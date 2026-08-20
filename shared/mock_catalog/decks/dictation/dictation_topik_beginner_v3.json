@@ -1,0 +1,1350 @@
+{
+  "deck_id": "dictation_topik_beginner",
+  "version": 3,
+  "name": "書き取り・初級 総合難易度",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 1,
+  "tags": [
+    "TOPIK",
+    "タイピング",
+    "初級",
+    "書き取り",
+    "ゲーム",
+    "公式"
+  ],
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "나",
+      "reading_ja": "ナ",
+      "meaning_ja": "私",
+      "audio": "audio/ko_1098bbe54520ab2a367c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I",
+          "reading": "na"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "너",
+      "reading_ja": "ノ",
+      "meaning_ja": "あなた",
+      "audio": "audio/ko_734dae8e9d9a8f8b763b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "you",
+          "reading": "neo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "비",
+      "reading_ja": "ピ",
+      "meaning_ja": "雨",
+      "audio": "audio/ko_5e0d62698b44a4342d26.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "rain",
+          "reading": "bi"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "길",
+      "reading_ja": "キル",
+      "meaning_ja": "道",
+      "audio": "audio/ko_d72c8434585436678000.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "road",
+          "reading": "gil"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "눈",
+      "reading_ja": "ヌン",
+      "meaning_ja": "雪",
+      "audio": "audio/ko_ab1b14816087979d2143.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "snow",
+          "reading": "nun"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "문",
+      "reading_ja": "ムン",
+      "meaning_ja": "ドア",
+      "audio": "audio/ko_e2c7d5c49b61f5326c13.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "door",
+          "reading": "mun"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "물",
+      "reading_ja": "ムル",
+      "meaning_ja": "水",
+      "audio": "audio/ko_2e7edc957ce601f5ff7c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "water",
+          "reading": "mul"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "발",
+      "reading_ja": "パル",
+      "meaning_ja": "足",
+      "audio": "audio/ko_45a4bd47fdb2ffcdd952.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "foot",
+          "reading": "bal"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "밥",
+      "reading_ja": "パプ",
+      "meaning_ja": "ご飯",
+      "audio": "audio/ko_828fa1e7e354b408527f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "rice",
+          "reading": "bap"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "방",
+      "reading_ja": "パン",
+      "meaning_ja": "部屋",
+      "audio": "audio/ko_76102fe82462d111be2a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "room",
+          "reading": "bang"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "봄",
+      "reading_ja": "ポム",
+      "meaning_ja": "春",
+      "audio": "audio/ko_c3756af91340d5ce8345.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "spring",
+          "reading": "bom"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "손",
+      "reading_ja": "ソン",
+      "meaning_ja": "手",
+      "audio": "audio/ko_27d4fa6af704520dcfd6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "hand",
+          "reading": "son"
+        }
+      }
+    },
+    {
+      "id": "i_013",
+      "ko": "옷",
+      "reading_ja": "オッ",
+      "meaning_ja": "服",
+      "audio": "audio/ko_4bddf9b9203384c7b240.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "clothes",
+          "reading": "ot"
+        }
+      }
+    },
+    {
+      "id": "i_014",
+      "ko": "집",
+      "reading_ja": "チプ",
+      "meaning_ja": "家",
+      "audio": "audio/ko_99cf116bb12cf1061e0b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "home",
+          "reading": "jip"
+        }
+      }
+    },
+    {
+      "id": "i_015",
+      "ko": "책",
+      "reading_ja": "チェク",
+      "meaning_ja": "本",
+      "audio": "audio/ko_ba928dd573a2db9e7579.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "book",
+          "reading": "chaek"
+        }
+      }
+    },
+    {
+      "id": "i_016",
+      "ko": "빵",
+      "reading_ja": "パン",
+      "meaning_ja": "パン",
+      "audio": "audio/ko_edc73c627b8f32b7f6a1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bread",
+          "reading": "ppang"
+        }
+      }
+    },
+    {
+      "id": "i_017",
+      "ko": "가게",
+      "reading_ja": "カゲ",
+      "meaning_ja": "店",
+      "audio": "audio/ko_c013538e549a4dedbd4a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "store",
+          "reading": "gage"
+        }
+      }
+    },
+    {
+      "id": "i_018",
+      "ko": "가다",
+      "reading_ja": "カダ",
+      "meaning_ja": "行く",
+      "audio": "audio/ko_233cb510410b09d69cdc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to go",
+          "reading": "gada"
+        }
+      }
+    },
+    {
+      "id": "i_019",
+      "ko": "고기",
+      "reading_ja": "コギ",
+      "meaning_ja": "肉",
+      "audio": "audio/ko_645b9cec60f52032ad29.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "meat",
+          "reading": "gogi"
+        }
+      }
+    },
+    {
+      "id": "i_020",
+      "ko": "기차",
+      "reading_ja": "キチャ",
+      "meaning_ja": "列車",
+      "audio": "audio/ko_d0ab4116e9831f86ef6e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "train",
+          "reading": "gicha"
+        }
+      }
+    },
+    {
+      "id": "i_021",
+      "ko": "나라",
+      "reading_ja": "ナラ",
+      "meaning_ja": "国",
+      "audio": "audio/ko_02faec8ed1c75703dcd3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "country",
+          "reading": "nara"
+        }
+      }
+    },
+    {
+      "id": "i_022",
+      "ko": "나무",
+      "reading_ja": "ナム",
+      "meaning_ja": "木",
+      "audio": "audio/ko_b294b251f77dfbc5ede4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "tree",
+          "reading": "namu"
+        }
+      }
+    },
+    {
+      "id": "i_023",
+      "ko": "노래",
+      "reading_ja": "ノレ",
+      "meaning_ja": "歌",
+      "audio": "audio/ko_edcad1c9c3dba9e99435.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "song",
+          "reading": "norae"
+        }
+      }
+    },
+    {
+      "id": "i_024",
+      "ko": "누나",
+      "reading_ja": "ヌナ",
+      "meaning_ja": "姉",
+      "audio": "audio/ko_6f46257ffa57c2f085e4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "older sister (male speaker)",
+          "reading": "nuna"
+        }
+      }
+    },
+    {
+      "id": "i_025",
+      "ko": "다리",
+      "reading_ja": "タリ",
+      "meaning_ja": "脚",
+      "audio": "audio/ko_982037b144c2b329e189.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "leg",
+          "reading": "dari"
+        }
+      }
+    },
+    {
+      "id": "i_026",
+      "ko": "도시",
+      "reading_ja": "トシ",
+      "meaning_ja": "都市",
+      "audio": "audio/ko_abbc940f03792a890e5d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "city",
+          "reading": "dosi"
+        }
+      }
+    },
+    {
+      "id": "i_027",
+      "ko": "머리",
+      "reading_ja": "モリ",
+      "meaning_ja": "頭",
+      "audio": "audio/ko_74eee3ddf202a62b7596.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "head",
+          "reading": "meori"
+        }
+      }
+    },
+    {
+      "id": "i_028",
+      "ko": "모자",
+      "reading_ja": "モジャ",
+      "meaning_ja": "帽子",
+      "audio": "audio/ko_4bf2a7500031422684ab.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "hat",
+          "reading": "moja"
+        }
+      }
+    },
+    {
+      "id": "i_029",
+      "ko": "바다",
+      "reading_ja": "パダ",
+      "meaning_ja": "海",
+      "audio": "audio/ko_1ea5c356f65344cfeb55.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sea",
+          "reading": "bada"
+        }
+      }
+    },
+    {
+      "id": "i_030",
+      "ko": "바지",
+      "reading_ja": "パジ",
+      "meaning_ja": "ズボン",
+      "audio": "audio/ko_fb24dd66a8c8c7dd42d1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "pants",
+          "reading": "baji"
+        }
+      }
+    },
+    {
+      "id": "i_031",
+      "ko": "버스",
+      "reading_ja": "ポス",
+      "meaning_ja": "バス",
+      "audio": "audio/ko_fb84fa7f86eac62eca5f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bus",
+          "reading": "beoseu"
+        }
+      }
+    },
+    {
+      "id": "i_032",
+      "ko": "보다",
+      "reading_ja": "ポダ",
+      "meaning_ja": "見る",
+      "audio": "audio/ko_6a45cf834264a5ec3611.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to see",
+          "reading": "boda"
+        }
+      }
+    },
+    {
+      "id": "i_033",
+      "ko": "부모",
+      "reading_ja": "プモ",
+      "meaning_ja": "両親",
+      "audio": "audio/ko_881a8172c7dcec2e64dc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "parents",
+          "reading": "bumo"
+        }
+      }
+    },
+    {
+      "id": "i_034",
+      "ko": "소리",
+      "reading_ja": "ソリ",
+      "meaning_ja": "音",
+      "audio": "audio/ko_d13cec79f66edb6aa0c5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sound",
+          "reading": "sori"
+        }
+      }
+    },
+    {
+      "id": "i_035",
+      "ko": "아기",
+      "reading_ja": "アギ",
+      "meaning_ja": "赤ちゃん",
+      "audio": "audio/ko_d5fa7c0faafdc9fccb16.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "baby",
+          "reading": "agi"
+        }
+      }
+    },
+    {
+      "id": "i_036",
+      "ko": "오다",
+      "reading_ja": "オダ",
+      "meaning_ja": "来る",
+      "audio": "audio/ko_6fe577b99594f4a7bd8d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to come",
+          "reading": "oda"
+        }
+      }
+    },
+    {
+      "id": "i_037",
+      "ko": "우유",
+      "reading_ja": "ウユ",
+      "meaning_ja": "牛乳",
+      "audio": "audio/ko_2b7e75051be2c51a0337.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "milk",
+          "reading": "uyu"
+        }
+      }
+    },
+    {
+      "id": "i_038",
+      "ko": "자매",
+      "reading_ja": "チャメ",
+      "meaning_ja": "姉妹",
+      "audio": "audio/ko_ae332ac7883e426a7068.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sisters",
+          "reading": "jamae"
+        }
+      }
+    },
+    {
+      "id": "i_039",
+      "ko": "주소",
+      "reading_ja": "チュソ",
+      "meaning_ja": "住所",
+      "audio": "audio/ko_28e058c7cec8846e6c5f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "address",
+          "reading": "juso"
+        }
+      }
+    },
+    {
+      "id": "i_040",
+      "ko": "지도",
+      "reading_ja": "チド",
+      "meaning_ja": "地図",
+      "audio": "audio/ko_82c5fe62d75b8c38b810.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "map",
+          "reading": "jido"
+        }
+      }
+    },
+    {
+      "id": "i_041",
+      "ko": "카드",
+      "reading_ja": "カドゥ",
+      "meaning_ja": "カード",
+      "audio": "audio/ko_62b41b5aaec6fef4bd83.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "card",
+          "reading": "kadeu"
+        }
+      }
+    },
+    {
+      "id": "i_042",
+      "ko": "커피",
+      "reading_ja": "コピ",
+      "meaning_ja": "コーヒー",
+      "audio": "audio/ko_a4215a3126661d523ba2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "coffee",
+          "reading": "keopi"
+        }
+      }
+    },
+    {
+      "id": "i_043",
+      "ko": "크다",
+      "reading_ja": "クダ",
+      "meaning_ja": "大きい",
+      "audio": "audio/ko_d9eb2cf86baea9292578.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be big",
+          "reading": "keuda"
+        }
+      }
+    },
+    {
+      "id": "i_044",
+      "ko": "하다",
+      "reading_ja": "ハダ",
+      "meaning_ja": "する",
+      "audio": "audio/ko_505de0a2f6be73fa7758.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to do",
+          "reading": "hada"
+        }
+      }
+    },
+    {
+      "id": "i_045",
+      "ko": "하루",
+      "reading_ja": "ハル",
+      "meaning_ja": "一日",
+      "audio": "audio/ko_621a158068fae5de1aee.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "day",
+          "reading": "haru"
+        }
+      }
+    },
+    {
+      "id": "i_046",
+      "ko": "사과",
+      "reading_ja": "サグァ",
+      "meaning_ja": "りんご",
+      "audio": "audio/ko_46fc35121d1a4b332863.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "apple",
+          "reading": "sagwa"
+        }
+      }
+    },
+    {
+      "id": "i_047",
+      "ko": "의자",
+      "reading_ja": "ウィジャ",
+      "meaning_ja": "椅子",
+      "audio": "audio/ko_e8bb0f33e8ba6ddcf691.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "chair",
+          "reading": "uija"
+        }
+      }
+    },
+    {
+      "id": "i_048",
+      "ko": "가방",
+      "reading_ja": "カバン",
+      "meaning_ja": "かばん",
+      "audio": "audio/ko_6852b2954fc8556674f1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bag",
+          "reading": "gabang"
+        }
+      }
+    },
+    {
+      "id": "i_049",
+      "ko": "가을",
+      "reading_ja": "カウル",
+      "meaning_ja": "秋",
+      "audio": "audio/ko_c5911194be78d7d5c393.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "autumn",
+          "reading": "gaeul"
+        }
+      }
+    },
+    {
+      "id": "i_050",
+      "ko": "가족",
+      "reading_ja": "カジョク",
+      "meaning_ja": "家族",
+      "audio": "audio/ko_7659575fd72a872b8d05.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "family",
+          "reading": "gajok"
+        }
+      }
+    },
+    {
+      "id": "i_051",
+      "ko": "겨울",
+      "reading_ja": "キョウル",
+      "meaning_ja": "冬",
+      "audio": "audio/ko_ac9e69428d653c8c2b15.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "winter",
+          "reading": "gyeoul"
+        }
+      }
+    },
+    {
+      "id": "i_052",
+      "ko": "공부",
+      "reading_ja": "コンブ",
+      "meaning_ja": "勉強",
+      "audio": "audio/ko_c9b4aed6d54a88472fe8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "study",
+          "reading": "gongbu"
+        }
+      }
+    },
+    {
+      "id": "i_053",
+      "ko": "내일",
+      "reading_ja": "ネイル",
+      "meaning_ja": "明日",
+      "audio": "audio/ko_1e07b94ba5182a41e7de.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "tomorrow",
+          "reading": "naeil"
+        }
+      }
+    },
+    {
+      "id": "i_054",
+      "ko": "라면",
+      "reading_ja": "ラミョン",
+      "meaning_ja": "ラーメン",
+      "audio": "audio/ko_6454befbdb61c843cbd2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ramen",
+          "reading": "ramyeon"
+        }
+      }
+    },
+    {
+      "id": "i_055",
+      "ko": "마을",
+      "reading_ja": "マウル",
+      "meaning_ja": "村",
+      "audio": "audio/ko_16a6e53889b32d5b72f4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "village",
+          "reading": "maeul"
+        }
+      }
+    },
+    {
+      "id": "i_056",
+      "ko": "마음",
+      "reading_ja": "マウム",
+      "meaning_ja": "心",
+      "audio": "audio/ko_aa9cbf25b5381e2c30cd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "heart",
+          "reading": "maeum"
+        }
+      }
+    },
+    {
+      "id": "i_057",
+      "ko": "먹다",
+      "reading_ja": "モクタ",
+      "meaning_ja": "食べる",
+      "audio": "audio/ko_9639f892bdddb53fc055.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to eat",
+          "reading": "meokda"
+        }
+      }
+    },
+    {
+      "id": "i_058",
+      "ko": "사람",
+      "reading_ja": "サラム",
+      "meaning_ja": "人",
+      "audio": "audio/ko_389e7564ae2551b4f94d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "person",
+          "reading": "saram"
+        }
+      }
+    },
+    {
+      "id": "i_059",
+      "ko": "시간",
+      "reading_ja": "シガン",
+      "meaning_ja": "時間",
+      "audio": "audio/ko_4692cef5ac69eb37bd53.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "time",
+          "reading": "sigan"
+        }
+      }
+    },
+    {
+      "id": "i_060",
+      "ko": "시장",
+      "reading_ja": "シジャン",
+      "meaning_ja": "市場",
+      "audio": "audio/ko_b46fa208d9de21d2daf1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "market",
+          "reading": "sijang"
+        }
+      }
+    },
+    {
+      "id": "i_061",
+      "ko": "아침",
+      "reading_ja": "アチム",
+      "meaning_ja": "朝",
+      "audio": "audio/ko_2fdd736548d881c6da93.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "morning",
+          "reading": "achim"
+        }
+      }
+    },
+    {
+      "id": "i_062",
+      "ko": "여름",
+      "reading_ja": "ヨルム",
+      "meaning_ja": "夏",
+      "audio": "audio/ko_4442e49ca3d7c1ba77c7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "summer",
+          "reading": "yeoreum"
+        }
+      }
+    },
+    {
+      "id": "i_063",
+      "ko": "오늘",
+      "reading_ja": "オヌル",
+      "meaning_ja": "今日",
+      "audio": "audio/ko_3bc6235e1d18162fb94c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "today",
+          "reading": "oneul"
+        }
+      }
+    },
+    {
+      "id": "i_064",
+      "ko": "우산",
+      "reading_ja": "ウサン",
+      "meaning_ja": "傘",
+      "audio": "audio/ko_8b6f9142a49be5004b82.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "umbrella",
+          "reading": "usan"
+        }
+      }
+    },
+    {
+      "id": "i_065",
+      "ko": "이름",
+      "reading_ja": "イルム",
+      "meaning_ja": "名前",
+      "audio": "audio/ko_253d1510caf5362045ce.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "name",
+          "reading": "ireum"
+        }
+      }
+    },
+    {
+      "id": "i_066",
+      "ko": "작다",
+      "reading_ja": "チャクタ",
+      "meaning_ja": "小さい",
+      "audio": "audio/ko_bc42f85bf5be37c92f7c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be small",
+          "reading": "jakda"
+        }
+      }
+    },
+    {
+      "id": "i_067",
+      "ko": "저녁",
+      "reading_ja": "チョニョク",
+      "meaning_ja": "夕食",
+      "audio": "audio/ko_8d3c547011f433e6d259.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "dinner",
+          "reading": "jeonyeok"
+        }
+      }
+    },
+    {
+      "id": "i_068",
+      "ko": "좋다",
+      "reading_ja": "チョタ",
+      "meaning_ja": "良い",
+      "audio": "audio/ko_86d0464f1c6da40233cd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be good",
+          "reading": "johda"
+        }
+      }
+    },
+    {
+      "id": "i_069",
+      "ko": "주말",
+      "reading_ja": "チュマル",
+      "meaning_ja": "週末",
+      "audio": "audio/ko_dc80d0fe247835379f4f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "weekend",
+          "reading": "jumal"
+        }
+      }
+    },
+    {
+      "id": "i_070",
+      "ko": "친구",
+      "reading_ja": "チング",
+      "meaning_ja": "友達",
+      "audio": "audio/ko_1202aff936337891e079.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "friend",
+          "reading": "chingu"
+        }
+      }
+    },
+    {
+      "id": "i_071",
+      "ko": "침대",
+      "reading_ja": "チムデ",
+      "meaning_ja": "ベッド",
+      "audio": "audio/ko_438637b694f51806c024.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bed",
+          "reading": "chimdae"
+        }
+      }
+    },
+    {
+      "id": "i_072",
+      "ko": "택시",
+      "reading_ja": "テクシ",
+      "meaning_ja": "タクシー",
+      "audio": "audio/ko_94be61a73763ee4ccdbe.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "taxi",
+          "reading": "taeksi"
+        }
+      }
+    },
+    {
+      "id": "i_073",
+      "ko": "하늘",
+      "reading_ja": "ハヌル",
+      "meaning_ja": "空",
+      "audio": "audio/ko_4cd0df8d103d3a7b39d0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sky",
+          "reading": "haneul"
+        }
+      }
+    },
+    {
+      "id": "i_074",
+      "ko": "학교",
+      "reading_ja": "ハッキョ",
+      "meaning_ja": "学校",
+      "audio": "audio/ko_f7b9c878ccca829ab6ab.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "school",
+          "reading": "hakgyo"
+        }
+      }
+    },
+    {
+      "id": "i_075",
+      "ko": "형제",
+      "reading_ja": "ヒョンジェ",
+      "meaning_ja": "兄弟",
+      "audio": "audio/ko_6d2b6b10fa368657dc32.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "brothers",
+          "reading": "hyeongje"
+        }
+      }
+    },
+    {
+      "id": "i_076",
+      "ko": "휴일",
+      "reading_ja": "ヒュイル",
+      "meaning_ja": "休日",
+      "audio": "audio/ko_98c4721ccd1350f17224.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "day off",
+          "reading": "hyuil"
+        }
+      }
+    },
+    {
+      "id": "i_077",
+      "ko": "날씨",
+      "reading_ja": "ナルシ",
+      "meaning_ja": "天気",
+      "audio": "audio/ko_fe655cf1d979cf3db76c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "weather",
+          "reading": "nalssi"
+        }
+      }
+    },
+    {
+      "id": "i_078",
+      "ko": "아버지",
+      "reading_ja": "アボジ",
+      "meaning_ja": "父",
+      "audio": "audio/ko_af4870c15b98485bf462.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "father",
+          "reading": "abeoji"
+        }
+      }
+    },
+    {
+      "id": "i_079",
+      "ko": "어머니",
+      "reading_ja": "オモニ",
+      "meaning_ja": "母",
+      "audio": "audio/ko_a8f7e3b1e379f4880b79.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "mother",
+          "reading": "eomeoni"
+        }
+      }
+    },
+    {
+      "id": "i_080",
+      "ko": "빠르다",
+      "reading_ja": "パルダ",
+      "meaning_ja": "速い",
+      "audio": "audio/ko_904de91feaff572f721f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be fast",
+          "reading": "ppareuda"
+        }
+      }
+    },
+    {
+      "id": "i_081",
+      "ko": "예쁘다",
+      "reading_ja": "イェップダ",
+      "meaning_ja": "きれいだ",
+      "audio": "audio/ko_f62ff8982d788e72028f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be pretty",
+          "reading": "yeppeuda"
+        }
+      }
+    },
+    {
+      "id": "i_082",
+      "ko": "전화",
+      "reading_ja": "チョヌァ",
+      "meaning_ja": "電話",
+      "audio": "audio/ko_6db518d738ede9912d10.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "phone call",
+          "reading": "jeonhwa"
+        }
+      }
+    },
+    {
+      "id": "i_083",
+      "ko": "동물",
+      "reading_ja": "トンムル",
+      "meaning_ja": "動物",
+      "audio": "audio/ko_227e25cceb2f8449c2a4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "animal",
+          "reading": "dongmul"
+        }
+      }
+    },
+    {
+      "id": "i_084",
+      "ko": "산책",
+      "reading_ja": "サンチェク",
+      "meaning_ja": "散歩",
+      "audio": "audio/ko_b745d43721954853192d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "walk",
+          "reading": "sanchaek"
+        }
+      }
+    },
+    {
+      "id": "i_085",
+      "ko": "신발",
+      "reading_ja": "シンバル",
+      "meaning_ja": "靴",
+      "audio": "audio/ko_514d3c6f08937125aef8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "shoes",
+          "reading": "sinbal"
+        }
+      }
+    },
+    {
+      "id": "i_086",
+      "ko": "은행",
+      "reading_ja": "ウネン",
+      "meaning_ja": "銀行",
+      "audio": "audio/ko_9630c6227715da131d3e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bank",
+          "reading": "eunhaeng"
+        }
+      }
+    },
+    {
+      "id": "i_087",
+      "ko": "음식",
+      "reading_ja": "ウムシク",
+      "meaning_ja": "食べ物",
+      "audio": "audio/ko_2e144916046c2a6fc7df.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "food",
+          "reading": "eumsik"
+        }
+      }
+    },
+    {
+      "id": "i_088",
+      "ko": "점심",
+      "reading_ja": "チョムシム",
+      "meaning_ja": "昼食",
+      "audio": "audio/ko_12cf30d1ce4feda7a77d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "lunch",
+          "reading": "jeomsim"
+        }
+      }
+    },
+    {
+      "id": "i_089",
+      "ko": "창문",
+      "reading_ja": "チャンムン",
+      "meaning_ja": "窓",
+      "audio": "audio/ko_13938495269cab67783e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "window",
+          "reading": "changmun"
+        }
+      }
+    },
+    {
+      "id": "i_090",
+      "ko": "책상",
+      "reading_ja": "チェクサン",
+      "meaning_ja": "机",
+      "audio": "audio/ko_e2d1cb559455849bf57e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "desk",
+          "reading": "chaeksang"
+        }
+      }
+    },
+    {
+      "id": "i_091",
+      "ko": "학생",
+      "reading_ja": "ハクセン",
+      "meaning_ja": "学生",
+      "audio": "audio/ko_f24650b42089c29f9027.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "student",
+          "reading": "haksaeng"
+        }
+      }
+    },
+    {
+      "id": "i_092",
+      "ko": "우체국",
+      "reading_ja": "ウチェグク",
+      "meaning_ja": "郵便局",
+      "audio": "audio/ko_849e8b72fa03e3c90dcb.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "post office",
+          "reading": "ucheguk"
+        }
+      }
+    },
+    {
+      "id": "i_093",
+      "ko": "자전거",
+      "reading_ja": "チャジョンゴ",
+      "meaning_ja": "自転車",
+      "audio": "audio/ko_91e88e6f412fe193a0f1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "bicycle",
+          "reading": "jajeongeo"
+        }
+      }
+    },
+    {
+      "id": "i_094",
+      "ko": "지하철",
+      "reading_ja": "チハチョル",
+      "meaning_ja": "地下鉄",
+      "audio": "audio/ko_dfb8c73b9f048c3b7e27.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "subway",
+          "reading": "jihacheol"
+        }
+      }
+    },
+    {
+      "id": "i_095",
+      "ko": "공원",
+      "reading_ja": "コンウォン",
+      "meaning_ja": "公園",
+      "audio": "audio/ko_1af88d86437a105faf10.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "park",
+          "reading": "gongwon"
+        }
+      }
+    },
+    {
+      "id": "i_096",
+      "ko": "병원",
+      "reading_ja": "ピョンウォン",
+      "meaning_ja": "病院",
+      "audio": "audio/ko_4f4c2d79c47ca512edb7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "hospital",
+          "reading": "byeongwon"
+        }
+      }
+    },
+    {
+      "id": "i_097",
+      "ko": "냉장고",
+      "reading_ja": "ネンジャンゴ",
+      "meaning_ja": "冷蔵庫",
+      "audio": "audio/ko_b3bf31f65841d3e1822e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "refrigerator",
+          "reading": "naengjanggo"
+        }
+      }
+    },
+    {
+      "id": "i_098",
+      "ko": "재미있다",
+      "reading_ja": "チェミイッタ",
+      "meaning_ja": "面白い",
+      "audio": "audio/ko_e2360d9fd7642ddd6242.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be fun",
+          "reading": "jaemiitda"
+        }
+      }
+    },
+    {
+      "id": "i_099",
+      "ko": "선생님",
+      "reading_ja": "ソンセンニム",
+      "meaning_ja": "先生",
+      "audio": "audio/ko_daac5ca7b302bd9b404a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "teacher",
+          "reading": "seonsaengnim"
+        }
+      }
+    },
+    {
+      "id": "i_100",
+      "ko": "괜찮다",
+      "reading_ja": "クェンチャンタ",
+      "meaning_ja": "大丈夫だ",
+      "audio": "audio/ko_b9a2699f824000e36e45.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "to be okay",
+          "reading": "gwaenchanda"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Dictation: Beginner Mix",
+      "author_nickname": "typee Official",
+      "tags": [
+        "TOPIK",
+        "Typing",
+        "Beginner",
+        "Dictation",
+        "Games",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "받아쓰기·초급 종합 난이도",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "TOPIK",
+        "타이핑",
+        "초급",
+        "받아쓰기",
+        "게임",
+        "공식"
+      ]
+    }
+  }
+}

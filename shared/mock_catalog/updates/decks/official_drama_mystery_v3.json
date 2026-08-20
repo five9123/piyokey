@@ -1,0 +1,200 @@
+{
+  "deck_id": "official_drama_mystery",
+  "version": 3,
+  "name": "Kドラマ会話：秘密と逆転",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 3,
+  "tags": [
+    "Kドラマ",
+    "ミステリー",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-03-22T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "비밀",
+      "reading_ja": "ピミル",
+      "meaning_ja": "秘密",
+      "audio": "audio/ko_00897c8f8b298fae0a09.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "secret",
+          "reading": "bimil"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "단서",
+      "reading_ja": "タンソ",
+      "meaning_ja": "手がかり",
+      "audio": "audio/ko_1a7fd9fbfca3998210af.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "clue",
+          "reading": "danseo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "누구세요",
+      "reading_ja": "ヌグセヨ",
+      "meaning_ja": "どなたですか",
+      "audio": "audio/ko_0f03f614fa7af94e6d1c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Who are you?",
+          "reading": "nuguseyo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "문 열어 줘요",
+      "reading_ja": "ムン ヨロ ジョヨ",
+      "meaning_ja": "ドアを開けてください",
+      "audio": "audio/ko_d7c68f3f5bf5e90b139c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please open the door",
+          "reading": "mun yeoleo jwoyo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "사실대로 말해요",
+      "reading_ja": "サシルデロ マレヨ",
+      "meaning_ja": "本当のことを話して",
+      "audio": "audio/ko_b8bbc258d424a4309188.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Tell me the truth",
+          "reading": "sasildaero malhaeyo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "아직 끝나지 않았어",
+      "reading_ja": "アジク クンナジ アナッソ",
+      "meaning_ja": "まだ終わっていない",
+      "audio": "audio/ko_a7fe216dcb9f0ac00cbc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "It's not over yet",
+          "reading": "ajik kkeutnaji anateo"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "난 전부 기억해",
+      "reading_ja": "ナン チョンブ キオケ",
+      "meaning_ja": "私は全部覚えている",
+      "audio": "audio/ko_50c47641fb18fc4cf0e3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I remember everything",
+          "reading": "nan jeonbu gieokhae"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "범인은 따로 있어",
+      "reading_ja": "ポミヌン タロ イッソ",
+      "meaning_ja": "犯人は別にいる",
+      "audio": "audio/ko_a298b4229424f78cf870.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The real culprit is someone else",
+          "reading": "beomineun ttaro iteo"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "이제 진실을 말해",
+      "reading_ja": "イジェ チンシルル マレ",
+      "meaning_ja": "もう真実を話して",
+      "audio": "audio/ko_3bb1e3561551cf1c4b33.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Tell me the truth now",
+          "reading": "ije jinsileul malhae"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "우리 편이 맞나요",
+      "reading_ja": "ウリ ピョニ マンナヨ",
+      "meaning_ja": "私たちの味方ですか",
+      "audio": "audio/ko_6ddd508b97d3d7d5eab8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Are you on our side?",
+          "reading": "uri pyeoni matnayo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "아무도 믿지 마요",
+      "reading_ja": "アムド ミッチ マヨ",
+      "meaning_ja": "誰も信じないで",
+      "audio": "audio/ko_f2ad33d3459b7f65a0be.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Don't trust anyone",
+          "reading": "amudo mitji mayo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "마지막 기회를 줄게",
+      "reading_ja": "マジマク キフェルル チュルケ",
+      "meaning_ja": "最後の機会をあげる",
+      "audio": "audio/ko_d11e3a33019b8c848f3b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll give you one last chance",
+          "reading": "majimak gihoereul julge"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "K-Drama Dialogue: Secrets & Twists",
+      "author_nickname": "typee Official",
+      "tags": [
+        "K-Drama",
+        "Mystery",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "K-드라마 대화: 비밀과 반전",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "K-드라마",
+        "미스터리",
+        "회화",
+        "공식"
+      ]
+    }
+  }
+}

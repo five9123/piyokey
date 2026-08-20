@@ -1,0 +1,200 @@
+{
+  "deck_id": "official_fun_couple_conflict",
+  "version": 2,
+  "name": "彼氏にモヤッとした時",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "恋愛",
+    "カップル",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-04-11T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "왜 연락 안 했어",
+      "reading_ja": "ウェ ヨルラク アン ヘッソ",
+      "meaning_ja": "どうして連絡しなかったの",
+      "audio": "audio/ko_3e29991aa8cc23000d5e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Why didn't you get in touch?",
+          "reading": "wae yeonrak an haeteo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "내 말 좀 들어 줘",
+      "reading_ja": "ネ マル チョム トゥロ ジョ",
+      "meaning_ja": "私の話をちょっと聞いて",
+      "audio": "audio/ko_2ad9c00ae7d1957e7746.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please listen to me",
+          "reading": "nae mal jom deuleo jwo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "그 말은 좀 서운해",
+      "reading_ja": "ク マルン チョム ソウネ",
+      "meaning_ja": "その言い方はちょっと悲しい",
+      "audio": "audio/ko_2fb2229b7a3e52063353.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "That was a little hurtful",
+          "reading": "geu maleun jom seounhae"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "지금은 화가 났어",
+      "reading_ja": "チグムン ファガ ナッソ",
+      "meaning_ja": "今は怒ってる",
+      "audio": "audio/ko_daa83918af64779d75b4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm angry right now",
+          "reading": "jigeumeun hwaga nateo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "나만 노력하잖아",
+      "reading_ja": "ナマン ノリョカジャナ",
+      "meaning_ja": "私ばかり努力してるじゃない",
+      "audio": "audio/ko_58cb51d4dd2ab86ff148.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm the only one trying",
+          "reading": "naman noryeokhajana"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "왜 내 편이 아니야",
+      "reading_ja": "ウェ ネ ピョニ アニヤ",
+      "meaning_ja": "どうして私の味方じゃないの",
+      "audio": "audio/ko_2de8529c722fcd7f232b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Why aren't you on my side?",
+          "reading": "wae nae pyeoni aniya"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "약속과 다르잖아",
+      "reading_ja": "ヤクソックァ タルジャナ",
+      "meaning_ja": "約束と違うじゃない",
+      "audio": "audio/ko_560f93f7f5e0ae7aaa70.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "That's not what you promised",
+          "reading": "yaksokgwa dareujana"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "내 기분도 중요해",
+      "reading_ja": "ネ キブンド チュンヨヘ",
+      "meaning_ja": "私の気持ちも大事だよ",
+      "audio": "audio/ko_ecdcf8fd813e6ed6f77d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "My feelings matter too",
+          "reading": "nae gibundo jungyohae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "그냥 넘기지 마",
+      "reading_ja": "クニャン ノムギジ マ",
+      "meaning_ja": "適当に流さないで",
+      "audio": "audio/ko_a41ebb617b883033ec0f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Don't just brush it off",
+          "reading": "geunyang neomgiji ma"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "솔직하게 말해 줘",
+      "reading_ja": "ソルチカゲ マレ ジョ",
+      "meaning_ja": "正直に話して",
+      "audio": "audio/ko_81148e1d418a4bffdd7b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Tell me honestly",
+          "reading": "soljikhage malhae jwo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "잠깐 생각할게",
+      "reading_ja": "チャムカン センガカルケ",
+      "meaning_ja": "少し考えるね",
+      "audio": "audio/ko_414f03c09f031661391b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let me think for a moment",
+          "reading": "jamkkan saenggakhalge"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "서로 존중해 줘",
+      "reading_ja": "ソロ チョンジュンヘ ジョ",
+      "meaning_ja": "お互いを尊重して",
+      "audio": "audio/ko_2443f0d487bee8cd6130.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's respect each other",
+          "reading": "seoro jonjunghae jwo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "When You're Upset with Your Boyfriend",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Romance",
+        "Couples",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "남자친구에게 서운할 때",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "연애",
+        "커플",
+        "회화",
+        "공식"
+      ]
+    }
+  }
+}

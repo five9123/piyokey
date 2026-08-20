@@ -1,0 +1,197 @@
+{
+  "deck_id": "official_consonants",
+  "version": 4,
+  "name": "基本子音を覚えよう",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 1,
+  "tags": [
+    "入門",
+    "子音",
+    "公式"
+  ],
+  "created_at": "2026-01-11T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "ㅅ",
+      "reading_ja": "シオッ",
+      "meaning_ja": "基本子音 ㅅ",
+      "audio": "audio/ko_fd5ee944f84a474fd02d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅅ",
+          "reading": "s"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "ㅇ",
+      "reading_ja": "イウン",
+      "meaning_ja": "基本子音 ㅇ",
+      "audio": "audio/ko_15915fe9caccfc454fb5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅇ",
+          "reading": "ng"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "ㅈ",
+      "reading_ja": "チウッ",
+      "meaning_ja": "基本子音 ㅈ",
+      "audio": "audio/ko_ac8e41bf91d07bc5d368.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅈ",
+          "reading": "j"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "ㅎ",
+      "reading_ja": "ヒウッ",
+      "meaning_ja": "基本子音 ㅎ",
+      "audio": "audio/ko_5cf9d9adb0c0d6cf0bca.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅎ",
+          "reading": "h"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "ㄱ",
+      "reading_ja": "キヨク",
+      "meaning_ja": "基本子音 ㄱ",
+      "audio": "audio/ko_fcae0b0f80045e9a25c6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㄱ",
+          "reading": "g"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "ㄴ",
+      "reading_ja": "ニウン",
+      "meaning_ja": "基本子音 ㄴ",
+      "audio": "audio/ko_9e28a673835fd6986ae2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㄴ",
+          "reading": "n"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "ㄷ",
+      "reading_ja": "ティグッ",
+      "meaning_ja": "基本子音 ㄷ",
+      "audio": "audio/ko_1303522e0b59179b948c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㄷ",
+          "reading": "d"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "ㄹ",
+      "reading_ja": "リウル",
+      "meaning_ja": "基本子音 ㄹ",
+      "audio": "audio/ko_e6e56ddaee696565abaf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㄹ",
+          "reading": "r"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "ㅁ",
+      "reading_ja": "ミウム",
+      "meaning_ja": "基本子音 ㅁ",
+      "audio": "audio/ko_518f0fd2ed04a5ac5d53.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅁ",
+          "reading": "m"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "ㅂ",
+      "reading_ja": "ピウプ",
+      "meaning_ja": "基本子音 ㅂ",
+      "audio": "audio/ko_d291f17162c4d27c984e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅂ",
+          "reading": "b"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "ㅅ",
+      "reading_ja": "シオッ",
+      "meaning_ja": "基本子音 ㅅ",
+      "audio": "audio/ko_fd5ee944f84a474fd02d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅅ",
+          "reading": "s"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "ㅇ",
+      "reading_ja": "イウン",
+      "meaning_ja": "基本子音 ㅇ",
+      "audio": "audio/ko_15915fe9caccfc454fb5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic consonant ㅇ",
+          "reading": "ng"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Basic Korean Consonants",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Beginner Basics",
+        "Consonants",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "기본 자음 익히기",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "입문",
+        "자음",
+        "공식"
+      ]
+    }
+  }
+}

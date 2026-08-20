@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "typee";
+"CFBundleName" = "typee";
+"CFBundleTypeName" = "typee Deck";
+"UTTypeDescription" = "typee Deck";
+"NSPhotoLibraryAddUsageDescription" = "typee uses Photos access to save your game result image.";

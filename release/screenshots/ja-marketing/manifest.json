@@ -1,0 +1,50 @@
+[
+  {
+    "output" : "01-keyboard-start-ja.png",
+    "source" : "01-appstore-current-curriculum-mission-ja.png",
+    "subtitle" : "韓国語キーボード未設定でも、すぐ練習",
+    "title" : "光るキーを追って、\n韓国語を打とう"
+  },
+  {
+    "output" : "02-six-games-ja.png",
+    "source" : "02-appstore-current-flow-ja.png",
+    "subtitle" : "6つのゲームで、スピードと正確さに挑戦",
+    "title" : "流れる単語を追って、\nコンボをつなごう"
+  },
+  {
+    "output" : "03-curriculum-ja.png",
+    "source" : "03-appstore-current-attendance-home-ja.png",
+    "subtitle" : "スタンプとピヨの応援で、自然に続く",
+    "title" : "今日も達成、\n4日連続"
+  },
+  {
+    "output" : "04-daily-habit-ja.png",
+    "source" : "04-appstore-current-acid-rain-ja.png",
+    "subtitle" : "危ない単語を見きわめて、すばやく入力",
+    "title" : "落ちてくる単語を、\n地面に着く前に！"
+  },
+  {
+    "output" : "05-results-ja.png",
+    "source" : "05-appstore-current-word-match-ja.png",
+    "subtitle" : "日本語のヒントから、ハングルを直接入力",
+    "title" : "意味を見て、\n韓国語で答えよう"
+  },
+  {
+    "output" : "06-flow-game-ja.png",
+    "source" : "06-appstore-current-choseong-ja.png",
+    "subtitle" : "考えながら、韓国語の語彙も強くなる",
+    "title" : "初声をヒントに、\n答えをタイピング"
+  },
+  {
+    "output" : "07-piyo-growth-ja.png",
+    "source" : "07-appstore-current-daily-mission-ja.png",
+    "subtitle" : "毎日のミッションで、少しずつ上達",
+    "title" : "今日の3分を、\nピヨと進めよう"
+  },
+  {
+    "output" : "08-streak-rewards-ja.png",
+    "source" : "08-appstore-current-rewards-ja.png",
+    "subtitle" : "学ぶほど、ピヨのアイテムが増えていく",
+    "title" : "あと1日で、\n次のごほうび"
+  }
+]

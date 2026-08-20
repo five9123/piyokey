@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hanco.example/schema/catalog.schema.json",
+  "title": "Hanco Read-only Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalog_version", "generated_at", "decks", "tags"],
+  "properties": {
+    "catalog_version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "decks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/catalogDeck" }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/catalogTag" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "deckType": { "type": "string", "enum": ["word", "sentence"] },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 }
+    },
+    "previewItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ko", "meaning_ja"],
+      "properties": {
+        "ko": { "type": "string", "minLength": 1, "maxLength": 10 },
+        "meaning_ja": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "localizations": { "$ref": "#/$defs/previewLocalizations" }
+      }
+    },
+    "previewLocalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meaning"],
+      "properties": {
+        "meaning": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "previewLocalizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "en": { "$ref": "#/$defs/previewLocalization" },
+        "ko": { "$ref": "#/$defs/previewLocalization" }
+      }
+    },
+    "deckLocalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "author_nickname", "tags"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "author_nickname": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "tags": { "$ref": "#/$defs/tags" }
+      }
+    },
+    "deckLocalizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "en": { "$ref": "#/$defs/deckLocalization" },
+        "ko": { "$ref": "#/$defs/deckLocalization" }
+      }
+    },
+    "catalogDeck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deck_id",
+        "version",
+        "name",
+        "author_nickname",
+        "official",
+        "featured",
+        "type",
+        "level",
+        "tags",
+        "item_count",
+        "size_bytes",
+        "downloads_total",
+        "downloads_7d",
+        "created_at",
+        "preview_items",
+        "file_url"
+      ],
+      "properties": {
+        "deck_id": { "$ref": "#/$defs/id" },
+        "version": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "author_nickname": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "official": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "type": { "$ref": "#/$defs/deckType" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "tags": { "$ref": "#/$defs/tags" },
+        "localizations": { "$ref": "#/$defs/deckLocalizations" },
+        "item_count": { "type": "integer", "minimum": 1 },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "downloads_total": { "type": "integer", "minimum": 0 },
+        "downloads_7d": { "type": "integer", "minimum": 0 },
+        "created_at": { "type": "string", "format": "date-time" },
+        "preview_items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/previewItem" }
+        },
+        "file_url": {
+          "type": "string",
+          "minLength": 12,
+          "pattern": "^decks/[a-z0-9_-]+_v[1-9][0-9]*\\.json$"
+        }
+      }
+    },
+    "catalogTag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tag", "deck_count", "category"],
+      "properties": {
+        "tag": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "deck_count": { "type": "integer", "minimum": 1 },
+        "category": { "type": "string", "enum": ["artist", "purpose", "topic"] },
+        "localizations": { "$ref": "#/$defs/tagLocalizations" }
+      }
+    },
+    "tagLocalizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "ko": { "type": "string", "minLength": 1, "maxLength": 40 }
+      }
+    }
+  }
+}

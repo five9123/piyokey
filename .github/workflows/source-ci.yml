@@ -1,0 +1,53 @@
+name: Source CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: source-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  python-contracts:
+    name: Python tools and content contracts
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run tool tests
+        run: python3 -m unittest discover -s tools/tests -p 'test_*.py'
+      - name: Verify release contracts
+        run: python3 tools/release_preflight.py
+
+  swift-contracts:
+    name: Swift shared engine
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test HangulEngine and DeckKit
+        working-directory: ios/HangulEngine
+        run: swift test
+
+  ios-build:
+    name: iOS simulator build
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build app without signing
+        run: >-
+          xcodebuild build
+          -project ios/Hanco/Hanco.xcodeproj
+          -scheme Hanco
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO

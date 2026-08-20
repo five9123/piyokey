@@ -1,0 +1,33 @@
+{
+  "author": {
+    "id": "creator_11111111111111111111111111111111",
+    "nickname": "テスト作成者"
+  },
+  "created_at": "2026-08-14T00:00:00Z",
+  "deck_id": "user_00000000000000000000000000000001",
+  "items": [
+    {
+      "audio": null,
+      "id": "item_00000000000000000000000000000001",
+      "ko": "학교",
+      "meaning_ja": "学校",
+      "reading_ja": "ハッキョ"
+    },
+    {
+      "audio": null,
+      "id": "item_00000000000000000000000000000002",
+      "ko": "친구",
+      "meaning_ja": "友達",
+      "reading_ja": "チング"
+    }
+  ],
+  "level": 1,
+  "name": "はじめてのマイデッキ",
+  "official": false,
+  "tags": [
+    "基本"
+  ],
+  "type": "word",
+  "updated_at": "2026-08-14T00:00:00Z",
+  "version": 1
+}

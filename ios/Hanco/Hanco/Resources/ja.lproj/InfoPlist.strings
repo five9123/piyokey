@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "ピヨキー";
+"CFBundleName" = "ピヨキー";
+"CFBundleTypeName" = "ピヨキーデッキ";
+"UTTypeDescription" = "ピヨキーデッキ";
+"NSPhotoLibraryAddUsageDescription" = "ゲーム結果の画像を写真に保存するために使用します。";

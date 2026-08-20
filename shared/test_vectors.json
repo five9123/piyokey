@@ -1,0 +1,309 @@
+{
+  "version": 1,
+  "description": "Shared test vectors for the two-beolsik Hangul composition engine. Both platforms must pass all cases. See PRD section 6.",
+  "composition_cases": [
+    {
+      "name": "greeting",
+      "target": "안녕하세요",
+      "key_sequence": [
+        "ㅇ",
+        "ㅏ",
+        "ㄴ",
+        "ㄴ",
+        "ㅕ",
+        "ㅇ",
+        "ㅎ",
+        "ㅏ",
+        "ㅅ",
+        "ㅔ",
+        "ㅇ",
+        "ㅛ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 12
+    },
+    {
+      "name": "fandom_love",
+      "target": "사랑해요",
+      "key_sequence": [
+        "ㅅ",
+        "ㅏ",
+        "ㄹ",
+        "ㅏ",
+        "ㅇ",
+        "ㅎ",
+        "ㅐ",
+        "ㅇ",
+        "ㅛ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 9
+    },
+    {
+      "name": "compound_jong_dark",
+      "target": "닭",
+      "key_sequence": [
+        "ㄷ",
+        "ㅏ",
+        "ㄹ",
+        "ㄱ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 3
+    },
+    {
+      "name": "compound_jong_bs",
+      "target": "없다",
+      "key_sequence": [
+        "ㅇ",
+        "ㅓ",
+        "ㅂ",
+        "ㅅ",
+        "ㄷ",
+        "ㅏ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 5
+    },
+    {
+      "name": "carryover_dokkaebi",
+      "target": "달가",
+      "key_sequence": [
+        "ㄷ",
+        "ㅏ",
+        "ㄹ",
+        "ㄱ",
+        "ㅏ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 5
+    },
+    {
+      "name": "carryover_from_dark",
+      "target": "닭이",
+      "key_sequence": [
+        "ㄷ",
+        "ㅏ",
+        "ㄹ",
+        "ㄱ",
+        "ㅇ",
+        "ㅣ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 5
+    },
+    {
+      "name": "compound_vowel_oe",
+      "target": "외국",
+      "key_sequence": [
+        "ㅇ",
+        "ㅗ",
+        "ㅣ",
+        "ㄱ",
+        "ㅜ",
+        "ㄱ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 5
+    },
+    {
+      "name": "compound_vowel_ui",
+      "target": "의자",
+      "key_sequence": [
+        "ㅇ",
+        "ㅡ",
+        "ㅣ",
+        "ㅈ",
+        "ㅏ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 4
+    },
+    {
+      "name": "compound_vowel_wa",
+      "target": "과자",
+      "key_sequence": [
+        "ㄱ",
+        "ㅗ",
+        "ㅏ",
+        "ㅈ",
+        "ㅏ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 4
+    },
+    {
+      "name": "shift_ssang",
+      "target": "꿀",
+      "key_sequence": [
+        "ㄲ",
+        "ㅜ",
+        "ㄹ"
+      ],
+      "uses_shift": [
+        "ㄲ"
+      ],
+      "nfd_length": 3
+    },
+    {
+      "name": "shift_mixed",
+      "target": "빨리",
+      "key_sequence": [
+        "ㅃ",
+        "ㅏ",
+        "ㄹ",
+        "ㄹ",
+        "ㅣ"
+      ],
+      "uses_shift": [
+        "ㅃ"
+      ],
+      "nfd_length": 5
+    },
+    {
+      "name": "sentence_with_space",
+      "target": "한국 최고",
+      "key_sequence": [
+        "ㅎ",
+        "ㅏ",
+        "ㄴ",
+        "ㄱ",
+        "ㅜ",
+        "ㄱ",
+        " ",
+        "ㅊ",
+        "ㅗ",
+        "ㅣ",
+        "ㄱ",
+        "ㅗ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 11
+    },
+    {
+      "name": "fan_comment",
+      "target": "오빠 사랑해",
+      "key_sequence": [
+        "ㅇ",
+        "ㅗ",
+        "ㅃ",
+        "ㅏ",
+        " ",
+        "ㅅ",
+        "ㅏ",
+        "ㄹ",
+        "ㅏ",
+        "ㅇ",
+        "ㅎ",
+        "ㅐ"
+      ],
+      "uses_shift": [
+        "ㅃ"
+      ],
+      "nfd_length": 12
+    },
+    {
+      "name": "perfect_case",
+      "target": "괜찮아요",
+      "key_sequence": [
+        "ㄱ",
+        "ㅗ",
+        "ㅐ",
+        "ㄴ",
+        "ㅊ",
+        "ㅏ",
+        "ㄴ",
+        "ㅎ",
+        "ㅇ",
+        "ㅏ",
+        "ㅇ",
+        "ㅛ"
+      ],
+      "uses_shift": [],
+      "nfd_length": 10
+    },
+    {
+      "name": "best_case",
+      "target": "최고예요",
+      "key_sequence": [
+        "ㅊ",
+        "ㅗ",
+        "ㅣ",
+        "ㄱ",
+        "ㅗ",
+        "ㅇ",
+        "ㅖ",
+        "ㅇ",
+        "ㅛ"
+      ],
+      "uses_shift": [
+        "ㅖ"
+      ],
+      "nfd_length": 8
+    }
+  ],
+  "backspace_cases": [
+    {
+      "name": "bs_disassemble_gan",
+      "type_keys": [
+        "ㄱ",
+        "ㅏ",
+        "ㄴ"
+      ],
+      "then_backspaces": 1,
+      "expected": "가"
+    },
+    {
+      "name": "bs_disassemble_to_cho",
+      "type_keys": [
+        "ㄱ",
+        "ㅏ",
+        "ㄴ"
+      ],
+      "then_backspaces": 2,
+      "expected": "ㄱ"
+    },
+    {
+      "name": "bs_disassemble_all",
+      "type_keys": [
+        "ㄱ",
+        "ㅏ",
+        "ㄴ"
+      ],
+      "then_backspaces": 3,
+      "expected": ""
+    },
+    {
+      "name": "bs_compound_jong",
+      "type_keys": [
+        "ㄷ",
+        "ㅏ",
+        "ㄹ",
+        "ㄱ"
+      ],
+      "then_backspaces": 1,
+      "expected": "달"
+    },
+    {
+      "name": "bs_compound_vowel",
+      "type_keys": [
+        "ㅇ",
+        "ㅗ",
+        "ㅣ"
+      ],
+      "then_backspaces": 1,
+      "expected": "오"
+    },
+    {
+      "name": "bs_across_syllables",
+      "type_keys": [
+        "ㄱ",
+        "ㅏ",
+        "ㄴ",
+        "ㅏ"
+      ],
+      "then_backspaces": 1,
+      "expected": "간"
+    }
+  ]
+}

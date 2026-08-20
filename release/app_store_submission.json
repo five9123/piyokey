@@ -1,0 +1,225 @@
+{
+  "app_store_connect_app_id": "6794853985",
+  "developer_team_id": "X44BQNTAH9",
+  "bundle_id": "app.piyokey.Piyokey",
+  "marketing_version": "1.0.2",
+  "build_number": "6",
+  "release_mode": "automatic_after_approval",
+  "manual_hold": false,
+  "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
+  "support_url": "https://hancoweb.vercel.app/support",
+  "marketing_url": "https://hancoweb.vercel.app/",
+  "copyright": "2026 Jungmin Oh",
+  "app_store_connect_status": {
+    "app_record_created": true,
+    "japanese_metadata_saved": true,
+    "app_review_contact_saved": true,
+    "age_rating_saved": true,
+    "age_rating": "13+ (12+ before OS 26, subject to regional mapping)",
+    "app_privacy_published": true,
+    "app_privacy_answer": "Data Not Collected",
+    "privacy_policy_url_saved": true,
+    "price_jpy": 0,
+    "availability": [
+      "JPN"
+    ],
+    "mac_availability": false,
+    "vision_pro_availability": false,
+    "screenshots_uploaded": true,
+    "content_rights_answered": true,
+    "game_center_components_created": true,
+    "game_center_achievement_images_updated": false,
+    "game_center_achievement_image_change_waived": true,
+    "game_center_word_match_contract": "piyokey.v4.word_match.*",
+    "game_center_flow_contract": "piyokey.v4.flow.*",
+    "game_center_weekly_flow_contract": "piyokey.v4.cup.weekly.flow",
+    "game_center_latest_flow_components_created": true,
+    "game_center_latest_flow_components_added_for_review": true,
+    "game_center_weekly_v4_start_at": "2026-08-17T00:00:00+09:00",
+    "game_center_weekly_v4_default_pending_live_status": true,
+    "game_center_legacy_v2_cleanup_pending": true,
+    "game_center_legacy_v3_word_match_cleanup_pending": true,
+    "previous_approved_marketing_version": "1.0.1",
+    "previous_approved_build_number": "4",
+    "build_uploaded": true,
+    "uploaded_build_processing_state": "complete_ready_to_submit",
+    "latest_upload_succeeded_at": "2026-08-11T20:57:37+09:00",
+    "previous_upload_succeeded_at": "2026-08-10T02:01:37+09:00",
+    "export_compliance_resolved": true,
+    "build_linked_to_version": true,
+    "app_version_added_for_review": true,
+    "review_draft_status": "waiting_for_review",
+    "review_draft_item_count": 5,
+    "review_draft_leaderboard_count": 4,
+    "review_draft_achievement_count": 0,
+    "review_submit_button_enabled": false,
+    "final_review_submission_sent": true,
+    "final_review_submission_status": "waiting_for_review",
+    "final_review_submission_id": "45184f9b-494c-431e-a740-a3dde9080f4a",
+    "final_review_submitted_at": "2026-08-11T21:15:00+09:00",
+    "automatic_release_after_approval": true,
+    "phased_release_enabled": false,
+    "release_to_all_users_immediately": true,
+    "final_review_items": [
+      {
+        "kind": "ios_app",
+        "marketing_version": "1.0.2",
+        "build_number": "6",
+        "status": "waiting_for_review"
+      },
+      {
+        "kind": "leaderboard",
+        "identifier": "piyokey.v4.flow.beginner",
+        "display_name": "Flow Beginner v4",
+        "status": "waiting_for_review"
+      },
+      {
+        "kind": "leaderboard",
+        "identifier": "piyokey.v4.flow.intermediate",
+        "display_name": "Flow Intermediate v4",
+        "status": "waiting_for_review"
+      },
+      {
+        "kind": "leaderboard",
+        "identifier": "piyokey.v4.flow.advanced",
+        "display_name": "Flow Advanced v4",
+        "status": "waiting_for_review"
+      },
+      {
+        "kind": "leaderboard",
+        "identifier": "piyokey.v4.cup.weekly.flow",
+        "display_name": "Weekly Piyo Cup v4",
+        "status": "waiting_for_review"
+      }
+    ],
+    "previous_review_submission": {
+      "marketing_version": "1.0.2",
+      "build_number": "5",
+      "item_count": 5,
+      "leaderboard_count": 4,
+      "achievement_count": 0,
+      "submission_id": "722d6568-1321-4b44-838f-138f07ef8647",
+      "submitted_at": "2026-08-10T07:55:00+09:00",
+      "removed_at": "2026-08-11",
+      "status": "removed_developer_rejected"
+    },
+    "removed_submission_id": "722d6568-1321-4b44-838f-138f07ef8647"
+  },
+  "content_rights_confirmed": true,
+  "app_review": {
+    "contact_name": "Jungmin Oh",
+    "contact_email": "contact@typee.app",
+    "contact_phone": "+821050910203",
+    "notes_prepared": true,
+    "notes": "No account or login is required. Reviewers can use every core learning and game flow with the built-in Dubeolsik keyboard; the Korean system keyboard is optional. Local notification permission is requested only if the reviewer enables a daily reminder. Korean pronunciation uses bundled pre-generated audio and falls back to the device's ko-KR speech voice if an asset cannot play. The deck catalog is read-only static JSON and bundled content remains available offline. The app shows no ads, interstitials, or other modal interruptions during lessons or games."
+  },
+  "qa_gates": {
+    "release_archive_validated": true,
+    "full_unit_and_ui_regression": true,
+    "testflight_clean_install_smoke": false,
+    "korean_os_ime_device_check": false,
+    "tts_device_check": false,
+    "silent_mode_sound_device_check": false,
+    "external_audio_mix_device_check": false,
+    "iphone_12_performance_gate": false,
+    "game_center_live_device_check": true
+  },
+  "manual_gate_waiver": {
+    "approved": true,
+    "approved_at": "2026-08-10T07:34:00+09:00",
+    "applies_to_build_number": "5",
+    "scope": [
+      "testflight_clean_install_smoke",
+      "korean_os_ime_device_check",
+      "tts_device_check",
+      "silent_mode_sound_device_check",
+      "external_audio_mix_device_check",
+      "iphone_12_performance_gate"
+    ],
+    "note": "The user explicitly approved App Review submission while these device-only gates remain incomplete. Their gate values stay false and are not represented as completed."
+  },
+  "submission_authorization": {
+    "approved": true,
+    "approved_at": "2026-08-11T21:07:00+09:00",
+    "applies_to_build_number": "6",
+    "instruction": "The user confirmed the TestFlight Game Center check and explicitly instructed immediate App Review submission.",
+    "open_gates_preserved": [
+      "testflight_clean_install_smoke",
+      "korean_os_ime_device_check",
+      "tts_device_check",
+      "silent_mode_sound_device_check",
+      "external_audio_mix_device_check",
+      "iphone_12_performance_gate"
+    ]
+  },
+  "next_submission": {
+    "record_status": "preparing_version_1_1",
+    "historical_top_level_record_immutable": true,
+    "app_store_connect_app_id": "6794853985",
+    "developer_team_id": "X44BQNTAH9",
+    "bundle_id": "app.piyokey.Piyokey",
+    "marketing_version": "1.1",
+    "build_number": "7",
+    "release_mode": "pending_separate_decision",
+    "manual_hold": true,
+    "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
+    "support_url": "https://hancoweb.vercel.app/support",
+    "marketing_url": "https://hancoweb.vercel.app/",
+    "copyright": "2026 Jungmin Oh",
+    "availability": {
+      "selection": "ALL_COUNTRIES_OR_REGIONS",
+      "include_future_storefronts": true,
+      "app_and_iap_match": true,
+      "country_waves_enabled": false,
+      "regional_storefront_status_review_completed": false,
+      "regional_compliance_exceptions": []
+    },
+    "content_rights_confirmed": false,
+    "app_review": {
+      "contact_name": "Jungmin Oh",
+      "contact_email": "contact@typee.app",
+      "contact_phone": "+821050910203",
+      "notes_prepared": true,
+      "notes_path": "release/APP_REVIEW_NOTES.md"
+    },
+    "in_app_purchase": {
+      "reference_name": "Deck Maker Lifetime",
+      "product_id": "app.piyokey.deckmaker.lifetime",
+      "type": "NON_CONSUMABLE",
+      "localizations": [
+        "ja",
+        "en-US",
+        "ko"
+      ],
+      "paid_apps_agreement_active": false,
+      "tax_and_banking_active": false,
+      "small_business_program_status_checked": false,
+      "price_and_availability_configured": false,
+      "tax_category_confirmed": false,
+      "family_sharing_policy_confirmed": false,
+      "review_screenshot_uploaded": false,
+      "review_notes_saved": false,
+      "ready_to_submit": false,
+      "added_for_review": false,
+      "attached_to_version_1_1_submission": false
+    },
+    "qa_gates": {
+      "release_archive_validated": false,
+      "full_unit_and_ui_regression": false,
+      "testflight_clean_install_smoke": false,
+      "korean_os_ime_device_check": false,
+      "tts_device_check": false,
+      "silent_mode_sound_device_check": false,
+      "external_audio_mix_device_check": false,
+      "iphone_12_performance_gate": false,
+      "game_center_live_device_check": false,
+      "deck_maker_local_storekit_check": false,
+      "deck_maker_sandbox_purchase_check": false,
+      "deck_maker_sandbox_cancel_check": false,
+      "deck_maker_sandbox_pending_check": false,
+      "deck_maker_sandbox_restore_check": false,
+      "deck_maker_sandbox_refund_revocation_check": false,
+      "free_piyodeck_boundary_check": false
+    }
+  }
+}

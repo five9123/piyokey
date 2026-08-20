@@ -1,0 +1,50 @@
+{
+  "locale": "ja",
+  "device": "iPhone 17 Pro Max",
+  "device_id": "00608B21-6BB5-4F22-BDD2-9A4F67DA4C59",
+  "os": "iOS 26.5 Simulator",
+  "dimensions": "1320x2868",
+  "captured_from_bundle_id": "app.piyokey.Piyokey",
+  "screenshots": [
+    {
+      "file": "01-keyboard-start-ja.png",
+      "source_test": "testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick",
+      "sha256": "917e6a091d951a42136de40178d92ce3b0b188c36ec8e8d8d1ab2c0936619ed9"
+    },
+    {
+      "file": "02-six-games-ja.png",
+      "source_test": "testAppStoreScreenshotGamesShowCurrentProgressWithChick",
+      "sha256": "474af66320ee44dc9fa32b642c5addca9c4771f3f89b4dce60b52521b2ae17c5"
+    },
+    {
+      "file": "03-curriculum-ja.png",
+      "source_test": "testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick",
+      "sha256": "8a5967594105da8c4af59b5b7b7942f3287106c60d7ab7ec8d4d98574676f4c9"
+    },
+    {
+      "file": "04-daily-habit-ja.png",
+      "source_test": "testAppStoreScreenshotGamesShowCurrentProgressWithChick",
+      "sha256": "003c203a287c18cb328a3457062aa6f74e46647b4a7fe5e21268bcbb7e52e4d6"
+    },
+    {
+      "file": "05-results-ja.png",
+      "source_test": "testAppStoreScreenshotGamesShowCurrentProgressWithChick",
+      "sha256": "c6e0720fdcaa2b892a6f3e8df0adfc0e39f44e222935e86f32164577e8d32e8a"
+    },
+    {
+      "file": "06-flow-game-ja.png",
+      "source_test": "testAppStoreScreenshotGamesShowCurrentProgressWithChick",
+      "sha256": "2e2f7bdc214c82ddb02c64a5302920bcd2c075364f1986de82ca5bb52b3ffd61"
+    },
+    {
+      "file": "07-piyo-growth-ja.png",
+      "source_test": "testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick",
+      "sha256": "a53a34f64d626b3baf37eaf13460729c75a5925e04a3a121e98466a5723e89f5"
+    },
+    {
+      "file": "08-streak-rewards-ja.png",
+      "source_test": "testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick",
+      "sha256": "bd34cbfbd507e84e21d7df33c12f06b24a243e66cf6315cf8679af8d5f92762b"
+    }
+  ]
+}

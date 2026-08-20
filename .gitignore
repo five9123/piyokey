@@ -1,0 +1,64 @@
+# macOS
+.DS_Store
+
+# Xcode
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+*.xcresult/
+*.xcarchive/
+*.dSYM/
+*.ipa
+*.logarchive/
+*.profdata
+
+# Swift Package Manager
+.build/
+.swiftpm/xcode/package.xcworkspace/xcuserdata/
+
+# Android / Gradle
+.gradle/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Web
+node_modules/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.vite/
+coverage/
+dist/
+
+# Generated test, performance, archive, and milestone evidence
+*.trace/
+/artifacts/**
+!/artifacts/**/
+!/artifacts/**/README.md
+/release/app-preview/
+/release/screenshots/*.zip
+
+# Historical visual references live in the external release-assets archive.
+/notion_screenshots/
+/ref/
+
+# Generated temporary output
+/outputs/
+
+# Secrets and signing assets
+.env
+.env.*
+!.env.example
+*.cer
+*.key
+*.pem
+*.p12
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+*Secrets.xcconfig

@@ -1,0 +1,1143 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C00000000000000000000001 /* HancoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000001 /* HancoApp.swift */; };
+		C00000000000000000000002 /* AppPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000002 /* AppPalette.swift */; };
+		C00000000000000000000003 /* PracticeSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000003 /* PracticeSessionViewModel.swift */; };
+		C00000000000000000000004 /* HangulKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000004 /* HangulKeyboardView.swift */; };
+		C00000000000000000000005 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000005 /* PracticeView.swift */; };
+		C00000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000006 /* Assets.xcassets */; };
+		C00000000000000000000007 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000007 /* Localizable.strings */; };
+		C00000000000000000000008 /* HangulEngine in Frameworks */ = {isa = PBXBuildFile; productRef = G00000000000000000000002 /* HangulEngine */; };
+		C00000000000000000000009 /* PracticeSessionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000008 /* PracticeSessionViewModelTests.swift */; };
+		C0000000000000000000000A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000B /* XCTest.framework */; };
+		C0000000000000000000000B /* HancoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000D /* HancoUITests.swift */; };
+		C0000000000000000000000C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000B /* XCTest.framework */; };
+		C0000000000000000000000D /* InputLatencyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000F /* InputLatencyMonitor.swift */; };
+		C0000000000000000000000E /* PracticeSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000010 /* PracticeSetupView.swift */; };
+		C0000000000000000000000F /* ChickMascotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000011 /* ChickMascotView.swift */; };
+		C00000000000000000000010 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000012 /* AppRootView.swift */; };
+		C00000000000000000000011 /* CatalogRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000013 /* CatalogRepository.swift */; };
+		C00000000000000000000012 /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000014 /* DiscoverViewModel.swift */; };
+		C00000000000000000000013 /* DeckCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000015 /* DeckCardView.swift */; };
+		C00000000000000000000014 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000016 /* DiscoverView.swift */; };
+		C00000000000000000000015 /* DiscoverViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000017 /* DiscoverViewModelTests.swift */; };
+		C00000000000000000000016 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000018 /* catalog.json */; };
+		C00000000000000000000017 /* DeckKit in Frameworks */ = {isa = PBXBuildFile; productRef = G00000000000000000000003 /* DeckKit */; };
+		C00000000000000000000018 /* DeckKit in Frameworks */ = {isa = PBXBuildFile; productRef = G00000000000000000000003 /* DeckKit */; };
+		C00000000000000000000019 /* DeckInstallationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000019 /* DeckInstallationStore.swift */; };
+		C0000000000000000000001A /* MockDeckSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001A /* MockDeckSource.swift */; };
+		C0000000000000000000001B /* DeckLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001B /* DeckLibrary.swift */; };
+		C0000000000000000000001C /* DeckDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001C /* DeckDetailView.swift */; };
+		C0000000000000000000001D /* MyDecksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001D /* MyDecksView.swift */; };
+		C0000000000000000000001E /* DeckPracticeDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001E /* DeckPracticeDestination.swift */; };
+		C0000000000000000000001F /* DeckLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001F /* DeckLibraryTests.swift */; };
+		C00000000000000000000020 /* decks in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000020 /* decks */; };
+		C00000000000000000000021 /* StaticContentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000021 /* StaticContentClient.swift */; };
+		C00000000000000000000022 /* CatalogCacheStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000022 /* CatalogCacheStore.swift */; };
+		C00000000000000000000023 /* CatalogNetworkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000023 /* CatalogNetworkingTests.swift */; };
+		C00000000000000000000024 /* updates in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000024 /* updates */; };
+		C00000000000000000000026 /* DeckRecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000026 /* DeckRecommendationEngine.swift */; };
+		C00000000000000000000027 /* PracticeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000027 /* PracticeResultView.swift */; };
+		C00000000000000000000028 /* RecommendationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000028 /* RecommendationEngineTests.swift */; };
+		C00000000000000000000029 /* FlowGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000029 /* FlowGameViewModel.swift */; };
+		C0000000000000000000002A /* GameDeckSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002A /* GameDeckSelectionView.swift */; };
+		C0000000000000000000002B /* FlowGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002B /* FlowGameView.swift */; };
+		C0000000000000000000002C /* FlowGameResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002C /* FlowGameResultView.swift */; };
+		C0000000000000000000002D /* FlowGameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002D /* FlowGameViewModelTests.swift */; };
+		C0000000000000000000002E /* FlowGameRankTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002E /* FlowGameRankTuning.swift */; };
+		C0000000000000000000002F /* game_rank_tuning.json in Resources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000002F /* game_rank_tuning.json */; };
+		C00000000000000000000030 /* GameProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000030 /* GameProgressStore.swift */; };
+		C00000000000000000000031 /* FlowGameRankTuningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000031 /* FlowGameRankTuningTests.swift */; };
+		C00000000000000000000032 /* GameProgressStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000032 /* GameProgressStoreTests.swift */; };
+		C00000000000000000000033 /* SessionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000033 /* SessionResultView.swift */; };
+		C00000000000000000000034 /* SessionResultRevealTimelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000034 /* SessionResultRevealTimelineTests.swift */; };
+		C00000000000000000000035 /* GameFrameRateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000035 /* GameFrameRateMonitor.swift */; };
+		C00000000000000000000036 /* ReviewDeckStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000036 /* ReviewDeckStore.swift */; };
+		C00000000000000000000037 /* ReviewDeckStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000037 /* ReviewDeckStoreTests.swift */; };
+		C00000000000000000000038 /* ReviewDeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000038 /* ReviewDeckView.swift */; };
+		C00000000000000000000039 /* CurriculumCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000039 /* CurriculumCatalog.swift */; };
+		C0000000000000000000003A /* CurriculumProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003A /* CurriculumProgressStore.swift */; };
+		C0000000000000000000003B /* CurriculumMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003B /* CurriculumMapView.swift */; };
+		C0000000000000000000003C /* CurriculumProgressStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003C /* CurriculumProgressStoreTests.swift */; };
+		C0000000000000000000003D /* RetentionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003D /* RetentionStore.swift */; };
+		C0000000000000000000003E /* DailyReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003E /* DailyReminder.swift */; };
+		C0000000000000000000003F /* RetentionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000003F /* RetentionViews.swift */; };
+		C00000000000000000000040 /* RetentionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000040 /* RetentionStoreTests.swift */; };
+		C00000000000000000000041 /* OnboardingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000041 /* OnboardingStore.swift */; };
+		C00000000000000000000042 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000042 /* OnboardingView.swift */; };
+		C00000000000000000000043 /* OnboardingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000043 /* OnboardingStoreTests.swift */; };
+		C00000000000000000000044 /* OSIMEInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000044 /* OSIMEInputView.swift */; };
+		C00000000000000000000045 /* SessionShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000045 /* SessionShareCard.swift */; };
+		C00000000000000000000046 /* SessionShareCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000046 /* SessionShareCardTests.swift */; };
+		C00000000000000000000047 /* HancoSoundEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000047 /* HancoSoundEngine.swift */; };
+		C00000000000000000000048 /* HancoSoundEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000048 /* HancoSoundEngineTests.swift */; };
+		C00000000000000000000050 /* PiyokeyLogoMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000050 /* PiyokeyLogoMark.swift */; };
+		C00000000000000000000051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000054 /* InfoPlist.strings */; };
+		C00000000000000000000052 /* RecoverableJSONFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000055 /* RecoverableJSONFile.swift */; };
+		C00000000000000000000053 /* ChoseongQuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000056 /* ChoseongQuizView.swift */; };
+		C00000000000000000000054 /* ChoseongQuizViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000057 /* ChoseongQuizViewModelTests.swift */; };
+		C00000000000000000000049 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000049 /* AppSettings.swift */; };
+		C0000000000000000000004A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000004A /* SettingsView.swift */; };
+		C0000000000000000000004D /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000004D /* AppSettingsTests.swift */; };
+		C0000000000000000000004E /* MascotGrowthSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000004E /* MascotGrowthSystem.swift */; };
+		C0000000000000000000004F /* MascotGrowthSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000004F /* MascotGrowthSystemTests.swift */; };
+		C00000000000000000000055 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000058 /* PrivacyInfo.xcprivacy */; };
+		C00000000000000000000056 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000059 /* audio */; };
+		C00000000000000000000057 /* SpacingGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000005A /* SpacingGameView.swift */; };
+		C00000000000000000000058 /* SpacingGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000005B /* SpacingGameTests.swift */; };
+		C00000000000000000000059 /* ui_basic_mouse_click_640020.caf in Resources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000005C /* ui_basic_mouse_click_640020.caf */; };
+		C00000000000000000000060 /* GameCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000060 /* GameCenterService.swift */; };
+		C00000000000000000000061 /* GameCenterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000061 /* GameCenterServiceTests.swift */; };
+		C00000000000000000000062 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B00000000000000000000063 /* GameKit.framework */; };
+		C10000000000000000000001 /* DeckMakerPurchaseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* DeckMakerPurchaseStore.swift */; };
+		C10000000000000000000002 /* DeckMakerPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* DeckMakerPaywallView.swift */; };
+		C10000000000000000000003 /* DeckEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* DeckEditorView.swift */; };
+		C10000000000000000000004 /* PiyoDeckDocumentFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000004 /* PiyoDeckDocumentFlow.swift */; };
+		C10000000000000000000005 /* deck.schema.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* deck.schema.json */; };
+		C10000000000000000000006 /* DeckMakerPurchaseStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* DeckMakerPurchaseStoreTests.swift */; };
+		C10000000000000000000007 /* DeckEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* DeckEditorTests.swift */; };
+		C10000000000000000000008 /* PiyoDeckDocumentFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* PiyoDeckDocumentFlowTests.swift */; };
+		C20000000000000000000001 /* UserDeckDraftStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* UserDeckDraftStore.swift */; };
+		C20000000000000000000002 /* UserDeckDraftStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* UserDeckDraftStoreTests.swift */; };
+		C30000000000000000000001 /* TargetSpeechSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* TargetSpeechSynthesizer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		H00000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00000000000000000000001;
+			remoteInfo = Hanco;
+		};
+		H00000000000000000000003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00000000000000000000001;
+			remoteInfo = Hanco;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B00000000000000000000001 /* HancoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoApp.swift; sourceTree = "<group>"; };
+		B00000000000000000000002 /* AppPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPalette.swift; sourceTree = "<group>"; };
+		B00000000000000000000003 /* PracticeSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSessionViewModel.swift; sourceTree = "<group>"; };
+		B00000000000000000000004 /* HangulKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangulKeyboardView.swift; sourceTree = "<group>"; };
+		B00000000000000000000005 /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
+		B00000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B00000000000000000000008 /* PracticeSessionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSessionViewModelTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000009 /* Hanco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hanco.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0000000000000000000000A /* HancoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HancoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0000000000000000000000B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		B0000000000000000000000C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B0000000000000000000000D /* HancoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoUITests.swift; sourceTree = "<group>"; };
+		B0000000000000000000000E /* HancoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HancoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0000000000000000000000F /* InputLatencyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputLatencyMonitor.swift; sourceTree = "<group>"; };
+		B00000000000000000000010 /* PracticeSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSetupView.swift; sourceTree = "<group>"; };
+		B00000000000000000000011 /* ChickMascotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChickMascotView.swift; sourceTree = "<group>"; };
+		B00000000000000000000012 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+		B00000000000000000000013 /* CatalogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepository.swift; sourceTree = "<group>"; };
+		B00000000000000000000014 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
+		B00000000000000000000015 /* DeckCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckCardView.swift; sourceTree = "<group>"; };
+		B00000000000000000000016 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		B00000000000000000000017 /* DiscoverViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModelTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000018 /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = catalog.json; path = ../../shared/mock_catalog/catalog.json; sourceTree = SOURCE_ROOT; };
+		B00000000000000000000019 /* DeckInstallationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckInstallationStore.swift; sourceTree = "<group>"; };
+		B0000000000000000000001A /* MockDeckSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeckSource.swift; sourceTree = "<group>"; };
+		B0000000000000000000001B /* DeckLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckLibrary.swift; sourceTree = "<group>"; };
+		B0000000000000000000001C /* DeckDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckDetailView.swift; sourceTree = "<group>"; };
+		B0000000000000000000001D /* MyDecksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDecksView.swift; sourceTree = "<group>"; };
+		B0000000000000000000001E /* DeckPracticeDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticeDestination.swift; sourceTree = "<group>"; };
+		B0000000000000000000001F /* DeckLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckLibraryTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000020 /* decks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = decks; path = ../../shared/mock_catalog/decks; sourceTree = SOURCE_ROOT; };
+		B00000000000000000000059 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audio; path = ../../shared/mock_catalog/audio; sourceTree = SOURCE_ROOT; };
+		B0000000000000000000005C /* ui_basic_mouse_click_640020.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = Sounds/ui_basic_mouse_click_640020.caf; sourceTree = "<group>"; };
+		B00000000000000000000021 /* StaticContentClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticContentClient.swift; sourceTree = "<group>"; };
+		B00000000000000000000022 /* CatalogCacheStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogCacheStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000023 /* CatalogNetworkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogNetworkingTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000024 /* updates */ = {isa = PBXFileReference; lastKnownFileType = folder; name = updates; path = ../../shared/mock_catalog/updates; sourceTree = SOURCE_ROOT; };
+		B00000000000000000000025 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B00000000000000000000026 /* DeckRecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckRecommendationEngine.swift; sourceTree = "<group>"; };
+		B00000000000000000000027 /* PracticeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeResultView.swift; sourceTree = "<group>"; };
+		B00000000000000000000028 /* RecommendationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationEngineTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000029 /* FlowGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameViewModel.swift; sourceTree = "<group>"; };
+		B0000000000000000000002A /* GameDeckSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDeckSelectionView.swift; sourceTree = "<group>"; };
+		B0000000000000000000002B /* FlowGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameView.swift; sourceTree = "<group>"; };
+		B0000000000000000000002C /* FlowGameResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameResultView.swift; sourceTree = "<group>"; };
+		B0000000000000000000002D /* FlowGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameViewModelTests.swift; sourceTree = "<group>"; };
+		B0000000000000000000002E /* FlowGameRankTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameRankTuning.swift; sourceTree = "<group>"; };
+		B0000000000000000000002F /* game_rank_tuning.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = game_rank_tuning.json; sourceTree = "<group>"; };
+		B00000000000000000000030 /* GameProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgressStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000031 /* FlowGameRankTuningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameRankTuningTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000032 /* GameProgressStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgressStoreTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000033 /* SessionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionResultView.swift; sourceTree = "<group>"; };
+		B00000000000000000000034 /* SessionResultRevealTimelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionResultRevealTimelineTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000035 /* GameFrameRateMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFrameRateMonitor.swift; sourceTree = "<group>"; };
+		B00000000000000000000036 /* ReviewDeckStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDeckStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000037 /* ReviewDeckStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDeckStoreTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000038 /* ReviewDeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDeckView.swift; sourceTree = "<group>"; };
+		B00000000000000000000039 /* CurriculumCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumCatalog.swift; sourceTree = "<group>"; };
+		B0000000000000000000003A /* CurriculumProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumProgressStore.swift; sourceTree = "<group>"; };
+		B0000000000000000000003B /* CurriculumMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumMapView.swift; sourceTree = "<group>"; };
+		B0000000000000000000003C /* CurriculumProgressStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumProgressStoreTests.swift; sourceTree = "<group>"; };
+		B0000000000000000000003D /* RetentionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetentionStore.swift; sourceTree = "<group>"; };
+		B0000000000000000000003E /* DailyReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReminder.swift; sourceTree = "<group>"; };
+		B0000000000000000000003F /* RetentionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetentionViews.swift; sourceTree = "<group>"; };
+		B00000000000000000000040 /* RetentionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetentionStoreTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000041 /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000042 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		B00000000000000000000043 /* OnboardingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStoreTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000044 /* OSIMEInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSIMEInputView.swift; sourceTree = "<group>"; };
+		B00000000000000000000045 /* SessionShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionShareCard.swift; sourceTree = "<group>"; };
+		B00000000000000000000046 /* SessionShareCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionShareCardTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000047 /* HancoSoundEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoSoundEngine.swift; sourceTree = "<group>"; };
+		B00000000000000000000048 /* HancoSoundEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoSoundEngineTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000049 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		B0000000000000000000004A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B0000000000000000000004B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B0000000000000000000004C /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B0000000000000000000004D /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		B0000000000000000000004E /* MascotGrowthSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotGrowthSystem.swift; sourceTree = "<group>"; };
+		B0000000000000000000004F /* MascotGrowthSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotGrowthSystemTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000050 /* PiyokeyLogoMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiyokeyLogoMark.swift; sourceTree = "<group>"; };
+		B00000000000000000000051 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B00000000000000000000052 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B00000000000000000000053 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B00000000000000000000055 /* RecoverableJSONFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverableJSONFile.swift; sourceTree = "<group>"; };
+		B00000000000000000000056 /* ChoseongQuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoseongQuizView.swift; sourceTree = "<group>"; };
+		B00000000000000000000057 /* ChoseongQuizViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoseongQuizViewModelTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000058 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B0000000000000000000005A /* SpacingGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacingGameView.swift; sourceTree = "<group>"; };
+		B0000000000000000000005B /* SpacingGameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacingGameTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000060 /* GameCenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterService.swift; sourceTree = "<group>"; };
+		B00000000000000000000061 /* GameCenterServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterServiceTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000062 /* Hanco.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hanco.entitlements; sourceTree = "<group>"; };
+		B00000000000000000000063 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		B10000000000000000000001 /* DeckMakerPurchaseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckMakerPurchaseStore.swift; sourceTree = "<group>"; };
+		B10000000000000000000002 /* DeckMakerPaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckMakerPaywallView.swift; sourceTree = "<group>"; };
+		B10000000000000000000003 /* DeckEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckEditorView.swift; sourceTree = "<group>"; };
+		B10000000000000000000004 /* PiyoDeckDocumentFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiyoDeckDocumentFlow.swift; sourceTree = "<group>"; };
+		B10000000000000000000005 /* deck.schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = deck.schema.json; path = ../../shared/schema/deck.schema.json; sourceTree = SOURCE_ROOT; };
+		B10000000000000000000006 /* DeckMakerPurchaseStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckMakerPurchaseStoreTests.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* DeckEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckEditorTests.swift; sourceTree = "<group>"; };
+		B10000000000000000000008 /* PiyoDeckDocumentFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiyoDeckDocumentFlowTests.swift; sourceTree = "<group>"; };
+		B10000000000000000000009 /* DeckMaker.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = DeckMaker.storekit; sourceTree = "<group>"; };
+		B20000000000000000000001 /* UserDeckDraftStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeckDraftStore.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* UserDeckDraftStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeckDraftStoreTests.swift; sourceTree = "<group>"; };
+		B30000000000000000000001 /* TargetSpeechSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetSpeechSynthesizer.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D00000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000000000000000000062 /* GameKit.framework in Frameworks */,
+				C00000000000000000000008 /* HangulEngine in Frameworks */,
+				C00000000000000000000017 /* DeckKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0000000000000000000000A /* XCTest.framework in Frameworks */,
+				C00000000000000000000018 /* DeckKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0000000000000000000000C /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000005 /* Hanco */,
+				A0000000000000000000000B /* HancoTests */,
+				A0000000000000000000000C /* HancoUITests */,
+				A00000000000000000000004 /* Frameworks */,
+				A00000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000009 /* Hanco.app */,
+				B0000000000000000000000A /* HancoTests.xctest */,
+				B0000000000000000000000E /* HancoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000004 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000063 /* GameKit.framework */,
+				B0000000000000000000000B /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000005 /* Hanco */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000062 /* Hanco.entitlements */,
+				A00000000000000000000006 /* App */,
+				A0000000000000000000000E /* Core */,
+				A00000000000000000000007 /* DesignSystem */,
+				A00000000000000000000008 /* Features */,
+				A0000000000000000000000A /* Resources */,
+			);
+			path = Hanco;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000006 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000001 /* HancoApp.swift */,
+				B00000000000000000000012 /* AppRootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000007 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000002 /* AppPalette.swift */,
+				B00000000000000000000011 /* ChickMascotView.swift */,
+				B0000000000000000000004E /* MascotGrowthSystem.swift */,
+				B00000000000000000000050 /* PiyokeyLogoMark.swift */,
+				B00000000000000000000033 /* SessionResultView.swift */,
+				B00000000000000000000045 /* SessionShareCard.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000008 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000009 /* Practice */,
+				A0000000000000000000000D /* Discover */,
+				A00000000000000000000010 /* Library */,
+				A00000000000000000000013 /* Game */,
+				A00000000000000000000015 /* Curriculum */,
+				A00000000000000000000016 /* Retention */,
+				A00000000000000000000019 /* Onboarding */,
+				A0000000000000000000001C /* Settings */,
+				A10000000000000000000002 /* Purchases */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000009 /* Practice */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000003 /* PracticeSessionViewModel.swift */,
+				B00000000000000000000004 /* HangulKeyboardView.swift */,
+				B00000000000000000000005 /* PracticeView.swift */,
+				B0000000000000000000000F /* InputLatencyMonitor.swift */,
+				B00000000000000000000010 /* PracticeSetupView.swift */,
+				B0000000000000000000001E /* DeckPracticeDestination.swift */,
+				B00000000000000000000027 /* PracticeResultView.swift */,
+				B00000000000000000000044 /* OSIMEInputView.swift */,
+			);
+			path = Practice;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000006 /* Assets.xcassets */,
+				B00000000000000000000007 /* Localizable.strings */,
+				B00000000000000000000054 /* InfoPlist.strings */,
+				B00000000000000000000018 /* catalog.json */,
+				B00000000000000000000020 /* decks */,
+				B00000000000000000000059 /* audio */,
+				B0000000000000000000005C /* ui_basic_mouse_click_640020.caf */,
+				B00000000000000000000024 /* updates */,
+				B00000000000000000000025 /* Info.plist */,
+				B00000000000000000000058 /* PrivacyInfo.xcprivacy */,
+				B0000000000000000000002F /* game_rank_tuning.json */,
+				B10000000000000000000005 /* deck.schema.json */,
+				B10000000000000000000009 /* DeckMaker.storekit */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000B /* HancoTests */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000002 /* UserDeckDraftStoreTests.swift */,
+				B00000000000000000000061 /* GameCenterServiceTests.swift */,
+				B00000000000000000000008 /* PracticeSessionViewModelTests.swift */,
+				B00000000000000000000017 /* DiscoverViewModelTests.swift */,
+				B0000000000000000000001F /* DeckLibraryTests.swift */,
+				B00000000000000000000023 /* CatalogNetworkingTests.swift */,
+				B00000000000000000000028 /* RecommendationEngineTests.swift */,
+				B0000000000000000000002D /* FlowGameViewModelTests.swift */,
+				B00000000000000000000031 /* FlowGameRankTuningTests.swift */,
+				B00000000000000000000032 /* GameProgressStoreTests.swift */,
+				B00000000000000000000034 /* SessionResultRevealTimelineTests.swift */,
+				B00000000000000000000037 /* ReviewDeckStoreTests.swift */,
+				B0000000000000000000003C /* CurriculumProgressStoreTests.swift */,
+				B00000000000000000000040 /* RetentionStoreTests.swift */,
+				B00000000000000000000043 /* OnboardingStoreTests.swift */,
+				B00000000000000000000046 /* SessionShareCardTests.swift */,
+				B00000000000000000000048 /* HancoSoundEngineTests.swift */,
+				B0000000000000000000004D /* AppSettingsTests.swift */,
+				B0000000000000000000004F /* MascotGrowthSystemTests.swift */,
+				B00000000000000000000057 /* ChoseongQuizViewModelTests.swift */,
+				B0000000000000000000005B /* SpacingGameTests.swift */,
+				B10000000000000000000006 /* DeckMakerPurchaseStoreTests.swift */,
+				B10000000000000000000007 /* DeckEditorTests.swift */,
+				B10000000000000000000008 /* PiyoDeckDocumentFlowTests.swift */,
+			);
+			path = HancoTests;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000C /* HancoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000000D /* HancoUITests.swift */,
+			);
+			path = HancoUITests;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000D /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000013 /* CatalogRepository.swift */,
+				B00000000000000000000014 /* DiscoverViewModel.swift */,
+				B00000000000000000000015 /* DeckCardView.swift */,
+				B00000000000000000000016 /* DiscoverView.swift */,
+				B0000000000000000000001C /* DeckDetailView.swift */,
+			);
+			path = Discover;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				A0000000000000000000001E /* GameCenter */,
+				A0000000000000000000001A /* Audio */,
+				A0000000000000000000001D /* Persistence */,
+				A0000000000000000000000F /* DeckLibrary */,
+				A00000000000000000000011 /* StaticContent */,
+				A00000000000000000000012 /* Recommendations */,
+				A00000000000000000000014 /* Progress */,
+				A00000000000000000000017 /* Notifications */,
+				A00000000000000000000018 /* Onboarding */,
+				A0000000000000000000001B /* Settings */,
+				A10000000000000000000001 /* Purchases */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001E /* GameCenter */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000060 /* GameCenterService.swift */,
+			);
+			path = GameCenter;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001D /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000055 /* RecoverableJSONFile.swift */,
+				B20000000000000000000001 /* UserDeckDraftStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001A /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000047 /* HancoSoundEngine.swift */,
+				B30000000000000000000001 /* TargetSpeechSynthesizer.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001B /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000049 /* AppSettings.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000001 /* Purchases */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000001 /* DeckMakerPurchaseStore.swift */,
+			);
+			path = Purchases;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000000F /* DeckLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000019 /* DeckInstallationStore.swift */,
+				B0000000000000000000001A /* MockDeckSource.swift */,
+				B0000000000000000000001B /* DeckLibrary.swift */,
+			);
+			path = DeckLibrary;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000010 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000001D /* MyDecksView.swift */,
+				B00000000000000000000038 /* ReviewDeckView.swift */,
+				B10000000000000000000003 /* DeckEditorView.swift */,
+				B10000000000000000000004 /* PiyoDeckDocumentFlow.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000002 /* Purchases */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000002 /* DeckMakerPaywallView.swift */,
+			);
+			path = Purchases;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000013 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000029 /* FlowGameViewModel.swift */,
+				B0000000000000000000002A /* GameDeckSelectionView.swift */,
+				B0000000000000000000002B /* FlowGameView.swift */,
+				B0000000000000000000002C /* FlowGameResultView.swift */,
+				B0000000000000000000002E /* FlowGameRankTuning.swift */,
+				B00000000000000000000035 /* GameFrameRateMonitor.swift */,
+				B00000000000000000000056 /* ChoseongQuizView.swift */,
+				B0000000000000000000005A /* SpacingGameView.swift */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000011 /* StaticContent */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000021 /* StaticContentClient.swift */,
+				B00000000000000000000022 /* CatalogCacheStore.swift */,
+			);
+			path = StaticContent;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000012 /* Recommendations */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000026 /* DeckRecommendationEngine.swift */,
+			);
+			path = Recommendations;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000014 /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000030 /* GameProgressStore.swift */,
+				B00000000000000000000036 /* ReviewDeckStore.swift */,
+				B0000000000000000000003A /* CurriculumProgressStore.swift */,
+				B0000000000000000000003D /* RetentionStore.swift */,
+			);
+			path = Progress;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000015 /* Curriculum */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000039 /* CurriculumCatalog.swift */,
+				B0000000000000000000003B /* CurriculumMapView.swift */,
+			);
+			path = Curriculum;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000016 /* Retention */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000003F /* RetentionViews.swift */,
+			);
+			path = Retention;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000017 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000003E /* DailyReminder.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000018 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000041 /* OnboardingStore.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000019 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000042 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000004A /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E00000000000000000000001 /* Hanco */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00000000000000000000002 /* Build configuration list for PBXNativeTarget "Hanco" */;
+			buildPhases = (
+				D00000000000000000000001 /* Sources */,
+				D00000000000000000000002 /* Frameworks */,
+				D00000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hanco;
+			packageProductDependencies = (
+				G00000000000000000000002 /* HangulEngine */,
+				G00000000000000000000003 /* DeckKit */,
+			);
+			productName = Hanco;
+			productReference = B00000000000000000000009 /* Hanco.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E00000000000000000000002 /* HancoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00000000000000000000003 /* Build configuration list for PBXNativeTarget "HancoTests" */;
+			buildPhases = (
+				D00000000000000000000004 /* Sources */,
+				D00000000000000000000005 /* Frameworks */,
+				D00000000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				H00000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = HancoTests;
+			packageProductDependencies = (
+				G00000000000000000000003 /* DeckKit */,
+			);
+			productName = HancoTests;
+			productReference = B0000000000000000000000A /* HancoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E00000000000000000000003 /* HancoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00000000000000000000004 /* Build configuration list for PBXNativeTarget "HancoUITests" */;
+			buildPhases = (
+				D00000000000000000000007 /* Sources */,
+				D00000000000000000000008 /* Frameworks */,
+				D00000000000000000000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				H00000000000000000000004 /* PBXTargetDependency */,
+			);
+			name = HancoUITests;
+			productName = HancoUITests;
+			productReference = B0000000000000000000000E /* HancoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					E00000000000000000000001 = {
+						CreatedOnToolsVersion = 26.0;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
+					};
+					E00000000000000000000002 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = E00000000000000000000001;
+					};
+					E00000000000000000000003 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = E00000000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = F00000000000000000000001 /* Build configuration list for PBXProject "Hanco" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				ja,
+				en,
+				ko,
+				Base,
+			);
+			mainGroup = A00000000000000000000002;
+			packageReferences = (
+				G00000000000000000000001 /* XCLocalSwiftPackageReference "../HangulEngine" */,
+			);
+			productRefGroup = A00000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E00000000000000000000001 /* Hanco */,
+				E00000000000000000000002 /* HancoTests */,
+				E00000000000000000000003 /* HancoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D00000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000000000000000000006 /* Assets.xcassets in Resources */,
+				C00000000000000000000007 /* Localizable.strings in Resources */,
+				C00000000000000000000051 /* InfoPlist.strings in Resources */,
+				C00000000000000000000016 /* catalog.json in Resources */,
+				C00000000000000000000020 /* decks in Resources */,
+				C00000000000000000000056 /* audio in Resources */,
+				C00000000000000000000059 /* ui_basic_mouse_click_640020.caf in Resources */,
+				C00000000000000000000024 /* updates in Resources */,
+				C0000000000000000000002F /* game_rank_tuning.json in Resources */,
+				C00000000000000000000055 /* PrivacyInfo.xcprivacy in Resources */,
+				C10000000000000000000005 /* deck.schema.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D00000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C20000000000000000000001 /* UserDeckDraftStore.swift in Sources */,
+				C00000000000000000000001 /* HancoApp.swift in Sources */,
+				C00000000000000000000060 /* GameCenterService.swift in Sources */,
+				C00000000000000000000010 /* AppRootView.swift in Sources */,
+				C00000000000000000000002 /* AppPalette.swift in Sources */,
+				C00000000000000000000003 /* PracticeSessionViewModel.swift in Sources */,
+				C00000000000000000000004 /* HangulKeyboardView.swift in Sources */,
+				C00000000000000000000005 /* PracticeView.swift in Sources */,
+				C0000000000000000000000D /* InputLatencyMonitor.swift in Sources */,
+				C0000000000000000000000E /* PracticeSetupView.swift in Sources */,
+				C0000000000000000000000F /* ChickMascotView.swift in Sources */,
+				C0000000000000000000004E /* MascotGrowthSystem.swift in Sources */,
+				C00000000000000000000050 /* PiyokeyLogoMark.swift in Sources */,
+				C00000000000000000000011 /* CatalogRepository.swift in Sources */,
+				C00000000000000000000012 /* DiscoverViewModel.swift in Sources */,
+				C00000000000000000000013 /* DeckCardView.swift in Sources */,
+				C00000000000000000000014 /* DiscoverView.swift in Sources */,
+				C00000000000000000000019 /* DeckInstallationStore.swift in Sources */,
+				C0000000000000000000001A /* MockDeckSource.swift in Sources */,
+				C0000000000000000000001B /* DeckLibrary.swift in Sources */,
+				C0000000000000000000001C /* DeckDetailView.swift in Sources */,
+				C0000000000000000000001D /* MyDecksView.swift in Sources */,
+				C00000000000000000000038 /* ReviewDeckView.swift in Sources */,
+				C0000000000000000000001E /* DeckPracticeDestination.swift in Sources */,
+				C00000000000000000000021 /* StaticContentClient.swift in Sources */,
+				C00000000000000000000022 /* CatalogCacheStore.swift in Sources */,
+				C00000000000000000000026 /* DeckRecommendationEngine.swift in Sources */,
+				C00000000000000000000027 /* PracticeResultView.swift in Sources */,
+				C00000000000000000000029 /* FlowGameViewModel.swift in Sources */,
+				C0000000000000000000002A /* GameDeckSelectionView.swift in Sources */,
+				C0000000000000000000002B /* FlowGameView.swift in Sources */,
+				C0000000000000000000002C /* FlowGameResultView.swift in Sources */,
+				C0000000000000000000002E /* FlowGameRankTuning.swift in Sources */,
+				C00000000000000000000035 /* GameFrameRateMonitor.swift in Sources */,
+				C00000000000000000000030 /* GameProgressStore.swift in Sources */,
+				C00000000000000000000036 /* ReviewDeckStore.swift in Sources */,
+				C00000000000000000000033 /* SessionResultView.swift in Sources */,
+				C00000000000000000000039 /* CurriculumCatalog.swift in Sources */,
+				C0000000000000000000003A /* CurriculumProgressStore.swift in Sources */,
+				C0000000000000000000003B /* CurriculumMapView.swift in Sources */,
+				C0000000000000000000003D /* RetentionStore.swift in Sources */,
+				C0000000000000000000003E /* DailyReminder.swift in Sources */,
+				C0000000000000000000003F /* RetentionViews.swift in Sources */,
+				C00000000000000000000041 /* OnboardingStore.swift in Sources */,
+				C00000000000000000000042 /* OnboardingView.swift in Sources */,
+				C00000000000000000000044 /* OSIMEInputView.swift in Sources */,
+				C00000000000000000000045 /* SessionShareCard.swift in Sources */,
+				C00000000000000000000047 /* HancoSoundEngine.swift in Sources */,
+				C00000000000000000000049 /* AppSettings.swift in Sources */,
+				C0000000000000000000004A /* SettingsView.swift in Sources */,
+				C00000000000000000000052 /* RecoverableJSONFile.swift in Sources */,
+				C00000000000000000000053 /* ChoseongQuizView.swift in Sources */,
+				C00000000000000000000057 /* SpacingGameView.swift in Sources */,
+				C10000000000000000000001 /* DeckMakerPurchaseStore.swift in Sources */,
+				C10000000000000000000002 /* DeckMakerPaywallView.swift in Sources */,
+				C10000000000000000000003 /* DeckEditorView.swift in Sources */,
+				C10000000000000000000004 /* PiyoDeckDocumentFlow.swift in Sources */,
+				C30000000000000000000001 /* TargetSpeechSynthesizer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C20000000000000000000002 /* UserDeckDraftStoreTests.swift in Sources */,
+				C00000000000000000000061 /* GameCenterServiceTests.swift in Sources */,
+				C00000000000000000000009 /* PracticeSessionViewModelTests.swift in Sources */,
+				C00000000000000000000015 /* DiscoverViewModelTests.swift in Sources */,
+				C0000000000000000000001F /* DeckLibraryTests.swift in Sources */,
+				C00000000000000000000023 /* CatalogNetworkingTests.swift in Sources */,
+				C00000000000000000000028 /* RecommendationEngineTests.swift in Sources */,
+				C0000000000000000000002D /* FlowGameViewModelTests.swift in Sources */,
+				C00000000000000000000031 /* FlowGameRankTuningTests.swift in Sources */,
+				C00000000000000000000032 /* GameProgressStoreTests.swift in Sources */,
+				C00000000000000000000034 /* SessionResultRevealTimelineTests.swift in Sources */,
+				C00000000000000000000037 /* ReviewDeckStoreTests.swift in Sources */,
+				C0000000000000000000003C /* CurriculumProgressStoreTests.swift in Sources */,
+				C00000000000000000000040 /* RetentionStoreTests.swift in Sources */,
+				C00000000000000000000043 /* OnboardingStoreTests.swift in Sources */,
+				C00000000000000000000046 /* SessionShareCardTests.swift in Sources */,
+				C00000000000000000000048 /* HancoSoundEngineTests.swift in Sources */,
+				C0000000000000000000004D /* AppSettingsTests.swift in Sources */,
+				C0000000000000000000004F /* MascotGrowthSystemTests.swift in Sources */,
+				C00000000000000000000054 /* ChoseongQuizViewModelTests.swift in Sources */,
+				C00000000000000000000058 /* SpacingGameTests.swift in Sources */,
+				C10000000000000000000006 /* DeckMakerPurchaseStoreTests.swift in Sources */,
+				C10000000000000000000007 /* DeckEditorTests.swift in Sources */,
+				C10000000000000000000008 /* PiyoDeckDocumentFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0000000000000000000000B /* HancoUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		H00000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00000000000000000000001 /* Hanco */;
+			targetProxy = H00000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		H00000000000000000000004 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00000000000000000000001 /* Hanco */;
+			targetProxy = H00000000000000000000003 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B00000000000000000000007 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0000000000000000000000C /* ja */,
+				B0000000000000000000004B /* en */,
+				B0000000000000000000004C /* ko */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		B00000000000000000000054 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B00000000000000000000051 /* ja */,
+				B00000000000000000000052 /* en */,
+				B00000000000000000000053 /* ko */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F00000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F00000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F00000000000000000000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Hanco/Hanco.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Hanco/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				HANCO_CATALOG_URL = "";
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		F00000000000000000000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Hanco/Hanco.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Hanco/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				HANCO_CATALOG_URL = "";
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		F00000000000000000000031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
+			};
+			name = Debug;
+		};
+		F00000000000000000000032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
+			};
+			name = Release;
+		};
+		F00000000000000000000041 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = Hanco;
+			};
+			name = Debug;
+		};
+		F00000000000000000000042 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = Hanco;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F00000000000000000000001 /* Build configuration list for PBXProject "Hanco" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00000000000000000000011 /* Debug */,
+				F00000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00000000000000000000002 /* Build configuration list for PBXNativeTarget "Hanco" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00000000000000000000021 /* Debug */,
+				F00000000000000000000022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00000000000000000000003 /* Build configuration list for PBXNativeTarget "HancoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00000000000000000000031 /* Debug */,
+				F00000000000000000000032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00000000000000000000004 /* Build configuration list for PBXNativeTarget "HancoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00000000000000000000041 /* Debug */,
+				F00000000000000000000042 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		G00000000000000000000001 /* XCLocalSwiftPackageReference "../HangulEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../HangulEngine;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		G00000000000000000000002 /* HangulEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = G00000000000000000000001 /* XCLocalSwiftPackageReference "../HangulEngine" */;
+			productName = HangulEngine;
+		};
+		G00000000000000000000003 /* DeckKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = G00000000000000000000001 /* XCLocalSwiftPackageReference "../HangulEngine" */;
+			productName = DeckKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}

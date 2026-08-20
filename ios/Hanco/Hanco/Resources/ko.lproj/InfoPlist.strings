@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "typee";
+"CFBundleName" = "typee";
+"CFBundleTypeName" = "typee 덱";
+"UTTypeDescription" = "typee 덱";
+"NSPhotoLibraryAddUsageDescription" = "게임 결과 이미지를 사진에 저장하기 위해 사용합니다.";

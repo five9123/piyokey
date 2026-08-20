@@ -1,0 +1,200 @@
+{
+  "deck_id": "official_drama_daily",
+  "version": 3,
+  "name": "Kドラマ会話：毎日のぬくもり",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "Kドラマ",
+    "日常",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-03-27T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "밥은 먹었어",
+      "reading_ja": "パブン モゴッソ",
+      "meaning_ja": "ご飯は食べた？",
+      "audio": "audio/ko_e06f6dbdd176ce980eaa.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Have you eaten?",
+          "reading": "bapeun meokeoteo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "커피 한잔할래",
+      "reading_ja": "コピ ハンジャンハルレ",
+      "meaning_ja": "コーヒーを一杯どう？",
+      "audio": "audio/ko_5a761d7efa0ddabe9d58.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Want to grab a coffee?",
+          "reading": "keopi hanjanhalrae"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "오늘 정말 바빴어",
+      "reading_ja": "オヌル チョンマル パッパッソ",
+      "meaning_ja": "今日は本当に忙しかった",
+      "audio": "audio/ko_65b0bac583d63d02579f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I was really busy today",
+          "reading": "oneul jeongmal bappateo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "집에 가서 푹 쉬어",
+      "reading_ja": "チベ カソ プク シオ",
+      "meaning_ja": "家に帰ってゆっくり休んで",
+      "audio": "audio/ko_e8288fd2eba2512768f8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Go home and get some good rest",
+          "reading": "jipe gaseo puk swieo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "저녁은 내가 살게",
+      "reading_ja": "チョニョグン ネガ サルケ",
+      "meaning_ja": "夕食は私がおごるよ",
+      "audio": "audio/ko_903f1e6bad19f436ba29.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Dinner's on me",
+          "reading": "jeonyeokeun naega salge"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "주말에 같이 걸을까",
+      "reading_ja": "チュマレ カチ コルルカ",
+      "meaning_ja": "週末に一緒に歩こうか",
+      "audio": "audio/ko_7f0c89d142e548afdfb4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Shall we take a walk this weekend?",
+          "reading": "jumale gati geoleulkka"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "늦으면 먼저 연락해",
+      "reading_ja": "ヌジュミョン モンジョ ヨルラケ",
+      "meaning_ja": "遅れるなら先に連絡して",
+      "audio": "audio/ko_b9c09823a0271d5bead2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let me know if you're going to be late",
+          "reading": "neuteumyeon meonjeo yeonrakhae"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "힘들면 내게 말해",
+      "reading_ja": "ヒムドゥルミョン ネゲ マレ",
+      "meaning_ja": "つらいなら私に話して",
+      "audio": "audio/ko_280a763a99d5030020e7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Tell me if you're having a hard time",
+          "reading": "himdeulmyeon naege malhae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "아침에 깨워 줘",
+      "reading_ja": "アチメ ケウォ ジョ",
+      "meaning_ja": "朝に起こして",
+      "audio": "audio/ko_644d653e098711830afc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Wake me up in the morning",
+          "reading": "achime kkaewo jwo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "퇴근",
+      "reading_ja": "トェグン",
+      "meaning_ja": "退勤",
+      "audio": "audio/ko_344e3166df7e6c4b52ba.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "leaving work",
+          "reading": "toegeun"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "약속",
+      "reading_ja": "ヤクソク",
+      "meaning_ja": "約束",
+      "audio": "audio/ko_a39ee87db456831ef069.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "promise",
+          "reading": "yaksok"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "잘 잤어요",
+      "reading_ja": "チャル チャッソヨ",
+      "meaning_ja": "よく眠れましたか",
+      "audio": "audio/ko_b54d876d1d7ab179b25a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Did you sleep well?",
+          "reading": "jal jateoyo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "K-Drama Dialogue: Everyday Warmth",
+      "author_nickname": "typee Official",
+      "tags": [
+        "K-Drama",
+        "Everyday",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "K-드라마 대화: 일상의 온기",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "K-드라마",
+        "일상",
+        "회화",
+        "공식"
+      ]
+    }
+  }
+}

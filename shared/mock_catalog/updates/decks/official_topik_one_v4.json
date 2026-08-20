@@ -1,0 +1,197 @@
+{
+  "deck_id": "official_topik_one",
+  "version": 4,
+  "name": "TOPIK I 基本単語",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 2,
+  "tags": [
+    "TOPIK",
+    "公式",
+    "検定"
+  ],
+  "created_at": "2026-02-20T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "교육",
+      "reading_ja": "キョユク",
+      "meaning_ja": "教育",
+      "audio": "audio/ko_4da9a75910ede3adef01.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "education",
+          "reading": "gyoyuk"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "환경",
+      "reading_ja": "ファンギョン",
+      "meaning_ja": "環境",
+      "audio": "audio/ko_5d36e09c3271e0e77bdf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "environment",
+          "reading": "hwangyeong"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "건강",
+      "reading_ja": "コンガン",
+      "meaning_ja": "健康",
+      "audio": "audio/ko_b9e697a6a3627e47a5d1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "health",
+          "reading": "geongang"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "교통",
+      "reading_ja": "キョトン",
+      "meaning_ja": "交通",
+      "audio": "audio/ko_5eb36550b4cd74af8e57.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "transportation",
+          "reading": "gyotong"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "생활",
+      "reading_ja": "センファル",
+      "meaning_ja": "生活",
+      "audio": "audio/ko_6a739e74f8dfb7fbc5ec.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "daily life",
+          "reading": "saenghwal"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "사회",
+      "reading_ja": "サフェ",
+      "meaning_ja": "社会",
+      "audio": "audio/ko_550a40b940e2e59e11c9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "society",
+          "reading": "sahoe"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "계획",
+      "reading_ja": "ケフェク",
+      "meaning_ja": "計画",
+      "audio": "audio/ko_b0fe4ea3ac5ac4022d19.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "plan",
+          "reading": "gyehoek"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "경험",
+      "reading_ja": "キョンホム",
+      "meaning_ja": "経験",
+      "audio": "audio/ko_340b9a0fcd5fc1d6bfa3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "experience",
+          "reading": "gyeongheom"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "관계",
+      "reading_ja": "クァンゲ",
+      "meaning_ja": "関係",
+      "audio": "audio/ko_18ab6599abaaab1b0c2d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "relationship",
+          "reading": "gwangye"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "방법",
+      "reading_ja": "パンボプ",
+      "meaning_ja": "方法",
+      "audio": "audio/ko_a4a801d526fb251193b0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "method",
+          "reading": "bangbeop"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "이유",
+      "reading_ja": "イユ",
+      "meaning_ja": "理由",
+      "audio": "audio/ko_6445cb23ec9811b5f35a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "reason",
+          "reading": "iyu"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "결과",
+      "reading_ja": "キョルグァ",
+      "meaning_ja": "結果",
+      "audio": "audio/ko_109383e344db8ae54a47.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "result",
+          "reading": "gyeolgwa"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "TOPIK I Essential Words",
+      "author_nickname": "typee Official",
+      "tags": [
+        "TOPIK",
+        "Official",
+        "Test Prep"
+      ]
+    },
+    "ko": {
+      "name": "TOPIK I 기본 단어",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "TOPIK",
+        "공식",
+        "시험 대비"
+      ]
+    }
+  }
+}

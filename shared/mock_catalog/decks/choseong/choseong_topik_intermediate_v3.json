@@ -1,0 +1,1350 @@
+{
+  "deck_id": "choseong_topik_intermediate",
+  "version": 3,
+  "name": "初声クイズ・中級 総合難易度",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 2,
+  "tags": [
+    "TOPIK",
+    "タイピング",
+    "中級",
+    "初声",
+    "ゲーム",
+    "公式"
+  ],
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "뉴스",
+      "reading_ja": "ニュス",
+      "meaning_ja": "ニュース",
+      "audio": "audio/ko_5ac661dbed5720aed8f4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "news",
+          "reading": "nyuseu"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "비교",
+      "reading_ja": "ピギョ",
+      "meaning_ja": "比較",
+      "audio": "audio/ko_c0154c812ab6ed528d93.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "comparison",
+          "reading": "bigyo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "소비",
+      "reading_ja": "ソビ",
+      "meaning_ja": "消費",
+      "audio": "audio/ko_84aa75c8e4690275aade.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "consumption",
+          "reading": "sobi"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "요리",
+      "reading_ja": "ヨリ",
+      "meaning_ja": "料理",
+      "audio": "audio/ko_aa664b105a07ea19ff3e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "cooking",
+          "reading": "yori"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "이유",
+      "reading_ja": "イユ",
+      "meaning_ja": "理由",
+      "audio": "audio/ko_6445cb23ec9811b5f35a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "reason",
+          "reading": "iyu"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "자료",
+      "reading_ja": "チャリョ",
+      "meaning_ja": "資料",
+      "audio": "audio/ko_6416867e472594899d64.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "materials",
+          "reading": "jaryo"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "조사",
+      "reading_ja": "チョサ",
+      "meaning_ja": "調査",
+      "audio": "audio/ko_e9e7abfc765737f0ebf8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "investigation",
+          "reading": "josa"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "기회",
+      "reading_ja": "キフェ",
+      "meaning_ja": "機会",
+      "audio": "audio/ko_1815f64fee30a098d49f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "opportunity",
+          "reading": "gihoe"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "대화",
+      "reading_ja": "テファ",
+      "meaning_ja": "会話",
+      "audio": "audio/ko_b3e53098ffdf8c9118d2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "conversation",
+          "reading": "daehwa"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "사회",
+      "reading_ja": "サフェ",
+      "meaning_ja": "社会",
+      "audio": "audio/ko_550a40b940e2e59e11c9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "society",
+          "reading": "sahoe"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "취미",
+      "reading_ja": "チュィミ",
+      "meaning_ja": "趣味",
+      "audio": "audio/ko_fce0e79fcf68c195df88.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "hobby",
+          "reading": "chwimi"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "회사",
+      "reading_ja": "フェサ",
+      "meaning_ja": "会社",
+      "audio": "audio/ko_a109dcd7f6f11c2e1703.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "company",
+          "reading": "hoesa"
+        }
+      }
+    },
+    {
+      "id": "i_013",
+      "ko": "결제",
+      "reading_ja": "キョルチェ",
+      "meaning_ja": "決済",
+      "audio": "audio/ko_8d4f3299dd01d1b16e67.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "payment",
+          "reading": "gyeolje"
+        }
+      }
+    },
+    {
+      "id": "i_014",
+      "ko": "계약",
+      "reading_ja": "ケヤク",
+      "meaning_ja": "契約",
+      "audio": "audio/ko_38de236ecca580401830.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "contract",
+          "reading": "gyeyak"
+        }
+      }
+    },
+    {
+      "id": "i_015",
+      "ko": "고장",
+      "reading_ja": "コジャン",
+      "meaning_ja": "故障",
+      "audio": "audio/ko_a1a759c684921a8dd35e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "malfunction",
+          "reading": "gojang"
+        }
+      }
+    },
+    {
+      "id": "i_016",
+      "ko": "공지",
+      "reading_ja": "コンジ",
+      "meaning_ja": "お知らせ",
+      "audio": "audio/ko_b6412a92e8c6393c1018.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "announcement",
+          "reading": "gongji"
+        }
+      }
+    },
+    {
+      "id": "i_017",
+      "ko": "교육",
+      "reading_ja": "キョユク",
+      "meaning_ja": "教育",
+      "audio": "audio/ko_4da9a75910ede3adef01.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "education",
+          "reading": "gyoyuk"
+        }
+      }
+    },
+    {
+      "id": "i_018",
+      "ko": "교통",
+      "reading_ja": "キョトン",
+      "meaning_ja": "交通",
+      "audio": "audio/ko_5eb36550b4cd74af8e57.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "transportation",
+          "reading": "gyotong"
+        }
+      }
+    },
+    {
+      "id": "i_019",
+      "ko": "노력",
+      "reading_ja": "ノリョク",
+      "meaning_ja": "努力",
+      "audio": "audio/ko_1119b060db74766fb336.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "effort",
+          "reading": "noryeok"
+        }
+      }
+    },
+    {
+      "id": "i_020",
+      "ko": "문제",
+      "reading_ja": "ムンジェ",
+      "meaning_ja": "問題",
+      "audio": "audio/ko_bc0fca46ae9a48794dbd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "problem",
+          "reading": "munje"
+        }
+      }
+    },
+    {
+      "id": "i_021",
+      "ko": "발표",
+      "reading_ja": "パルピョ",
+      "meaning_ja": "発表",
+      "audio": "audio/ko_662fbb8d7bdeae8019f6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "presentation",
+          "reading": "balpyo"
+        }
+      }
+    },
+    {
+      "id": "i_022",
+      "ko": "배송",
+      "reading_ja": "ペソン",
+      "meaning_ja": "配送",
+      "audio": "audio/ko_9c5a604dbc05e8de3bf7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "delivery",
+          "reading": "baesong"
+        }
+      }
+    },
+    {
+      "id": "i_023",
+      "ko": "보험",
+      "reading_ja": "ポホム",
+      "meaning_ja": "保険",
+      "audio": "audio/ko_483b66ad0cc4f7d5acd1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "insurance",
+          "reading": "boheom"
+        }
+      }
+    },
+    {
+      "id": "i_024",
+      "ko": "사용",
+      "reading_ja": "サヨン",
+      "meaning_ja": "使用",
+      "audio": "audio/ko_93c558d72f27bb096611.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "use",
+          "reading": "sayong"
+        }
+      }
+    },
+    {
+      "id": "i_025",
+      "ko": "소통",
+      "reading_ja": "ソトン",
+      "meaning_ja": "意思疎通",
+      "audio": "audio/ko_5ef1b43a168ea45fe587.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "communication",
+          "reading": "sotong"
+        }
+      }
+    },
+    {
+      "id": "i_026",
+      "ko": "수입",
+      "reading_ja": "スイプ",
+      "meaning_ja": "収入",
+      "audio": "audio/ko_2b599954c4ba5b32c48f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "income",
+          "reading": "suip"
+        }
+      }
+    },
+    {
+      "id": "i_027",
+      "ko": "수출",
+      "reading_ja": "スチュル",
+      "meaning_ja": "輸出",
+      "audio": "audio/ko_fbc626f7f124c3391b53.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "export",
+          "reading": "suchul"
+        }
+      }
+    },
+    {
+      "id": "i_028",
+      "ko": "시설",
+      "reading_ja": "シソル",
+      "meaning_ja": "施設",
+      "audio": "audio/ko_af2559470c0531c93681.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "facility",
+          "reading": "siseol"
+        }
+      }
+    },
+    {
+      "id": "i_029",
+      "ko": "안내",
+      "reading_ja": "アンネ",
+      "meaning_ja": "案内",
+      "audio": "audio/ko_eb81d7d96ba4e901770e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "guidance",
+          "reading": "annae"
+        }
+      }
+    },
+    {
+      "id": "i_030",
+      "ko": "업무",
+      "reading_ja": "オンム",
+      "meaning_ja": "業務",
+      "audio": "audio/ko_1377bb69d5f7d43cea77.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "work duties",
+          "reading": "eopmu"
+        }
+      }
+    },
+    {
+      "id": "i_031",
+      "ko": "여행",
+      "reading_ja": "ヨヘン",
+      "meaning_ja": "旅行",
+      "audio": "audio/ko_b5d87b0a7b5d6b82f2a8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "travel",
+          "reading": "yeohaeng"
+        }
+      }
+    },
+    {
+      "id": "i_032",
+      "ko": "예약",
+      "reading_ja": "イェヤク",
+      "meaning_ja": "予約",
+      "audio": "audio/ko_a04df23492bdcfa7ff7b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "reservation",
+          "reading": "yeyak"
+        }
+      }
+    },
+    {
+      "id": "i_033",
+      "ko": "이용",
+      "reading_ja": "イヨン",
+      "meaning_ja": "利用",
+      "audio": "audio/ko_770bdb495b6edba2da47.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "use",
+          "reading": "iyong"
+        }
+      }
+    },
+    {
+      "id": "i_034",
+      "ko": "저축",
+      "reading_ja": "チョチュク",
+      "meaning_ja": "貯蓄",
+      "audio": "audio/ko_7b943d7a00cb39bff616.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "savings",
+          "reading": "jeochuk"
+        }
+      }
+    },
+    {
+      "id": "i_035",
+      "ko": "절차",
+      "reading_ja": "チョルチャ",
+      "meaning_ja": "手続き",
+      "audio": "audio/ko_132955c7d26f2ff68bbc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "procedure",
+          "reading": "jeolcha"
+        }
+      }
+    },
+    {
+      "id": "i_036",
+      "ko": "접수",
+      "reading_ja": "チョプス",
+      "meaning_ja": "受付",
+      "audio": "audio/ko_d995d6ab415d91d191ba.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "registration",
+          "reading": "jeopsu"
+        }
+      }
+    },
+    {
+      "id": "i_037",
+      "ko": "준비",
+      "reading_ja": "チュンビ",
+      "meaning_ja": "準備",
+      "audio": "audio/ko_9ce364fc9c6f2a1ce188.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "preparation",
+          "reading": "junbi"
+        }
+      }
+    },
+    {
+      "id": "i_038",
+      "ko": "지출",
+      "reading_ja": "チチュル",
+      "meaning_ja": "支出",
+      "audio": "audio/ko_1ed4f1ad1c21e9b65d0d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "spending",
+          "reading": "jichul"
+        }
+      }
+    },
+    {
+      "id": "i_039",
+      "ko": "진료",
+      "reading_ja": "チルリョ",
+      "meaning_ja": "診療",
+      "audio": "audio/ko_16fab363f8f2f4d9e376.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "medical care",
+          "reading": "jinryo"
+        }
+      }
+    },
+    {
+      "id": "i_040",
+      "ko": "채용",
+      "reading_ja": "チェヨン",
+      "meaning_ja": "採用",
+      "audio": "audio/ko_edebf005949ad3393ece.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "recruitment",
+          "reading": "chaeyong"
+        }
+      }
+    },
+    {
+      "id": "i_041",
+      "ko": "토론",
+      "reading_ja": "トロン",
+      "meaning_ja": "討論",
+      "audio": "audio/ko_3d53da771fe0954dd95f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "discussion",
+          "reading": "toron"
+        }
+      }
+    },
+    {
+      "id": "i_042",
+      "ko": "해결",
+      "reading_ja": "ヘギョル",
+      "meaning_ja": "解決",
+      "audio": "audio/ko_774be83e44842779b3fd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "solution",
+          "reading": "haegyeol"
+        }
+      }
+    },
+    {
+      "id": "i_043",
+      "ko": "행사",
+      "reading_ja": "ヘンサ",
+      "meaning_ja": "イベント",
+      "audio": "audio/ko_9fbe110d36cda8cf2d98.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "event",
+          "reading": "haengsa"
+        }
+      }
+    },
+    {
+      "id": "i_044",
+      "ko": "휴식",
+      "reading_ja": "ヒュシク",
+      "meaning_ja": "休息",
+      "audio": "audio/ko_5c75df710af3f2ee069c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "rest",
+          "reading": "hyusik"
+        }
+      }
+    },
+    {
+      "id": "i_045",
+      "ko": "보고서",
+      "reading_ja": "ポゴソ",
+      "meaning_ja": "報告書",
+      "audio": "audio/ko_01a64adf7f1500650cfd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "report",
+          "reading": "bogoseo"
+        }
+      }
+    },
+    {
+      "id": "i_046",
+      "ko": "서비스",
+      "reading_ja": "ソビス",
+      "meaning_ja": "サービス",
+      "audio": "audio/ko_06aff97f69dc060dd759.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "service",
+          "reading": "seobiseu"
+        }
+      }
+    },
+    {
+      "id": "i_047",
+      "ko": "회의",
+      "reading_ja": "フェイ",
+      "meaning_ja": "会議",
+      "audio": "audio/ko_8ada2d6d6aa420fc4f0d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "meeting",
+          "reading": "hoeui"
+        }
+      }
+    },
+    {
+      "id": "i_048",
+      "ko": "결과",
+      "reading_ja": "キョルグァ",
+      "meaning_ja": "結果",
+      "audio": "audio/ko_109383e344db8ae54a47.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "result",
+          "reading": "gyeolgwa"
+        }
+      }
+    },
+    {
+      "id": "i_049",
+      "ko": "계획",
+      "reading_ja": "ケフェク",
+      "meaning_ja": "計画",
+      "audio": "audio/ko_b0fe4ea3ac5ac4022d19.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "plan",
+          "reading": "gyehoek"
+        }
+      }
+    },
+    {
+      "id": "i_050",
+      "ko": "과정",
+      "reading_ja": "クァジョン",
+      "meaning_ja": "過程",
+      "audio": "audio/ko_6712bde78eaa7f6ecd18.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "process",
+          "reading": "gwajeong"
+        }
+      }
+    },
+    {
+      "id": "i_051",
+      "ko": "관계",
+      "reading_ja": "クァンゲ",
+      "meaning_ja": "関係",
+      "audio": "audio/ko_18ab6599abaaab1b0c2d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "relationship",
+          "reading": "gwangye"
+        }
+      }
+    },
+    {
+      "id": "i_052",
+      "ko": "관리",
+      "reading_ja": "クァルリ",
+      "meaning_ja": "管理",
+      "audio": "audio/ko_29ae8f308ff1d9963b4d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "management",
+          "reading": "gwanri"
+        }
+      }
+    },
+    {
+      "id": "i_053",
+      "ko": "교환",
+      "reading_ja": "キョファン",
+      "meaning_ja": "交換",
+      "audio": "audio/ko_727bf610db6d3427dd38.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "exchange",
+          "reading": "gyohwan"
+        }
+      }
+    },
+    {
+      "id": "i_054",
+      "ko": "문화",
+      "reading_ja": "ムナ",
+      "meaning_ja": "文化",
+      "audio": "audio/ko_580bb8d061b97e66f221.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "culture",
+          "reading": "munhwa"
+        }
+      }
+    },
+    {
+      "id": "i_055",
+      "ko": "변화",
+      "reading_ja": "ピョヌァ",
+      "meaning_ja": "変化",
+      "audio": "audio/ko_d06231d77cebc3d059aa.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "change",
+          "reading": "byeonhwa"
+        }
+      }
+    },
+    {
+      "id": "i_056",
+      "ko": "의견",
+      "reading_ja": "ウィギョン",
+      "meaning_ja": "意見",
+      "audio": "audio/ko_1eaed37a207480d88b78.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "opinion",
+          "reading": "uigyeon"
+        }
+      }
+    },
+    {
+      "id": "i_057",
+      "ko": "취업",
+      "reading_ja": "チュィオプ",
+      "meaning_ja": "就職",
+      "audio": "audio/ko_2be46a8d9de559e10ac5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "employment",
+          "reading": "chwieop"
+        }
+      }
+    },
+    {
+      "id": "i_058",
+      "ko": "퇴근",
+      "reading_ja": "トェグン",
+      "meaning_ja": "退勤",
+      "audio": "audio/ko_344e3166df7e6c4b52ba.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "leaving work",
+          "reading": "toegeun"
+        }
+      }
+    },
+    {
+      "id": "i_059",
+      "ko": "갈등",
+      "reading_ja": "カルトゥン",
+      "meaning_ja": "葛藤",
+      "audio": "audio/ko_d1760340752759cd084b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "conflict",
+          "reading": "galdeung"
+        }
+      }
+    },
+    {
+      "id": "i_060",
+      "ko": "건강",
+      "reading_ja": "コンガン",
+      "meaning_ja": "健康",
+      "audio": "audio/ko_b9e697a6a3627e47a5d1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "health",
+          "reading": "geongang"
+        }
+      }
+    },
+    {
+      "id": "i_061",
+      "ko": "경험",
+      "reading_ja": "キョンホム",
+      "meaning_ja": "経験",
+      "audio": "audio/ko_340b9a0fcd5fc1d6bfa3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "experience",
+          "reading": "gyeongheom"
+        }
+      }
+    },
+    {
+      "id": "i_062",
+      "ko": "공항",
+      "reading_ja": "コンハン",
+      "meaning_ja": "空港",
+      "audio": "audio/ko_fce088cae0e9817824e0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "airport",
+          "reading": "gonghang"
+        }
+      }
+    },
+    {
+      "id": "i_063",
+      "ko": "능력",
+      "reading_ja": "ヌンニョク",
+      "meaning_ja": "能力",
+      "audio": "audio/ko_f9c5a220974330b54c6e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ability",
+          "reading": "neungryeok"
+        }
+      }
+    },
+    {
+      "id": "i_064",
+      "ko": "답변",
+      "reading_ja": "タプピョン",
+      "meaning_ja": "回答",
+      "audio": "audio/ko_2b2ab898a3e77b601db6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "answer",
+          "reading": "dapbyeon"
+        }
+      }
+    },
+    {
+      "id": "i_065",
+      "ko": "방법",
+      "reading_ja": "パンボプ",
+      "meaning_ja": "方法",
+      "audio": "audio/ko_a4a801d526fb251193b0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "method",
+          "reading": "bangbeop"
+        }
+      }
+    },
+    {
+      "id": "i_066",
+      "ko": "생산",
+      "reading_ja": "センサン",
+      "meaning_ja": "生産",
+      "audio": "audio/ko_b3df362a51cdd23e8944.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "production",
+          "reading": "saengsan"
+        }
+      }
+    },
+    {
+      "id": "i_067",
+      "ko": "선택",
+      "reading_ja": "ソンテク",
+      "meaning_ja": "選択",
+      "audio": "audio/ko_8d1a750c9351d1b803fc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "choice",
+          "reading": "seontaek"
+        }
+      }
+    },
+    {
+      "id": "i_068",
+      "ko": "설명",
+      "reading_ja": "ソルミョン",
+      "meaning_ja": "説明",
+      "audio": "audio/ko_8c3f651d3083e63da644.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "explanation",
+          "reading": "seolmyeong"
+        }
+      }
+    },
+    {
+      "id": "i_069",
+      "ko": "성장",
+      "reading_ja": "ソンジャン",
+      "meaning_ja": "成長",
+      "audio": "audio/ko_2008c71775593d82ab3c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "growth",
+          "reading": "seongjang"
+        }
+      }
+    },
+    {
+      "id": "i_070",
+      "ko": "식당",
+      "reading_ja": "シクタン",
+      "meaning_ja": "食堂",
+      "audio": "audio/ko_fe047fb6c566f2771257.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "restaurant",
+          "reading": "sikdang"
+        }
+      }
+    },
+    {
+      "id": "i_071",
+      "ko": "신청",
+      "reading_ja": "シンチョン",
+      "meaning_ja": "申請",
+      "audio": "audio/ko_0793bce18be02a79f122.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "application",
+          "reading": "sincheong"
+        }
+      }
+    },
+    {
+      "id": "i_072",
+      "ko": "안전",
+      "reading_ja": "アンジョン",
+      "meaning_ja": "安全",
+      "audio": "audio/ko_beff908259d220501203.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "safety",
+          "reading": "anjeon"
+        }
+      }
+    },
+    {
+      "id": "i_073",
+      "ko": "약속",
+      "reading_ja": "ヤクソク",
+      "meaning_ja": "約束",
+      "audio": "audio/ko_a39ee87db456831ef069.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "promise",
+          "reading": "yaksok"
+        }
+      }
+    },
+    {
+      "id": "i_074",
+      "ko": "연락",
+      "reading_ja": "ヨルラク",
+      "meaning_ja": "連絡",
+      "audio": "audio/ko_b1c3b94a6a87c1f5d675.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "contact",
+          "reading": "yeonrak"
+        }
+      }
+    },
+    {
+      "id": "i_075",
+      "ko": "운전",
+      "reading_ja": "ウンジョン",
+      "meaning_ja": "運転",
+      "audio": "audio/ko_5d97578a4a83b40e2ef4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "driving",
+          "reading": "unjeon"
+        }
+      }
+    },
+    {
+      "id": "i_076",
+      "ko": "일정",
+      "reading_ja": "イルチョン",
+      "meaning_ja": "日程",
+      "audio": "audio/ko_510d062ea38e7953e887.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "schedule",
+          "reading": "iljeong"
+        }
+      }
+    },
+    {
+      "id": "i_077",
+      "ko": "직장",
+      "reading_ja": "チクチャン",
+      "meaning_ja": "職場",
+      "audio": "audio/ko_fdfb4ffae29b3defcce4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "workplace",
+          "reading": "jikjang"
+        }
+      }
+    },
+    {
+      "id": "i_078",
+      "ko": "질문",
+      "reading_ja": "チルムン",
+      "meaning_ja": "質問",
+      "audio": "audio/ko_32729cc3f7b6d44a6210.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "question",
+          "reading": "jilmun"
+        }
+      }
+    },
+    {
+      "id": "i_079",
+      "ko": "책임",
+      "reading_ja": "チェギム",
+      "meaning_ja": "責任",
+      "audio": "audio/ko_d9e8885b1d9be68bef6c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "responsibility",
+          "reading": "chaekim"
+        }
+      }
+    },
+    {
+      "id": "i_080",
+      "ko": "출근",
+      "reading_ja": "チュルグン",
+      "meaning_ja": "出勤",
+      "audio": "audio/ko_0ece90941e0c8568c6d5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "going to work",
+          "reading": "chulgeun"
+        }
+      }
+    },
+    {
+      "id": "i_081",
+      "ko": "출장",
+      "reading_ja": "チュルチャン",
+      "meaning_ja": "出張",
+      "audio": "audio/ko_9750a26dc02fab9dfd46.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "business trip",
+          "reading": "chuljang"
+        }
+      }
+    },
+    {
+      "id": "i_082",
+      "ko": "한국",
+      "reading_ja": "ハングク",
+      "meaning_ja": "韓国",
+      "audio": "audio/ko_1eb7da6d56d883ca1dd1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Korea",
+          "reading": "hanguk"
+        }
+      }
+    },
+    {
+      "id": "i_083",
+      "ko": "할인",
+      "reading_ja": "ハリン",
+      "meaning_ja": "割引",
+      "audio": "audio/ko_37ccd7d822c8e4eb7b32.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "discount",
+          "reading": "halin"
+        }
+      }
+    },
+    {
+      "id": "i_084",
+      "ko": "관심",
+      "reading_ja": "クァンシム",
+      "meaning_ja": "関心",
+      "audio": "audio/ko_07b3c15a29688a55c61b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "interest",
+          "reading": "gwansim"
+        }
+      }
+    },
+    {
+      "id": "i_085",
+      "ko": "상황",
+      "reading_ja": "サンファン",
+      "meaning_ja": "状況",
+      "audio": "audio/ko_946f8147acaaf499e924.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "situation",
+          "reading": "sanghwang"
+        }
+      }
+    },
+    {
+      "id": "i_086",
+      "ko": "생활",
+      "reading_ja": "センファル",
+      "meaning_ja": "生活",
+      "audio": "audio/ko_6a739e74f8dfb7fbc5ec.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "daily life",
+          "reading": "saenghwal"
+        }
+      }
+    },
+    {
+      "id": "i_087",
+      "ko": "원인",
+      "reading_ja": "ウォニン",
+      "meaning_ja": "原因",
+      "audio": "audio/ko_b84254868f623d278671.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "cause",
+          "reading": "wonin"
+        }
+      }
+    },
+    {
+      "id": "i_088",
+      "ko": "월급",
+      "reading_ja": "ウォルグプ",
+      "meaning_ja": "給料",
+      "audio": "audio/ko_c384db10210a9b769d7c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "salary",
+          "reading": "wolgeup"
+        }
+      }
+    },
+    {
+      "id": "i_089",
+      "ko": "확인",
+      "reading_ja": "ファギン",
+      "meaning_ja": "確認",
+      "audio": "audio/ko_1aacb54c499242964cc0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "confirmation",
+          "reading": "hwakin"
+        }
+      }
+    },
+    {
+      "id": "i_090",
+      "ko": "환경",
+      "reading_ja": "ファンギョン",
+      "meaning_ja": "環境",
+      "audio": "audio/ko_5d36e09c3271e0e77bdf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "environment",
+          "reading": "hwangyeong"
+        }
+      }
+    },
+    {
+      "id": "i_091",
+      "ko": "환불",
+      "reading_ja": "ファンブル",
+      "meaning_ja": "返金",
+      "audio": "audio/ko_edda9108c109b66354db.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "refund",
+          "reading": "hwanbul"
+        }
+      }
+    },
+    {
+      "id": "i_092",
+      "ko": "도서관",
+      "reading_ja": "トソグァン",
+      "meaning_ja": "図書館",
+      "audio": "audio/ko_9ee22c8536d3503a4b1c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "library",
+          "reading": "doseogwan"
+        }
+      }
+    },
+    {
+      "id": "i_093",
+      "ko": "증명서",
+      "reading_ja": "チュンミョンソ",
+      "meaning_ja": "証明書",
+      "audio": "audio/ko_235f8a8f334b1e9f0728.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "certificate",
+          "reading": "jeungmyeongseo"
+        }
+      }
+    },
+    {
+      "id": "i_094",
+      "ko": "한국어",
+      "reading_ja": "ハングゴ",
+      "meaning_ja": "韓国語",
+      "audio": "audio/ko_ea3252281bc3bcec5672.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Korean language",
+          "reading": "hangukeo"
+        }
+      }
+    },
+    {
+      "id": "i_095",
+      "ko": "관광",
+      "reading_ja": "クァングァン",
+      "meaning_ja": "観光",
+      "audio": "audio/ko_ec5e7c8fff9b86da58d2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "tourism",
+          "reading": "gwangwang"
+        }
+      }
+    },
+    {
+      "id": "i_096",
+      "ko": "백화점",
+      "reading_ja": "ペクァジョム",
+      "meaning_ja": "百貨店",
+      "audio": "audio/ko_655eab9f02534cf0ba14.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "department store",
+          "reading": "baekhwajeom"
+        }
+      }
+    },
+    {
+      "id": "i_097",
+      "ko": "편의점",
+      "reading_ja": "ピョニジョム",
+      "meaning_ja": "コンビニ",
+      "audio": "audio/ko_590f2a3e6ebd654080a3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "convenience store",
+          "reading": "pyeonuijeom"
+        }
+      }
+    },
+    {
+      "id": "i_098",
+      "ko": "화장실",
+      "reading_ja": "ファジャンシル",
+      "meaning_ja": "トイレ",
+      "audio": "audio/ko_477b8e1cccfde276bae7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "restroom",
+          "reading": "hwajangsil"
+        }
+      }
+    },
+    {
+      "id": "i_099",
+      "ko": "운동장",
+      "reading_ja": "ウンドンジャン",
+      "meaning_ja": "運動場",
+      "audio": "audio/ko_899e5787d5587fd1d0c4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sports field",
+          "reading": "undongjang"
+        }
+      }
+    },
+    {
+      "id": "i_100",
+      "ko": "박물관",
+      "reading_ja": "パンムルグァン",
+      "meaning_ja": "博物館",
+      "audio": "audio/ko_9c844c75334ef5795590.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "museum",
+          "reading": "bakmulgwan"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Initial Sound Quiz: Intermediate Mix",
+      "author_nickname": "typee Official",
+      "tags": [
+        "TOPIK",
+        "Typing",
+        "Intermediate",
+        "Initial Consonants",
+        "Games",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "초성 퀴즈·중급 종합 난이도",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "TOPIK",
+        "타이핑",
+        "중급",
+        "초성",
+        "게임",
+        "공식"
+      ]
+    }
+  }
+}

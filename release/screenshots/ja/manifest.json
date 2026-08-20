@@ -1,0 +1,50 @@
+{
+  "locale": "ja",
+  "device": "iPhone 17 Pro Max",
+  "device_id": "00608B21-6BB5-4F22-BDD2-9A4F67DA4C59",
+  "os": "iOS 26.5 Simulator",
+  "dimensions": "1320x2868",
+  "captured_from_bundle_id": "app.piyokey.Piyokey",
+  "screenshots": [
+    {
+      "file": "01-home-recommendations-ja.png",
+      "source_test": "testHomeRecommendationsOpenDeckDetail",
+      "sha256": "c4efd3594b7640e5d21128086b6bc142b2f724f37c50bc1e89683a8f10f108e3"
+    },
+    {
+      "file": "02-practice-syllable-success-ja.png",
+      "source_test": "testCompletedSyllableShowsSuccessStateWhileTyping",
+      "sha256": "9c8e0b926fa1ad933834a56723f1729eda81aac92f26236937eb4e4e26408e5a"
+    },
+    {
+      "file": "03-curriculum-map-ja.png",
+      "source_test": "testCurriculumMapStartsWithSequentialCoreUnlocks",
+      "sha256": "406881028bc6a7dfd78c421e15f9fef99ed0c50a7473b4a288e37fcfcbdb89ab"
+    },
+    {
+      "file": "04-game-mode-grid-ja.png",
+      "source_test": "testGameSelectionShowsGameCardsBeforeDecks",
+      "sha256": "acb4cbe44d0945c5a28bbf64922929699e16a5c3f4b4562c88e6b2ee0839394a"
+    },
+    {
+      "file": "05-game-flow-ja.png",
+      "source_test": "testInstalledDeckStartsTimedFlowGameAndRetriesFromResult",
+      "sha256": "fe22e2f2bb277df4ff6cfa7a77f0ede29a3a7301d64bb1af64dc2c9581b53ed4"
+    },
+    {
+      "file": "06-mascot-closet-ja.png",
+      "source_test": "testMascotClosetRemainsAvailableFromSettings",
+      "sha256": "26e2742556c18b8d78963892667ae375063b2cf2134a176d0d164b59a476f6e9"
+    },
+    {
+      "file": "07-practice-result-ja.png",
+      "source_test": "testDeckResultShowsSameTagRecommendationsAndRetriesInOneTap",
+      "sha256": "dc6f8e70810cb73983cbd1b0c9cf33c6dd109f00cf2c9784c57d206f39b74e31"
+    },
+    {
+      "file": "08-my-piyo-stamps-rewards-ja.png",
+      "source_test": "testHomeMyPiyoCombinesStampsRewardsAndKeepsMyPageProfile",
+      "sha256": "9f362f508faeac97f6666410e602dab0e3705c1aac8a486be6e4b99635dd2295"
+    }
+  ]
+}

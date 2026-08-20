@@ -1,0 +1,25 @@
+{
+  "author": {
+    "id": "official_hanco",
+    "nickname": "偽の公式"
+  },
+  "created_at": "2026-08-14T00:00:00Z",
+  "deck_id": "official_fake_user_deck",
+  "items": [
+    {
+      "audio": null,
+      "id": "item_00000000000000000000000000000001",
+      "ko": "학교",
+      "meaning_ja": "学校",
+      "reading_ja": "ハッキョ"
+    }
+  ],
+  "level": 1,
+  "name": "偽の公式デッキ",
+  "official": true,
+  "tags": ["公式"],
+  "type": "word",
+  "updated_at": "2026-08-14T00:00:00Z",
+  "version": 1
+}
+

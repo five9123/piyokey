@@ -1,0 +1,7 @@
+* text=auto
+
+*.mp3 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.piyodeck binary

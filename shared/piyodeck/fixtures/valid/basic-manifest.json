@@ -1,0 +1,15 @@
+{
+  "deck": {
+    "deck_id": "user_00000000000000000000000000000001",
+    "deck_version": 1,
+    "item_count": 2,
+    "media_type": "application/json",
+    "path": "deck.json",
+    "sha256": "933f27d489166e3374ef03c4417204578825c3fb40d933ee82693224162446ed",
+    "size_bytes": 752
+  },
+  "deck_schema_version": 1,
+  "format": "piyokey.deck-package",
+  "format_version": 1
+}
+

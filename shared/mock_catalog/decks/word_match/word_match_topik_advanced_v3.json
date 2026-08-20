@@ -1,0 +1,1350 @@
+{
+  "deck_id": "word_match_topik_advanced",
+  "version": 3,
+  "name": "単語クイズ・上級 総合難易度",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 3,
+  "tags": [
+    "TOPIK",
+    "タイピング",
+    "上級",
+    "単語クイズ",
+    "ゲーム",
+    "公式"
+  ],
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "규제",
+      "reading_ja": "キュジェ",
+      "meaning_ja": "規制",
+      "audio": "audio/ko_3462ef51ab412b437fe0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "regulation",
+          "reading": "gyuje"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "제도",
+      "reading_ja": "チェド",
+      "meaning_ja": "制度",
+      "audio": "audio/ko_9d1a628b7b5d9b4514cd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "system",
+          "reading": "jedo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "가설",
+      "reading_ja": "カソル",
+      "meaning_ja": "仮説",
+      "audio": "audio/ko_212dbd10647a496a6d92.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "hypothesis",
+          "reading": "gaseol"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "개혁",
+      "reading_ja": "ケヒョク",
+      "meaning_ja": "改革",
+      "audio": "audio/ko_13d0db561d55efb4972c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "reform",
+          "reading": "gaehyeok"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "고용",
+      "reading_ja": "コヨン",
+      "meaning_ja": "雇用",
+      "audio": "audio/ko_2c22ce30cd3d52fdb338.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "employment",
+          "reading": "goyong"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "근거",
+      "reading_ja": "クンゴ",
+      "meaning_ja": "根拠",
+      "audio": "audio/ko_d7794cf130b736a79160.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basis",
+          "reading": "geungeo"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "물가",
+      "reading_ja": "ムルカ",
+      "meaning_ja": "物価",
+      "audio": "audio/ko_f4d16c8379abbc0f64e9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "prices",
+          "reading": "mulga"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "복지",
+      "reading_ja": "ポクチ",
+      "meaning_ja": "福祉",
+      "audio": "audio/ko_715fe8435ed83afbf662.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "welfare",
+          "reading": "bokji"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "심리",
+      "reading_ja": "シムニ",
+      "meaning_ja": "心理",
+      "audio": "audio/ko_9e7b46284a1fa3acb077.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "psychology",
+          "reading": "simri"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "여론",
+      "reading_ja": "ヨロン",
+      "meaning_ja": "世論",
+      "audio": "audio/ko_8e49d6967e2b915a9eaf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "public opinion",
+          "reading": "yeoron"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "윤리",
+      "reading_ja": "ユルリ",
+      "meaning_ja": "倫理",
+      "audio": "audio/ko_e3849ab035b8540fb6f5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ethics",
+          "reading": "yunri"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "재정",
+      "reading_ja": "チェジョン",
+      "meaning_ja": "財政",
+      "audio": "audio/ko_e999efbc687396524eec.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "public finance",
+          "reading": "jaejeong"
+        }
+      }
+    },
+    {
+      "id": "i_013",
+      "ko": "결론",
+      "reading_ja": "キョルロン",
+      "meaning_ja": "結論",
+      "audio": "audio/ko_ce5da34183dc53ab86fe.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "conclusion",
+          "reading": "gyeolron"
+        }
+      }
+    },
+    {
+      "id": "i_014",
+      "ko": "국민",
+      "reading_ja": "クンミン",
+      "meaning_ja": "国民",
+      "audio": "audio/ko_f8d6d99284c0c268e1f8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "citizens",
+          "reading": "gukmin"
+        }
+      }
+    },
+    {
+      "id": "i_015",
+      "ko": "금융",
+      "reading_ja": "クミュン",
+      "meaning_ja": "金融",
+      "audio": "audio/ko_dd6e00b8fcc706a614f1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "finance",
+          "reading": "geumyung"
+        }
+      }
+    },
+    {
+      "id": "i_016",
+      "ko": "법률",
+      "reading_ja": "ポムニュル",
+      "meaning_ja": "法律",
+      "audio": "audio/ko_3e29c7e3f21b3be52aec.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "law",
+          "reading": "beopryul"
+        }
+      }
+    },
+    {
+      "id": "i_017",
+      "ko": "산업",
+      "reading_ja": "サノプ",
+      "meaning_ja": "産業",
+      "audio": "audio/ko_e996578dcbd36c0f04d0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "industry",
+          "reading": "saneop"
+        }
+      }
+    },
+    {
+      "id": "i_018",
+      "ko": "영향",
+      "reading_ja": "ヨンヒャン",
+      "meaning_ja": "影響",
+      "audio": "audio/ko_5528424f5f612845dbac.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "impact",
+          "reading": "yeonghyang"
+        }
+      }
+    },
+    {
+      "id": "i_019",
+      "ko": "쟁점",
+      "reading_ja": "チェンチョム",
+      "meaning_ja": "争点",
+      "audio": "audio/ko_d160902bdf2c3007070a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "key issue",
+          "reading": "jaengjeom"
+        }
+      }
+    },
+    {
+      "id": "i_020",
+      "ko": "전망",
+      "reading_ja": "チョンマン",
+      "meaning_ja": "展望",
+      "audio": "audio/ko_a7ebd5e5ce12020bc986.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "outlook",
+          "reading": "jeonmang"
+        }
+      }
+    },
+    {
+      "id": "i_021",
+      "ko": "정책",
+      "reading_ja": "チョンチェク",
+      "meaning_ja": "政策",
+      "audio": "audio/ko_ff41d4a47c5fd63e9a96.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "policy",
+          "reading": "jeongchaek"
+        }
+      }
+    },
+    {
+      "id": "i_022",
+      "ko": "행정",
+      "reading_ja": "ヘンジョン",
+      "meaning_ja": "行政",
+      "audio": "audio/ko_a4f24ba76b27ac585486.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "administration",
+          "reading": "haengjeong"
+        }
+      }
+    },
+    {
+      "id": "i_023",
+      "ko": "혁신",
+      "reading_ja": "ヒョクシン",
+      "meaning_ja": "革新",
+      "audio": "audio/ko_1322d8772fa3e3579728.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "innovation",
+          "reading": "hyeoksin"
+        }
+      }
+    },
+    {
+      "id": "i_024",
+      "ko": "현상",
+      "reading_ja": "ヒョンサン",
+      "meaning_ja": "現象",
+      "audio": "audio/ko_aad7616538ae569e1079.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "phenomenon",
+          "reading": "hyeonsang"
+        }
+      }
+    },
+    {
+      "id": "i_025",
+      "ko": "협력",
+      "reading_ja": "ヒョムニョク",
+      "meaning_ja": "協力",
+      "audio": "audio/ko_ec3119447758fa2b25a4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "cooperation",
+          "reading": "hyeopryeok"
+        }
+      }
+    },
+    {
+      "id": "i_026",
+      "ko": "관점",
+      "reading_ja": "クァンチョム",
+      "meaning_ja": "観点",
+      "audio": "audio/ko_5dcd4e43f9ff098330bb.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "perspective",
+          "reading": "gwanjeom"
+        }
+      }
+    },
+    {
+      "id": "i_027",
+      "ko": "인권",
+      "reading_ja": "イングォン",
+      "meaning_ja": "人権",
+      "audio": "audio/ko_a2bcebe64d0a82d32e6b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "human rights",
+          "reading": "ingwon"
+        }
+      }
+    },
+    {
+      "id": "i_028",
+      "ko": "가치관",
+      "reading_ja": "カチグァン",
+      "meaning_ja": "価値観",
+      "audio": "audio/ko_3b3afe7c3e3e6666333e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "values",
+          "reading": "gachigwan"
+        }
+      }
+    },
+    {
+      "id": "i_029",
+      "ko": "고령화",
+      "reading_ja": "コリョンファ",
+      "meaning_ja": "高齢化",
+      "audio": "audio/ko_9c6e426617f9901d273a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "population aging",
+          "reading": "goryeonghwa"
+        }
+      }
+    },
+    {
+      "id": "i_030",
+      "ko": "국제화",
+      "reading_ja": "ククチェファ",
+      "meaning_ja": "国際化",
+      "audio": "audio/ko_b23f595b97ccfc1dfa2c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "internationalization",
+          "reading": "gukjehwa"
+        }
+      }
+    },
+    {
+      "id": "i_031",
+      "ko": "정보화",
+      "reading_ja": "チョンボファ",
+      "meaning_ja": "情報化",
+      "audio": "audio/ko_c00c1254dcc4474cd3a6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "digitalization",
+          "reading": "jeongbohwa"
+        }
+      }
+    },
+    {
+      "id": "i_032",
+      "ko": "값어치",
+      "reading_ja": "カプソチ",
+      "meaning_ja": "価値",
+      "audio": "audio/ko_f336f76a30d2e6ef16c2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "worth",
+          "reading": "gapeochi"
+        }
+      }
+    },
+    {
+      "id": "i_033",
+      "ko": "개선책",
+      "reading_ja": "ケソンチェク",
+      "meaning_ja": "改善策",
+      "audio": "audio/ko_13bcec464418256e92e7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "improvement plan",
+          "reading": "gaeseonchaek"
+        }
+      }
+    },
+    {
+      "id": "i_034",
+      "ko": "다양성",
+      "reading_ja": "タヤンソン",
+      "meaning_ja": "多様性",
+      "audio": "audio/ko_9f95aa309733f1845880.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "diversity",
+          "reading": "dayangseong"
+        }
+      }
+    },
+    {
+      "id": "i_035",
+      "ko": "저출산",
+      "reading_ja": "チョチュルサン",
+      "meaning_ja": "少子化",
+      "audio": "audio/ko_c84f42ef8a22cf6bcae5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "low birth rate",
+          "reading": "jeochulsan"
+        }
+      }
+    },
+    {
+      "id": "i_036",
+      "ko": "정체성",
+      "reading_ja": "チョンチェソン",
+      "meaning_ja": "アイデンティティ",
+      "audio": "audio/ko_6c59e1aeb296f46986ec.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "identity",
+          "reading": "jeongcheseong"
+        }
+      }
+    },
+    {
+      "id": "i_037",
+      "ko": "타당성",
+      "reading_ja": "タダンソン",
+      "meaning_ja": "妥当性",
+      "audio": "audio/ko_1dd234addec1380d07a8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "validity",
+          "reading": "tadangseong"
+        }
+      }
+    },
+    {
+      "id": "i_038",
+      "ko": "효율성",
+      "reading_ja": "ヒョユルソン",
+      "meaning_ja": "効率性",
+      "audio": "audio/ko_3e49e8345ecbf601beb1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "efficiency",
+          "reading": "hyoyulseong"
+        }
+      }
+    },
+    {
+      "id": "i_039",
+      "ko": "복지제도",
+      "reading_ja": "ポクチジェド",
+      "meaning_ja": "福祉制度",
+      "audio": "audio/ko_13466cac1242c6c1c7d6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "welfare system",
+          "reading": "bokjijedo"
+        }
+      }
+    },
+    {
+      "id": "i_040",
+      "ko": "정보보호",
+      "reading_ja": "チョンボボホ",
+      "meaning_ja": "情報保護",
+      "audio": "audio/ko_c8e5347075b8ab4c68b3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "information security",
+          "reading": "jeongboboho"
+        }
+      }
+    },
+    {
+      "id": "i_041",
+      "ko": "양극화",
+      "reading_ja": "ヤングクァ",
+      "meaning_ja": "二極化",
+      "audio": "audio/ko_2986974fae678003689e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "polarization",
+          "reading": "yanggeukhwa"
+        }
+      }
+    },
+    {
+      "id": "i_042",
+      "ko": "경쟁력",
+      "reading_ja": "キョンジェンニョク",
+      "meaning_ja": "競争力",
+      "audio": "audio/ko_770f3a54d8a0cd74bec0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "competitiveness",
+          "reading": "gyeongjaengryeok"
+        }
+      }
+    },
+    {
+      "id": "i_043",
+      "ko": "공급망",
+      "reading_ja": "コングムマン",
+      "meaning_ja": "サプライチェーン",
+      "audio": "audio/ko_033438c93647204dfede.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "supply chain",
+          "reading": "gonggeupmang"
+        }
+      }
+    },
+    {
+      "id": "i_044",
+      "ko": "불평등",
+      "reading_ja": "プルピョンドゥン",
+      "meaning_ja": "不平等",
+      "audio": "audio/ko_a179819b59b5b0c7ef85.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "inequality",
+          "reading": "bulpyeongdeung"
+        }
+      }
+    },
+    {
+      "id": "i_045",
+      "ko": "생산성",
+      "reading_ja": "センサンソン",
+      "meaning_ja": "生産性",
+      "audio": "audio/ko_97e833011434e3421f69.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "productivity",
+          "reading": "saengsanseong"
+        }
+      }
+    },
+    {
+      "id": "i_046",
+      "ko": "전문성",
+      "reading_ja": "チョンムンソン",
+      "meaning_ja": "専門性",
+      "audio": "audio/ko_a6eefa431b91fd0818ca.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "expertise",
+          "reading": "jeonmunseong"
+        }
+      }
+    },
+    {
+      "id": "i_047",
+      "ko": "기후변화",
+      "reading_ja": "キフビョヌァ",
+      "meaning_ja": "気候変動",
+      "audio": "audio/ko_74d2264c8087166f1556.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "climate change",
+          "reading": "gihubyeonhwa"
+        }
+      }
+    },
+    {
+      "id": "i_048",
+      "ko": "의사소통",
+      "reading_ja": "ウィサソトン",
+      "meaning_ja": "意思疎通",
+      "audio": "audio/ko_3002fee3c5565982de2c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "communication",
+          "reading": "uisasotong"
+        }
+      }
+    },
+    {
+      "id": "i_049",
+      "ko": "가치충돌",
+      "reading_ja": "カチチュンドル",
+      "meaning_ja": "価値の衝突",
+      "audio": "audio/ko_cc9fb3138269909b93e7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "value conflict",
+          "reading": "gachichungdol"
+        }
+      }
+    },
+    {
+      "id": "i_050",
+      "ko": "가치판단",
+      "reading_ja": "カチパンダン",
+      "meaning_ja": "価値判断",
+      "audio": "audio/ko_9d9f2c0fe222c557e304.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "value judgment",
+          "reading": "gachipandan"
+        }
+      }
+    },
+    {
+      "id": "i_051",
+      "ko": "개인정보",
+      "reading_ja": "ケインチョンボ",
+      "meaning_ja": "個人情報",
+      "audio": "audio/ko_5cdfba05d4bfe9962ce3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "personal information",
+          "reading": "gaeinjeongbo"
+        }
+      }
+    },
+    {
+      "id": "i_052",
+      "ko": "교육격차",
+      "reading_ja": "キョユクキョクチャ",
+      "meaning_ja": "教育格差",
+      "audio": "audio/ko_a1aac8a3ff49bd156b52.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "education gap",
+          "reading": "gyoyukgyeokcha"
+        }
+      }
+    },
+    {
+      "id": "i_053",
+      "ko": "노동시장",
+      "reading_ja": "ノドンシジャン",
+      "meaning_ja": "労働市場",
+      "audio": "audio/ko_c884e09a1a022dc99ebd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "labor market",
+          "reading": "nodongsijang"
+        }
+      }
+    },
+    {
+      "id": "i_054",
+      "ko": "세대갈등",
+      "reading_ja": "セデガルトゥン",
+      "meaning_ja": "世代間葛藤",
+      "audio": "audio/ko_3c532cdeceaacc14daaa.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "generational conflict",
+          "reading": "sedaegaldeung"
+        }
+      }
+    },
+    {
+      "id": "i_055",
+      "ko": "인구감소",
+      "reading_ja": "イングガムソ",
+      "meaning_ja": "人口減少",
+      "audio": "audio/ko_e9ff0f0d612cfe517045.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "population decline",
+          "reading": "ingugamso"
+        }
+      }
+    },
+    {
+      "id": "i_056",
+      "ko": "재택근무",
+      "reading_ja": "チェテククンム",
+      "meaning_ja": "在宅勤務",
+      "audio": "audio/ko_51f992d3674b82c5b0a3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "remote work",
+          "reading": "jaetaekgeunmu"
+        }
+      }
+    },
+    {
+      "id": "i_057",
+      "ko": "정보격차",
+      "reading_ja": "チョンボギョクチャ",
+      "meaning_ja": "情報格差",
+      "audio": "audio/ko_935fac149e80bf0e16aa.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "information gap",
+          "reading": "jeongbogyeokcha"
+        }
+      }
+    },
+    {
+      "id": "i_058",
+      "ko": "규제완화",
+      "reading_ja": "キュジェワヌァ",
+      "meaning_ja": "規制緩和",
+      "audio": "audio/ko_021d46fce8e467d18fc7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "deregulation",
+          "reading": "gyujewanhwa"
+        }
+      }
+    },
+    {
+      "id": "i_059",
+      "ko": "사회갈등",
+      "reading_ja": "サフェガルトゥン",
+      "meaning_ja": "社会的葛藤",
+      "audio": "audio/ko_e8f00bf0bf70fbdce86c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "social conflict",
+          "reading": "sahoegaldeung"
+        }
+      }
+    },
+    {
+      "id": "i_060",
+      "ko": "사회통합",
+      "reading_ja": "サフェトンハプ",
+      "meaning_ja": "社会統合",
+      "audio": "audio/ko_b15a5a49c6a141c5cba6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "social integration",
+          "reading": "sahoetonghap"
+        }
+      }
+    },
+    {
+      "id": "i_061",
+      "ko": "의견조정",
+      "reading_ja": "ウィギョンジョジョン",
+      "meaning_ja": "意見調整",
+      "audio": "audio/ko_8968d9c57d874d1679e4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "opinion coordination",
+          "reading": "uigyeonjojeong"
+        }
+      }
+    },
+    {
+      "id": "i_062",
+      "ko": "의사결정",
+      "reading_ja": "ウィサギョルチョン",
+      "meaning_ja": "意思決定",
+      "audio": "audio/ko_06e142e322e78d88689a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "decision-making",
+          "reading": "uisagyeoljeong"
+        }
+      }
+    },
+    {
+      "id": "i_063",
+      "ko": "환경보호",
+      "reading_ja": "ファンギョンボホ",
+      "meaning_ja": "環境保護",
+      "audio": "audio/ko_2f8e6964f51ab5318cdf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "environmental protection",
+          "reading": "hwangyeongboho"
+        }
+      }
+    },
+    {
+      "id": "i_064",
+      "ko": "경제성장",
+      "reading_ja": "キョンジェソンジャン",
+      "meaning_ja": "経済成長",
+      "audio": "audio/ko_5d9489f13862f4554842.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "economic growth",
+          "reading": "gyeongjeseongjang"
+        }
+      }
+    },
+    {
+      "id": "i_065",
+      "ko": "경제정책",
+      "reading_ja": "キョンジェジョンチェク",
+      "meaning_ja": "経済政策",
+      "audio": "audio/ko_2a6677dab9ccc41f5cf2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "economic policy",
+          "reading": "gyeongjejeongchaek"
+        }
+      }
+    },
+    {
+      "id": "i_066",
+      "ko": "공공복지",
+      "reading_ja": "コンゴンボクチ",
+      "meaning_ja": "公共福祉",
+      "audio": "audio/ko_cebb93a64685efa04201.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "public welfare",
+          "reading": "gonggongbokji"
+        }
+      }
+    },
+    {
+      "id": "i_067",
+      "ko": "국제협력",
+      "reading_ja": "ククチェヒョムニョク",
+      "meaning_ja": "国際協力",
+      "audio": "audio/ko_7ff0a7ec50c57e2debbd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "international cooperation",
+          "reading": "gukjehyeopryeok"
+        }
+      }
+    },
+    {
+      "id": "i_068",
+      "ko": "기술혁신",
+      "reading_ja": "キスルヒョクシン",
+      "meaning_ja": "技術革新",
+      "audio": "audio/ko_cd42458f5fb089ffd626.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "technological innovation",
+          "reading": "gisulhyeoksin"
+        }
+      }
+    },
+    {
+      "id": "i_069",
+      "ko": "상호작용",
+      "reading_ja": "サンホジャギョン",
+      "meaning_ja": "相互作用",
+      "audio": "audio/ko_d833c28f2e337cce945c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "interaction",
+          "reading": "sanghojakyong"
+        }
+      }
+    },
+    {
+      "id": "i_070",
+      "ko": "인공지능",
+      "reading_ja": "インゴンジヌン",
+      "meaning_ja": "人工知能",
+      "audio": "audio/ko_c597b282778e3c885464.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "artificial intelligence",
+          "reading": "ingongjineung"
+        }
+      }
+    },
+    {
+      "id": "i_071",
+      "ko": "전문지식",
+      "reading_ja": "チョンムンジシク",
+      "meaning_ja": "専門知識",
+      "audio": "audio/ko_e92f74e6ef832378b0ad.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "specialized knowledge",
+          "reading": "jeonmunjisik"
+        }
+      }
+    },
+    {
+      "id": "i_072",
+      "ko": "정책평가",
+      "reading_ja": "チョンチェクピョンガ",
+      "meaning_ja": "政策評価",
+      "audio": "audio/ko_1969b52a1f393d57ace8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "policy evaluation",
+          "reading": "jeongchaekpyeongga"
+        }
+      }
+    },
+    {
+      "id": "i_073",
+      "ko": "탄소중립",
+      "reading_ja": "タンソジュンニプ",
+      "meaning_ja": "カーボンニュートラル",
+      "audio": "audio/ko_821cd44576683e17f846.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "carbon neutrality",
+          "reading": "tansojungrip"
+        }
+      }
+    },
+    {
+      "id": "i_074",
+      "ko": "데이터분석",
+      "reading_ja": "デイトブンソク",
+      "meaning_ja": "データ分析",
+      "audio": "audio/ko_589dffe65e37fbdf4089.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "data analysis",
+          "reading": "deiteobunseok"
+        }
+      }
+    },
+    {
+      "id": "i_075",
+      "ko": "인과관계",
+      "reading_ja": "イングァグァンゲ",
+      "meaning_ja": "因果関係",
+      "audio": "audio/ko_47c2321038ea4410e5a9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "causal relationship",
+          "reading": "ingwagwangye"
+        }
+      }
+    },
+    {
+      "id": "i_076",
+      "ko": "인권보장",
+      "reading_ja": "イングォンボジャン",
+      "meaning_ja": "人権保障",
+      "audio": "audio/ko_ebf8cae6bdd495275f33.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "protection of human rights",
+          "reading": "ingwonbojang"
+        }
+      }
+    },
+    {
+      "id": "i_077",
+      "ko": "인권침해",
+      "reading_ja": "イングォンチメ",
+      "meaning_ja": "人権侵害",
+      "audio": "audio/ko_d60ff7c3a0c496f01ef4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "human rights violation",
+          "reading": "ingwonchimhae"
+        }
+      }
+    },
+    {
+      "id": "i_078",
+      "ko": "책임의식",
+      "reading_ja": "チェギムウィシク",
+      "meaning_ja": "責任意識",
+      "audio": "audio/ko_7cc6e6defe2a557df9cd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sense of responsibility",
+          "reading": "chaekimuisik"
+        }
+      }
+    },
+    {
+      "id": "i_079",
+      "ko": "환경오염",
+      "reading_ja": "ファンギョンオヨム",
+      "meaning_ja": "環境汚染",
+      "audio": "audio/ko_1fc168080b5ca2ce9940.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "environmental pollution",
+          "reading": "hwangyeongoyeom"
+        }
+      }
+    },
+    {
+      "id": "i_080",
+      "ko": "공공안전",
+      "reading_ja": "コンゴンアンジョン",
+      "meaning_ja": "公共安全",
+      "audio": "audio/ko_cba4127c47d60a2810ee.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "public safety",
+          "reading": "gonggonganjeon"
+        }
+      }
+    },
+    {
+      "id": "i_081",
+      "ko": "정책결정",
+      "reading_ja": "チョンチェクキョルチョン",
+      "meaning_ja": "政策決定",
+      "audio": "audio/ko_17e08ee23a2e54321b87.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "policy decision-making",
+          "reading": "jeongchaekgyeoljeong"
+        }
+      }
+    },
+    {
+      "id": "i_082",
+      "ko": "책임경영",
+      "reading_ja": "チェギムギョンヨン",
+      "meaning_ja": "責任経営",
+      "audio": "audio/ko_85d4ab924d90c8305437.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "responsible management",
+          "reading": "chaekimgyeongyeong"
+        }
+      }
+    },
+    {
+      "id": "i_083",
+      "ko": "에너지전환",
+      "reading_ja": "エノジジョンファン",
+      "meaning_ja": "エネルギー転換",
+      "audio": "audio/ko_9209968516c995db2388.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "energy transition",
+          "reading": "eneojijeonhwan"
+        }
+      }
+    },
+    {
+      "id": "i_084",
+      "ko": "문제해결력",
+      "reading_ja": "ムンジェヘギョルリョク",
+      "meaning_ja": "問題解決力",
+      "audio": "audio/ko_e4933a960aec63390101.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "problem-solving ability",
+          "reading": "munjehaegyeolryeok"
+        }
+      }
+    },
+    {
+      "id": "i_085",
+      "ko": "세대불균형",
+      "reading_ja": "セデプルギュニョン",
+      "meaning_ja": "世代間不均衡",
+      "audio": "audio/ko_810cabde6ac939a52bbc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "generational imbalance",
+          "reading": "sedaebulgyunhyeong"
+        }
+      }
+    },
+    {
+      "id": "i_086",
+      "ko": "지속가능성",
+      "reading_ja": "チソクカヌンソン",
+      "meaning_ja": "持続可能性",
+      "audio": "audio/ko_f4460a5a737c97e0596f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sustainability",
+          "reading": "jisokganeungseong"
+        }
+      }
+    },
+    {
+      "id": "i_087",
+      "ko": "개인정보보호",
+      "reading_ja": "ケインチョンボボホ",
+      "meaning_ja": "個人情報保護",
+      "audio": "audio/ko_fae9ba16aac3464711bf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "personal data protection",
+          "reading": "gaeinjeongboboho"
+        }
+      }
+    },
+    {
+      "id": "i_088",
+      "ko": "환경정책",
+      "reading_ja": "ファンギョンジョンチェク",
+      "meaning_ja": "環境政策",
+      "audio": "audio/ko_3bedb7ada2b75dfa08da.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "environmental policy",
+          "reading": "hwangyeongjeongchaek"
+        }
+      }
+    },
+    {
+      "id": "i_089",
+      "ko": "사회적합의",
+      "reading_ja": "サフェジョク ハブィ",
+      "meaning_ja": "社会的合意",
+      "audio": "audio/ko_841bed2519ffc2c4e031.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "social consensus",
+          "reading": "sahoejeokhapui"
+        }
+      }
+    },
+    {
+      "id": "i_090",
+      "ko": "문화다양성",
+      "reading_ja": "ムナダヤンソン",
+      "meaning_ja": "文化的多様性",
+      "audio": "audio/ko_0040c0ace8f55cac59dc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "cultural diversity",
+          "reading": "munhwadayangseong"
+        }
+      }
+    },
+    {
+      "id": "i_091",
+      "ko": "문화정체성",
+      "reading_ja": "ムナジョンチェソン",
+      "meaning_ja": "文化的アイデンティティ",
+      "audio": "audio/ko_1004284d81c0de74a792.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "cultural identity",
+          "reading": "munhwajeongcheseong"
+        }
+      }
+    },
+    {
+      "id": "i_092",
+      "ko": "사회안전망",
+      "reading_ja": "サフェアンジョンマン",
+      "meaning_ja": "社会的セーフティネット",
+      "audio": "audio/ko_9a3e61e72158050186b0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "social safety net",
+          "reading": "sahoeanjeonmang"
+        }
+      }
+    },
+    {
+      "id": "i_093",
+      "ko": "사회적책임",
+      "reading_ja": "サフェジョクチェギム",
+      "meaning_ja": "社会的責任",
+      "audio": "audio/ko_aba64766253b5b5f1f58.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "social responsibility",
+          "reading": "sahoejeokchaekim"
+        }
+      }
+    },
+    {
+      "id": "i_094",
+      "ko": "상호의존성",
+      "reading_ja": "サンホウィジョンソン",
+      "meaning_ja": "相互依存性",
+      "audio": "audio/ko_c471b56c35a0cbaa1e30.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "interdependence",
+          "reading": "sanghouijonseong"
+        }
+      }
+    },
+    {
+      "id": "i_095",
+      "ko": "국제경쟁력",
+      "reading_ja": "ククチェギョンジェンニョク",
+      "meaning_ja": "国際競争力",
+      "audio": "audio/ko_00eec21d213be44ab7ee.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "international competitiveness",
+          "reading": "gukjegyeongjaengryeok"
+        }
+      }
+    },
+    {
+      "id": "i_096",
+      "ko": "노동생산성",
+      "reading_ja": "ノドンセンサンソン",
+      "meaning_ja": "労働生産性",
+      "audio": "audio/ko_c8320fb83840fd54e145.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "labor productivity",
+          "reading": "nodongsaengsanseong"
+        }
+      }
+    },
+    {
+      "id": "i_097",
+      "ko": "소득불평등",
+      "reading_ja": "ソドゥクプルピョンドゥン",
+      "meaning_ja": "所得不平等",
+      "audio": "audio/ko_a38361da00e0f3b04c38.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "income inequality",
+          "reading": "sodeukbulpyeongdeung"
+        }
+      }
+    },
+    {
+      "id": "i_098",
+      "ko": "재정건전성",
+      "reading_ja": "チェジョンゴンジョンソン",
+      "meaning_ja": "財政健全性",
+      "audio": "audio/ko_687364ef13edca4c085e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "fiscal soundness",
+          "reading": "jaejeonggeonjeonseong"
+        }
+      }
+    },
+    {
+      "id": "i_099",
+      "ko": "지속적성장",
+      "reading_ja": "チソクチョクソンジャン",
+      "meaning_ja": "持続的成長",
+      "audio": "audio/ko_7fc98564a2bc5bbdba64.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "sustainable growth",
+          "reading": "jisokjeokseongjang"
+        }
+      }
+    },
+    {
+      "id": "i_100",
+      "ko": "지역불균형",
+      "reading_ja": "チヨクプルギュニョン",
+      "meaning_ja": "地域不均衡",
+      "audio": "audio/ko_58d48bf6def68413bfd1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "regional imbalance",
+          "reading": "jiyeokbulgyunhyeong"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Word Quiz: Advanced Mix",
+      "author_nickname": "typee Official",
+      "tags": [
+        "TOPIK",
+        "Typing",
+        "Advanced",
+        "Word Quiz",
+        "Games",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "단어 퀴즈·고급 종합 난이도",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "TOPIK",
+        "타이핑",
+        "고급",
+        "단어 퀴즈",
+        "게임",
+        "공식"
+      ]
+    }
+  }
+}

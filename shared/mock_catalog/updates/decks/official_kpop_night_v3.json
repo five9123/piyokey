@@ -1,0 +1,197 @@
+{
+  "deck_id": "official_kpop_night",
+  "version": 3,
+  "name": "オリジナルK-POP：夜と星",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "K-POP",
+    "歌詞風",
+    "公式"
+  ],
+  "created_at": "2026-03-12T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "별을 세며 걸어",
+      "reading_ja": "ピョルル セミョ コロ",
+      "meaning_ja": "星を数えながら歩く",
+      "audio": "audio/ko_be4784ddef83e0045a8a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Walk while counting the stars",
+          "reading": "byeoleul semyeo geoleo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "네 목소릴 따라가",
+      "reading_ja": "ネ モクソリル タラガ",
+      "meaning_ja": "君の声を追いかける",
+      "audio": "audio/ko_f86edbf971c8f7d40fee.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I follow your voice",
+          "reading": "ne moksoril ttaraga"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "우리만의 은하수",
+      "reading_ja": "ウリマネ ウナス",
+      "meaning_ja": "私たちだけの天の川",
+      "audio": "audio/ko_a8f8b005517b2ec78707.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Our own Milky Way",
+          "reading": "urimanui eunhasu"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "달이 지기 전까지",
+      "reading_ja": "タリ チギ チョンカジ",
+      "meaning_ja": "月が沈むまで",
+      "audio": "audio/ko_6a70e12bcc784d48387f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Until the moon sets",
+          "reading": "dali jigi jeonkkaji"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "이 밤을 기억해 줘",
+      "reading_ja": "イ パムル キオケ ジョ",
+      "meaning_ja": "この夜を覚えていて",
+      "audio": "audio/ko_b69b4ce6dd7694238e25.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Remember this night",
+          "reading": "i bameul gieokhae jwo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "꿈속에서 다시 만나",
+      "reading_ja": "クムソゲソ タシ マンナ",
+      "meaning_ja": "夢の中でもう一度会おう",
+      "audio": "audio/ko_d9a685786daf6486e505.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's meet again in our dreams",
+          "reading": "kkumsokeseo dasi manna"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "별빛",
+      "reading_ja": "ピョルピッ",
+      "meaning_ja": "星明かり",
+      "audio": "audio/ko_4e5ce0107d7f6371700f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "starlight",
+          "reading": "byeolbit"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "달빛",
+      "reading_ja": "タルピッ",
+      "meaning_ja": "月明かり",
+      "audio": "audio/ko_b162f0baeac46602a8ca.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "moonlight",
+          "reading": "dalbit"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "푸른 밤",
+      "reading_ja": "プルン パム",
+      "meaning_ja": "青い夜",
+      "audio": "audio/ko_1d478418e45f41badc9d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Blue night",
+          "reading": "pureun bam"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "새벽 공기",
+      "reading_ja": "セビョク コンギ",
+      "meaning_ja": "夜明けの空気",
+      "audio": "audio/ko_bbd89b07b564bc89e1d9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "dawn air",
+          "reading": "saebyeok gonggi"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "밤하늘 아래",
+      "reading_ja": "パマヌル アレ",
+      "meaning_ja": "夜空の下",
+      "audio": "audio/ko_1c87ccfe2f3d72bebb37.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Under the night sky",
+          "reading": "bamhaneul arae"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "조용히 눈을 감아",
+      "reading_ja": "チョヨンヒ ヌヌル カマ",
+      "meaning_ja": "静かに目を閉じて",
+      "audio": "audio/ko_9a3de3fa41a0a23ba6e4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Gently close your eyes",
+          "reading": "joyonghi nuneul gama"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Original K-Pop: Night & Stars",
+      "author_nickname": "typee Official",
+      "tags": [
+        "K-Pop",
+        "Lyric-Inspired",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "오리지널 K-POP: 밤과 별",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "K-POP",
+        "가사풍",
+        "공식"
+      ]
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "deck_id": "official_travel_phrases",
+  "version": 4,
+  "name": "韓国旅行ですぐ使える表現",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "韓国旅行",
+    "公式",
+    "会話"
+  ],
+  "created_at": "2026-02-15T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "추천 메뉴가 뭐예요",
+      "reading_ja": "チュチョン メニュガ ムォエヨ",
+      "meaning_ja": "おすすめは何ですか",
+      "audio": "audio/ko_de902ac81a4222f0c5bc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "What do you recommend?",
+          "reading": "chucheon menyuga mwoyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "지하철역이 어디예요",
+      "reading_ja": "チハチョリョギ オディエヨ",
+      "meaning_ja": "地下鉄の駅はどこですか",
+      "audio": "audio/ko_0db316cad23cce381a5a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Where is the subway station?",
+          "reading": "jihacheolyeoki eodiyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "이거 얼마예요",
+      "reading_ja": "イゴ オルマエヨ",
+      "meaning_ja": "これはいくらですか",
+      "audio": "audio/ko_8a3e7d9c84c8e9c411c6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "How much is this?",
+          "reading": "igeo eolmayeyo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "사진 찍어 주세요",
+      "reading_ja": "サジン チゴ ジュセヨ",
+      "meaning_ja": "写真を撮ってください",
+      "audio": "audio/ko_ffeaa27f69dbeb0a0277.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please take a photo",
+          "reading": "sajin jjikeo juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "화장실이 어디예요",
+      "reading_ja": "ファジャンシリ オディエヨ",
+      "meaning_ja": "トイレはどこですか",
+      "audio": "audio/ko_a3a489dd23ac969892cc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Where is the restroom?",
+          "reading": "hwajangsili eodiyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "카드로 계산할게요",
+      "reading_ja": "カドゥロ ケサナルケヨ",
+      "meaning_ja": "カードで支払います",
+      "audio": "audio/ko_f44523651c4e01f09f9b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll pay by card",
+          "reading": "kadeuro gyesanhalgeyo"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "예약했어요",
+      "reading_ja": "イェヤケッソヨ",
+      "meaning_ja": "予約しました",
+      "audio": "audio/ko_e4fe5e289a1526076862.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I have a reservation",
+          "reading": "yeyakhaeteoyo"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "길을 잃었어요",
+      "reading_ja": "キルル イロッソヨ",
+      "meaning_ja": "道に迷いました",
+      "audio": "audio/ko_e084ed48031e0d01ef17.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm lost",
+          "reading": "gileul ileoteoyo"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "한 장 주세요",
+      "reading_ja": "ハン ジャン ジュセヨ",
+      "meaning_ja": "一枚ください",
+      "audio": "audio/ko_70765b0438cbdb740e71.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "One, please",
+          "reading": "han jang juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "매운 음식 괜찮아요",
+      "reading_ja": "メウン ウムシク ケンチャナヨ",
+      "meaning_ja": "辛い食べ物は大丈夫です",
+      "audio": "audio/ko_7adfaa360147992593de.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Spicy food is fine",
+          "reading": "maeun eumsik gwaenchanayo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "여기에서 내려요",
+      "reading_ja": "ヨギエソ ネリョヨ",
+      "meaning_ja": "ここで降ります",
+      "audio": "audio/ko_570e44f2bcc3ca712d9e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm getting off here",
+          "reading": "yeogieseo naeryeoyo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "공항까지 가 주세요",
+      "reading_ja": "コンハンカジ カ ジュセヨ",
+      "meaning_ja": "空港まで行ってください",
+      "audio": "audio/ko_24ec48880193886285f2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please take me to the airport",
+          "reading": "gonghangkkaji ga juseyo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Essential Korean Travel Phrases",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Korea Travel",
+        "Official",
+        "Conversation"
+      ]
+    },
+    "ko": {
+      "name": "한국 여행 필수 표현",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "한국 여행",
+        "공식",
+        "회화"
+      ]
+    }
+  }
+}

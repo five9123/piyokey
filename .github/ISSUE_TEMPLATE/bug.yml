@@ -1,0 +1,43 @@
+name: Bug
+description: 재현 가능한 회귀나 제품 결함을 기록합니다.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 증상
+      description: 기대 결과와 실제 결과를 함께 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 재현 단계
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 환경
+      description: 앱 버전/build, OS, 기기, 입력 방식, 네트워크 상태를 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: prd
+    attributes:
+      label: 관련 PRD 절 또는 계약
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 로그와 자료
+      description: 민감 정보를 제거한 로그, screenshot, recording 위치를 적어 주세요.
+  - type: textarea
+    id: regression
+    attributes:
+      label: 회귀 test 계획
+      description: 수정 뒤 추가할 자동 test 또는 수동 gate를 적어 주세요.
+    validations:
+      required: true

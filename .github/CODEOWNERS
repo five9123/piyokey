@@ -1,0 +1,9 @@
+# Initial ownership. Add platform maintainers as Android and Web work starts.
+* @five9123-maker
+
+# Cross-platform contracts and product decisions require owner review.
+/shared/ @five9123-maker
+/tools/ @five9123-maker
+/PRD.md @five9123-maker
+/DECISIONS.md @five9123-maker
+/AGENTS.md @five9123-maker

@@ -1,0 +1,28 @@
+name: Pronunciation audio contract
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'shared/mock_catalog/**'
+      - 'tools/**'
+      - 'ios/Hanco/Hanco/**'
+      - 'AGENTS.md'
+      - 'PRD.md'
+      - 'DECISIONS.md'
+
+jobs:
+  release-preflight:
+    name: Verify offline pronunciation asset contract
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate pronunciation catalog contract
+        run: python3 tools/release_preflight.py

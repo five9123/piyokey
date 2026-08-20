@@ -1,0 +1,3790 @@
+{
+  "catalog_version": 11,
+  "generated_at": "2026-07-26T12:00:00Z",
+  "decks": [
+    {
+      "deck_id": "official_keyboard_start",
+      "version": 4,
+      "name": "はじめての2ボル式",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": true,
+      "type": "word",
+      "level": 1,
+      "tags": [
+        "入門",
+        "キーボード",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "First Steps with Dubeolsik",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Beginner Basics",
+            "Keyboard",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "두벌식 첫걸음",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "입문",
+            "키보드",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4209,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-06T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "라",
+          "meaning_ja": "ㄹ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄹ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "마",
+          "meaning_ja": "ㅁ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅁ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "보",
+          "meaning_ja": "ㅂ + ㅗ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅂ + ㅗ"
+            }
+          }
+        },
+        {
+          "ko": "소",
+          "meaning_ja": "ㅅ + ㅗ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅅ + ㅗ"
+            }
+          }
+        },
+        {
+          "ko": "우",
+          "meaning_ja": "ㅇ + ㅜ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅇ + ㅜ"
+            }
+          }
+        },
+        {
+          "ko": "지",
+          "meaning_ja": "ㅈ + ㅣ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅈ + ㅣ"
+            }
+          }
+        },
+        {
+          "ko": "해",
+          "meaning_ja": "ㅎ + ㅐ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅎ + ㅐ"
+            }
+          }
+        },
+        {
+          "ko": "가",
+          "meaning_ja": "ㄱ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄱ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "나",
+          "meaning_ja": "ㄴ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄴ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "다",
+          "meaning_ja": "ㄷ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄷ + ㅏ"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_keyboard_start_v4.json"
+    },
+    {
+      "deck_id": "official_consonants",
+      "version": 4,
+      "name": "基本子音を覚えよう",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "word",
+      "level": 1,
+      "tags": [
+        "入門",
+        "子音",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Basic Korean Consonants",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Beginner Basics",
+            "Consonants",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "기본 자음 익히기",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "입문",
+            "자음",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4467,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-11T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "ㅅ",
+          "meaning_ja": "基本子音 ㅅ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅅ"
+            }
+          }
+        },
+        {
+          "ko": "ㅇ",
+          "meaning_ja": "基本子音 ㅇ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅇ"
+            }
+          }
+        },
+        {
+          "ko": "ㅈ",
+          "meaning_ja": "基本子音 ㅈ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅈ"
+            }
+          }
+        },
+        {
+          "ko": "ㅎ",
+          "meaning_ja": "基本子音 ㅎ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅎ"
+            }
+          }
+        },
+        {
+          "ko": "ㄱ",
+          "meaning_ja": "基本子音 ㄱ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㄱ"
+            }
+          }
+        },
+        {
+          "ko": "ㄴ",
+          "meaning_ja": "基本子音 ㄴ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㄴ"
+            }
+          }
+        },
+        {
+          "ko": "ㄷ",
+          "meaning_ja": "基本子音 ㄷ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㄷ"
+            }
+          }
+        },
+        {
+          "ko": "ㄹ",
+          "meaning_ja": "基本子音 ㄹ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㄹ"
+            }
+          }
+        },
+        {
+          "ko": "ㅁ",
+          "meaning_ja": "基本子音 ㅁ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅁ"
+            }
+          }
+        },
+        {
+          "ko": "ㅂ",
+          "meaning_ja": "基本子音 ㅂ",
+          "localizations": {
+            "en": {
+              "meaning": "basic consonant ㅂ"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_consonants_v4.json"
+    },
+    {
+      "deck_id": "official_vowels",
+      "version": 4,
+      "name": "基本母音を覚えよう",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "word",
+      "level": 1,
+      "tags": [
+        "入門",
+        "母音",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Basic Korean Vowels",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Beginner Basics",
+            "Vowels",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "기본 모음 익히기",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "입문",
+            "모음",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4338,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-16T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "ㅕ",
+          "meaning_ja": "基本母音 ㅕ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅕ"
+            }
+          }
+        },
+        {
+          "ko": "ㅏ",
+          "meaning_ja": "基本母音 ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "ㅓ",
+          "meaning_ja": "基本母音 ㅓ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅓ"
+            }
+          }
+        },
+        {
+          "ko": "ㅗ",
+          "meaning_ja": "基本母音 ㅗ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅗ"
+            }
+          }
+        },
+        {
+          "ko": "ㅜ",
+          "meaning_ja": "基本母音 ㅜ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅜ"
+            }
+          }
+        },
+        {
+          "ko": "ㅡ",
+          "meaning_ja": "基本母音 ㅡ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅡ"
+            }
+          }
+        },
+        {
+          "ko": "ㅣ",
+          "meaning_ja": "基本母音 ㅣ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅣ"
+            }
+          }
+        },
+        {
+          "ko": "ㅐ",
+          "meaning_ja": "基本母音 ㅐ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅐ"
+            }
+          }
+        },
+        {
+          "ko": "ㅔ",
+          "meaning_ja": "基本母音 ㅔ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅔ"
+            }
+          }
+        },
+        {
+          "ko": "ㅑ",
+          "meaning_ja": "基本母音 ㅑ",
+          "localizations": {
+            "en": {
+              "meaning": "basic vowel ㅑ"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_vowels_v4.json"
+    },
+    {
+      "deck_id": "official_syllable_building",
+      "version": 4,
+      "name": "子音＋母音で組み立てる",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "word",
+      "level": 1,
+      "tags": [
+        "入門",
+        "組み立て",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Build Korean Syllables",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Beginner Basics",
+            "Syllable Building",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "자음과 모음으로 음절 만들기",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "입문",
+            "음절 조합",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4246,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-21T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "다",
+          "meaning_ja": "ㄷ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄷ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "라",
+          "meaning_ja": "ㄹ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄹ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "마",
+          "meaning_ja": "ㅁ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅁ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "보",
+          "meaning_ja": "ㅂ + ㅗ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅂ + ㅗ"
+            }
+          }
+        },
+        {
+          "ko": "소",
+          "meaning_ja": "ㅅ + ㅗ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅅ + ㅗ"
+            }
+          }
+        },
+        {
+          "ko": "우",
+          "meaning_ja": "ㅇ + ㅜ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅇ + ㅜ"
+            }
+          }
+        },
+        {
+          "ko": "지",
+          "meaning_ja": "ㅈ + ㅣ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅈ + ㅣ"
+            }
+          }
+        },
+        {
+          "ko": "해",
+          "meaning_ja": "ㅎ + ㅐ",
+          "localizations": {
+            "en": {
+              "meaning": "ㅎ + ㅐ"
+            }
+          }
+        },
+        {
+          "ko": "가",
+          "meaning_ja": "ㄱ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄱ + ㅏ"
+            }
+          }
+        },
+        {
+          "ko": "나",
+          "meaning_ja": "ㄴ + ㅏ",
+          "localizations": {
+            "en": {
+              "meaning": "ㄴ + ㅏ"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_syllable_building_v4.json"
+    },
+    {
+      "deck_id": "official_batchim",
+      "version": 4,
+      "name": "パッチム入門",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "word",
+      "level": 2,
+      "tags": [
+        "入門",
+        "パッチム",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Batchim Basics",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Beginner Basics",
+            "Batchim",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "받침 첫걸음",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "입문",
+            "받침",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4403,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-26T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "강",
+          "meaning_ja": "終声 ㅇ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㅇ"
+            }
+          }
+        },
+        {
+          "ko": "꽃",
+          "meaning_ja": "濃音と終声",
+          "localizations": {
+            "en": {
+              "meaning": "tense consonant and final consonant"
+            }
+          }
+        },
+        {
+          "ko": "집",
+          "meaning_ja": "終声 ㅂ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㅂ"
+            }
+          }
+        },
+        {
+          "ko": "책",
+          "meaning_ja": "終声 ㄱ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㄱ"
+            }
+          }
+        },
+        {
+          "ko": "문",
+          "meaning_ja": "終声 ㄴ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㄴ"
+            }
+          }
+        },
+        {
+          "ko": "간",
+          "meaning_ja": "終声 ㄴ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㄴ"
+            }
+          }
+        },
+        {
+          "ko": "달",
+          "meaning_ja": "終声 ㄹ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㄹ"
+            }
+          }
+        },
+        {
+          "ko": "밤",
+          "meaning_ja": "終声 ㅁ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㅁ"
+            }
+          }
+        },
+        {
+          "ko": "밥",
+          "meaning_ja": "終声 ㅂ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㅂ"
+            }
+          }
+        },
+        {
+          "ko": "옷",
+          "meaning_ja": "終声 ㅅ",
+          "localizations": {
+            "en": {
+              "meaning": "final consonant ㅅ"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_batchim_v4.json"
+    },
+    {
+      "deck_id": "official_daily_words",
+      "version": 5,
+      "name": "毎日の韓国語",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": true,
+      "type": "word",
+      "level": 1,
+      "tags": [
+        "日常",
+        "公式",
+        "単語"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Everyday Korean Words",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Everyday",
+            "Official",
+            "Words"
+          ]
+        },
+        "ko": {
+          "name": "매일 쓰는 한국어 단어",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "일상",
+            "공식",
+            "단어"
+          ]
+        }
+      },
+      "item_count": 13,
+      "size_bytes": 4574,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-01-31T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "회사",
+          "meaning_ja": "会社",
+          "localizations": {
+            "en": {
+              "meaning": "company"
+            }
+          }
+        },
+        {
+          "ko": "학교",
+          "meaning_ja": "学校",
+          "localizations": {
+            "en": {
+              "meaning": "school"
+            }
+          }
+        },
+        {
+          "ko": "날씨",
+          "meaning_ja": "天気",
+          "localizations": {
+            "en": {
+              "meaning": "weather"
+            }
+          }
+        },
+        {
+          "ko": "주말",
+          "meaning_ja": "週末",
+          "localizations": {
+            "en": {
+              "meaning": "weekend"
+            }
+          }
+        },
+        {
+          "ko": "가족",
+          "meaning_ja": "家族",
+          "localizations": {
+            "en": {
+              "meaning": "family"
+            }
+          }
+        },
+        {
+          "ko": "시간",
+          "meaning_ja": "時間",
+          "localizations": {
+            "en": {
+              "meaning": "time"
+            }
+          }
+        },
+        {
+          "ko": "마음",
+          "meaning_ja": "心",
+          "localizations": {
+            "en": {
+              "meaning": "heart"
+            }
+          }
+        },
+        {
+          "ko": "휴일",
+          "meaning_ja": "休日",
+          "localizations": {
+            "en": {
+              "meaning": "day off"
+            }
+          }
+        },
+        {
+          "ko": "산책",
+          "meaning_ja": "散歩",
+          "localizations": {
+            "en": {
+              "meaning": "walk"
+            }
+          }
+        },
+        {
+          "ko": "공부",
+          "meaning_ja": "勉強",
+          "localizations": {
+            "en": {
+              "meaning": "study"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_daily_words_v5.json"
+    },
+    {
+      "deck_id": "official_verbs_adjectives",
+      "version": 4,
+      "name": "基本の動詞・形容詞",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "word",
+      "level": 2,
+      "tags": [
+        "基礎単語",
+        "動詞",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Essential Verbs & Adjectives",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Essential Vocabulary",
+            "Verbs",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "기본 동사·형용사",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "기본 어휘",
+            "동사",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4389,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-02-05T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "예쁘다",
+          "meaning_ja": "きれいだ",
+          "localizations": {
+            "en": {
+              "meaning": "to be pretty"
+            }
+          }
+        },
+        {
+          "ko": "재미있다",
+          "meaning_ja": "面白い",
+          "localizations": {
+            "en": {
+              "meaning": "to be fun"
+            }
+          }
+        },
+        {
+          "ko": "괜찮다",
+          "meaning_ja": "大丈夫だ",
+          "localizations": {
+            "en": {
+              "meaning": "to be okay"
+            }
+          }
+        },
+        {
+          "ko": "가다",
+          "meaning_ja": "行く",
+          "localizations": {
+            "en": {
+              "meaning": "to go"
+            }
+          }
+        },
+        {
+          "ko": "오다",
+          "meaning_ja": "来る",
+          "localizations": {
+            "en": {
+              "meaning": "to come"
+            }
+          }
+        },
+        {
+          "ko": "먹다",
+          "meaning_ja": "食べる",
+          "localizations": {
+            "en": {
+              "meaning": "to eat"
+            }
+          }
+        },
+        {
+          "ko": "보다",
+          "meaning_ja": "見る",
+          "localizations": {
+            "en": {
+              "meaning": "to see"
+            }
+          }
+        },
+        {
+          "ko": "하다",
+          "meaning_ja": "する",
+          "localizations": {
+            "en": {
+              "meaning": "to do"
+            }
+          }
+        },
+        {
+          "ko": "좋다",
+          "meaning_ja": "良い",
+          "localizations": {
+            "en": {
+              "meaning": "to be good"
+            }
+          }
+        },
+        {
+          "ko": "크다",
+          "meaning_ja": "大きい",
+          "localizations": {
+            "en": {
+              "meaning": "to be big"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_verbs_adjectives_v4.json"
+    },
+    {
+      "deck_id": "official_daily_phrases",
+      "version": 5,
+      "name": "毎日使う短いフレーズ",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "日常",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Everyday Short Phrases",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Everyday",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "매일 쓰는 짧은 표현",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "일상",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5351,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-02-10T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "행복하게 웃어요",
+          "meaning_ja": "幸せに笑ってください",
+          "localizations": {
+            "en": {
+              "meaning": "Please keep smiling"
+            }
+          }
+        },
+        {
+          "ko": "오늘 하루 어땠어요",
+          "meaning_ja": "今日はどうでしたか",
+          "localizations": {
+            "en": {
+              "meaning": "How was your day?"
+            }
+          }
+        },
+        {
+          "ko": "도와줘서 고마워요",
+          "meaning_ja": "手伝ってくれてありがとう",
+          "localizations": {
+            "en": {
+              "meaning": "Thank you for helping me"
+            }
+          }
+        },
+        {
+          "ko": "다음에 또 말해요",
+          "meaning_ja": "今度また話しましょう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's talk again next time"
+            }
+          }
+        },
+        {
+          "ko": "좋은 아침이에요",
+          "meaning_ja": "おはようございます",
+          "localizations": {
+            "en": {
+              "meaning": "Good morning"
+            }
+          }
+        },
+        {
+          "ko": "오늘 날씨가 좋아요",
+          "meaning_ja": "今日は天気が良いです",
+          "localizations": {
+            "en": {
+              "meaning": "The weather is nice today"
+            }
+          }
+        },
+        {
+          "ko": "점심 같이 먹어요",
+          "meaning_ja": "昼食を一緒に食べましょう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's have lunch together"
+            }
+          }
+        },
+        {
+          "ko": "조금 피곤해요",
+          "meaning_ja": "少し疲れています",
+          "localizations": {
+            "en": {
+              "meaning": "I'm a little tired"
+            }
+          }
+        },
+        {
+          "ko": "지금 집에 가요",
+          "meaning_ja": "今家に帰ります",
+          "localizations": {
+            "en": {
+              "meaning": "I'm going home now"
+            }
+          }
+        },
+        {
+          "ko": "내일 다시 만나요",
+          "meaning_ja": "明日また会いましょう",
+          "localizations": {
+            "en": {
+              "meaning": "See you again tomorrow"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_daily_phrases_v5.json"
+    },
+    {
+      "deck_id": "official_travel_phrases",
+      "version": 4,
+      "name": "韓国旅行ですぐ使える表現",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": true,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "韓国旅行",
+        "公式",
+        "会話"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Essential Korean Travel Phrases",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Korea Travel",
+            "Official",
+            "Conversation"
+          ]
+        },
+        "ko": {
+          "name": "한국 여행 필수 표현",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "한국 여행",
+            "공식",
+            "회화"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5348,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-02-15T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "추천 메뉴가 뭐예요",
+          "meaning_ja": "おすすめは何ですか",
+          "localizations": {
+            "en": {
+              "meaning": "What do you recommend?"
+            }
+          }
+        },
+        {
+          "ko": "지하철역이 어디예요",
+          "meaning_ja": "地下鉄の駅はどこですか",
+          "localizations": {
+            "en": {
+              "meaning": "Where is the subway station?"
+            }
+          }
+        },
+        {
+          "ko": "이거 얼마예요",
+          "meaning_ja": "これはいくらですか",
+          "localizations": {
+            "en": {
+              "meaning": "How much is this?"
+            }
+          }
+        },
+        {
+          "ko": "사진 찍어 주세요",
+          "meaning_ja": "写真を撮ってください",
+          "localizations": {
+            "en": {
+              "meaning": "Please take a photo"
+            }
+          }
+        },
+        {
+          "ko": "화장실이 어디예요",
+          "meaning_ja": "トイレはどこですか",
+          "localizations": {
+            "en": {
+              "meaning": "Where is the restroom?"
+            }
+          }
+        },
+        {
+          "ko": "카드로 계산할게요",
+          "meaning_ja": "カードで支払います",
+          "localizations": {
+            "en": {
+              "meaning": "I'll pay by card"
+            }
+          }
+        },
+        {
+          "ko": "예약했어요",
+          "meaning_ja": "予約しました",
+          "localizations": {
+            "en": {
+              "meaning": "I have a reservation"
+            }
+          }
+        },
+        {
+          "ko": "길을 잃었어요",
+          "meaning_ja": "道に迷いました",
+          "localizations": {
+            "en": {
+              "meaning": "I'm lost"
+            }
+          }
+        },
+        {
+          "ko": "한 장 주세요",
+          "meaning_ja": "一枚ください",
+          "localizations": {
+            "en": {
+              "meaning": "One, please"
+            }
+          }
+        },
+        {
+          "ko": "매운 음식 괜찮아요",
+          "meaning_ja": "辛い食べ物は大丈夫です",
+          "localizations": {
+            "en": {
+              "meaning": "Spicy food is fine"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_travel_phrases_v4.json"
+    },
+    {
+      "deck_id": "official_topik_one",
+      "version": 4,
+      "name": "TOPIK I 基本単語",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": true,
+      "type": "word",
+      "level": 2,
+      "tags": [
+        "TOPIK",
+        "公式",
+        "検定"
+      ],
+      "localizations": {
+        "en": {
+          "name": "TOPIK I Essential Words",
+          "author_nickname": "typee Official",
+          "tags": [
+            "TOPIK",
+            "Official",
+            "Test Prep"
+          ]
+        },
+        "ko": {
+          "name": "TOPIK I 기본 단어",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "TOPIK",
+            "공식",
+            "시험 대비"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4353,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-02-20T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "교육",
+          "meaning_ja": "教育",
+          "localizations": {
+            "en": {
+              "meaning": "education"
+            }
+          }
+        },
+        {
+          "ko": "환경",
+          "meaning_ja": "環境",
+          "localizations": {
+            "en": {
+              "meaning": "environment"
+            }
+          }
+        },
+        {
+          "ko": "건강",
+          "meaning_ja": "健康",
+          "localizations": {
+            "en": {
+              "meaning": "health"
+            }
+          }
+        },
+        {
+          "ko": "교통",
+          "meaning_ja": "交通",
+          "localizations": {
+            "en": {
+              "meaning": "transportation"
+            }
+          }
+        },
+        {
+          "ko": "생활",
+          "meaning_ja": "生活",
+          "localizations": {
+            "en": {
+              "meaning": "daily life"
+            }
+          }
+        },
+        {
+          "ko": "사회",
+          "meaning_ja": "社会",
+          "localizations": {
+            "en": {
+              "meaning": "society"
+            }
+          }
+        },
+        {
+          "ko": "계획",
+          "meaning_ja": "計画",
+          "localizations": {
+            "en": {
+              "meaning": "plan"
+            }
+          }
+        },
+        {
+          "ko": "경험",
+          "meaning_ja": "経験",
+          "localizations": {
+            "en": {
+              "meaning": "experience"
+            }
+          }
+        },
+        {
+          "ko": "관계",
+          "meaning_ja": "関係",
+          "localizations": {
+            "en": {
+              "meaning": "relationship"
+            }
+          }
+        },
+        {
+          "ko": "방법",
+          "meaning_ja": "方法",
+          "localizations": {
+            "en": {
+              "meaning": "method"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_topik_one_v4.json"
+    },
+    {
+      "deck_id": "official_trending_korean",
+      "version": 4,
+      "name": "今どき韓国語",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": true,
+      "type": "word",
+      "level": 2,
+      "tags": [
+        "今どき",
+        "SNS",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Korean Slang & Trends",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Trending",
+            "Social Media",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "요즘 한국어",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "요즘",
+            "SNS",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4703,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-02-25T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "레전드",
+          "meaning_ja": "伝説級",
+          "localizations": {
+            "en": {
+              "meaning": "legendary"
+            }
+          }
+        },
+        {
+          "ko": "찐이다",
+          "meaning_ja": "本物だ",
+          "localizations": {
+            "en": {
+              "meaning": "It's the real deal"
+            }
+          }
+        },
+        {
+          "ko": "폼 미쳤다",
+          "meaning_ja": "絶好調だ",
+          "localizations": {
+            "en": {
+              "meaning": "You're on fire"
+            }
+          }
+        },
+        {
+          "ko": "저점매수",
+          "meaning_ja": "底値買い",
+          "localizations": {
+            "en": {
+              "meaning": "buying the dip"
+            }
+          }
+        },
+        {
+          "ko": "너 뭐 돼",
+          "meaning_ja": "お前、何様？",
+          "localizations": {
+            "en": {
+              "meaning": "Who do you think you are?"
+            }
+          }
+        },
+        {
+          "ko": "야호",
+          "meaning_ja": "やっほー",
+          "localizations": {
+            "en": {
+              "meaning": "Woo-hoo!"
+            }
+          }
+        },
+        {
+          "ko": "완전 좋아",
+          "meaning_ja": "すごく好き",
+          "localizations": {
+            "en": {
+              "meaning": "I love it"
+            }
+          }
+        },
+        {
+          "ko": "가보자고",
+          "meaning_ja": "行ってみよう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's go check it out"
+            }
+          }
+        },
+        {
+          "ko": "인정",
+          "meaning_ja": "同意",
+          "localizations": {
+            "en": {
+              "meaning": "Agreed"
+            }
+          }
+        },
+        {
+          "ko": "취향 저격",
+          "meaning_ja": "好みにぴったり",
+          "localizations": {
+            "en": {
+              "meaning": "Exactly my taste"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_trending_korean_v4.json"
+    },
+    {
+      "deck_id": "official_kpop_spark",
+      "version": 3,
+      "name": "オリジナルK-POP：ときめき",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 1,
+      "tags": [
+        "K-POP",
+        "歌詞風",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Original K-Pop: First Spark",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Pop",
+            "Lyric-Inspired",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "오리지널 K-POP: 설렘",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-POP",
+            "가사풍",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 4991,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-02T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "첫눈",
+          "meaning_ja": "初雪",
+          "localizations": {
+            "en": {
+              "meaning": "first snow"
+            }
+          }
+        },
+        {
+          "ko": "떨림",
+          "meaning_ja": "ときめき",
+          "localizations": {
+            "en": {
+              "meaning": "flutter"
+            }
+          }
+        },
+        {
+          "ko": "심장 박동",
+          "meaning_ja": "胸の鼓動",
+          "localizations": {
+            "en": {
+              "meaning": "heartbeat"
+            }
+          }
+        },
+        {
+          "ko": "눈부신 너",
+          "meaning_ja": "まぶしい君",
+          "localizations": {
+            "en": {
+              "meaning": "You shine so bright"
+            }
+          }
+        },
+        {
+          "ko": "우리의 리듬",
+          "meaning_ja": "私たちのリズム",
+          "localizations": {
+            "en": {
+              "meaning": "Our rhythm"
+            }
+          }
+        },
+        {
+          "ko": "두 손을 높이",
+          "meaning_ja": "両手を高く",
+          "localizations": {
+            "en": {
+              "meaning": "Put both hands up high"
+            }
+          }
+        },
+        {
+          "ko": "빛을 따라가",
+          "meaning_ja": "光を追いかけて",
+          "localizations": {
+            "en": {
+              "meaning": "Follow the light"
+            }
+          }
+        },
+        {
+          "ko": "오늘을 크게 노래해",
+          "meaning_ja": "今日を高らかに歌おう",
+          "localizations": {
+            "en": {
+              "meaning": "Sing today out loud"
+            }
+          }
+        },
+        {
+          "ko": "함께 춤을 춰",
+          "meaning_ja": "一緒に踊ろう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's dance together"
+            }
+          }
+        },
+        {
+          "ko": "내 맘에 번진 빛",
+          "meaning_ja": "心に広がった光",
+          "localizations": {
+            "en": {
+              "meaning": "The light that spread through my heart"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_kpop_spark_v3.json"
+    },
+    {
+      "deck_id": "official_kpop_dream",
+      "version": 3,
+      "name": "オリジナルK-POP：夢とエール",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "K-POP",
+        "歌詞風",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Original K-Pop: Dreams & Cheers",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Pop",
+            "Lyric-Inspired",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "오리지널 K-POP: 꿈과 응원",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-POP",
+            "가사풍",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5011,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-07T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "끝없는 길",
+          "meaning_ja": "果てしない道",
+          "localizations": {
+            "en": {
+              "meaning": "endless road"
+            }
+          }
+        },
+        {
+          "ko": "겁내지 마",
+          "meaning_ja": "怖がらないで",
+          "localizations": {
+            "en": {
+              "meaning": "Don't be afraid"
+            }
+          }
+        },
+        {
+          "ko": "손을 잡아",
+          "meaning_ja": "手を取って",
+          "localizations": {
+            "en": {
+              "meaning": "Take my hand"
+            }
+          }
+        },
+        {
+          "ko": "더 크게 외쳐",
+          "meaning_ja": "もっと大きく叫んで",
+          "localizations": {
+            "en": {
+              "meaning": "Shout louder"
+            }
+          }
+        },
+        {
+          "ko": "꿈을 향해 달려",
+          "meaning_ja": "夢へ向かって走って",
+          "localizations": {
+            "en": {
+              "meaning": "Run toward your dream"
+            }
+          }
+        },
+        {
+          "ko": "넘어져도 괜찮아",
+          "meaning_ja": "転んでも大丈夫",
+          "localizations": {
+            "en": {
+              "meaning": "It's okay if you fall"
+            }
+          }
+        },
+        {
+          "ko": "우리가 답을 만들자",
+          "meaning_ja": "私たちで答えを作ろう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's create the answer together"
+            }
+          }
+        },
+        {
+          "ko": "끝까지 빛을 내",
+          "meaning_ja": "最後まで輝いて",
+          "localizations": {
+            "en": {
+              "meaning": "Keep shining till the end"
+            }
+          }
+        },
+        {
+          "ko": "내일은 더 가까워",
+          "meaning_ja": "明日はもっと近い",
+          "localizations": {
+            "en": {
+              "meaning": "We'll be closer tomorrow"
+            }
+          }
+        },
+        {
+          "ko": "꿈결",
+          "meaning_ja": "夢うつつ",
+          "localizations": {
+            "en": {
+              "meaning": "dreamlike haze"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_kpop_dream_v3.json"
+    },
+    {
+      "deck_id": "official_kpop_night",
+      "version": 3,
+      "name": "オリジナルK-POP：夜と星",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "K-POP",
+        "歌詞風",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Original K-Pop: Night & Stars",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Pop",
+            "Lyric-Inspired",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "오리지널 K-POP: 밤과 별",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-POP",
+            "가사풍",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5053,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-12T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "별을 세며 걸어",
+          "meaning_ja": "星を数えながら歩く",
+          "localizations": {
+            "en": {
+              "meaning": "Walk while counting the stars"
+            }
+          }
+        },
+        {
+          "ko": "네 목소릴 따라가",
+          "meaning_ja": "君の声を追いかける",
+          "localizations": {
+            "en": {
+              "meaning": "I follow your voice"
+            }
+          }
+        },
+        {
+          "ko": "우리만의 은하수",
+          "meaning_ja": "私たちだけの天の川",
+          "localizations": {
+            "en": {
+              "meaning": "Our own Milky Way"
+            }
+          }
+        },
+        {
+          "ko": "달이 지기 전까지",
+          "meaning_ja": "月が沈むまで",
+          "localizations": {
+            "en": {
+              "meaning": "Until the moon sets"
+            }
+          }
+        },
+        {
+          "ko": "이 밤을 기억해 줘",
+          "meaning_ja": "この夜を覚えていて",
+          "localizations": {
+            "en": {
+              "meaning": "Remember this night"
+            }
+          }
+        },
+        {
+          "ko": "꿈속에서 다시 만나",
+          "meaning_ja": "夢の中でもう一度会おう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's meet again in our dreams"
+            }
+          }
+        },
+        {
+          "ko": "별빛",
+          "meaning_ja": "星明かり",
+          "localizations": {
+            "en": {
+              "meaning": "starlight"
+            }
+          }
+        },
+        {
+          "ko": "달빛",
+          "meaning_ja": "月明かり",
+          "localizations": {
+            "en": {
+              "meaning": "moonlight"
+            }
+          }
+        },
+        {
+          "ko": "푸른 밤",
+          "meaning_ja": "青い夜",
+          "localizations": {
+            "en": {
+              "meaning": "Blue night"
+            }
+          }
+        },
+        {
+          "ko": "새벽 공기",
+          "meaning_ja": "夜明けの空気",
+          "localizations": {
+            "en": {
+              "meaning": "dawn air"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_kpop_night_v3.json"
+    },
+    {
+      "deck_id": "official_drama_romance",
+      "version": 3,
+      "name": "Kドラマ会話：恋の予感",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "Kドラマ",
+        "恋愛",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "K-Drama Dialogue: Hint of Romance",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Drama",
+            "Romance",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "K-드라마 대화: 사랑의 예감",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-드라마",
+            "연애",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5218,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-17T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "내 마음이 들리나요",
+          "meaning_ja": "私の心が聞こえますか",
+          "localizations": {
+            "en": {
+              "meaning": "Can you hear my heart?"
+            }
+          }
+        },
+        {
+          "ko": "천천히 다가와 줘",
+          "meaning_ja": "ゆっくり近づいてきて",
+          "localizations": {
+            "en": {
+              "meaning": "Come closer slowly"
+            }
+          }
+        },
+        {
+          "ko": "이번엔 놓치지 않아",
+          "meaning_ja": "今度は離さない",
+          "localizations": {
+            "en": {
+              "meaning": "I won't let go this time"
+            }
+          }
+        },
+        {
+          "ko": "인연",
+          "meaning_ja": "縁",
+          "localizations": {
+            "en": {
+              "meaning": "destined connection"
+            }
+          }
+        },
+        {
+          "ko": "첫사랑",
+          "meaning_ja": "初恋",
+          "localizations": {
+            "en": {
+              "meaning": "first love"
+            }
+          }
+        },
+        {
+          "ko": "잠깐만요",
+          "meaning_ja": "ちょっと待ってください",
+          "localizations": {
+            "en": {
+              "meaning": "Just a moment, please"
+            }
+          }
+        },
+        {
+          "ko": "보고 싶었어",
+          "meaning_ja": "会いたかった",
+          "localizations": {
+            "en": {
+              "meaning": "I missed you"
+            }
+          }
+        },
+        {
+          "ko": "내 옆에 있어 줘",
+          "meaning_ja": "私のそばにいて",
+          "localizations": {
+            "en": {
+              "meaning": "Stay by my side"
+            }
+          }
+        },
+        {
+          "ko": "왜 이제 왔어요",
+          "meaning_ja": "どうして今来たのですか",
+          "localizations": {
+            "en": {
+              "meaning": "Why did you come so late?"
+            }
+          }
+        },
+        {
+          "ko": "오늘은 가지 마요",
+          "meaning_ja": "今日は行かないで",
+          "localizations": {
+            "en": {
+              "meaning": "Don't go today"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_drama_romance_v3.json"
+    },
+    {
+      "deck_id": "official_drama_mystery",
+      "version": 3,
+      "name": "Kドラマ会話：秘密と逆転",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 3,
+      "tags": [
+        "Kドラマ",
+        "ミステリー",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "K-Drama Dialogue: Secrets & Twists",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Drama",
+            "Mystery",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "K-드라마 대화: 비밀과 반전",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-드라마",
+            "미스터리",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5194,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-22T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "비밀",
+          "meaning_ja": "秘密",
+          "localizations": {
+            "en": {
+              "meaning": "secret"
+            }
+          }
+        },
+        {
+          "ko": "단서",
+          "meaning_ja": "手がかり",
+          "localizations": {
+            "en": {
+              "meaning": "clue"
+            }
+          }
+        },
+        {
+          "ko": "누구세요",
+          "meaning_ja": "どなたですか",
+          "localizations": {
+            "en": {
+              "meaning": "Who are you?"
+            }
+          }
+        },
+        {
+          "ko": "문 열어 줘요",
+          "meaning_ja": "ドアを開けてください",
+          "localizations": {
+            "en": {
+              "meaning": "Please open the door"
+            }
+          }
+        },
+        {
+          "ko": "사실대로 말해요",
+          "meaning_ja": "本当のことを話して",
+          "localizations": {
+            "en": {
+              "meaning": "Tell me the truth"
+            }
+          }
+        },
+        {
+          "ko": "아직 끝나지 않았어",
+          "meaning_ja": "まだ終わっていない",
+          "localizations": {
+            "en": {
+              "meaning": "It's not over yet"
+            }
+          }
+        },
+        {
+          "ko": "난 전부 기억해",
+          "meaning_ja": "私は全部覚えている",
+          "localizations": {
+            "en": {
+              "meaning": "I remember everything"
+            }
+          }
+        },
+        {
+          "ko": "범인은 따로 있어",
+          "meaning_ja": "犯人は別にいる",
+          "localizations": {
+            "en": {
+              "meaning": "The real culprit is someone else"
+            }
+          }
+        },
+        {
+          "ko": "이제 진실을 말해",
+          "meaning_ja": "もう真実を話して",
+          "localizations": {
+            "en": {
+              "meaning": "Tell me the truth now"
+            }
+          }
+        },
+        {
+          "ko": "우리 편이 맞나요",
+          "meaning_ja": "私たちの味方ですか",
+          "localizations": {
+            "en": {
+              "meaning": "Are you on our side?"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_drama_mystery_v3.json"
+    },
+    {
+      "deck_id": "official_drama_daily",
+      "version": 3,
+      "name": "Kドラマ会話：毎日のぬくもり",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "Kドラマ",
+        "日常",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "K-Drama Dialogue: Everyday Warmth",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Drama",
+            "Everyday",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "K-드라마 대화: 일상의 온기",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-드라마",
+            "일상",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5339,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-03-27T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "밥은 먹었어",
+          "meaning_ja": "ご飯は食べた？",
+          "localizations": {
+            "en": {
+              "meaning": "Have you eaten?"
+            }
+          }
+        },
+        {
+          "ko": "커피 한잔할래",
+          "meaning_ja": "コーヒーを一杯どう？",
+          "localizations": {
+            "en": {
+              "meaning": "Want to grab a coffee?"
+            }
+          }
+        },
+        {
+          "ko": "오늘 정말 바빴어",
+          "meaning_ja": "今日は本当に忙しかった",
+          "localizations": {
+            "en": {
+              "meaning": "I was really busy today"
+            }
+          }
+        },
+        {
+          "ko": "집에 가서 푹 쉬어",
+          "meaning_ja": "家に帰ってゆっくり休んで",
+          "localizations": {
+            "en": {
+              "meaning": "Go home and get some good rest"
+            }
+          }
+        },
+        {
+          "ko": "저녁은 내가 살게",
+          "meaning_ja": "夕食は私がおごるよ",
+          "localizations": {
+            "en": {
+              "meaning": "Dinner's on me"
+            }
+          }
+        },
+        {
+          "ko": "주말에 같이 걸을까",
+          "meaning_ja": "週末に一緒に歩こうか",
+          "localizations": {
+            "en": {
+              "meaning": "Shall we take a walk this weekend?"
+            }
+          }
+        },
+        {
+          "ko": "늦으면 먼저 연락해",
+          "meaning_ja": "遅れるなら先に連絡して",
+          "localizations": {
+            "en": {
+              "meaning": "Let me know if you're going to be late"
+            }
+          }
+        },
+        {
+          "ko": "힘들면 내게 말해",
+          "meaning_ja": "つらいなら私に話して",
+          "localizations": {
+            "en": {
+              "meaning": "Tell me if you're having a hard time"
+            }
+          }
+        },
+        {
+          "ko": "아침에 깨워 줘",
+          "meaning_ja": "朝に起こして",
+          "localizations": {
+            "en": {
+              "meaning": "Wake me up in the morning"
+            }
+          }
+        },
+        {
+          "ko": "퇴근",
+          "meaning_ja": "退勤",
+          "localizations": {
+            "en": {
+              "meaning": "leaving work"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_drama_daily_v3.json"
+    },
+    {
+      "deck_id": "official_fun_travel_moments",
+      "version": 2,
+      "name": "旅先で使えるひと言",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "韓国旅行",
+        "ひと言",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Travel One-Liners",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Korea Travel",
+            "Quick Phrases",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "여행지에서 쓰는 한마디",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "한국 여행",
+            "한마디",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5535,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-01T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "여기서 내려 주세요",
+          "meaning_ja": "ここで降ろしてください",
+          "localizations": {
+            "en": {
+              "meaning": "Please let me off here"
+            }
+          }
+        },
+        {
+          "ko": "같이 여행 가요",
+          "meaning_ja": "一緒に旅行しましょう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's travel together"
+            }
+          }
+        },
+        {
+          "ko": "다음 역은 어디예요",
+          "meaning_ja": "次の駅はどこですか",
+          "localizations": {
+            "en": {
+              "meaning": "What is the next station?"
+            }
+          }
+        },
+        {
+          "ko": "짐을 맡아 주세요",
+          "meaning_ja": "荷物を預かってください",
+          "localizations": {
+            "en": {
+              "meaning": "Please store my luggage"
+            }
+          }
+        },
+        {
+          "ko": "노을 보러 갈래요",
+          "meaning_ja": "夕日を見に行きませんか",
+          "localizations": {
+            "en": {
+              "meaning": "Would you like to go see the sunset?"
+            }
+          }
+        },
+        {
+          "ko": "근처 맛집 있어요",
+          "meaning_ja": "近くに人気店はありますか",
+          "localizations": {
+            "en": {
+              "meaning": "Is there a good restaurant nearby?"
+            }
+          }
+        },
+        {
+          "ko": "사진 부탁해요",
+          "meaning_ja": "写真をお願いします",
+          "localizations": {
+            "en": {
+              "meaning": "Please take a photo"
+            }
+          }
+        },
+        {
+          "ko": "여기 진짜 예뻐요",
+          "meaning_ja": "ここ、本当にきれいです",
+          "localizations": {
+            "en": {
+              "meaning": "It's really beautiful here"
+            }
+          }
+        },
+        {
+          "ko": "우리 길 잃은 거야",
+          "meaning_ja": "私たち、道に迷ったの？",
+          "localizations": {
+            "en": {
+              "meaning": "Are we lost?"
+            }
+          }
+        },
+        {
+          "ko": "막차 몇 시예요",
+          "meaning_ja": "終電は何時ですか",
+          "localizations": {
+            "en": {
+              "meaning": "What time is the last train?"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_travel_moments_v2.json"
+    },
+    {
+      "deck_id": "official_fun_food_cafe",
+      "version": 2,
+      "name": "カフェ・グルメのひと言",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "韓国旅行",
+        "グルメ",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Cafe & Food One-Liners",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Korea Travel",
+            "Food & Dining",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "카페·맛집 한마디",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "한국 여행",
+            "맛집",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5438,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-06T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "디저트는 못 참아",
+          "meaning_ja": "デザートは我慢できない",
+          "localizations": {
+            "en": {
+              "meaning": "I can't resist dessert"
+            }
+          }
+        },
+        {
+          "ko": "여기 또 오고 싶다",
+          "meaning_ja": "ここにまた来たい",
+          "localizations": {
+            "en": {
+              "meaning": "I want to come here again"
+            }
+          }
+        },
+        {
+          "ko": "매운맛 도전할게요",
+          "meaning_ja": "辛い味に挑戦します",
+          "localizations": {
+            "en": {
+              "meaning": "I'll try the spicy version"
+            }
+          }
+        },
+        {
+          "ko": "아이스로 주세요",
+          "meaning_ja": "アイスでください",
+          "localizations": {
+            "en": {
+              "meaning": "Iced, please"
+            }
+          }
+        },
+        {
+          "ko": "덜 맵게 해 주세요",
+          "meaning_ja": "辛さ控えめにしてください",
+          "localizations": {
+            "en": {
+              "meaning": "Please make it less spicy"
+            }
+          }
+        },
+        {
+          "ko": "이거 진짜 맛있다",
+          "meaning_ja": "これ、本当においしい",
+          "localizations": {
+            "en": {
+              "meaning": "This is really delicious"
+            }
+          }
+        },
+        {
+          "ko": "한입만 주세요",
+          "meaning_ja": "一口だけください",
+          "localizations": {
+            "en": {
+              "meaning": "Just one bite, please"
+            }
+          }
+        },
+        {
+          "ko": "사진부터 찍자",
+          "meaning_ja": "まず写真を撮ろう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's take a photo first"
+            }
+          }
+        },
+        {
+          "ko": "카페 분위기 좋다",
+          "meaning_ja": "カフェの雰囲気がいい",
+          "localizations": {
+            "en": {
+              "meaning": "This cafe has a great vibe"
+            }
+          }
+        },
+        {
+          "ko": "추천 메뉴 뭐예요",
+          "meaning_ja": "おすすめは何ですか",
+          "localizations": {
+            "en": {
+              "meaning": "What do you recommend?"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_food_cafe_v2.json"
+    },
+    {
+      "deck_id": "official_fun_couple_conflict",
+      "version": 2,
+      "name": "彼氏にモヤッとした時",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "恋愛",
+        "カップル",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "When You're Upset with Your Boyfriend",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Romance",
+            "Couples",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "남자친구에게 서운할 때",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "연애",
+            "커플",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5502,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-11T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "왜 연락 안 했어",
+          "meaning_ja": "どうして連絡しなかったの",
+          "localizations": {
+            "en": {
+              "meaning": "Why didn't you get in touch?"
+            }
+          }
+        },
+        {
+          "ko": "내 말 좀 들어 줘",
+          "meaning_ja": "私の話をちょっと聞いて",
+          "localizations": {
+            "en": {
+              "meaning": "Please listen to me"
+            }
+          }
+        },
+        {
+          "ko": "그 말은 좀 서운해",
+          "meaning_ja": "その言い方はちょっと悲しい",
+          "localizations": {
+            "en": {
+              "meaning": "That was a little hurtful"
+            }
+          }
+        },
+        {
+          "ko": "지금은 화가 났어",
+          "meaning_ja": "今は怒ってる",
+          "localizations": {
+            "en": {
+              "meaning": "I'm angry right now"
+            }
+          }
+        },
+        {
+          "ko": "나만 노력하잖아",
+          "meaning_ja": "私ばかり努力してるじゃない",
+          "localizations": {
+            "en": {
+              "meaning": "I'm the only one trying"
+            }
+          }
+        },
+        {
+          "ko": "왜 내 편이 아니야",
+          "meaning_ja": "どうして私の味方じゃないの",
+          "localizations": {
+            "en": {
+              "meaning": "Why aren't you on my side?"
+            }
+          }
+        },
+        {
+          "ko": "약속과 다르잖아",
+          "meaning_ja": "約束と違うじゃない",
+          "localizations": {
+            "en": {
+              "meaning": "That's not what you promised"
+            }
+          }
+        },
+        {
+          "ko": "내 기분도 중요해",
+          "meaning_ja": "私の気持ちも大事だよ",
+          "localizations": {
+            "en": {
+              "meaning": "My feelings matter too"
+            }
+          }
+        },
+        {
+          "ko": "그냥 넘기지 마",
+          "meaning_ja": "適当に流さないで",
+          "localizations": {
+            "en": {
+              "meaning": "Don't just brush it off"
+            }
+          }
+        },
+        {
+          "ko": "솔직하게 말해 줘",
+          "meaning_ja": "正直に話して",
+          "localizations": {
+            "en": {
+              "meaning": "Tell me honestly"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_couple_conflict_v2.json"
+    },
+    {
+      "deck_id": "official_fun_couple_makeup",
+      "version": 2,
+      "name": "仲直りしたい時",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "恋愛",
+        "カップル",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Making Up After a Fight",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Romance",
+            "Couples",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "화해하고 싶을 때",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "연애",
+            "커플",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5342,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-16T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "우리 다시 얘기하자",
+          "meaning_ja": "もう一度ちゃんと話そう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's talk again"
+            }
+          }
+        },
+        {
+          "ko": "안아 줘도 돼",
+          "meaning_ja": "抱きしめてくれていいよ",
+          "localizations": {
+            "en": {
+              "meaning": "You can hug me"
+            }
+          }
+        },
+        {
+          "ko": "화해하고 싶어",
+          "meaning_ja": "仲直りしたい",
+          "localizations": {
+            "en": {
+              "meaning": "I want to make up"
+            }
+          }
+        },
+        {
+          "ko": "다음엔 더 잘할게",
+          "meaning_ja": "次はもっと気をつけるね",
+          "localizations": {
+            "en": {
+              "meaning": "I'll do better next time"
+            }
+          }
+        },
+        {
+          "ko": "네가 많이 소중해",
+          "meaning_ja": "あなたがとても大切",
+          "localizations": {
+            "en": {
+              "meaning": "You mean so much to me"
+            }
+          }
+        },
+        {
+          "ko": "상처 줘서 미안해",
+          "meaning_ja": "傷つけてごめん",
+          "localizations": {
+            "en": {
+              "meaning": "I'm sorry I hurt you"
+            }
+          }
+        },
+        {
+          "ko": "끝내고 싶지 않아",
+          "meaning_ja": "終わりにしたくない",
+          "localizations": {
+            "en": {
+              "meaning": "I don't want this to end"
+            }
+          }
+        },
+        {
+          "ko": "천천히 풀어 보자",
+          "meaning_ja": "ゆっくり仲直りしよう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's work things out slowly"
+            }
+          }
+        },
+        {
+          "ko": "우리 편하게 말하자",
+          "meaning_ja": "気楽に話そう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's speak casually"
+            }
+          }
+        },
+        {
+          "ko": "내가 미안해",
+          "meaning_ja": "私が悪かった、ごめん",
+          "localizations": {
+            "en": {
+              "meaning": "I'm sorry, it was my fault"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_couple_makeup_v2.json"
+    },
+    {
+      "deck_id": "official_fun_first_date",
+      "version": 2,
+      "name": "初デートのひと言",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "恋愛",
+        "デート",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "First-Date Phrases",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Romance",
+            "Dating",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "첫 데이트 한마디",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "연애",
+            "데이트",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5515,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-21T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "다음에 또 만날래요",
+          "meaning_ja": "また会いませんか",
+          "localizations": {
+            "en": {
+              "meaning": "Would you like to meet again?"
+            }
+          }
+        },
+        {
+          "ko": "오늘 분위기 좋네요",
+          "meaning_ja": "今日は雰囲気がいいですね",
+          "localizations": {
+            "en": {
+              "meaning": "The vibe is nice today"
+            }
+          }
+        },
+        {
+          "ko": "우리 잘 통하네요",
+          "meaning_ja": "私たち気が合いますね",
+          "localizations": {
+            "en": {
+              "meaning": "We really click"
+            }
+          }
+        },
+        {
+          "ko": "취향이 비슷하네요",
+          "meaning_ja": "好みが似ていますね",
+          "localizations": {
+            "en": {
+              "meaning": "We have similar tastes"
+            }
+          }
+        },
+        {
+          "ko": "같이 있으면 편해요",
+          "meaning_ja": "一緒にいると落ち着きます",
+          "localizations": {
+            "en": {
+              "meaning": "I feel at ease with you"
+            }
+          }
+        },
+        {
+          "ko": "같이 데이트할래요",
+          "meaning_ja": "一緒にデートしませんか",
+          "localizations": {
+            "en": {
+              "meaning": "Would you like to go on a date?"
+            }
+          }
+        },
+        {
+          "ko": "혹시 자주 와요",
+          "meaning_ja": "ここにはよく来ますか",
+          "localizations": {
+            "en": {
+              "meaning": "Do you come here often?"
+            }
+          }
+        },
+        {
+          "ko": "웃는 게 예뻐요",
+          "meaning_ja": "笑顔がきれいです",
+          "localizations": {
+            "en": {
+              "meaning": "You have a beautiful smile"
+            }
+          }
+        },
+        {
+          "ko": "더 알고 싶어요",
+          "meaning_ja": "もっと知りたいです",
+          "localizations": {
+            "en": {
+              "meaning": "I want to know more"
+            }
+          }
+        },
+        {
+          "ko": "같이 커피 마실래요",
+          "meaning_ja": "一緒にコーヒーを飲みませんか",
+          "localizations": {
+            "en": {
+              "meaning": "Would you like to have coffee?"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_first_date_v2.json"
+    },
+    {
+      "deck_id": "official_fun_flirty_chat",
+      "version": 2,
+      "name": "チャットでじわっとフラート",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "恋愛",
+        "チャット",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Flirty Chat",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Romance",
+            "Chat",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "은근한 플러팅 채팅",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "연애",
+            "채팅",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5418,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-04-26T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "좋은 밤 보내요",
+          "meaning_ja": "良い夜を過ごしてね",
+          "localizations": {
+            "en": {
+              "meaning": "Have a good night"
+            }
+          }
+        },
+        {
+          "ko": "내 꿈에 나와요",
+          "meaning_ja": "私の夢に出てきてね",
+          "localizations": {
+            "en": {
+              "meaning": "Come visit me in my dreams"
+            }
+          }
+        },
+        {
+          "ko": "자꾸 생각나네요",
+          "meaning_ja": "何度も思い出します",
+          "localizations": {
+            "en": {
+              "meaning": "I keep thinking of you"
+            }
+          }
+        },
+        {
+          "ko": "오늘 생각났어요",
+          "meaning_ja": "今日、ふと思い出しました",
+          "localizations": {
+            "en": {
+              "meaning": "I thought of you today"
+            }
+          }
+        },
+        {
+          "ko": "답장 기다렸어요",
+          "meaning_ja": "返信を待っていました",
+          "localizations": {
+            "en": {
+              "meaning": "I was waiting for your reply"
+            }
+          }
+        },
+        {
+          "ko": "목소리 듣고 싶어요",
+          "meaning_ja": "声が聞きたいです",
+          "localizations": {
+            "en": {
+              "meaning": "I want to hear your voice"
+            }
+          }
+        },
+        {
+          "ko": "사진 보내 줘요",
+          "meaning_ja": "写真を送ってください",
+          "localizations": {
+            "en": {
+              "meaning": "Please send me a photo"
+            }
+          }
+        },
+        {
+          "ko": "많이 보고 싶어요",
+          "meaning_ja": "とても会いたいです",
+          "localizations": {
+            "en": {
+              "meaning": "I miss you so much"
+            }
+          }
+        },
+        {
+          "ko": "오늘도 예쁘네요",
+          "meaning_ja": "今日もきれいですね",
+          "localizations": {
+            "en": {
+              "meaning": "You look beautiful today too"
+            }
+          }
+        },
+        {
+          "ko": "보고 싶어서 왔어요",
+          "meaning_ja": "会いたくて来ました",
+          "localizations": {
+            "en": {
+              "meaning": "I came because I missed you"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_flirty_chat_v2.json"
+    },
+    {
+      "deck_id": "official_fun_friend_reactions",
+      "version": 2,
+      "name": "友だちとの韓国語リアクション",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 1,
+      "tags": [
+        "友だち",
+        "リアクション",
+        "今どき",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Korean Reactions with Friends",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Friends",
+            "Reactions",
+            "Trending",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "친구와 쓰는 한국어 리액션",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "친구",
+            "리액션",
+            "요즘",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5251,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-05-01T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "대박 진짜야",
+          "meaning_ja": "すごい、本当？",
+          "localizations": {
+            "en": {
+              "meaning": "Wow, really?"
+            }
+          }
+        },
+        {
+          "ko": "너무 웃겨",
+          "meaning_ja": "面白すぎる",
+          "localizations": {
+            "en": {
+              "meaning": "That's hilarious"
+            }
+          }
+        },
+        {
+          "ko": "말도 안 돼",
+          "meaning_ja": "ありえない",
+          "localizations": {
+            "en": {
+              "meaning": "No way"
+            }
+          }
+        },
+        {
+          "ko": "이건 레전드야",
+          "meaning_ja": "これは伝説級だよ",
+          "localizations": {
+            "en": {
+              "meaning": "This is legendary"
+            }
+          }
+        },
+        {
+          "ko": "완전 내 취향",
+          "meaning_ja": "完全に私の好み",
+          "localizations": {
+            "en": {
+              "meaning": "Totally my type"
+            }
+          }
+        },
+        {
+          "ko": "나 지금 소름 돋아",
+          "meaning_ja": "今、鳥肌が立った",
+          "localizations": {
+            "en": {
+              "meaning": "I just got goosebumps"
+            }
+          }
+        },
+        {
+          "ko": "너 폼 미쳤다",
+          "meaning_ja": "今日の君、絶好調だね",
+          "localizations": {
+            "en": {
+              "meaning": "You're on fire today"
+            }
+          }
+        },
+        {
+          "ko": "이걸 해냈다고",
+          "meaning_ja": "これをやり遂げたって？",
+          "localizations": {
+            "en": {
+              "meaning": "You pulled this off?"
+            }
+          }
+        },
+        {
+          "ko": "나만 몰랐어",
+          "meaning_ja": "知らなかったの私だけ？",
+          "localizations": {
+            "en": {
+              "meaning": "Was I the only one who didn't know?"
+            }
+          }
+        },
+        {
+          "ko": "다시 말해 줘",
+          "meaning_ja": "もう一回言って",
+          "localizations": {
+            "en": {
+              "meaning": "Say that again"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_friend_reactions_v2.json"
+    },
+    {
+      "deck_id": "official_fun_weekend_party",
+      "version": 2,
+      "name": "週末・飲み会テンション",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "友だち",
+        "週末",
+        "会話",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Weekend & Night-Out Vibes",
+          "author_nickname": "typee Official",
+          "tags": [
+            "Friends",
+            "Weekend",
+            "Conversation",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "주말·술자리 텐션",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "친구",
+            "주말",
+            "회화",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5337,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-05-06T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "우리 사진 찍자",
+          "meaning_ja": "みんなで写真を撮ろう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's take a photo together"
+            }
+          }
+        },
+        {
+          "ko": "집에 가기 싫다",
+          "meaning_ja": "家に帰りたくない",
+          "localizations": {
+            "en": {
+              "meaning": "I don't want to go home"
+            }
+          }
+        },
+        {
+          "ko": "이 노래 내 거야",
+          "meaning_ja": "この歌は私の十八番",
+          "localizations": {
+            "en": {
+              "meaning": "This is my song"
+            }
+          }
+        },
+        {
+          "ko": "다 같이 건배",
+          "meaning_ja": "みんなで乾杯",
+          "localizations": {
+            "en": {
+              "meaning": "Cheers, everyone!"
+            }
+          }
+        },
+        {
+          "ko": "내일은 늦잠 잘래",
+          "meaning_ja": "明日は朝寝坊する",
+          "localizations": {
+            "en": {
+              "meaning": "I'll sleep in tomorrow"
+            }
+          }
+        },
+        {
+          "ko": "택시 같이 타자",
+          "meaning_ja": "一緒にタクシーに乗ろう",
+          "localizations": {
+            "en": {
+              "meaning": "Let's take a taxi together"
+            }
+          }
+        },
+        {
+          "ko": "벌써 끝난 거야",
+          "meaning_ja": "もう終わりなの？",
+          "localizations": {
+            "en": {
+              "meaning": "Is it over already?"
+            }
+          }
+        },
+        {
+          "ko": "주말은 지금부터야",
+          "meaning_ja": "週末は今からだよ",
+          "localizations": {
+            "en": {
+              "meaning": "The weekend starts now"
+            }
+          }
+        },
+        {
+          "ko": "오늘 기억할게",
+          "meaning_ja": "今日のこと覚えておくね",
+          "localizations": {
+            "en": {
+              "meaning": "I'll remember today"
+            }
+          }
+        },
+        {
+          "ko": "오늘은 내가 쏜다",
+          "meaning_ja": "今日は私のおごり",
+          "localizations": {
+            "en": {
+              "meaning": "It's on me today"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_weekend_party_v2.json"
+    },
+    {
+      "deck_id": "official_fun_idol_live_comments",
+      "version": 2,
+      "name": "推しのライブ配信コメント",
+      "author_nickname": "ピヨキー 公式",
+      "official": true,
+      "featured": false,
+      "type": "sentence",
+      "level": 2,
+      "tags": [
+        "K-POP",
+        "推し活",
+        "ライブ",
+        "公式"
+      ],
+      "localizations": {
+        "en": {
+          "name": "Comments for Your Idol's Livestream",
+          "author_nickname": "typee Official",
+          "tags": [
+            "K-Pop",
+            "Fandom",
+            "Livestream",
+            "Official"
+          ]
+        },
+        "ko": {
+          "name": "최애 라이브 방송 댓글",
+          "author_nickname": "피요키 공식",
+          "tags": [
+            "K-POP",
+            "팬 활동",
+            "라이브",
+            "공식"
+          ]
+        }
+      },
+      "item_count": 12,
+      "size_bytes": 5606,
+      "downloads_total": 0,
+      "downloads_7d": 0,
+      "created_at": "2026-05-11T00:00:00Z",
+      "preview_items": [
+        {
+          "ko": "건강 꼭 챙겨요",
+          "meaning_ja": "体を大事にしてね",
+          "localizations": {
+            "en": {
+              "meaning": "Take good care of yourself"
+            }
+          }
+        },
+        {
+          "ko": "하트 해 주세요",
+          "meaning_ja": "ハートを作ってください",
+          "localizations": {
+            "en": {
+              "meaning": "Please make a heart"
+            }
+          }
+        },
+        {
+          "ko": "웃는 모습 좋아요",
+          "meaning_ja": "笑っている姿が好きです",
+          "localizations": {
+            "en": {
+              "meaning": "I love seeing you smile"
+            }
+          }
+        },
+        {
+          "ko": "평생 응원할게요",
+          "meaning_ja": "ずっと応援します",
+          "localizations": {
+            "en": {
+              "meaning": "I'll support you forever"
+            }
+          }
+        },
+        {
+          "ko": "화면 너머로 설레요",
+          "meaning_ja": "画面越しでもときめきます",
+          "localizations": {
+            "en": {
+              "meaning": "I get butterflies even through the screen"
+            }
+          }
+        },
+        {
+          "ko": "다음 방송도 올게요",
+          "meaning_ja": "次の配信にも来ます",
+          "localizations": {
+            "en": {
+              "meaning": "I'll be back for the next stream"
+            }
+          }
+        },
+        {
+          "ko": "오늘도 레전드예요",
+          "meaning_ja": "今日も伝説級です",
+          "localizations": {
+            "en": {
+              "meaning": "You're legendary today too"
+            }
+          }
+        },
+        {
+          "ko": "목소리 진짜 좋아요",
+          "meaning_ja": "声が本当に好きです",
+          "localizations": {
+            "en": {
+              "meaning": "I really love your voice"
+            }
+          }
+        },
+        {
+          "ko": "와 줘서 고마워요",
+          "meaning_ja": "来てくれてありがとう",
+          "localizations": {
+            "en": {
+              "meaning": "Thanks for coming"
+            }
+          }
+        },
+        {
+          "ko": "오늘 착장 최고예요",
+          "meaning_ja": "今日の衣装、最高です",
+          "localizations": {
+            "en": {
+              "meaning": "Today's outfit is amazing"
+            }
+          }
+        }
+      ],
+      "file_url": "decks/official_fun_idol_live_comments_v2.json"
+    }
+  ],
+  "tags": [
+    {
+      "tag": "公式",
+      "deck_count": 26,
+      "category": "topic",
+      "localizations": {
+        "en": "Official",
+        "ko": "공식"
+      }
+    },
+    {
+      "tag": "会話",
+      "deck_count": 12,
+      "category": "purpose",
+      "localizations": {
+        "en": "Conversation",
+        "ko": "회화"
+      }
+    },
+    {
+      "tag": "入門",
+      "deck_count": 5,
+      "category": "purpose",
+      "localizations": {
+        "en": "Beginner Basics",
+        "ko": "입문"
+      }
+    },
+    {
+      "tag": "恋愛",
+      "deck_count": 5,
+      "category": "purpose",
+      "localizations": {
+        "en": "Romance",
+        "ko": "연애"
+      }
+    },
+    {
+      "tag": "K-POP",
+      "deck_count": 4,
+      "category": "purpose",
+      "localizations": {
+        "en": "K-Pop",
+        "ko": "K-POP"
+      }
+    },
+    {
+      "tag": "Kドラマ",
+      "deck_count": 3,
+      "category": "purpose",
+      "localizations": {
+        "en": "K-Drama",
+        "ko": "K-드라마"
+      }
+    },
+    {
+      "tag": "日常",
+      "deck_count": 3,
+      "category": "purpose",
+      "localizations": {
+        "en": "Everyday",
+        "ko": "일상"
+      }
+    },
+    {
+      "tag": "歌詞風",
+      "deck_count": 3,
+      "category": "topic",
+      "localizations": {
+        "en": "Lyric-Inspired",
+        "ko": "가사풍"
+      }
+    },
+    {
+      "tag": "韓国旅行",
+      "deck_count": 3,
+      "category": "purpose",
+      "localizations": {
+        "en": "Korea Travel",
+        "ko": "한국 여행"
+      }
+    },
+    {
+      "tag": "カップル",
+      "deck_count": 2,
+      "category": "topic",
+      "localizations": {
+        "en": "Couples",
+        "ko": "커플"
+      }
+    },
+    {
+      "tag": "今どき",
+      "deck_count": 2,
+      "category": "purpose",
+      "localizations": {
+        "en": "Trending",
+        "ko": "요즘"
+      }
+    },
+    {
+      "tag": "友だち",
+      "deck_count": 2,
+      "category": "purpose",
+      "localizations": {
+        "en": "Friends",
+        "ko": "친구"
+      }
+    },
+    {
+      "tag": "SNS",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Social Media",
+        "ko": "SNS"
+      }
+    },
+    {
+      "tag": "TOPIK",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "TOPIK",
+        "ko": "TOPIK"
+      }
+    },
+    {
+      "tag": "ひと言",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Quick Phrases",
+        "ko": "한마디"
+      }
+    },
+    {
+      "tag": "キーボード",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Keyboard",
+        "ko": "키보드"
+      }
+    },
+    {
+      "tag": "グルメ",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Food & Dining",
+        "ko": "맛집"
+      }
+    },
+    {
+      "tag": "チャット",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Chat",
+        "ko": "채팅"
+      }
+    },
+    {
+      "tag": "デート",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Dating",
+        "ko": "데이트"
+      }
+    },
+    {
+      "tag": "パッチム",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Batchim",
+        "ko": "받침"
+      }
+    },
+    {
+      "tag": "ミステリー",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Mystery",
+        "ko": "미스터리"
+      }
+    },
+    {
+      "tag": "ライブ",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Livestream",
+        "ko": "라이브"
+      }
+    },
+    {
+      "tag": "リアクション",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Reactions",
+        "ko": "리액션"
+      }
+    },
+    {
+      "tag": "動詞",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Verbs",
+        "ko": "동사"
+      }
+    },
+    {
+      "tag": "単語",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Words",
+        "ko": "단어"
+      }
+    },
+    {
+      "tag": "基礎単語",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Essential Vocabulary",
+        "ko": "기본 어휘"
+      }
+    },
+    {
+      "tag": "子音",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Consonants",
+        "ko": "자음"
+      }
+    },
+    {
+      "tag": "推し活",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Fandom",
+        "ko": "팬 활동"
+      }
+    },
+    {
+      "tag": "検定",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Test Prep",
+        "ko": "시험 대비"
+      }
+    },
+    {
+      "tag": "母音",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Vowels",
+        "ko": "모음"
+      }
+    },
+    {
+      "tag": "組み立て",
+      "deck_count": 1,
+      "category": "topic",
+      "localizations": {
+        "en": "Syllable Building",
+        "ko": "음절 조합"
+      }
+    },
+    {
+      "tag": "週末",
+      "deck_count": 1,
+      "category": "purpose",
+      "localizations": {
+        "en": "Weekend",
+        "ko": "주말"
+      }
+    }
+  ]
+}

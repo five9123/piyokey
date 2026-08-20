@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://piyokey.app/schema/piyodeck-manifest-v1.schema.json",
+  "title": "PIYOKEY Deck Package Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "format_version", "deck_schema_version", "deck"],
+  "properties": {
+    "format": {
+      "type": "string",
+      "enum": ["piyokey.deck-package"]
+    },
+    "format_version": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "deck_schema_version": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "deck": {
+      "$ref": "#/$defs/deckDescriptor"
+    }
+  },
+  "$defs": {
+    "deckDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "media_type",
+        "deck_id",
+        "deck_version",
+        "item_count",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "enum": ["deck.json"]
+        },
+        "media_type": {
+          "type": "string",
+          "enum": ["application/json"]
+        },
+        "deck_id": {
+          "type": "string",
+          "pattern": "^user_[0-9a-f]{32}$"
+        },
+        "deck_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "item_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "accuracy_weight": 0.6,
+  "speed_weight": 0.4,
+  "speed_cap_characters_per_minute": 120,
+  "s_threshold": 90,
+  "a_threshold": 75,
+  "b_threshold": 55
+}

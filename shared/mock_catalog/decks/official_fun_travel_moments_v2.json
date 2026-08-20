@@ -1,0 +1,200 @@
+{
+  "deck_id": "official_fun_travel_moments",
+  "version": 2,
+  "name": "旅先で使えるひと言",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "韓国旅行",
+    "ひと言",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-04-01T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "여기서 내려 주세요",
+      "reading_ja": "ヨギソ ネリョ ジュセヨ",
+      "meaning_ja": "ここで降ろしてください",
+      "audio": "audio/ko_5d17fb3acdb2b1ecb5f8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please let me off here",
+          "reading": "yeogiseo naeryeo juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "같이 여행 가요",
+      "reading_ja": "カチ ヨヘン カヨ",
+      "meaning_ja": "一緒に旅行しましょう",
+      "audio": "audio/ko_ebe6b36eaadbed25a7d0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's travel together",
+          "reading": "gati yeohaeng gayo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "다음 역은 어디예요",
+      "reading_ja": "タウム ヨグン オディエヨ",
+      "meaning_ja": "次の駅はどこですか",
+      "audio": "audio/ko_1b865747bb5abcfa89e7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "What is the next station?",
+          "reading": "daeum yeokeun eodiyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "짐을 맡아 주세요",
+      "reading_ja": "チムル マタ ジュセヨ",
+      "meaning_ja": "荷物を預かってください",
+      "audio": "audio/ko_df53302f92742668a4cf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please store my luggage",
+          "reading": "jimeul mata juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "노을 보러 갈래요",
+      "reading_ja": "ノウル ポロ カルレヨ",
+      "meaning_ja": "夕日を見に行きませんか",
+      "audio": "audio/ko_496f6ca9e1c41e32718a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Would you like to go see the sunset?",
+          "reading": "noeul boreo galraeyo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "근처 맛집 있어요",
+      "reading_ja": "クンチョ マッチプ イッソヨ",
+      "meaning_ja": "近くに人気店はありますか",
+      "audio": "audio/ko_c4549a27b412e1a981af.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Is there a good restaurant nearby?",
+          "reading": "geuncheo matjip iteoyo"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "사진 부탁해요",
+      "reading_ja": "サジン プタケヨ",
+      "meaning_ja": "写真をお願いします",
+      "audio": "audio/ko_eb199438e1a03649ab5d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please take a photo",
+          "reading": "sajin butakhaeyo"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "여기 진짜 예뻐요",
+      "reading_ja": "ヨギ チンチャ イェッポヨ",
+      "meaning_ja": "ここ、本当にきれいです",
+      "audio": "audio/ko_cc571e99f49204418e82.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "It's really beautiful here",
+          "reading": "yeogi jinjja yeppeoyo"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "우리 길 잃은 거야",
+      "reading_ja": "ウリ キル イルン ゴヤ",
+      "meaning_ja": "私たち、道に迷ったの？",
+      "audio": "audio/ko_0180f807b585244cc96d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Are we lost?",
+          "reading": "uri gil ileun geoya"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "막차 몇 시예요",
+      "reading_ja": "マクチャ ミョッ シエヨ",
+      "meaning_ja": "終電は何時ですか",
+      "audio": "audio/ko_50890cae424de963a6e6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "What time is the last train?",
+          "reading": "makcha myeot siyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "창가 자리 있어요",
+      "reading_ja": "チャンカ チャリ イッソヨ",
+      "meaning_ja": "窓側の席はありますか",
+      "audio": "audio/ko_a47e0e74a082cd27362e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Do you have a window seat?",
+          "reading": "changga jari iteoyo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "지도 좀 보여 줘요",
+      "reading_ja": "チド チョム ポヨ ジョヨ",
+      "meaning_ja": "地図をちょっと見せてください",
+      "audio": "audio/ko_e28a7728ce76f11a5bf1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please show me the map",
+          "reading": "jido jom boyeo jwoyo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Travel One-Liners",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Korea Travel",
+        "Quick Phrases",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "여행지에서 쓰는 한마디",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "한국 여행",
+        "한마디",
+        "회화",
+        "공식"
+      ]
+    }
+  }
+}

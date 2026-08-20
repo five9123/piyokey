@@ -1,0 +1,84 @@
+{
+  "record_scope": "legacy_japanese_copy_and_iap_reference_not_global_availability_source",
+  "global_availability_source": "release/global_app_store_metadata.json",
+  "primary_locale": "ja",
+  "sku": "piyokey-ios-001",
+  "primary_category": "EDUCATION",
+  "secondary_category": "GAMES_WORD",
+  "price": "FREE",
+  "release_method": "AUTOMATIC",
+  "initial_availability": ["JPN"],
+  "made_for_kids": false,
+  "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
+  "support_url": "https://hancoweb.vercel.app/support",
+  "marketing_url": "https://hancoweb.vercel.app/",
+  "in_app_purchase": {
+    "reference_name": "Deck Maker Lifetime",
+    "product_id": "app.piyokey.deckmaker.lifetime",
+    "type": "NON_CONSUMABLE",
+    "price_source": "App Store Connect; the app displays StoreKit displayPrice",
+    "free_boundary": "Import, validate, preview, replace, practice/game, export, delete, and re-import valid local .piyodeck documents without purchase.",
+    "paid_boundary": "Create a deck, edit an imported deck, create an editable copy of an official deck, and save those changes.",
+    "localizations": {
+      "ja": {
+        "display_name": "マイデッキメーカー",
+        "description": "デッキの作成・編集をずっと利用できます"
+      },
+      "en-US": {
+        "display_name": "My Deck Maker",
+        "description": "Create and edit decks with lifetime access."
+      },
+      "ko": {
+        "display_name": "내 덱 만들기",
+        "description": "덱 생성과 편집을 평생 이용할 수 있어요"
+      }
+    }
+  },
+  "localizations": {
+    "ja": {
+      "name": "ピヨキー",
+      "subtitle": "ひよこと学ぶ韓国語タイピング",
+      "promotional_text": "ハングルの配列から実践入力まで、1日3分。ピヨと一緒にレッスン、ゲーム、復習を続けよう。",
+      "keywords": "韓国語,ハングル,タイピング,韓国語入力,2ボル式,TOPIK,韓国語学習,ゲーム",
+      "description": "ハングルは読める。でも、キーボードではまだ打てない。\n\nピヨキーは、韓国語の標準的な2ボル式キーボードを、ひよこのピヨと一緒に身につけるタイピング学習アプリです。アカウント登録や広告はありません。\n\n【配列から少しずつ】\n子音、母音、文字の組み立て、パッチム、単語、フレーズの順に進みます。次に押すキーと字母の進み方を見ながら練習できます。\n\n【内蔵キーボードですぐ始める】\niPhoneに韓国語キーボードを追加していなくても練習できます。慣れたらiOSの韓国語キーボードに切り替えて、実際の入力感覚でも挑戦できます。\n\n【公式デッキで実践】\n日常、旅行、TOPIK、K-POP風の創作フレーズ、韓国ドラマ風の創作会話など、目的に合わせた公式コンテンツを収録。韓国語、日本語の意味、カタカナの読み方を確認できます。\n\n【自分のデッキを使う】\n.piyodeckファイルは購入なしで読み込み、練習、ゲーム、書き出しができます。アプリ内で新しいデッキを作成・編集したい場合は、買い切りの「マイデッキメーカー」を利用できます。ファイルや購入情報はPIYOKEYのサーバーへアップロードされません。\n\n【6つのゲーム】\n流れる単語、単語の雨、初声クイズ、単語クイズ、書き取り、分かち書きで、速さ・正確さ・思い出す力を楽しく鍛えます。\n\n【間違えた単語を復習】\nミスした項目は復習に集まり、正しく入力できるようになるまで繰り返せます。毎日の3分練習、連続記録、成長するピヨが継続を応援します。\n\n【安心して使える設計】\n・広告なし。レッスン、ゲーム、デッキの読み込みは無料\n・アプリ内でのデッキ作成・編集は買い切りのオプション\n・アカウント登録なし\n・学習記録と設定は端末内に保存\n・同梱コンテンツはオフラインでも利用可能\n・日本語、English、한국어に対応\n\n韓国語を「読む」から「自分で打つ」へ。ピヨキーで最初の一文字から始めましょう。",
+      "whats_new": ".piyodeckデッキを無料で読み込み、練習・ゲーム・書き出しに使えるようになりました。買い切りの「マイデッキメーカー」では、アプリ内で新しいデッキの作成、読み込んだデッキの編集、公式デッキのコピー編集ができます。"
+    },
+    "en-US": {
+      "name": "PIYOKEY",
+      "subtitle": "Learn Korean by Typing",
+      "promotional_text": "Learn the Korean keyboard in three minutes a day with guided lessons, playful games, review, and a growing chick companion.",
+      "keywords": "Korean,Hangul,typing,keyboard,Dubeolsik,TOPIK,language,learning",
+      "description": "You can read Hangul—but can you type it?\n\nPIYOKEY is a Korean typing tutor that helps you learn the standard Dubeolsik keyboard with Piyo, your growing chick companion. There are no accounts or ads. Core learning and deck import are free; an optional one-time purchase unlocks in-app deck creation and editing.\n\nLEARN STEP BY STEP\nMove from consonants and vowels to syllable composition, batchim, words, and phrases. See the next key and follow each jamo as you type.\n\nSTART WITH THE BUILT-IN KEYBOARD\nPractice without adding a Korean keyboard to your iPhone. When you are ready, switch to the iOS Korean keyboard for real-world input practice.\n\nPRACTICE WITH OFFICIAL DECKS\nLearn with everyday, travel, TOPIK, original K-pop-inspired phrases, and original K-drama-style conversations. Check the Korean target, Japanese meaning, and katakana reading.\n\nUSE YOUR OWN DECKS\nImport a valid .piyodeck file for free, then practice, play compatible games, export, or re-import it. The optional lifetime My Deck Maker purchase unlocks creating and editing decks inside the app. Documents and purchase data are never uploaded to a PIYOKEY server.\n\nPLAY SIX GAMES\nBuild speed, accuracy, recall, listening, and spacing skills with Flow, Word Rain, Initials Quiz, Word Quiz, Dictation, and Spacing.\n\nREVIEW WHAT YOU MISS\nMistyped items are collected for review. Daily three-minute practice, streaks, and Piyo's growth make it easier to keep going.\n\nBUILT WITH PRIVACY IN MIND\n• No ads; lessons, games, and deck import are free\n• Optional one-time purchase for in-app deck creation and editing\n• No account registration\n• Learning records and settings stay on your device\n• Bundled content works offline\n• Japanese, English, and Korean interface languages\n\nMove from reading Korean to typing it yourself—one key at a time.",
+      "whats_new": "Import .piyodeck files for free and use them for practice, compatible games, and export. The optional lifetime My Deck Maker purchase adds in-app deck creation, editing, and editable copies of official decks."
+    },
+    "ko": {
+      "name": "피요키",
+      "subtitle": "병아리와 배우는 한글 타이핑",
+      "promotional_text": "한글 자판부터 실전 입력까지 하루 3분. 피요와 함께 레슨, 게임, 복습을 즐겨 보세요.",
+      "keywords": "한국어,한글,타이핑,키보드,두벌식,TOPIK,한국어공부,타자연습",
+      "description": "한글은 읽을 수 있지만 키보드 입력은 아직 어렵나요?\n\n피요키는 성장하는 병아리 피요와 함께 표준 두벌식 자판을 익히는 한국어 타이핑 학습 앱입니다. 계정과 광고가 없으며 핵심 학습과 덱 가져오기는 무료입니다. 선택형 일회성 결제로 앱 안의 덱 생성과 편집 도구를 이용할 수 있습니다.\n\n차근차근 배우기\n자음과 모음부터 글자 조합, 받침, 단어와 문장 순서로 배웁니다. 다음 키와 자모 진행을 보며 연습할 수 있습니다.\n\n내장 키보드로 바로 시작\niPhone에 한국어 키보드를 추가하지 않아도 연습할 수 있습니다. 익숙해지면 iOS 한국어 키보드로 바꿔 실제 입력 방식에 도전할 수 있습니다.\n\n공식 덱으로 실전 연습\n일상, 여행, TOPIK, 직접 창작한 K-POP풍 문구와 K-드라마풍 대화 등 목적별 콘텐츠를 제공합니다. 한국어, 일본어 뜻, 가타카나 읽기를 확인할 수 있습니다.\n\n나만의 덱 사용하기\n유효한 .piyodeck 파일은 무료로 가져와 연습, 호환 게임, 내보내기, 다시 가져오기에 사용할 수 있습니다. 앱 안에서 새 덱을 만들거나 편집할 때만 평생 이용형 ‘내 덱 만들기’가 필요합니다. 문서와 결제 정보는 PIYOKEY 서버에 업로드되지 않습니다.\n\n6가지 게임\n흐름, 산성비, 초성 퀴즈, 단어 퀴즈, 받아쓰기, 띄어쓰기로 속도와 정확도, 회상, 듣기 능력을 재미있게 키웁니다.\n\n틀린 항목 자동 복습\n오타가 난 항목은 복습에 모입니다. 하루 3분 연습, 연속 기록, 피요의 성장이 꾸준한 학습을 응원합니다.\n\n안심할 수 있는 설계\n• 광고 없음, 레슨·게임·덱 가져오기는 무료\n• 앱 안의 덱 생성·편집은 선택형 일회성 결제\n• 계정 등록 없음\n• 학습 기록과 설정은 기기 안에 저장\n• 동봉 콘텐츠는 오프라인에서도 이용 가능\n• 일본어, 영어, 한국어 지원\n\n한국어를 읽는 데서 직접 입력하는 단계로, 피요키와 함께 시작하세요.",
+      "whats_new": ".piyodeck 덱을 무료로 가져와 연습, 호환 게임, 내보내기에 사용할 수 있습니다. 선택형 평생 이용 ‘내 덱 만들기’에서는 앱 안의 새 덱 생성, 가져온 덱 편집, 공식 덱 사본 편집을 이용할 수 있습니다."
+    }
+  },
+  "app_privacy": {
+    "tracking": false,
+    "data_collected": false,
+    "answer": "No, we do not collect data from this app"
+  },
+  "age_rating": {
+    "expected_rating": "13+",
+    "legacy_global_rating": "12+ on operating systems earlier than version 26",
+    "contests": "FREQUENT (weekly Game Center ranking)",
+    "all_other_content_descriptors": "NONE",
+    "unrestricted_web_access": false,
+    "user_generated_content": false,
+    "social_media": false,
+    "messaging_or_chat": false,
+    "advertising": false,
+    "gambling": false
+  },
+  "export_compliance": {
+    "uses_non_exempt_encryption": false,
+    "notes": "HTTPS is provided only through Apple platform networking; the app implements no proprietary encryption."
+  }
+}

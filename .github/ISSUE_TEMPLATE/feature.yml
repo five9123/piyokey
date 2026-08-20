@@ -1,0 +1,49 @@
+name: Feature
+description: PRD acceptance criteria를 구현하거나 개선합니다.
+title: "[Feature] "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 목표 결과
+      description: 사용자 또는 유지보수 관점의 완료 상태를 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: prd
+    attributes:
+      label: 관련 PRD 절
+      placeholder: "예: PRD F6d, §13 M7"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: 검증 가능한 체크리스트로 적어 주세요.
+    validations:
+      required: true
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: 영향 범위
+      options:
+        - label: iOS
+        - label: Android
+        - label: Web
+        - label: Shared contracts/content
+        - label: Tools/CI/Docs
+  - type: textarea
+    id: tests
+    attributes:
+      label: 검증 계획
+      description: 자동 test, 수동 시나리오, 실기기 gate를 구분해 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 선행 작업과 충돌 가능 파일
+      description: 다른 issue와 serialize해야 할 파일이 있으면 적어 주세요.

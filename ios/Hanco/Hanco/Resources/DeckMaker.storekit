@@ -1,0 +1,64 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "ja_JP",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "5A11C0DE",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1500",
+      "familyShareable" : false,
+      "internalID" : "D3C4A1F1",
+      "localizations" : [
+        {
+          "description" : "デッキの作成・編集をずっと利用できます",
+          "displayName" : "マイデッキメーカー",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "Create and edit decks with lifetime access.",
+          "displayName" : "My Deck Maker",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "덱 생성과 편집을 평생 이용할 수 있어요",
+          "displayName" : "내 덱 만들기",
+          "locale" : "ko_KR"
+        }
+      ],
+      "productID" : "app.piyokey.deckmaker.lifetime",
+      "referenceName" : "Deck Maker Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "ja_JP",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "JPN",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

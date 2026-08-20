@@ -1,0 +1,200 @@
+{
+  "deck_id": "official_fun_friend_reactions",
+  "version": 2,
+  "name": "友だちとの韓国語リアクション",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 1,
+  "tags": [
+    "友だち",
+    "リアクション",
+    "今どき",
+    "公式"
+  ],
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-08-11T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "대박 진짜야",
+      "reading_ja": "テバク チンチャヤ",
+      "meaning_ja": "すごい、本当？",
+      "audio": "audio/ko_ea455b86da4d7bd20203.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Wow, really?",
+          "reading": "daebak jinjjaya"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "너무 웃겨",
+      "reading_ja": "ノム ウッキョ",
+      "meaning_ja": "面白すぎる",
+      "audio": "audio/ko_d705361c3cae21371c4c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "That's hilarious",
+          "reading": "neomu utgyeo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "말도 안 돼",
+      "reading_ja": "マルド アン ドェ",
+      "meaning_ja": "ありえない",
+      "audio": "audio/ko_afccdcf4a5d07e80eb03.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "No way",
+          "reading": "maldo an dwae"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "이건 레전드야",
+      "reading_ja": "イゴン レジョンドゥヤ",
+      "meaning_ja": "これは伝説級だよ",
+      "audio": "audio/ko_14d698ce8033ba0b2bdf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "This is legendary",
+          "reading": "igeon rejeondeuya"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "완전 내 취향",
+      "reading_ja": "ワンジョン ネ チュィヒャン",
+      "meaning_ja": "完全に私の好み",
+      "audio": "audio/ko_0104ced33fa40c1e84a1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Totally my type",
+          "reading": "wanjeon nae chwihyang"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "나 지금 소름 돋아",
+      "reading_ja": "ナ チグム ソルム トダ",
+      "meaning_ja": "今、鳥肌が立った",
+      "audio": "audio/ko_16abe994beba40b1d17c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I just got goosebumps",
+          "reading": "na jigeum soreum dota"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "너 폼 미쳤다",
+      "reading_ja": "ノ ポム ミチョッタ",
+      "meaning_ja": "今日の君、絶好調だね",
+      "audio": "audio/ko_420216e75a4430786818.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You're on fire today",
+          "reading": "neo pom michyeotda"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "이걸 해냈다고",
+      "reading_ja": "イゴル ヘネッタゴ",
+      "meaning_ja": "これをやり遂げたって？",
+      "audio": "audio/ko_612b61b62976392ebf5f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You pulled this off?",
+          "reading": "igeol haenaetdago"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "나만 몰랐어",
+      "reading_ja": "ナマン モルラッソ",
+      "meaning_ja": "知らなかったの私だけ？",
+      "audio": "audio/ko_383289db3f6fdbc20c63.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Was I the only one who didn't know?",
+          "reading": "naman molrateo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "다시 말해 줘",
+      "reading_ja": "タシ マレ ジョ",
+      "meaning_ja": "もう一回言って",
+      "audio": "audio/ko_2ff890f7dd02948292e4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Say that again",
+          "reading": "dasi malhae jwo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "오늘 텐션 최고야",
+      "reading_ja": "オヌル テンション チェゴヤ",
+      "meaning_ja": "今日のテンション最高",
+      "audio": "audio/ko_996445fdae3ef3f192c6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The energy is great today",
+          "reading": "oneul tensyeon choegoya"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "그건 인정이지",
+      "reading_ja": "クゴン インジョンイジ",
+      "meaning_ja": "それは認める",
+      "audio": "audio/ko_06b5fe28be50efa0c3a3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll give you that",
+          "reading": "geugeon injeongiji"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Korean Reactions with Friends",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Friends",
+        "Reactions",
+        "Trending",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "친구와 쓰는 한국어 리액션",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "친구",
+        "리액션",
+        "요즘",
+        "공식"
+      ]
+    }
+  }
+}
