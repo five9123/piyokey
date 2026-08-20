@@ -3,7 +3,7 @@
     "eula" : "",
     "policies" : [
       {
-        "locale" : "ja_JP",
+        "locale" : "ja",
         "policyText" : "",
         "policyURL" : ""
       }
@@ -22,7 +22,7 @@
         {
           "description" : "デッキの作成・編集をずっと利用できます",
           "displayName" : "マイデッキメーカー",
-          "locale" : "ja_JP"
+          "locale" : "ja"
         },
         {
           "description" : "Create and edit decks with lifetime access.",
@@ -32,7 +32,7 @@
         {
           "description" : "덱 생성과 편집을 평생 이용할 수 있어요",
           "displayName" : "내 덱 만들기",
-          "locale" : "ko_KR"
+          "locale" : "ko"
         }
       ],
       "productID" : "app.piyokey.deckmaker.lifetime",
@@ -46,7 +46,7 @@
     "_billingIssuesEnabled" : false,
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_locale" : "ja_JP",
+    "_locale" : "ja",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "JPN",
     "_storeKitErrors" : [
@@ -58,7 +58,7 @@
 
   ],
   "version" : {
-    "major" : 4,
+    "major" : 5,
     "minor" : 0
   }
 }
