@@ -153,13 +153,15 @@
     ]
   },
   "next_submission": {
-    "record_status": "preparing_version_1_1",
+    "record_status": "version_1_1_record_created",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
     "marketing_version": "1.1",
     "build_number": "7",
+    "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
+    "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
     "release_mode": "pending_separate_decision",
     "manual_hold": true,
     "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
@@ -169,8 +171,11 @@
     "availability": {
       "selection": "ALL_COUNTRIES_OR_REGIONS",
       "include_future_storefronts": true,
-      "app_and_iap_match": true,
+      "app_and_iap_match": false,
       "country_waves_enabled": false,
+      "current_app_available_countries_or_regions": 1,
+      "current_app_available_country_or_region": "Japan",
+      "target_countries_or_regions": 175,
       "regional_storefront_status_review_completed": false,
       "regional_compliance_exceptions": []
     },
@@ -185,7 +190,16 @@
     "in_app_purchase": {
       "reference_name": "Deck Maker Lifetime",
       "product_id": "app.piyokey.deckmaker.lifetime",
+      "app_store_connect_apple_id": "6803850493",
       "type": "NON_CONSUMABLE",
+      "product_record_created": true,
+      "product_record_created_at": "2026-08-21T18:47:35+09:00",
+      "country_or_region_availability": "ALL_COUNTRIES_OR_REGIONS",
+      "include_future_storefronts": true,
+      "family_sharing_enabled": false,
+      "tax_category_current": "MATCH_PARENT_APP",
+      "paid_apps_agreement_status": "NEW",
+      "legal_entity_update_required": true,
       "localizations": [
         "ja",
         "en-US",
@@ -213,13 +227,13 @@
       "external_audio_mix_device_check": false,
       "iphone_12_performance_gate": false,
       "game_center_live_device_check": false,
-      "deck_maker_local_storekit_check": false,
+      "deck_maker_local_storekit_check": true,
       "deck_maker_sandbox_purchase_check": false,
       "deck_maker_sandbox_cancel_check": false,
       "deck_maker_sandbox_pending_check": false,
       "deck_maker_sandbox_restore_check": false,
       "deck_maker_sandbox_refund_revocation_check": false,
-      "free_piyodeck_boundary_check": false
+      "free_piyodeck_boundary_check": true
     }
   }
 }

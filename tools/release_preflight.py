@@ -47,7 +47,7 @@ DECK_MAKER_LOCALIZATIONS = {
     "en-US": ("My Deck Maker", "Create and edit decks with lifetime access."),
     "ko": ("내 덱 만들기", "덱 생성과 편집을 평생 이용할 수 있어요"),
 }
-STOREKIT_LOCALE_MAP = {"ja": "ja_JP", "en-US": "en_US", "ko": "ko_KR"}
+STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
 VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "ko"})
 GLOBAL_APP_STORE_LOCALES = frozenset({"en-US", "en-GB", "en-AU", "en-CA", "ko", "ja"})
@@ -552,7 +552,7 @@ def repository_checks(root: Path) -> list[Finding]:
         if launch_reference is not None:
             add(
                 findings,
-                launch_reference.get("identifier") == "../Hanco/Resources/DeckMaker.storekit",
+                launch_reference.get("identifier") == "../../Hanco/Resources/DeckMaker.storekit",
                 "Debug LaunchAction StoreKit configuration path differs",
             )
         add(
