@@ -4,6 +4,10 @@
 
 Closes #
 
+- 주 담당 사람/agent:
+- Branch/worktree:
+- 단독 소유가 필요한 충돌 위험 파일:
+
 ## 계약과 범위
 
 - 관련 PRD 절:
@@ -29,6 +33,13 @@ Closes #
 ```text
 
 ```
+
+## Handoff
+
+- 상태: 진행 중 / review 준비 / blocked
+- 완료:
+- 다음 한 단계:
+- 외부 상태·blocker:
 
 ## 안전 점검
 

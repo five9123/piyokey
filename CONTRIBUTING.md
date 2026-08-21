@@ -4,6 +4,10 @@
 것을 전제로 합니다. 충돌을 줄이는 가장 중요한 단위는 `issue 1개 = branch
 1개 = 주 담당자/agent 1명`입니다.
 
+처음 참여하는 디바이스나 agent는 먼저
+[다중 디바이스·AI agent 온보딩](docs/DEVICE_SETUP.md)을 따르고
+`python3 tools/workspace_doctor.py`를 실행합니다.
+
 ## 작업 흐름
 
 1. GitHub issue에 목적, PRD 절, acceptance criteria, 영향 플랫폼을 적습니다.
@@ -32,6 +36,8 @@ Commit은 검토 가능한 한 가지 의도를 담고, 제목은 명령형으�
   PR로 먼저 병합하거나 명시적인 stacked PR로 연결합니다.
 - 한 agent가 세션을 마칠 때 issue/PR에 현재 상태, 다음 한 단계, 테스트,
   blocker를 남깁니다.
+- branch는 작업 시작 직후 원격에 push하고 issue에 주 담당자, branch,
+  수정 경로와 단독 소유 파일을 기록합니다.
 - signing key, App Store Connect key, provisioning profile, 개인 `.env`는
   저장소나 agent 프롬프트에 넣지 않습니다.
 
