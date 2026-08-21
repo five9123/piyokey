@@ -44,7 +44,7 @@ final class HangulEngineTests: XCTestCase {
 
   func testAllSharedBackspaceCases() throws {
     let vectors = try loadVectors()
-    XCTAssertEqual(vectors.backspaceCases.count, 6)
+    XCTAssertEqual(vectors.backspaceCases.count, 10)
 
     for testCase in vectors.backspaceCases {
       var state = HangulComposer.compose(try testCase.typeKeys.map(singleCharacter))

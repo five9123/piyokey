@@ -154,13 +154,13 @@ public struct Deck: Codable, Equatable, Sendable {
 
   public func hasLocalization(languageCode: String) -> Bool {
     let code = normalizedLanguageCode(languageCode)
-    return code == "ja" || localizations?[code] != nil
+    return code == "ja" || localizations?[code] != nil || localizations?["en"] != nil
   }
 
   private func metadataLocalization(languageCode: String) -> DeckMetadataLocalization? {
     let code = normalizedLanguageCode(languageCode)
     guard code != "ja" else { return nil }
-    return localizations?[code]
+    return localizations?[code] ?? localizations?["en"]
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -283,13 +283,13 @@ public struct CatalogDeck: Codable, Equatable, Sendable {
 
   public func hasLocalization(languageCode: String) -> Bool {
     let code = normalizedLanguageCode(languageCode)
-    return code == "ja" || localizations?[code] != nil
+    return code == "ja" || localizations?[code] != nil || localizations?["en"] != nil
   }
 
   private func metadataLocalization(languageCode: String) -> DeckMetadataLocalization? {
     let code = normalizedLanguageCode(languageCode)
     guard code != "ja" else { return nil }
-    return localizations?[code]
+    return localizations?[code] ?? localizations?["en"]
   }
 
   public var trendingRatio: Double {
@@ -331,7 +331,7 @@ public struct CatalogTag: Codable, Equatable, Sendable {
   public func localizedTag(languageCode: String) -> String? {
     let code = normalizedLanguageCode(languageCode)
     guard code != "ja" else { return tag }
-    return localizations?[code]
+    return localizations?[code] ?? localizations?["en"]
   }
 
   private enum CodingKeys: String, CodingKey {

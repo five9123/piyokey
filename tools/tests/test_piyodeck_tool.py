@@ -21,6 +21,7 @@ SPEC.loader.exec_module(piyodeck_tool)
 
 class PiyoDeckToolTests(unittest.TestCase):
     fixture = ROOT / "shared/piyodeck/fixtures/valid/basic-deck.json"
+    package_fixture = ROOT / "shared/piyodeck/fixtures/valid/basic.piyodeck"
     schema = ROOT / "shared/schema/deck.schema.json"
 
     def test_pack_is_deterministic_and_emits_store_entries_in_v1_order(self):
@@ -32,6 +33,9 @@ class PiyoDeckToolTests(unittest.TestCase):
             piyodeck_tool.pack(self.fixture, second)
 
             self.assertEqual(first.read_bytes(), second.read_bytes())
+            self.assertEqual(self.package_fixture.read_bytes(), first.read_bytes())
+            imported = piyodeck_tool.validate_package(self.package_fixture, self.schema)
+            self.assertEqual(package.deck, imported.deck)
             self.assertEqual(package.manifest["deck"]["deck_version"], 1)
             self.assertEqual(package.manifest["deck"]["item_count"], 2)
             self.assertNotIn(b"\n", package.entries["manifest.json"])
@@ -51,6 +55,10 @@ class PiyoDeckToolTests(unittest.TestCase):
             )
             self.assertEqual(len(first.read_bytes()), 1109)
             self.assertEqual(
+                hashlib.sha256(first.read_bytes()).hexdigest(),
+                "025efa7a0584509fd892221a01c4b3cdf828472c3ffeb13a7eec420102061c31",
+            )
+            self.assertEqual(
                 package.manifest["deck"]["sha256"],
                 hashlib.sha256(package.entries["deck.json"]).hexdigest(),
             )
@@ -62,6 +70,58 @@ class PiyoDeckToolTests(unittest.TestCase):
                 self.assertTrue(
                     all(info.date_time == (1980, 1, 1, 0, 0, 0) for info in archive.infolist())
                 )
+
+    def test_shared_binary_goldens_are_portable_and_fail_closed(self):
+        canonical = piyodeck_tool.validate_package(self.package_fixture, self.schema)
+        fixture_root = ROOT / "shared/piyodeck/fixtures"
+        manifest = json.loads((fixture_root / "cases.json").read_text(encoding="utf-8"))
+        self.assertEqual(1, manifest["schema_version"])
+        self.assertGreaterEqual(len(manifest["cases"]), 15)
+
+        for case in manifest["cases"]:
+            path = fixture_root / case["path"]
+            data = path.read_bytes()
+            with self.subTest(case=case["id"]):
+                self.assertEqual(case["size_bytes"], len(data))
+                self.assertEqual(case["sha256"], hashlib.sha256(data).hexdigest())
+                if case["valid"]:
+                    imported = piyodeck_tool.validate_package(path, self.schema)
+                    self.assertEqual(canonical.deck, imported.deck)
+                    continue
+
+                with self.assertRaises(piyodeck_tool.PiyoDeckToolError) as caught:
+                    piyodeck_tool.validate_package(path, self.schema)
+                self.assertEqual(case["expectation"], self.error_family(caught.exception))
+
+    def error_family(self, error: Exception) -> str:
+        message = str(error)
+        if isinstance(error, piyodeck_tool.DuplicateJSONKeyError):
+            return "invalid_json"
+        if "SHA-256 does not match" in message:
+            return "sha256_mismatch"
+        if "unsupported .piyodeck format_version" in message or "unsupported deck_schema_version" in message:
+            return "unsupported_version"
+        if "unsupported ZIP" in message:
+            return "unsupported_archive_feature"
+        if "unsafe ZIP entry path" in message:
+            return "unsafe_entry_path"
+        if "ZIP CRC-32 check failed" in message:
+            return "crc_mismatch"
+        if "malformed ZIP" in message:
+            return "malformed_archive"
+        if any(
+            marker in message
+            for marker in (
+                "invalid JSON",
+                "invalid UTF-8",
+                "UTF-8 BOM",
+                "without a BOM",
+                "invalid Unicode",
+            )
+        ):
+            return "invalid_json"
+        self.fail(f"unclassified PiyoDeck error: {error}")
+        raise AssertionError("unreachable")
 
     def test_inspect_and_validate_commands_report_package_metadata(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -151,6 +211,35 @@ class PiyoDeckToolTests(unittest.TestCase):
                 piyodeck_tool.DuplicateJSONKeyError, "deck_id"
             ):
                 piyodeck_tool.pack(source, Path(directory) / "duplicate.piyodeck")
+
+    def test_pack_rejects_noncanonical_timestamp_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "offset-time.json"
+            deck = json.loads(self.fixture.read_text(encoding="utf-8"))
+            deck["created_at"] = "2026-08-01T09:00:00+09:00"
+            source.write_text(json.dumps(deck, ensure_ascii=False), encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                piyodeck_tool.PiyoDeckToolError, "created_at"
+            ):
+                piyodeck_tool.pack(source, Path(directory) / "offset-time.piyodeck")
+
+    def test_strict_json_rejects_unpaired_surrogate_escapes(self):
+        invalid_values = (
+            br'{"name":"\ud800"}',
+            br'{"name":"\udc00"}',
+            br'{"name":"\ud800\u0041"}',
+        )
+        for value in invalid_values:
+            with self.subTest(value=value), self.assertRaisesRegex(
+                piyodeck_tool.PiyoDeckToolError, "invalid Unicode"
+            ):
+                piyodeck_tool.decode_strict_json(value, "deck.json")
+
+        valid = piyodeck_tool.decode_strict_json(
+            br'{"name":"\ud835\udfd9"}', "deck.json"
+        )
+        self.assertEqual("𝟙", valid["name"])
 
 
 if __name__ == "__main__":

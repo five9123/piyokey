@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "canonical-basic",
+      "path": "valid/basic.piyodeck",
+      "valid": true,
+      "expectation": "accepted_canonical",
+      "size_bytes": 1109,
+      "sha256": "025efa7a0584509fd892221a01c4b3cdf828472c3ffeb13a7eec420102061c31"
+    },
+    {
+      "id": "pretty-basic",
+      "path": "valid/pretty-basic.piyodeck",
+      "valid": true,
+      "expectation": "accepted_noncanonical",
+      "size_bytes": 1345,
+      "sha256": "e9c34281fc45e1d1e71502f9920aab3b97783474473c4119e9787c92f37e4b84"
+    },
+    {
+      "id": "wrong-sha",
+      "path": "invalid/wrong-sha.piyodeck",
+      "valid": false,
+      "expectation": "sha256_mismatch",
+      "size_bytes": 1109,
+      "sha256": "9714a6284f16be826d8e535ad8001c0fabbd1bd81eea533c2aab30158899951a"
+    },
+    {
+      "id": "unpaired-surrogate",
+      "path": "invalid/unpaired-surrogate.piyodeck",
+      "valid": false,
+      "expectation": "invalid_json",
+      "size_bytes": 1085,
+      "sha256": "56a042f97b0f19b708eeb2433b00afc6d47d0954a158f92dd75506135c8f0e42"
+    },
+    {
+      "id": "bom-deck",
+      "path": "invalid/bom-deck.piyodeck",
+      "valid": false,
+      "expectation": "invalid_json",
+      "size_bytes": 1112,
+      "sha256": "36ca710dfaf4949562f406afe619f6162228430d1ab43988f3887a691bdb9b52"
+    },
+    {
+      "id": "duplicate-key",
+      "path": "invalid/duplicate-key.piyodeck",
+      "valid": false,
+      "expectation": "invalid_json",
+      "size_bytes": 1121,
+      "sha256": "b207ee0aba1e4af49dd1460f76c25302804000046d2735bea9030b3fd2012e78"
+    },
+    {
+      "id": "future-version",
+      "path": "invalid/future-version.piyodeck",
+      "valid": false,
+      "expectation": "unsupported_version",
+      "size_bytes": 1109,
+      "sha256": "a8c35cc1552073c2749b2417441e5947c25753038656bb5f1f53997f9d0cee4b"
+    },
+    {
+      "id": "encrypted",
+      "path": "invalid/encrypted.piyodeck",
+      "valid": false,
+      "expectation": "unsupported_archive_feature",
+      "size_bytes": 1109,
+      "sha256": "2e88da8db464c321277a261f4b396d4d09cf2e147eda7cdf02476c19fbeb249a"
+    },
+    {
+      "id": "data-descriptor",
+      "path": "invalid/data-descriptor.piyodeck",
+      "valid": false,
+      "expectation": "unsupported_archive_feature",
+      "size_bytes": 1109,
+      "sha256": "2cc60002e99948f63830de36f22fe770dd82df55fb21fe60b25eb96fde6c4100"
+    },
+    {
+      "id": "deflate-method",
+      "path": "invalid/deflate-method.piyodeck",
+      "valid": false,
+      "expectation": "unsupported_archive_feature",
+      "size_bytes": 1109,
+      "sha256": "f19f0bbc621d891b2a7fedb6eec12d0d7c15d29553650a1d2f7b3b593e13ab2a"
+    },
+    {
+      "id": "zip64",
+      "path": "invalid/zip64.piyodeck",
+      "valid": false,
+      "expectation": "unsupported_archive_feature",
+      "size_bytes": 1109,
+      "sha256": "ab885702ed26f377eadc04b2a07f37c638a258c357fb53662f6fb7ce93a41fad"
+    },
+    {
+      "id": "header-mismatch",
+      "path": "invalid/header-mismatch.piyodeck",
+      "valid": false,
+      "expectation": "malformed_archive",
+      "size_bytes": 1109,
+      "sha256": "2d702c03d7e8062e2a802eae9080f6d01370c0b900c6519275b7d24bcb69a0e3"
+    },
+    {
+      "id": "crc-mismatch",
+      "path": "invalid/crc-mismatch.piyodeck",
+      "valid": false,
+      "expectation": "crc_mismatch",
+      "size_bytes": 1109,
+      "sha256": "a25b15005c307b2bd735e4f23e112de5f5b8476b0b5bad9d5c61ca2421328ae2"
+    },
+    {
+      "id": "unsafe-path",
+      "path": "invalid/unsafe-path.piyodeck",
+      "valid": false,
+      "expectation": "unsafe_entry_path",
+      "size_bytes": 1109,
+      "sha256": "7953dec4e9551960b9d1102331e8f6f5a248dff001e290d89524afcd09bb2735"
+    },
+    {
+      "id": "hidden-preamble",
+      "path": "invalid/hidden-preamble.piyodeck",
+      "valid": false,
+      "expectation": "malformed_archive",
+      "size_bytes": 1115,
+      "sha256": "89cb15c9a6cfca3a91d3f290a5c0d0ce1676b91de71fec67f41aaa45833ebc6f"
+    }
+  ]
+}

@@ -5,7 +5,11 @@ public enum UserDeckValidator {
   private static let userItemIDPattern = #"^item_[0-9a-f]{32}$"#
 
   public static func validate(_ deck: Deck) -> [ContentValidationIssue] {
-    var issues = DeckValidator.validate(deck)
+    DeckValidator.validate(deck) + validatePackageRules(deck)
+  }
+
+  static func validatePackageRules(_ deck: Deck) -> [ContentValidationIssue] {
+    var issues: [ContentValidationIssue] = []
 
     appendMaximumLengthIssue(deck.name, maximum: 120, path: "name", into: &issues)
     appendIdentifierIssue(deck.author.id, path: "author.id", into: &issues)

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">ピヨキー</string>
+  <string name="readiness_title">Android版の開発準備</string>
+  <string name="readiness_body">共通のハングル入力仕様を接続しました。製品画面はマイルストーン順に追加します。</string>
+  <string name="contract_label">共通エンジン仕様</string>
+  <string name="contract_value">テストベクター 25件</string>
+  <string name="next_step_label">次のステップ</string>
+  <string name="next_step_value">デッキ仕様とローカルコンテンツ</string>
+</resources>

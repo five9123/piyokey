@@ -126,6 +126,27 @@ def _check_json_nesting(text: str, label: str) -> None:
                 raise PiyoDeckToolError(f"{label} has malformed JSON structure")
 
 
+def _validate_unicode_scalars(value: Any, label: str, path: str = "$") -> None:
+    """Reject decoded strings containing isolated UTF-16 surrogate code points."""
+
+    if isinstance(value, str):
+        try:
+            value.encode("utf-8", errors="strict")
+        except UnicodeEncodeError as error:
+            raise PiyoDeckToolError(
+                f"{label} contains invalid Unicode at {path}: {error}"
+            ) from error
+        return
+    if isinstance(value, list):
+        for index, item in enumerate(value):
+            _validate_unicode_scalars(item, label, f"{path}[{index}]")
+        return
+    if isinstance(value, dict):
+        for key, item in value.items():
+            _validate_unicode_scalars(key, label, f"{path}.<key>")
+            _validate_unicode_scalars(item, label, f"{path}.{key}")
+
+
 def decode_strict_json(data: bytes, label: str) -> Any:
     if data.startswith(b"\xef\xbb\xbf"):
         raise PiyoDeckToolError(f"{label} must be UTF-8 without a BOM")
@@ -135,11 +156,13 @@ def decode_strict_json(data: bytes, label: str) -> Any:
         raise PiyoDeckToolError(f"{label} is not valid UTF-8: {error}") from error
     _check_json_nesting(text, label)
     try:
-        return json.loads(
+        value = json.loads(
             text,
             object_pairs_hook=_strict_object,
             parse_constant=_reject_json_constant,
         )
+        _validate_unicode_scalars(value, label)
+        return value
     except DuplicateJSONKeyError:
         raise
     except (json.JSONDecodeError, RecursionError) as error:
@@ -381,8 +404,6 @@ def read_strict_zip(data: bytes) -> dict[str, bytes]:
                 f"malformed ZIP: local and central paths differ for {record.name}"
             )
         payload = data[name_end:data_end]
-        if (binascii.crc32(payload) & 0xFFFFFFFF) != record.crc32:
-            raise PiyoDeckToolError(f"ZIP CRC-32 check failed for {record.name}")
         payloads[record.name] = payload
         occupied.append((record.local_header_offset, data_end))
 
@@ -395,6 +416,10 @@ def read_strict_zip(data: bytes) -> dict[str, bytes]:
         expected_offset = end
     if expected_offset != central_offset:
         raise PiyoDeckToolError("malformed ZIP: hidden bytes before central directory")
+    for record in records:
+        payload = payloads[record.name]
+        if (binascii.crc32(payload) & 0xFFFFFFFF) != record.crc32:
+            raise PiyoDeckToolError(f"ZIP CRC-32 check failed for {record.name}")
     return payloads
 
 
@@ -687,20 +712,12 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
     author = deck.get("author")
     if isinstance(author, dict):
         author_id = author.get("id")
-        if isinstance(author_id, str):
-            if GENERIC_ID.fullmatch(author_id) is None:
-                issues.append("$.author.id: invalid identifier")
-            if author_id.startswith("official_"):
-                issues.append("$.author.id: official_ is reserved")
+        if isinstance(author_id, str) and GENERIC_ID.fullmatch(author_id) is None:
+            issues.append("$.author.id: invalid identifier")
 
     deck_id = deck.get("deck_id")
-    if isinstance(deck_id, str):
-        if deck_id.startswith("official_"):
-            issues.append("$.deck_id: official_ is reserved")
-        if USER_DECK_ID.fullmatch(deck_id) is None:
-            issues.append("$.deck_id: expected user_ followed by 32 lower-case hex characters")
-    if deck.get("official") is not False:
-        issues.append("$.official: user deck must set official to false")
+    if isinstance(deck_id, str) and GENERIC_ID.fullmatch(deck_id) is None:
+        issues.append("$.deck_id: invalid identifier")
 
     tags = deck.get("tags")
     if isinstance(tags, list):
@@ -736,8 +753,8 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
     items = deck.get("items")
     if not isinstance(items, list):
         return issues
-    if not 1 <= len(items) <= MAX_ITEMS:
-        issues.append(f"$.items: user decks require 1...{MAX_ITEMS} items")
+    if not items:
+        issues.append("$.items: at least one item is required")
     seen_ids: set[str] = set()
     english_metadata = isinstance(localizations, dict) and "en" in localizations
     for index, item in enumerate(items):
@@ -749,12 +766,8 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
             if item_id in seen_ids:
                 issues.append(f"{path}.id: duplicate item identifier")
             seen_ids.add(item_id)
-            if item_id.startswith("official_"):
-                issues.append(f"{path}.id: official_ is reserved")
-            if USER_ITEM_ID.fullmatch(item_id) is None:
-                issues.append(
-                    f"{path}.id: expected item_ followed by 32 lower-case hex characters"
-                )
+            if GENERIC_ID.fullmatch(item_id) is None:
+                issues.append(f"{path}.id: invalid identifier")
         ko = item.get("ko")
         if isinstance(ko, str):
             if not ko.strip():
@@ -770,8 +783,6 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
         for field in ("reading_ja", "meaning_ja"):
             if not _trimmed(item.get(field)):
                 issues.append(f"{path}.{field}: must not be blank")
-        if item.get("audio", object()) is not None:
-            issues.append(f"{path}.audio: .piyodeck v1 requires null")
         item_localizations = item.get("localizations")
         if english_metadata and (
             not isinstance(item_localizations, dict) or "en" not in item_localizations
@@ -786,6 +797,45 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
                         issues.append(
                             f"{path}.localizations.{language}.{field}: must not be blank"
                         )
+    return issues
+
+
+def user_deck_issues(deck: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    author = deck.get("author")
+    if isinstance(author, dict):
+        author_id = author.get("id")
+        if isinstance(author_id, str) and author_id.startswith("official_"):
+            issues.append("$.author.id: official_ is reserved")
+
+    deck_id = deck.get("deck_id")
+    if isinstance(deck_id, str):
+        if deck_id.startswith("official_"):
+            issues.append("$.deck_id: official_ is reserved")
+        if USER_DECK_ID.fullmatch(deck_id) is None:
+            issues.append("$.deck_id: expected user_ followed by 32 lower-case hex characters")
+    if deck.get("official") is not False:
+        issues.append("$.official: user deck must set official to false")
+
+    items = deck.get("items")
+    if not isinstance(items, list):
+        return issues
+    if not 1 <= len(items) <= MAX_ITEMS:
+        issues.append(f"$.items: user decks require 1...{MAX_ITEMS} items")
+    for index, item in enumerate(items):
+        if not isinstance(item, dict):
+            continue
+        path = f"$.items[{index}]"
+        item_id = item.get("id")
+        if isinstance(item_id, str):
+            if item_id.startswith("official_"):
+                issues.append(f"{path}.id: official_ is reserved")
+            if USER_ITEM_ID.fullmatch(item_id) is None:
+                issues.append(
+                    f"{path}.id: expected item_ followed by 32 lower-case hex characters"
+                )
+        if item.get("audio", object()) is not None:
+            issues.append(f"{path}.audio: .piyodeck v1 requires null")
     return issues
 
 
@@ -820,7 +870,9 @@ def validate_package_data(data: bytes, deck_schema: dict[str, Any]) -> Validated
     entries = read_strict_zip(data)
     manifest_raw = entries["manifest.json"]
     deck_raw = entries["deck.json"]
-    manifest = _validate_manifest(decode_strict_json(manifest_raw, "manifest.json"))
+    manifest_value = decode_strict_json(manifest_raw, "manifest.json")
+    deck_value = decode_strict_json(deck_raw, "deck.json")
+    manifest = _validate_manifest(manifest_value)
 
     descriptor = manifest["deck"]
     if descriptor["size_bytes"] != len(deck_raw):
@@ -829,19 +881,24 @@ def validate_package_data(data: bytes, deck_schema: dict[str, Any]) -> Validated
     if descriptor["sha256"] != digest:
         raise PiyoDeckToolError("deck.json SHA-256 does not match manifest")
 
-    deck_value = decode_strict_json(deck_raw, "deck.json")
     if not isinstance(deck_value, dict):
         raise PiyoDeckToolError("deck.json root must be an object")
-    _raise_issues("deck.json does not match deck schema", schema_issues(deck_value, deck_schema))
-    _raise_issues("deck.json is not a valid user deck", deck_semantic_issues(deck_value))
 
     for field, actual in (
-        ("deck_id", deck_value["deck_id"]),
-        ("deck_version", deck_value["version"]),
-        ("item_count", len(deck_value["items"])),
+        ("deck_id", deck_value.get("deck_id")),
+        ("deck_version", deck_value.get("version")),
+        (
+            "item_count",
+            len(deck_value.get("items"))
+            if isinstance(deck_value.get("items"), list)
+            else None,
+        ),
     ):
-        if descriptor[field] != actual:
+        if type(descriptor[field]) is not type(actual) or descriptor[field] != actual:
             raise PiyoDeckToolError(f"manifest mismatch: deck.{field}")
+    _raise_issues("deck.json does not match deck schema", schema_issues(deck_value, deck_schema))
+    _raise_issues("deck.json fails DeckKit semantics", deck_semantic_issues(deck_value))
+    _raise_issues("deck.json is not a valid user deck", user_deck_issues(deck_value))
     return ValidatedPackage(
         package_size=len(data),
         manifest=manifest,
@@ -864,7 +921,8 @@ def pack(deck_path: Path, output_path: Path) -> ValidatedPackage:
         raise PiyoDeckToolError("deck JSON root must be an object")
     deck_schema = _load_schema(DEFAULT_DECK_SCHEMA)
     _raise_issues("deck JSON does not match deck schema", schema_issues(deck, deck_schema))
-    _raise_issues("deck JSON is not a valid user deck", deck_semantic_issues(deck))
+    _raise_issues("deck JSON fails DeckKit semantics", deck_semantic_issues(deck))
+    _raise_issues("deck JSON is not a valid user deck", user_deck_issues(deck))
 
     deck_data = canonical_json(deck)
     if len(deck_data) > MAX_DECK_BYTES:
