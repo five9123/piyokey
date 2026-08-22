@@ -306,9 +306,6 @@ enum PiyoDeckZIP {
       let dataEnd = try checkedEnd(
         localNameEnd, record.compressedSize, limit: centralDirectoryOffset)
       let payload = archive.subdata(in: localNameEnd..<dataEnd)
-      guard PiyoDeckCRC32.checksum(payload) == record.crc32 else {
-        throw PiyoDeckImportError.crcMismatch(name: record.name)
-      }
       payloads[record.name] = payload
       occupiedRanges.append((start: offset, end: dataEnd))
     }
@@ -325,6 +322,12 @@ enum PiyoDeckZIP {
     }
     guard expectedOffset == centralDirectoryOffset else {
       throw PiyoDeckImportError.malformedArchive("hidden bytes before the central directory")
+    }
+    for record in records {
+      guard let payload = payloads[record.name], PiyoDeckCRC32.checksum(payload) == record.crc32
+      else {
+        throw PiyoDeckImportError.crcMismatch(name: record.name)
+      }
     }
     return payloads
   }

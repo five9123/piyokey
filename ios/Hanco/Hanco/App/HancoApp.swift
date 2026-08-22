@@ -155,7 +155,10 @@ struct HancoApp: App {
       ]
     )
 
-    guard let package = try? PiyoDeckPackageWriter.write(deck: deck) else { return }
+    guard
+      let schemaData = try? PiyoDeckDocumentService.deckSchemaData(),
+      let package = try? PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: schemaData)
+    else { return }
     let fileManager = FileManager.default
     let rootURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
       .appendingPathComponent("Hanco", isDirectory: true)
@@ -194,7 +197,13 @@ struct HancoApp: App {
     )
     installUITestDeck(currentDeck)
 
-    guard let package = try? PiyoDeckPackageWriter.write(deck: incomingDeck) else { return }
+    guard
+      let schemaData = try? PiyoDeckDocumentService.deckSchemaData(),
+      let package = try? PiyoDeckPackageWriter.write(
+        deck: incomingDeck,
+        deckSchemaData: schemaData
+      )
+    else { return }
     let rootURL = piyoDeckPendingImportsRootURL()
     try? FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     try? package.write(

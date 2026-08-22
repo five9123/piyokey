@@ -2,7 +2,7 @@ import CryptoKit
 import Foundation
 
 public enum PiyoDeckPackageWriter {
-  public static func write(deck: Deck, deckSchemaData: Data? = nil) throws -> Data {
+  public static func write(deck: Deck, deckSchemaData: Data) throws -> Data {
     let userIssues = UserDeckValidator.validate(deck)
     guard userIssues.isEmpty else {
       throw PiyoDeckImportError.invalidUserDeck(userIssues)
@@ -32,23 +32,21 @@ public enum PiyoDeckPackageWriter {
     } catch {
       throw PiyoDeckImportError.invalidJSON(name: "deck.json", reason: String(describing: error))
     }
-    if let deckSchemaData {
-      do {
-        let schemaIssues = try JSONSchemaValidator.validate(
-          instanceData: deckData,
-          schemaData: deckSchemaData
-        )
-        guard schemaIssues.isEmpty else {
-          throw PiyoDeckImportError.deckSchemaViolation(schemaIssues)
-        }
-      } catch let error as PiyoDeckImportError {
-        throw error
-      } catch {
-        throw PiyoDeckImportError.invalidJSON(
-          name: "deck.json",
-          reason: String(describing: error)
-        )
+    do {
+      let schemaIssues = try JSONSchemaValidator.validate(
+        instanceData: deckData,
+        schemaData: deckSchemaData
+      )
+      guard schemaIssues.isEmpty else {
+        throw PiyoDeckImportError.deckSchemaViolation(schemaIssues)
       }
+    } catch let error as PiyoDeckImportError {
+      throw error
+    } catch {
+      throw PiyoDeckImportError.invalidJSON(
+        name: "deck.json",
+        reason: String(describing: error)
+      )
     }
     guard deckData.count <= PiyoDeckPackageLimits.maximumDeckBytes else {
       throw PiyoDeckImportError.entryTooLarge(

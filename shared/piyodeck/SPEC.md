@@ -101,6 +101,9 @@ rules:
   text to generate speech.
 - The existing schema's `additionalProperties: false` rules remain in force.
 - Duplicate JSON object keys are invalid.
+- `created_at` and `updated_at` use the canonical UTC, whole-second form
+  `YYYY-MM-DDTHH:MM:SSZ`. Offsets and fractional seconds are rejected so every
+  conforming writer emits identical timestamp bytes.
 
 In particular, executable code, HTML behavior, plug-ins, remote URLs, purchase
 receipts, license keys, premium flags, expiry fields, account email, and device
@@ -151,3 +154,15 @@ python3 tools/piyodeck_tool.py validate /tmp/basic.piyodeck --deck-schema shared
 writing a deterministic package. `inspect` and `validate` apply the same strict
 v1 container and content checks; `validate` accepts an explicit deck schema so
 CI and compatibility checks can pin the intended schema revision.
+
+`fixtures/valid/basic.piyodeck` is the canonical cross-platform binary golden.
+Python, Swift, and Kotlin writers must reproduce it byte-for-byte, and all three
+readers must accept it using the pinned shared deck schema.
+
+`fixtures/valid/pretty-basic.piyodeck` preserves valid pretty-printed entry
+bytes and must be accepted by all readers. `fixtures/cases.json` records the
+portable malicious corpus with exact size, SHA-256, and coarse error family.
+Python and Swift execute every listed binary directly; Kotlin directly executes
+the shared SHA and Unicode cases and covers the remaining recorded ZIP/JSON
+families with deterministic in-memory mutations. Regenerate the binary corpus
+with `python3 tools/gen_piyodeck_fixtures.py`.

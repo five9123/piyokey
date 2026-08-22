@@ -19,7 +19,7 @@ hanco/
     Core/HangulEngine/     # 순수 로직 — UI 의존 금지, 테스트 최우선
     Core/DeckKit/          # 덱 모델, 카탈로그 클라이언트, 검증
     Features/...           # 화면 단위
-  android/                 # M7에서 생성 (Kotlin, Compose, API 26+)
+  android/                 # M7 Kotlin/Compose 앱 (API 26+)
 ```
 
 ## 철칙
@@ -39,6 +39,8 @@ hanco/
 - 저장소 발음 자산 계약 검증: `python3 tools/release_preflight.py`
 - iOS 앱 테스트: `xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'`
 - M1 패키지 테스트: `cd ios/HangulEngine && swift test`
+- Android M1 공용 코어 테스트: `cd android && ./gradlew :core:hangul:jacocoTestCoverageVerification :core:deckkit:test :core:piyodeck:test`
+- Android 앱 골격 검증: `cd android && ./gradlew :app:lintDebug :app:assembleDebug`
 - M4 실기기 게이트: `python3 tools/m4_ios_performance_gate.py inspect-device --device <UDID>` 후 `prepare`·`record` 서브커맨드 사용 (`artifacts/m4/README.md` 참고)
 
 ## 테스트 실행 범위
@@ -51,7 +53,7 @@ hanco/
 - M6 최신 게임 UI: 초성 맞추기·단어 맞추기·받아쓰기는 흐름·산성비와 같은 `닫기 | 문제 수·점수·콤보` 상단 HUD, 중앙 문제 레인, 입력 상태, 하단 고정 키보드 구조를 사용한다. 공통 HUD는 아이콘 안전 영역과 수치 영역을 분리하고 긴 남은 시간·점수·콤보·목숨·문제 수를 단계적·가변 축소해 서로 겹치지 않게 한다. 플레이 중 덱 제목·세션 설정·입력 방식 변경 컨트롤은 노출하지 않으며, 설정에서 선택한 기본 입력 방식을 세션 시작 시 확정한다. 세 모드는 모두 일반 연습형 `피요 + 원형 조합 프리뷰 + 入力中` 입력 카드에서 누적 입력과 정타·오타·완료 피드백을 보여 주며 문제 카드 안의 중복 피요는 제거한다. 초성 맞추기는 중앙 초성을 음절 진행에 맞춰 현재·완료 색과 스프링으로 갱신하고 큰 일본어 뜻 워드박스를 사용한다. 일본어 뜻은 기본 ON이고 설정의 게임 표시에서 끌 수 있으며, 정답 완성 시 중앙에 맞춘 한국어 단어를 약 1.35초 노출한 뒤 자동 전환한다. 단어 맞추기는 일본어 뜻을 필수 문제 단서로 표시하고 정답 한글 전체를 직접 입력한 뒤 0.65초에 전환한다. 받아쓰기는 정답·초성·뜻·읽기를 사전 노출하지 않고 0.65초 전환을 유지한다.
 - M6 최신 게임 조정: 모든 연습·게임 피요는 옷장의 사용자 선택을 세션 내내 유지하고 `자동`에서도 덱·카드 태그 기반 소품을 장착하지 않는다. TOPIK 안경은 TOPIK 게임에서 0점 이상을 기록하면 영구 해금한 뒤 옷장에서 직접 선택한다. 흐름·산성비의 플레이 피요는 몸체를 정면으로 고정하고 눈동자로만 카드를 추적해 다른 화면과 같은 실루엣 비율을 유지한다. 두 모드는 3목숨을 표시하고 세 번째 카드를 놓치면 60초 전이라도 종료한다. 카드가 바뀔 때마다 플레이 경과 0~50초 동안 흐름은 시작 대비 최대 1.8배, 산성비는 최대 1.5배까지 점진 가속한다. 흐름의 새 점수 조건은 Game Center `piyokey.v4.flow.*`와 `piyokey.v4.cup.weekly.flow` 계약으로 분리했다.
 - M6 최신 산성비: 첫 카드가 바닥에 닿기 전 이동 시간의 약 42% 간격으로 다음 카드를 생성해 최대 4장이 3개 레인에서 동시에 낙하한다. 내장 키보드는 현재 입력 중인 가장 위험한 카드를 강조·고정하고 완료·이탈 뒤 진행률이 가장 높은 카드로 이어진다. OS 키보드는 화면에 낙하 중인 단어 중 어떤 것이든 완성 입력과 일치하면 해당 카드를 완료한다. 각 카드는 독립적으로 위험선 도달과 목숨 차감을 판정한다.
-- M1 완료: `ios/HangulEngine` Swift 패키지, 콘텐츠 스키마/검증기, 30덱 목 카탈로그가 구현·검증됨.
+- iOS M1 완료: `ios/HangulEngine` Swift 패키지, 콘텐츠 스키마/검증기, 공식 26덱 카탈로그와 별도 게임 프리셋 15덱이 구현·검증됨.
 - M2 완료: 연습 전 영속 설정, 3문제 흐름, 내장 두벌식 키보드, 조합 프리뷰, 정타·오타·완료 연출과 초기 마스코트가 구현됨. 초기 펭귄 에셋은 M6에서 Swift 벡터 병아리 성장 시스템으로 교체됨.
 - M3 완료: 발견·검색·필터·상세·다운로드·오프라인 내 덱·정적 HTTP/캐시·v2 업데이트, 삭제 후에도 유지되는 다운로드 태그 이력, 홈 추천 3개, 결과의 동일 태그 추천 2개와 1탭 재시작이 구현·검증됨. 기준 이미지 5장과 성공 흐름 영상은 `artifacts/m3/`에 저장됨.
 - M4 기능 완료: 설치 덱 선택, 자동 코스, 60초 흐름 모드, 점수·콤보·카드 이탈, 60Hz 카드·파티클, 백그라운드 타이머 정지, 콘텐츠 기반 랭크, GameRecord·DeckProgress·최고 기록, 레슨·게임 공통 F12 결과와 2.5초 연출·안전한 탭 스킵·1탭 재도전이 구현·검증됨. iPhone 15 Pro 보조 검증은 Hanco hang·hitch 0건, 파티클 2회 직후 평균 59.8 FPS·p95 16.7ms. 사용자의 명시적 승인으로 iPhone 12 측정은 M6 종료 전 출시 게이트로 이관됨.
@@ -61,3 +63,6 @@ hanco/
 - M6 출시 상태 정정(2026-08-11): 위 build 5 제출은 Game Center 표시·동기화 경합과 MainActor 저장 병목을 수정하기 위해 심사 시작 전에 취소했으며, 현재 `Removed / Developer Rejected`다. 수정본 `1.0.2 (6)`은 전체 회귀 321/321, Distribution archive·IPA 검증, Organizer 업로드와 TestFlight Game Center 실기기 확인을 완료했다. 제출 ID `45184f9b-494c-431e-a740-a3dde9080f4a`로 iOS 앱과 Flow v4 3개·Weekly Piyo Cup v4를 전송했으며 5개 모두 `Waiting for Review`다. 수동 hold는 해제했고 승인 후 phased release 없이 전 사용자에게 즉시 자동 출시한다.
 - 앱 1.1 구현 베이스 완료(2026-08-14, build 7·미제출): `.piyodeck` v1 규격·fixture·Swift/Python reader/writer/validator, 무료 가져오기·연습/게임·내보내기·삭제·충돌 교체·재가져오기, 진행/복습 이력 보존, StoreKit 2 비소모성 `app.piyokey.deckmaker.lifetime` 기반 모바일 생성·편집·공식 덱 사본 저장을 구현했다. 사용자 덱은 로컬-only·무계정·비공개이며 세션 중 파일/충돌/편집/결제 모달을 띄우지 않는다. SwiftPM 36개, 관련 iOS 단위 테스트 94개, 결제 경계·안전 UX UI 회귀 5개와 캡처 시나리오 2개, Python 도구/프리플라이트 13개가 통과했다. App Store Connect 상품 생성·실판매 가격/세금/Family Sharing·심사 스크린샷, Sandbox 결제/복원/환불, TestFlight 실기기 Files·iCloud Drive·AirDrop 및 1,000항목 성능은 R1.1 출시 전 수동 게이트로 남아 있다(PRD F5.9, §8.4, R1.1).
 - 앱 1.1 안전 UX 보완(2026-08-14): 단일 활성 편집 초안의 primary/backup 자동 저장·재실행 복구·다른 흐름 시작 전 재개/폐기 선택, 설치 transaction 내부 `base_version` 원자 비교와 원본 변경 시 별도 사본 저장, 현재본/가져온 파일 충돌 비교·내보내기·파괴적 재확인, 삭제 확인·내보낸 뒤 삭제·실패 복구, 첫 검증 오류 자동 포커스·VoiceOver 안내, 1,000항목 접이식 편집, Dynamic Type·좁은 폭·텍스트 대비 대응을 추가했다. Debug/Release Simulator 빌드에서 검증하고 Release 앱 번들에서 Debug 전용 `.storekit`을 제외한다.
+- iOS 공개 상태 확인(2026-08-21): Apple 공개 lookup의 일본 storefront에서 버전 `1.0.2`가 2026-08-18 출시된 상태를 확인했다. 저장소의 build 6 심사 대기 기록은 운영 상태보다 오래됐고, 로컬 `1.1 (7)`은 Deck Maker와 `.piyodeck`을 포함한 다음 업데이트용 미제출 기준선으로 유지한다.
+- M7 재개·A0 로컬 기반 완료(2026-08-21): 사용자의 명시적 요청으로 Android HOLD를 해제하고 `android/`에 Gradle 9.5 wrapper, AGP 9.3.1, Kotlin/Compose compiler 2.3.21, Compose BOM 2026.08.00, min 26/compile 37/target 36의 Compose 앱 골격과 순수 Kotlin Hangul core를 추가했다. 공용 벡터는 생성기 기준 composition 15종+backspace 10종으로 보강했다. API 37은 기존 수락 license를 Gradle이 확인해 자동 설치됐고 별도 수락 명령은 실행하지 않았다. 대규모 dirty worktree의 baseline commit/tag, 최종 application ID·launcher icon, Android Studio/JDK 17, Play Console 상태는 열린 A0 게이트다.
+- M7 M1 공용 코어 완료(2026-08-22): Android 순수 Kotlin `core:hangul`·`core:deckkit`·`core:piyodeck`을 구현하고 공식 26덱, 게임 프리셋 15덱×100항목, v10→v11 전체 snapshot, `.piyodeck` v1 strict ZIP/JSON/사용자 덱 정책을 공용 fixture로 검증했다. Python·Swift·Kotlin writer는 1,109-byte canonical package와 동일하고 세 reader는 pretty package를 수용하며 공유 SHA·Unicode 공격 package를 거부한다. Kotlin 34개, SwiftPM 42개, Python 49개와 release preflight, Android lintDebug·assembleDebug가 통과했으며 Hangul line 99.68%·branch 95.78%다. 다음 기능 단계는 중앙 저장소 전용 브랜치로 선별 이전하기 전까지 시작하지 않는다.

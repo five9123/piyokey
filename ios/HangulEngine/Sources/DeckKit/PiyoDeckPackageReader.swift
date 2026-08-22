@@ -13,6 +13,11 @@ public enum PiyoDeckPackageReader {
     guard let manifestData = entries["manifest.json"], let deckData = entries["deck.json"] else {
       throw PiyoDeckImportError.invalidEntrySet(Array(entries.keys).sorted())
     }
+
+    // Both JSON transports are untrusted archive input. Validate them before
+    // trusting version or metadata from either entry.
+    try PiyoDeckStrictJSON.validate(manifestData, name: "manifest.json")
+    try PiyoDeckStrictJSON.validate(deckData, name: "deck.json")
     let manifest = try decodeManifest(manifestData)
 
     guard manifest.deck.sizeBytes == deckData.count else {
@@ -22,7 +27,36 @@ public enum PiyoDeckPackageReader {
       throw PiyoDeckImportError.sha256Mismatch
     }
 
-    try PiyoDeckStrictJSON.validate(deckData, name: "deck.json")
+    let deckObject: [String: Any]
+    do {
+      guard let object = try JSONSerialization.jsonObject(with: deckData) as? [String: Any] else {
+        throw PiyoDeckImportError.invalidJSON(
+          name: "deck.json",
+          reason: "root must be a JSON object"
+        )
+      }
+      deckObject = object
+    } catch let error as PiyoDeckImportError {
+      throw error
+    } catch {
+      throw PiyoDeckImportError.invalidJSON(
+        name: "deck.json",
+        reason: String(describing: error)
+      )
+    }
+    guard manifest.deck.deckId == deckObject["deck_id"] as? String else {
+      throw PiyoDeckImportError.manifestMismatch(field: "deck.deck_id")
+    }
+    guard manifest.deck.deckVersion == deckObject["version"] as? Int else {
+      throw PiyoDeckImportError.manifestMismatch(field: "deck.deck_version")
+    }
+    guard
+      let rawItems = deckObject["items"] as? [Any],
+      manifest.deck.itemCount == rawItems.count
+    else {
+      throw PiyoDeckImportError.manifestMismatch(field: "deck.item_count")
+    }
+
     let schemaIssues: [ContentValidationIssue]
     do {
       schemaIssues = try JSONSchemaValidator.validate(
@@ -49,17 +83,11 @@ public enum PiyoDeckPackageReader {
       )
     }
 
-    guard manifest.deck.deckId == deck.deckId else {
-      throw PiyoDeckImportError.manifestMismatch(field: "deck.deck_id")
+    let semanticIssues = DeckValidator.validate(deck)
+    guard semanticIssues.isEmpty else {
+      throw PiyoDeckImportError.invalidUserDeck(semanticIssues)
     }
-    guard manifest.deck.deckVersion == deck.version else {
-      throw PiyoDeckImportError.manifestMismatch(field: "deck.deck_version")
-    }
-    guard manifest.deck.itemCount == deck.items.count else {
-      throw PiyoDeckImportError.manifestMismatch(field: "deck.item_count")
-    }
-
-    let userIssues = UserDeckValidator.validate(deck)
+    let userIssues = UserDeckValidator.validatePackageRules(deck)
     guard userIssues.isEmpty else {
       throw PiyoDeckImportError.invalidUserDeck(userIssues)
     }
