@@ -134,6 +134,10 @@ def main():
         {"name": "bs_compound_jong", "type_keys": ["ㄷ","ㅏ","ㄹ","ㄱ"], "then_backspaces": 1, "expected": "달"},
         {"name": "bs_compound_vowel", "type_keys": ["ㅇ","ㅗ","ㅣ"], "then_backspaces": 1, "expected": "오"},
         {"name": "bs_across_syllables", "type_keys": ["ㄱ","ㅏ","ㄴ","ㅏ"], "then_backspaces": 1, "expected": "간"},
+        {"name": "bs_compound_jong_to_syllable", "type_keys": ["ㄷ","ㅏ","ㄹ","ㄱ"], "then_backspaces": 2, "expected": "다"},
+        {"name": "bs_compound_vowel_to_cho", "type_keys": ["ㅇ","ㅗ","ㅣ"], "then_backspaces": 2, "expected": "ㅇ"},
+        {"name": "bs_restore_before_carryover", "type_keys": ["ㄷ","ㅏ","ㄹ","ㄱ","ㅏ"], "then_backspaces": 1, "expected": "닭"},
+        {"name": "bs_ignores_excess_deletes", "type_keys": ["ㄱ","ㅏ"], "then_backspaces": 4, "expected": ""},
     ]
     out = {
         "version": 1,

@@ -11,7 +11,7 @@ public enum JSONSchemaValidator {
   public static func validate(instanceData: Data, schemaData: Data) throws
     -> [ContentValidationIssue]
   {
-    let instance = try JSONSerialization.jsonObject(with: instanceData)
+    let instance = try JSONSerialization.jsonObject(with: instanceData, options: [.fragmentsAllowed])
     let schemaObject = try JSONSerialization.jsonObject(with: schemaData)
     guard let schema = schemaObject as? [String: Any] else {
       throw JSONSchemaValidationError.invalidSchemaRoot
@@ -62,6 +62,7 @@ public enum JSONSchemaValidator {
 
     if let object = value as? [String: Any] {
       let properties = schema["properties"] as? [String: [String: Any]] ?? [:]
+      validateCount(object.count, schema: schema, path: path, unit: "properties", into: &issues)
       if let required = schema["required"] as? [String] {
         for key in required where object[key] == nil {
           issues.append(.init(code: "schema.required", path: "\(path).\(key)", message: "필수 필드입니다"))
@@ -107,7 +108,13 @@ public enum JSONSchemaValidator {
     }
 
     if let string = value as? String {
-      validateCount(string.count, schema: schema, path: path, unit: "length", into: &issues)
+      validateCount(
+        string.unicodeScalars.count,
+        schema: schema,
+        path: path,
+        unit: "length",
+        into: &issues
+      )
       if let pattern = schema["pattern"] as? String,
         string.range(of: pattern, options: .regularExpression) == nil
       {
@@ -171,8 +178,19 @@ public enum JSONSchemaValidator {
     unit: String,
     into issues: inout [ContentValidationIssue]
   ) {
-    let minimumKey = unit == "items" ? "minItems" : "minLength"
-    let maximumKey = unit == "items" ? "maxItems" : "maxLength"
+    let minimumKey: String
+    let maximumKey: String
+    switch unit {
+    case "items":
+      minimumKey = "minItems"
+      maximumKey = "maxItems"
+    case "properties":
+      minimumKey = "minProperties"
+      maximumKey = "maxProperties"
+    default:
+      minimumKey = "minLength"
+      maximumKey = "maxLength"
+    }
     if let minimum = schema[minimumKey] as? Int, count < minimum {
       issues.append(
         .init(code: "schema.\(minimumKey)", path: path, message: "최소 \(minimum)이어야 합니다"))

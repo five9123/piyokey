@@ -1,6 +1,6 @@
 # PRD: 한국어 타이핑 연습 모바일 앱 (글로벌 시장, 일본 특화 UX 유지)
 
-- 문서 버전: v5.7 (2026-08-15) — v1.1: OS 키보드 모드 추가, v1.2: 읽기 전용 덱 발견·다운로드 추가, v1.3: 결과 화면(F12) 상세 스펙, v1.4: PIYOKEY 브랜드 확정, v1.5: 출시판을 공식 학습 콘텐츠·무계정·원탭 연습 중심으로 재정렬, v1.6: HanTap 공용 병아리 AppIcon 채택, v1.7: 첫 3챕터 부화 온보딩과 콘텐츠 접근 게이트 추가, v1.8: 창작 K-POP·K드라마 덱 6종 추가, v1.9: 홈·마이페이지 피요 데일리 응원 멘트 추가, v2.0: 부화 미션 연속 진행과 결과 하단 완료 CTA 추가, v2.1: 흐름·산성비 점진 가속·3목숨 조기 종료와 플레이 피요 정면 비율 고정, v2.2: 흐름·산성비 단어 카드 내부 장식 아이콘 제거, v2.3: 초성·받아쓰기 플레이 UI와 입력 방식 정책을 최신 게임 프레임으로 통일, v2.4: 흐름·산성비 단어 카드 내용 맞춤 폭과 발음 표기 추가, v2.5: 긴 자모 트랙의 화면 폭 격리와 현재 자모 자동 추적 추가, v2.6: 산성비 시간차 동시 낙하와 위험 카드 우선 입력 추가, v2.7: 산성비 OS 키보드의 화면 내 자유 단어 입력 추가, v2.8: 직접 입력 게임의 중복 조합 텍스트 제거·상태 문구 중앙 정렬과 흐름·산성비 목숨 손실 피드백 강화, v2.9: 게임 HUD 닫기 버튼 테두리 제거와 수치 중앙 정렬, v3.0: 초성별 입력 진행·연습형 조합 카드·일본어 뜻 워드박스 추가, v3.1: 초성 일본어 뜻 기본 표시와 설정 토글 추가, v3.2: 받아쓰기에도 연습형 조합 입력 카드 적용, v3.3: 게임 허브에서 받아쓰기와 단어 맞추기 카드 위치 교환, v3.4: 전용 게임 세트를 타이핑 난이도별 100단어로 확대하고 세션별 무작위 출제 추가, v3.5: 게임 결과의 모드·레벨 표기와 결과 이미지 직접 저장·SNS 공유 추가, v3.6: 여행·연애·친구 상황별 재미 표현 덱 8종 추가, v3.7: 최애 아이돌 라이브 댓글 덱 추가, v3.8: 게임 전용 100단어를 실용 TOPIK 수준과 타이핑 난이도의 복합 기준으로 재구성, v3.9: 부화 미션 결과의 보조 액션 제거와 단계별 성장 연출 순서 복구, v4.0: 부화 완료 후 홈 랜딩과 6단계 메인 앱 스포트라이트 튜토리얼 추가, v4.1: 음영이 있는 흰색 `ㅎ` 키캡 브랜드 이미지로 AppIcon·앱 내부·공유 카드 로고 통일, v4.2: 게임 플레이 중 피요 복장 고정, v4.3: 연습·게임 세션 외형 결정 통일, v4.4: TOPIK 안경을 게임 참여 보상으로 전환, v4.5: 단어 퀴즈를 일본어 뜻 기반 한글 직접 타이핑으로 전환, v4.6: 게임 HUD의 긴 수치 자동 축소와 아이콘 안전 영역 추가, v4.7: 플로우 가속 상한을 1.8배로 상향하고 플로우·피요컵 Game Center 계약을 v4로 분리, v4.8: 옷장의 알 무늬 4종 재선택 UI 제거, v4.9: 게임 허브의 최상단 Game Center 전체 랭킹 버튼 제거, v5.0: 외부 운영 메일 기반 신규 덱 제안·기존 콘텐츠 제보 추가, v5.1: 영어 콘텐츠와 글로벌 배포를 위한 `typee` 로케일 브랜드·콘텐츠 현지화·단일 앱 레코드 정책 추가, v5.2: 앱 1.1용 `.piyodeck` 무료 가져오기와 비소모성 Deck Maker 생성·편집 계약 추가, v5.3: 글로벌 App Store 표시명을 기능 설명 우선·브랜드 후위 형식으로 확정, v5.4: Deck Maker 초안 복구·원자적 편집 충돌 방지·안전 삭제·접근성 계약 보강, v5.5: 앱 1.1 `All Countries or Regions` availability 확정, v5.6: 앱 제공 고정 목표 전 영역의 오프라인 gTTS MP3와 공통 폴백 순서 확정, v5.7: 이후 추가·수정되는 앱 제공 고정 목표에도 동일 gTTS 생성·검증 규칙을 의무화
+- 문서 버전: v5.8 (2026-08-21) — v1.1: OS 키보드 모드 추가, v1.2: 읽기 전용 덱 발견·다운로드 추가, v1.3: 결과 화면(F12) 상세 스펙, v1.4: PIYOKEY 브랜드 확정, v1.5: 출시판을 공식 학습 콘텐츠·무계정·원탭 연습 중심으로 재정렬, v1.6: HanTap 공용 병아리 AppIcon 채택, v1.7: 첫 3챕터 부화 온보딩과 콘텐츠 접근 게이트 추가, v1.8: 창작 K-POP·K드라마 덱 6종 추가, v1.9: 홈·마이페이지 피요 데일리 응원 멘트 추가, v2.0: 부화 미션 연속 진행과 결과 하단 완료 CTA 추가, v2.1: 흐름·산성비 점진 가속·3목숨 조기 종료와 플레이 피요 정면 비율 고정, v2.2: 흐름·산성비 단어 카드 내부 장식 아이콘 제거, v2.3: 초성·받아쓰기 플레이 UI와 입력 방식 정책을 최신 게임 프레임으로 통일, v2.4: 흐름·산성비 단어 카드 내용 맞춤 폭과 발음 표기 추가, v2.5: 긴 자모 트랙의 화면 폭 격리와 현재 자모 자동 추적 추가, v2.6: 산성비 시간차 동시 낙하와 위험 카드 우선 입력 추가, v2.7: 산성비 OS 키보드의 화면 내 자유 단어 입력 추가, v2.8: 직접 입력 게임의 중복 조합 텍스트 제거·상태 문구 중앙 정렬과 흐름·산성비 목숨 손실 피드백 강화, v2.9: 게임 HUD 닫기 버튼 테두리 제거와 수치 중앙 정렬, v3.0: 초성별 입력 진행·연습형 조합 카드·일본어 뜻 워드박스 추가, v3.1: 초성 일본어 뜻 기본 표시와 설정 토글 추가, v3.2: 받아쓰기에도 연습형 조합 입력 카드 적용, v3.3: 게임 허브에서 받아쓰기와 단어 맞추기 카드 위치 교환, v3.4: 전용 게임 세트를 타이핑 난이도별 100단어로 확대하고 세션별 무작위 출제 추가, v3.5: 게임 결과의 모드·레벨 표기와 결과 이미지 직접 저장·SNS 공유 추가, v3.6: 여행·연애·친구 상황별 재미 표현 덱 8종 추가, v3.7: 최애 아이돌 라이브 댓글 덱 추가, v3.8: 게임 전용 100단어를 실용 TOPIK 수준과 타이핑 난이도의 복합 기준으로 재구성, v3.9: 부화 미션 결과의 보조 액션 제거와 단계별 성장 연출 순서 복구, v4.0: 부화 완료 후 홈 랜딩과 6단계 메인 앱 스포트라이트 튜토리얼 추가, v4.1: 음영이 있는 흰색 `ㅎ` 키캡 브랜드 이미지로 AppIcon·앱 내부·공유 카드 로고 통일, v4.2: 게임 플레이 중 피요 복장 고정, v4.3: 연습·게임 세션 외형 결정 통일, v4.4: TOPIK 안경을 게임 참여 보상으로 전환, v4.5: 단어 퀴즈를 일본어 뜻 기반 한글 직접 타이핑으로 전환, v4.6: 게임 HUD의 긴 수치 자동 축소와 아이콘 안전 영역 추가, v4.7: 플로우 가속 상한을 1.8배로 상향하고 플로우·피요컵 Game Center 계약을 v4로 분리, v4.8: 옷장의 알 무늬 4종 재선택 UI 제거, v4.9: 게임 허브의 최상단 Game Center 전체 랭킹 버튼 제거, v5.0: 외부 운영 메일 기반 신규 덱 제안·기존 콘텐츠 제보 추가, v5.1: 영어 콘텐츠와 글로벌 배포를 위한 `typee` 로케일 브랜드·콘텐츠 현지화·단일 앱 레코드 정책 추가, v5.2: 앱 1.1용 `.piyodeck` 무료 가져오기와 비소모성 Deck Maker 생성·편집 계약 추가, v5.3: 글로벌 App Store 표시명을 기능 설명 우선·브랜드 후위 형식으로 확정, v5.4: Deck Maker 초안 복구·원자적 편집 충돌 방지·안전 삭제·접근성 계약 보강, v5.5: 앱 1.1 `All Countries or Regions` availability 확정, v5.6: 앱 제공 고정 목표 전 영역의 오프라인 gTTS MP3와 공통 폴백 순서 확정, v5.7: 이후 추가·수정되는 앱 제공 고정 목표에도 동일 gTTS 생성·검증 규칙을 의무화, v5.8: Android M7 재개와 플랫폼 저장·파일·결제·랭킹·오디오 계약 추가
 - 대상 독자: 코딩 에이전트(Claude Code / Codex), 개발자
 - 플랫폼: iOS 네이티브(Swift/SwiftUI), Android 네이티브(Kotlin/Jetpack Compose)
 - MVP 범위: 코어(타이핑 학습) + 게임성(콤보·파티클·오브젝트 흐름 모드·스트릭)
@@ -233,10 +233,10 @@ S10 사용자 덱: `.piyodeck` 검증·미리보기·충돌 선택 + Deck Maker 
 **제품 경계**
 
 - `.piyodeck`은 서버에 업로드하는 콘텐츠가 아니라 Files·iCloud Drive·AirDrop·공유 시트로 주고받는 로컬 문서다. 가져오기·검증·설치·연습/게임·현재본 내보내기·삭제·같은 덱 다시 가져오기는 구매 없이 제공한다.
-- 모바일에서 새 사용자 덱 생성, 가져온 사용자 덱 편집, 공식 덱을 사용자 사본으로 복제, 변경 내용 저장은 비소모성 StoreKit 2 IAP `app.piyokey.deckmaker.lifetime` 구매가 필요하다. 상품명은 ja=`マイデッキメーカー`, en=`My Deck Maker`, ko=`내 덱 만들기`로 현지화하고 구매 복원을 제공한다.
+- 모바일에서 새 사용자 덱 생성, 가져온 사용자 덱 편집, 공식 덱을 사용자 사본으로 복제, 변경 내용 저장은 비소모성/일회성 상품 `app.piyokey.deckmaker.lifetime` 구매가 필요하다. iOS는 StoreKit 2 non-consumable, Android는 Play Billing one-time product로 구현한다. 상품명은 ja=`マイデッキメーカー`, en=`My Deck Maker`, ko=`내 덱 만들기`로 현지화하고 구매 복원을 제공한다.
 - 과금 대상은 파일의 재생 권한이 아니라 앱 안의 제작 편의 기능이다. package 안에 영수증·라이선스·만료일·`premium` 플래그를 넣지 않고, 구매하지 않은 사용자도 다른 도구나 사람에게 받은 모든 유효한 `.piyodeck`을 가져와 학습할 수 있다.
 - 앱 1.1은 로컬-only·무계정이다. 사용자 덱의 클라우드 동기화, 공개 카탈로그 게시, 검색 노출, 좋아요·댓글·신고, 원격 쓰기 API와 사용자 콘텐츠 검수 서버를 만들지 않는다. 공식 정적 카탈로그 §8.3과 사용자 문서 저장소는 분리한다.
-- StoreKit entitlement를 확인할 수 없거나 구매가 환불되어도 기존 사용자 덱의 읽기·연습·게임·무료 내보내기·삭제는 막지 않는다. 확인된 entitlement가 없을 때 새 생성·복제·편집 저장만 잠그며 사용자 데이터를 삭제하거나 워터마크를 넣지 않는다.
+- 플랫폼 스토어 entitlement를 확인할 수 없거나 구매가 pending·환불·취소되어도 기존 사용자 덱의 읽기·연습·게임·무료 내보내기·삭제는 막지 않는다. iOS의 검증된 StoreKit entitlement 또는 Android Play Billing의 `PURCHASED` 재조회 결과만 제작 권한을 열고, 확인된 entitlement가 없을 때 새 생성·복제·편집 저장만 잠그며 사용자 데이터를 삭제하거나 워터마크를 넣지 않는다.
 
 **진입과 편집 UX**
 
@@ -279,7 +279,7 @@ S10 사용자 덱: `.piyodeck` 검증·미리보기·충돌 선택 + Deck Maker 
 
 - 구매하지 않은 새 설치에서 Files·iCloud Drive·AirDrop으로 정상 `.piyodeck`을 가져와 오프라인 연습과 호환 게임을 시작하고, 현재본을 다시 내보내고 삭제·재가져오기 할 수 있다.
 - 구매하지 않은 사용자는 새 덱 생성·사용자 덱 편집·공식 덱 사본 저장을 완료할 수 없지만, 취소·오프라인·복원 실패 뒤에도 기존 덱의 학습과 내보내기를 잃지 않는다.
-- StoreKit 테스트 환경에서 구매·취소·pending·중복 구매·복원·환불 상태를 검증하고, 성공 구매 후 앱 재실행과 오프라인 실행에서도 확인된 비소모성 entitlement로 생성·편집할 수 있다.
+- 각 플랫폼의 StoreKit/Play Billing 테스트 환경에서 구매·취소·pending·중복 구매·복원·환불 상태를 검증한다. Android는 `PURCHASED`만 권한을 열고 미확인 구매를 acknowledge하며, 명시적 복원은 구매 재조회를 수행한다. 성공 구매 후 앱 재실행과 오프라인 실행에서도 마지막으로 확인된 일회성 entitlement로 생성·편집할 수 있다.
 - 공식 덱 사본은 새 ID·version 1·`official=false`이고 원본 업데이트나 Game Center 제출 대상이 아니다. 사용자 덱은 Game Center CTA와 공식 추천·다운로드 통계에서 제외된다.
 - 동일 파일 재가져오기는 no-op이고, 교체·사본·다운그레이드·동일 버전 충돌 선택이 표대로 동작하며 교체 후 덱 및 동일 item 진행 기록이 유지된다.
 - 악성·손상·과대 package는 §8.4 제한에서 거부되고 기존 덱·인덱스·학습 기록을 한 바이트도 변경하지 않는다. ja/en/ko의 파일 선택·미리보기·구매·복원·편집·검증·충돌·완료·오류 문자열을 모두 로컬라이제이션한다.
@@ -371,13 +371,14 @@ S10 사용자 덱: `.piyodeck` 검증·미리보기·충돌 선택 + Deck Maker 
 - 결과는 공통 결과 연출을 사용해 최초 판단 기반 점수·랭크, 첫 판단 정확도, 최종 완성도, 수정 횟수, 풀이 시간을 제공한다. 최초로 틀린 경계는 `사용자 판단 → 정답` 형태의 짧은 단어 문맥으로 최대 8개 우선 표시하고 정답 원문·1탭 재도전도 유지한다. 덱 진행·자모 복습·입력 모드 기록과는 분리하되 완료한 게임 활동은 스트릭에 반영한다.
 - AC: 게임 허브의 띄어쓰기 카드 → 1~6단계 긴 글 선택 → 좌우 수동 이동·가운데 공백 추가/취소·추가 시 즉시 피드백 → 마지막 완료 CTA → 최초 판단/최종 완성 결과 → 문맥 오답 복습 → 재도전이 설치 덱이나 네트워크 없이 가능하다. 선택 화면에는 순서대로 6개 단계가 표시되고 글 길이는 단계가 오를수록 늘어난다. 번들 글은 모두 100~200자이며 레벨 6은 180자 이상이다. UI는 비공백 문자를 수정하는 입력 경로를 제공하지 않으며 순수 판정 로직도 비공백 문자가 달라진 제출을 거부한다.
 
-### F6f. Game Center 점수·랭킹 [P1]
+### F6f. 플랫폼 점수·랭킹 [P1]
 - Game Center는 선택형 보조 계층이다. 로컬 `GameRecord`와 피요 성장 데이터가 단일 기준이며 로그인·네트워크·App Store Connect 장애와 무관하게 게임·성장·보상은 정상 동작한다. 인증된 플레이어에게만 저장된 최고 점수와 성장 업적을 비동기 동기화한다.
 - 클래식 리더보드는 흐름·산성비·초성 맞추기·단어 맞추기·받아쓰기의 번들 100단어 복합 난이도 세트 v3에 게임별·난이도별로 3개씩, 총 15개를 운영하고 내장 키보드 기록만 제출한다. 산성비·초성·받아쓰기에는 `piyokey.v3.<game>.<beginner|intermediate|advanced>`를 사용한다. 가속 상한이 바뀐 흐름은 `piyokey.v4.flow.<beginner|intermediate|advanced>`, 4지선다에서 직접 타이핑으로 채점 조건이 바뀐 단어 맞추기는 `piyokey.v4.word_match.<beginner|intermediate|advanced>` 계약으로 분리한다. 게임 종류·난이도·채점 조건이 다른 점수는 섞지 않으며, 버전이 달라진 업데이트 세트, 다운로드·사용자 덱, OS IME는 로컬 최고 기록만 유지한다.
 - 게임 허브에는 설치 여부와 무관하게 번들 `flow_topik_beginner` v3로 바로 시작하는 **주간 피요컵**을 제공한다. 피요컵은 흐름 60초·3목숨·0~50초 1.0→1.8배 점진 가속·내장 키보드로 고정하고 `piyokey.v4.cup.weekly.flow` recurring 리더보드와 `piyokey.v4.flow.beginner` 클래식 리더보드 양쪽에 제출한다. 피요컵 콘텐츠나 채점 조건을 바꿀 때는 기존 보드를 재사용하지 않고 새 계약 ID를 만든다.
 - 게임 결과에는 해당 리더보드의 세계 순위와 열기 버튼을 제공한다. iOS 버전이 특정 리더보드 대시보드를 지원하지 않으면 전체 리더보드 대시보드로 안전하게 대체한다. 오프라인에서 만든 더 높은 로컬 기록은 다음 인증 때 보충 제출하되, 주간 피요컵은 JST 월요일 00:00부터 현재 회차 안에 만든 기록만 보충한다. 여러 대상에 제출되는 피요컵 기록은 가장 높은 세계 순위를 대표 순위로 표시한다.
 - 로그인 UI와 Game Center 대시보드는 게임 결과 화면에서 사용자가 해당 리더보드 버튼을 눌렀을 때만 표시한다. 게임 허브에는 별도의 Game Center 전체 랭킹 버튼을 두지 않으며, 게임 플레이·레슨 세션 중에는 인증 요청, 배너, 대시보드 등 어떤 Game Center 모달도 삽입하지 않는다.
 - 피요 성장은 기존 로컬 조건을 유지하면서 완료 챕터 1·3·6개, 누적 입력 12,000자모, 최장 스트릭 30일을 Game Center 업적 5개로 미러링한다. 최초 점수 제출 성공 또는 기존 서버 순위 확인 시 `챔피언 트로피` 소품을 영구 해금한다. 이후 변할 수 있는 현재 순위는 성장 단계나 영구 보상의 조건으로 사용하지 않는다.
+- Android는 Play Games Services v2를 선택형 어댑터로 사용한다. 번들 고정 세트의 클래식 15개 논리 리더보드와 업적 5개만 Play Console이 발급한 opaque resource ID에 매핑하고, 로컬 `GameRecord`를 계속 단일 기준으로 둔다. Play Games의 recurring reset 시각은 JST 월요일 00:00 피요컵과 같지 않으므로 Android 피요컵 주간 기록은 로컬에서만 같은 계약으로 유지하고 원격 recurring 제출·순위 CTA는 서버 기반 회차 계약이 생길 때까지 제공하지 않는다.
 - AC: Game Center 비로그인·오프라인 상태에서 플레이와 성장이 막히지 않는다. 피요컵은 덱 다운로드 없이 시작되고 내장 키보드로 고정된다. 인증 후 정확한 공식 덱·버전의 로컬 최고 점수만 6개 클래식 리더보드에 제출되고, 피요컵 기록은 주간 보드와 고정 덱 보드 양쪽에 제출된다. 성장 업적 진행률은 단조 증가하며 최초 성공 제출 뒤 트로피가 재실행·로그아웃 후에도 유지된다. App Store Connect에 코드와 동일한 클래식 6개·주간 recurring 1개 리더보드와 업적 5개 ID를 등록한 샌드박스 계정으로 대시보드·순위·업적을 확인한다.
 
 ### F7. 틀린 단어 자동 수집 + 복습 덱 [P0]
@@ -452,8 +453,8 @@ Z5 액션    : [もう一回] [前の画面へ] [復習する] [シェア] + 같
 - 정타 완성음, 콤보 상승음(피치 상승), 오타음(불쾌하지 않은 낮은 톤).
 - 앱이 제공하는 모든 고정 목표인 공식 카탈로그 26덱, 5개 게임의 3단계 프리셋 15덱, 커리큘럼과 그 부분집합인 데일리, 무료 샘플은 gTTS `ko` 보통 속도의 사전 생성 MP3를 번들에서 오프라인 재생한다. 중복을 제거한 581개 한국어 문구는 SHA-256 기반 canonical 경로로 같은 음원을 공유하며 앱은 런타임에 gTTS나 네트워크를 호출하지 않는다.
 - 이후 앱 제공 고정 목표를 추가하거나 한국어 문구를 수정할 때도 같은 gTTS 설정과 canonical MP3 규칙을 의무 적용한다. 덱 밖 고정 문구는 `pronunciation_prompts.json`에 등록하고, 음원 생성·CoreAudio 디코딩·전체 번들 커버리지 프리플라이트가 통과하기 전에는 병합·출시하지 않는다. macOS/Yuna 발음, 발음용 CAF, 새 고정 문구의 기기 TTS 전용 제공으로 되돌리지 않으며 제공자·설정 변경은 명시적 제품 결정으로만 허용한다.
-- 발음 resolver는 항목이 선언한 `audio` → 목표 한국어의 canonical hash MP3 → `AVSpeechSynthesizer(ko-KR)` 순서로 시도한다. 선언 파일이 누락·손상되어도 canonical 파일을 다시 시도하고, 번들에 없는 사용자 덱·비공개 동적 콘텐츠와 모든 파일 재생 실패만 기기 TTS로 대체한다.
-- 타건음·정오답·콤보 등 효과음은 기본 ON이며 iOS `AVAudioSession` category `.playback` + `.mixWithOthers`로 무음 모드에서도 재생한다. 사용자는 전역·세션 설정에서 즉시 OFF할 수 있고 OFF 상태는 영속화한다.
+- 발음 resolver는 항목이 선언한 `audio` → 목표 한국어의 canonical hash MP3 → 플랫폼 기기 TTS 순서로 시도한다. iOS는 `AVSpeechSynthesizer(ko-KR)`, Android는 네트워크 연결을 요구하지 않는 `TextToSpeech(ko-KR)` 음성만 최종 폴백으로 사용한다. 선언 파일이 누락·손상되어도 canonical 파일을 다시 시도하고, 번들에 없는 사용자 덱·비공개 동적 콘텐츠와 모든 파일 재생 실패만 기기 TTS로 대체한다.
+- 타건음·정오답·콤보 등 효과음은 기본 ON이다. iOS는 `AVAudioSession` category `.playback` + `.mixWithOthers`, Android는 다른 앱을 멈추거나 duck하지 않도록 audio-focus gain을 요청하지 않는 media/game usage로 재생한다. 사용자는 전역·세션 설정에서 즉시 OFF할 수 있고 OFF 상태는 영속화한다.
 - 사용자가 누른 목표 발음과 설정에서 명시적으로 켠 문제 자동 발음도 `.playback` + `.mixWithOthers`로 무음 모드에서 재생한다. 발음 재생 중에는 효과음을 억제하고 종료 즉시 효과음용 `.playback` 기본 모드로 복원한다.
 - 타건음과 정오답·콤보는 독립 플레이어 풀을 사용해 빠른 입력이 중요한 피드백음을 끊지 않는다. 앱 진입만으로 오디오 엔진을 시작하지 않고 첫 재생 때 지연 시작하며, 마지막 효과음 15초 뒤 또는 백그라운드 진입 시 엔진·세션을 반납한다.
 - 백그라운드 진입 시 연습·받아쓰기의 진행 중인 발음을 즉시 중지한다. 연습은 복귀 후 문제 자동 발음 설정이 ON일 때 현재 목표를 다시 자동 재생하고, 받아쓰기는 복귀 카운트다운이 끝난 뒤 현재 문제 발음을 다시 자동 재생한다. 수동 재생만 했거나 연습 자동 발음이 OFF인 경우 복귀만으로 새 발음을 시작하지 않는다.
@@ -581,6 +582,7 @@ Z5 액션    : [もう一回] [前の画面へ] [復習する] [シェア] + 같
 - 기존 `name`·`author.nickname`·`tags`·`reading_ja`·`meaning_ja`는 일본어 호환 원본으로 유지한다. `localizations`는 기존 설치 덱과 저장 데이터를 깨지 않는 추가 선택 필드이며 허용 키는 `en`·`ko`다.
 - 글로벌 배포 대상 공식 덱은 덱 메타데이터의 `en`·`ko` 현지화와 모든 항목의 `en.meaning`·`en.reading`을 필수로 갖춘다. 영어 `reading`은 라틴 문자 로마자다. 한국어 앱 언어는 덱 메타데이터는 `ko`를 사용하고, 항목의 `ko` 뜻·읽기가 없으면 `en`을 사용한다.
 - 해석 순서는 일본어 앱 언어=`*_ja`, 영어·미지원 언어=`localizations.en`, 한국어 앱 언어=`localizations.ko` 후 `localizations.en`이다. 일본어 외 앱 언어에서는 `*_ja`를 fallback으로 사용하지 않는다.
+- `created_at`·`updated_at`과 카탈로그 `generated_at`은 플랫폼별 재인코딩 차이를 막기 위해 UTC 초 단위 `YYYY-MM-DDTHH:MM:SSZ`만 허용한다. 시간대 offset과 소수 초는 가져오기 전에 정규화하거나 거부한다.
 
 ### 8.2 카탈로그 인덱스 (발견 탭 데이터 소스, 읽기 전용)
 ```json
@@ -706,7 +708,7 @@ my-topik-deck.piyodeck
 - 엔트리는 정확한 루트 파일명 2개만 허용한다. 절대경로, `..`, 빈 경로 요소, 역슬래시, 이름 정규화 후 중복, directory·symlink·hardlink·device entry와 중첩 archive를 거부한다.
 - ZIP 암호화, data descriptor로 크기를 숨긴 엔트리, ZIP64, 다중 볼륨, 겹치거나 범위를 벗어난 offset, CRC32 불일치를 거부한다. CRC32 확인 후 SHA-256, JSON Schema, DeckKit 의미 검증 순서로 진행한다.
 - 검증은 앱 전용 staging 디렉터리의 복사본만 읽으며 원본 문서를 수정하지 않는다. 어느 단계든 실패하면 설치 payload·인덱스·학습 기록을 변경하지 않고 staging을 정리한다.
-- 외부 파일은 security-scoped resource를 필요한 복사 시간에만 열고 접근을 즉시 해제한다. 사용자 덱의 이름·항목·파일·hash는 분석이나 오류 수집 서버로 보내지 않는다.
+- 외부 파일은 원본 권한을 필요한 복사 시간에만 열고 접근을 즉시 해제한다. iOS는 security-scoped URL, Android는 Storage Access Framework의 `ContentResolver`로 읽으며 저장소 전체 권한은 요청하지 않는다. Android의 open/view/send URI도 먼저 8 MiB+1 제한으로 앱 전용 staging에 복사하고 검증하며, export는 `ACTION_CREATE_DOCUMENT` 또는 `content://` 공유 URI만 사용한다. 사용자 덱의 이름·항목·파일·hash는 분석이나 오류 수집 서버로 보내지 않는다.
 
 **호환성과 소유권 경계**
 
@@ -737,6 +739,8 @@ DeckMakerEntitlementCache: product_id, verified, last_verified_at
 - 앱 1.1은 기기당 활성 `UserDeckDraft` 하나를 primary/backup JSON으로 보존한다. 같은 편집 흐름의 자동 저장은 `draft_id`와 최초 `created_at`을 유지하고, 다른 제작 흐름은 새 초안 쓰기가 성공한 뒤에만 기존 활성 초안을 교체한다. 미래 schema는 보존하고 이전 앱이 덮어쓰지 않는다.
 - 기존 사용자 덱 편집 commit은 `base_version`을 `DeckInstallationStore` transaction 내부의 현재 version과 비교한 뒤에만 payload와 index를 교체한다. 불일치하면 typed source-changed 오류로 중단하고 기존 덱·초안·설치 journal을 변경하지 않는다.
 - `DeckMakerEntitlementCache`는 StoreKit 2 검증 결과의 오프라인 UX cache일 뿐 자체 라이선스가 아니다. 계정이나 서버 entitlement를 만들지 않고 `Transaction.currentEntitlements`와 transaction update를 기준으로 갱신한다.
+- Android는 Room에 설치 메타데이터·학습/게임/복습/스트릭 기록과 복구 journal을, 앱 전용 파일에 실제 덱·카탈로그 payload와 primary/backup/quarantine·초안·SAF staging을, Preferences DataStore에 로케일·사운드·입력·마스코트·리마인더 같은 작은 설정만 저장한다. persistent journal → 같은 디렉터리의 원자적 move → Room transaction 순서와 시작 시 복구로 파일과 DB가 항상 이전 pair 또는 새 pair 중 하나로 수렴하게 한다.
+- Android의 entitlement cache도 표시와 오프라인 UX를 위한 마지막 확인값일 뿐 제작 mutation의 단독 권한 근거가 아니다. foreground 연결 때 Play Billing 구매를 다시 조회하고 `PURCHASED`만 권한을 열며 pending·환불·취소가 확인돼도 기존 덱과 초안을 삭제하지 않는다.
 
 ## 10. 분석 (로컬 우선)
 
@@ -752,7 +756,7 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
 3. 타이머·기록에 영향을 주는 어떤 인터럽트도 금지.
 4. 구독 미가입자도 코어 커리큘럼 전체 이용 가능 (프리미엄은 추가 팩·테마·통계).
 5. 앱 1.1의 사용자 덱 가져오기·연습·게임·내보내기·삭제·교체 재가져오기는 무료다. 비소모성 IAP `app.piyokey.deckmaker.lifetime`은 모바일 생성·복제·편집·변경 저장만 해제하며 파일 자체에 구매 권한을 묶지 않는다.
-6. Deck Maker 구매·복원은 StoreKit 2만 사용하고 세션 밖에서 사용자가 잠긴 제작 액션을 명시적으로 선택했을 때만 제시한다. entitlement 상실·검증 실패를 이유로 이미 저장된 사용자 덱이나 초안을 삭제하지 않는다.
+6. Deck Maker 구매·복원은 iOS의 StoreKit 2 또는 Android의 Play Billing만 사용하고 세션 밖에서 사용자가 잠긴 제작 액션을 명시적으로 선택했을 때만 제시한다. entitlement 상실·검증 실패를 이유로 이미 저장된 사용자 덱이나 초안을 삭제하지 않는다.
 
 근거: 직접 경쟁 앱의 1점 리뷰가 거의 전부 광고 빈도·타이밍에서 발생 (§1.2).
 
@@ -762,10 +766,18 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
 - Android: Kotlin 2.x, Jetpack Compose, 최소 API 26.
 - 파티클/이펙트: iOS SpriteKit 또는 SwiftUI Canvas, Android Compose Canvas. 60fps 필수 (§F6 AC).
 - 접근성: Dynamic Type 대응(문제 텍스트·키캡), VoiceOver/토크백은 메뉴 화면만 P0. 작은 아이콘도 실제 탭 영역은 최소 44×44pt를 보장한다.
-- 오디오: 효과음과 목표 발음은 모두 `.playback` + `.mixWithOthers`로 무음 모드에서도 재생한다. 효과음은 기본 ON이고 설정 최상단에서 즉시 OFF할 수 있다 (§F11).
-- 사용자 문서: iOS는 Files document picker, security-scoped URL, 외부 문서 open-in-place 전달을 지원하되 `.piyodeck` 원본을 앱 전용 staging에 복사한 뒤 §8.4의 제한형 parser로 검증한다. arbitrary archive extraction API나 package 안의 실행 가능 콘텐츠를 사용하지 않는다.
-- 결제: Deck Maker는 StoreKit 2 비소모성 상품 하나로 구현하고 서명 검증된 current entitlement·transaction update·구매 복원을 지원한다. 자체 결제·라이선스 키·계정 서버는 만들지 않는다.
+- 오디오: iOS 효과음과 목표 발음은 `.playback` + `.mixWithOthers`로 재생한다. Android는 다른 앱 음악을 멈추거나 duck하지 않도록 audio-focus gain을 요청하지 않고 `SoundPool`과 로컬 MP3 player를 분리한다. 두 플랫폼 모두 효과음은 기본 ON이고 설정 최상단에서 즉시 OFF할 수 있다 (§F11).
+- 사용자 문서: iOS Files/security-scoped URL과 Android Storage Access Framework/`ContentResolver`는 `.piyodeck` 원본을 앱 전용 staging에 제한 복사한 뒤 §8.4 parser로 검증한다. 저장소 전체 권한, arbitrary archive extraction API, package 안의 실행 가능 콘텐츠를 사용하지 않는다.
+- 결제: iOS Deck Maker는 StoreKit 2 비소모성 상품, Android는 Play Billing one-time product 하나로 구현한다. 검증된 `PURCHASED` 상태만 제작 mutation을 열고 구매 재조회·pending·acknowledge·환불을 처리하며 자체 결제·라이선스 키·계정 서버는 만들지 않는다.
 - 테스트: 조합 엔진 커버리지 ≥ 95%, 공용 테스트 벡터 CI 게이트. UI 스냅샷 테스트는 결과 화면·키보드 뷰만.
+
+### 12.1 Android M7 플랫폼 계약
+
+- 빌드 기준은 AGP `9.3.1`, Gradle Wrapper `9.5.0`, Kotlin/Compose compiler `2.3.21`, Compose BOM `2026.08.00`, compile SDK 37, target SDK 36, min SDK 26, Java bytecode 17로 고정한다. Android 모듈은 AGP 9 built-in Kotlin을 사용하고 `org.jetbrains.kotlin.android`·kapt를 적용하지 않는다.
+- 로컬 후보 application ID와 namespace는 `app.piyokey.piyokey`다. Play Console에서 충돌·소유권을 확인하고 사용자가 확정하기 전에는 서명 업로드·내부 테스트 트랙 생성 등 되돌릴 수 없는 외부 작업을 하지 않는다.
+- `core:hangul`, `core:deckkit`, `core:piyodeck`, `core:session`은 Android·Compose import가 없는 순수 로직이다. `core:data`는 Room/files/DataStore, `core:platform`은 IME/audio/TTS/SAF/Billing/Play Games/reminder/share, feature 모듈은 화면과 navigation만 소유한다.
+- OS IME는 표준 `EditText`를 Compose `AndroidView`로 감싸 committed/composing을 분리해 순수 `OSIMETextJudge`에 전달한다. 한국어 IME 감지는 안내 힌트이며 hard block하지 않고, 설정 이동·파일·결제·랭킹 UI는 세션 전에만 연다.
+- 게임 clock과 판정은 monotonic time 기반 순수 reducer로 두고 Compose Canvas는 frame clock을 사용한다. Pixel 6 60Hz 60초 stress에서 평균 59fps 이상, p95 16.7ms 이하, jank 1% 이하, ANR/crash 0을 M7 출시 게이트로 검증한다.
 
 ## 13. 마일스톤 (에이전트 작업 순서 제안)
 
@@ -782,7 +794,7 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
    4. 마이페이지 file importer, 외부 문서 open, 미리보기, pending import, 충돌 선택, 무료 export·delete를 연결하고 세션 중 모달 금지를 UI 테스트한다.
    5. StoreKit 2 비소모성 IAP와 구매·pending·복원·환불·오프라인 entitlement 테스트를 완료한 뒤 생성·편집·공식 사본 편집·검증 저장 UI를 연결한다.
    6. ja/en/ko 로컬라이제이션, 1,000항목 성능, Files/iCloud/AirDrop 실기기, 기존 설치/진행 무손실 migration, Distribution archive와 App Review 상품/복원 메타데이터를 검증한 뒤 앱 버전 1.1로 제출한다.
-8. **M7 Android 포팅 [HOLD]**: 별도 재개 결정 전에는 신규 Android 프로젝트나 `android/` 구현을 시작하지 않는다. 재개하면 M1 공용 벡터 검증부터 순서대로 수행하고 `.piyodeck` v1 reader·writer와 무료/유료 경계를 동일하게 포팅한다.
+8. **M7 Android 포팅 [ACTIVE — M1 공용 코어 완료 2026-08-22]**: A0에서 현재 iOS 1.1 build 7·PRD·공용 계약의 재현 가능한 기준점, Gradle wrapper/version catalog/CI와 앱 골격을 준비했다. M1에서 공용 조합 벡터, 덱·카탈로그 schema, `.piyodeck` v1 reader·writer와 정상·악성 cross-platform golden을 순수 Kotlin으로 포팅했다. 현재 iOS 1.1에 없는 새 제품 기능은 Android에서 먼저 추가하지 않는다.
 
 각 마일스톤 종료 시: 테스트 통과 + 시뮬레이터 스크린 녹화 + `DECISIONS.md` 갱신.
 
@@ -791,8 +803,8 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
 - 확정 앱 이름/브랜딩: 앱 언어 `ja`=`ピヨキー`, `ko`·`en` 및 미지원 언어 fallback=`typee`. App Store 국가가 아니라 앱 로케일을 기준으로 하며 기존 단일 앱 레코드·Bundle ID를 유지한다. 홈 화면 AppIcon과 앱 내부·공유 카드의 로고 이미지는 음영이 있는 흰색 `ㅎ` 키캡을 든 동일한 납작한 병아리 이미지를 사용하고 텍스트 브랜드만 로케일에 맞춘다. App Store 표시명은 기능 설명을 먼저 쓰고 브랜드를 마지막에 배치한다.
 - 확정 1.1 언어 범위: 앱 UI·콘텐츠는 `ja`·`en`·`ko`, 미지원 언어는 `en` fallback이다. App Store 메타데이터는 `ja`·`ko`·`en-US`·`en-GB`·`en-AU`·`en-CA`를 우선 제공한다. 그 밖의 UI 언어와 metadata-only 현지화는 출시 후 국가별 제품 페이지 조회·다운로드·리뷰·지원 문의를 검토해 별도 버전에서 결정한다.
 - 확정 1.1 availability: 앱과 Deck Maker IAP 모두 `All Countries or Regions`를 선택하고 향후 새 storefront도 자동 포함한다. 국가별 순차 활성화는 하지 않으며, 규제 미충족으로 Apple이 개별 storefront를 실제 판매 불가로 표시하는 경우는 availability 선택과 분리해 compliance 예외로 관리한다.
-- Android: M7 스펙과 공용 계약은 보존하되 현재 개발은 보류한다. 명시적 재개 결정 전에는 Android 프로젝트를 생성하거나 iOS 1.1 범위를 확장하지 않는다.
+- Android: 2026-08-21 사용자 요청으로 M7을 재개했다. 현재 로컬 iOS 1.1 build 7과 PRD v5.8·공용 fixture를 parity 기준으로 사용하며 A0→M1→M2 순서를 지킨다. 대규모 dirty worktree의 기준 commit/tag, 새 환경의 API 37 SDK/license 재현, 최종 application ID와 Play Console 설정은 각각 별도 게이트로 유지한다.
 - 마스코트 디자인 외주 여부 (MVP는 플레이스홀더 도형으로 진행)
-- TTS: 공식 카탈로그 26덱·게임 프리셋 15덱·커리큘럼/데일리·무료 샘플을 합친 앱 제공 고정 목표 581개는 gTTS `ko` 보통 속도의 직접 MP3로 사전 생성해 완전 오프라인으로 번들한다. 런타임은 선언 경로 → canonical hash 경로 → `AVSpeechSynthesizer(ko-KR)` 순서로 해석하며 사용자·비공개 동적 콘텐츠를 gTTS에 전송하지 않는다. gTTS가 문서화되지 않은 Google Translate 음성 기능을 사용하므로 `content_rights_confirmed` 출시 게이트는 배포·콘텐츠 사용 권리 검토 전까지 닫아 두고, 확인할 수 없으면 공식 지원 TTS 제공자로 같은 canonical 경로의 음원을 재생성한다.
+- TTS: 공식 카탈로그 26덱·게임 프리셋 15덱·커리큘럼/데일리·무료 샘플을 합친 앱 제공 고정 목표 581개는 gTTS `ko` 보통 속도의 직접 MP3로 사전 생성해 완전 오프라인으로 번들한다. 런타임은 선언 경로 → canonical hash 경로 → 플랫폼 로컬 TTS(iOS `AVSpeechSynthesizer(ko-KR)`, Android 네트워크 불필요 `TextToSpeech(ko-KR)`) 순서로 해석하며 사용자·비공개 동적 콘텐츠를 네트워크 TTS나 gTTS에 전송하지 않는다. gTTS가 문서화되지 않은 Google Translate 음성 기능을 사용하므로 `content_rights_confirmed` 출시 게이트는 배포·콘텐츠 사용 권리 검토 전까지 닫아 두고, 확인할 수 없으면 공식 지원 TTS 제공자로 같은 canonical 경로의 음원을 재생성한다.
 - 외부 상표·가사·기관명 권리: 직접 인용과 근거 없는 제휴 표시는 금지하고, 일반 표현도 출시 전 운영 검수일을 기록한다.
 - 앱 1.1 사용자 덱: `.piyodeck` v1의 유효한 파일은 구매 없이 가져오기·학습·현재본 내보내기·삭제·교체할 수 있다. 모바일 생성·편집·사본 저장만 비소모성 `app.piyokey.deckmaker.lifetime`으로 판매하고 계정·공개 UGC·원격 쓰기 API는 추가하지 않는다.

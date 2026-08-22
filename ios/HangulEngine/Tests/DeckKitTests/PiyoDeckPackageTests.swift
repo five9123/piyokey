@@ -26,9 +26,13 @@ final class PiyoDeckPackageTests: XCTestCase {
 
     let deck = try DeckKitJSON.decodeDeck(from: deckData)
     XCTAssertEqual(UserDeckValidator.validate(deck), [])
-    let package = try PiyoDeckPackageWriter.write(deck: deck)
-    XCTAssertEqual(package, try PiyoDeckPackageWriter.write(deck: deck))
-    XCTAssertEqual(package, try PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: deckSchema))
+    let package = try PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: deckSchema)
+    XCTAssertEqual(
+      package,
+      try PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: deckSchema)
+    )
+    let crossPlatformGolden = try fixture("valid/basic.piyodeck", root: root)
+    XCTAssertEqual(package, crossPlatformGolden)
 
     let entries = try PiyoDeckZIP.read(package)
     XCTAssertEqual(Set(entries.keys), ["manifest.json", "deck.json"])
@@ -52,6 +56,10 @@ final class PiyoDeckPackageTests: XCTestCase {
     )
     XCTAssertEqual(package.count, 1_109)
     XCTAssertEqual(
+      PiyoDeckDigest.sha256Hex(package),
+      "025efa7a0584509fd892221a01c4b3cdf828472c3ffeb13a7eec420102061c31"
+    )
+    XCTAssertEqual(
       try JSONSchemaValidator.validate(
         instanceData: generatedManifest,
         schemaData: manifestSchema
@@ -65,6 +73,110 @@ final class PiyoDeckPackageTests: XCTestCase {
     XCTAssertEqual(imported.contentSHA256, PiyoDeckDigest.sha256Hex(imported.deckData))
     XCTAssertFalse(imported.deck.official)
     XCTAssertTrue(imported.deck.items.allSatisfy { $0.audio == nil })
+
+    let importedGolden = try PiyoDeckPackageReader.read(
+      data: crossPlatformGolden,
+      deckSchemaData: deckSchema
+    )
+    XCTAssertEqual(importedGolden.deck, deck)
+    XCTAssertEqual(importedGolden.deckData, generatedDeck)
+
+    let prettyGolden = try fixture("valid/pretty-basic.piyodeck", root: root)
+    let importedPretty = try PiyoDeckPackageReader.read(
+      data: prettyGolden,
+      deckSchemaData: deckSchema
+    )
+    XCTAssertEqual(importedPretty.deck, deck)
+    XCTAssertEqual(
+      try PiyoDeckPackageWriter.write(deck: importedPretty.deck, deckSchemaData: deckSchema),
+      package
+    )
+  }
+
+  func testSharedBinaryCaseManifestDrivesEveryReaderExpectation() throws {
+    let root = try repositoryRoot()
+    let deckSchema = try schema("deck.schema.json", root: root)
+    let manifestData = try fixture("cases.json", root: root)
+    let manifest = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: manifestData) as? [String: Any]
+    )
+    XCTAssertEqual(manifest["schema_version"] as? Int, 1)
+    let cases = try XCTUnwrap(manifest["cases"] as? [[String: Any]])
+    XCTAssertGreaterThanOrEqual(cases.count, 15)
+    let sourceDeck = try DeckKitJSON.decodeDeck(
+      from: fixture("valid/basic-deck.json", root: root)
+    )
+    let canonical = try fixture("valid/basic.piyodeck", root: root)
+
+    for fixtureCase in cases {
+      let identifier = try XCTUnwrap(fixtureCase["id"] as? String)
+      let path = try XCTUnwrap(fixtureCase["path"] as? String)
+      let expectedSize = try XCTUnwrap(fixtureCase["size_bytes"] as? Int)
+      let expectedSHA = try XCTUnwrap(fixtureCase["sha256"] as? String)
+      let valid = try XCTUnwrap(fixtureCase["valid"] as? Bool)
+      let expectation = try XCTUnwrap(fixtureCase["expectation"] as? String)
+      let data = try fixture(path, root: root)
+
+      XCTAssertEqual(data.count, expectedSize, identifier)
+      XCTAssertEqual(PiyoDeckDigest.sha256Hex(data), expectedSHA, identifier)
+      if valid {
+        let imported = try PiyoDeckPackageReader.read(data: data, deckSchemaData: deckSchema)
+        XCTAssertEqual(imported.deck, sourceDeck, identifier)
+        let normalized = try PiyoDeckPackageWriter.write(
+          deck: imported.deck,
+          deckSchemaData: deckSchema
+        )
+        XCTAssertEqual(normalized, canonical, identifier)
+      } else {
+        switch tryRead(data, schema: deckSchema) {
+        case .success:
+          XCTFail("Expected \(identifier) to fail")
+        case .failure(let error):
+          guard let importError = error as? PiyoDeckImportError else {
+            return XCTFail("Unexpected error for \(identifier): \(error)")
+          }
+          XCTAssertEqual(errorFamily(importError), expectation, identifier)
+        }
+      }
+    }
+  }
+
+  func testWriterAlwaysAppliesPinnedDeckSchema() throws {
+    let root = try repositoryRoot()
+    let deckSchema = try schema("deck.schema.json", root: root)
+    let source = try DeckKitJSON.decodeDeck(
+      from: fixture("valid/basic-deck.json", root: root)
+    )
+    let emptyLocalizations = Deck(
+      deckId: source.deckId,
+      version: source.version,
+      name: source.name,
+      author: source.author,
+      official: source.official,
+      type: source.type,
+      level: source.level,
+      tags: source.tags,
+      createdAt: source.createdAt,
+      updatedAt: source.updatedAt,
+      items: source.items,
+      localizations: [:]
+    )
+
+    XCTAssertThrowsError(
+      try PiyoDeckPackageWriter.write(
+        deck: emptyLocalizations,
+        deckSchemaData: deckSchema
+      )
+    ) { error in
+      guard case PiyoDeckImportError.deckSchemaViolation(let issues) = error else {
+        return XCTFail("Unexpected error: \(error)")
+      }
+      XCTAssertTrue(
+        issues.contains {
+          $0.code == "schema.minProperties" && $0.path == "$.localizations"
+        }
+      )
+    }
   }
 
   func testCRC32MatchesStandardVector() {
@@ -287,8 +399,74 @@ final class PiyoDeckPackageTests: XCTestCase {
     }
   }
 
+  func testReaderRejectsNoncanonicalTimestampBytes() throws {
+    let root = try repositoryRoot()
+    let source = try fixture("valid/basic-deck.json", root: root)
+    let sourceString = try XCTUnwrap(String(data: source, encoding: .utf8))
+    let offsetTimestamp = sourceString.replacingOccurrences(
+      of: #"2026-08-14T00:00:00Z"#,
+      with: #"2026-08-14T09:00:00+09:00"#
+    )
+    let package = try rawPackage(deckData: Data(offsetTimestamp.utf8))
+
+    assertImportError(
+      tryRead(package, schema: try schema("deck.schema.json", root: root))
+    ) {
+      guard case .deckSchemaViolation(let issues) = $0 else { return false }
+      return issues.contains {
+        $0.code == "schema.pattern" && $0.path == "$.created_at"
+      }
+    }
+  }
+
+  func testStrictJSONRejectsUnpairedSurrogateEscapes() throws {
+    let invalidDocuments = [
+      #"{"name":"\ud800"}"#,
+      #"{"name":"\udc00"}"#,
+      #"{"name":"\ud800\u0041"}"#,
+    ]
+    for document in invalidDocuments {
+      XCTAssertThrowsError(
+        try PiyoDeckStrictJSON.validate(Data(document.utf8), name: "deck.json")
+      ) { error in
+        guard case PiyoDeckImportError.invalidJSON(let name, _) = error else {
+          return XCTFail("Unexpected error: \(error)")
+        }
+        XCTAssertEqual(name, "deck.json")
+      }
+    }
+
+    XCTAssertNoThrow(
+      try PiyoDeckStrictJSON.validate(
+        Data(#"{"name":"\ud835\udfd9"}"#.utf8),
+        name: "deck.json"
+      )
+    )
+  }
+
   private func tryRead(_ data: Data, schema: Data) -> Result<PiyoDeckPackage, Error> {
     Result { try PiyoDeckPackageReader.read(data: data, deckSchemaData: schema) }
+  }
+
+  private func errorFamily(_ error: PiyoDeckImportError) -> String {
+    switch error {
+    case .sha256Mismatch:
+      return "sha256_mismatch"
+    case .invalidJSON, .duplicateJSONKey:
+      return "invalid_json"
+    case .unsupportedFormatVersion, .unsupportedDeckSchemaVersion:
+      return "unsupported_version"
+    case .unsupportedArchiveFeature:
+      return "unsupported_archive_feature"
+    case .unsafeEntryPath:
+      return "unsafe_entry_path"
+    case .malformedArchive:
+      return "malformed_archive"
+    case .crcMismatch:
+      return "crc_mismatch"
+    default:
+      return "unexpected"
+    }
   }
 
   private func assertImportError(

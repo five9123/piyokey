@@ -9,7 +9,7 @@
 ```text
 .
 ├── ios/                  # SwiftUI 앱과 Swift 공용 로직
-├── android/              # M7에서 추가할 Kotlin/Compose 앱
+├── android/              # M7 Kotlin/Compose 앱과 순수 Kotlin core
 ├── web/                  # 웹 버전 착수 시 추가
 ├── shared/               # 스키마, 테스트 벡터, 목 카탈로그, 오프라인 음원
 ├── tools/                # 콘텐츠 생성·검증 도구
@@ -25,7 +25,8 @@
 
 ## 시작하기
 
-요구 환경은 Xcode와 Swift 5.10+, Python 3.11+입니다. iOS 앱은
+요구 환경은 Xcode와 Swift 5.10+, Python 3.11+, Android용 JDK 17+와 API 37
+SDK입니다. iOS 앱은
 `ios/Hanco/Hanco.xcodeproj`의 `Hanco` scheme으로 실행합니다.
 
 저장소 루트에서 빠른 검증을 실행합니다.
@@ -34,7 +35,12 @@
 python3 -m unittest discover -s tools/tests -p 'test_*.py'
 python3 tools/release_preflight.py
 (cd ios/HangulEngine && swift test)
+(cd android && ./gradlew :core:hangul:jacocoTestCoverageVerification :core:deckkit:test :core:piyodeck:test)
 ```
+
+Android의 고정 도구 체인, 환경 변수와 아직 열린 Play 게이트는
+[Android README](android/README.md)와
+[M7 준비 현황](docs/ANDROID_M7_READINESS.md)을 참조합니다.
 
 전체 iOS 회귀는 마일스톤 종료나 출시 후보에서 실행합니다.
 

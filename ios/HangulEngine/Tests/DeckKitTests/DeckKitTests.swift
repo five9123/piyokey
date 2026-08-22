@@ -233,6 +233,59 @@ final class DeckKitTests: XCTestCase {
     }
   }
 
+  func testUnsupportedLocalesFallBackToEnglishMetadataAndClues() throws {
+    let catalog = try loadCatalog()
+    let entry = try XCTUnwrap(catalog.decks.first)
+    let deck = try loadDeck(for: entry)
+    let preview = try XCTUnwrap(entry.previewItems.first)
+    let item = try XCTUnwrap(deck.items.first)
+    let tag = try XCTUnwrap(catalog.tags.first)
+
+    XCTAssertTrue(entry.hasLocalization(languageCode: "fr-FR"))
+    XCTAssertEqual(
+      entry.localizedName(languageCode: "fr-FR"),
+      entry.localizedName(languageCode: "en")
+    )
+    XCTAssertEqual(
+      entry.localizedAuthorNickname(languageCode: "fr-FR"),
+      entry.localizedAuthorNickname(languageCode: "en")
+    )
+    XCTAssertEqual(
+      entry.localizedTags(languageCode: "fr-FR"),
+      entry.localizedTags(languageCode: "en")
+    )
+    XCTAssertEqual(
+      preview.localizedMeaning(languageCode: "fr-FR"),
+      preview.localizedMeaning(languageCode: "en")
+    )
+
+    XCTAssertTrue(deck.hasLocalization(languageCode: "fr-FR"))
+    XCTAssertEqual(
+      deck.localizedName(languageCode: "fr-FR"),
+      deck.localizedName(languageCode: "en")
+    )
+    XCTAssertEqual(
+      deck.localizedAuthorNickname(languageCode: "fr-FR"),
+      deck.localizedAuthorNickname(languageCode: "en")
+    )
+    XCTAssertEqual(
+      deck.localizedTags(languageCode: "fr-FR"),
+      deck.localizedTags(languageCode: "en")
+    )
+    XCTAssertEqual(
+      item.localizedMeaning(languageCode: "fr-FR"),
+      item.localizedMeaning(languageCode: "en")
+    )
+    XCTAssertEqual(
+      item.localizedReading(languageCode: "fr-FR"),
+      item.localizedReading(languageCode: "en")
+    )
+    XCTAssertEqual(
+      tag.localizedTag(languageCode: "fr-FR"),
+      tag.localizedTag(languageCode: "en")
+    )
+  }
+
   func testLegacyContentNeverFallsBackToJapaneseForGlobalLocales() throws {
     let data = Data(
       #"{"id":"legacy","ko":"학교","reading_ja":"ハッキョ","meaning_ja":"学校","audio":null}"#
@@ -323,6 +376,36 @@ final class DeckKitTests: XCTestCase {
     XCTAssertTrue(
       issues.contains { $0.code == "schema.additionalProperties" && $0.path == "$.unexpected" })
     XCTAssertTrue(issues.contains { $0.code == "schema.required" && $0.path == "$.generated_at" })
+  }
+
+  func testJSONSchemaValidatorEnforcesObjectAndUnicodeScalarLengths() throws {
+    let root = try RepositoryFixtureLocator.root(from: #filePath)
+    let deckSchema = try Data(
+      contentsOf: root.appendingPathComponent("shared/schema/deck.schema.json"))
+    let source = try Data(
+      contentsOf: root.appendingPathComponent(
+        "shared/piyodeck/fixtures/valid/basic-deck.json"
+      ))
+    var object = try XCTUnwrap(JSONSerialization.jsonObject(with: source) as? [String: Any])
+    object["localizations"] = [String: Any]()
+    let malformed = try JSONSerialization.data(withJSONObject: object)
+    let deckIssues = try JSONSchemaValidator.validate(
+      instanceData: malformed,
+      schemaData: deckSchema
+    )
+    XCTAssertTrue(
+      deckIssues.contains {
+        $0.code == "schema.minProperties" && $0.path == "$.localizations"
+      }
+    )
+
+    let scalarSchema = Data(#"{"type":"string","maxLength":1}"#.utf8)
+    let twoScalarGrapheme = Data(#""e\u0301""#.utf8)
+    let scalarIssues = try JSONSchemaValidator.validate(
+      instanceData: twoScalarGrapheme,
+      schemaData: scalarSchema
+    )
+    XCTAssertTrue(scalarIssues.contains { $0.code == "schema.maxLength" })
   }
 
   func testSemanticValidatorRejectsUntypeableKoreanAndDuplicateItems() {
