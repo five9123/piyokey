@@ -5,13 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Sequence
+from typing import Optional, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +56,33 @@ def python_version_status(version: Sequence[int]) -> tuple[str, str]:
     if tuple(version[:2]) < (3, 11):
         return "FAIL", f"Python {rendered}; 3.11 이상이 필요합니다"
     return "PASS", f"Python {rendered}"
+
+
+def java_version_status(output: str) -> tuple[str, str]:
+    match = re.search(r'version "(?:1\.)?(\d+)(?:[._](\d+))?', output)
+    if match is None:
+        return "FAIL", "Java 버전을 확인할 수 없습니다"
+    major = int(match.group(1))
+    rendered = match.group(0).removeprefix("version ").strip('"')
+    if major < 17:
+        return "FAIL", f"Java {rendered}; JDK 17 이상이 필요합니다"
+    return "PASS", f"Java {rendered}"
+
+
+def android_sdk_path(environment: dict[str, str], home: Path) -> Optional[Path]:
+    configured = environment.get("ANDROID_HOME") or environment.get("ANDROID_SDK_ROOT")
+    candidates = [Path(configured).expanduser()] if configured else []
+    candidates.append(home / "Library/Android/sdk")
+    return next((candidate for candidate in candidates if candidate.is_dir()), None)
+
+
+def android_platform_path(sdk: Optional[Path], api_level: int) -> Optional[Path]:
+    if sdk is None:
+        return None
+    platforms = sdk / "platforms"
+    candidates = [platforms / f"android-{api_level}"]
+    candidates.extend(sorted(platforms.glob(f"android-{api_level}.*")))
+    return next((candidate for candidate in candidates if candidate.is_dir()), None)
 
 
 def run(*args: str, cwd: Path = ROOT) -> subprocess.CompletedProcess[str]:
@@ -160,12 +189,65 @@ def collect_checks(scope: str) -> list[Check]:
             )
         )
 
+    if scope == "android":
+        java = shutil.which("java")
+        if java is None:
+            checks.append(Check("java", "FAIL", "JDK 17 이상이 필요합니다"))
+        else:
+            result = run(java, "-version")
+            status, detail = java_version_status(result.stdout + result.stderr)
+            checks.append(Check("java", status, detail))
+
+        sdk = android_sdk_path(dict(os.environ), Path.home())
+        checks.append(
+            Check(
+                "android_sdk",
+                "PASS" if sdk else "FAIL",
+                str(sdk) if sdk else "ANDROID_HOME 또는 API 37 SDK가 필요합니다",
+            )
+        )
+        api_37 = android_platform_path(sdk, 37)
+        checks.append(
+            Check(
+                "android_api_37",
+                "PASS" if api_37 and api_37.is_dir() else "FAIL",
+                str(api_37) if api_37 else "Android API 37이 없습니다",
+            )
+        )
+
+        wrapper = ROOT / "android/gradlew"
+        checks.append(
+            Check(
+                "gradle_wrapper",
+                "PASS" if wrapper.is_file() and os.access(wrapper, os.X_OK) else "FAIL",
+                str(wrapper),
+            )
+        )
+        required_modules = (
+            "android/app/build.gradle.kts",
+            "android/core/hangul/build.gradle.kts",
+            "android/core/deckkit/build.gradle.kts",
+            "android/core/piyodeck/build.gradle.kts",
+        )
+        missing_modules = [
+            relative for relative in required_modules if not (ROOT / relative).is_file()
+        ]
+        checks.append(
+            Check(
+                "android_modules",
+                "FAIL" if missing_modules else "PASS",
+                "누락: " + ", ".join(missing_modules)
+                if missing_modules
+                else "app·hangul·deckkit·piyodeck 확인",
+            )
+        )
+
     return checks
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scope", choices=("repo", "ios"), default="repo")
+    parser.add_argument("--scope", choices=("repo", "ios", "android"), default="repo")
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
 

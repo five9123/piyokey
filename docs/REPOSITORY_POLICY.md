@@ -3,9 +3,10 @@
 ## Source layout
 
 PIYOKEY uses one private source monorepo. The existing `ios/` tree remains in
-place, and future ports are added at the repository root as `android/` and
-`web/`. Cross-platform contracts live under `shared/`; platform UI, storage,
-audio, input, and purchase integrations stay in their platform trees.
+place, the active Kotlin/Compose port lives under `android/`, and a future web
+port will live under `web/`. Cross-platform contracts live under `shared/`;
+platform UI, storage, audio, input, and purchase integrations stay in their
+platform trees.
 
 The Swift, Kotlin, and TypeScript Hangul engines are independent pure-function
 implementations. They must consume the same schemas, fixtures, and

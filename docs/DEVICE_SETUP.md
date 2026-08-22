@@ -11,9 +11,10 @@ AI agent가 동시에 다룰 때의 표준 시작 절차다. GitHub가 소스와
 - **같은 worktree 공유**: 금지한다. 파일 변경과 index가 즉시 섞여 담당 경계가
   사라진다.
 
-Android M7은 현재 HOLD 상태다. Android 프로젝트 생성이나 구현은 별도 재개
-결정 전까지 시작하지 않는다. 웹도 승인된 issue가 생기기 전에는 빈 플랫폼
-디렉터리를 선행 생성하지 않는다.
+Android M7은 재개되어 M1 공용 코어까지 `main`에 반영됐다. 새 Android 작업은
+반드시 최신 `main`의 `android/`에서 issue·전용 branch·독립 worktree를 만든 뒤
+시작한다. 이전 `hanco` 작업 폴더를 계속 수정하거나 파일을 수동 복사하지 않는다.
+웹은 승인된 issue가 생기기 전에는 빈 플랫폼 디렉터리를 선행 생성하지 않는다.
 
 ## 2. 새 디바이스 최초 설정
 
@@ -36,6 +37,13 @@ iOS 작업을 할 Mac에서는 추가 점검을 실행한다.
 
 ```bash
 python3 tools/workspace_doctor.py --scope ios
+```
+
+Android 작업 환경에서는 JDK 17 이상, Android API 37 SDK, Gradle wrapper와 M1
+모듈을 추가 점검한다.
+
+```bash
+python3 tools/workspace_doctor.py --scope android
 ```
 
 점검 도구는 읽기 전용이다. 설정이나 파일을 자동 수정하지 않으며 secret과

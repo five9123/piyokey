@@ -1,5 +1,6 @@
 import importlib.util
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -42,6 +43,46 @@ class WorkspaceDoctorTests(unittest.TestCase):
         self.assertEqual(workspace_doctor.python_version_status((3, 10, 9))[0], "FAIL")
         self.assertEqual(workspace_doctor.python_version_status((3, 11, 0))[0], "PASS")
         self.assertEqual(workspace_doctor.python_version_status((3, 13, 1))[0], "PASS")
+
+    def test_java_version_requires_17(self):
+        self.assertEqual(
+            workspace_doctor.java_version_status('openjdk version "16.0.2"')[0],
+            "FAIL",
+        )
+        self.assertEqual(
+            workspace_doctor.java_version_status('openjdk version "17.0.12"')[0],
+            "PASS",
+        )
+        self.assertEqual(
+            workspace_doctor.java_version_status('openjdk version "21.0.8"')[0],
+            "PASS",
+        )
+        self.assertEqual(workspace_doctor.java_version_status("unknown")[0], "FAIL")
+
+    def test_android_sdk_path_prefers_configured_then_default(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            configured = home / "configured-sdk"
+            default = home / "Library/Android/sdk"
+            configured.mkdir()
+            default.mkdir(parents=True)
+            self.assertEqual(
+                workspace_doctor.android_sdk_path(
+                    {"ANDROID_HOME": str(configured)}, home
+                ),
+                configured,
+            )
+            self.assertEqual(workspace_doctor.android_sdk_path({}, home), default)
+
+    def test_android_platform_path_accepts_versioned_sdk_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            sdk = Path(directory)
+            versioned = sdk / "platforms/android-37.0"
+            versioned.mkdir(parents=True)
+            self.assertEqual(
+                workspace_doctor.android_platform_path(sdk, 37), versioned
+            )
+            self.assertIsNone(workspace_doctor.android_platform_path(sdk, 36))
 
 
 if __name__ == "__main__":
