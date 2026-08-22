@@ -14,6 +14,10 @@
 모든 작업자는 자기 clone 또는 worktree와 자기 branch를 사용합니다. 같은
 worktree를 두 agent가 동시에 수정하지 않습니다.
 
+새 디바이스와 worktree 생성 명령은 [DEVICE_SETUP.md](DEVICE_SETUP.md)를
+기준으로 합니다. 작업 시작 직후 branch를 원격에 push해 다른 작업자가
+소유권을 확인할 수 있게 합니다.
+
 ## Handoff
 
 작업을 넘길 때 issue 또는 draft PR에 아래 내용을 남깁니다.
@@ -28,6 +32,9 @@ worktree를 두 agent가 동시에 수정하지 않습니다.
 ```
 
 코드만 있고 이 기록이 없으면 handoff가 완료된 것으로 보지 않습니다.
+
+다른 디바이스에서 작업을 재개할 때는 채팅 요약만 믿지 않고 issue/PR handoff,
+`AGENTS.md`, 관련 PRD 절, 원격 branch의 최신 diff를 함께 확인합니다.
 
 ## 충돌이 잦은 파일
 

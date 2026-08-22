@@ -1,0 +1,65 @@
+name: Agent or device task
+description: 사람·AI agent·디바이스 하나가 맡을 독립 작업을 예약합니다.
+title: "[Task] "
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 완료 결과
+      description: 사용자 또는 유지보수 관점의 완료 상태를 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: prd
+    attributes:
+      label: 관련 PRD 절 또는 운영 계약
+      placeholder: "예: PRD §13 R1.1, docs/WORKFLOW.md"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: 검증 가능한 체크리스트로 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: 주 담당 사람 또는 agent
+      description: 동시에 한 명만 주 담당자로 지정합니다.
+    validations:
+      required: true
+  - type: input
+    id: branch
+    attributes:
+      label: Branch
+      placeholder: "codex/123-short-slug"
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: 수정 경로와 단독 소유 파일
+      description: 예상 상위 경로와 충돌 위험 파일을 구분해 적어 주세요.
+    validations:
+      required: true
+  - type: checkboxes
+    id: workspace
+    attributes:
+      label: 독립 작업 공간
+      options:
+        - label: 다른 물리 디바이스의 독립 clone
+        - label: 같은 Mac의 독립 worktree
+  - type: textarea
+    id: verification
+    attributes:
+      label: 검증 계획
+      description: 자동 test, 수동 시나리오, 실기기 gate를 구분합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 선행 작업과 handoff
+      description: 선행 issue/PR, 다음 한 단계, 외부 blocker를 적어 주세요.
