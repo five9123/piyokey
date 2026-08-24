@@ -1626,6 +1626,63 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(element("choseong.question.value").label, "1/10")
   }
 
+  func testChoseongAndWordMatchShareThreeQuestionPronunciationHintBudget() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, audioProbe: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["さがす"].tap()
+    let search = app.textFields["discover.search"]
+    XCTAssertTrue(search.waitForExistence(timeout: 5))
+    search.tap()
+    search.typeText("毎日の韓国語")
+    let deckCard = element("discover.deck.official_daily_words")
+    XCTAssertTrue(deckCard.waitForExistence(timeout: 3))
+    deckCard.tap()
+    app.buttons["deck.detail.download"].tap()
+    XCTAssertTrue(app.buttons["deck.detail.play"].waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.choseong"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    element("game.choseong.preset.beginner").tap()
+    XCTAssertTrue(element("choseong.play.screen").waitForExistence(timeout: 5))
+
+    let choseongHint = app.buttons["choseong.pronunciation_hint"]
+    XCTAssertTrue(choseongHint.waitForExistence(timeout: 3))
+    XCTAssertTrue(choseongHint.label.contains("残り3問"))
+    let pronunciationStarts = element("debug.pronunciation.start_count")
+    XCTAssertTrue(pronunciationStarts.waitForExistence(timeout: 3))
+    let initialStartCount = pronunciationStarts.label
+    choseongHint.tap()
+    waitForLabelContaining("残り2問", on: choseongHint, timeout: 3)
+    waitForLabelDifferentFrom(initialStartCount, on: pronunciationStarts, timeout: 3)
+    let firstHintStartCount = pronunciationStarts.label
+    choseongHint.tap()
+    waitForLabelContaining("残り2問", on: choseongHint, timeout: 3)
+    waitForLabelDifferentFrom(firstHintStartCount, on: pronunciationStarts, timeout: 3)
+
+    app.buttons["game.end"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    app.navigationBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.word_match"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    element("game.word_match.preset.beginner").tap()
+    XCTAssertTrue(element("word_match.play.screen").waitForExistence(timeout: 5))
+
+    let wordMatchHint = app.buttons["word_match.pronunciation_hint"]
+    let hintReady = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "isHittable == true"),
+      object: wordMatchHint
+    )
+    XCTAssertEqual(XCTWaiter.wait(for: [hintReady], timeout: 5), .completed)
+    XCTAssertTrue(wordMatchHint.label.contains("残り3問"))
+    wordMatchHint.tap()
+    waitForLabelContaining("残り2問", on: wordMatchHint, timeout: 3)
+    XCTAssertFalse(app.buttons["dictation.pronunciation_hint"].exists)
+  }
+
   func testDictationUsesAudioOnlyPromptAndCompletesTypedAnswer() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, deckItemLimit: 1)
@@ -2652,6 +2709,25 @@ final class HancoUITests: XCTestCase {
 
     let current = identifier.isEmpty ? element : self.element(identifier)
     XCTFail("Timed out waiting for \(identifier) label \(label); current label is \(current.label)")
+  }
+
+  private func waitForLabelContaining(
+    _ text: String,
+    on element: XCUIElement,
+    timeout: TimeInterval
+  ) {
+    let identifier = element.identifier
+    let deadline = Date().addingTimeInterval(timeout)
+    repeat {
+      let current = identifier.isEmpty ? element : self.element(identifier)
+      if current.exists, current.label.contains(text) { return }
+      RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+    } while Date() < deadline
+
+    let current = identifier.isEmpty ? element : self.element(identifier)
+    XCTFail(
+      "Timed out waiting for \(identifier) label containing \(text); current label is \(current.label)"
+    )
   }
 
   private func waitForNonexistence(_ element: XCUIElement, timeout: TimeInterval) {

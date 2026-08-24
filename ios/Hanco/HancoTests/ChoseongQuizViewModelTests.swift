@@ -146,6 +146,106 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(completion.points, 140)
   }
 
+  func testPronunciationHintConsumesOneQuestionBudgetAndReplayIsFree() {
+    let rounds = [
+      ChoseongTypingRound(
+        answer: item("school", "학교"),
+        initials: "ㅎㄱ",
+        requiresMeaningHint: false
+      ),
+      ChoseongTypingRound(
+        answer: item("friend", "친구"),
+        initials: "ㅊㄱ",
+        requiresMeaningHint: false
+      ),
+    ]
+    let model = ChoseongTypingViewModel(rounds: rounds)
+    let origin = Date(timeIntervalSince1970: 4_600)
+    model.start(at: origin)
+    for key in Array("ㅎㅏㄱㄱㅛ") {
+      _ = model.input(key, at: origin.addingTimeInterval(1))
+    }
+    XCTAssertEqual(model.combo, 1)
+    model.advance(at: origin.addingTimeInterval(2))
+
+    XCTAssertEqual(
+      model.usePronunciationHint(),
+      .firstUse(answer: rounds[1].answer)
+    )
+    XCTAssertEqual(model.pronunciationHintsRemaining, 2)
+    XCTAssertEqual(model.combo, 0)
+    XCTAssertTrue(model.isHintPenaltyApplied)
+    XCTAssertEqual(
+      model.usePronunciationHint(),
+      .replay(answer: rounds[1].answer)
+    )
+    XCTAssertEqual(model.pronunciationHintsRemaining, 2)
+
+    var outcome: ChoseongTypingInputOutcome?
+    for key in Array("ㅊㅣㄴㄱㅜ") {
+      outcome = model.input(key, at: origin.addingTimeInterval(3))
+    }
+    guard case .completed(let completion) = outcome else {
+      return XCTFail("The hinted question must remain completable")
+    }
+    XCTAssertTrue(completion.usedHint)
+    XCTAssertEqual(completion.points, 120)
+  }
+
+  func testPronunciationHintLimitSpansQuestionsAndRestartRestoresIt() {
+    let rounds = (0..<4).map { index in
+      ChoseongTypingRound(
+        answer: item("ga-\(index)", "가"),
+        initials: "ㄱ",
+        requiresMeaningHint: false
+      )
+    }
+    let model = ChoseongTypingViewModel(rounds: rounds)
+    let origin = Date(timeIntervalSince1970: 4_700)
+    model.start(at: origin)
+
+    for index in 0..<3 {
+      XCTAssertNotNil(model.usePronunciationHint())
+      XCTAssertEqual(model.pronunciationHintsRemaining, 2 - index)
+      _ = model.input("ㄱ", at: origin.addingTimeInterval(Double(index + 1)))
+      _ = model.input("ㅏ", at: origin.addingTimeInterval(Double(index + 1)))
+      model.advance(at: origin.addingTimeInterval(Double(index + 1)))
+    }
+
+    XCTAssertEqual(model.questionNumber, 4)
+    XCTAssertFalse(model.canUsePronunciationHint)
+    XCTAssertNil(model.usePronunciationHint())
+
+    model.restart(at: origin.addingTimeInterval(10))
+    XCTAssertEqual(model.pronunciationHintsRemaining, 3)
+    XCTAssertTrue(model.canUsePronunciationHint)
+    XCTAssertFalse(model.didUsePronunciationHintForCurrentRound)
+  }
+
+  func testFreeMeaningHintDoesNotErasePronunciationPenalty() {
+    let answer = item("company", "회사")
+    let model = ChoseongTypingViewModel(
+      rounds: [
+        ChoseongTypingRound(answer: answer, initials: "ㅎㅅ", requiresMeaningHint: true)
+      ]
+    )
+    let origin = Date(timeIntervalSince1970: 4_800)
+    model.start(at: origin)
+    XCTAssertNotNil(model.usePronunciationHint())
+    model.useHint(shouldPenalize: false)
+
+    var outcome: ChoseongTypingInputOutcome?
+    for key in Array("ㅎㅗㅣㅅㅏ") {
+      outcome = model.input(key, at: origin.addingTimeInterval(2))
+    }
+    guard case .completed(let completion) = outcome else {
+      return XCTFail("Both hints must still allow completion")
+    }
+    XCTAssertTrue(completion.usedHint)
+    XCTAssertTrue(model.isHintPenaltyApplied)
+    XCTAssertEqual(completion.points, 110)
+  }
+
   func testInitialProgressTracksEachSyllableAndPreservesWordBoundaries() {
     let start = ChoseongInitialProgressBuilder.units(
       answer: "학교 생활",

@@ -586,6 +586,10 @@
 "choseong.initials.title" = "이 초성은 어떤 단어일까요?";
 "choseong.hint.used" = "뜻 힌트";
 "choseong.hint.show" = "뜻 힌트 보기";
+"game.pronunciation_hint.use_format" = "발음 듣기 · %d문제 남음 · −30점";
+"game.pronunciation_hint.replay_format" = "다시 듣기 · %d문제 남음";
+"game.pronunciation_hint.exhausted_format" = "발음 힌트 종료 · %d문제 남음";
+"game.pronunciation_hint.used_announcement_format" = "발음 힌트를 사용했습니다. %d문제 남았습니다. 콤보가 초기화되고 30점이 차감됩니다.";
 "choseong.feedback.ready" = "초성을 보고 정답을 떠올려 타이핑해요";
 "choseong.feedback.correct" = "정답! +%d점";
 "choseong.feedback.incorrect" = "정답은 ‘%@’";

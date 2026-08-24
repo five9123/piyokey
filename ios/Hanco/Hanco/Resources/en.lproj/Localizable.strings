@@ -586,6 +586,10 @@
 "choseong.initials.title" = "Which word matches these initials?";
 "choseong.hint.used" = "Meaning hint";
 "choseong.hint.show" = "Show meaning hint";
+"game.pronunciation_hint.use_format" = "Listen · %d left · −30 pts";
+"game.pronunciation_hint.replay_format" = "Listen again · %d left";
+"game.pronunciation_hint.exhausted_format" = "No audio hints · %d left";
+"game.pronunciation_hint.used_announcement_format" = "Audio hint used. %d left. Combo reset and 30 points deducted.";
 "choseong.feedback.ready" = "Think of the answer and type it from the initials";
 "choseong.feedback.correct" = "Correct! +%d pts";
 "choseong.feedback.incorrect" = "The answer is “%@”";
