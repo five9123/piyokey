@@ -99,6 +99,13 @@ class KeyboardLayoutTest {
   }
 
   @Test
+  fun `jamo track only auto scrolls when chips overflow the viewport`() {
+    assertEquals(78f, JamoTrackMetrics.contentWidthDp(itemCount = 2))
+    assertFalse(JamoTrackMetrics.requiresAutoTracking(itemCount = 2, availableWidthDp = 320f))
+    assertTrue(JamoTrackMetrics.requiresAutoTracking(itemCount = 10, availableWidthDp = 320f))
+  }
+
+  @Test
   fun `rollover tracker keeps concurrent pointers independent`() {
     val tracker = RolloverTouchTracker()
     val first = KeyboardAction.JamoKey('ㄱ')

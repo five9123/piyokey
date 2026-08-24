@@ -111,14 +111,16 @@ class PracticeTouchGateInstrumentedTest {
     )
     launchGate(
       monitor = monitor,
-      targetCount = 60,
+      // Leave spare practice items so the production 60/60 result boundary cannot be mistaken for
+      // the independent touch-input counter shown by the gate overlay.
+      targetCount = 80,
       showPhysicalInstructions = true,
     )
 
     var waitFailure: Throwable? = null
     try {
-      composeRule.waitUntil(timeoutMillis = 180_000) {
-        monitor.measurementSampleCount >= 100
+      composeRule.waitUntil(timeoutMillis = 600_000) {
+        monitor.isReadyToEvaluate
       }
     } catch (failure: Throwable) {
       waitFailure = failure
