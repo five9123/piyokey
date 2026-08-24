@@ -502,10 +502,30 @@ internal class PracticeTouchGateMonitor(
   val acceptedDeliveryCount: Int
     get() = synchronized(lock) { deliveries.count { it.acceptedRevision != null } }
 
+  /**
+   * Becomes true after the planned raw key downs have been handled and frame callbacks have had a
+   * short quiet period to settle. This also terminates promptly when rejected input makes the gate
+   * fail, instead of leaving the user at the unrelated practice-session result boundary.
+   */
+  val isReadyToEvaluate: Boolean
+    get() = synchronized(lock) {
+      val plannedDownCount = downs.count {
+        it.phase == TouchGatePhase.WARMUP || it.phase == TouchGatePhase.MEASUREMENT
+      }
+      val lastRelevantUptimeMillis = deliveries
+        .filter {
+          it.phase == TouchGatePhase.WARMUP || it.phase == TouchGatePhase.MEASUREMENT
+        }
+        .maxOfOrNull { it.callbackUptimeMillis }
+      plannedDownCount >= warmupTarget + measurementTarget &&
+        lastRelevantUptimeMillis != null &&
+        SystemClock.uptimeMillis() - lastRelevantUptimeMillis >= FRAME_SETTLE_MILLIS
+    }
+
   fun statusText(): String = synchronized(lock) {
     if (!armed) return@synchronized "Preparing touch gate…"
-    val warmupCount = samples.count { it.phase == TouchGatePhase.WARMUP }
-    val measurementCount = samples.count { it.phase == TouchGatePhase.MEASUREMENT }
+    val warmupCount = downs.count { it.phase == TouchGatePhase.WARMUP }
+    val measurementCount = downs.count { it.phase == TouchGatePhase.MEASUREMENT }
     when {
       warmupCount < warmupTarget ->
         "Warm-up $warmupCount/$warmupTarget · hold ㄱ, roll ㅏ"
@@ -513,6 +533,10 @@ internal class PracticeTouchGateMonitor(
         "Measure $measurementCount/$measurementTarget · keep two fingers overlapped"
       else -> "STOP · measurement complete"
     }
+  }
+
+  private companion object {
+    const val FRAME_SETTLE_MILLIS = 750L
   }
 
   fun snapshot(): TouchGateSnapshot = synchronized(lock) {
