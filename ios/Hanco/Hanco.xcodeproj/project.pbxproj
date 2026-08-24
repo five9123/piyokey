@@ -980,7 +980,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1006,7 +1006,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1025,7 +1025,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
 			};
 			name = Debug;
@@ -1045,7 +1045,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
 			};
 			name = Release;
@@ -1059,7 +1059,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Hanco;
 			};
 			name = Debug;
@@ -1073,7 +1073,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Hanco;
 			};
 			name = Release;

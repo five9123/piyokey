@@ -1263,3 +1263,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: reducer 도달 시간만 재면 Compose가 화면에 반영되는 비용을 누락하고, synthetic pointer만으로는 실제 Android touch dispatch와 손가락 rollover를 증명할 수 없다. 자동 회귀와 opt-in 물리 측정을 분리하면 CI를 멈추지 않으면서 F2의 사용자 체감 경계를 재현 가능한 raw evidence로 남길 수 있다.
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
+
+## 2026-08-25 iPhone+iPad Universal 앱과 적응형 화면 범위
+- 결정: 기존 App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`, Xcode project·scheme을 유지하고 iOS target을 iPhone+iPad Universal로 확장한다. iPhone은 기존 portrait만 유지하고 iPad는 iPadOS 16+ 네 방향, Split View 1/2·1/3, Stage Manager와 resizable window를 지원한다. `UIRequiresFullScreen` opt-out, 별도 iPad target·앱 레코드·sidebar는 만들지 않는다.
+- 결정: 적응형 화면은 기기 모델이 아니라 실제 가용 폭을 기준으로 공통 metrics에서 compact `<600pt`, medium `600..<900pt`, wide `>=900pt`를 계산한다. compact는 iPhone 구성을 재사용하고 읽기 콘텐츠 720pt, 허브/카탈로그 1120pt, 세션 문제 lane 920pt, 내장 키보드 820pt를 최대 폭 기준으로 둔다.
+- 결정: 방향·창 크기 변경은 현재 탭·문제·입력·점수·콤보·목숨·타이머를 보존하며 세션 중 새 설정·파일·결제·연결 안내 모달을 허용하지 않는다. iPad 공식 지원의 통합 출시는 Issue #10의 적응형 화면, Issue #12의 물리 키보드 OS IME 실기기 gate, Issue #17의 두벌식 배열·권장 운지 학습 UX를 함께 요구한다.
+- 근거: Slack·Threads 피드백의 핵심은 확대된 iPhone 화면이 아니라 iPad와 Bluetooth 키보드로 실제 두벌식 위치를 익히는 것이다. 같은 앱·상태 모델을 유지한 채 폭과 window contract만 분리해야 iPhone 회귀와 세션 무중단 원칙을 보존할 수 있다.
+- 관련 PRD 섹션: §2.3, F2, F2a, F4, F6, F10, §7, §12.2, §13
+- 영향 범위: iOS target device family·Info.plist 방향, 공통 adaptive layout, 홈·둘러보기·연습·게임·결과·마이페이지·설정, iPad 자동·수동 QA와 App Store 증빙

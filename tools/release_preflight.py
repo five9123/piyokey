@@ -49,6 +49,16 @@ DECK_MAKER_LOCALIZATIONS = {
 }
 STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
+EXPECTED_IPHONE_ORIENTATIONS = ["UIInterfaceOrientationPortrait"]
+EXPECTED_IPAD_ORIENTATIONS = frozenset(
+    {
+        "UIInterfaceOrientationPortrait",
+        "UIInterfaceOrientationPortraitUpsideDown",
+        "UIInterfaceOrientationLandscapeLeft",
+        "UIInterfaceOrientationLandscapeRight",
+    }
+)
+
 VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "ko"})
 GLOBAL_APP_STORE_LOCALES = frozenset({"en-US", "en-GB", "en-AU", "en-CA", "ko", "ja"})
 GLOBAL_APP_STORE_NAMES = {
@@ -340,6 +350,41 @@ def game_center_contract_findings(info: dict[str, Any], source: str) -> list[Fin
     return findings
 
 
+def ios_universal_contract_findings(project: str, info: dict[str, Any]) -> list[Finding]:
+    findings: list[Finding] = []
+    raw_device_families = re.findall(r"TARGETED_DEVICE_FAMILY = ([^;]+);", project)
+    device_families = {
+        value.strip().strip('"').replace(" ", "") for value in raw_device_families
+    }
+    add(
+        findings,
+        bool(raw_device_families) and device_families == {"1,2"},
+        f"All iOS targets must support iPhone and iPad device families: {sorted(device_families)}",
+    )
+
+    iphone_orientations = info.get("UISupportedInterfaceOrientations")
+    add(
+        findings,
+        iphone_orientations == EXPECTED_IPHONE_ORIENTATIONS,
+        f"iPhone orientations must remain portrait-only: {iphone_orientations!r}",
+    )
+
+    ipad_orientations = info.get("UISupportedInterfaceOrientations~ipad")
+    add(
+        findings,
+        isinstance(ipad_orientations, list)
+        and len(ipad_orientations) == len(EXPECTED_IPAD_ORIENTATIONS)
+        and set(ipad_orientations) == EXPECTED_IPAD_ORIENTATIONS,
+        f"iPad must declare all four interface orientations: {ipad_orientations!r}",
+    )
+    add(
+        findings,
+        "UIRequiresFullScreen" not in info,
+        "UIRequiresFullScreen must remain absent for iPad multitasking and resizable windows",
+    )
+    return findings
+
+
 def repository_checks(root: Path) -> list[Finding]:
     findings: list[Finding] = []
     app = root / "ios/Hanco/Hanco"
@@ -606,8 +651,7 @@ def repository_checks(root: Path) -> list[Finding]:
             "App category must be Education",
         )
         add(findings, info.get("ITSAppUsesNonExemptEncryption") is False, "Export compliance plist declaration is missing")
-        orientations = info.get("UISupportedInterfaceOrientations", [])
-        add(findings, orientations == ["UIInterfaceOrientationPortrait"], "Only portrait orientation should be declared")
+        findings.extend(ios_universal_contract_findings(project, info))
         findings.extend(
             game_center_contract_findings(
                 info,
