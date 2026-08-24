@@ -2,7 +2,6 @@ package app.piyokey.feature.practice
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -91,16 +90,6 @@ fun DubeolsikKeyboard(
     isShifted = isShifted,
     enabled = options.showsKeyGuide,
   )
-  val guidePulse by rememberInfiniteTransition(label = "keyboard-guide").animateFloat(
-    initialValue = 0.34f,
-    targetValue = 0.78f,
-    animationSpec = infiniteRepeatable(
-      animation = tween(durationMillis = 1_000),
-      repeatMode = RepeatMode.Reverse,
-    ),
-    label = "keyboard-guide-alpha",
-  )
-
   val latestOnJamo = rememberUpdatedState(onJamo)
   val latestOnBackspace = rememberUpdatedState(onBackspace)
   val latestHapticsEnabled = rememberUpdatedState(options.hapticsEnabled)
@@ -140,7 +129,6 @@ fun DubeolsikKeyboard(
         definitions = DubeolsikLayout.topRow,
         isShifted = isShifted,
         guide = guide,
-        guidePulse = guidePulse,
         pressedCounts = pressedCounts,
         targetRegistry = targetRegistry,
         options = options,
@@ -150,7 +138,6 @@ fun DubeolsikKeyboard(
         definitions = DubeolsikLayout.homeRow,
         isShifted = isShifted,
         guide = guide,
-        guidePulse = guidePulse,
         pressedCounts = pressedCounts,
         targetRegistry = targetRegistry,
         options = options,
@@ -167,7 +154,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_shift),
           action = Shift,
           highlighted = guide.highlightedAction == Shift,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Shift] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -182,7 +168,6 @@ fun DubeolsikKeyboard(
             accessibilityLabel = keyboardKeyDescription(definition, isShifted, options),
             action = action,
             highlighted = guide.highlightedAction == action,
-            guidePulse = guidePulse,
             pressed = (pressedCounts[action] ?: 0) > 0,
             targetRegistry = targetRegistry,
             onActivate = activationHandler.value,
@@ -194,7 +179,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_backspace),
           action = Backspace,
           highlighted = false,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Backspace] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -210,7 +194,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_space),
           action = Space,
           highlighted = guide.highlightedAction == Space,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Space] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -271,7 +254,6 @@ private fun KeyboardCharacterRow(
   definitions: List<JamoKeyDefinition>,
   isShifted: Boolean,
   guide: KeyboardGuideState,
-  guidePulse: Float,
   pressedCounts: Map<KeyboardAction, Int>,
   targetRegistry: KeyboardTouchTargetRegistry,
   options: PracticeKeyboardOptions,
@@ -290,7 +272,6 @@ private fun KeyboardCharacterRow(
         accessibilityLabel = keyboardKeyDescription(definition, isShifted, options),
         action = action,
         highlighted = guide.highlightedAction == action,
-        guidePulse = guidePulse,
         pressed = (pressedCounts[action] ?: 0) > 0,
         targetRegistry = targetRegistry,
         onActivate = onActivate,
@@ -320,7 +301,6 @@ private fun KeyboardKeycap(
   accessibilityLabel: String,
   action: KeyboardAction,
   highlighted: Boolean,
-  guidePulse: Float,
   pressed: Boolean,
   targetRegistry: KeyboardTouchTargetRegistry,
   onActivate: (KeyboardAction) -> Unit,
@@ -335,11 +315,8 @@ private fun KeyboardKeycap(
     animationSpec = tween(durationMillis = 60),
     label = "key-press",
   )
-  val elevation by animateDpAsState(
-    targetValue = if (highlighted) (5 + guidePulse * 7).dp else 2.dp,
-    animationSpec = tween(durationMillis = 120),
-    label = "key-guide-elevation",
-  )
+  val guidePulse = animatedKeyboardGuidePulse(highlighted)
+  val elevation = if (highlighted) (5 + guidePulse * 7).dp else 2.dp
   val shape = RoundedCornerShape(11.dp)
   val color = when {
     highlighted -> KeyboardColors.GuideSoft
@@ -408,6 +385,22 @@ private fun KeyboardKeycap(
       }
     }
   }
+}
+
+@Composable
+private fun animatedKeyboardGuidePulse(highlighted: Boolean): Float {
+  if (!highlighted) return 0f
+  val transition = rememberInfiniteTransition(label = "keyboard-guide")
+  val pulse by transition.animateFloat(
+    initialValue = 0.34f,
+    targetValue = 0.78f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 1_000),
+      repeatMode = RepeatMode.Reverse,
+    ),
+    label = "keyboard-guide-alpha",
+  )
+  return pulse
 }
 
 private class KeyboardTouchTargetRegistry {
