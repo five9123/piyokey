@@ -1263,3 +1263,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: reducer 도달 시간만 재면 Compose가 화면에 반영되는 비용을 누락하고, synthetic pointer만으로는 실제 Android touch dispatch와 손가락 rollover를 증명할 수 없다. 자동 회귀와 opt-in 물리 측정을 분리하면 CI를 멈추지 않으면서 F2의 사용자 체감 경계를 재현 가능한 raw evidence로 남길 수 있다.
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
+
+## 2026-08-25 iOS 물리 키보드는 OS IME 입력 경로로 지원
+- 결정: Bluetooth·USB·Magic Keyboard는 새 raw key event 경로나 하드웨어별 자판 매핑을 만들지 않고, 기존 OS 키보드 모드의 `UITextField` committed/marked text와 `OSIMETextJudge`를 사용한다. 지원 기준은 iOS에서 한국어 두벌식 입력 소스를 선택한 iPhone 및 iPad의 iPhone 호환 실행이다.
+- 결정: Backspace·Space·Return·한/영 전환·키 반복은 OS 표준 편집 동작을 우선한다. 앱은 Backspace에 따른 target prefix 되감기, 목표 Space 수락, Return의 개행 방지·포커스 유지, 연결 해제·재연결 및 foreground 복귀 후 세션 진행·포커스 보존을 검증한다. 내장 키보드 모드에서 물리 키를 별도 수신하지 않는다.
+- 결정: iPad 적응형 레이아웃·정식 Universal 대상 기기 전환은 Issue #10 범위로 유지한다. Issue #12는 현재 iPhone 앱의 iPad 호환 실행과 iPhone에서 물리 입력이 정확히 판정되는지만 다룬다.
+- 근거: iOS IME는 물리 키보드에서도 자모 raw key보다 조합 중·확정 텍스트를 제공하므로 기존 diff 판정 경로를 재사용해야 소프트웨어 키보드와 판정이 갈라지지 않는다. 하드웨어별 raw mapping은 한/영 전환·도깨비 이월·사용자 배열을 중복 구현해 오판정 위험을 높인다.
+- 관련 PRD 섹션: F2a, F3, §6.3~6.4, §12
+- 영향 범위: iOS OS IME 입력 패널, HangulEngine/연습/UI 회귀, 실기기 QA 문서; iPad 레이아웃·Android 제외

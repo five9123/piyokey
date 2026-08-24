@@ -719,6 +719,32 @@ final class HancoUITests: XCTestCase {
     waitForValue("사랑해", on: restoredField, timeout: 3)
   }
 
+  func testOSIMEHardwareStyleDeleteAndReturnKeepAcceptedPrefixAligned() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사랑")
+    waitForValue("사랑", on: imeField, timeout: 3)
+
+    imeField.typeText(XCUIKeyboardKey.delete.rawValue)
+    waitForValue("사", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+
+    imeField.typeText("\n")
+    imeField.typeText("랑해")
+    waitForValue("사랑해", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사랑해")
+  }
+
   func testHomeRecommendationsOpenDeckDetail() {
     XCTAssertTrue(element("home.screen").exists)
     XCTAssertTrue(element("home.my_piyo_card").exists)
