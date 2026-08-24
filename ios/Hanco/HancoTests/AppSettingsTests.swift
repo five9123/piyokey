@@ -216,10 +216,14 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertFalse(compact.usesTwoColumnDashboard)
     XCTAssertFalse(medium.usesTwoColumnDashboard)
     XCTAssertTrue(wide.usesTwoColumnDashboard)
+    XCTAssertEqual(wide.formContentMaxWidth, 680)
     XCTAssertEqual(wide.readableContentMaxWidth, 720)
+    XCTAssertEqual(wide.resultContentMaxWidth, 760)
     XCTAssertEqual(wide.hubContentMaxWidth, 1_120)
     XCTAssertEqual(wide.sessionLaneMaxWidth, 920)
     XCTAssertEqual(wide.keyboardMaxWidth, 820)
+    XCTAssertLessThanOrEqual(wide.keyboardMaxWidth, wide.sessionLaneMaxWidth)
+    XCTAssertLessThanOrEqual(wide.formContentMaxWidth, wide.readableContentMaxWidth)
   }
 
   func testContentReportEmailIncludesOnlyRequiredContext() throws {

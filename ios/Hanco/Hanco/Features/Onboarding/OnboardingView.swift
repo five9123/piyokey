@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingView: View {
   @Environment(\.hancoFontScale) private var fontScale
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var onboarding: OnboardingLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
@@ -79,6 +80,7 @@ struct OnboardingView: View {
     .padding(.horizontal, 20)
     .padding(.top, 12)
     .padding(.bottom, 10)
+    .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
   }
 
   private var goalStep: some View {
@@ -125,6 +127,7 @@ struct OnboardingView: View {
       }
       .padding(.horizontal, 20)
       .padding(.bottom, 24)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .accessibilityIdentifier("onboarding.goal.screen")
   }
@@ -241,6 +244,7 @@ struct OnboardingView: View {
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 18)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .accessibilityIdentifier("onboarding.keyboard.screen")
   }
@@ -345,6 +349,7 @@ struct OnboardingView: View {
           }
           .padding(.horizontal, 20)
           .padding(.bottom, 10)
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
 
         .opacity(lesson.enteredText.isEmpty ? 0.48 : 1)
@@ -368,6 +373,7 @@ struct OnboardingView: View {
           onKey: lesson.input,
           onBackspace: lesson.backspace
         )
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
       }
       .accessibilityIdentifier("onboarding.lesson.screen")
     }
@@ -417,6 +423,7 @@ struct OnboardingView: View {
       }
       .padding(.horizontal, 20)
       .padding(.bottom, 28)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .accessibilityIdentifier("onboarding.hatch.handoff.screen")
   }

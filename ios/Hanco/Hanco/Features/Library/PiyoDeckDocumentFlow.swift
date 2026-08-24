@@ -405,6 +405,7 @@ final class PiyoDeckDocumentCoordinator: ObservableObject {
 }
 
 struct PiyoDeckImportPreviewView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
   @EnvironmentObject private var purchaseStore: DeckMakerPurchaseStore
@@ -454,6 +455,7 @@ struct PiyoDeckImportPreviewView: View {
           if let comparison { comparisonCard(comparison) }
         }
         .padding(20)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
       }
       .background(AppPalette.backgroundTop.ignoresSafeArea())
       .accessibilityIdentifier("piyodeck.import.preview")

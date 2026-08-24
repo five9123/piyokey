@@ -372,6 +372,7 @@ struct GameDeckSelectionView: View {
 
 private struct GameDeckListView: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
 
@@ -397,6 +398,7 @@ private struct GameDeckListView: View {
         }
       }
       .padding(18)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .background(
       LinearGradient(

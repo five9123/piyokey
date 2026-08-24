@@ -8,6 +8,7 @@ struct PracticeReviewSource {
 }
 
 struct PracticeView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.hancoFontScale) private var fontScale
@@ -147,10 +148,12 @@ struct PracticeView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
       }
       .scrollDismissesKeyboard(.never)
 
       inputArea
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
     }
     .background(
       LinearGradient(

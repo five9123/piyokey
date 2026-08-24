@@ -437,6 +437,8 @@ final class SpacingGameViewModel: ObservableObject {
 }
 
 struct SpacingPassageListView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+
   var body: some View {
     ScrollView {
       LazyVStack(alignment: .leading, spacing: 10) {
@@ -456,6 +458,7 @@ struct SpacingPassageListView: View {
         }
       }
       .padding(18)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .background(spacingBackground)
     .navigationTitle(Text("game.mode.spacing"))
@@ -509,6 +512,7 @@ struct SpacingGameView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var retention: RetentionLibrary
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
@@ -585,6 +589,7 @@ struct SpacingGameView: View {
           }
         }
         .padding(18)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
       }
       .onChange(of: viewModel.currentBoundary) { boundary in
         withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.22)) {
@@ -620,6 +625,7 @@ struct SpacingGameView: View {
       }
       .padding(.horizontal, 18)
       .padding(.vertical, 12)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
       .background(.ultraThinMaterial)
     }
     .background(spacingBackground)

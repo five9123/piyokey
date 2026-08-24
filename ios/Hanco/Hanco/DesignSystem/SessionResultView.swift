@@ -286,6 +286,7 @@ where
   BottomBar: View
 {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
 
   let navigationTitle: LocalizedStringKey
   let onFinish: () -> Void
@@ -376,6 +377,7 @@ where
           }
           .padding(18)
           .padding(.bottom, 82)
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.resultContentMaxWidth)
         }
 
         SessionResultCelebrationCanvas(
@@ -392,6 +394,7 @@ where
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.resultContentMaxWidth)
         .background(.ultraThinMaterial)
         .opacity(reveal.lowerZoneOpacity)
         .disabled(!actionsEnabled)

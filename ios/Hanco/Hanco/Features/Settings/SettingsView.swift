@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.dismiss) private var dismiss
   @EnvironmentObject private var reminder: DailyReminderLibrary
 
@@ -73,6 +74,7 @@ struct SettingsView: View {
     .onChange(of: practiceDisplayPreset) { rawValue in
       applyPracticePreset(PracticeDisplayPreset.resolved(from: rawValue))
     }
+    .hancoUITestDynamicTypeOverride()
   }
 
   private var settingsContent: some View {
@@ -89,6 +91,7 @@ struct SettingsView: View {
       }
       .padding(.horizontal, 18)
       .padding(.vertical, 16)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
     }
     .background(
       LinearGradient(
@@ -99,6 +102,11 @@ struct SettingsView: View {
       .ignoresSafeArea()
     )
     .accessibilityIdentifier("settings.screen")
+    .overlay(alignment: .topLeading) {
+      #if DEBUG
+        DynamicTypeDebugProbe()
+      #endif
+    }
     .navigationTitle(Text("settings.navigation_title"))
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
@@ -627,3 +635,20 @@ struct SettingsView: View {
     }
   }
 }
+
+#if DEBUG
+  private struct DynamicTypeDebugProbe: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+      Text(verbatim: " ")
+        .font(.system(size: 1))
+        .opacity(0.01)
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(
+          Text(verbatim: dynamicTypeSize.isAccessibilitySize ? "accessibility" : "standard")
+        )
+        .accessibilityIdentifier("debug.dynamic_type")
+    }
+  }
+#endif

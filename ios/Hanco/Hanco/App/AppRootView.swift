@@ -248,6 +248,7 @@ struct AppRootView: View {
     .overlay(alignment: .topLeading) {
       debugAudioProbe
     }
+    .hancoUITestDynamicTypeOverride()
   }
 
   private func flushPendingProgress() {
@@ -424,6 +425,21 @@ struct AppRootView: View {
         }
       }
     }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func hancoUITestDynamicTypeOverride() -> some View {
+    #if DEBUG
+      if ProcessInfo.processInfo.environment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] == "1" {
+        dynamicTypeSize(.accessibility5)
+      } else {
+        self
+      }
+    #else
+      self
+    #endif
   }
 }
 

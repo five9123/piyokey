@@ -34,6 +34,7 @@ private enum DeckMakerPaywallFeature: String, CaseIterable {
 struct DeckMakerPaywallView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.hancoFontScale) private var fontScale
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @ObservedObject private var purchaseStore: DeckMakerPurchaseStore
   @ScaledMetric(relativeTo: .largeTitle) private var headerSymbolSize: CGFloat = 42
   @ScaledMetric(relativeTo: .largeTitle) private var headerFrameSize: CGFloat = 86
@@ -69,6 +70,7 @@ struct DeckMakerPaywallView: View {
         .padding(.horizontal, 20)
         .padding(.top, 16)
         .padding(.bottom, 20)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
       }
       .background(background)
       .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -244,6 +246,7 @@ struct DeckMakerPaywallView: View {
     .padding(.horizontal, 20)
     .padding(.top, 14)
     .padding(.bottom, 8)
+    .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
     .background(.ultraThinMaterial)
   }
 
