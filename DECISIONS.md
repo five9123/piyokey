@@ -1263,3 +1263,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: reducer 도달 시간만 재면 Compose가 화면에 반영되는 비용을 누락하고, synthetic pointer만으로는 실제 Android touch dispatch와 손가락 rollover를 증명할 수 없다. 자동 회귀와 opt-in 물리 측정을 분리하면 CI를 멈추지 않으면서 F2의 사용자 체감 경계를 재현 가능한 raw evidence로 남길 수 있다.
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
+
+## 2026-08-25 Android 실기기 QA의 출시 후보 통합 gate 이관
+- 결정: 사용자의 명시적 요청에 따라 Android 개발 중 반복적으로 로컬 실기기를 요구하는 수동·정량 QA는 기능별 면제로 처리하지 않고 M3~M6 전체 구현과 자동 검증이 끝난 출시 후보 단계의 통합 실기기 QA로 이관한다. 각 마일스톤은 JVM·instrumented 자동 회귀, lint, debug/release build와 가능한 에뮬레이터 검증을 계속 통과해야 한다.
+- 결정: M2는 다양한 단어 16개·자모 101/101 실기기 기능 gate, 사용자 직접 입력 확인, 자동 representative-plan·2-pointer MotionEvent 회귀를 근거로 후속 구현을 허용한다. 물리 touch-down→frame-commit p95 50ms 이하와 50쌍 rollover 누락·중복 0은 삭제하거나 완화하지 않는다. 마지막 유효 정량 측정은 짧은 자모열 불필요 스크롤 제거 뒤 p50 38ms·p95 54ms·max 64ms였고, 키 가이드 애니메이션 재구성 범위 최적화는 자동 테스트·lint·빌드까지 통과했으나 이 결정에 따라 실기기 재측정은 출시 후보로 남긴다.
+- 결정: M3부터 PRD §13 순서로 구현을 계속할 수 있지만 Android 출시 가능 판정과 사용자에게 전달하는 최종 완료 보고는 이관된 실기기 목록을 사용자가 직접 QA하고 필수 수치·기능 gate를 모두 통과한 뒤에만 한다. 중간 상태를 출시 완료나 실기기 AC 충족으로 표현하지 않는다.
+- 근거: 사용자는 개발 단계마다 기기를 반복 조작하기보다 앱 전체 설계·기능을 출시 가능한 수준까지 먼저 완성하고 출시 직전에 한 번에 직접 QA하기를 선택했다. 자동 검증으로 회귀를 조기에 차단하면서 수동 검증 전환 비용을 출시 후보에 모으되, 명시된 품질 기준은 그대로 보존한다.
+- 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2~M7, §14
+- 영향 범위: Android 마일스톤 완료 판정, GitHub Project 상태, M2 성능 evidence, M3~M6 착수 조건, 출시 후보 실기기 QA 체크리스트

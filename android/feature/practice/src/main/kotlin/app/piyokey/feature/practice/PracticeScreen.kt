@@ -415,25 +415,27 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
   val listState = rememberLazyListState()
   val currentIndex = state.completedJamoCount.coerceAtMost(state.targetJamoSequence.lastIndex)
 
-  LaunchedEffect(state.currentTargetIndex, currentIndex) {
-    if (state.targetJamoSequence.isEmpty()) return@LaunchedEffect
-    listState.scrollToItem(currentIndex)
-    val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == currentIndex }
-      ?: return@LaunchedEffect
-    val viewportCenter = (
-      listState.layoutInfo.viewportStartOffset + listState.layoutInfo.viewportEndOffset
-      ) / 2
-    val itemCenter = item.offset + item.size / 2
-    listState.animateScrollBy((itemCenter - viewportCenter).toFloat())
-  }
-
   BoxWithConstraints(Modifier.fillMaxWidth()) {
-    val contentWidth = 36.dp * state.targetJamoSequence.size +
-      6.dp * (state.targetJamoSequence.size - 1).coerceAtLeast(0)
-    val edgePadding = if (contentWidth > maxWidth) {
+    val contentWidth = JamoTrackMetrics.contentWidthDp(state.targetJamoSequence.size).dp
+    val requiresAutoTracking = contentWidth > maxWidth
+    val edgePadding = if (requiresAutoTracking) {
       (maxWidth / 2 - 18.dp).coerceAtLeast(20.dp)
     } else {
       20.dp
+    }
+
+    LaunchedEffect(state.currentTargetIndex, currentIndex, requiresAutoTracking) {
+      if (state.targetJamoSequence.isEmpty() || !requiresAutoTracking) {
+        return@LaunchedEffect
+      }
+      listState.scrollToItem(currentIndex)
+      val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == currentIndex }
+        ?: return@LaunchedEffect
+      val viewportCenter = (
+        listState.layoutInfo.viewportStartOffset + listState.layoutInfo.viewportEndOffset
+        ) / 2
+      val itemCenter = item.offset + item.size / 2
+      listState.animateScrollBy((itemCenter - viewportCenter).toFloat())
     }
 
     LazyRow(
@@ -466,6 +468,21 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
       }
     }
   }
+}
+
+internal object JamoTrackMetrics {
+  private const val ChipWidthDp = 36f
+  private const val ItemSpacingDp = 6f
+
+  fun contentWidthDp(itemCount: Int): Float {
+    require(itemCount >= 0)
+    return ChipWidthDp * itemCount + ItemSpacingDp * (itemCount - 1).coerceAtLeast(0)
+  }
+
+  fun requiresAutoTracking(
+    itemCount: Int,
+    availableWidthDp: Float,
+  ): Boolean = contentWidthDp(itemCount) > availableWidthDp
 }
 
 @Composable
