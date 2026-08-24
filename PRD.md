@@ -794,7 +794,7 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
    4. 마이페이지 file importer, 외부 문서 open, 미리보기, pending import, 충돌 선택, 무료 export·delete를 연결하고 세션 중 모달 금지를 UI 테스트한다.
    5. StoreKit 2 비소모성 IAP와 구매·pending·복원·환불·오프라인 entitlement 테스트를 완료한 뒤 생성·편집·공식 사본 편집·검증 저장 UI를 연결한다.
    6. ja/en/ko 로컬라이제이션, 1,000항목 성능, Files/iCloud/AirDrop 실기기, 기존 설치/진행 무손실 migration, Distribution archive와 App Review 상품/복원 메타데이터를 검증한 뒤 앱 버전 1.1로 제출한다.
-8. **M7 Android 포팅 [ACTIVE — M1 공용 코어 완료 2026-08-22]**: A0에서 현재 iOS 1.1 build 7·PRD·공용 계약의 재현 가능한 기준점, Gradle wrapper/version catalog/CI와 앱 골격을 준비했다. M1에서 공용 조합 벡터, 덱·카탈로그 schema, `.piyodeck` v1 reader·writer와 정상·악성 cross-platform golden을 순수 Kotlin으로 포팅했다. 현재 iOS 1.1에 없는 새 제품 기능은 Android에서 먼저 추가하지 않는다.
+8. **M7 Android 포팅 [ACTIVE — M2 실기기 gate 하네스 준비 2026-08-23]**: A0에서 현재 iOS 1.1 build 7·PRD·공용 계약의 재현 가능한 기준점, Gradle wrapper/version catalog/CI와 앱 골격을 준비했다. M1에서 공용 조합 벡터, 덱·카탈로그 schema, `.piyodeck` v1 reader·writer와 정상·악성 cross-platform golden을 순수 Kotlin으로 포팅했다. M2에서 순수 연습 session reducer, 내장 두벌식 키보드, 자모·조합·정오타·완료 피드백과 0.65초 자동 전환을 구현하고 API 35 좁은 화면·큰 글자에서 검증했다. production 코드를 바꾸지 않는 Android instrumented gate로 다중 MotionEvent와 frame-commit 상관을 자동 검증하고 물리 입력의 warm-up 20·측정 100 raw sample/기기/API/Hz를 기록할 준비를 마쳤다. 실제 기기 touch-down→frame-commit proxy p95 50ms 이하와 동시 2-pointer rollover를 통과하기 전에는 M2를 최종 완료로 닫거나 M3를 시작하지 않는다. OS IME는 M6 범위로 유지하며 현재 iOS 1.1에 없는 새 제품 기능은 Android에서 먼저 추가하지 않는다.
 
 각 마일스톤 종료 시: 테스트 통과 + 시뮬레이터 스크린 녹화 + `DECISIONS.md` 갱신.
 
@@ -803,7 +803,7 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
 - 확정 앱 이름/브랜딩: 앱 언어 `ja`=`ピヨキー`, `ko`·`en` 및 미지원 언어 fallback=`typee`. App Store 국가가 아니라 앱 로케일을 기준으로 하며 기존 단일 앱 레코드·Bundle ID를 유지한다. 홈 화면 AppIcon과 앱 내부·공유 카드의 로고 이미지는 음영이 있는 흰색 `ㅎ` 키캡을 든 동일한 납작한 병아리 이미지를 사용하고 텍스트 브랜드만 로케일에 맞춘다. App Store 표시명은 기능 설명을 먼저 쓰고 브랜드를 마지막에 배치한다.
 - 확정 1.1 언어 범위: 앱 UI·콘텐츠는 `ja`·`en`·`ko`, 미지원 언어는 `en` fallback이다. App Store 메타데이터는 `ja`·`ko`·`en-US`·`en-GB`·`en-AU`·`en-CA`를 우선 제공한다. 그 밖의 UI 언어와 metadata-only 현지화는 출시 후 국가별 제품 페이지 조회·다운로드·리뷰·지원 문의를 검토해 별도 버전에서 결정한다.
 - 확정 1.1 availability: 앱과 Deck Maker IAP 모두 `All Countries or Regions`를 선택하고 향후 새 storefront도 자동 포함한다. 국가별 순차 활성화는 하지 않으며, 규제 미충족으로 Apple이 개별 storefront를 실제 판매 불가로 표시하는 경우는 availability 선택과 분리해 compliance 예외로 관리한다.
-- Android: 2026-08-21 사용자 요청으로 M7을 재개했다. 현재 로컬 iOS 1.1 build 7과 PRD v5.8·공용 fixture를 parity 기준으로 사용하며 A0→M1→M2 순서를 지킨다. 대규모 dirty worktree의 기준 commit/tag, 새 환경의 API 37 SDK/license 재현, 최종 application ID와 Play Console 설정은 각각 별도 게이트로 유지한다.
+- Android: 2026-08-21 사용자 요청으로 M7을 재개했다. 현재 로컬 iOS 1.1 build 7과 PRD v5.8·공용 fixture를 parity 기준으로 사용하며 A0→M1→M2 순서를 지킨다. M2 기능 베이스와 실기기 계측 하네스는 구현했으나 실제 기기 입력 지연·동시 포인터 gate 전에는 최종 완료가 아니다. 대규모 dirty worktree의 기준 commit/tag, 새 환경의 API 37 SDK/license 재현, 최종 application ID와 Play Console 설정은 각각 별도 게이트로 유지한다.
 - 마스코트 디자인 외주 여부 (MVP는 플레이스홀더 도형으로 진행)
 - TTS: 공식 카탈로그 26덱·게임 프리셋 15덱·커리큘럼/데일리·무료 샘플을 합친 앱 제공 고정 목표 581개는 gTTS `ko` 보통 속도의 직접 MP3로 사전 생성해 완전 오프라인으로 번들한다. 런타임은 선언 경로 → canonical hash 경로 → 플랫폼 로컬 TTS(iOS `AVSpeechSynthesizer(ko-KR)`, Android 네트워크 불필요 `TextToSpeech(ko-KR)`) 순서로 해석하며 사용자·비공개 동적 콘텐츠를 네트워크 TTS나 gTTS에 전송하지 않는다. gTTS가 문서화되지 않은 Google Translate 음성 기능을 사용하므로 `content_rights_confirmed` 출시 게이트는 배포·콘텐츠 사용 권리 검토 전까지 닫아 두고, 확인할 수 없으면 공식 지원 TTS 제공자로 같은 canonical 경로의 음원을 재생성한다.
 - 외부 상표·가사·기관명 권리: 직접 인용과 근거 없는 제휴 표시는 금지하고, 일반 표현도 출시 전 운영 검수일을 기록한다.

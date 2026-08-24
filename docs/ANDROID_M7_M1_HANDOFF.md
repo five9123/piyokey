@@ -3,8 +3,11 @@
 기준일: 2026-08-22 JST
 
 이 문서는 현재 대규모 dirty worktree를 정리하거나 commit하지 않고 Android A0와
-M1 완료 단위만 중앙 `piyokey` 저장소의 전용 브랜치로 선별 이전하기 위한 정확한
-파일 경계를 기록한다. M2 기능은 포함하지 않는다.
+M1이 소유한 논리적 파일 경계를 기록한다. M1 완료 시점에는 M2 기능을 포함하지
+않았지만, 현재 worktree의 통합 파일 일부는 후속 M2 내용으로 덮였다. 복원 가능한
+M1-only commit/hash는 로컬에 없으므로 이 목록의 현재 파일만 독립 이전하면 안 된다.
+현재 상태를 중앙 `piyokey` 저장소로 옮길 때는 반드시
+`docs/ANDROID_M7_M2_HANDOFF.md`와 합집합으로 선별 이전한다.
 
 ## 1. Android 소유 파일 — 39개
 
@@ -126,6 +129,9 @@ ios/HangulEngine/Sources/DeckKit/PiyoDeckStrictJSON.swift
 
 ## 4. 검증 기준
 
+아래는 M1 완료 시 사용한 논리 게이트다. 현재 `settings`, app과 CI는 M2 모듈을
+참조하므로 현재 worktree 재검증에는 M2 인계 문서의 통합 명령을 사용한다.
+
 ```sh
 python3 tools/gen_piyodeck_fixtures.py
 python3 -m unittest discover -s tools/tests -p 'test_*.py'
@@ -135,8 +141,12 @@ python3 tools/release_preflight.py
 shasum -a 256 -c docs/ANDROID_M7_CONTRACTS.sha256
 ```
 
-완료 실측은 Kotlin 34/34, SwiftPM 42/42, Python 49/49, Hangul line
+완료 실측은 Kotlin 35/35, SwiftPM 42/42, Python 49/49, Hangul line
 99.68%·branch 95.78%, release preflight·lintDebug·assembleDebug 통과다.
+
+Kotlin 35개는 Hangul 11, DeckKit 8, PiyoDeck 16이다. PiyoDeck의 마지막 회귀는
+manifest metadata의 누락·오타입을 schema 오류보다 먼저 `ManifestMismatch`로
+거부하는 공통 오류 순서를 고정한다.
 
 공유 `cases.json`은 valid 2개·malicious 13개를 기록한다. Python·Swift는 15개
 binary를 data-driven으로 직접 실행하고, Kotlin은 공용 SHA·Unicode binary 2개와
@@ -147,4 +157,6 @@ M1 인계의 확정 범위이며 별도 테스트 확대는 하지 않는다.
 
 - Git commit, tag, stage, stash, clean, branch 생성
 - Git remote 추가 또는 GitHub 외부 상태 변경
-- M2 키보드·연습 UI, 저장, 오디오, Billing, Play Games 기능 착수
+- M2 키보드·연습 UI는 이 M1 논리 소유 경계에 포함하지 않는다. 후속 구현·검증은
+  `docs/ANDROID_M7_M2_HANDOFF.md`에 별도 기록한다.
+- 저장, 오디오, Billing, Play Games 기능 착수

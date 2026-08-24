@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="practice_overall_progress">%2$d問中 %1$d問目</string>
+  <string name="practice_overall_progress_accessibility">練習の進捗：%2$d問中 %1$d問目</string>
+  <string name="practice_jamo_progress_accessibility">字母の進捗：%2$d個中%1$d個</string>
+  <string name="practice_composition_label">入力中</string>
+  <string name="practice_composition_placeholder">入力してみよう</string>
+  <string name="practice_feedback_idle">光っているキーを押してね</string>
+  <string name="practice_feedback_correct">いいね！</string>
+  <string name="practice_feedback_incorrect">次は「%1$s」</string>
+  <string name="practice_feedback_complete">できた！</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">アプリ内韓国語キーボード</string>
+  <string name="keyboard_shift">シフト</string>
+  <string name="keyboard_backspace">削除</string>
+  <string name="keyboard_space">スペース</string>
+  <string name="keyboard_key_with_roman">%1$s、%2$sキー</string>
+</resources>

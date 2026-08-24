@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="practice_overall_progress">%2$d문제 중 %1$d번째</string>
+  <string name="practice_overall_progress_accessibility">연습 진행: %2$d문제 중 %1$d번째</string>
+  <string name="practice_jamo_progress_accessibility">자모 진행: %2$d개 중 %1$d개</string>
+  <string name="practice_composition_label">입력 중</string>
+  <string name="practice_composition_placeholder">입력해 보세요</string>
+  <string name="practice_feedback_idle">빛나는 키를 따라 눌러 보세요</string>
+  <string name="practice_feedback_correct">좋아요!</string>
+  <string name="practice_feedback_incorrect">다음은 ‘%1$s’예요</string>
+  <string name="practice_feedback_complete">완성!</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">앱 내장 한국어 키보드</string>
+  <string name="keyboard_shift">시프트</string>
+  <string name="keyboard_backspace">지우기</string>
+  <string name="keyboard_space">스페이스</string>
+  <string name="keyboard_key_with_roman">%1$s, %2$s 키</string>
+</resources>

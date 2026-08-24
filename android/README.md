@@ -1,6 +1,6 @@
 # PIYOKEY Android
 
-Android M7의 A0 골격과 M1 공용 코어 기준선이다. 앱 UI를 복제하기 전에 한글 입력, 덱, `.piyodeck` 계약을 순수 Kotlin으로 고정했다.
+Android M7의 A0 골격, M1 공용 코어와 M2 연습 기능 베이스다. 한글 입력·덱·`.piyodeck` 계약은 순수 Kotlin으로 고정하고, M2는 순수 세션 reducer 위에 Compose 내장 두벌식 키보드와 연습 화면을 올린다.
 
 ## 고정 도구 체인
 
@@ -11,7 +11,7 @@ Android M7의 A0 골격과 M1 공용 코어 기준선이다. 앱 UI를 복제하
 - `minSdk 26`, `compileSdk 37`, `targetSdk 36`
 - Java/Kotlin bytecode 17
 
-AGP 9의 built-in Kotlin을 사용하므로 `:app`에는 `org.jetbrains.kotlin.android` plugin을 적용하지 않는다. 순수 JVM 모듈인 `:core:hangul`만 `org.jetbrains.kotlin.jvm`을 적용한다.
+AGP 9의 built-in Kotlin을 사용하므로 Android 모듈인 `:app`과 `:feature:practice`에는 `org.jetbrains.kotlin.android` plugin을 적용하지 않는다. 순수 JVM 모듈인 `:core:hangul`, `:core:deckkit`, `:core:piyodeck`, `:core:session`은 `org.jetbrains.kotlin.jvm`을 적용한다.
 
 로컬에는 Homebrew JDK 21을 Gradle 실행용으로 사용할 수 있다.
 
@@ -20,9 +20,16 @@ cd android
 JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home \
 ANDROID_HOME="$HOME/Library/Android/sdk" \
 ./gradlew \
+  :core:hangul:jacocoTestReport \
   :core:hangul:jacocoTestCoverageVerification \
   :core:deckkit:test \
-  :core:piyodeck:test
+  :core:piyodeck:test \
+  :core:session:test \
+  :feature:practice:testDebugUnitTest \
+  :feature:practice:assembleDebugAndroidTest \
+  :feature:practice:lintDebug \
+  :app:lintDebug \
+  :app:assembleDebug
 ```
 
 CI의 권장 Gradle 실행 JDK는 17이다. 생성되는 bytecode도 17로 고정한다.
@@ -38,10 +45,12 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
 
 ## 모듈 경계
 
-- `:app`: Compose single-activity 진입점과 플랫폼 연결. 현재 화면은 세션이 아닌 개발 준비 상태만 보여 준다.
+- `:app`: Compose single-activity 진입점과 플랫폼 연결. 현재 `PracticeRoute`를 시작 화면으로 표시한다.
 - `:core:hangul`: Android 및 Compose에 의존하지 않는 순수 Kotlin 상태 기계. `shared/test_vectors.json`의 15개 조합, 10개 백스페이스 계약을 직접 읽어 검증한다.
 - `:core:deckkit`: 덱·카탈로그 모델, strict codec, 공용 JSON Schema와 의미·bundle 검증. 공식 26덱, 게임 프리셋 15덱, v10→v11 snapshot을 검증한다.
 - `:core:piyodeck`: STORE-only ZIP, strict UTF-8 JSON, manifest/hash/metadata, 사용자 덱 정책과 결정적 writer. `core:deckkit`에만 단방향 의존한다.
+- `:core:session`: Android 및 Compose에 의존하지 않는 불변 연습 상태와 순수 reducer. 자모 판정, 오타 무시, 되감기, 정확도와 token 기반 650ms 자동 전환을 소유한다.
+- `:feature:practice`: Compose 내장 두벌식 키보드와 연습 화면. 키보드 제스처·연출·현지화만 소유하고 저장·오디오·OS IME·결과 화면은 소유하지 않는다.
 
 후보 `applicationId`와 namespace는 `app.piyokey.piyokey`다. Google Play Console에서 패키지 소유권과 최종 식별자를 확인하기 전까지 출시 계약으로 확정하지 않는다.
 
@@ -49,9 +58,37 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
 
 ## M1 검증 결과
 
-- Kotlin tests: Hangul 11, DeckKit 8, PiyoDeck 15, 실패 0
+- Kotlin tests: Hangul 11, DeckKit 8, PiyoDeck 16, 실패 0
 - Hangul JaCoCo: line 99.68%, branch 95.78%
 - cross-platform golden: canonical 1,109 bytes, SHA-256 `025efa7a0584509fd892221a01c4b3cdf828472c3ffeb13a7eec420102061c31`
 - 순수 core의 Android/Compose import: 0
 
-M2 기능 단계는 이 작업에서 시작하지 않았다. 현재 변경을 중앙 저장소의 전용 브랜치로 선별 이전하고 기준선을 review한 뒤에만 이어간다.
+## M2 구현 및 검증 결과
+
+- 순수 session reducer 12 tests, 두벌식 layout·동작 8 tests, 실패·스킵 0
+- 3행 두벌식, one-shot Shift, touch-down 입력, multi-pointer tracker, 2초 다음 키 guide와 로마자 힌트
+- 자모 진행·조합 프리뷰, 오타 220ms, 조합 합류 175ms, 완료 후 650ms 자동 다음 문제
+- API 35의 320×640 에뮬레이터에서 일본어 UI, 글자 배율 1.5, 실제 9자모 입력 후 자동 전환 확인
+- API 35 에뮬레이터에서 실제 Compose 다중 `MotionEvent`로 `ㄱ down → ㅏ down/up → ㄱ up`과 두 입력의 frame-commit 상관관계 확인
+- `feature:practice` lint issue 0, `app` lint error 0, debug APK 조립 성공
+
+### M2 실기기 입력 gate
+
+계측 하네스는 production Kotlin을 바꾸지 않고 `feature:practice/src/androidTest`에만 둔다. 일반 에뮬레이터 실행은 자동 rollover 테스트 1개를 통과하고 물리 gate를 skip한다.
+
+실기기를 연결한 뒤 아래 명령을 실행하고, 화면 안내에 따라 `ㄱ`을 누른 채 `ㅏ`를 누르는 rollover를 반복한다.
+
+```sh
+cd android
+./gradlew :feature:practice:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.piyokeyPhysicalGate=true \
+  --no-daemon
+```
+
+물리 gate는 API 29 이상 하드웨어에서 유효한 warm-up 20입력과 측정 100입력을 요구한다. pointer event uptime부터 해당 입력 revision을 포함하는 첫 `ViewTreeObserver` frame commit까지의 nearest-rank p95가 50ms 이하여야 하며, 측정 50쌍 모두 두 pointer가 동시에 활성 상태에서 `ㄱ`, `ㅏ` 순서로 각 1회 반영되어야 한다. frame commit은 실제 패널 발광 시각이 아니라 Android가 제공하는 GPU/frame-buffer commit proxy이며 timestamp는 millisecond 단위다.
+
+성공·실패 모두 기기/API/주사율, 원시 touch·delivery·frame 표본과 요약을 target app external files의 `m2-touch-gate/` JSON으로 기록하고 Gradle 출력에 절대 경로를 표시한다.
+
+M2 기능 베이스의 코드 차단 이슈는 없다. 다만 연결된 실기기가 없어 위 물리 gate를 아직 실행하지 못했으므로 전체 M2 완료 게이트는 열어 둔다. 설정 영속화·F12 결과·최신 S5 헤더/뜻·읽기 연동과 OS IME는 각각 후속 M6 및 관련 기능 범위다. M3는 시작하지 않았다.
+
+현재 변경은 대규모 dirty worktree를 commit·tag·정리하지 않은 상태다. 중앙 저장소로 옮길 정확한 증분 파일과 검증은 `docs/ANDROID_M7_M2_HANDOFF.md`에 기록한다.

@@ -1,8 +1,9 @@
-# Android M7 M1 contract snapshot, 2026-08-22 JST.
+# Android M7 M1+M2 contract snapshot, 2026-08-23 JST.
 # This records the reviewed local inputs; it does not replace a Git commit/tag.
-2668c401f4ec38cbae49de652abf02c42fbc435369249a634e30591670e4c1e8  docs/ANDROID_M7_M1_HANDOFF.md
-e9bfd2e2539873524b8a65f0553580804f831af730aa01d7de049988c833d739  PRD.md
-4c6e5ccccfbbf73ac83bccc96d793fe656f07c471464be964a42d72e9268b82b  DECISIONS.md
+7dd9a80c59d7d2f6e0de761c8331f198397baa6f6ad88747de88bcc881e1d0fd  docs/ANDROID_M7_M1_HANDOFF.md
+4ef129724c1dcbea30ffe3866207c84220435e886ee389554bfe18b2ea3c5bfa  docs/ANDROID_M7_M2_HANDOFF.md
+88a2d77e09b070917a9d42b1be68b88300a21423d9199fe3ca55adedec2febeb  PRD.md
+67516e2f23152bbd07b67c6863bef9ce87e6682fb34e3e27abc46d52ff3c6f11  DECISIONS.md
 b4b2f9a9734686642b3c60b763d114086133d253a0fbcf52ceb73face4dbc6e5  shared/test_vectors.json
 c736421d7bd14346b117c8caaa1fb50a459ca8f2bbc29cec23124b810916a13d  shared/schema/deck.schema.json
 46de8072dfbd1bf2b3174f09611ba0bb20dd42c1c98af9decda951a52c0820b6  shared/schema/catalog.schema.json

@@ -42,15 +42,18 @@ public object PiyoDeckPackageReader {
     }
 
     val deckId = deckObject.string("deck_id")
-    if (deckId != null && manifest.deck.deckId != deckId) {
+      ?: throw PiyoDeckImportException.ManifestMismatch("deck.deck_id")
+    if (manifest.deck.deckId != deckId) {
       throw PiyoDeckImportException.ManifestMismatch("deck.deck_id")
     }
     val deckVersion = deckObject.integer("version")
-    if (deckVersion != null && manifest.deck.deckVersion != deckVersion) {
+      ?: throw PiyoDeckImportException.ManifestMismatch("deck.deck_version")
+    if (manifest.deck.deckVersion != deckVersion) {
       throw PiyoDeckImportException.ManifestMismatch("deck.deck_version")
     }
     val items = deckObject["items"] as? JsonArray
-    if (items != null && manifest.deck.itemCount != items.size) {
+      ?: throw PiyoDeckImportException.ManifestMismatch("deck.item_count")
+    if (manifest.deck.itemCount != items.size) {
       throw PiyoDeckImportException.ManifestMismatch("deck.item_count")
     }
 
