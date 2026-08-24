@@ -44,7 +44,7 @@ jobs:
         run: swift test
 
   android-contracts:
-    name: Kotlin M1 contracts
+    name: Android M2 contracts and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,13 +57,19 @@ jobs:
             android/**/*.gradle.kts
             android/gradle/libs.versions.toml
             android/gradle/wrapper/gradle-wrapper.properties
-      - name: Run Android M1 contracts and Hangul coverage gate
+      - name: Run Android core contracts, M2 UI checks, lint, and build
         working-directory: android
         run: >-
           ./gradlew
           :core:hangul:jacocoTestCoverageVerification
           :core:deckkit:test
           :core:piyodeck:test
+          :core:session:test
+          :feature:practice:testDebugUnitTest
+          :feature:practice:assembleDebugAndroidTest
+          :feature:practice:lintDebug
+          :app:lintDebug
+          :app:assembleDebug
           --no-daemon
 
   ios-build:

@@ -40,7 +40,9 @@ hanco/
 - iOS 앱 테스트: `xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'`
 - M1 패키지 테스트: `cd ios/HangulEngine && swift test`
 - Android M1 공용 코어 테스트: `cd android && ./gradlew :core:hangul:jacocoTestCoverageVerification :core:deckkit:test :core:piyodeck:test`
-- Android 앱 골격 검증: `cd android && ./gradlew :app:lintDebug :app:assembleDebug`
+- Android M2 회귀·계측 APK: `cd android && ./gradlew :core:session:test :feature:practice:testDebugUnitTest :feature:practice:assembleDebugAndroidTest :feature:practice:lintDebug :app:lintDebug :app:assembleDebug`
+- Android M2 자동 pointer gate: `cd android && ./gradlew :feature:practice:connectedDebugAndroidTest`
+- Android M2 물리 입력 gate(API 29+ 실기기): `cd android && ./gradlew :feature:practice:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.piyokeyPhysicalGate=true`
 - M4 실기기 게이트: `python3 tools/m4_ios_performance_gate.py inspect-device --device <UDID>` 후 `prepare`·`record` 서브커맨드 사용 (`artifacts/m4/README.md` 참고)
 
 ## 테스트 실행 범위
@@ -65,4 +67,5 @@ hanco/
 - 앱 1.1 안전 UX 보완(2026-08-14): 단일 활성 편집 초안의 primary/backup 자동 저장·재실행 복구·다른 흐름 시작 전 재개/폐기 선택, 설치 transaction 내부 `base_version` 원자 비교와 원본 변경 시 별도 사본 저장, 현재본/가져온 파일 충돌 비교·내보내기·파괴적 재확인, 삭제 확인·내보낸 뒤 삭제·실패 복구, 첫 검증 오류 자동 포커스·VoiceOver 안내, 1,000항목 접이식 편집, Dynamic Type·좁은 폭·텍스트 대비 대응을 추가했다. Debug/Release Simulator 빌드에서 검증하고 Release 앱 번들에서 Debug 전용 `.storekit`을 제외한다.
 - iOS 공개 상태 확인(2026-08-21): Apple 공개 lookup의 일본 storefront에서 버전 `1.0.2`가 2026-08-18 출시된 상태를 확인했다. 저장소의 build 6 심사 대기 기록은 운영 상태보다 오래됐고, 로컬 `1.1 (7)`은 Deck Maker와 `.piyodeck`을 포함한 다음 업데이트용 미제출 기준선으로 유지한다.
 - M7 재개·A0 로컬 기반 완료(2026-08-21): 사용자의 명시적 요청으로 Android HOLD를 해제하고 `android/`에 Gradle 9.5 wrapper, AGP 9.3.1, Kotlin/Compose compiler 2.3.21, Compose BOM 2026.08.00, min 26/compile 37/target 36의 Compose 앱 골격과 순수 Kotlin Hangul core를 추가했다. 공용 벡터는 생성기 기준 composition 15종+backspace 10종으로 보강했다. API 37은 기존 수락 license를 Gradle이 확인해 자동 설치됐고 별도 수락 명령은 실행하지 않았다. 대규모 dirty worktree의 baseline commit/tag, 최종 application ID·launcher icon, Android Studio/JDK 17, Play Console 상태는 열린 A0 게이트다.
-- M7 M1 공용 코어 완료(2026-08-22): Android 순수 Kotlin `core:hangul`·`core:deckkit`·`core:piyodeck`을 구현하고 공식 26덱, 게임 프리셋 15덱×100항목, v10→v11 전체 snapshot, `.piyodeck` v1 strict ZIP/JSON/사용자 덱 정책을 공용 fixture로 검증했다. Python·Swift·Kotlin writer는 1,109-byte canonical package와 동일하고 세 reader는 pretty package를 수용하며 공유 SHA·Unicode 공격 package를 거부한다. Kotlin 34개, SwiftPM 42개, Python 49개와 release preflight, Android lintDebug·assembleDebug가 통과했으며 Hangul line 99.68%·branch 95.78%다. 다음 기능 단계는 중앙 저장소 전용 브랜치로 선별 이전하기 전까지 시작하지 않는다.
+- M7 M1 공용 코어 완료(2026-08-22): Android 순수 Kotlin `core:hangul`·`core:deckkit`·`core:piyodeck`을 구현하고 공식 26덱, 게임 프리셋 15덱×100항목, v10→v11 전체 snapshot, `.piyodeck` v1 strict ZIP/JSON/사용자 덱 정책을 공용 fixture로 검증했다. Python·Swift·Kotlin writer는 1,109-byte canonical package와 동일하고 세 reader는 pretty package를 수용하며 공유 SHA·Unicode 공격 package를 거부한다. Kotlin 35개, SwiftPM 42개, Python 49개와 release preflight, Android lintDebug·assembleDebug가 통과했으며 Hangul line 99.68%·branch 95.78%다.
+- M7 M2 기능·계측 하네스 준비(2026-08-23): 순수 Kotlin `core:session` reducer와 Compose 내장 두벌식 키보드·연습 화면을 구현했다. JVM tests는 전체 55/55, API 35 AVD 자동 instrumented gate는 실제 다중 MotionEvent·frame commit 상관 1 pass이고 물리 gate 1개는 skip됐다. API 29+ 실제 기기에서 warm-up 20·측정 100의 touch-down→frame-commit proxy p95≤50ms와 손가락 2-pointer rollover 누락·중복 0을 JSON으로 증명하기 전에는 M2를 완료 처리하거나 M3를 시작하지 않는다.

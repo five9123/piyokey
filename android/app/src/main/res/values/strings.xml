@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">typee</string>
-  <string name="readiness_title">Android preparation build</string>
-  <string name="readiness_body">The shared Hangul input contract is connected. Product screens will be added milestone by milestone.</string>
-  <string name="contract_label">Shared engine contract</string>
-  <string name="contract_value">25 test vectors</string>
-  <string name="next_step_label">Next step</string>
-  <string name="next_step_value">Deck schema and local content</string>
 </resources>

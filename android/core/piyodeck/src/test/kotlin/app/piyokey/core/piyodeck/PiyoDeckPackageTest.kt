@@ -10,7 +10,9 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
@@ -161,6 +163,41 @@ class PiyoDeckPackageTest {
       PiyoDeckImportException.ManifestMismatch("deck.deck_version"),
       assertFailsWith { readPackage(rawPackage(deckData, deckVersion = 2)) },
     )
+  }
+
+  @Test
+  fun missingOrWrongTypeDeckMetadataFailsAsManifestMismatchBeforeSchema() {
+    val validDeck = PiyoDeckStrictJson.decodeObject(fixture("valid/basic-deck.json"), "deck.json")
+    val cases = listOf(
+      MetadataMutation("deck_id", null, "deck.deck_id"),
+      MetadataMutation("deck_id", JsonPrimitive(7), "deck.deck_id"),
+      MetadataMutation("version", null, "deck.deck_version"),
+      MetadataMutation("version", JsonPrimitive("1"), "deck.deck_version"),
+      MetadataMutation("items", null, "deck.item_count"),
+      MetadataMutation("items", JsonPrimitive("not-an-array"), "deck.item_count"),
+    )
+
+    for (case in cases) {
+      val values = validDeck.toMutableMap()
+      if (case.replacement == null) {
+        values.remove(case.field)
+      } else {
+        values[case.field] = case.replacement
+      }
+      val deckData = PiyoDeckStrictJson.canonicalData(JsonObject(values))
+      val packageData = rawPackage(
+        deckData,
+        deckId = "user_00000000000000000000000000000001",
+        deckVersion = 1,
+        itemCount = 2,
+      )
+
+      assertEquals(
+        PiyoDeckImportException.ManifestMismatch(case.manifestField),
+        assertFailsWith { readPackage(packageData) },
+        "${case.field} mutation ${case.replacement} must fail before deck schema validation",
+      )
+    }
   }
 
   @Test
@@ -400,6 +437,7 @@ class PiyoDeckPackageTest {
     deckData: ByteArray,
     formatVersion: Int = 1,
     deckSchemaVersion: Int = 1,
+    deckId: String? = null,
     deckVersion: Int? = null,
     itemCount: Int? = null,
     sha256: String? = null,
@@ -408,6 +446,7 @@ class PiyoDeckPackageTest {
       deckData,
       formatVersion,
       deckSchemaVersion,
+      deckId,
       deckVersion,
       itemCount,
       sha256,
@@ -424,6 +463,7 @@ class PiyoDeckPackageTest {
     deckData: ByteArray,
     formatVersion: Int = 1,
     deckSchemaVersion: Int = 1,
+    deckId: String? = null,
     deckVersion: Int? = null,
     itemCount: Int? = null,
     sha256: String? = null,
@@ -436,7 +476,12 @@ class PiyoDeckPackageTest {
       put("deck", buildJsonObject {
         put("path", PiyoDeckManifest.DECK_PATH)
         put("media_type", PiyoDeckManifest.DECK_MEDIA_TYPE)
-        put("deck_id", deck?.get("deck_id")?.jsonPrimitive?.content ?: "user_00000000000000000000000000000001")
+        put(
+          "deck_id",
+          deckId
+            ?: deck?.get("deck_id")?.jsonPrimitive?.content
+            ?: "user_00000000000000000000000000000001",
+        )
         put("deck_version", deckVersion ?: deck?.get("version")?.jsonPrimitive?.int ?: 1)
         put("item_count", itemCount ?: deck?.get("items")?.jsonArray?.size ?: 1)
         put("size_bytes", deckData.size)
@@ -459,6 +504,12 @@ class PiyoDeckPackageTest {
 
   private fun writePackage(data: ByteArray): ByteArray =
     PiyoDeckPackageWriter.write(data, deckSchemaSource)
+
+  private data class MetadataMutation(
+    val field: String,
+    val replacement: JsonElement?,
+    val manifestField: String,
+  )
 
   private fun ByteArray.centralDirectoryOffset(): Int {
     val offset = size - 22 + 16

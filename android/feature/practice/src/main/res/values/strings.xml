@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="practice_overall_progress">Question %1$d of %2$d</string>
+  <string name="practice_overall_progress_accessibility">Practice progress: question %1$d of %2$d</string>
+  <string name="practice_jamo_progress_accessibility">Jamo progress: %1$d of %2$d</string>
+  <string name="practice_composition_label">Composing</string>
+  <string name="practice_composition_placeholder">Start typing</string>
+  <string name="practice_feedback_idle">Follow the highlighted key</string>
+  <string name="practice_feedback_correct">Good!</string>
+  <string name="practice_feedback_incorrect">Try %1$s</string>
+  <string name="practice_feedback_complete">Complete!</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">Built-in Korean keyboard</string>
+  <string name="keyboard_shift">Shift</string>
+  <string name="keyboard_backspace">Backspace</string>
+  <string name="keyboard_space">Space</string>
+  <string name="keyboard_key_with_roman">%1$s, %2$s</string>
+</resources>
