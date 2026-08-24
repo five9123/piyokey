@@ -130,18 +130,22 @@ struct AppRootView: View {
   }
 
   var body: some View {
-    Group {
-      if onboarding.shouldPresent {
-        OnboardingView()
-      } else if shouldPresentHatchGate {
-        CurriculumMapView(
-          catalog: nil,
-          isHatchOnboarding: true,
-          onHatchCompleted: finishHatchOnboarding
-        )
-      } else {
-        mainTabs
+    GeometryReader { proxy in
+      let adaptiveMetrics = HancoAdaptiveMetrics(availableWidth: proxy.size.width)
+      Group {
+        if onboarding.shouldPresent {
+          OnboardingView()
+        } else if shouldPresentHatchGate {
+          CurriculumMapView(
+            catalog: nil,
+            isHatchOnboarding: true,
+            onHatchCompleted: finishHatchOnboarding
+          )
+        } else {
+          mainTabs
+        }
       }
+      .environment(\.hancoAdaptiveMetrics, adaptiveMetrics)
     }
     .environmentObject(deckLibrary)
     .environmentObject(deckMakerPurchaseStore)

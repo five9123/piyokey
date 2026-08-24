@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct HomeView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
   @EnvironmentObject private var curriculumProgress: CurriculumProgressLibrary
@@ -26,7 +27,9 @@ struct HomeView: View {
           }
           HomeRecommendationsView(catalog: catalog)
         }
-        .padding(.horizontal, 18)
+        .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 16)
       }
       .background(
@@ -40,6 +43,7 @@ struct HomeView: View {
       .navigationTitle(Text("home.navigation_title"))
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier("home.screen")
+      .hancoAdaptiveDebugValue(adaptiveMetrics)
       .rootSettingsToolbar()
     }
   }
@@ -249,6 +253,7 @@ private struct HomePrimaryActionView: View {
 }
 
 struct CurriculumMapView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var progress: CurriculumProgressLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
 
@@ -277,7 +282,9 @@ struct CurriculumMapView: View {
             freePracticeCard
           }
         }
-        .padding(.horizontal, 18)
+        .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 16)
       }
       .background(

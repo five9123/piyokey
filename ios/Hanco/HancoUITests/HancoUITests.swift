@@ -2297,6 +2297,24 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
   }
 
+  func testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This adaptive rotation gate runs on iPad-sized destinations")
+    }
+
+    XCUIDevice.shared.orientation = .portrait
+    let homeScreen = element("home.screen")
+    waitForValue("medium", on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-portrait-ja")
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    waitForValue("wide", on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-landscape-ja")
+
+    XCUIDevice.shared.orientation = .portrait
+    waitForValue("medium", on: homeScreen, timeout: 5)
+  }
+
   func testAppTourBackgroundTapAdvancesAndNextButtonDoesNotDoubleAdvance() {
     app.terminate()
     app = makeApplication(
