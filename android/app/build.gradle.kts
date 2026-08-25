@@ -11,13 +11,18 @@ android {
     applicationId = "app.piyokey.piyokey"
     minSdk = 26
     targetSdk = 36
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     versionCode = 1
-    versionName = "0.2.0-m2"
+    versionName = "0.3.0-m3"
+    val catalogUrl = providers.gradleProperty("PIYOKEY_CATALOG_URL").orElse("").get()
+      .replace("\\", "\\\\")
+      .replace("\"", "\\\"")
+    buildConfigField("String", "CATALOG_URL", "\"$catalogUrl\"")
   }
 
   buildFeatures {
     compose = true
-    buildConfig = false
+    buildConfig = true
   }
 
   compileOptions {
@@ -37,7 +42,12 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":core:data"))
+  implementation(project(":core:deckkit"))
+  implementation(project(":core:session"))
+  implementation(project(":feature:discover"))
   implementation(project(":feature:practice"))
+  implementation(libs.kotlinx.coroutines.android)
   implementation(libs.androidx.activity.compose)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)
@@ -45,4 +55,9 @@ dependencies {
   implementation(libs.androidx.compose.material3)
 
   debugImplementation(libs.androidx.compose.ui.tooling)
+  debugImplementation(libs.androidx.compose.ui.test.manifest)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  androidTestImplementation(libs.androidx.test.runner)
+  androidTestImplementation(libs.androidx.test.ext.junit)
+  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 }

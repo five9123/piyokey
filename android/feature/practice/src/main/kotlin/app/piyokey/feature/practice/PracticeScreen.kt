@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -75,13 +76,18 @@ import kotlin.math.sin
 fun PracticeRoute(
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
+  targets: List<String>? = null,
+  onSessionCompleted: (PracticeSessionState) -> Unit = {},
 ) {
-  val targets = listOf(
+  val sampleTargets = listOf(
     stringResource(R.string.practice_sample_target_1),
     stringResource(R.string.practice_sample_target_2),
     stringResource(R.string.practice_sample_target_3),
   )
-  var state by remember(targets) { mutableStateOf(PracticeSessionReducer.initialState(targets)) }
+  val resolvedTargets = targets?.takeIf(List<String>::isNotEmpty) ?: sampleTargets
+  var state by remember(resolvedTargets) {
+    mutableStateOf(PracticeSessionReducer.initialState(resolvedTargets))
+  }
   var scheduledAdvance by remember { mutableStateOf<PracticeSessionEffect.ScheduleAdvance?>(null) }
 
   val dispatch: (PracticeSessionEvent) -> Unit = { event ->
@@ -102,6 +108,11 @@ fun PracticeRoute(
     val schedule = scheduledAdvance ?: return@LaunchedEffect
     delay(schedule.delayMillis)
     latestDispatch.value(PracticeSessionEvent.Advance(schedule.transitionToken))
+  }
+
+  val latestCompletion = rememberUpdatedState(onSessionCompleted)
+  LaunchedEffect(state.isResultReady) {
+    if (state.isResultReady) latestCompletion.value(state)
   }
 
   PracticeScreen(
@@ -198,6 +209,7 @@ fun PracticeScreen(
   Box(
     modifier = modifier
       .fillMaxSize()
+      .testTag("practice-screen")
       .background(PracticeColors.Background)
       .windowInsetsPadding(WindowInsets.safeDrawing),
   ) {

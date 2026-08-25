@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">typee</string>
+  <string name="nav_home">Home</string>
+  <string name="nav_discover">Discover</string>
+  <string name="nav_practice">Practice</string>
+  <string name="nav_games">Games</string>
+  <string name="nav_profile">Profile</string>
+  <string name="loading_content">Loading verified offline content…</string>
+  <string name="practice_choose_deck">Choose a downloaded deck</string>
+  <string name="practice_sample">Try a sample</string>
+  <string name="games_coming_next">Game modes are being prepared.</string>
+  <string name="close_session">Close</string>
+  <string name="retry_load">Try again</string>
 </resources>
