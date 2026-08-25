@@ -129,4 +129,8 @@
   <string name="user_deck_error_too_large">This deck exceeds the 8 MiB safety limit. Your existing decks were not changed.</string>
   <string name="user_deck_error_update">This deck was made for a newer PIYOKEY format. Update the app before importing it.</string>
   <string name="user_deck_error_read">The selected file could not be read. Your existing decks were not changed.</string>
+  <string name="discover_propose_deck">Propose a deck you want</string>
+  <string name="deck_report_content">Report this deck’s content</string>
+  <string name="user_deck_import_as_copy">Import as a separate copy</string>
+  <string name="user_deck_import_as_copy_locked">Import as a separate copy · Deck Maker</string>
 </resources>

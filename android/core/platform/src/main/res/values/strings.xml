@@ -1,1 +1,11 @@
-<resources><string name="reminder_channel_name">Daily practice</string><string name="reminder_notification_title">Your 3-minute PIYOKEY practice</string><string name="reminder_notification_body">Keep your Korean typing streak growing today.</string></resources>
+<resources>
+  <string name="reminder_channel_name">Daily practice</string><string name="reminder_notification_title">Your 3-minute PIYOKEY practice</string><string name="reminder_notification_body">Keep your Korean typing streak growing today.</string>
+  <string name="feedback_proposal_subject">[PIYOKEY] Deck proposal</string>
+  <string name="feedback_report_subject">[PIYOKEY] Deck content report</string>
+  <string name="feedback_combined_subject">[PIYOKEY] Content feedback</string>
+  <string name="feedback_proposal_body">Topic:\nTarget level:\nWords you want included:\nWhy you want this deck:\n\nPlease do not enter passwords, addresses, or actual song lyrics/drama lines. Submissions are reviewed manually and are not published automatically.</string>
+  <string name="feedback_report_body">Expression to report:\nType (typo / meaning / reading / audio / rights):\nDetails:\n\nPlease do not enter passwords, addresses, or actual song lyrics/drama lines. Reports are reviewed manually and are not published automatically.</string>
+  <string name="feedback_combined_body">Feedback type (deck proposal / content report):\nTopic or expression:\nTarget level or issue type:\nDetails:\n\nPlease do not enter passwords, addresses, or actual song lyrics/drama lines. Submissions are reviewed manually and are not published automatically.</string>
+  <string name="feedback_metadata_heading">--- Automatically added app information ---</string>
+  <string name="feedback_metadata_type">Type</string><string name="feedback_metadata_source">Source screen</string><string name="feedback_metadata_app">App version/build</string><string name="feedback_metadata_language">Language</string><string name="feedback_metadata_deck">Deck ID/version</string>
+</resources>

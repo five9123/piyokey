@@ -129,4 +129,8 @@
   <string name="user_deck_error_too_large">8 MiB 안전 제한을 넘었어요. 기존 덱은 변경하지 않았어요.</string>
   <string name="user_deck_error_update">더 새로운 PIYOKEY 형식으로 만든 덱이에요. 앱을 업데이트한 뒤 가져와 주세요.</string>
   <string name="user_deck_error_read">선택한 파일을 읽지 못했어요. 기존 덱은 변경하지 않았어요.</string>
+  <string name="discover_propose_deck">원하는 덱 제안하기</string>
+  <string name="deck_report_content">이 덱 내용 신고하기</string>
+  <string name="user_deck_import_as_copy">별도 사본으로 가져오기</string>
+  <string name="user_deck_import_as_copy_locked">별도 사본으로 가져오기 · 덱 메이커</string>
 </resources>

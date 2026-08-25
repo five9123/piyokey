@@ -93,7 +93,13 @@ import app.piyokey.core.game.toRecord
 import app.piyokey.core.game.PlayGamesPolicy
 import app.piyokey.core.game.PlayGamesResultIdentity
 import app.piyokey.core.platform.DailyReminderScheduler
+import app.piyokey.core.platform.ContentFeedbackController
+import app.piyokey.core.platform.ContentFeedbackDeck
+import app.piyokey.core.platform.ContentFeedbackKind
+import app.piyokey.core.platform.ContentFeedbackRequest
+import app.piyokey.core.platform.ContentFeedbackSource
 import app.piyokey.core.platform.DeckMakerBillingActivity
+import app.piyokey.core.platform.DeckMakerAuthorizationException
 import app.piyokey.core.platform.DeckMakerBillingManager
 import app.piyokey.core.platform.DeckMakerBillingNotice
 import app.piyokey.core.platform.PlayBillingDeckMakerGateway
@@ -427,6 +433,7 @@ private fun PiyokeyApp(
   val reminderScheduler = remember { DailyReminderScheduler(context) }
   var pendingReminderEnable by remember { mutableStateOf(false) }
   val documentGateway = remember { PiyoDeckDocumentGateway(context) }
+  val feedbackController = remember(context) { ContentFeedbackController(context) }
   var userDeckImport by remember { mutableStateOf<UserDeckImportUiState?>(null) }
   var pendingUserDeckExport by remember { mutableStateOf<PendingUserDeckExport?>(null) }
   var storedDeckDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
@@ -435,6 +442,7 @@ private fun PiyokeyApp(
   var editorSaveError by remember { mutableStateOf(false) }
   var showDeckMakerPaywall by remember { mutableStateOf(false) }
   var pendingPaidDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
+  var pendingPaidImportCopy by remember { mutableStateOf<UserDeckImportUiState.Ready?>(null) }
   var pendingDifferentDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
   var staleEditDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
 
@@ -1185,8 +1193,32 @@ private fun PiyokeyApp(
     }
   }
 
+  fun commitUserDeckImportAsCopy(ready: UserDeckImportUiState.Ready) {
+    userDeckImport = ready.copy(isWorking = true)
+    scope.launch {
+      try {
+        billingManager.requireAccess()
+        repository.commitImportedDeckAsSeparateCopy(
+          stagingFile = ready.document.file,
+          expectedContentSha256 = ready.preview.contentSha256,
+          language = preferences.language.toUserDeckLanguage(),
+        )
+        closeUserDeckImport()
+        tab = RootTab.PROFILE
+        reload()
+      } catch (_: DeckMakerAuthorizationException) {
+        userDeckImport = ready
+        pendingPaidImportCopy = ready
+        showDeckMakerPaywall = true
+      } catch (error: Exception) {
+        documentGateway.discard(ready.document)
+        userDeckImport = UserDeckImportUiState.Failed(error.toUserDeckImportError())
+      }
+    }
+  }
+
   val importState = userDeckImport
-  if (importState != null && activePractice == null && result == null) {
+  if (importState != null && activePractice == null && result == null && !showDeckMakerPaywall) {
     val ready = importState as? UserDeckImportUiState.Ready
     UserDeckImportScreen(
       preview = ready?.preview,
@@ -1196,6 +1228,15 @@ private fun PiyokeyApp(
       onInstall = { ready?.let { commitUserDeckImport(it, replaceConfirmed = false) } },
       onKeepCurrent = ::closeUserDeckImport,
       onReplace = { ready?.let { commitUserDeckImport(it, replaceConfirmed = true) } },
+      onImportAsCopy = {
+        ready?.let {
+          if (billingState.hasAccess) commitUserDeckImportAsCopy(it) else {
+            pendingPaidImportCopy = it
+            showDeckMakerPaywall = true
+          }
+        }
+      },
+      hasDeckMakerAccess = billingState.hasAccess,
       onExportCurrent = { ready?.preview?.installed?.let { exportUserDeck(it) } },
     )
     return
@@ -1281,7 +1322,10 @@ private fun PiyokeyApp(
           scope.launch {
             if (billingManager.purchase(activity)) {
               showDeckMakerPaywall = false
-              pendingPaidDraft?.let(::requestDeckMakerDraft)
+              val paidImport = pendingPaidImportCopy
+              pendingPaidImportCopy = null
+              if (paidImport != null) commitUserDeckImportAsCopy(paidImport)
+              else pendingPaidDraft?.let(::requestDeckMakerDraft)
               pendingPaidDraft = null
             }
           }
@@ -1291,7 +1335,10 @@ private fun PiyokeyApp(
         scope.launch {
           if (billingManager.restore()) {
             showDeckMakerPaywall = false
-            pendingPaidDraft?.let(::requestDeckMakerDraft)
+            val paidImport = pendingPaidImportCopy
+            pendingPaidImportCopy = null
+            if (paidImport != null) commitUserDeckImportAsCopy(paidImport)
+            else pendingPaidDraft?.let(::requestDeckMakerDraft)
             pendingPaidDraft = null
           }
         }
@@ -1300,6 +1347,7 @@ private fun PiyokeyApp(
       onClose = {
         showDeckMakerPaywall = false
         pendingPaidDraft = null
+        pendingPaidImportCopy = null
       },
     )
     return
@@ -1345,6 +1393,18 @@ private fun PiyokeyApp(
           }
         },
         onPlay = { installed?.let(::play) },
+        onReportDeck = {
+          feedbackController.open(
+            ContentFeedbackRequest(
+              kind = ContentFeedbackKind.REPORT,
+              source = ContentFeedbackSource.DECK_DETAIL,
+              appVersion = BuildConfig.VERSION_NAME,
+              appBuild = BuildConfig.VERSION_CODE.toLong(),
+              language = preferences.language.tag,
+              deck = ContentFeedbackDeck(detail.deckId, detail.version),
+            ),
+          )
+        },
         onDeckClick = ::openDetail,
       )
       return
@@ -1546,6 +1606,17 @@ private fun PiyokeyApp(
           filters = filters,
           onFiltersChange = { filters = it },
           onDeckClick = ::openDetail,
+          onProposeDeck = {
+            feedbackController.open(
+              ContentFeedbackRequest(
+                kind = ContentFeedbackKind.PROPOSAL,
+                source = ContentFeedbackSource.DISCOVER,
+                appVersion = BuildConfig.VERSION_NAME,
+                appBuild = BuildConfig.VERSION_CODE.toLong(),
+                language = preferences.language.tag,
+              ),
+            )
+          },
         )
         RootTab.PRACTICE -> if (showFreePractice) {
           PracticeDeckChooser(
@@ -1868,9 +1939,14 @@ private fun PiyokeyApp(
         )
       },
       onOpenFeedback = {
-        context.startActivity(
-          Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:contact@typee.app"))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        feedbackController.open(
+          ContentFeedbackRequest(
+            kind = ContentFeedbackKind.COMBINED,
+            source = ContentFeedbackSource.SETTINGS,
+            appVersion = BuildConfig.VERSION_NAME,
+            appBuild = BuildConfig.VERSION_CODE.toLong(),
+            language = preferences.language.tag,
+          ),
         )
       },
       onOpenSupport = {

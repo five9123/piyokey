@@ -95,6 +95,42 @@ class DeckRepositoryInstrumentedTest {
   }
 
   @Test
+  fun conflictingImportCanBecomeIndependentCopyWithoutTouchingOriginalOrDraft() = runTest {
+    val initialFile = stageFixture("valid/basic.piyodeck")
+    val initialPreview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    repository.commitImportedDeck(initialFile, initialPreview.contentSha256, false)
+    repository.markPlayed(initialPreview.deck.deckId)
+    val originalBefore = requireNotNull(database.dao().installedDeck(initialPreview.deck.deckId))
+
+    val activeDraft = repository.saveUserDeckDraft(
+      complete(UserDeckDraft.new(Instant.ofEpochMilli(now)) { "9".repeat(32) }),
+    )
+    val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
+    val parsed = PiyoDeckPackageReader.read(initialFile.readBytes(), schema)
+    val incomingItems = parsed.deck.items.mapIndexed { index, item ->
+      if (index == 0) item.copy(meaningJa = item.meaningJa + "（別内容）") else item
+    }
+    val conflictFile = stageBytes(PiyoDeckPackageWriter.write(parsed.deck.copy(items = incomingItems), schema))
+    val conflict = repository.previewImportedDeck(conflictFile, "conflict.piyodeck")
+    assertEquals(ImportedDeckConflict.SAME_VERSION_DIFFERENT_CONTENT, conflict.conflict)
+
+    val separate = repository.commitImportedDeckAsSeparateCopy(
+      conflictFile,
+      conflict.contentSha256,
+      UserDeckLanguage.JAPANESE,
+    )
+
+    assertTrue(separate.deck.deckId.startsWith("user_"))
+    assertEquals(1, separate.deck.version)
+    assertEquals("created", separate.metadata.source)
+    assertTrue(separate.deck.items.map { it.id }.toSet().intersect(parsed.deck.items.map { it.id }.toSet()).isEmpty())
+    assertEquals(originalBefore, database.dao().installedDeck(initialPreview.deck.deckId))
+    assertEquals(null, separate.metadata.lastPlayedAtEpochMillis)
+    assertEquals(activeDraft.draftId, repository.loadUserDeckDraft()?.draftId)
+    assertEquals(2, repository.snapshot().installed.size)
+  }
+
+  @Test
   fun maliciousImportNeverMutatesInstalledDecks() = runTest {
     val valid = stageFixture("valid/basic.piyodeck")
     val preview = repository.previewImportedDeck(valid, "basic.piyodeck")

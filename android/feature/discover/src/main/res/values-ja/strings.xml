@@ -129,4 +129,8 @@
   <string name="user_deck_error_too_large">8 MiBの安全上限を超えています。既存のデッキは変更していません。</string>
   <string name="user_deck_error_update">新しいPIYOKEY形式のデッキです。アプリを更新してから読み込んでください。</string>
   <string name="user_deck_error_read">選択したファイルを読み込めませんでした。既存のデッキは変更していません。</string>
+  <string name="discover_propose_deck">ほしいデッキを提案する</string>
+  <string name="deck_report_content">このデッキの内容を報告</string>
+  <string name="user_deck_import_as_copy">別のコピーとして読み込む</string>
+  <string name="user_deck_import_as_copy_locked">別のコピーとして読み込む・デッキメーカー</string>
 </resources>

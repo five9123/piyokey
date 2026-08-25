@@ -347,6 +347,102 @@ class DeckRepository private constructor(
     }
   }
 
+  /**
+   * Converts a conflicting import into a new local deck without replacing the installed deck or
+   * borrowing its progress. Deck Maker entitlement is deliberately enforced by the caller at the
+   * paid mutation boundary; this repository method still revalidates the staged bytes atomically.
+   */
+  suspend fun commitImportedDeckAsSeparateCopy(
+    stagingFile: File,
+    expectedContentSha256: String,
+    language: UserDeckLanguage,
+  ): InstalledDeck = withContext(Dispatchers.IO) {
+    userDeckMutationMutex.withLock {
+      recoverPendingOperations()
+      val imported = readStagedPiyoDeck(stagingFile)
+      requireUserDeckIdentifierAvailable(imported)
+      if (imported.contentSha256 != expectedContentSha256) {
+        throw ImportedDeckException.SourceChanged(expectedContentSha256, imported.contentSha256)
+      }
+      val installedEntity = dao.installedDeck(imported.deck.deckId)
+      val installed = installedEntity?.let { loadInstalled(it) }
+      if (installed != null && installed.metadata.source !in USER_DECK_SOURCES) {
+        throw ImportedDeckException.InstalledSourceCollision
+      }
+      val conflict = ImportedDeckConflictPolicy.classify(
+        incoming = ImportedDeckVersionSummary(imported.deck.version, imported.contentSha256),
+        installed = installed?.let {
+          ImportedDeckVersionSummary(it.metadata.version, it.metadata.payloadSha256)
+        },
+      )
+      if (!ImportedDeckConflictPolicy.requiresDestructiveConfirmation(conflict)) {
+        throw ImportedDeckException.SeparateCopyRequiresConflict(conflict)
+      }
+
+      val nowMillis = clock()
+      val draft = UserDeckDraft.editing(imported.deck).asSeparateCopy(Instant.ofEpochMilli(nowMillis))
+      val deck = draft.validatedDeck(Instant.ofEpochMilli(nowMillis), language)
+      if (dao.installedDeck(deck.deckId) != null || loadCatalog().decks.any { it.deckId == deck.deckId }) {
+        throw UserDeckEditCommitException.IdentifierCollision
+      }
+      val bytes = DeckKitJson.encodeDeck(deck).toByteArray(StandardCharsets.UTF_8)
+      val validatedDeck = decodeDeck(bytes)
+      val targetName = store.deckTargetName(deck.deckId)
+      val stagedName = store.stage(bytes)
+      val sha = AtomicPayloadStore.sha256(bytes)
+      val journal = RecoveryJournalEntity(
+        operationId = "deck-install:${deck.deckId}",
+        kind = JOURNAL_DECK_INSTALL,
+        deckId = deck.deckId,
+        version = 1,
+        targetName = targetName,
+        stagedName = stagedName,
+        backupName = null,
+        expectedSha256 = sha,
+        source = SOURCE_CREATED,
+        official = false,
+        tagsJson = null,
+        catalogVersion = null,
+        etag = null,
+        lastModified = null,
+        startedAtEpochMillis = nowMillis,
+      )
+      database.withTransaction { dao.upsertJournal(journal) }
+      store.replace(stagedName, targetName, null)
+      database.withTransaction {
+        dao.upsertInstalledDeck(
+          InstalledDeckEntity(
+            deckId = deck.deckId,
+            version = 1,
+            payloadName = targetName,
+            payloadSha256 = sha,
+            backupPayloadName = null,
+            backupSha256 = null,
+            backupVersion = null,
+            source = SOURCE_CREATED,
+            official = false,
+            installedAtEpochMillis = nowMillis,
+            updatedAtEpochMillis = nowMillis,
+            lastPlayedAtEpochMillis = null,
+          ),
+        )
+        dao.upsertUserDeckHistory(
+          UserDeckHistoryEntity(
+            deckId = deck.deckId,
+            firstImportedAtEpochMillis = nowMillis,
+            lastImportedAtEpochMillis = nowMillis,
+            lastDeletedAtEpochMillis = null,
+            lastVersion = 1,
+            lastContentSha256 = sha,
+            lastPlayedAtEpochMillis = null,
+          ),
+        )
+        dao.deleteJournal(journal.operationId)
+      }
+      InstalledDeck(requireNotNull(dao.installedDeck(deck.deckId)), validatedDeck)
+    }
+  }
+
   suspend fun loadUserDeckDraft(): ActiveUserDeckDraft? = withContext(Dispatchers.IO) {
     userDeckMutationMutex.withLock { userDeckDraftStore.load() }
   }
