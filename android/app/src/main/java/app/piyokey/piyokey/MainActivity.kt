@@ -64,6 +64,9 @@ import app.piyokey.core.data.DeckLibrarySnapshot
 import app.piyokey.core.data.DeckRepository
 import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
+import app.piyokey.core.data.ImportedDeckException
+import app.piyokey.core.data.ImportedDeckCommitResult
+import app.piyokey.core.data.ImportedDeckPreview
 import app.piyokey.core.data.LearningSnapshot
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.DeckItem
@@ -78,7 +81,10 @@ import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.toRecord
 import app.piyokey.core.platform.DailyReminderScheduler
+import app.piyokey.core.platform.PiyoDeckDocumentGateway
 import app.piyokey.core.platform.ResultShareModel
+import app.piyokey.core.platform.StagedPiyoDeckDocument
+import app.piyokey.core.piyodeck.PiyoDeckImportException
 import app.piyokey.core.retention.CurriculumItem
 import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
@@ -98,6 +104,8 @@ import app.piyokey.feature.discover.DiscoverScreen
 import app.piyokey.feature.discover.MyDecksScreen
 import app.piyokey.feature.discover.PracticeResultScreen
 import app.piyokey.feature.discover.RecommendationHome
+import app.piyokey.feature.discover.UserDeckImportError
+import app.piyokey.feature.discover.UserDeckImportScreen
 import app.piyokey.feature.practice.PracticeRoute
 import app.piyokey.feature.practice.PracticeDisplayOptions
 import app.piyokey.feature.practice.PracticeKeyboardOptions
@@ -129,10 +137,14 @@ import app.piyokey.feature.settings.CommonSettingsButton
 import app.piyokey.feature.settings.SettingsSheet
 import java.util.Locale
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : AppCompatActivity() {
+  private val incomingPiyoDeck = MutableStateFlow<IncomingPiyoDeck?>(null)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    publishIncomingDocument(intent)
     val preferencesStore = AppPreferencesStore.create(this) {
       resources.configuration.locales.let { locales ->
         (0 until locales.size()).map { locales[it].toLanguageTag() }
@@ -140,6 +152,7 @@ class MainActivity : AppCompatActivity() {
     }
     setContent {
       val preferences by preferencesStore.values.collectAsStateWithLifecycle(initialValue = null)
+      val incomingDocument by incomingPiyoDeck.collectAsStateWithLifecycle()
       val scope = rememberCoroutineScope()
       val resolved = preferences
       if (resolved == null) {
@@ -188,6 +201,20 @@ class MainActivity : AppCompatActivity() {
           MaterialTheme(colorScheme = if (optimistic.theme == AppTheme.DARK) darkColorScheme() else lightColorScheme()) {
             PiyokeyApp(
               preferences = optimistic,
+              incomingDocument = incomingDocument,
+              onIncomingDocumentConsumed = { token ->
+                if (incomingPiyoDeck.value?.token == token) {
+                  incomingPiyoDeck.value = null
+                  setIntent(
+                    Intent(intent).apply {
+                      action = Intent.ACTION_MAIN
+                      data = null
+                      type = null
+                      removeExtra(Intent.EXTRA_STREAM)
+                    },
+                  )
+                }
+              },
               onPreferencesChange = { updated ->
                 optimistic = updated
                 scope.launch { preferencesStore.update { updated } }
@@ -198,7 +225,44 @@ class MainActivity : AppCompatActivity() {
       }
     }
   }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    publishIncomingDocument(intent)
+  }
+
+  @Suppress("DEPRECATION")
+  internal fun publishIncomingDocument(intent: Intent?) {
+    val uri = when (intent?.action) {
+      Intent.ACTION_VIEW -> intent.data
+      Intent.ACTION_SEND -> intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+      else -> null
+    } ?: return
+    incomingPiyoDeck.value = IncomingPiyoDeck(
+      uri = uri,
+      sourceContext = if (intent?.action == Intent.ACTION_SEND) "send" else "view",
+      token = System.nanoTime(),
+    )
+  }
 }
+
+private data class IncomingPiyoDeck(val uri: Uri, val sourceContext: String, val token: Long)
+
+private sealed interface UserDeckImportUiState {
+  data class Loading(val document: StagedPiyoDeckDocument? = null) : UserDeckImportUiState
+  data class Ready(
+    val document: StagedPiyoDeckDocument,
+    val preview: ImportedDeckPreview,
+    val isWorking: Boolean = false,
+  ) : UserDeckImportUiState
+  data class Failed(
+    val error: UserDeckImportError,
+    val document: StagedPiyoDeckDocument? = null,
+  ) : UserDeckImportUiState
+}
+
+private data class PendingUserDeckExport(val deckId: String, val deleteAfterExport: Boolean)
 
 private enum class RootTab(val label: Int, val symbol: String) {
   HOME(R.string.nav_home, "⌂"),
@@ -244,6 +308,8 @@ private enum class GameStage { HUB, DECK_SELECT, SPACING_SELECT }
 @Composable
 private fun PiyokeyApp(
   preferences: AppPreferences,
+  incomingDocument: IncomingPiyoDeck?,
+  onIncomingDocumentConsumed: (Long) -> Unit,
   onPreferencesChange: (AppPreferences) -> Unit,
 ) {
   val context = LocalContext.current.applicationContext
@@ -287,6 +353,87 @@ private fun PiyokeyApp(
   var appTourStep by remember { mutableStateOf(0) }
   val reminderScheduler = remember { DailyReminderScheduler(context) }
   var pendingReminderEnable by remember { mutableStateOf(false) }
+  val documentGateway = remember { PiyoDeckDocumentGateway(context) }
+  var userDeckImport by remember { mutableStateOf<UserDeckImportUiState?>(null) }
+  var pendingUserDeckExport by remember { mutableStateOf<PendingUserDeckExport?>(null) }
+
+  fun beginUserDeckImport(uri: Uri, sourceContext: String) {
+    val previousDocument = when (val state = userDeckImport) {
+      is UserDeckImportUiState.Loading -> state.document
+      is UserDeckImportUiState.Ready -> state.document
+      is UserDeckImportUiState.Failed -> state.document
+      null -> null
+    }
+    documentGateway.discard(previousDocument)
+    userDeckImport = UserDeckImportUiState.Loading()
+    scope.launch {
+      var staged: StagedPiyoDeckDocument? = null
+      try {
+        staged = documentGateway.stage(uri, sourceContext)
+        userDeckImport = UserDeckImportUiState.Loading(staged)
+        val preview = repository.previewImportedDeck(staged.file, staged.displayName)
+        userDeckImport = UserDeckImportUiState.Ready(staged, preview)
+      } catch (error: Exception) {
+        documentGateway.discard(staged)
+        userDeckImport = UserDeckImportUiState.Failed(error.toUserDeckImportError())
+      }
+    }
+  }
+
+  val openUserDeck = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+    uri?.let { beginUserDeckImport(it, "picker") }
+  }
+  val createUserDeck = rememberLauncherForActivityResult(
+    ActivityResultContracts.CreateDocument(PiyoDeckDocumentGateway.MIME_TYPE),
+  ) { uri ->
+    val request = pendingUserDeckExport
+    if (uri == null || request == null) {
+      pendingUserDeckExport = null
+    } else {
+      scope.launch {
+        try {
+          documentGateway.writeExport(uri, repository.exportUserDeck(request.deckId))
+          if (request.deleteAfterExport) repository.delete(request.deckId)
+          reloadToken += 1
+        } catch (_: Exception) {
+          operationFailed = true
+        } finally {
+          pendingUserDeckExport = null
+        }
+      }
+    }
+  }
+
+  fun exportUserDeck(deck: InstalledDeck, deleteAfterExport: Boolean = false) {
+    pendingUserDeckExport = PendingUserDeckExport(deck.metadata.deckId, deleteAfterExport)
+    val safeName = (deck.deck.localizedName(preferences.language.tag) ?: "piyokey-deck")
+      .replace(Regex("[\\\\/:*?\"<>|]"), "-")
+      .take(80)
+    createUserDeck.launch("$safeName.piyodeck")
+  }
+
+  LaunchedEffect(incomingDocument?.token) {
+    val incoming = incomingDocument ?: return@LaunchedEffect
+    beginUserDeckImport(incoming.uri, incoming.sourceContext)
+    onIncomingDocumentConsumed(incoming.token)
+  }
+
+  LaunchedEffect(documentGateway, incomingDocument?.token) {
+    if (incomingDocument == null && userDeckImport == null) {
+      documentGateway.recoverPending()?.let { recovered ->
+        userDeckImport = UserDeckImportUiState.Loading(recovered)
+        userDeckImport = try {
+          UserDeckImportUiState.Ready(
+            recovered,
+            repository.previewImportedDeck(recovered.file, recovered.displayName),
+          )
+        } catch (error: Exception) {
+          documentGateway.discard(recovered)
+          UserDeckImportUiState.Failed(error.toUserDeckImportError())
+        }
+      }
+    }
+  }
 
   LaunchedEffect(preferences.onboardingMigrationChecked) {
     if (!preferences.onboardingMigrationChecked) {
@@ -823,6 +970,56 @@ private fun PiyokeyApp(
     return
   }
 
+  fun closeUserDeckImport() {
+    val document = when (val state = userDeckImport) {
+      is UserDeckImportUiState.Loading -> state.document
+      is UserDeckImportUiState.Ready -> state.document
+      is UserDeckImportUiState.Failed -> state.document
+      null -> null
+    }
+    documentGateway.discard(document)
+    userDeckImport = null
+  }
+
+  fun commitUserDeckImport(ready: UserDeckImportUiState.Ready, replaceConfirmed: Boolean) {
+    userDeckImport = ready.copy(isWorking = true)
+    scope.launch {
+      try {
+        when (repository.commitImportedDeck(
+          stagingFile = ready.document.file,
+          expectedContentSha256 = ready.preview.contentSha256,
+          replaceConfirmed = replaceConfirmed,
+        )) {
+          is ImportedDeckCommitResult.Installed,
+          is ImportedDeckCommitResult.AlreadyInstalled,
+          -> Unit
+        }
+        closeUserDeckImport()
+        tab = RootTab.PROFILE
+        reload()
+      } catch (error: Exception) {
+        documentGateway.discard(ready.document)
+        userDeckImport = UserDeckImportUiState.Failed(error.toUserDeckImportError())
+      }
+    }
+  }
+
+  val importState = userDeckImport
+  if (importState != null && activePractice == null && result == null) {
+    val ready = importState as? UserDeckImportUiState.Ready
+    UserDeckImportScreen(
+      preview = ready?.preview,
+      error = (importState as? UserDeckImportUiState.Failed)?.error,
+      isWorking = ready?.isWorking == true,
+      onBack = ::closeUserDeckImport,
+      onInstall = { ready?.let { commitUserDeckImport(it, replaceConfirmed = false) } },
+      onKeepCurrent = ::closeUserDeckImport,
+      onReplace = { ready?.let { commitUserDeckImport(it, replaceConfirmed = true) } },
+      onExportCurrent = { ready?.preview?.installed?.let { exportUserDeck(it) } },
+    )
+    return
+  }
+
   val detail = detailDeckId?.let { id -> current.catalog.decks.firstOrNull { it.deckId == id } }
   when {
     detail != null -> {
@@ -919,7 +1116,10 @@ private fun PiyokeyApp(
             modifier = Modifier.align(Alignment.TopStart).padding(top = 4.dp, start = 4.dp),
             color = Color.White.copy(alpha = 0.92f),
           ) {
-            TextButton(onClick = { activePractice = null }) { Text(stringResource(R.string.close_session)) }
+            TextButton(
+              onClick = { activePractice = null },
+              modifier = Modifier.testTag("close-practice-session"),
+            ) { Text(stringResource(R.string.close_session)) }
           }
         }
       }
@@ -1160,6 +1360,17 @@ private fun PiyokeyApp(
               }
             }
           },
+          onImport = {
+            openUserDeck.launch(
+              arrayOf(
+                PiyoDeckDocumentGateway.MIME_TYPE,
+                "application/zip",
+                "application/octet-stream",
+              ),
+            )
+          },
+          onExport = { deck -> exportUserDeck(deck) },
+          onExportThenDelete = { deck -> exportUserDeck(deck, deleteAfterExport = true) },
           header = {
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
               PiyoProfileSection(
@@ -1423,3 +1634,17 @@ private fun CurriculumItem.toDeckItem(): DeckItem = DeckItem(
   audio = null,
   localizations = null,
 )
+
+private fun Throwable.toUserDeckImportError(): UserDeckImportError = when (this) {
+  is PiyoDeckImportException.PackageTooLarge,
+  is PiyoDeckImportException.EntryTooLarge,
+  -> UserDeckImportError.TOO_LARGE
+  is PiyoDeckImportException.UnsupportedFormatVersion,
+  is PiyoDeckImportException.UnsupportedDeckSchemaVersion,
+  -> UserDeckImportError.UPDATE_REQUIRED
+  is PiyoDeckImportException,
+  is ImportedDeckException.OfficialIdentifierCollision,
+  is ImportedDeckException.InstalledSourceCollision,
+  -> UserDeckImportError.INVALID
+  else -> UserDeckImportError.READ_FAILED
+}

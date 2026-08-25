@@ -37,6 +37,18 @@ data class DownloadHistoryEntity(
   val downloadedAtEpochMillis: Long,
 )
 
+@Entity(tableName = "user_deck_history")
+data class UserDeckHistoryEntity(
+  @PrimaryKey val deckId: String,
+  val firstImportedAtEpochMillis: Long,
+  val lastImportedAtEpochMillis: Long,
+  val lastDeletedAtEpochMillis: Long?,
+  val lastVersion: Int,
+  val lastContentSha256: String,
+  /** Restores the deck's recency after a deliberate delete and later re-import. */
+  val lastPlayedAtEpochMillis: Long?,
+)
+
 @Entity(tableName = "catalog_state")
 data class CatalogStateEntity(
   @PrimaryKey val singletonId: Int = 1,
@@ -182,6 +194,12 @@ interface PiyokeyDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsertDownloadHistory(entity: DownloadHistoryEntity)
 
+  @Query("SELECT * FROM user_deck_history WHERE deckId = :deckId")
+  suspend fun userDeckHistory(deckId: String): UserDeckHistoryEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertUserDeckHistory(entity: UserDeckHistoryEntity)
+
   @Query("SELECT * FROM catalog_state WHERE singletonId = 1")
   suspend fun catalogState(): CatalogStateEntity?
 
@@ -268,6 +286,7 @@ interface PiyokeyDao {
   entities = [
     InstalledDeckEntity::class,
     DownloadHistoryEntity::class,
+    UserDeckHistoryEntity::class,
     CatalogStateEntity::class,
     RecoveryJournalEntity::class,
     GameRecordEntity::class,
@@ -279,7 +298,7 @@ interface PiyokeyDao {
     RetentionRewardEntity::class,
     ReminderPreferenceEntity::class,
   ],
-  version = 3,
+  version = 4,
   exportSchema = true,
 )
 abstract class PiyokeyDatabase : RoomDatabase() {
@@ -293,7 +312,13 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         context.applicationContext,
         PiyokeyDatabase::class.java,
         "piyokey.db",
-      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build().also { instance = it }
+      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { instance = it }
+    }
+
+    /** Keeps repeated instrumented fresh-install scenarios isolated in the same process. */
+    fun closeSingletonForTesting() = synchronized(this) {
+      instance?.close()
+      instance = null
     }
 
     val MIGRATION_1_2: Migration = object : Migration(1, 2) {
@@ -358,6 +383,19 @@ abstract class PiyokeyDatabase : RoomDatabase() {
             |`singletonId` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL,
             |`hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL,
             |PRIMARY KEY(`singletonId`))""".trimMargin(),
+        )
+      }
+    }
+
+    val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `user_deck_history` (
+            |`deckId` TEXT NOT NULL, `firstImportedAtEpochMillis` INTEGER NOT NULL,
+            |`lastImportedAtEpochMillis` INTEGER NOT NULL, `lastDeletedAtEpochMillis` INTEGER,
+            |`lastVersion` INTEGER NOT NULL, `lastContentSha256` TEXT NOT NULL,
+            |`lastPlayedAtEpochMillis` INTEGER,
+            |PRIMARY KEY(`deckId`))""".trimMargin(),
         )
       }
     }

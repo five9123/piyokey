@@ -1,6 +1,6 @@
 # PIYOKEY Android
 
-Android M7의 A0 골격과 M1~M4 구현이다. 한글 입력·덱·`.piyodeck`·게임 규칙 계약은 순수 Kotlin으로 고정하고, Compose 연습·발견·오프라인 덱·흐름 게임을 5탭 앱 셸에 연결한다.
+Android M7의 A0~M6C와 앱 1.1 무료 사용자 덱 문서 수명주기 구현이다. 한글 입력·덱·`.piyodeck`·게임 규칙 계약은 순수 Kotlin으로 고정하고, Compose 연습·발견·오프라인 덱·전체 게임·SAF 사용자 덱을 5탭 앱 셸에 연결한다.
 
 ## 고정 도구 체인
 
@@ -131,3 +131,13 @@ M4 증분 파일과 검증은 `docs/ANDROID_M7_M4_HANDOFF.md`에 기록한다.
 - 실기기 입력·60초 frame·최종 알림 수신은 출시 후보 통합 QA Issue #19에 유지한다.
 
 M5 증분 파일과 검증은 `docs/ANDROID_M7_M5_HANDOFF.md`에 기록한다.
+
+## 앱 1.1 R1.1A 무료 사용자 덱 문서
+
+- SAF picker와 `VIEW`/`SEND` 문서 진입은 원본 URI를 8 MiB 제한으로 앱 전용 staging에만 복사하고 strict `.piyodeck` parser를 통과한 뒤 미리보기를 연다.
+- 이름·제작자·유형·난이도·태그·항목 수·첫 3항목을 설치 전에 표시한다. 동일 package는 무쓰기이며 업데이트·다운그레이드·같은 버전 충돌은 현재본 비교와 별도 교체 확인을 요구한다.
+- 가져오기·현재본 내보내기·삭제·내보낸 뒤 삭제·재가져오기는 구매 없이 제공한다. Room v3→v4와 별도 user-deck history가 플레이·게임·복습·설치 이력을 payload 삭제 뒤에도 유지한다.
+- 외부 문서는 세션 중 staging/pending으로만 보관하고 화면·오류 모달을 띄우지 않는다. 세션 종료 뒤에만 미리보기를 제안하며 pending은 프로세스 재생성 뒤에도 복구한다.
+- API 35에서 data 계측 16개와 앱 전체 23개(세션 보류→미리보기→무료 설치, 손상 staging 즉시 정리 포함)를 통과한다. Files·공유 앱 상호운용 수동 확인은 Issue #19의 출시 후보 통합 QA에서 한 번만 수행한다.
+
+세부 증거와 후속 경계는 `docs/ANDROID_R11A_PIYODECK_HANDOFF.md`에 기록한다.
