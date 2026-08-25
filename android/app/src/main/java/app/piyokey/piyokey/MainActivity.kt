@@ -1,6 +1,7 @@
 package app.piyokey.piyokey
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -38,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,12 +59,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.piyokey.core.data.CatalogRefreshResult
 import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckLibrarySnapshot
 import app.piyokey.core.data.DeckRepository
+import app.piyokey.core.data.ActiveUserDeckDraft
+import app.piyokey.core.data.DeckMakerEntitlementCache
+import app.piyokey.core.data.PiyokeyDatabase
+import app.piyokey.core.data.UserDeckEditCommitException
 import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
 import app.piyokey.core.data.ImportedDeckException
@@ -81,10 +90,18 @@ import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.toRecord
 import app.piyokey.core.platform.DailyReminderScheduler
+import app.piyokey.core.platform.DeckMakerBillingActivity
+import app.piyokey.core.platform.DeckMakerBillingManager
+import app.piyokey.core.platform.DeckMakerBillingNotice
+import app.piyokey.core.platform.PlayBillingDeckMakerGateway
+import app.piyokey.core.platform.RoomDeckMakerEntitlementCacheStore
 import app.piyokey.core.platform.PiyoDeckDocumentGateway
 import app.piyokey.core.platform.ResultShareModel
 import app.piyokey.core.platform.StagedPiyoDeckDocument
 import app.piyokey.core.piyodeck.PiyoDeckImportException
+import app.piyokey.core.piyodeck.UserDeckDraft
+import app.piyokey.core.piyodeck.UserDeckDraftOrigin
+import app.piyokey.core.piyodeck.UserDeckLanguage
 import app.piyokey.core.retention.CurriculumItem
 import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
@@ -93,6 +110,7 @@ import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.ReviewItem
 import app.piyokey.core.retention.RetentionPolicy
 import app.piyokey.core.settings.AppPreferences
+import app.piyokey.core.settings.AppLanguage
 import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.InputMode
@@ -102,6 +120,9 @@ import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
 import app.piyokey.feature.discover.MyDecksScreen
+import app.piyokey.feature.discover.DeckMakerPaywallScreen
+import app.piyokey.feature.discover.DeckMakerUiNotice
+import app.piyokey.feature.discover.UserDeckEditorScreen
 import app.piyokey.feature.discover.PracticeResultScreen
 import app.piyokey.feature.discover.RecommendationHome
 import app.piyokey.feature.discover.UserDeckImportError
@@ -312,12 +333,28 @@ private fun PiyokeyApp(
   onIncomingDocumentConsumed: (Long) -> Unit,
   onPreferencesChange: (AppPreferences) -> Unit,
 ) {
-  val context = LocalContext.current.applicationContext
+  val hostContext = LocalContext.current
+  val hostActivity = hostContext as? Activity
+  val context = hostContext.applicationContext
   val hadExistingDatabase = remember { context.getDatabasePath("piyokey.db").exists() }
   val repository = remember {
     DeckRepository.create(context, BuildConfig.CATALOG_URL.ifBlank { null })
   }
   val scope = rememberCoroutineScope()
+  val billingManager = remember {
+    DeckMakerBillingManager(
+      gateway = PlayBillingDeckMakerGateway(context),
+      cache = RoomDeckMakerEntitlementCacheStore(
+        DeckMakerEntitlementCache(PiyokeyDatabase.open(context)),
+      ),
+    )
+  }
+  val billingState by billingManager.state.collectAsStateWithLifecycle()
+  DisposableEffect(billingManager) { onDispose { billingManager.close() } }
+  LaunchedEffect(billingManager) { billingManager.prepare() }
+  LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+    scope.launch { billingManager.onForeground() }
+  }
   var snapshot by remember { mutableStateOf<DeckLibrarySnapshot?>(null) }
   var learning by remember { mutableStateOf<LearningSnapshot?>(null) }
   var loadFailed by remember { mutableStateOf(false) }
@@ -356,6 +393,14 @@ private fun PiyokeyApp(
   val documentGateway = remember { PiyoDeckDocumentGateway(context) }
   var userDeckImport by remember { mutableStateOf<UserDeckImportUiState?>(null) }
   var pendingUserDeckExport by remember { mutableStateOf<PendingUserDeckExport?>(null) }
+  var storedDeckDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
+  var editorDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
+  var editorWorking by remember { mutableStateOf(false) }
+  var editorSaveError by remember { mutableStateOf(false) }
+  var showDeckMakerPaywall by remember { mutableStateOf(false) }
+  var pendingPaidDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
+  var pendingDifferentDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
+  var staleEditDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
 
   fun beginUserDeckImport(uri: Uri, sourceContext: String) {
     val previousDocument = when (val state = userDeckImport) {
@@ -485,6 +530,7 @@ private fun PiyokeyApp(
       }
       snapshot = loadedSnapshot
       learning = loadedLearning
+      storedDeckDraft = repository.loadUserDeckDraft()
       flowPresets = loadedPresets
       gamePresets = loadedGamePresets
       spacingPassages = loadedSpacingPassages
@@ -556,6 +602,74 @@ private fun PiyokeyApp(
 
   fun reload() {
     reloadToken += 1
+  }
+
+  fun persistAndOpenDeckDraft(draft: UserDeckDraft) {
+    scope.launch {
+      try {
+        val active = repository.saveUserDeckDraft(draft)
+        storedDeckDraft = active
+        editorDraft = active
+        editorSaveError = false
+      } catch (_: Exception) {
+        operationFailed = true
+      }
+    }
+  }
+
+  fun requestDeckMakerDraft(draft: UserDeckDraft) {
+    if (!billingState.hasAccess) {
+      pendingPaidDraft = draft
+      showDeckMakerPaywall = true
+      return
+    }
+    val existing = storedDeckDraft
+    when {
+      existing == null -> persistAndOpenDeckDraft(draft)
+      existing.draft.isSameDeckMakerFlow(draft) -> editorDraft = existing
+      else -> pendingDifferentDraft = draft
+    }
+  }
+
+  fun saveEditorDraft(draft: UserDeckDraft) {
+    scope.launch {
+      try {
+        val saved = repository.saveUserDeckDraft(draft)
+        storedDeckDraft = saved
+        if (editorDraft?.draftId == saved.draftId) editorDraft = saved
+        editorSaveError = false
+      } catch (_: Exception) {
+        editorSaveError = true
+      }
+    }
+  }
+
+  fun commitEditorDraft(draft: UserDeckDraft, language: UserDeckLanguage) {
+    editorWorking = true
+    editorSaveError = false
+    scope.launch {
+      try {
+        billingManager.requireAccess()
+        val active = repository.saveUserDeckDraft(draft)
+        storedDeckDraft = active
+        repository.commitUserDeckDraft(active, language)
+        storedDeckDraft = null
+        editorDraft = null
+        tab = RootTab.PROFILE
+        reload()
+      } catch (error: UserDeckEditCommitException.SourceChanged) {
+        staleEditDraft = repository.loadUserDeckDraft()
+        editorSaveError = true
+      } catch (_: Exception) {
+        editorSaveError = true
+        if (!billingState.hasAccess) {
+          pendingPaidDraft = draft
+          showDeckMakerPaywall = true
+        }
+      } finally {
+        editorWorking = false
+      }
+    }
   }
 
   fun openDetail(deck: CatalogDeck) {
@@ -1020,6 +1134,126 @@ private fun PiyokeyApp(
     return
   }
 
+  val replacementDraft = pendingDifferentDraft
+  if (replacementDraft != null) {
+    AlertDialog(
+      onDismissRequest = { pendingDifferentDraft = null },
+      title = { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_existing_title)) },
+      text = { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_existing_body)) },
+      confirmButton = {
+        TextButton(onClick = {
+          pendingDifferentDraft = null
+          storedDeckDraft?.let { editorDraft = it }
+        }) { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_resume_draft)) }
+      },
+      dismissButton = {
+        Column(horizontalAlignment = Alignment.End) {
+          TextButton(onClick = {
+            pendingDifferentDraft = null
+            scope.launch {
+              try {
+                repository.discardUserDeckDraft()
+                storedDeckDraft = null
+                persistAndOpenDeckDraft(replacementDraft)
+              } catch (_: Exception) {
+                operationFailed = true
+              }
+            }
+          }) { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_discard_and_start)) }
+          TextButton(onClick = { pendingDifferentDraft = null }) {
+            Text(stringResource(app.piyokey.feature.discover.R.string.action_cancel))
+          }
+        }
+      },
+    )
+  }
+
+  val staleDraft = staleEditDraft
+  if (staleDraft != null) {
+    AlertDialog(
+      onDismissRequest = { staleEditDraft = null },
+      title = { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_source_changed_title)) },
+      text = { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_source_changed_body)) },
+      confirmButton = {
+        TextButton(onClick = {
+          staleEditDraft = null
+          val separate = staleDraft.draft.asSeparateCopy(java.time.Instant.now())
+          editorWorking = true
+          scope.launch {
+            try {
+              billingManager.requireAccess()
+              val active = repository.saveUserDeckDraft(separate)
+              repository.commitUserDeckDraft(active, preferences.language.toUserDeckLanguage())
+              storedDeckDraft = null
+              editorDraft = null
+              reload()
+            } catch (_: Exception) {
+              editorSaveError = true
+            } finally {
+              editorWorking = false
+            }
+          }
+        }) { Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_save_separate)) }
+      },
+      dismissButton = {
+        TextButton(onClick = { staleEditDraft = null }) {
+          Text(stringResource(app.piyokey.feature.discover.R.string.deck_editor_keep_draft))
+        }
+      },
+    )
+  }
+
+  if (showDeckMakerPaywall && activePractice == null && result == null) {
+    DeckMakerPaywallScreen(
+      formattedPrice = billingState.product?.formattedPrice,
+      hasAccess = billingState.hasAccess,
+      isWorking = billingState.activity != DeckMakerBillingActivity.IDLE,
+      notice = billingState.notice?.toDeckMakerUiNotice(),
+      onPurchase = {
+        hostActivity?.let { activity ->
+          scope.launch {
+            if (billingManager.purchase(activity)) {
+              showDeckMakerPaywall = false
+              pendingPaidDraft?.let(::requestDeckMakerDraft)
+              pendingPaidDraft = null
+            }
+          }
+        }
+      },
+      onRestore = {
+        scope.launch {
+          if (billingManager.restore()) {
+            showDeckMakerPaywall = false
+            pendingPaidDraft?.let(::requestDeckMakerDraft)
+            pendingPaidDraft = null
+          }
+        }
+      },
+      onDismissNotice = billingManager::dismissNotice,
+      onClose = {
+        showDeckMakerPaywall = false
+        pendingPaidDraft = null
+      },
+    )
+    return
+  }
+
+  val currentEditor = editorDraft
+  if (currentEditor != null && activePractice == null && result == null) {
+    UserDeckEditorScreen(
+      initialDraft = currentEditor.draft,
+      isWorking = editorWorking,
+      saveError = editorSaveError,
+      onDraftChanged = ::saveEditorDraft,
+      onSave = ::commitEditorDraft,
+      onClose = { draft ->
+        saveEditorDraft(draft)
+        editorDraft = null
+      },
+    )
+    return
+  }
+
   val detail = detailDeckId?.let { id -> current.catalog.decks.firstOrNull { it.deckId == id } }
   when {
     detail != null -> {
@@ -1371,6 +1605,26 @@ private fun PiyokeyApp(
           },
           onExport = { deck -> exportUserDeck(deck) },
           onExportThenDelete = { deck -> exportUserDeck(deck, deleteAfterExport = true) },
+          hasDeckMakerAccess = billingState.hasAccess,
+          hasActiveDraft = storedDeckDraft != null,
+          onNewDeck = {
+            requestDeckMakerDraft(UserDeckDraft.new(java.time.Instant.now()))
+          },
+          onResumeDraft = {
+            val active = storedDeckDraft
+            if (active == null) Unit
+            else if (billingState.hasAccess) editorDraft = active
+            else {
+              pendingPaidDraft = active.draft
+              showDeckMakerPaywall = true
+            }
+          },
+          onEditDeck = { installed -> requestDeckMakerDraft(UserDeckDraft.editing(installed.deck)) },
+          onCopyOfficial = { installed ->
+            requestDeckMakerDraft(
+              UserDeckDraft.copyingOfficial(installed.deck, java.time.Instant.now()),
+            )
+          },
           header = {
             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
               PiyoProfileSection(
@@ -1647,4 +1901,31 @@ private fun Throwable.toUserDeckImportError(): UserDeckImportError = when (this)
   is ImportedDeckException.InstalledSourceCollision,
   -> UserDeckImportError.INVALID
   else -> UserDeckImportError.READ_FAILED
+}
+
+private fun UserDeckDraft.isSameDeckMakerFlow(other: UserDeckDraft): Boolean {
+  val left = origin
+  val right = other.origin
+  return when {
+    left == UserDeckDraftOrigin.New && right == UserDeckDraftOrigin.New -> deckId == other.deckId
+    left == UserDeckDraftOrigin.Editing && right == UserDeckDraftOrigin.Editing -> deckId == other.deckId
+    left is UserDeckDraftOrigin.OfficialCopy && right is UserDeckDraftOrigin.OfficialCopy ->
+      left.sourceDeckId == right.sourceDeckId && deckId == other.deckId
+    else -> false
+  }
+}
+
+private fun AppLanguage.toUserDeckLanguage(): UserDeckLanguage = when (this) {
+  AppLanguage.JAPANESE -> UserDeckLanguage.JAPANESE
+  AppLanguage.ENGLISH -> UserDeckLanguage.ENGLISH
+  AppLanguage.KOREAN -> UserDeckLanguage.KOREAN
+}
+
+private fun DeckMakerBillingNotice.toDeckMakerUiNotice(): DeckMakerUiNotice = when (this) {
+  DeckMakerBillingNotice.PURCHASE_PENDING -> DeckMakerUiNotice.PURCHASE_PENDING
+  DeckMakerBillingNotice.PURCHASE_FAILED -> DeckMakerUiNotice.PURCHASE_FAILED
+  DeckMakerBillingNotice.RESTORE_SUCCEEDED -> DeckMakerUiNotice.RESTORE_SUCCEEDED
+  DeckMakerBillingNotice.NOTHING_TO_RESTORE -> DeckMakerUiNotice.NOTHING_TO_RESTORE
+  DeckMakerBillingNotice.RESTORE_FAILED -> DeckMakerUiNotice.RESTORE_FAILED
+  DeckMakerBillingNotice.PRODUCT_UNAVAILABLE -> DeckMakerUiNotice.PRODUCT_UNAVAILABLE
 }

@@ -12,6 +12,10 @@ import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.piyodeck.PiyoDeckImportException
 import app.piyokey.core.piyodeck.PiyoDeckPackageReader
 import app.piyokey.core.piyodeck.PiyoDeckPackageWriter
+import app.piyokey.core.piyodeck.UserDeckDraft
+import app.piyokey.core.piyodeck.UserDeckItemDraft
+import app.piyokey.core.piyodeck.UserDeckLanguage
+import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -31,6 +35,7 @@ class DeckRepositoryInstrumentedTest {
   @Before
   fun setUp() {
     File(context.filesDir, "piyokey/content").deleteRecursively()
+    File(context.filesDir, "piyokey/deck-maker").deleteRecursively()
     File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
     database = Room.inMemoryDatabaseBuilder(context, PiyokeyDatabase::class.java).build()
     repository = DeckRepository.createForTesting(context, database, clock = { now++ })
@@ -40,6 +45,7 @@ class DeckRepositoryInstrumentedTest {
   fun tearDown() {
     database.close()
     File(context.filesDir, "piyokey/content").deleteRecursively()
+    File(context.filesDir, "piyokey/deck-maker").deleteRecursively()
     File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
   }
 
@@ -103,6 +109,87 @@ class DeckRepositoryInstrumentedTest {
     }
     assertEquals(before, database.dao().installedDecks())
   }
+
+  @Test
+  fun deckMakerCreatesEditsAndClearsOnlyTheCommittedDraft() = runTest {
+    val draft = complete(UserDeckDraft.new(Instant.ofEpochMilli(now)) { "1".repeat(32) })
+    val active = repository.saveUserDeckDraft(draft)
+    val created = repository.commitUserDeckDraft(active, UserDeckLanguage.JAPANESE)
+
+    assertEquals(1, created.deck.version)
+    assertEquals("created", created.metadata.source)
+    assertEquals(null, repository.loadUserDeckDraft())
+
+    val editing = UserDeckDraft.editing(created.deck).copy(name = "편집됨")
+    val editingActive = repository.saveUserDeckDraft(editing)
+    val edited = repository.commitUserDeckDraft(editingActive, UserDeckLanguage.JAPANESE)
+    assertEquals(2, edited.deck.version)
+    assertEquals("편집됨", edited.deck.name)
+    assertEquals(created.deck.deckId, edited.deck.deckId)
+  }
+
+  @Test
+  fun editBaseVersionConflictPreservesDraftForSeparateCopy() = runTest {
+    val initialDraft = complete(UserDeckDraft.new(Instant.ofEpochMilli(now)) { "2".repeat(32) })
+    val created = repository.commitUserDeckDraft(
+      repository.saveUserDeckDraft(initialDraft),
+      UserDeckLanguage.JAPANESE,
+    )
+    val stale = repository.saveUserDeckDraft(
+      UserDeckDraft.editing(created.deck).copy(name = "보존할 변경"),
+    )
+    database.dao().upsertInstalledDeck(created.metadata.copy(version = 2))
+
+    try {
+      repository.commitUserDeckDraft(stale, UserDeckLanguage.JAPANESE)
+      throw AssertionError("stale edit was committed")
+    } catch (error: UserDeckEditCommitException.SourceChanged) {
+      assertEquals(1, error.expectedVersion)
+      assertEquals(2, error.actualVersion)
+    }
+    val recovered = requireNotNull(repository.loadUserDeckDraft())
+    assertEquals("보존할 변경", recovered.draft.name)
+    val separate = recovered.draft.asSeparateCopy(
+      Instant.ofEpochMilli(now),
+    ) { "3".repeat(32) }
+    assertTrue(separate.deckId != created.deck.deckId)
+  }
+
+  @Test
+  fun officialCopyStoresLocalProvenanceWithoutChangingExportedDeck() = runTest {
+    val official = repository.install(
+      repository.snapshot().catalog.decks.first { it.deckId == "official_daily_words" },
+    )
+    var id = 10
+    val draft = UserDeckDraft.copyingOfficial(
+      official.deck,
+      Instant.ofEpochMilli(now),
+    ) { (++id).toString(16).padStart(32, '0') }
+    val copied = repository.commitUserDeckDraft(
+      repository.saveUserDeckDraft(draft),
+      UserDeckLanguage.JAPANESE,
+    )
+
+    assertEquals(official.deck.deckId, copied.metadata.derivedFromDeckId)
+    assertFalse(copied.deck.official)
+    val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
+    val exported = PiyoDeckPackageReader.read(repository.exportUserDeck(copied.deck.deckId), schema)
+    assertEquals(copied.deck.deckId, exported.deck.deckId)
+  }
+
+  private fun complete(draft: UserDeckDraft): UserDeckDraft = draft.copy(
+    name = "내 덱",
+    authorNickname = "나",
+    tags = listOf("일상"),
+    items = draft.items.map {
+      UserDeckItemDraft(
+        id = it.id,
+        ko = "가",
+        readingJa = "カ",
+        meaningJa = "行く",
+      )
+    },
+  )
 
   private fun stageFixture(path: String): File = stageBytes(context.assets.open(path).use { it.readBytes() })
 

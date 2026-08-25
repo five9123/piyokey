@@ -495,6 +495,12 @@ fun MyDecksScreen(
   onImport: () -> Unit,
   onExport: (InstalledDeck) -> Unit,
   onExportThenDelete: (InstalledDeck) -> Unit,
+  hasDeckMakerAccess: Boolean,
+  hasActiveDraft: Boolean,
+  onNewDeck: () -> Unit,
+  onResumeDraft: () -> Unit,
+  onEditDeck: (InstalledDeck) -> Unit,
+  onCopyOfficial: (InstalledDeck) -> Unit,
   header: @Composable () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
@@ -538,18 +544,25 @@ fun MyDecksScreen(
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
     verticalArrangement = Arrangement.spacedBy(13.dp),
   ) {
-    item { header() }
     item { Text(stringResource(R.string.my_decks_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
     item {
       Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = onImport, modifier = Modifier.weight(1f).testTag("import-deck")) {
           Text(stringResource(R.string.user_deck_import))
         }
-        OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.weight(1f)) {
-          Text(stringResource(R.string.user_deck_new_locked))
+        OutlinedButton(onClick = onNewDeck, modifier = Modifier.weight(1f).testTag("new-deck")) {
+          Text(stringResource(if (hasDeckMakerAccess) R.string.user_deck_new else R.string.user_deck_new_locked))
         }
       }
     }
+    if (hasActiveDraft) {
+      item {
+        Button(onClick = onResumeDraft, modifier = Modifier.fillMaxWidth().testTag("resume-deck-draft")) {
+          Text(stringResource(R.string.deck_editor_resume_draft))
+        }
+      }
+    }
+    item { header() }
     if (installed.isEmpty()) {
       item {
         Surface(color = Color.White, shape = RoundedCornerShape(24.dp)) {
@@ -584,9 +597,18 @@ fun MyDecksScreen(
             }
             if (item.metadata.source in setOf("imported", "created")) {
               OutlinedButton(
+                onClick = { onEditDeck(item) },
+                modifier = Modifier.fillMaxWidth().testTag("edit-${item.metadata.deckId}"),
+              ) { Text(stringResource(R.string.deck_editor_edit)) }
+              OutlinedButton(
                 onClick = { onExport(item) },
                 modifier = Modifier.fillMaxWidth().testTag("export-${item.metadata.deckId}"),
               ) { Text(stringResource(R.string.user_deck_export)) }
+            } else if (item.deck.official) {
+              OutlinedButton(
+                onClick = { onCopyOfficial(item) },
+                modifier = Modifier.fillMaxWidth().testTag("copy-${item.metadata.deckId}"),
+              ) { Text(stringResource(R.string.deck_editor_copy_official)) }
             }
           }
         }

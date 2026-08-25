@@ -1343,3 +1343,15 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 세션 중 외부 문서는 staging까지만 수행하고 미리보기·충돌·오류 UI를 노출하지 않는다. Activity intent는 소비 후 원래 launch identity를 유지한 채 `MAIN`으로 중화하고 pending sidecar로 process recreation 뒤 복구해 세션 종료 후에만 제안한다.
 - 근거: 파일 선택 자체를 설치로 간주하지 않고, untrusted archive 검증과 논리 transaction을 UI보다 아래 계층에 고정해야 악성 package·중복 import·중단 복구가 기존 덱과 기록을 변경하지 않는다. 무료 재생과 유료 제작을 분리하면 F5.9의 소유권·결제 경계를 Android에서도 유지할 수 있다.
 - 영향 범위: Android Room v4, `core:data` import repository, `core:platform` SAF gateway, 마이페이지/미리보기/충돌 Compose UI, 문서 intent filter, ja/en/ko 리소스, API 35 자동 회귀와 출시 후보 QA.
+
+## 2026-08-25 Android 앱 1.1 R1.1B Deck Maker·Play Billing
+
+- 관련: PRD F5.9, §8.4, §9, §11, §13 R1.1, Issue #34.
+- 결정: Android Deck Maker는 새 덱, 가져온 사용자 덱 편집, 불변 공식 덱의 사용자 사본만 제작한다. 순수 Kotlin 초안은 새 `user_`·`item_` ID와 version 1, 편집 시 기존 ID 보존·version 증가, 공식 사본의 새 ID·version 1·`official=false`와 `derived_from_deck_id`만 기록하는 계약을 소유한다.
+- 결정: 기기당 활성 초안 하나를 앱 전용 primary/backup JSON으로 자동 저장한다. 같은 흐름은 `draft_id`를 유지해 재개하고 다른 흐름은 재개·명시적 폐기·취소 선택 전 덮어쓰지 않는다. 닫기·앱 비활성 직전에 즉시 flush하며 미래 schema와 복구 불가능한 손상본은 이전 앱이 덮어쓰거나 조용히 삭제하지 않는다.
+- 결정: 편집 commit은 Room transaction 안의 `base_version` 비교, recovery journal, 검증 payload 원자 교체, 설치 metadata 갱신 뒤 같은 `draft_id`만 정리한다. 원본이 바뀌면 현재본과 초안을 유지하고 새 ID의 별도 사용자 사본 저장을 제공한다. 1,000항목은 단일 lazy 접이식 목록으로 구성하고 검증 실패 시 첫 오류를 펼쳐 자동 이동·포커스하며 TalkBack live region으로 알린다.
+- 결정: 유료 권한은 Google Play Billing Library 9.1.0 one-time product `app.piyokey.deckmaker.lifetime`만 사용한다. eligible one-time offer를 매 구매 직전 다시 조회하고 `PURCHASED`만 권한을 열며 미확인 구매는 acknowledge한다. `PENDING`은 권한을 열거나 acknowledge하지 않고, 시작·foreground·명시적 복원에서 구매를 재조회한다.
+- 결정: 마지막 성공 `PURCHASED` 조회는 Room에 오프라인 UX cache로 남겨 재실행·일시적 오프라인에서도 제작을 이어가게 한다. 이후 성공한 빈 구매 조회는 환불·취소로 간주해 제작 mutation만 다시 잠그며 기존 덱·초안·무료 가져오기·연습·게임·내보내기·삭제는 변경하지 않는다. 자체 계정·라이선스 서버·영수증 파일은 만들지 않는다.
+- 결정: 실제 Play license tester의 구매·pending·취소·중복·복원·환불과 가격/상품 메타데이터, Galaxy의 Files·공유·편집 UX는 Issue #19의 출시 후보 통합 실기기 QA에서 한 번만 수행한다. API 35 에뮬레이터와 JVM에서는 draft 복구·충돌·Billing 상태 기계·Room v4→v5·무료/유료 화면 경계를 자동 검증한다.
+- 근거: 제작 권한과 사용자 문서 소유권을 분리하고 초안·설치 commit을 복구 가능한 transaction으로 고정하면 결제 중단·환불·프로세스 종료가 사용자의 덱이나 무료 기능을 손상시키지 않는다. 외부 Play 상태를 제외한 회귀를 자동화해 사용자가 요청한 단일 출시 직전 실기기 QA 원칙을 유지한다.
+- 영향 범위: Android Room v5, user-deck draft/editor core, DeckRepository created/edit commit, Play Billing adapter·entitlement cache, 마이페이지 paywall/editor, ja/en/ko 리소스, Source CI·API 35 회귀, 출시 후보 수동 gate.

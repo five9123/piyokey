@@ -22,7 +22,7 @@ android {
     targetSdk = 36
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     versionCode = 1
-    versionName = "0.7.0-r11a"
+    versionName = "0.8.0-r11b"
     val catalogUrl = providers.gradleProperty("PIYOKEY_CATALOG_URL").orElse("").get()
       .replace("\\", "\\\\")
       .replace("\"", "\\\"")
