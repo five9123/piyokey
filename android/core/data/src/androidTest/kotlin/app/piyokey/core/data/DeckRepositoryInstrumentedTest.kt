@@ -167,6 +167,26 @@ class DeckRepositoryInstrumentedTest {
   }
 
   @Test
+  fun allBundledGamePresetsAndSpacingPassagesMeetOfflineContracts() = runTest {
+    listOf("acid_rain", "choseong", "word_match", "dictation").forEach { mode ->
+      val presets = repository.bundledGameDecks(mode)
+      assertEquals(mode, 3, presets.size)
+      assertTrue(mode, presets.all { it.items.size == 100 })
+      assertTrue(mode, presets.all { deck -> deck.items.map { it.ko }.distinct().size == 100 })
+      if (mode == "dictation") {
+        presets.flatMap { it.items }.forEach { item ->
+          val audio = requireNotNull(item.audio) { "Bundled dictation item ${item.id} needs canonical audio" }
+          assertTrue(audio, context.assets.open(audio).use { it.readBytes().isNotEmpty() })
+        }
+      }
+    }
+    val passages = repository.bundledSpacingPassages()
+    assertEquals((1..6).toList(), passages.map { it.level })
+    assertTrue(passages.all { it.characterCount in 100..200 })
+    assertTrue(passages.last().characterCount >= 180)
+  }
+
+  @Test
   fun gameRecordsAreAppendOnlyWhileDeckProgressKeepsBestAndPlayCount() = runTest {
     val first = sampleFlowRecord(score = 800, accuracy = 92.5, playedAt = 2_000)
     val second = sampleFlowRecord(score = 500, accuracy = 98.0, playedAt = 3_000)

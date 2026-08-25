@@ -6,6 +6,8 @@ import app.piyokey.core.hangul.JamoDecomposer
 import app.piyokey.core.hangul.JamoJudgeResult
 import app.piyokey.core.hangul.JamoJudgeState
 import app.piyokey.core.hangul.JamoSequenceJudge
+import app.piyokey.core.hangul.OSIMETextJudge
+import app.piyokey.core.hangul.OSIMETextJudgeStatus
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -77,6 +79,8 @@ data class FlowGameState(
 sealed interface FlowGameEvent {
   data class Tick(val nowMillis: Long) : FlowGameEvent
   data class Key(val jamo: Char) : FlowGameEvent
+  data object Backspace : FlowGameEvent
+  data class IMEText(val committedText: String, val composingText: String?) : FlowGameEvent
   data object Pause : FlowGameEvent
   data class Resume(val nowMillis: Long, val reduceMotion: Boolean = false) : FlowGameEvent
   data object Close : FlowGameEvent
@@ -152,6 +156,8 @@ object FlowGameReducer {
   fun reduce(state: FlowGameState, event: FlowGameEvent): FlowGameReduction = when (event) {
     is FlowGameEvent.Tick -> tick(state, event.nowMillis)
     is FlowGameEvent.Key -> key(state, event.jamo)
+    FlowGameEvent.Backspace -> backspace(state)
+    is FlowGameEvent.IMEText -> ime(state, event.committedText, event.composingText)
     FlowGameEvent.Pause -> pause(state)
     is FlowGameEvent.Resume -> resume(state, event.nowMillis, event.reduceMotion)
     FlowGameEvent.Close -> FlowGameReduction(finish(state, FlowFinishReason.CLOSED))
@@ -224,24 +230,64 @@ object FlowGameReducer {
         if (!result.completed) {
           FlowGameReduction(state.copy(currentCard = updatedCard, correctJamoCount = state.correctJamoCount + 1))
         } else {
-          val nextCombo = if (updatedCard.hadMistake) 0 else state.combo + 1
-          val jamoCount = updatedCard.judge.expectedSequence.size
-          val points = (jamoCount * 10 * comboMultiplier(nextCombo)).roundToInt()
-          val completed = state.copy(
-            currentCard = updatedCard,
-            remainingTimeMillis = state.remainingTimeMillis + if (updatedCard.hadMistake) 0 else FLOW_PERFECT_BONUS_MILLIS,
-            score = state.score + points,
-            combo = nextCombo,
-            maxCombo = maxOf(state.maxCombo, nextCombo),
-            correctJamoCount = state.correctJamoCount + 1,
-            scoredJamoCount = state.scoredJamoCount + jamoCount,
-            completedItemCount = state.completedItemCount + 1,
-            feedbackRevision = state.feedbackRevision + 1,
-          )
-          FlowGameReduction(nextCard(completed), completedCard = true, newBestCandidate = true)
+          complete(state.copy(correctJamoCount = state.correctJamoCount + 1), updatedCard)
         }
       }
     }
+  }
+
+  private fun ime(state: FlowGameState, committed: String, composing: String?): FlowGameReduction {
+    if (state.phase != FlowPhase.PLAYING) return FlowGameReduction(state)
+    val evaluation = OSIMETextJudge.evaluate(state.currentCard.item.ko, committed, composing)
+    val accepted = replay(state.currentCard.item.ko, evaluation.acceptedSequence)
+    val acceptedMore = (evaluation.acceptedSequence.size - state.currentCard.judge.currentIndex).coerceAtLeast(0)
+    val updatedCard = state.currentCard.copy(judge = accepted)
+    return when (evaluation.status) {
+      is OSIMETextJudgeStatus.ConfirmedMismatch -> FlowGameReduction(
+        state.copy(
+          currentCard = updatedCard.copy(hadMistake = true),
+          combo = 0,
+          mistakeCount = state.mistakeCount + 1,
+          reviewMistakeCounts = state.reviewMistakeCounts.increment(state.currentCard.item.id),
+          feedbackRevision = state.feedbackRevision + 1,
+        ),
+      )
+      OSIMETextJudgeStatus.ComposingMismatch -> FlowGameReduction(state.copy(currentCard = updatedCard))
+      is OSIMETextJudgeStatus.Matching -> {
+        val advanced = state.copy(currentCard = updatedCard, correctJamoCount = state.correctJamoCount + acceptedMore)
+        val status = evaluation.status as OSIMETextJudgeStatus.Matching
+        if (status.completed && !status.isComposing) complete(advanced, updatedCard) else FlowGameReduction(advanced)
+      }
+    }
+  }
+
+  private fun backspace(state: FlowGameState): FlowGameReduction {
+    if (state.phase != FlowPhase.PLAYING || state.currentCard.judge.currentIndex == 0) return FlowGameReduction(state)
+    val keys = state.currentCard.judge.expectedSequence.take(state.currentCard.judge.currentIndex - 1)
+    return FlowGameReduction(state.copy(currentCard = state.currentCard.copy(judge = replay(state.currentCard.item.ko, keys))))
+  }
+
+  private fun complete(state: FlowGameState, card: FlowCard): FlowGameReduction {
+    val nextCombo = if (card.hadMistake) 0 else state.combo + 1
+    val jamoCount = card.judge.expectedSequence.size
+    val points = (jamoCount * 10 * comboMultiplier(nextCombo)).roundToInt()
+    val completed = state.copy(
+      currentCard = card,
+      remainingTimeMillis = state.remainingTimeMillis + if (card.hadMistake) 0 else FLOW_PERFECT_BONUS_MILLIS,
+      score = state.score + points,
+      combo = nextCombo,
+      maxCombo = maxOf(state.maxCombo, nextCombo),
+      scoredJamoCount = state.scoredJamoCount + jamoCount,
+      completedItemCount = state.completedItemCount + 1,
+      feedbackRevision = state.feedbackRevision + 1,
+    )
+    return FlowGameReduction(nextCard(completed), completedCard = true, newBestCandidate = true)
+  }
+
+  private fun replay(target: String, keys: List<Char>): JamoJudgeState {
+    var judge = JamoJudgeState.forTarget(target)
+    keys.forEach { judge = JamoSequenceJudge.evaluate(it, judge).state }
+    return judge
   }
 
   private fun pause(state: FlowGameState): FlowGameReduction = if (state.phase == FlowPhase.FINISHED) {

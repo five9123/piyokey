@@ -10,6 +10,8 @@ import app.piyokey.core.deckkit.DeckItemLocalization
 import app.piyokey.core.deckkit.DeckKitJson
 import app.piyokey.core.game.FlowGameRecord
 import app.piyokey.core.game.FlowRankTuning
+import app.piyokey.core.game.GameSessionRecord
+import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.retention.CurriculumPolicy
 import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.RetentionActivity
@@ -236,13 +238,36 @@ class DeckRepository private constructor(
     FLOW_PRESET_PATHS.map { path -> decodeDeck(readAssetBytes(path)) }
   }
 
+  suspend fun bundledGameDecks(mode: String): List<Deck> = withContext(Dispatchers.IO) {
+    val paths = GAME_PRESET_PATHS[mode] ?: error("Unsupported bundled game mode: $mode")
+    paths.map { path -> decodeDeck(readAssetBytes(path)) }
+  }
+
+  suspend fun bundledSpacingPassages(): List<SpacingPassage> = withContext(Dispatchers.IO) {
+    val root = tagsJson.parseToJsonElement(readAssetBytes(SPACING_PASSAGES_PATH).toString(StandardCharsets.UTF_8)).jsonObject
+    require(root.getValue("schema_version").jsonPrimitive.int == 1) { "Unsupported spacing passage schema" }
+    root.getValue("passages").jsonArray.map { element ->
+      val passage = element.jsonObject
+      SpacingPassage(
+        id = passage.getValue("id").jsonPrimitive.content,
+        level = passage.getValue("level").jsonPrimitive.int,
+        text = passage.getValue("text").jsonPrimitive.content,
+      )
+    }.also { passages ->
+      require(passages.map(SpacingPassage::level) == (1..6).toList()) { "Spacing passages must contain ordered levels 1 through 6" }
+      require(passages.all { it.characterCount in 100..200 }) { "Spacing passages must contain 100 to 200 characters" }
+      require(passages.last().characterCount >= 180) { "Spacing level 6 must contain at least 180 characters" }
+    }
+  }
+
   suspend fun saveFlowRecord(
     record: FlowGameRecord,
     deckItems: List<DeckItem> = emptyList(),
     reviewMistakeCounts: Map<String, Int> = emptyMap(),
+    inputMode: String = INPUT_MODE_BUILTIN,
   ): SavedGameResult = withContext(Dispatchers.IO) {
     database.withTransaction {
-      val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
+      val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, inputMode)
       val isNewBest = previous == null || record.score > previous.bestScore
       dao.insertGameRecord(
         GameRecordEntity(
@@ -253,7 +278,7 @@ class DeckRepository private constructor(
           score = record.score,
           maxCombo = record.maxCombo,
           accuracyPercent = record.accuracyPercent,
-          inputMode = INPUT_MODE_BUILTIN,
+          inputMode = inputMode,
           correctJamoCount = record.correctJamoCount,
           charactersPerMinute = record.charactersPerMinute,
           mistakeCount = record.mistakeCount,
@@ -266,7 +291,7 @@ class DeckRepository private constructor(
       val progress = DeckProgressEntity(
         deckId = record.deckId,
         mode = GAME_MODE_FLOW,
-        inputMode = INPUT_MODE_BUILTIN,
+        inputMode = inputMode,
         plays = (previous?.plays ?: 0) + 1,
         bestScore = maxOf(previous?.bestScore ?: 0, record.score),
         bestAccuracyPercent = maxOf(previous?.bestAccuracyPercent ?: 0.0, record.accuracyPercent),
@@ -292,8 +317,62 @@ class DeckRepository private constructor(
     }
   }
 
-  suspend fun flowProgress(deckId: String): DeckProgressEntity? = withContext(Dispatchers.IO) {
-    dao.deckProgress(deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
+  suspend fun flowProgress(deckId: String, inputMode: String = INPUT_MODE_BUILTIN): DeckProgressEntity? = withContext(Dispatchers.IO) {
+    dao.deckProgress(deckId, GAME_MODE_FLOW, inputMode)
+  }
+
+  suspend fun saveGameRecord(
+    record: GameSessionRecord,
+    deckItems: List<DeckItem> = emptyList(),
+    reviewMistakeCounts: Map<String, Int> = emptyMap(),
+  ): SavedGameResult = withContext(Dispatchers.IO) {
+    database.withTransaction {
+      val previous = dao.deckProgress(record.deckId, record.mode, record.inputMode)
+      val isNewBest = previous == null || record.score > previous.bestScore
+      dao.insertGameRecord(
+        GameRecordEntity(
+          recordId = UUID.randomUUID().toString(),
+          mode = record.mode,
+          deckId = record.deckId,
+          course = record.course,
+          score = record.score,
+          maxCombo = record.maxCombo,
+          accuracyPercent = record.accuracyPercent,
+          inputMode = record.inputMode,
+          correctJamoCount = record.correctJamoCount,
+          charactersPerMinute = record.ratePerMinute,
+          mistakeCount = record.mistakeCount,
+          completedItemCount = record.completedItemCount,
+          missedItemCount = record.missedItemCount,
+          playDurationMillis = record.playDurationMillis,
+          playedAtEpochMillis = record.playedAtEpochMillis,
+        ),
+      )
+      val progress = DeckProgressEntity(
+        deckId = record.deckId,
+        mode = record.mode,
+        inputMode = record.inputMode,
+        plays = (previous?.plays ?: 0) + 1,
+        bestScore = maxOf(previous?.bestScore ?: 0, record.score),
+        bestAccuracyPercent = maxOf(previous?.bestAccuracyPercent ?: 0.0, record.accuracyPercent),
+        lastPlayedAtEpochMillis = record.playedAtEpochMillis,
+      )
+      dao.upsertDeckProgress(progress)
+      val itemsById = deckItems.associateBy(DeckItem::id)
+      reviewMistakeCounts.forEach { (itemId, count) ->
+        val item = itemsById[itemId] ?: return@forEach
+        val reviewId = "${record.deckId}::$itemId"
+        var review = dao.reviewItem(reviewId)?.toModel()
+        repeat(count.coerceAtLeast(1)) { review = ReviewPolicy.recordMistake(review, item, record.deckId, record.playedAtEpochMillis).item }
+        review?.let { dao.upsertReviewItem(it.toEntity()) }
+      }
+      recordActivityInTransaction(JstDay.fromEpochMillis(record.playedAtEpochMillis), RetentionActivity.GAME, record.playedAtEpochMillis)
+      SavedGameResult(progress, isNewBest)
+    }
+  }
+
+  suspend fun gameProgress(mode: String, deckId: String, inputMode: String): DeckProgressEntity? = withContext(Dispatchers.IO) {
+    dao.deckProgress(deckId, mode, inputMode)
   }
 
   suspend fun learningSnapshot(): LearningSnapshot = withContext(Dispatchers.IO) {
@@ -721,6 +800,30 @@ class DeckRepository private constructor(
       "decks/flow/flow_topik_beginner_v3.json",
       "decks/flow/flow_topik_intermediate_v3.json",
       "decks/flow/flow_topik_advanced_v3.json",
+    )
+    private const val SPACING_PASSAGES_PATH = "spacing_passages.json"
+    private val GAME_PRESET_PATHS = mapOf(
+      "flow" to FLOW_PRESET_PATHS,
+      "acid_rain" to listOf(
+        "decks/acid_rain/acid_rain_topik_beginner_v3.json",
+        "decks/acid_rain/acid_rain_topik_intermediate_v3.json",
+        "decks/acid_rain/acid_rain_topik_advanced_v3.json",
+      ),
+      "choseong" to listOf(
+        "decks/choseong/choseong_topik_beginner_v3.json",
+        "decks/choseong/choseong_topik_intermediate_v3.json",
+        "decks/choseong/choseong_topik_advanced_v3.json",
+      ),
+      "word_match" to listOf(
+        "decks/word_match/word_match_topik_beginner_v3.json",
+        "decks/word_match/word_match_topik_intermediate_v3.json",
+        "decks/word_match/word_match_topik_advanced_v3.json",
+      ),
+      "dictation" to listOf(
+        "decks/dictation/dictation_topik_beginner_v3.json",
+        "decks/dictation/dictation_topik_intermediate_v3.json",
+        "decks/dictation/dictation_topik_advanced_v3.json",
+      ),
     )
 
     fun create(

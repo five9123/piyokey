@@ -7,6 +7,7 @@ import org.junit.rules.ExternalResource
 class TestAppStateRule(
   private val skipOnboarding: Boolean,
   private val freshInstall: Boolean = false,
+  private val forceOSIME: Boolean = false,
 ) : ExternalResource() {
   override fun before() {
     val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -18,6 +19,7 @@ class TestAppStateRule(
       .edit()
       .putBoolean("skip_onboarding", skipOnboarding)
       .putBoolean("fresh_onboarding", freshInstall)
+      .putBoolean("force_os_ime", forceOSIME)
       .commit()
   }
 }

@@ -104,6 +104,24 @@ class FlowGameReducerTest {
     assertEquals(initial, reduce(initial, FlowGameEvent.Key('ㄴ')))
   }
 
+  @Test fun osImeIgnoresMarkedMismatchAndCompletesConfirmedTarget() {
+    var state = playing()
+    state = reduce(state, FlowGameEvent.IMEText("", "틀"))
+    assertEquals(0, state.mistakeCount)
+    val target = state.currentCard.item.ko
+    state = reduce(state, FlowGameEvent.IMEText(target, null))
+    assertEquals(1, state.completedItemCount)
+    assertEquals(1, state.combo)
+  }
+
+  @Test fun flowBackspaceRestoresPreviousAcceptedJamo() {
+    var state = playing()
+    state = reduce(state, FlowGameEvent.Key(state.currentCard.judge.expectedSequence.first()))
+    assertEquals(1, state.currentCard.judge.currentIndex)
+    state = reduce(state, FlowGameEvent.Backspace)
+    assertEquals(0, state.currentCard.judge.currentIndex)
+  }
+
   @Test fun rankTuningMatchesSharedAccuracyAndSpeedContract() {
     val tuning = FlowRankTuning()
     assertEquals("S", tuning.rank(100.0, 120.0))
