@@ -29,8 +29,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -70,6 +75,9 @@ import app.piyokey.core.session.PracticeSessionReducer
 import app.piyokey.core.session.PracticeSessionState
 import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.session.TargetSyllableState
+import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.PracticePromptField
+import app.piyokey.core.settings.PracticePromptOrder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -77,13 +85,35 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+data class PracticePrompt(
+  val target: String,
+  val meaning: String? = null,
+  val reading: String? = null,
+)
+
+data class PracticeDisplayOptions(
+  val showsTarget: Boolean = true,
+  val showsMeaning: Boolean = true,
+  val showsReading: Boolean = false,
+  val promptOrder: PracticePromptOrder = PracticePromptOrder.TARGET_MEANING_READING,
+  val showsJamo: Boolean = true,
+  val showsComposition: Boolean = true,
+  val showsMascot: Boolean = true,
+)
+
 /** Self-contained M2 entry point used by the Android app shell. */
 @Composable
 fun PracticeRoute(
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
   targets: List<String>? = null,
+  prompts: List<PracticePrompt>? = null,
   initialCheckpoint: PracticeSessionCheckpoint? = null,
+  inputMode: InputMode = InputMode.BUILTIN,
+  inputModeLocked: Boolean = false,
+  onInputModeChange: (InputMode) -> Unit = {},
+  onOpenIMEHelp: () -> Unit = {},
+  displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
   onCheckpointChanged: (PracticeSessionCheckpoint) -> Unit = {},
   onSessionCompleted: (PracticeSessionState, activeDurationMillis: Long) -> Unit = { _, _ -> },
 ) {
@@ -93,6 +123,9 @@ fun PracticeRoute(
     stringResource(R.string.practice_sample_target_3),
   )
   val resolvedTargets = targets?.takeIf(List<String>::isNotEmpty) ?: sampleTargets
+  val resolvedPrompts = prompts
+    ?.takeIf { it.size == resolvedTargets.size && it.map(PracticePrompt::target) == resolvedTargets }
+    ?: resolvedTargets.map(::PracticePrompt)
   var state by remember(resolvedTargets, initialCheckpoint) {
     mutableStateOf(
       initialCheckpoint?.let { PracticeSessionReducer.restoreState(resolvedTargets, it) }
@@ -162,6 +195,12 @@ fun PracticeRoute(
     state = state,
     onEvent = dispatch,
     keyboardOptions = keyboardOptions,
+    prompts = resolvedPrompts,
+    inputMode = inputMode,
+    inputModeLocked = inputModeLocked,
+    onInputModeChange = onInputModeChange,
+    onOpenIMEHelp = onOpenIMEHelp,
+    displayOptions = displayOptions,
     modifier = modifier,
   )
 }
@@ -172,6 +211,12 @@ fun PracticeScreen(
   onEvent: (PracticeSessionEvent) -> Unit,
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
+  prompts: List<PracticePrompt> = state.targets.map(::PracticePrompt),
+  inputMode: InputMode = InputMode.BUILTIN,
+  inputModeLocked: Boolean = false,
+  onInputModeChange: (InputMode) -> Unit = {},
+  onOpenIMEHelp: () -> Unit = {},
+  displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
 ) {
   val shake = remember { Animatable(0f) }
   val errorFlash = remember { Animatable(0f) }
@@ -257,7 +302,11 @@ fun PracticeScreen(
       .windowInsetsPadding(WindowInsets.safeDrawing),
   ) {
     Column(Modifier.fillMaxSize()) {
-      PracticeProgressHeader(state)
+      PracticeProgressHeader(state, inputMode, inputModeLocked, onInputModeChange)
+
+      if (inputMode == InputMode.OS_IME && !hasKoreanInputMethod(LocalContext.current)) {
+        IMEGuidanceBanner(onOpenIMEHelp)
+      }
 
       Column(
         modifier = Modifier
@@ -268,23 +317,35 @@ fun PracticeScreen(
       ) {
         TargetCard(
           state = state,
+          prompt = prompts.getOrElse(state.currentTargetIndex) { PracticePrompt(state.currentTarget) },
+          displayOptions = displayOptions,
           errorFlash = errorFlash.value,
           shakeOffset = shake.value,
         )
-        CompositionCard(
-          state = state,
-          assemblyScale = compositionScale.value,
-          joinProgress = joinProgress.value,
-          completionProgress = completionProgress.value,
-        )
+        if (displayOptions.showsComposition || displayOptions.showsMascot) {
+          CompositionCard(
+            state = state,
+            assemblyScale = compositionScale.value,
+            joinProgress = joinProgress.value,
+            completionProgress = completionProgress.value,
+          )
+        }
       }
 
-      DubeolsikKeyboard(
-        nextExpectedJamo = state.nextExpected,
-        onJamo = { onEvent(PracticeSessionEvent.Key(it)) },
-        onBackspace = { onEvent(PracticeSessionEvent.Backspace) },
-        options = keyboardOptions,
-      )
+      if (inputMode == InputMode.BUILTIN) {
+        DubeolsikKeyboard(
+          nextExpectedJamo = state.nextExpected,
+          onJamo = { onEvent(PracticeSessionEvent.Key(it)) },
+          onBackspace = { onEvent(PracticeSessionEvent.Backspace) },
+          options = keyboardOptions,
+        )
+      } else {
+        OSIMEInput(
+          visibleText = state.enteredText,
+          onEvent = onEvent,
+          modifier = Modifier.fillMaxWidth().height(1.dp),
+        )
+      }
     }
 
     CompletionSparkles(
@@ -303,7 +364,12 @@ fun PracticeScreen(
 }
 
 @Composable
-private fun PracticeProgressHeader(state: PracticeSessionState) {
+private fun PracticeProgressHeader(
+  state: PracticeSessionState,
+  inputMode: InputMode,
+  inputModeLocked: Boolean,
+  onInputModeChange: (InputMode) -> Unit,
+) {
   val totalJamoCount = state.targetJamoCounts.sum().coerceAtLeast(1)
   val progress = state.acceptedJamoCount.toFloat() / totalJamoCount.toFloat()
   val progressLabel = stringResource(
@@ -312,6 +378,7 @@ private fun PracticeProgressHeader(state: PracticeSessionState) {
     state.targets.size,
   )
 
+  var menuOpen by remember { mutableStateOf(false) }
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -344,12 +411,47 @@ private fun PracticeProgressHeader(state: PracticeSessionState) {
       fontSize = 13.sp,
       fontWeight = FontWeight.Bold,
     )
+    Box {
+      TextButton(
+        onClick = { if (!inputModeLocked) menuOpen = true },
+        enabled = !inputModeLocked,
+        modifier = Modifier.testTag("practice-input-mode"),
+      ) {
+        Text(if (inputMode == InputMode.BUILTIN) stringResource(R.string.practice_input_builtin_short) else stringResource(R.string.practice_input_os_short))
+      }
+      DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.practice_input_builtin)) },
+          onClick = { menuOpen = false; onInputModeChange(InputMode.BUILTIN) },
+        )
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.practice_input_os)) },
+          onClick = { menuOpen = false; onInputModeChange(InputMode.OS_IME) },
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun IMEGuidanceBanner(onOpenHelp: () -> Unit) {
+  Surface(
+    modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag("practice-ime-guidance"),
+    color = PracticeColors.AccentSoft.copy(alpha = 0.25f),
+    shape = RoundedCornerShape(14.dp),
+  ) {
+    Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+      Text(stringResource(R.string.practice_ime_missing), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
+      TextButton(onClick = onOpenHelp) { Text(stringResource(R.string.practice_ime_open_settings)) }
+    }
   }
 }
 
 @Composable
 private fun TargetCard(
   state: PracticeSessionState,
+  prompt: PracticePrompt,
+  displayOptions: PracticeDisplayOptions,
   errorFlash: Float,
   shakeOffset: Float,
 ) {
@@ -380,8 +482,20 @@ private fun TargetCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(13.dp),
       ) {
-        TargetSyllableTrack(state)
-        JamoProgressTrack(state)
+        displayOptions.promptOrder.fields.forEach { field ->
+          when (field) {
+            PracticePromptField.TARGET -> if (displayOptions.showsTarget) TargetSyllableTrack(state)
+            PracticePromptField.MEANING -> if (displayOptions.showsMeaning && !prompt.meaning.isNullOrBlank()) {
+              Surface(color = Color(0xFFEAF7FF), shape = RoundedCornerShape(99.dp)) {
+                Text(prompt.meaning, Modifier.padding(horizontal = 12.dp, vertical = 7.dp), fontWeight = FontWeight.SemiBold)
+              }
+            }
+            PracticePromptField.READING -> if (displayOptions.showsReading && !prompt.reading.isNullOrBlank()) {
+              Text(prompt.reading, color = PracticeColors.MutedInk.copy(alpha = 0.68f), fontWeight = FontWeight.Medium)
+            }
+          }
+        }
+        if (displayOptions.showsJamo) JamoProgressTrack(state)
       }
       Box(
         Modifier

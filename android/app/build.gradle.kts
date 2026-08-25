@@ -13,7 +13,7 @@ android {
     targetSdk = 36
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     versionCode = 1
-    versionName = "0.5.0-m5"
+    versionName = "0.6.0-m6a"
     val catalogUrl = providers.gradleProperty("PIYOKEY_CATALOG_URL").orElse("").get()
       .replace("\\", "\\\\")
       .replace("\"", "\\\"")
@@ -48,13 +48,18 @@ dependencies {
   implementation(project(":core:game"))
   implementation(project(":core:retention"))
   implementation(project(":core:platform"))
+  implementation(project(":core:settings"))
   implementation(project(":feature:discover"))
   implementation(project(":feature:game"))
   implementation(project(":feature:practice"))
   implementation(project(":feature:retention"))
+  implementation(project(":feature:onboarding"))
+  implementation(project(":feature:settings"))
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.core.ktx)
+  implementation(libs.androidx.appcompat)
+  implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.compose.ui.tooling.preview)

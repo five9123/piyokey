@@ -11,11 +11,14 @@ import androidx.compose.ui.test.performClick
 import java.io.File
 import java.io.FileOutputStream
 import org.junit.Rule
+import org.junit.rules.RuleChain
 import org.junit.Test
 
 class M3DiscoveryFlowInstrumentedTest {
-  @get:Rule
   val composeRule = createAndroidComposeRule<MainActivity>()
+
+  @get:Rule
+  val rules: RuleChain = RuleChain.outerRule(TestAppStateRule(skipOnboarding = true)).around(composeRule)
 
   @Test
   fun bundledDeckCanBeDiscoveredInstalledAndPlayedOffline() {

@@ -1302,3 +1302,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: iOS M5와 같은 학습 결과를 순수 정책으로 고정하면서 Android lifecycle·notification 차이는 platform adapter로 격리하면 실기기 반복 없이 JVM/Room/API 35에서 날짜·복구·졸업·migration을 먼저 닫을 수 있다. 실제 알림 수신과 입력/프레임 정량 측정은 사용자가 지정한 출시 후보 통합 QA에 유지한다.
 - 관련 PRD 섹션: F4, F5.6, F7, F8, F12, §9, §13 M5·M7
 - 영향 범위: `core:retention`, `core:session`, Room schema v3, 흐름 복습 수집, Compose 홈/연습/마이페이지, Android notification/boot adapter, M5 CI·출시 gate
+
+## 2026-08-25 Android M7 M6A 온보딩·설정·OS IME 기반
+- 결정: M6의 첫 병합 단위를 F1 온보딩, F2a 연습 OS IME, F10 공통 설정으로 제한한다. 새 사용자는 목표·신뢰 안내와 두벌식 소개 뒤 네 번째 탭 이내에 실제 `ㄱ` 입력을 시작하고 `가`를 완성한 뒤 챕터1~3 부화 미션을 순서대로 완료한다. 소개 스킵은 PRD대로 설명과 첫 입력만 건너뛰고 부화 gate는 유지한다. 기존 Room DB가 있던 사용자는 1회 마이그레이션으로 온보딩을 완료 처리한다.
+- 결정: 작은 설정과 온보딩 진행은 Preferences DataStore가 소유한다. ja/en/ko, light/dark, 글자 크기 3단계, 효과음·타건음·햅틱, 로마자·가이드, 기본 입력 방식, 연습 표시 preset·개별 필드·6가지 순서, 자동 발음과 초성 뜻을 모든 탭의 공통 설정 시트에서 즉시 반영하고 영속화한다. 리마인더 권한은 사용자가 ON으로 바꿀 때만 요청한다.
+- 결정: Android OS IME는 투명한 표준 `EditText` adapter가 composing span을 committed text와 분리하고 순수 `OSIMETextJudge`에 전달한다. composing 불일치는 무시하고 확정 불일치만 오타로 기록하며 입력 방식 변경은 reducer 상태를 재생성하지 않는다. 부화 미션·챕터1~4는 내장 고정, 챕터5+·자유/덱/데일리/복습은 OS IME를 허용한다. 한국어 IME 미감지는 안내일 뿐 hard block하지 않고 시스템 설정은 사용자 탭으로만 연다.
+- 결정: Debug instrumented 회귀는 명시적 test-only preference로 새 사용자 또는 기존 사용자 시작 상태를 격리한다. Release에서는 `BuildConfig.DEBUG`가 false라 이 우회가 비활성이다. API 35에서 M3~M6 앱 10개 시나리오와 관련 JVM 41개, lint, Debug·Release APK를 자동 gate로 사용하고 실제 IME 종류·입력 지연·물리 rollover는 Issue #19 통합 QA에 남긴다.
+- 근거: 온보딩과 설정을 앱 전역 상태로 먼저 고정하면 이후 오디오·게임·캐릭터가 같은 사용자 선택을 재사용할 수 있고, OS IME의 조합 중 흔들림을 순수 판정기로 격리하면 제조사 키보드 차이를 UI reducer에 퍼뜨리지 않는다.
+- 관련 PRD 섹션: F1, F2a, F8, F10, §6.3, §7.2, §9, §12, §13 M6·M7
+- 영향 범위: Android app shell, `core:settings`, `core:session`, practice/onboarding/settings features, ja/en/ko resources, source CI, 출시 후보 실기기 gate
