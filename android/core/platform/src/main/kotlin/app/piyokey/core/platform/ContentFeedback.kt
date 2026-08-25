@@ -65,7 +65,10 @@ object ContentFeedbackComposer {
   }
 }
 
-class ContentFeedbackController(private val context: Context) {
+class ContentFeedbackController(
+  private val context: Context,
+  private val supportUrl: String = DEFAULT_SUPPORT_URL,
+) {
   fun open(request: ContentFeedbackRequest): Boolean {
     val message = ContentFeedbackComposer.compose(request, localizedCopy())
     val mailUri = Uri.parse("mailto:$CONTACT_ADDRESS").buildUpon()
@@ -83,7 +86,7 @@ class ContentFeedbackController(private val context: Context) {
     }
     return try {
       context.startActivity(
-        Intent(Intent.ACTION_VIEW, Uri.parse(SUPPORT_URL)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        Intent(Intent.ACTION_VIEW, Uri.parse(supportUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
       )
       true
     } catch (_: ActivityNotFoundException) {
@@ -110,6 +113,6 @@ class ContentFeedbackController(private val context: Context) {
 
   companion object {
     const val CONTACT_ADDRESS: String = "contact@typee.app"
-    const val SUPPORT_URL: String = "https://hancoweb.vercel.app/support"
+    const val DEFAULT_SUPPORT_URL: String = "https://hancoweb.vercel.app/support"
   }
 }

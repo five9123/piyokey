@@ -1367,3 +1367,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 실제 Play Console 프로젝트/OAuth, 15개 보드·5개 업적 리소스 생성, license tester 로그인·서버 점수·대시보드 확인은 Issue #19의 단일 출시 후보 실기기 QA에 유지한다. 자동 gate는 순수 매핑·가짜 gateway, Room v5→v6/outbox/업적, API 35 결과 UI, 전체 Source CI와 Debug/Release 빌드를 사용한다.
 - 근거: 로컬 진행을 외부 서비스보다 먼저 확정하고 동기화 가능 범위를 exact ID 정책으로 닫으면 인증·오프라인·Play 장애가 플레이와 보상을 막지 않는다. 외부 콘솔 값과 실제 계정만 마지막 통합 QA에 남겨 사용자의 실기기 1회 원칙을 유지할 수 있다.
 - 영향 범위: `core:game` Play Games policy, Room v6, `core:platform` v2 adapter/sync manager, 결과 화면·앱 startup, 외부 release properties, Source CI, 최종 Play Console/실기기 gate.
+
+## 2026-08-25 Android 1.1 배포 번들·출시 사전검증 계약
+
+- 관련: PRD §12·§12.1·§13 M7·R1.1·§14, Issue #40.
+- 결정: Android 소스 후보는 `1.1.0 (8)`, minSdk 26, targetSdk 36으로 고정하고 Release에 R8과 resource shrinking을 적용한다. 일반 로컬·CI는 비밀값 없이 minified unsigned APK와 AAB, merged manifest 계약을 계속 검증하며 이 산출물을 배포용으로 사용하지 않는다.
+- 결정: 실제 Play 배포는 `bundleDistributionRelease --no-configuration-cache`만 사용한다. 최종 application ID의 명시적 동일값 확인, 공개 HTTPS catalog/privacy/support, 콘텐츠·고정 발음 권리 승인, 존재하는 upload keystore와 네 서명값, Play Games project ID·20개 고유 resource ID 중 하나라도 없거나 형식이 맞지 않으면 AAB task보다 먼저 key 이름만 표시하고 실패한다.
+- 결정: upload signing 값은 저장소에 넣지 않고 private Gradle property 또는 같은 이름의 환경값으로만 주입한다. store path가 설정된 상태에서 configuration cache가 켜져 있으면 password provider를 읽기 전에 configuration 단계에서 실패시켜 서명 비밀이 cache에 직렬화되지 않게 한다. 실제 값은 로그·Issue·PR 증빙에 출력하지 않는다.
+- 결정: Release merged manifest는 `debuggable=true`를 금지하고 로컬-only 사용자 덱을 위해 `allowBackup=false`를 요구하며 cleartext opt-in을 금지한다. privacy/support URL은 현재 공개 200 응답을 확인했지만, 공개 static catalog·application ID 소유권·upload identity·Play Console 상품·랭킹·업적과 `content_rights_confirmed`는 소스 구현으로 대신하지 않는다.
+- 결정: 최종 스택 head의 GitHub Source CI는 계정 결제·Actions 지출 한도로 checkout 전에 거부되었으므로 원격 green으로 간주하지 않는다. 같은 head의 로컬 Source CI-equivalent 959 tasks, API 35 앱 계측 31/31, Python 56/56, Swift 42/42를 구현 증빙으로 유지하고 계정 제한 해제 뒤 원격 CI를 다시 실행한다.
+- 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
+- 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.

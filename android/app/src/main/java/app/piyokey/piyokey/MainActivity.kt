@@ -433,7 +433,7 @@ private fun PiyokeyApp(
   val reminderScheduler = remember { DailyReminderScheduler(context) }
   var pendingReminderEnable by remember { mutableStateOf(false) }
   val documentGateway = remember { PiyoDeckDocumentGateway(context) }
-  val feedbackController = remember(context) { ContentFeedbackController(context) }
+  val feedbackController = remember(context) { ContentFeedbackController(context, BuildConfig.SUPPORT_URL) }
   var userDeckImport by remember { mutableStateOf<UserDeckImportUiState?>(null) }
   var pendingUserDeckExport by remember { mutableStateOf<PendingUserDeckExport?>(null) }
   var storedDeckDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
@@ -1934,7 +1934,7 @@ private fun PiyokeyApp(
       },
       onOpenPrivacy = {
         context.startActivity(
-          Intent(Intent.ACTION_VIEW, Uri.parse("https://hancoweb.vercel.app/privacy"))
+          Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
       },
@@ -1951,7 +1951,7 @@ private fun PiyokeyApp(
       },
       onOpenSupport = {
         context.startActivity(
-          Intent(Intent.ACTION_VIEW, Uri.parse("https://hancoweb.vercel.app/support"))
+          Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.SUPPORT_URL))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
       },

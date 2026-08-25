@@ -44,7 +44,7 @@ jobs:
         run: swift test
 
   android-contracts:
-    name: Android M6D/R1.1B contracts and build
+    name: Android M6D/R1.1C release contracts and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
             android/**/*.gradle.kts
             android/gradle/libs.versions.toml
             android/gradle/wrapper/gradle-wrapper.properties
-      - name: Run Android M1-M6D/R1.1B contracts, UI checks, lint, and build
+      - name: Run Android M1-M6D/R1.1C contracts, UI checks, lint, APK, and AAB
         working-directory: android
         run: >-
           ./gradlew
@@ -85,6 +85,8 @@ jobs:
           :app:lintDebug
           :app:assembleDebug
           :app:assembleRelease
+          :app:bundleRelease
+          :app:verifyReleaseManifestContract
           --no-daemon
 
   ios-build:
