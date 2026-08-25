@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import java.util.Locale
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +71,9 @@ class AppPreferencesStore private constructor(
     hatchChaptersCompleted = (preferences[Keys.hatchChaptersCompleted] ?: 0).coerceIn(0, 3),
     pendingHatchResultChapter = (preferences[Keys.pendingHatchResultChapter] ?: 0).coerceIn(0, 3),
     piyoNickname = preferences[Keys.piyoNickname].orEmpty(),
+    selectedPiyoAccessory = enumValue(preferences[Keys.selectedPiyoAccessory], PiyoAccessory.AUTO),
+    unlockedPiyoAccessories = preferences[Keys.unlockedPiyoAccessories].orEmpty()
+      .mapNotNull { enumValueOrNull<PiyoAccessory>(it) }.toSet(),
     appTourCompleted = preferences[Keys.appTourCompleted] ?: false,
     onboardingMigrationChecked = preferences[Keys.onboardingMigrationChecked] ?: false,
   )
@@ -103,6 +107,8 @@ class AppPreferencesStore private constructor(
     preferences[Keys.hatchChaptersCompleted] = value.hatchChaptersCompleted
     preferences[Keys.pendingHatchResultChapter] = value.pendingHatchResultChapter
     preferences[Keys.piyoNickname] = value.piyoNickname
+    preferences[Keys.selectedPiyoAccessory] = value.selectedPiyoAccessory.name
+    preferences[Keys.unlockedPiyoAccessories] = value.unlockedPiyoAccessories.mapTo(mutableSetOf()) { it.name }
     preferences[Keys.appTourCompleted] = value.appTourCompleted
     preferences[Keys.onboardingMigrationChecked] = value.onboardingMigrationChecked
   }
@@ -142,6 +148,8 @@ class AppPreferencesStore private constructor(
     val hatchChaptersCompleted = intPreferencesKey("onboarding.hatch_chapters_completed")
     val pendingHatchResultChapter = intPreferencesKey("onboarding.pending_hatch_result_chapter")
     val piyoNickname = stringPreferencesKey("onboarding.piyo_nickname")
+    val selectedPiyoAccessory = stringPreferencesKey("piyo.selected_accessory")
+    val unlockedPiyoAccessories = stringSetPreferencesKey("piyo.unlocked_accessories")
     val appTourCompleted = booleanPreferencesKey("onboarding.app_tour_completed")
     val onboardingMigrationChecked = booleanPreferencesKey("onboarding.migration_checked")
   }

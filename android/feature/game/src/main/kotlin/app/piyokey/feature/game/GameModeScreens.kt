@@ -1,8 +1,13 @@
 package app.piyokey.feature.game
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.os.SystemClock
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -85,6 +90,16 @@ import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.TypingRoundBuilder
 import app.piyokey.core.hangul.HangulComposer
 import app.piyokey.core.hangul.JamoDecomposer
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.platform.PiyokeySoundEngine
+import app.piyokey.core.platform.PronunciationPlayer
+import app.piyokey.core.platform.SoundCue
+import app.piyokey.core.platform.ResultShareController
+import app.piyokey.core.platform.ResultShareModel
+import app.piyokey.core.platform.ResultShareRenderer
+import app.piyokey.core.settings.KeySoundStyle
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.feature.practice.DubeolsikKeyboard
 import app.piyokey.feature.practice.KoreanIMEInput
 import app.piyokey.feature.practice.PracticeKeyboardOptions
@@ -111,7 +126,7 @@ fun GameDeckSelectionScreen(
   BackHandler(onBack = onBack)
   val language = LocalConfiguration.current.locales[0].language
   LazyColumn(
-    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF8F3)).testTag("game-select-${kind.route}"),
+    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("game-select-${kind.route}"),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
@@ -128,7 +143,7 @@ fun GameDeckSelectionScreen(
         if (row.size == 1) {
           Card(
             modifier = Modifier.weight(1f).height(136.dp).clickable(onClick = onFindDeck).testTag("game-find-deck"),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           ) {
             Box(Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.Center) {
               Text(stringResource(R.string.find_deck), textAlign = TextAlign.Center, fontWeight = FontWeight.Black, color = GameLavender)
@@ -141,7 +156,7 @@ fun GameDeckSelectionScreen(
       if (installed.isNotEmpty()) Text(stringResource(R.string.added_decks), fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 14.dp))
     }
     items(installed, key = Deck::deckId) { deck ->
-      Card(Modifier.fillMaxWidth().clickable { onSelect(deck) }, colors = CardDefaults.cardColors(containerColor = Color.White)) {
+      Card(Modifier.fillMaxWidth().clickable { onSelect(deck) }, colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
           Text(deck.localizedName(language) ?: deck.deckId, Modifier.weight(1f), fontWeight = FontWeight.Black)
           Text(stringResource(R.string.words_count, deck.items.size), color = Color.Gray)
@@ -163,7 +178,7 @@ private fun GameDeckGridCard(
   Card(
     modifier = modifier.height(136.dp).clickable { onSelect(deck) }
       .testTag(if (kind == GameKind.FLOW) "flow-deck-${deck.deckId}" else "game-deck-${deck.deckId}"),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     Column(Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Surface(shape = CircleShape, color = GamePink.copy(alpha = 0.14f), modifier = Modifier.size(36.dp)) {
@@ -182,6 +197,10 @@ fun TypingGameRoute(
   deck: Deck,
   useOSIME: Boolean,
   showChoseongMeaning: Boolean,
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  hapticsEnabled: Boolean = true,
   seed: Long = Random.nextLong(),
   onClose: () -> Unit,
   onFinished: (TypingGameState) -> Unit,
@@ -198,15 +217,31 @@ fun TypingGameRoute(
   var state by remember(deck.deckId, seed, mode) { mutableStateOf(TypingGameFactory.create(mode, rounds, SystemClock.elapsedRealtime())) }
   val lifecycleOwner = LocalLifecycleOwner.current
   val context = LocalContext.current
-  val player = remember { OfflinePromptPlayer(context.assets) }
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+  val player = remember { PronunciationPlayer(context, soundEngine::setSuppressed) }
 
-  fun dispatch(event: TypingGameEvent) { state = TypingGameReducer.reduce(state, event) }
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
+
+  fun dispatch(event: TypingGameEvent) {
+    val previous = state
+    val next = TypingGameReducer.reduce(state, event)
+    if (soundEffectsEnabled) {
+      when {
+        next.mistakeCount > previous.mistakeCount -> soundEngine.play(SoundCue.MISTAKE, keySoundStyle)
+        next.completedItemCount > previous.completedItemCount -> soundEngine.play(SoundCue.CORRECT, keySoundStyle)
+        event is TypingGameEvent.Backspace -> soundEngine.play(SoundCue.BACKSPACE, keySoundStyle)
+        event is TypingGameEvent.Key -> soundEngine.play(SoundCue.KEY, keySoundStyle)
+      }
+    }
+    state = next
+  }
   BackHandler(onBack = onClose)
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       when (event) {
         Lifecycle.Event.ON_STOP -> {
           player.stop()
+          soundEngine.release()
           dispatch(TypingGameEvent.Pause(SystemClock.elapsedRealtime()))
         }
         Lifecycle.Event.ON_START -> if (state.phase == TypingGamePhase.PAUSED) dispatch(TypingGameEvent.Resume(SystemClock.elapsedRealtime()))
@@ -217,6 +252,7 @@ fun TypingGameRoute(
     onDispose {
       lifecycleOwner.lifecycle.removeObserver(observer)
       player.close()
+      soundEngine.close()
     }
   }
   LaunchedEffect(state.phase, state.roundIndex) {
@@ -231,7 +267,10 @@ fun TypingGameRoute(
   }
   LaunchedEffect(state.phase) { if (state.phase == TypingGamePhase.FINISHED) onFinished(state) }
 
-  fun playPrompt() { state.currentRound.item.audio?.let(player::play) }
+  fun playPrompt() {
+    val item = state.currentRound.item
+    player.play(item.audio, item.ko, isBundledFixedContent = true)
+  }
   LaunchedEffect(mode, state.roundIndex, state.phase) {
     if (mode == TypingGameMode.DICTATION && state.phase == TypingGamePhase.PLAYING) playPrompt()
   }
@@ -281,7 +320,13 @@ fun TypingGameRoute(
       if (state.phase == TypingGamePhase.COUNTDOWN) CountdownBadge(state.countdownDurationMillis, state.countdownStartedAtMillis)
     }
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-      Column(Modifier.fillMaxWidth().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+      Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+        PiyoAvatar(
+          appearance = piyoAppearance,
+          contentDescription = stringResource(R.string.game_piyo_accessibility),
+          modifier = Modifier.size(66.dp),
+        )
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(R.string.input_label), color = Color.Gray, fontWeight = FontWeight.Bold)
         Text(if (state.composition.text.isBlank()) "…" else state.composition.text, fontSize = 27.sp, fontWeight = FontWeight.Black, color = if (state.phase == TypingGamePhase.ANSWER_HOLD) GameGood else GameInk)
         if (state.phase == TypingGamePhase.ANSWER_HOLD) Text("+${state.lastPoints}", color = GameGood, fontWeight = FontWeight.Black)
@@ -295,6 +340,7 @@ fun TypingGameRoute(
           color = if (state.feedback == TypingFeedback.WRONG) GameBad else GameGood,
           fontWeight = FontWeight.Bold,
         )
+        }
       }
     }
     if (useOSIME) {
@@ -310,7 +356,7 @@ fun TypingGameRoute(
         nextExpectedJamo = null,
         onJamo = { dispatch(TypingGameEvent.Key(it, SystemClock.elapsedRealtime())) },
         onBackspace = { dispatch(TypingGameEvent.Backspace) },
-        options = PracticeKeyboardOptions(showsKeyGuide = false),
+        options = PracticeKeyboardOptions(showsKeyGuide = false, hapticsEnabled = hapticsEnabled),
         modifier = Modifier.testTag("game-builtin-keyboard"),
       )
     }
@@ -321,6 +367,10 @@ fun TypingGameRoute(
 fun AcidRainRoute(
   deck: Deck,
   useOSIME: Boolean,
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  hapticsEnabled: Boolean = true,
   seed: Long = Random.nextLong(),
   onClose: () -> Unit,
   onFinished: (AcidRainState) -> Unit,
@@ -328,18 +378,33 @@ fun AcidRainRoute(
   var state by remember(deck.deckId, seed) { mutableStateOf(AcidRainFactory.create(deck, SystemClock.elapsedRealtime(), seed)) }
   val lifecycleOwner = LocalLifecycleOwner.current
   val context = LocalContext.current
-  fun dispatch(event: AcidRainEvent) { state = AcidRainReducer.reduce(state, event) }
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
+  fun dispatch(event: AcidRainEvent) {
+    val previous = state
+    val next = AcidRainReducer.reduce(state, event)
+    if (soundEffectsEnabled) {
+      when {
+        next.lives < previous.lives -> soundEngine.play(SoundCue.LIFE_LOST, keySoundStyle)
+        next.completedItemCount > previous.completedItemCount -> soundEngine.play(SoundCue.CORRECT, keySoundStyle)
+        next.mistakeCount > previous.mistakeCount -> soundEngine.play(SoundCue.MISTAKE, keySoundStyle)
+        event is AcidRainEvent.Backspace -> soundEngine.play(SoundCue.BACKSPACE, keySoundStyle)
+        event is AcidRainEvent.Key -> soundEngine.play(SoundCue.KEY, keySoundStyle)
+      }
+    }
+    state = next
+  }
   BackHandler(onBack = onClose)
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       when (event) {
-        Lifecycle.Event.ON_STOP -> dispatch(AcidRainEvent.Pause)
+        Lifecycle.Event.ON_STOP -> { soundEngine.release(); dispatch(AcidRainEvent.Pause) }
         Lifecycle.Event.ON_START -> if (state.phase == FlowPhase.PAUSED) dispatch(AcidRainEvent.Resume(SystemClock.elapsedRealtime()))
         else -> Unit
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
-    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer); soundEngine.close() }
   }
   LaunchedEffect(state.phase) {
     var firstFrame: Long? = null
@@ -353,6 +418,11 @@ fun AcidRainRoute(
   val language = LocalConfiguration.current.locales[0].language
   Column(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFFE9E4FF), Color(0xFFFFE8F0), Color.White))).testTag("acid-rain-game")) {
     RainHud(state, onClose)
+    PiyoAvatar(
+      appearance = piyoAppearance,
+      contentDescription = stringResource(R.string.game_piyo_accessibility),
+      modifier = Modifier.align(Alignment.CenterHorizontally).size(58.dp),
+    )
     BoxWithConstraints(Modifier.fillMaxWidth().weight(1f).padding(12.dp).clip(RoundedCornerShape(24.dp)).background(Color(0xFFFFFDF9))) {
       repeat(ACID_RAIN_LANES) { lane ->
         Box(Modifier.fillMaxSize().padding(start = maxWidth * lane / ACID_RAIN_LANES, end = maxWidth * (ACID_RAIN_LANES - lane - 1) / ACID_RAIN_LANES).background(Color.Transparent))
@@ -400,7 +470,7 @@ fun AcidRainRoute(
       nextExpectedJamo = null,
       onJamo = { dispatch(AcidRainEvent.Key(it)) },
       onBackspace = { dispatch(AcidRainEvent.Backspace) },
-      options = PracticeKeyboardOptions(showsKeyGuide = false),
+      options = PracticeKeyboardOptions(showsKeyGuide = false, hapticsEnabled = hapticsEnabled),
       modifier = Modifier.testTag("acid-rain-keyboard"),
     )
   }
@@ -409,10 +479,10 @@ fun AcidRainRoute(
 @Composable
 fun SpacingSelectionScreen(passages: List<SpacingPassage>, onBack: () -> Unit, onSelect: (SpacingPassage) -> Unit) {
   BackHandler(onBack = onBack)
-  LazyColumn(Modifier.fillMaxSize().background(Color(0xFFFFF8F3)).testTag("spacing-select"), contentPadding = PaddingValues(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+  LazyColumn(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("spacing-select"), contentPadding = PaddingValues(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
     item { TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.games_title)}") }; Text(stringResource(R.string.spacing_choose), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black) }
     items(passages, key = SpacingPassage::id) { passage ->
-      Card(Modifier.fillMaxWidth().clickable { onSelect(passage) }.testTag("spacing-level-${passage.level}"), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+      Card(Modifier.fillMaxWidth().clickable { onSelect(passage) }.testTag("spacing-level-${passage.level}"), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(Modifier.padding(18.dp)) {
           Text(stringResource(R.string.spacing_level, passage.level), fontWeight = FontWeight.Black, fontSize = 18.sp)
           Text(stringResource(R.string.spacing_summary, passage.characterCount, passage.spaceCount), color = Color.Gray)
@@ -423,22 +493,36 @@ fun SpacingSelectionScreen(passages: List<SpacingPassage>, onBack: () -> Unit, o
 }
 
 @Composable
-fun SpacingGameRoute(passage: SpacingPassage, onClose: () -> Unit, onFinished: (SpacingGameState) -> Unit) {
+fun SpacingGameRoute(
+  passage: SpacingPassage,
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  onClose: () -> Unit,
+  onFinished: (SpacingGameState) -> Unit,
+) {
   var state by remember(passage.id) { mutableStateOf(SpacingGameState(SpacingEngine(passage.text))) }
   val lifecycleOwner = LocalLifecycleOwner.current
-  fun dispatch(event: SpacingEvent) { state = SpacingReducer.reduce(state, event) }
+  val context = LocalContext.current
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
+  fun dispatch(event: SpacingEvent) {
+    state = SpacingReducer.reduce(state, event)
+    if (soundEffectsEnabled && (event is SpacingEvent.ToggleSpace || event is SpacingEvent.Next || event is SpacingEvent.Previous)) {
+      soundEngine.play(SoundCue.KEY, keySoundStyle)
+    }
+  }
   LaunchedEffect(Unit) { dispatch(SpacingEvent.Start(SystemClock.elapsedRealtime())) }
   BackHandler(onBack = onClose)
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       when (event) {
-        Lifecycle.Event.ON_STOP -> dispatch(SpacingEvent.Pause(SystemClock.elapsedRealtime()))
+        Lifecycle.Event.ON_STOP -> { soundEngine.release(); dispatch(SpacingEvent.Pause(SystemClock.elapsedRealtime())) }
         Lifecycle.Event.ON_START -> dispatch(SpacingEvent.Resume(SystemClock.elapsedRealtime()))
         else -> Unit
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
-    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer); soundEngine.close() }
   }
   LaunchedEffect(state.result) { if (state.result != null) onFinished(state) }
   val visibleElapsedMillis = state.activeElapsedMillis + (state.activeStartedAtMillis?.let { started ->
@@ -485,6 +569,7 @@ fun GenericGameResultScreen(
   detailValue: String? = null,
   reviewWords: List<String> = emptyList(),
   inputModeName: String? = null,
+  shareModel: ResultShareModel? = null,
   onRetry: () -> Unit,
   onDone: () -> Unit,
 ) {
@@ -510,6 +595,7 @@ fun GenericGameResultScreen(
         }
       }
     }
+    shareModel?.let { ResultShareActions(it) }
     Button(onClick = onRetry, Modifier.fillMaxWidth().padding(top = 22.dp).height(54.dp)) { Text(stringResource(R.string.retry), fontWeight = FontWeight.Black) }
     TextButton(onClick = onDone, Modifier.fillMaxWidth()) { Text(stringResource(R.string.done)) }
   }
@@ -518,6 +604,7 @@ fun GenericGameResultScreen(
 @Composable
 fun SpacingResultScreen(
   state: SpacingGameState,
+  shareModel: ResultShareModel? = null,
   onRetry: () -> Unit,
   onDone: () -> Unit,
 ) {
@@ -569,6 +656,7 @@ fun SpacingResultScreen(
         }
       }
     }
+    shareModel?.let { model -> item { ResultShareActions(model) } }
     item {
       Button(onClick = onRetry, Modifier.fillMaxWidth().padding(top = 12.dp).height(54.dp)) { Text(stringResource(R.string.retry), fontWeight = FontWeight.Black) }
       TextButton(onClick = onDone, Modifier.fillMaxWidth()) { Text(stringResource(R.string.done)) }
@@ -577,8 +665,9 @@ fun SpacingResultScreen(
 }
 
 @Composable private fun CompactGameHud(question: String, score: Int, combo: Int, onClose: () -> Unit) {
+  val closeDescription = stringResource(R.string.close)
   Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-    Surface(Modifier.size(44.dp).clickable(onClick = onClose), CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
+    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
     MiniMetric(stringResource(R.string.questions), question, Modifier.weight(1f))
     MiniMetric(stringResource(R.string.score), score.toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.combo), combo.toString(), Modifier.weight(1f))
@@ -586,8 +675,9 @@ fun SpacingResultScreen(
 }
 
 @Composable private fun RainHud(state: AcidRainState, onClose: () -> Unit) {
+  val closeDescription = stringResource(R.string.close)
   Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
-    Surface(Modifier.size(44.dp).clickable(onClick = onClose), CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
+    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
     MiniMetric(stringResource(R.string.time), ceil(state.remainingTimeMillis / 1000.0).toInt().toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.score), state.score.toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.combo), state.combo.toString(), Modifier.weight(1f))
@@ -650,23 +740,59 @@ private fun choseongProgress(target: String, acceptedJamoCount: Int): AnnotatedS
   Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) { Text(label, color = Color.Gray); Text(value, fontWeight = FontWeight.Black) }
 }
 
-private class OfflinePromptPlayer(private val assets: android.content.res.AssetManager) {
-  private var player: MediaPlayer? = null
-  fun play(path: String) {
-    close()
+@Composable
+fun ResultShareActions(model: ResultShareModel, modifier: Modifier = Modifier) {
+  val context = LocalContext.current
+  val controller = remember(context) { ResultShareController(context) }
+  val bitmap = remember(model) { ResultShareRenderer.render(context, model) }
+  val savedMessage = stringResource(R.string.share_saved)
+  val saveFailedMessage = stringResource(R.string.share_save_failed)
+  val permissionDeniedMessage = stringResource(R.string.share_permission_denied)
+  val chooserTitle = stringResource(R.string.share_chooser)
+  val shareFailedMessage = stringResource(R.string.share_failed)
+  var status by remember(model) { mutableStateOf<String?>(null) }
+
+  fun save() {
     runCatching {
-      assets.openFd(path).use { descriptor ->
-        player = MediaPlayer().apply {
-          setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
-          setDataSource(descriptor.fileDescriptor, descriptor.startOffset, descriptor.length)
-          setOnCompletionListener { close() }
-          setOnErrorListener { media, _, _ -> media.release(); player = null; true }
-          prepare()
-          start()
-        }
-      }
+      controller.save(bitmap, "piyokey-${System.currentTimeMillis()}.png")
+    }.onSuccess {
+      status = savedMessage
+    }.onFailure {
+      status = saveFailedMessage
     }
   }
-  fun stop() { player?.release(); player = null }
-  fun close() = stop()
+
+  val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+    if (granted) save() else status = permissionDeniedMessage
+  }
+  Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      OutlinedButton(
+        onClick = {
+          if (Build.VERSION.SDK_INT < 29 && ContextCompat.checkSelfPermission(
+              context,
+              Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ) != PackageManager.PERMISSION_GRANTED
+          ) permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE) else save()
+        },
+        modifier = Modifier.weight(1f).testTag("result-save-image"),
+      ) { Text(stringResource(R.string.share_save_image)) }
+      OutlinedButton(
+        onClick = {
+          runCatching {
+            context.startActivity(Intent.createChooser(controller.share(bitmap, model.caption), chooserTitle))
+          }.onFailure { status = shareFailedMessage }
+        },
+        modifier = Modifier.weight(1f).testTag("result-share-sns"),
+      ) { Text(stringResource(R.string.share_sns)) }
+    }
+    status?.let {
+      Text(
+        it,
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = it }.testTag("result-share-status"),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodySmall,
+      )
+    }
+  }
 }

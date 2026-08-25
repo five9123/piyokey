@@ -75,7 +75,14 @@ import app.piyokey.core.session.PracticeSessionReducer
 import app.piyokey.core.session.PracticeSessionState
 import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.session.TargetSyllableState
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.platform.PiyokeySoundEngine
+import app.piyokey.core.platform.PronunciationPlayer
+import app.piyokey.core.platform.SoundCue
 import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.KeySoundStyle
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.core.settings.PracticePromptField
 import app.piyokey.core.settings.PracticePromptOrder
 import kotlinx.coroutines.delay
@@ -89,6 +96,8 @@ data class PracticePrompt(
   val target: String,
   val meaning: String? = null,
   val reading: String? = null,
+  val audio: String? = null,
+  val isBundledFixedContent: Boolean = true,
 )
 
 data class PracticeDisplayOptions(
@@ -114,6 +123,10 @@ fun PracticeRoute(
   onInputModeChange: (InputMode) -> Unit = {},
   onOpenIMEHelp: () -> Unit = {},
   displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  autoPronounce: Boolean = false,
   onCheckpointChanged: (PracticeSessionCheckpoint) -> Unit = {},
   onSessionCompleted: (PracticeSessionState, activeDurationMillis: Long) -> Unit = { _, _ -> },
 ) {
@@ -146,6 +159,11 @@ fun PracticeRoute(
     )
   }
   val lifecycleOwner = LocalLifecycleOwner.current
+  val context = LocalContext.current
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+  val pronunciationPlayer = remember { PronunciationPlayer(context, soundEngine::setSuppressed) }
+
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
 
   fun activeDuration(): Long = activeClock.duration(android.os.SystemClock.elapsedRealtime())
 
@@ -156,6 +174,8 @@ fun PracticeRoute(
         Lifecycle.Event.ON_START -> activeClock = activeClock.start(android.os.SystemClock.elapsedRealtime())
         Lifecycle.Event.ON_STOP -> {
           activeClock = activeClock.pause(android.os.SystemClock.elapsedRealtime())
+          pronunciationPlayer.stop()
+          soundEngine.release()
           latestCheckpointCallback.value(PracticeSessionReducer.checkpoint(state, activeClock.accumulatedMillis))
         }
         else -> Unit
@@ -167,6 +187,16 @@ fun PracticeRoute(
 
   val dispatch: (PracticeSessionEvent) -> Unit = { event ->
     val reduction = PracticeSessionReducer.reduce(state, event)
+    if (soundEffectsEnabled) {
+      when {
+        reduction.state.feedback is PracticeFeedback.Incorrect && reduction.state.feedbackRevision != state.feedbackRevision ->
+          soundEngine.play(SoundCue.MISTAKE, keySoundStyle)
+        reduction.state.feedback == PracticeFeedback.Complete && reduction.state.feedbackRevision != state.feedbackRevision ->
+          soundEngine.play(SoundCue.CORRECT, keySoundStyle)
+        event is PracticeSessionEvent.Key -> soundEngine.play(SoundCue.KEY, keySoundStyle)
+        event is PracticeSessionEvent.Backspace -> soundEngine.play(SoundCue.BACKSPACE, keySoundStyle)
+      }
+    }
     state = reduction.state
     val newSchedule = reduction.effects
       .filterIsInstance<PracticeSessionEffect.ScheduleAdvance>()
@@ -191,6 +221,20 @@ fun PracticeRoute(
     if (state.isResultReady) latestCompletion.value(state, activeDuration())
   }
 
+  LaunchedEffect(state.currentTargetIndex, autoPronounce) {
+    if (autoPronounce) {
+      val prompt = resolvedPrompts[state.currentTargetIndex]
+      pronunciationPlayer.play(prompt.audio, prompt.target, prompt.isBundledFixedContent)
+    }
+  }
+
+  DisposableEffect(Unit) {
+    onDispose {
+      pronunciationPlayer.close()
+      soundEngine.close()
+    }
+  }
+
   PracticeScreen(
     state = state,
     onEvent = dispatch,
@@ -201,6 +245,11 @@ fun PracticeRoute(
     onInputModeChange = onInputModeChange,
     onOpenIMEHelp = onOpenIMEHelp,
     displayOptions = displayOptions,
+    piyoAppearance = piyoAppearance,
+    onPronounce = {
+      val prompt = resolvedPrompts[state.currentTargetIndex]
+      pronunciationPlayer.play(prompt.audio, prompt.target, prompt.isBundledFixedContent)
+    },
     modifier = modifier,
   )
 }
@@ -217,6 +266,8 @@ fun PracticeScreen(
   onInputModeChange: (InputMode) -> Unit = {},
   onOpenIMEHelp: () -> Unit = {},
   displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  onPronounce: () -> Unit = {},
 ) {
   val shake = remember { Animatable(0f) }
   val errorFlash = remember { Animatable(0f) }
@@ -321,6 +372,7 @@ fun PracticeScreen(
           displayOptions = displayOptions,
           errorFlash = errorFlash.value,
           shakeOffset = shake.value,
+          onPronounce = onPronounce,
         )
         if (displayOptions.showsComposition || displayOptions.showsMascot) {
           CompositionCard(
@@ -328,6 +380,7 @@ fun PracticeScreen(
             assemblyScale = compositionScale.value,
             joinProgress = joinProgress.value,
             completionProgress = completionProgress.value,
+            appearance = piyoAppearance.takeIf { displayOptions.showsMascot },
           )
         }
       }
@@ -454,6 +507,7 @@ private fun TargetCard(
   displayOptions: PracticeDisplayOptions,
   errorFlash: Float,
   shakeOffset: Float,
+  onPronounce: () -> Unit,
 ) {
   val shape = RoundedCornerShape(24.dp)
   val progressDescription = stringResource(
@@ -461,6 +515,7 @@ private fun TargetCard(
     state.completedJamoCount.coerceAtMost(state.targetJamoSequence.size),
     state.targetJamoSequence.size,
   )
+  val pronunciationDescription = stringResource(R.string.practice_play_pronunciation)
 
   Surface(
     modifier = Modifier
@@ -497,6 +552,13 @@ private fun TargetCard(
         }
         if (displayOptions.showsJamo) JamoProgressTrack(state)
       }
+      TextButton(
+        onClick = onPronounce,
+        modifier = Modifier.align(Alignment.TopEnd).size(48.dp).semantics {
+          contentDescription = pronunciationDescription
+        },
+        contentPadding = PaddingValues(0.dp),
+      ) { Text("▶") }
       Box(
         Modifier
           .matchParentSize()
@@ -660,6 +722,7 @@ private fun CompositionCard(
   assemblyScale: Float,
   joinProgress: Float,
   completionProgress: Float,
+  appearance: PiyoSessionAppearance?,
 ) {
   val shape = RoundedCornerShape(24.dp)
   val cardColor = when (state.feedback) {
@@ -695,6 +758,14 @@ private fun CompositionCard(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center,
     ) {
+      appearance?.let {
+        PiyoAvatar(
+          appearance = it,
+          contentDescription = stringResource(R.string.practice_piyo_accessibility),
+          modifier = Modifier.size(62.dp),
+        )
+        Spacer(Modifier.width(10.dp))
+      }
       Box(
         modifier = Modifier
           .size(76.dp)

@@ -14,7 +14,9 @@ android {
 
 dependencies {
   implementation(project(":core:data"))
+  implementation(project(":core:settings"))
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.room.runtime)
   implementation(libs.kotlinx.coroutines.android)
+  testImplementation(libs.kotlin.test.junit)
 }

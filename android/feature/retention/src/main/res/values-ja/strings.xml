@@ -8,4 +8,8 @@
   <string name="review_title">復習デッキ</string><string name="review_count">復習する単語 %1$d件</string><string name="review_empty">間違えた単語はここに自動で集まります。</string><string name="review_start">復習練習を始める</string><string name="review_progress">ノーミス %1$d/%2$d</string><string name="review_remove">削除</string>
   <string name="review_add_manually">単語を追加</string><string name="review_choose_word">マイデッキから選ぶ</string>
   <string name="reminder_title">毎日のリマインダー</string><string name="reminder_default_off">初期設定はOFF。練習時間を自分で選べます。</string><string name="reminder_time">%1$02d:%2$02d</string><string name="reminder_choose_time">通知時刻を選ぶ</string><string name="action_save">保存</string><string name="action_cancel">キャンセル</string>
+  <string name="retention_piyo_accessibility">MYピヨのキャラクター</string>
+  <string name="wardrobe_title">ピヨのクローゼット</string><string name="wardrobe_preview">ピヨの最終コーデのプレビュー</string>
+  <string name="wardrobe_auto">自動・成長の基本スタイル</string><string name="wardrobe_none">アクセサリーなし</string>
+  <string name="wardrobe_ribbon">連続リボン</string><string name="wardrobe_beret">星のベレー帽</string><string name="wardrobe_bow">レインボーリボン</string><string name="wardrobe_topik_glasses">TOPIKメガネ</string><string name="wardrobe_trophy">チャンピオントロフィー</string>
 </resources>

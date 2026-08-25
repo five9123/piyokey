@@ -22,6 +22,8 @@ dependencies {
   implementation(project(":core:retention"))
   implementation(project(":core:data"))
   implementation(project(":core:deckkit"))
+  implementation(project(":core:design"))
+  implementation(project(":core:settings"))
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.compose.material3)

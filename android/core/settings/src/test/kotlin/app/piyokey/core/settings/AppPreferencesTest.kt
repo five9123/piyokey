@@ -53,4 +53,29 @@ class AppPreferencesTest {
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 5))
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, null))
   }
+
+  @Test
+  fun wardrobeUnlocksAreMonotonicAndAutoNeverAddsContextAccessories() {
+    val streak = PiyoWardrobePolicy.unlockedAfterStreakRewards(emptySet(), setOf(3, 7))
+    assertEquals(setOf(PiyoAccessory.STREAK_RIBBON, PiyoAccessory.RAINBOW_BOW), streak)
+    val afterTopik = PiyoWardrobePolicy.unlockedAfterTopikGame(streak, setOf("TOPIK II"), 0)
+    assertTrue(PiyoAccessory.TOPIK_GLASSES in afterTopik)
+    assertEquals(null, PiyoWardrobePolicy.resolvedAccessory(PiyoAccessory.AUTO, afterTopik))
+    assertEquals(PiyoAccessory.TOPIK_GLASSES, PiyoWardrobePolicy.resolvedAccessory(PiyoAccessory.TOPIK_GLASSES, afterTopik))
+    assertEquals(null, PiyoWardrobePolicy.resolvedAccessory(PiyoAccessory.CHAMPION_TROPHY, afterTopik))
+  }
+
+  @Test
+  fun sessionAppearanceIsAnImmutableSnapshot() {
+    val preferences = AppPreferences(
+      firstInputCompleted = true,
+      hatchChaptersCompleted = 3,
+      selectedPiyoAccessory = PiyoAccessory.TOPIK_GLASSES,
+      unlockedPiyoAccessories = setOf(PiyoAccessory.TOPIK_GLASSES),
+    )
+    val appearance = preferences.sessionAppearance
+    val changed = preferences.copy(selectedPiyoAccessory = PiyoAccessory.NONE)
+    assertEquals(PiyoAccessory.TOPIK_GLASSES, appearance.accessory)
+    assertEquals(null, changed.sessionAppearance.accessory)
+  }
 }

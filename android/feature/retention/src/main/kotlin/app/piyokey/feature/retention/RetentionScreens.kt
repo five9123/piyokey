@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.piyokey.core.data.ReminderPreferenceEntity
 import app.piyokey.core.data.UserProgressEntity
+import app.piyokey.core.design.PiyoAvatar
 import app.piyokey.core.deckkit.DeckItem
 import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumPolicy
@@ -56,6 +57,9 @@ import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.RetentionPolicy
 import app.piyokey.core.retention.ReviewItem
 import app.piyokey.core.retention.StampState
+import app.piyokey.core.settings.PiyoAccessory
+import app.piyokey.core.settings.PiyoSessionAppearance
+import app.piyokey.core.settings.PiyoWardrobePolicy
 
 private val Background = Color(0xFFFFF9F1)
 private val Pink = Color(0xFFFFE4EC)
@@ -71,6 +75,7 @@ data class ManualReviewCandidate(
 fun RetentionHomeCard(
   today: JstDay,
   completedDays: Set<JstDay>,
+  appearance: PiyoSessionAppearance,
   onOpenProfile: () -> Unit,
   onDailyChallenge: () -> Unit,
   modifier: Modifier = Modifier,
@@ -87,15 +92,16 @@ fun RetentionHomeCard(
         .fillMaxWidth()
         .testTag("retention-profile-card")
         .clickable(onClick = onOpenProfile),
-      colors = CardDefaults.cardColors(containerColor = Color.White),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       shape = RoundedCornerShape(24.dp),
     ) {
       Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-          Box(
-            Modifier.size(58.dp).background(Yellow, CircleShape),
-            contentAlignment = Alignment.Center,
-          ) { Text("ㅎ", fontWeight = FontWeight.Black, style = MaterialTheme.typography.headlineSmall) }
+          PiyoAvatar(
+            appearance = appearance,
+            contentDescription = stringResource(R.string.retention_piyo_accessibility),
+            modifier = Modifier.size(64.dp),
+          )
           Column(Modifier.weight(1f)) {
             Text(stringResource(R.string.retention_my_piyo), fontWeight = FontWeight.Black)
             Surface(color = Pink, shape = RoundedCornerShape(14.dp)) {
@@ -154,28 +160,40 @@ fun PiyoProfileSection(
   today: JstDay,
   completedDays: Set<JstDay>,
   unlockedRewards: Set<Int>,
+  appearance: PiyoSessionAppearance,
+  selectedAccessory: PiyoAccessory,
+  unlockedAccessories: Set<PiyoAccessory>,
+  onAccessorySelected: (PiyoAccessory) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  var showWardrobe by remember { mutableStateOf(false) }
   val streak = RetentionPolicy.streak(completedDays, today)
   val message = stringArrayResource(R.array.retention_encouragements)[
     RetentionPolicy.encouragementIndex(today, completedDays)
   ]
   Card(
     modifier = modifier.fillMaxWidth().testTag("piyo-profile-detail"),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     shape = RoundedCornerShape(24.dp),
   ) {
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
       Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(Modifier.size(64.dp).background(Yellow, CircleShape), contentAlignment = Alignment.Center) {
-          Text("ㅎ", fontWeight = FontWeight.Black, style = MaterialTheme.typography.headlineSmall)
-        }
+        PiyoAvatar(
+          appearance = appearance,
+          contentDescription = stringResource(R.string.retention_piyo_accessibility),
+          modifier = Modifier.size(72.dp),
+        )
         Column(Modifier.weight(1f)) {
           Text(stringResource(R.string.retention_my_piyo), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
           Surface(color = Pink, shape = RoundedCornerShape(14.dp)) {
             Text("「$message」", Modifier.padding(horizontal = 10.dp, vertical = 7.dp))
           }
         }
+        TextButton(
+          onClick = { showWardrobe = true },
+          modifier = Modifier.size(48.dp).testTag("piyo-wardrobe-open"),
+          contentPadding = PaddingValues(0.dp),
+        ) { Text("♧", style = MaterialTheme.typography.headlineSmall) }
       }
       Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
         ProfileMetric(stringResource(R.string.retention_current_streak), streak.current)
@@ -204,7 +222,48 @@ fun PiyoProfileSection(
       }
     }
   }
+  if (showWardrobe) {
+    AlertDialog(
+      onDismissRequest = { showWardrobe = false },
+      title = { Text(stringResource(R.string.wardrobe_title)) },
+      text = {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+          PiyoAvatar(
+            appearance = appearance.copy(
+              accessory = PiyoWardrobePolicy.resolvedAccessory(selectedAccessory, unlockedAccessories),
+            ),
+            contentDescription = stringResource(R.string.wardrobe_preview),
+            modifier = Modifier.size(140.dp).align(Alignment.CenterHorizontally),
+          )
+          PiyoWardrobePolicy.selectableAccessories(unlockedAccessories).forEach { accessory ->
+            OutlinedButton(
+              onClick = { onAccessorySelected(accessory) },
+              modifier = Modifier.fillMaxWidth().testTag("piyo-accessory-${accessory.name.lowercase()}"),
+            ) {
+              Text("${if (selectedAccessory == accessory) "✓ " else ""}${accessoryLabel(accessory)}")
+            }
+          }
+        }
+      },
+      confirmButton = {
+        TextButton(onClick = { showWardrobe = false }) { Text(stringResource(R.string.action_save)) }
+      },
+    )
+  }
 }
+
+@Composable
+private fun accessoryLabel(accessory: PiyoAccessory): String = stringResource(
+  when (accessory) {
+    PiyoAccessory.AUTO -> R.string.wardrobe_auto
+    PiyoAccessory.NONE -> R.string.wardrobe_none
+    PiyoAccessory.STREAK_RIBBON -> R.string.wardrobe_ribbon
+    PiyoAccessory.STAR_BERET -> R.string.wardrobe_beret
+    PiyoAccessory.RAINBOW_BOW -> R.string.wardrobe_bow
+    PiyoAccessory.TOPIK_GLASSES -> R.string.wardrobe_topik_glasses
+    PiyoAccessory.CHAMPION_TROPHY -> R.string.wardrobe_trophy
+  },
+)
 
 @Composable
 private fun ProfileMetric(label: String, value: Int) {

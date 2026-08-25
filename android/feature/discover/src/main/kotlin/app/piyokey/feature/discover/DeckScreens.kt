@@ -588,6 +588,7 @@ fun PracticeResultScreen(
   onRetry: () -> Unit,
   onDeckClick: (CatalogDeck) -> Unit,
   onBack: () -> Unit,
+  shareActions: @Composable () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
@@ -629,6 +630,7 @@ fun PracticeResultScreen(
       )
     }
     item { Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_again)) } }
+    item { shareActions() }
     if (recommendations.isNotEmpty()) {
       item { SectionTitle(stringResource(R.string.deck_same_tags)) }
       items(recommendations, key = CatalogDeck::deckId) { deck ->

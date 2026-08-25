@@ -3,6 +3,15 @@ plugins {
   alias(libs.plugins.kotlin.compose)
 }
 
+val generatedBrandRes = layout.buildDirectory.dir("generated/piyokeyBrand/res")
+val generatePiyokeyBrandResources by tasks.registering(Sync::class) {
+  from(rootProject.layout.projectDirectory.dir("../ios/Hanco/Hanco/Resources/Assets.xcassets/PiyokeyLogo.imageset")) {
+    include("PiyokeyLogo.png")
+    rename { "piyokey_logo.png" }
+  }
+  into(generatedBrandRes.map { it.dir("drawable-nodpi") })
+}
+
 android {
   namespace = "app.piyokey.piyokey"
   compileSdk = 37
@@ -13,7 +22,7 @@ android {
     targetSdk = 36
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     versionCode = 1
-    versionName = "0.6.1-m6b"
+    versionName = "0.6.2-m6c"
     val catalogUrl = providers.gradleProperty("PIYOKEY_CATALOG_URL").orElse("").get()
       .replace("\\", "\\\\")
       .replace("\"", "\\\"")
@@ -25,6 +34,8 @@ android {
     buildConfig = true
   }
 
+  sourceSets.getByName("main").res.directories.add(generatedBrandRes.get().asFile.absolutePath)
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -34,6 +45,8 @@ android {
     resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
   }
 }
+
+tasks.named("preBuild").configure { dependsOn(generatePiyokeyBrandResources) }
 
 kotlin {
   compilerOptions {

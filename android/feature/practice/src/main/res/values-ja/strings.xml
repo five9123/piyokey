@@ -23,4 +23,6 @@
   <string name="practice_input_os">OSキーボード</string>
   <string name="practice_ime_missing">韓国語キーボードを検出できませんでした。このまま入力するか、システム設定を開けます。</string>
   <string name="practice_ime_open_settings">キーボード設定</string>
+  <string name="practice_play_pronunciation">韓国語の発音を再生</string>
+  <string name="practice_piyo_accessibility">入力に反応するピヨ</string>
 </resources>

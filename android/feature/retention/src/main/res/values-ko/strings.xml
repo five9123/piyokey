@@ -8,4 +8,8 @@
   <string name="review_title">복습 덱</string><string name="review_count">복습할 단어 %1$d개</string><string name="review_empty">틀린 단어가 여기에 자동으로 모여요.</string><string name="review_start">복습 연습 시작</string><string name="review_progress">노미스 %1$d/%2$d</string><string name="review_remove">제거</string>
   <string name="review_add_manually">단어 추가</string><string name="review_choose_word">내 덱에서 선택</string>
   <string name="reminder_title">매일 리마인더</string><string name="reminder_default_off">기본은 꺼짐이며 시간을 직접 정할 수 있어요.</string><string name="reminder_time">%1$02d:%2$02d</string><string name="reminder_choose_time">알림 시간 선택</string><string name="action_save">저장</string><string name="action_cancel">취소</string>
+  <string name="retention_piyo_accessibility">MY 피요 캐릭터</string>
+  <string name="wardrobe_title">피요 옷장</string><string name="wardrobe_preview">피요 최종 모습 미리보기</string>
+  <string name="wardrobe_auto">자동 · 성장 기본 모습</string><string name="wardrobe_none">소품 없음</string>
+  <string name="wardrobe_ribbon">연속 리본</string><string name="wardrobe_beret">별 베레모</string><string name="wardrobe_bow">무지개 리본</string><string name="wardrobe_topik_glasses">TOPIK 안경</string><string name="wardrobe_trophy">챔피언 트로피</string>
 </resources>
