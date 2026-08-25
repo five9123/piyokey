@@ -10,6 +10,8 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Entity(tableName = "installed_decks")
 data class InstalledDeckEntity(
@@ -70,6 +72,36 @@ data class RecoveryJournalEntity(
   val startedAtEpochMillis: Long,
 )
 
+@Entity(tableName = "game_records")
+data class GameRecordEntity(
+  @PrimaryKey val recordId: String,
+  val mode: String,
+  val deckId: String,
+  val course: String,
+  val score: Int,
+  val maxCombo: Int,
+  val accuracyPercent: Double,
+  val inputMode: String,
+  val correctJamoCount: Int,
+  val charactersPerMinute: Double,
+  val mistakeCount: Int,
+  val completedItemCount: Int,
+  val missedItemCount: Int,
+  val playDurationMillis: Long,
+  val playedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "deck_progress", primaryKeys = ["deckId", "mode", "inputMode"])
+data class DeckProgressEntity(
+  val deckId: String,
+  val mode: String,
+  val inputMode: String,
+  val plays: Int,
+  val bestScore: Int,
+  val bestAccuracyPercent: Double,
+  val lastPlayedAtEpochMillis: Long,
+)
+
 @Dao
 interface PiyokeyDao {
   @Query("SELECT * FROM installed_decks ORDER BY installedAtEpochMillis DESC")
@@ -110,6 +142,18 @@ interface PiyokeyDao {
 
   @Query("DELETE FROM recovery_journal WHERE operationId = :operationId")
   suspend fun deleteJournal(operationId: String)
+
+  @Insert
+  suspend fun insertGameRecord(entity: GameRecordEntity)
+
+  @Query("SELECT * FROM game_records WHERE deckId = :deckId AND mode = :mode AND inputMode = :inputMode ORDER BY playedAtEpochMillis DESC")
+  suspend fun gameRecords(deckId: String, mode: String, inputMode: String): List<GameRecordEntity>
+
+  @Query("SELECT * FROM deck_progress WHERE deckId = :deckId AND mode = :mode AND inputMode = :inputMode")
+  suspend fun deckProgress(deckId: String, mode: String, inputMode: String): DeckProgressEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertDeckProgress(entity: DeckProgressEntity)
 }
 
 @Database(
@@ -118,8 +162,10 @@ interface PiyokeyDao {
     DownloadHistoryEntity::class,
     CatalogStateEntity::class,
     RecoveryJournalEntity::class,
+    GameRecordEntity::class,
+    DeckProgressEntity::class,
   ],
-  version = 1,
+  version = 2,
   exportSchema = true,
 )
 abstract class PiyokeyDatabase : RoomDatabase() {
@@ -133,7 +179,30 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         context.applicationContext,
         PiyokeyDatabase::class.java,
         "piyokey.db",
-      ).build().also { instance = it }
+      ).addMigrations(MIGRATION_1_2).build().also { instance = it }
+    }
+
+    val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `game_records` (
+            |`recordId` TEXT NOT NULL, `mode` TEXT NOT NULL, `deckId` TEXT NOT NULL,
+            |`course` TEXT NOT NULL, `score` INTEGER NOT NULL, `maxCombo` INTEGER NOT NULL,
+            |`accuracyPercent` REAL NOT NULL, `inputMode` TEXT NOT NULL,
+            |`correctJamoCount` INTEGER NOT NULL, `charactersPerMinute` REAL NOT NULL,
+            |`mistakeCount` INTEGER NOT NULL,
+            |`completedItemCount` INTEGER NOT NULL, `missedItemCount` INTEGER NOT NULL,
+            |`playDurationMillis` INTEGER NOT NULL, `playedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`recordId`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `deck_progress` (
+            |`deckId` TEXT NOT NULL, `mode` TEXT NOT NULL, `inputMode` TEXT NOT NULL,
+            |`plays` INTEGER NOT NULL, `bestScore` INTEGER NOT NULL,
+            |`bestAccuracyPercent` REAL NOT NULL, `lastPlayedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`deckId`, `mode`, `inputMode`))""".trimMargin(),
+        )
+      }
     }
   }
 }

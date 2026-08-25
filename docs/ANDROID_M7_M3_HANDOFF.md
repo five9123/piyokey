@@ -63,8 +63,8 @@ cd android
 
 ## 후속
 
-M4는 순수 monotonic game reducer와 Compose frame rendering을 분리해 게임 hub,
-흐름·산성비·초성·단어 맞추기·받아쓰기·띄어쓰기를 구현한다. M3 Room schema는
+M4는 순수 monotonic game reducer와 Compose frame rendering을 분리해 게임 hub와
+흐름 게임·공통 결과를 구현하고, 나머지 게임은 M6에서 같은 기반으로 확장한다. M3 Room schema는
 M4 GameRecord·DeckProgress가 migration으로 확장할 기준선이다. 실제 기기 입력
 p95와 rollover, 60초 성능·오디오·IME는 출시 후보 통합 QA 전까지 완료로 표시하지
 않는다.

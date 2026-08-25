@@ -6,9 +6,12 @@ import app.piyokey.core.deckkit.Catalog
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.Deck
 import app.piyokey.core.deckkit.DeckKitJson
+import app.piyokey.core.game.FlowGameRecord
+import app.piyokey.core.game.FlowRankTuning
 import java.io.File
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -16,6 +19,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
 
 data class InstalledDeck(
   val metadata: InstalledDeckEntity,
@@ -30,6 +36,11 @@ data class DeckLibrarySnapshot(
   val installedDeckIds: Set<String>
     get() = installed.mapTo(mutableSetOf()) { it.metadata.deckId }
 }
+
+data class SavedGameResult(
+  val progress: DeckProgressEntity,
+  val isNewBest: Boolean,
+)
 
 sealed interface CatalogRefreshResult {
   data object NotConfigured : CatalogRefreshResult
@@ -189,6 +200,64 @@ class DeckRepository private constructor(
 
   suspend fun markPlayed(deckId: String) = withContext(Dispatchers.IO) {
     dao.markPlayed(deckId, clock())
+  }
+
+  suspend fun bundledFlowDecks(): List<Deck> = withContext(Dispatchers.IO) {
+    FLOW_PRESET_PATHS.map { path -> decodeDeck(readAssetBytes(path)) }
+  }
+
+  suspend fun saveFlowRecord(record: FlowGameRecord): SavedGameResult = withContext(Dispatchers.IO) {
+    database.withTransaction {
+      val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
+      val isNewBest = previous == null || record.score > previous.bestScore
+      dao.insertGameRecord(
+        GameRecordEntity(
+          recordId = UUID.randomUUID().toString(),
+          mode = GAME_MODE_FLOW,
+          deckId = record.deckId,
+          course = record.course,
+          score = record.score,
+          maxCombo = record.maxCombo,
+          accuracyPercent = record.accuracyPercent,
+          inputMode = INPUT_MODE_BUILTIN,
+          correctJamoCount = record.correctJamoCount,
+          charactersPerMinute = record.charactersPerMinute,
+          mistakeCount = record.mistakeCount,
+          completedItemCount = record.completedItemCount,
+          missedItemCount = record.missedItemCount,
+          playDurationMillis = record.playDurationMillis,
+          playedAtEpochMillis = record.playedAtEpochMillis,
+        ),
+      )
+      val progress = DeckProgressEntity(
+        deckId = record.deckId,
+        mode = GAME_MODE_FLOW,
+        inputMode = INPUT_MODE_BUILTIN,
+        plays = (previous?.plays ?: 0) + 1,
+        bestScore = maxOf(previous?.bestScore ?: 0, record.score),
+        bestAccuracyPercent = maxOf(previous?.bestAccuracyPercent ?: 0.0, record.accuracyPercent),
+        lastPlayedAtEpochMillis = record.playedAtEpochMillis,
+      )
+      dao.upsertDeckProgress(progress)
+      SavedGameResult(progress, isNewBest)
+    }
+  }
+
+  suspend fun flowProgress(deckId: String): DeckProgressEntity? = withContext(Dispatchers.IO) {
+    dao.deckProgress(deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
+  }
+
+  suspend fun flowRankTuning(): FlowRankTuning = withContext(Dispatchers.IO) {
+    val objectValue = Json.parseToJsonElement(readAssetText("game_rank_tuning.json")).jsonObject
+    require(objectValue.getValue("schema_version").jsonPrimitive.int == 1)
+    FlowRankTuning(
+      accuracyWeight = objectValue.getValue("accuracy_weight").jsonPrimitive.double,
+      speedWeight = objectValue.getValue("speed_weight").jsonPrimitive.double,
+      speedCapCharactersPerMinute = objectValue.getValue("speed_cap_characters_per_minute").jsonPrimitive.double,
+      sThreshold = objectValue.getValue("s_threshold").jsonPrimitive.double,
+      aThreshold = objectValue.getValue("a_threshold").jsonPrimitive.double,
+      bThreshold = objectValue.getValue("b_threshold").jsonPrimitive.double,
+    )
   }
 
   private suspend fun loadCatalog(): Catalog {
@@ -477,6 +546,13 @@ class DeckRepository private constructor(
     private const val JOURNAL_DECK_DELETE = "deck_delete"
     private const val JOURNAL_CATALOG_UPDATE = "catalog_update"
     private val tagsJson = Json { isLenient = false }
+    private const val GAME_MODE_FLOW = "flow"
+    private const val INPUT_MODE_BUILTIN = "builtin"
+    private val FLOW_PRESET_PATHS = listOf(
+      "decks/flow/flow_topik_beginner_v3.json",
+      "decks/flow/flow_topik_intermediate_v3.json",
+      "decks/flow/flow_topik_advanced_v3.json",
+    )
 
     fun create(
       context: Context,

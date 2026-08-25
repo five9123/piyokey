@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import java.net.URL
+import app.piyokey.core.game.FlowGameRecord
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -148,4 +149,47 @@ class DeckRepositoryInstrumentedTest {
     assertEquals(10, repository.snapshot().catalog.catalogVersion)
     assertEquals(10, database.dao().catalogState()?.catalogVersion)
   }
+
+  @Test
+  fun bundledFlowPresetsContainThreeDisjointOneHundredWordCourses() = runTest {
+    val presets = repository.bundledFlowDecks()
+    assertEquals(
+      listOf("flow_topik_beginner", "flow_topik_intermediate", "flow_topik_advanced"),
+      presets.map { it.deckId },
+    )
+    assertTrue(presets.all { it.items.size == 100 })
+    assertTrue(presets.all { deck -> deck.items.map { it.ko }.distinct().size == 100 })
+    assertEquals(300, presets.flatMap { deck -> deck.items.map { it.ko } }.distinct().size)
+    assertEquals("S", repository.flowRankTuning().rank(100.0, 120.0))
+  }
+
+  @Test
+  fun gameRecordsAreAppendOnlyWhileDeckProgressKeepsBestAndPlayCount() = runTest {
+    val first = sampleFlowRecord(score = 800, accuracy = 92.5, playedAt = 2_000)
+    val second = sampleFlowRecord(score = 500, accuracy = 98.0, playedAt = 3_000)
+
+    assertTrue(repository.saveFlowRecord(first).isNewBest)
+    val saved = repository.saveFlowRecord(second)
+
+    assertFalse(saved.isNewBest)
+    assertEquals(2, saved.progress.plays)
+    assertEquals(800, saved.progress.bestScore)
+    assertEquals(98.0, saved.progress.bestAccuracyPercent, 0.001)
+    assertEquals(2, database.dao().gameRecords(first.deckId, "flow", "builtin").size)
+  }
+
+  private fun sampleFlowRecord(score: Int, accuracy: Double, playedAt: Long) = FlowGameRecord(
+    deckId = "flow_topik_beginner",
+    course = "beginner",
+    score = score,
+    maxCombo = 7,
+    accuracyPercent = accuracy,
+    correctJamoCount = 20,
+    charactersPerMinute = 64.0,
+    mistakeCount = 2,
+    completedItemCount = 5,
+    missedItemCount = 1,
+    playDurationMillis = 60_000,
+    playedAtEpochMillis = playedAt,
+  )
 }

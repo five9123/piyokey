@@ -1,6 +1,6 @@
 # PIYOKEY Android
 
-Android M7의 A0 골격과 M1~M3 구현이다. 한글 입력·덱·`.piyodeck` 계약은 순수 Kotlin으로 고정하고, Compose 연습 화면 위에 정적 카탈로그 발견·다운로드·오프라인 내 덱 흐름을 연결한다.
+Android M7의 A0 골격과 M1~M4 구현이다. 한글 입력·덱·`.piyodeck`·게임 규칙 계약은 순수 Kotlin으로 고정하고, Compose 연습·발견·오프라인 덱·흐름 게임을 5탭 앱 셸에 연결한다.
 
 ## 고정 도구 체인
 
@@ -25,11 +25,13 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
   :core:deckkit:test \
   :core:piyodeck:test \
   :core:session:test \
+  :core:game:test \
   :feature:practice:testDebugUnitTest \
   :feature:practice:assembleDebugAndroidTest \
   :feature:practice:lintDebug \
   :core:data:testDebugUnitTest \
   :feature:discover:lintDebug \
+  :feature:game:lintDebug \
   :app:lintDebug \
   :app:assembleDebug
 ```
@@ -52,9 +54,11 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
 - `:core:deckkit`: 덱·카탈로그 모델, strict codec, 공용 JSON Schema와 의미·bundle 검증. 공식 26덱, 게임 프리셋 15덱, v10→v11 snapshot을 검증한다.
 - `:core:piyodeck`: STORE-only ZIP, strict UTF-8 JSON, manifest/hash/metadata, 사용자 덱 정책과 결정적 writer. `core:deckkit`에만 단방향 의존한다.
 - `:core:session`: Android 및 Compose에 의존하지 않는 불변 연습 상태와 순수 reducer. 자모 판정, 오타 무시, 되감기, 정확도와 token 기반 650ms 자동 전환을 소유한다.
-- `:core:data`: Room 설치 메타데이터·다운로드 이력·복구 journal과 앱 전용 catalog/deck payload를 소유한다. `journal → atomic move → Room transaction` 순서와 primary/backup/quarantine 복구를 유지한다.
+- `:core:game`: Android 및 Compose에 의존하지 않는 흐름 게임 상태와 monotonic reducer. 카운트다운·제한시간·점수·콤보·목숨·가속·pause/resume·결과 지표를 소유한다.
+- `:core:data`: Room 설치 메타데이터·다운로드 이력·복구 journal과 앱 전용 catalog/deck payload, `GameRecord`·`DeckProgress`를 소유한다. `journal → atomic move → Room transaction` 순서와 primary/backup/quarantine 복구를 유지한다.
 - `:feature:practice`: Compose 내장 두벌식 키보드와 연습 화면. 키보드 제스처·연출·현지화만 소유하고 저장·오디오·OS IME·결과 화면은 소유하지 않는다.
 - `:feature:discover`: 발견 검색·필터·정렬, 덱 상세·미리보기, 홈 추천, 내 덱과 M3 결과 추천 화면을 소유한다.
+- `:feature:game`: 게임 허브, 흐름 프리셋/설치 덱 선택, 카운트다운·레인·HUD·자모 트랙·파티클·결과/재도전 화면을 소유한다.
 
 후보 `applicationId`와 namespace는 `app.piyokey.piyokey`다. Google Play Console에서 패키지 소유권과 최종 식별자를 확인하기 전까지 출시 계약으로 확정하지 않는다.
 
@@ -105,3 +109,13 @@ M2 기능 베이스의 코드 차단 이슈는 없으며 물리 정량 gate는 �
 - 실기기 의존 검증은 추가하지 않았으며 출시 후보 통합 QA Issue #19에 유지한다.
 
 M3 증분 파일과 검증은 `docs/ANDROID_M7_M3_HANDOFF.md`에 기록한다.
+
+## M4 구현 및 검증 결과
+
+- 순수 흐름 reducer는 3·2·1, 60초, 노미스 +2초, 3목숨, 점수/콤보, 새 카드 1.8배 가속과 background 정지를 소유한다.
+- 흐름 전용 3×100단어와 설치 덱을 선택하고, 밝은 레인·내용 맞춤 카드·내부 자모 추적·화면 폭 고정 키보드·완료 파티클을 제공한다.
+- Room v1→v2 migration으로 append-only `GameRecord`와 덱/게임/입력별 `DeckProgress`를 추가하고 공용 rank tuning으로 결과 등급을 계산한다.
+- JVM game 11 tests, API 35 data 8 tests와 app 3 tests, feature/app lint와 debug APK가 통과했다.
+- 실기기 입력·60초 frame 성능은 출시 후보 통합 QA Issue #19에 유지한다.
+
+M4 증분 파일과 검증은 `docs/ANDROID_M7_M4_HANDOFF.md`에 기록한다.
