@@ -113,6 +113,20 @@ class R11UserDeckDocumentInstrumentedTest {
     }
   }
 
+  @Test
+  fun paidMakerEntryShowsPaywallWhileFreeDocumentFlowRemainsUngated() {
+    waitForShell()
+    composeRule.onNodeWithTag("nav-profile").performClick()
+    composeRule.waitUntil(timeoutMillis = 10_000) {
+      composeRule.onAllNodesWithTag("new-deck").fetchSemanticsNodes().isNotEmpty()
+    }
+    composeRule.onNodeWithTag("import-deck").assertIsDisplayed()
+    composeRule.onNodeWithTag("new-deck").performClick()
+    composeRule.onNodeWithTag("deck-maker-paywall").assertIsDisplayed()
+    composeRule.onNodeWithTag("deck-maker-purchase").assertIsDisplayed()
+    check(composeRule.onAllNodesWithTag("user-deck-import-screen").fetchSemanticsNodes().isEmpty())
+  }
+
   private fun waitForShell() {
     composeRule.waitUntil(timeoutMillis = 15_000) {
       composeRule.onAllNodesWithTag("nav-discover").fetchSemanticsNodes().isNotEmpty()

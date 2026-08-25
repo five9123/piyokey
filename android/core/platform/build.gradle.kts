@@ -19,5 +19,7 @@ dependencies {
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.room.runtime)
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.play.billing)
   testImplementation(libs.kotlin.test.junit)
+  testImplementation(libs.kotlinx.coroutines.test)
 }

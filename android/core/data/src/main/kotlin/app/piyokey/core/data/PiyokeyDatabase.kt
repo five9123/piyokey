@@ -27,6 +27,8 @@ data class InstalledDeckEntity(
   val installedAtEpochMillis: Long,
   val updatedAtEpochMillis: Long,
   val lastPlayedAtEpochMillis: Long?,
+  /** Official source deck for a user-created copy; never embedded in .piyodeck. */
+  val derivedFromDeckId: String? = null,
 )
 
 @Entity(tableName = "download_history")
@@ -47,6 +49,14 @@ data class UserDeckHistoryEntity(
   val lastContentSha256: String,
   /** Restores the deck's recency after a deliberate delete and later re-import. */
   val lastPlayedAtEpochMillis: Long?,
+)
+
+@Entity(tableName = "deck_maker_entitlement_cache")
+data class DeckMakerEntitlementCacheEntity(
+  @PrimaryKey val productId: String,
+  /** Last successfully queried PURCHASED value. This is an offline UX cache, not a receipt. */
+  val isActive: Boolean,
+  val lastVerifiedAtEpochMillis: Long,
 )
 
 @Entity(tableName = "catalog_state")
@@ -82,6 +92,7 @@ data class RecoveryJournalEntity(
   val etag: String?,
   val lastModified: String?,
   val startedAtEpochMillis: Long,
+  val derivedFromDeckId: String? = null,
 )
 
 @Entity(tableName = "game_records")
@@ -200,6 +211,12 @@ interface PiyokeyDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsertUserDeckHistory(entity: UserDeckHistoryEntity)
 
+  @Query("SELECT * FROM deck_maker_entitlement_cache WHERE productId = :productId")
+  suspend fun deckMakerEntitlementCache(productId: String): DeckMakerEntitlementCacheEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertDeckMakerEntitlementCache(entity: DeckMakerEntitlementCacheEntity)
+
   @Query("SELECT * FROM catalog_state WHERE singletonId = 1")
   suspend fun catalogState(): CatalogStateEntity?
 
@@ -287,6 +304,7 @@ interface PiyokeyDao {
     InstalledDeckEntity::class,
     DownloadHistoryEntity::class,
     UserDeckHistoryEntity::class,
+    DeckMakerEntitlementCacheEntity::class,
     CatalogStateEntity::class,
     RecoveryJournalEntity::class,
     GameRecordEntity::class,
@@ -298,7 +316,7 @@ interface PiyokeyDao {
     RetentionRewardEntity::class,
     ReminderPreferenceEntity::class,
   ],
-  version = 4,
+  version = 5,
   exportSchema = true,
 )
 abstract class PiyokeyDatabase : RoomDatabase() {
@@ -312,7 +330,8 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         context.applicationContext,
         PiyokeyDatabase::class.java,
         "piyokey.db",
-      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { instance = it }
+      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        .build().also { instance = it }
     }
 
     /** Keeps repeated instrumented fresh-install scenarios isolated in the same process. */
@@ -396,6 +415,18 @@ abstract class PiyokeyDatabase : RoomDatabase() {
             |`lastVersion` INTEGER NOT NULL, `lastContentSha256` TEXT NOT NULL,
             |`lastPlayedAtEpochMillis` INTEGER,
             |PRIMARY KEY(`deckId`))""".trimMargin(),
+        )
+      }
+    }
+
+    val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `installed_decks` ADD COLUMN `derivedFromDeckId` TEXT")
+        db.execSQL("ALTER TABLE `recovery_journal` ADD COLUMN `derivedFromDeckId` TEXT")
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `deck_maker_entitlement_cache` (
+            |`productId` TEXT NOT NULL, `isActive` INTEGER NOT NULL,
+            |`lastVerifiedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`productId`))""".trimMargin(),
         )
       }
     }

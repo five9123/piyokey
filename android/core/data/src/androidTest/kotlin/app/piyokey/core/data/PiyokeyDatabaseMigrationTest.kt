@@ -91,9 +91,41 @@ class PiyokeyDatabaseMigrationTest {
     }
   }
 
+  @Test
+  fun migrateFourToFivePreservesDecksAndAddsCopyProvenance() {
+    helper.createDatabase(DECK_MAKER_DATABASE_NAME, 4).apply {
+      execSQL(
+        """INSERT INTO installed_decks(deckId, version, payloadName, payloadSha256,
+          |backupPayloadName, backupSha256, backupVersion, source, official,
+          |installedAtEpochMillis, updatedAtEpochMillis, lastPlayedAtEpochMillis)
+          |VALUES ('user_kept', 2, 'decks/user_kept.json', 'sha', NULL, NULL, NULL,
+          |'created', 0, 100, 200, NULL)""".trimMargin(),
+      )
+      close()
+    }
+    helper.runMigrationsAndValidate(
+      DECK_MAKER_DATABASE_NAME,
+      5,
+      true,
+      PiyokeyDatabase.MIGRATION_4_5,
+    ).use { db ->
+      db.query("SELECT version, derivedFromDeckId FROM installed_decks WHERE deckId = 'user_kept'")
+        .use { cursor ->
+          cursor.moveToFirst()
+          assertEquals(2, cursor.getInt(0))
+          assertEquals(true, cursor.isNull(1))
+        }
+      db.query("SELECT COUNT(*) FROM deck_maker_entitlement_cache").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+    }
+  }
+
   private companion object {
     const val DATABASE_NAME = "m4-migration-test"
     const val M5_DATABASE_NAME = "m5-migration-test"
     const val R11_DATABASE_NAME = "r11-migration-test"
+    const val DECK_MAKER_DATABASE_NAME = "deck-maker-migration-test"
   }
 }
