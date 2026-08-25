@@ -151,3 +151,15 @@ Play Games는 선택 기능이다. 21개 외부 리소스가 모두 주입된 �
 ```
 
 클래식 공식 코스의 내장 키보드 결과만 15개 보드에 제출한다. OS IME, 사용자/다운로드 덱, 띄어쓰기, Android 주간컵은 로컬 기록만 유지한다. 최초 로그인·랭킹 UI는 자격 있는 결과 화면의 명시적 버튼에서만 시작된다.
+
+## Android 1.1 Release 빌드
+
+소스 기준 버전은 `1.1.0 (8)`이며 Release는 R8·resource shrink를 적용한다. 일반 로컬/CI는 비밀값 없이 unsigned APK와 AAB를 계속 검증한다.
+
+실제 Play 배포 번들은 아래 전용 task만 사용한다. 최종 application ID 확인, 공개 HTTPS catalog/privacy/support, 콘텐츠 권리 승인, upload signing, Play Games 21개 외부 값 중 하나라도 없거나 형식이 맞지 않으면 AAB 생성 전에 실패한다.
+
+```sh
+./gradlew :app:bundleDistributionRelease --no-daemon --no-configuration-cache
+```
+
+비공개 입력 이름, 서명 방식, 산출물 검증, Issue #19로 이관된 외부·최종 실기기 gate는 `docs/ANDROID_RELEASE_DISTRIBUTION_HANDOFF.md`에 기록한다. 저장소에는 keystore·password·실제 Play ID를 추가하지 않는다.
