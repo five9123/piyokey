@@ -40,6 +40,20 @@ enum class OnboardingGoal(val preferredTags: Set<String>) {
 
 enum class OnboardingIntroStep { GOAL, KEYBOARD, FIRST_INPUT, COMPLETE }
 enum class PiyoGrowthStage { EGG, CRACKED_EGG, HATCHING, CHICK }
+enum class PiyoAccessory {
+  AUTO,
+  NONE,
+  STREAK_RIBBON,
+  STAR_BERET,
+  RAINBOW_BOW,
+  TOPIK_GLASSES,
+  CHAMPION_TROPHY,
+}
+
+data class PiyoSessionAppearance(
+  val stage: PiyoGrowthStage,
+  val accessory: PiyoAccessory?,
+)
 
 data class AppPreferences(
   val language: AppLanguage = AppLanguage.ENGLISH,
@@ -69,6 +83,8 @@ data class AppPreferences(
   val hatchChaptersCompleted: Int = 0,
   val pendingHatchResultChapter: Int = 0,
   val piyoNickname: String = "",
+  val selectedPiyoAccessory: PiyoAccessory = PiyoAccessory.AUTO,
+  val unlockedPiyoAccessories: Set<PiyoAccessory> = emptySet(),
   val appTourCompleted: Boolean = false,
   val onboardingMigrationChecked: Boolean = false,
 ) {
@@ -86,6 +102,12 @@ data class AppPreferences(
     }
 
   val hatchGateComplete: Boolean get() = hatchChaptersCompleted >= 3
+
+  val sessionAppearance: PiyoSessionAppearance
+    get() = PiyoSessionAppearance(
+      stage = growthStage,
+      accessory = PiyoWardrobePolicy.resolvedAccessory(selectedPiyoAccessory, unlockedPiyoAccessories),
+    )
 
   fun withDisplayPreset(preset: PracticeDisplayPreset): AppPreferences = when (preset) {
     PracticeDisplayPreset.LEARNING -> copy(
@@ -107,6 +129,41 @@ data class AppPreferences(
       showsMascot = false,
     )
   }
+}
+
+object PiyoWardrobePolicy {
+  private val streakRewards = mapOf(
+    3 to PiyoAccessory.STREAK_RIBBON,
+    5 to PiyoAccessory.STAR_BERET,
+    7 to PiyoAccessory.RAINBOW_BOW,
+  )
+
+  fun unlockedAfterStreakRewards(
+    current: Set<PiyoAccessory>,
+    rewardThresholds: Set<Int>,
+  ): Set<PiyoAccessory> = current + rewardThresholds.mapNotNull(streakRewards::get)
+
+  fun unlockedAfterTopikGame(
+    current: Set<PiyoAccessory>,
+    deckTags: Set<String>,
+    score: Int,
+  ): Set<PiyoAccessory> = if (score >= 0 && deckTags.any { it.contains("TOPIK", ignoreCase = true) }) {
+    current + PiyoAccessory.TOPIK_GLASSES
+  } else {
+    current
+  }
+
+  fun resolvedAccessory(
+    selected: PiyoAccessory,
+    unlocked: Set<PiyoAccessory>,
+  ): PiyoAccessory? = when {
+    selected == PiyoAccessory.AUTO || selected == PiyoAccessory.NONE -> null
+    selected in unlocked -> selected
+    else -> null
+  }
+
+  fun selectableAccessories(unlocked: Set<PiyoAccessory>): List<PiyoAccessory> =
+    listOf(PiyoAccessory.AUTO, PiyoAccessory.NONE) + PiyoAccessory.entries.filter { it in unlocked }
 }
 
 object OnboardingPolicy {

@@ -23,4 +23,6 @@
   <string name="practice_input_os">OS 키보드</string>
   <string name="practice_ime_missing">한국어 키보드를 찾지 못했어요. 계속 입력하거나 시스템 설정을 열 수 있어요.</string>
   <string name="practice_ime_open_settings">키보드 설정</string>
+  <string name="practice_play_pronunciation">한국어 발음 재생</string>
+  <string name="practice_piyo_accessibility">입력에 반응하는 피요</string>
 </resources>

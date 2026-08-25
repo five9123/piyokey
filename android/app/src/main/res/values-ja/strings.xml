@@ -15,4 +15,5 @@
   <string name="dismiss_error">閉じる</string>
   <string name="retry_save">保存を再試行</string>
   <string name="back_to_curriculum">カリキュラムへ戻る</string>
+  <string name="practice_result_share_title">韓国語タイピング練習</string><string name="practice_result_share_level">練習セッション</string>
 </resources>

@@ -54,4 +54,5 @@
   <string name="main_tour_profile_detail">성장·복습·알림·받은 덱을 확인해요.</string>
   <string name="main_tour_settings_title">설정은 항상 여기</string>
   <string name="main_tour_settings_detail">오른쪽 위 버튼에서 어느 탭이든 같은 설정을 열어요.</string>
+  <string name="onboarding_piyo_accessibility">부화 미션으로 성장하는 피요</string>
 </resources>

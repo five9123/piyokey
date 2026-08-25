@@ -44,7 +44,7 @@ jobs:
         run: swift test
 
   android-contracts:
-    name: Android M6B contracts and build
+    name: Android M6C contracts and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
             android/**/*.gradle.kts
             android/gradle/libs.versions.toml
             android/gradle/wrapper/gradle-wrapper.properties
-      - name: Run Android M1-M6B contracts, UI checks, lint, and build
+      - name: Run Android M1-M6C contracts, UI checks, lint, and build
         working-directory: android
         run: >-
           ./gradlew
@@ -68,6 +68,7 @@ jobs:
           :core:game:test
           :core:retention:test
           :core:settings:test
+          :core:platform:test
           :core:data:testDebugUnitTest
           :feature:practice:testDebugUnitTest
           :feature:practice:assembleDebugAndroidTest
@@ -80,8 +81,10 @@ jobs:
           :feature:onboarding:lintDebug
           :feature:settings:lintDebug
           :core:platform:lintDebug
+          :core:design:lintDebug
           :app:lintDebug
           :app:assembleDebug
+          :app:assembleRelease
           --no-daemon
 
   ios-build:

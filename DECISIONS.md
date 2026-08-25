@@ -1322,3 +1322,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 게임 규칙을 순수 reducer와 정적 번들 계약으로 먼저 고정하면 제조사 IME·GPU·오디오 출력에 의존하지 않는 대부분의 회귀를 CI와 에뮬레이터에서 닫을 수 있다. 실기기 전환 비용은 사용자가 선택한 출시 직전 통합 QA에 모으면서도 성능·청취 기준은 삭제하지 않는다.
 - 관련 PRD 섹션: F6~F6e, F7, F10, §6.3, §7.3, §9~§13 M6·M7
 - 영향 범위: `core:game`, Room 게임 기록, game/practice Compose feature, 번들 게임·띄어쓰기 콘텐츠, ja/en/ko 리소스, source CI, 출시 후보 실기기 gate
+
+## 2026-08-25 Android M7 M6C 오디오·공유·성장 폴리싱
+
+- 관련: PRD F8~F12, §7, §12.1, Issue #30.
+- 결정: Android 고정 발음은 선언 asset→canonical asset만 사용하며 둘 다 열지 못하면 자동 테스트/프리플라이트 실패로 다룬다. 번들에 없는 사용자·비공개 동적 문구만 네트워크가 필요 없는 ko-KR `TextToSpeech` voice로 폴백한다. 발음 중 효과음은 억제한다.
+- 결정: 효과음은 audio-focus gain을 요청하지 않는 `USAGE_GAME` 지연식 `SoundPool`로 재생하고 48kHz mono 합성 fallback을 사용한다. 첫 재생 전에는 엔진을 만들지 않고 15초 유휴·백그라운드에서 반납한다.
+- 결정: 결과 공유는 정확히 1,200×1,200 로컬 PNG, MediaStore 저장, 캐시의 `shared_results/`만 허용한 non-exported FileProvider `content://` 공유로 구현한다. 저장소 전체 권한과 `file://`는 사용하지 않는다.
+- 결정: 3/5/7일 소품과 TOPIK 안경은 DataStore의 영구 단조 집합으로 보존한다. `자동`은 태그 기반 소품을 붙이지 않으며 선택 외형을 세션 시작 스냅샷으로 고정한다.
+- 결정: Android launcher/adaptive icon은 iOS와 동일한 공용 1024×1024 RGB 원본을 빌드 생성 리소스로 복사한다. 별도 Android 로고 원본을 만들지 않는다.
+- 결정: 실제 외부 음악 혼합·오디오 인터럽트·Galaxy IME·60fps/터치 검증은 사용자 결정대로 Issue #19 출시 후보 통합 실기기 QA에 유지한다.

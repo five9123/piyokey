@@ -20,6 +20,7 @@ kotlin {
 
 dependencies {
   implementation(project(":core:settings"))
+  implementation(project(":core:design"))
   implementation(project(":feature:practice"))
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)

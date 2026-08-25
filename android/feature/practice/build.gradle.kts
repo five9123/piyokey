@@ -32,6 +32,8 @@ kotlin {
 dependencies {
   implementation(project(":core:session"))
   implementation(project(":core:settings"))
+  implementation(project(":core:platform"))
+  implementation(project(":core:design"))
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.compose.ui.tooling.preview)

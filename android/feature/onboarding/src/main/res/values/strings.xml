@@ -54,4 +54,5 @@
   <string name="main_tour_profile_detail">Review growth, mistakes, reminders, and downloaded decks.</string>
   <string name="main_tour_settings_title">Settings are always here</string>
   <string name="main_tour_settings_detail">The top-right button opens the same settings from every tab.</string>
+  <string name="onboarding_piyo_accessibility">Piyo growing through the hatch missions</string>
 </resources>

@@ -72,4 +72,8 @@
   <string name="no_space_choice">no space</string>
   <string name="spacing_answer">Answer: %1$s · You chose: %2$s</string>
   <string name="korean_ime_required">Enable a Korean keyboard in system settings to use OS input.</string>
+  <string name="game_piyo_accessibility">Piyo following the current game</string>
+  <string name="share_save_image">Save image</string><string name="share_sns">Share to SNS</string><string name="share_chooser">Share PIYOKEY result</string>
+  <string name="share_saved">Image saved.</string><string name="share_save_failed">Couldn’t save the image.</string><string name="share_permission_denied">Photo permission was denied.</string><string name="share_failed">Couldn’t open sharing.</string>
+  <string name="share_score">Score</string><string name="share_combo">Best combo</string><string name="share_streak">Streak</string><string name="share_download">Practice Korean typing with typee</string><string name="share_caption">I scored %1$d in %2$s on typee! #typee #KoreanTyping</string>
 </resources>

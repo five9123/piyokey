@@ -77,6 +77,13 @@ import app.piyokey.core.game.FlowGameReducer
 import app.piyokey.core.game.FlowGameState
 import app.piyokey.core.game.FlowPhase
 import app.piyokey.core.hangul.HangulComposer
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.platform.PiyokeySoundEngine
+import app.piyokey.core.platform.SoundCue
+import app.piyokey.core.platform.ResultShareModel
+import app.piyokey.core.settings.KeySoundStyle
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.feature.practice.DubeolsikKeyboard
 import app.piyokey.feature.practice.KoreanIMEInput
 import app.piyokey.feature.practice.PracticeKeyboardOptions
@@ -106,7 +113,7 @@ fun GameHubScreen(
     GameTile(GameKind.SPACING, R.string.spacing_title, R.string.spacing_rule, "↔"),
   )
   LazyColumn(
-    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF8F3)).testTag("game-hub"),
+    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("game-hub"),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(14.dp),
   ) {
@@ -135,7 +142,7 @@ fun GameHubScreen(
           Card(
             modifier = Modifier.weight(1f).aspectRatio(1.0f)
               .clickable { onGame(tile.kind) }.testTag("game-${tile.kind.route}"),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           ) {
             Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
               Text(tile.symbol, fontSize = 30.sp, color = PiyoPink)
@@ -172,7 +179,7 @@ fun FlowDeckSelectionScreen(
   BackHandler(onBack = onBack)
   val language = LocalConfiguration.current.locales[0].language
   LazyColumn(
-    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF8F3)),
+    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
@@ -201,7 +208,7 @@ fun FlowDeckSelectionScreen(
 private fun FlowDeckCard(deck: Deck, language: String, best: Int?, onSelect: (Deck) -> Unit) {
   Card(
     modifier = Modifier.fillMaxWidth().clickable { onSelect(deck) }.testTag("flow-deck-${deck.deckId}"),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
       Surface(shape = CircleShape, color = PiyoPink.copy(alpha = 0.14f), modifier = Modifier.size(46.dp)) {
@@ -223,6 +230,10 @@ private enum class FlowFeedback { READY, CORRECT, WRONG, COMPLETE, LIFE_LOST }
 fun FlowGameRoute(
   deck: Deck,
   useOSIME: Boolean = false,
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  hapticsEnabled: Boolean = true,
   seed: Long = Random.nextLong(),
   onClose: () -> Unit,
   onFinished: (FlowGameState) -> Unit,
@@ -233,6 +244,10 @@ fun FlowGameRoute(
   var feedback by remember { mutableStateOf(FlowFeedback.READY) }
   var feedbackToken by remember { mutableLongStateOf(0L) }
   val lifecycleOwner = LocalLifecycleOwner.current
+  val context = LocalContext.current
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
 
   fun dispatch(event: FlowGameEvent) {
     val previous = state
@@ -246,13 +261,22 @@ fun FlowGameRoute(
       else -> feedback
     }
     if (reduction.lostLife || reduction.completedCard || event is FlowGameEvent.Key) feedbackToken += 1
+    if (soundEffectsEnabled) {
+      when {
+        reduction.lostLife -> soundEngine.play(SoundCue.LIFE_LOST, keySoundStyle)
+        reduction.completedCard -> soundEngine.play(SoundCue.CORRECT, keySoundStyle)
+        reduction.state.mistakeCount > previous.mistakeCount -> soundEngine.play(SoundCue.MISTAKE, keySoundStyle)
+        event is FlowGameEvent.Backspace -> soundEngine.play(SoundCue.BACKSPACE, keySoundStyle)
+        event is FlowGameEvent.Key -> soundEngine.play(SoundCue.KEY, keySoundStyle)
+      }
+    }
   }
 
   BackHandler { onClose() }
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       when (event) {
-        Lifecycle.Event.ON_STOP -> dispatch(FlowGameEvent.Pause)
+        Lifecycle.Event.ON_STOP -> { soundEngine.release(); dispatch(FlowGameEvent.Pause) }
         Lifecycle.Event.ON_START -> if (state.phase == FlowPhase.PAUSED) {
           dispatch(FlowGameEvent.Resume(SystemClock.elapsedRealtime()))
         }
@@ -260,7 +284,7 @@ fun FlowGameRoute(
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
-    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer); soundEngine.close() }
   }
   LaunchedEffect(state.phase) {
     val timelineOriginMillis = maxOf(
@@ -292,6 +316,8 @@ fun FlowGameRoute(
     onBackspace = { dispatch(FlowGameEvent.Backspace) },
     onIMEText = { committed, composing -> dispatch(FlowGameEvent.IMEText(committed, composing)) },
     useOSIME = useOSIME,
+    piyoAppearance = piyoAppearance,
+    hapticsEnabled = hapticsEnabled,
     onClose = {
       dispatch(FlowGameEvent.Close)
       onClose()
@@ -307,6 +333,8 @@ private fun FlowGameScreen(
   onBackspace: () -> Unit,
   onIMEText: (String, String?) -> Unit,
   useOSIME: Boolean,
+  piyoAppearance: PiyoSessionAppearance,
+  hapticsEnabled: Boolean,
   onClose: () -> Unit,
 ) {
   val context = LocalContext.current
@@ -333,6 +361,11 @@ private fun FlowGameScreen(
         FlowWordCard(
           state = state,
           modifier = Modifier.align(Alignment.CenterStart).offset(x = x, y = (-10).dp),
+        )
+        PiyoAvatar(
+          appearance = piyoAppearance,
+          contentDescription = stringResource(R.string.game_piyo_accessibility),
+          modifier = Modifier.align(Alignment.BottomStart).padding(12.dp).size(74.dp),
         )
         if (feedback == FlowFeedback.COMPLETE) {
           Box(Modifier.align(Alignment.Center)) { CompletionBurst() }
@@ -378,7 +411,7 @@ private fun FlowGameScreen(
           nextExpectedJamo = state.currentCard.judge.expectedNext,
           onJamo = onKey,
           onBackspace = onBackspace,
-          options = PracticeKeyboardOptions(),
+          options = PracticeKeyboardOptions(hapticsEnabled = hapticsEnabled),
           modifier = Modifier.testTag("flow-keyboard"),
         )
       }
@@ -497,6 +530,7 @@ fun FlowResultScreen(
   state: FlowGameState,
   rank: String,
   isNewBest: Boolean,
+  shareModel: ResultShareModel? = null,
   onRetry: () -> Unit,
   onDone: () -> Unit,
 ) {
@@ -520,6 +554,7 @@ fun FlowResultScreen(
         ResultMetric(stringResource(R.string.items_missed), state.missedItemCount.toString())
       }
     }
+    shareModel?.let { ResultShareActions(it, Modifier.padding(top = 12.dp)) }
     Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 22.dp).height(54.dp)) { Text(stringResource(R.string.retry), fontWeight = FontWeight.Black) }
     TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.done)) }
   }

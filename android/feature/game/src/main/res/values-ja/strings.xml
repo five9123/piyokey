@@ -72,4 +72,8 @@
   <string name="no_space_choice">空白なし</string>
   <string name="spacing_answer">正解：%1$s・選択：%2$s</string>
   <string name="korean_ime_required">OS入力には端末設定で韓国語キーボードを有効にしてください。</string>
+  <string name="game_piyo_accessibility">プレイを見守るピヨ</string>
+  <string name="share_save_image">画像を保存</string><string name="share_sns">SNSでシェア</string><string name="share_chooser">ピヨキーの結果をシェア</string>
+  <string name="share_saved">画像を保存しました。</string><string name="share_save_failed">画像を保存できませんでした。</string><string name="share_permission_denied">写真への追加が許可されませんでした。</string><string name="share_failed">共有画面を開けませんでした。</string>
+  <string name="share_score">スコア</string><string name="share_combo">最大コンボ</string><string name="share_streak">連続記録</string><string name="share_download">ピヨキーで韓国語タイピングを練習しよう</string><string name="share_caption">ピヨキーの%2$sで%1$d点！ #ピヨキー #韓国語タイピング</string>
 </resources>

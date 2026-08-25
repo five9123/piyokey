@@ -42,6 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.piyokey.core.settings.AppPreferences
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.core.settings.OnboardingGoal
 import app.piyokey.core.settings.OnboardingIntroStep
 import app.piyokey.feature.practice.DubeolsikKeyboard
@@ -377,9 +380,16 @@ fun HatchMissionResultScreen(
 
 @Composable
 private fun PiyoMark(symbol: String) {
-  Box(Modifier.size(82.dp).background(Yellow, CircleShape), contentAlignment = Alignment.Center) {
-    Text(symbol, fontSize = 42.sp)
+  val stage = when (symbol) {
+    "🥚" -> PiyoGrowthStage.EGG
+    "🐣" -> PiyoGrowthStage.HATCHING
+    else -> PiyoGrowthStage.CHICK
   }
+  PiyoAvatar(
+    appearance = PiyoSessionAppearance(stage, null),
+    contentDescription = stringResource(R.string.onboarding_piyo_accessibility),
+    modifier = Modifier.size(92.dp),
+  )
 }
 
 private fun OnboardingGoal.titleResource(): Int = when (this) {

@@ -32,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,13 +48,16 @@ import app.piyokey.core.settings.PracticePromptOrder
 
 @Composable
 fun CommonSettingsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+  val description = stringResource(R.string.settings_open)
   Surface(
     modifier = modifier.testTag("common-settings-button"),
     shape = CircleShape,
     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
     shadowElevation = 5.dp,
   ) {
-    IconButton(onClick = onClick) { Text("⚙", fontWeight = FontWeight.Black) }
+    IconButton(onClick = onClick, modifier = Modifier.semantics { contentDescription = description }) {
+      Text("⚙", fontWeight = FontWeight.Black)
+    }
   }
 }
 

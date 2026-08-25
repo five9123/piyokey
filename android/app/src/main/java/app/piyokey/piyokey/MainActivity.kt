@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import app.piyokey.core.data.CatalogRefreshResult
 import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckLibrarySnapshot
@@ -77,17 +78,20 @@ import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.toRecord
 import app.piyokey.core.platform.DailyReminderScheduler
+import app.piyokey.core.platform.ResultShareModel
 import app.piyokey.core.retention.CurriculumItem
 import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
 import app.piyokey.core.retention.DailyChallengePolicy
 import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.ReviewItem
+import app.piyokey.core.retention.RetentionPolicy
 import app.piyokey.core.settings.AppPreferences
 import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.InputMode
 import app.piyokey.core.settings.OnboardingPolicy
+import app.piyokey.core.settings.PiyoWardrobePolicy
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -110,6 +114,7 @@ import app.piyokey.feature.game.SpacingSelectionScreen
 import app.piyokey.feature.game.SpacingGameRoute
 import app.piyokey.feature.game.SpacingResultScreen
 import app.piyokey.feature.game.GenericGameResultScreen
+import app.piyokey.feature.game.ResultShareActions
 import app.piyokey.feature.retention.CurriculumMapScreen
 import app.piyokey.feature.retention.ReminderControls
 import app.piyokey.feature.retention.RetentionHomeCard
@@ -166,6 +171,15 @@ class MainActivity : AppCompatActivity() {
           if (tags != optimistic.language.tag) {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(optimistic.language.tag))
           }
+        }
+        LaunchedEffect(optimistic.theme) {
+          val light = optimistic.theme == AppTheme.LIGHT
+          WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = light
+            isAppearanceLightNavigationBars = light
+          }
+          @Suppress("DEPRECATION")
+          window.navigationBarColor = if (light) android.graphics.Color.WHITE else android.graphics.Color.rgb(18, 18, 20)
         }
         val baseDensity = LocalDensity.current
         CompositionLocalProvider(
@@ -372,6 +386,27 @@ private fun PiyokeyApp(
     return
   }
 
+  LaunchedEffect(currentLearning.unlockedRewards, preferences.unlockedPiyoAccessories) {
+    val unlocked = PiyoWardrobePolicy.unlockedAfterStreakRewards(
+      preferences.unlockedPiyoAccessories,
+      currentLearning.unlockedRewards,
+    )
+    if (unlocked != preferences.unlockedPiyoAccessories) {
+      onPreferencesChange(preferences.copy(unlockedPiyoAccessories = unlocked))
+    }
+  }
+
+  fun unlockTopikReward(deck: Deck, score: Int) {
+    val unlocked = PiyoWardrobePolicy.unlockedAfterTopikGame(
+      preferences.unlockedPiyoAccessories,
+      deck.tags.toSet(),
+      score,
+    )
+    if (unlocked != preferences.unlockedPiyoAccessories) {
+      onPreferencesChange(preferences.copy(unlockedPiyoAccessories = unlocked))
+    }
+  }
+
   fun reload() {
     reloadToken += 1
   }
@@ -559,15 +594,37 @@ private fun PiyokeyApp(
   }
 
   val inputModeKey = if (preferences.defaultInputMode == InputMode.OS_IME) "os_ime" else "builtin"
+  val currentStreak = RetentionPolicy.streak(
+    currentLearning.completedDays,
+    JstDay.fromEpochMillis(System.currentTimeMillis()),
+  ).current
+  fun shareModel(title: String, levelOrDeck: String, score: Int, combo: Int): ResultShareModel = ResultShareModel(
+    language = preferences.language,
+    title = title,
+    levelOrDeck = levelOrDeck,
+    score = score,
+    maxCombo = combo,
+    streak = currentStreak,
+    scoreLabel = context.getString(app.piyokey.feature.game.R.string.share_score),
+    comboLabel = context.getString(app.piyokey.feature.game.R.string.share_combo),
+    streakLabel = context.getString(app.piyokey.feature.game.R.string.share_streak),
+    downloadPrompt = context.getString(app.piyokey.feature.game.R.string.share_download),
+    caption = context.getString(app.piyokey.feature.game.R.string.share_caption, score, title),
+  )
   val runningFlow = activeFlowDeck
   val completedFlow = flowResult
   if (runningFlow != null && completedFlow == null) {
     FlowGameRoute(
       deck = runningFlow,
       useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+      piyoAppearance = preferences.sessionAppearance,
+      soundEffectsEnabled = preferences.soundEffectsEnabled,
+      keySoundStyle = preferences.keySoundStyle,
+      hapticsEnabled = preferences.hapticsEnabled,
       seed = flowSeed,
       onClose = { activeFlowDeck = null },
       onFinished = { finished ->
+        unlockTopikReward(runningFlow, finished.score)
         scope.launch {
           flowIsNewBest = try {
             val saved = repository.saveFlowRecord(
@@ -596,6 +653,12 @@ private fun PiyokeyApp(
       state = completedFlow,
       rank = flowRankTuning.rank(completedFlow.accuracyPercent, completedFlow.charactersPerMinute),
       isNewBest = flowIsNewBest,
+      shareModel = shareModel(
+        context.getString(app.piyokey.feature.game.R.string.flow_title),
+        runningFlow?.localizedName(preferences.language.tag) ?: completedFlow.deckId,
+        completedFlow.score,
+        completedFlow.maxCombo,
+      ),
       onRetry = {
         flowResult = null
         flowSeed = kotlin.random.Random.nextLong()
@@ -615,9 +678,14 @@ private fun PiyokeyApp(
       AcidRainRoute(
         deck = runningGameDeck,
         useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+        piyoAppearance = preferences.sessionAppearance,
+        soundEffectsEnabled = preferences.soundEffectsEnabled,
+        keySoundStyle = preferences.keySoundStyle,
+        hapticsEnabled = preferences.hapticsEnabled,
         seed = gameSeed,
         onClose = { activeGameDeck = null },
         onFinished = { finished ->
+          unlockTopikReward(runningGameDeck, finished.score)
           scope.launch {
             try {
               val saved = repository.saveGameRecord(
@@ -640,9 +708,14 @@ private fun PiyokeyApp(
         deck = runningGameDeck,
         useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
         showChoseongMeaning = preferences.choseongShowsMeaning,
+        piyoAppearance = preferences.sessionAppearance,
+        soundEffectsEnabled = preferences.soundEffectsEnabled,
+        keySoundStyle = preferences.keySoundStyle,
+        hapticsEnabled = preferences.hapticsEnabled,
         seed = gameSeed,
         onClose = { activeGameDeck = null },
         onFinished = { finished ->
+          unlockTopikReward(runningGameDeck, finished.score)
           scope.launch {
             try {
               val saved = repository.saveGameRecord(
@@ -663,6 +736,14 @@ private fun PiyokeyApp(
     return
   }
   typingGameResult?.let { completed ->
+    val gameTitle = context.getString(
+      when (selectedGameKind) {
+        GameKind.CHOSEONG -> app.piyokey.feature.game.R.string.choseong_title
+        GameKind.WORD_MATCH -> app.piyokey.feature.game.R.string.word_match_title
+        GameKind.DICTATION -> app.piyokey.feature.game.R.string.dictation_title
+        else -> app.piyokey.feature.game.R.string.games_title
+      },
+    )
     GenericGameResultScreen(
       score = completed.score,
       accuracy = completed.accuracyPercent,
@@ -674,6 +755,12 @@ private fun PiyokeyApp(
       inputModeName = stringResource(
         if (preferences.defaultInputMode == InputMode.OS_IME) app.piyokey.feature.game.R.string.os_ime_input
         else app.piyokey.feature.game.R.string.builtin_input,
+      ),
+      shareModel = shareModel(
+        gameTitle,
+        runningGameDeck?.localizedName(preferences.language.tag) ?: completed.mode.name,
+        completed.score,
+        completed.maxCombo,
       ),
       onRetry = { typingGameResult = null; gameSeed = kotlin.random.Random.nextLong() },
       onDone = { typingGameResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
@@ -691,6 +778,12 @@ private fun PiyokeyApp(
         if (preferences.defaultInputMode == InputMode.OS_IME) app.piyokey.feature.game.R.string.os_ime_input
         else app.piyokey.feature.game.R.string.builtin_input,
       ),
+      shareModel = shareModel(
+        context.getString(app.piyokey.feature.game.R.string.acid_rain_title),
+        runningGameDeck?.localizedName(preferences.language.tag) ?: completed.deckId,
+        completed.score,
+        completed.maxCombo,
+      ),
       onRetry = { acidRainResult = null; gameSeed = kotlin.random.Random.nextLong() },
       onDone = { acidRainResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
     )
@@ -701,6 +794,8 @@ private fun PiyokeyApp(
   if (runningSpacing != null && spacingGameResult == null) {
     SpacingGameRoute(
       passage = runningSpacing,
+      soundEffectsEnabled = preferences.soundEffectsEnabled,
+      keySoundStyle = preferences.keySoundStyle,
       onClose = { activeSpacingPassage = null },
       onFinished = { finished ->
         scope.launch {
@@ -716,6 +811,12 @@ private fun PiyokeyApp(
   spacingGameResult?.let { completed ->
     SpacingResultScreen(
       state = completed,
+      shareModel = shareModel(
+        context.getString(app.piyokey.feature.game.R.string.spacing_title),
+        context.getString(app.piyokey.feature.game.R.string.spacing_level, runningSpacing?.level ?: 1),
+        requireNotNull(completed.result).score,
+        0,
+      ),
       onRetry = { spacingGameResult = null },
       onDone = { spacingGameResult = null; activeSpacingPassage = null; gameStage = GameStage.SPACING_SELECT },
     )
@@ -760,6 +861,8 @@ private fun PiyokeyApp(
           target = item.ko,
           meaning = item.localizedMeaning(preferences.language.tag),
           reading = item.localizedReading(preferences.language.tag),
+          audio = item.audio,
+          isBundledFixedContent = practice.installed?.deck?.official ?: true,
         )
       }
       Box(Modifier.fillMaxSize()) {
@@ -790,6 +893,10 @@ private fun PiyokeyApp(
             showsComposition = preferences.showsComposition,
             showsMascot = preferences.showsMascot,
           ),
+          piyoAppearance = preferences.sessionAppearance,
+          soundEffectsEnabled = preferences.soundEffectsEnabled,
+          keySoundStyle = preferences.keySoundStyle,
+          autoPronounce = preferences.autoPronouncesPractice,
           onCheckpointChanged = { checkpoint ->
             if (practice.kind == PracticeKind.CURRICULUM || practice.kind == PracticeKind.ONBOARDING) {
               scope.launch {
@@ -861,6 +968,20 @@ private fun PiyokeyApp(
         },
         onDeckClick = ::openDetail,
         onBack = { result = null },
+        shareActions = {
+          val title = context.getString(R.string.practice_result_share_title)
+          val level = completedResult.practice.installed?.deck?.localizedName(preferences.language.tag)
+            ?: completedResult.practice.stageId
+            ?: context.getString(R.string.practice_result_share_level)
+          ResultShareActions(
+            shareModel(
+              title,
+              level,
+              completedResult.accuracyPercent.toInt() * 10,
+              0,
+            ),
+          )
+        },
       )
       return
     }
@@ -896,6 +1017,7 @@ private fun PiyokeyApp(
             RetentionHomeCard(
               today = JstDay.fromEpochMillis(System.currentTimeMillis()),
               completedDays = currentLearning.completedDays,
+              appearance = preferences.sessionAppearance,
               onOpenProfile = { tab = RootTab.PROFILE },
               onDailyChallenge = {
                 val day = JstDay.fromEpochMillis(System.currentTimeMillis())
@@ -1044,6 +1166,12 @@ private fun PiyokeyApp(
                 today = JstDay.fromEpochMillis(System.currentTimeMillis()),
                 completedDays = currentLearning.completedDays,
                 unlockedRewards = currentLearning.unlockedRewards,
+                appearance = preferences.sessionAppearance,
+                selectedAccessory = preferences.selectedPiyoAccessory,
+                unlockedAccessories = preferences.unlockedPiyoAccessories,
+                onAccessorySelected = { accessory ->
+                  onPreferencesChange(preferences.copy(selectedPiyoAccessory = accessory))
+                },
               )
               ReviewDeckSection(
                 reviewItems = currentLearning.reviewItems,
@@ -1232,7 +1360,7 @@ private fun PracticeDeckChooser(
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
   LazyColumn(
-    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF9F1)),
+    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {

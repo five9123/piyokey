@@ -50,4 +50,5 @@
   <string name="settings_save">저장</string>
   <string name="settings_cancel">취소</string>
   <string name="settings_done">완료</string>
+  <string name="settings_open">설정 열기</string>
 </resources>

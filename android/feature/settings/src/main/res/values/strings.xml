@@ -50,4 +50,5 @@
   <string name="settings_save">Save</string>
   <string name="settings_cancel">Cancel</string>
   <string name="settings_done">Done</string>
+  <string name="settings_open">Open settings</string>
 </resources>
