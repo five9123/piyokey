@@ -12,4 +12,7 @@
   <string name="games_coming_next">Game modes are being prepared.</string>
   <string name="close_session">Close</string>
   <string name="retry_load">Try again</string>
+  <string name="dismiss_error">Dismiss</string>
+  <string name="retry_save">Retry save</string>
+  <string name="back_to_curriculum">Back to curriculum</string>
 </resources>

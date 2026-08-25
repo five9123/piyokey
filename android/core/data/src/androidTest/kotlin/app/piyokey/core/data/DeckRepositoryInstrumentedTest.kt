@@ -6,6 +6,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import java.net.URL
 import app.piyokey.core.game.FlowGameRecord
+import app.piyokey.core.retention.JstDay
+import app.piyokey.core.session.PracticeItemResolution
+import app.piyokey.core.session.PracticeSessionCheckpoint
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -176,6 +179,73 @@ class DeckRepositoryInstrumentedTest {
     assertEquals(800, saved.progress.bestScore)
     assertEquals(98.0, saved.progress.bestAccuracyPercent, 0.001)
     assertEquals(2, database.dao().gameRecords(first.deckId, "flow", "builtin").size)
+  }
+
+  @Test
+  fun curriculumCheckpointCompletionAndJstStampAreTransactional() = runTest {
+    val checkpoint = PracticeSessionCheckpoint(
+      currentTargetIndex = 2,
+      acceptedKeys = "ㄷ",
+      mistakeCount = 1,
+      currentItemMistakeCount = 1,
+      currentItemMistakenJamoIndices = setOf(0),
+      itemResolutions = listOf(PracticeItemResolution(0, 0, emptySet()), PracticeItemResolution(1, 0, emptySet())),
+      activeDurationMillis = 12_345,
+    )
+    repository.saveCurriculumCheckpoint("chapter_1_basic_consonants", checkpoint)
+    assertEquals(checkpoint, repository.learningSnapshot().activeSession?.checkpoint)
+
+    val stars = repository.finishCurriculumStage(
+      stageId = "chapter_1_basic_consonants",
+      accuracyPercent = 95.0,
+      charactersPerMinute = 50.0,
+      sessionDay = JstDay("2026-08-25"),
+      completedAtEpochMillis = 10_000,
+    )
+    val snapshot = repository.learningSnapshot()
+    assertEquals(2, stars)
+    assertEquals(2, snapshot.progress.getValue("chapter_1_basic_consonants").stars)
+    assertEquals(null, snapshot.activeSession)
+    assertTrue(JstDay("2026-08-25") in snapshot.completedDays)
+  }
+
+  @Test
+  fun reviewItemsCollectMistakesAndGraduateAfterThreePerfectReviewSessions() = runTest {
+    val deck = repository.bundledFlowDecks().first()
+    val item = deck.items.first()
+    repository.recordPracticeReview(
+      deck.deckId,
+      listOf(item),
+      listOf(PracticeItemResolution(0, 2, setOf(0))),
+      isReviewSession = false,
+      atEpochMillis = 100,
+    )
+    repeat(3) { run ->
+      repository.recordPracticeReview(
+        deck.deckId,
+        listOf(item),
+        listOf(PracticeItemResolution(0, 0, emptySet())),
+        isReviewSession = true,
+        atEpochMillis = (200 + run).toLong(),
+      )
+    }
+    val stored = repository.learningSnapshot().reviewItems.single()
+    assertEquals(1, stored.missCount)
+    assertEquals(3, stored.consecutivePerfect)
+    assertFalse(stored.isActive)
+    repository.addReviewItemManually(item, deck.deckId, 500)
+    val reactivated = repository.learningSnapshot().reviewItems.single()
+    assertTrue(reactivated.isActive)
+    repository.removeReviewItemManually(reactivated.id)
+    assertTrue(repository.learningSnapshot().reviewItems.isEmpty())
+  }
+
+  @Test
+  fun threeFiveSevenWeeklyRewardsUnlockPermanently() = runTest {
+    (24..30).forEach { day ->
+      repository.recordDailyCompletion(JstDay("2026-08-$day"), day.toLong())
+    }
+    assertEquals(setOf(3, 5, 7), repository.learningSnapshot().unlockedRewards)
   }
 
   private fun sampleFlowRecord(score: Int, accuracy: Double, playedAt: Long) = FlowGameRecord(

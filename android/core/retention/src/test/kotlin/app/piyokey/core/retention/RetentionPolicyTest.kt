@@ -1,0 +1,77 @@
+package app.piyokey.core.retention
+
+import app.piyokey.core.deckkit.DeckItem
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
+class RetentionPolicyTest {
+  @Test fun curriculumHasSixChaptersAndTenToFifteenItemsPerStage() {
+    assertEquals(6, CurriculumCatalog.chapters.size)
+    assertTrue(CurriculumCatalog.stages.all { it.items.size in 10..15 })
+    assertEquals(7, CurriculumCatalog.stages.size)
+  }
+
+  @Test fun sequentialCoreUnlocksAndChapterFiveIsFree() {
+    val stages = CurriculumCatalog.stages
+    assertTrue(CurriculumPolicy.isUnlocked(stages[0], emptySet()))
+    assertFalse(CurriculumPolicy.isUnlocked(stages[1], emptySet()))
+    assertTrue(CurriculumPolicy.isUnlocked(stages[1], setOf(stages[0].id)))
+    assertTrue(CurriculumPolicy.isUnlocked(stages.first { it.chapterNumber == 5 }, emptySet()))
+  }
+
+  @Test fun starsUseIosParityThresholds() {
+    assertEquals(0, CurriculumPolicy.stars(79.99, 100.0))
+    assertEquals(1, CurriculumPolicy.stars(80.0, 0.0))
+    assertEquals(2, CurriculumPolicy.stars(90.0, 40.0))
+    assertEquals(3, CurriculumPolicy.stars(97.0, 60.0))
+  }
+
+  @Test fun jstBoundaryUsesTokyoDay() {
+    assertEquals(JstDay("2026-01-02"), JstDay.fromEpochMillis(1767281400000)) // 00:30 JST
+    assertEquals(JstDay("2026-01-01"), JstDay.fromEpochMillis(1767223800000)) // 08:30 JST
+  }
+
+  @Test fun weekIsMondayToSundayWithDistinctStates() {
+    val today = JstDay("2026-08-25")
+    val week = RetentionPolicy.week(today, setOf(JstDay("2026-08-24")))
+    assertEquals("2026-08-24", week.first().day.value)
+    assertEquals(StampState.COMPLETED, week[0].state)
+    assertEquals(StampState.TODAY_PENDING, week[1].state)
+    assertEquals(StampState.UPCOMING, week[2].state)
+  }
+
+  @Test fun currentStreakMayAnchorOnYesterdayAndLongestIsStable() {
+    val completed = setOf(JstDay("2026-08-20"), JstDay("2026-08-21"), JstDay("2026-08-23"), JstDay("2026-08-24"))
+    assertEquals(Streak(2, 2), RetentionPolicy.streak(completed, JstDay("2026-08-25")))
+    assertEquals(Streak(0, 2), RetentionPolicy.streak(completed, JstDay("2026-08-26")))
+  }
+
+  @Test fun dailySelectionIsDeterministicAndChangesByDay() {
+    val first = DailyChallengePolicy.items(JstDay("2026-08-25"))
+    assertEquals(first, DailyChallengePolicy.items(JstDay("2026-08-25")))
+    assertEquals(5, first.size)
+    assertTrue(first != DailyChallengePolicy.items(JstDay("2026-08-26")))
+  }
+
+  @Test fun encouragementIsDeterministicAndUsesAllFourContexts() {
+    val today = JstDay("2026-08-25")
+    assertTrue(RetentionPolicy.encouragementIndex(today, emptySet()) in setOf(0, 1, 2, 4))
+    assertTrue(RetentionPolicy.encouragementIndex(today, setOf(today)) in setOf(5, 6))
+    assertTrue(RetentionPolicy.encouragementIndex(today, setOf(today.plusDays(-1))) in setOf(3, 7))
+    assertTrue(RetentionPolicy.encouragementIndex(today, setOf(today.plusDays(-3))) in setOf(8, 9))
+  }
+
+  @Test fun reviewGraduatesAfterThreeConsecutivePerfectRunsAndMistakeResets() {
+    val item = DeckItem("item", "사랑", "サラン", "love", null, null)
+    var review = ReviewPolicy.recordMistake(null, item, "deck", 1).item
+    review = ReviewPolicy.recordPerfect(review, 2).item
+    review = ReviewPolicy.recordPerfect(review, 3).item
+    assertTrue(requireNotNull(review).isActive)
+    review = ReviewPolicy.recordMistake(review, item, "deck", 4).item
+    assertEquals(0, requireNotNull(review).consecutivePerfect)
+    repeat(3) { review = ReviewPolicy.recordPerfect(review, (5 + it).toLong()).item }
+    assertFalse(requireNotNull(review).isActive)
+  }
+}

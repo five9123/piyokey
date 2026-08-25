@@ -37,6 +37,7 @@ class FlowGameReducerTest {
     state = reduce(state, FlowGameEvent.Key(wrong))
     assertEquals(0, state.combo)
     assertEquals(1, state.mistakeCount)
+    assertEquals(1, state.reviewMistakeCounts.values.single())
     assertEquals(60_000, state.remainingTimeMillis)
     for (jamo in state.currentCard.judge.expectedSequence) state = reduce(state, FlowGameEvent.Key(jamo))
     assertEquals(0, state.combo)
@@ -60,6 +61,7 @@ class FlowGameReducerTest {
     assertEquals(FlowPhase.FINISHED, state.phase)
     assertEquals(FlowFinishReason.LIVES, state.finishReason)
     assertEquals(0, state.lives)
+    assertEquals(3, state.reviewMistakeCounts.values.sum())
   }
 
   @Test fun timeExpiryEndsEvenWhenLivesRemain() {

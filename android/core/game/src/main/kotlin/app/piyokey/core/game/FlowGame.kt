@@ -54,6 +54,7 @@ data class FlowGameState(
   val completedItemCount: Int,
   val missedItemCount: Int,
   val feedbackRevision: Long,
+  val reviewMistakeCounts: Map<String, Int> = emptyMap(),
   val finishReason: FlowFinishReason? = null,
 ) {
   val countdownValue: Int
@@ -194,6 +195,7 @@ object FlowGameReducer {
       lives = lives,
       combo = 0,
       missedItemCount = state.missedItemCount + 1,
+      reviewMistakeCounts = state.reviewMistakeCounts.increment(state.currentCard.item.id),
       feedbackRevision = state.feedbackRevision + 1,
     )
     return if (lives == 0) {
@@ -213,6 +215,7 @@ object FlowGameReducer {
           currentCard = state.currentCard.copy(judge = evaluation.state, hadMistake = true),
           combo = 0,
           mistakeCount = state.mistakeCount + 1,
+          reviewMistakeCounts = state.reviewMistakeCounts.increment(state.currentCard.item.id),
           feedbackRevision = state.feedbackRevision + 1,
         ),
       )
@@ -280,6 +283,8 @@ object FlowGameReducer {
     else -> 1.0
   }
 }
+
+private fun Map<String, Int>.increment(key: String): Map<String, Int> = this + (key to ((this[key] ?: 0) + 1))
 
 fun FlowGameState.toRecord(playedAtEpochMillis: Long): FlowGameRecord = FlowGameRecord(
   deckId = deckId,

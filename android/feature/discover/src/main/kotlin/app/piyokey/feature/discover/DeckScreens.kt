@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -486,6 +487,7 @@ fun MyDecksScreen(
   onPlay: (InstalledDeck) -> Unit,
   onUpdate: (CatalogDeck) -> Unit,
   onDelete: (InstalledDeck) -> Unit,
+  header: @Composable () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
@@ -510,6 +512,7 @@ fun MyDecksScreen(
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
     verticalArrangement = Arrangement.spacedBy(13.dp),
   ) {
+    item { header() }
     item { Text(stringResource(R.string.my_decks_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
     if (installed.isEmpty()) {
       item {
@@ -552,6 +555,7 @@ fun RecommendationHome(
   recommendations: List<CatalogDeck>,
   installedDeckIds: Set<String>,
   onDeckClick: (CatalogDeck) -> Unit,
+  header: @Composable () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
@@ -560,6 +564,7 @@ fun RecommendationHome(
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 20.dp),
     verticalArrangement = Arrangement.spacedBy(13.dp),
   ) {
+    item { header() }
     item { Text(stringResource(R.string.brand_name), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
     item {
       Text(stringResource(R.string.home_recommended), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
@@ -576,6 +581,8 @@ fun PracticeResultScreen(
   accuracyPercent: Double,
   misses: Int,
   completed: Int,
+  charactersPerMinute: Double = 0.0,
+  stars: Int? = null,
   recommendations: List<CatalogDeck>,
   installedDeckIds: Set<String>,
   onRetry: () -> Unit,
@@ -593,6 +600,17 @@ fun PracticeResultScreen(
     item {
       Text(stringResource(R.string.practice_result_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
     }
+    if (stars != null) {
+      item {
+        Text(
+          "★".repeat(stars) + "☆".repeat(3 - stars),
+          modifier = Modifier.fillMaxWidth(),
+          textAlign = TextAlign.Center,
+          fontSize = 36.sp,
+          color = PiyokeyColors.AccentDark,
+        )
+      }
+    }
     item {
       Surface(color = Color.White, shape = RoundedCornerShape(24.dp)) {
         Row(Modifier.fillMaxWidth().padding(22.dp), horizontalArrangement = Arrangement.SpaceAround) {
@@ -601,6 +619,14 @@ fun PracticeResultScreen(
           ResultStat(stringResource(R.string.practice_result_completed), completed.toString())
         }
       }
+    }
+    item {
+      Text(
+        stringResource(R.string.practice_result_speed_value, charactersPerMinute.roundToInt()),
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
     }
     item { Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_again)) } }
     if (recommendations.isNotEmpty()) {
