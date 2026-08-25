@@ -1332,3 +1332,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 3/5/7일 소품과 TOPIK 안경은 DataStore의 영구 단조 집합으로 보존한다. `자동`은 태그 기반 소품을 붙이지 않으며 선택 외형을 세션 시작 스냅샷으로 고정한다.
 - 결정: Android launcher/adaptive icon은 iOS와 동일한 공용 1024×1024 RGB 원본을 빌드 생성 리소스로 복사한다. 별도 Android 로고 원본을 만들지 않는다.
 - 결정: 실제 외부 음악 혼합·오디오 인터럽트·Galaxy IME·60fps/터치 검증은 사용자 결정대로 Issue #19 출시 후보 통합 실기기 QA에 유지한다.
+
+## 2026-08-25 Android 앱 1.1 R1.1A 무료 `.piyodeck` 수명주기
+
+- 관련: PRD F5.9, §8.4, §9, §11, §13 R1.1, Issue #32.
+- 결정: Android `ContentResolver` 원본 URI는 8 MiB+1 제한 복사 중에만 열고 앱 전용 `cache/piyodeck-imports` staging에 package와 최소 pending metadata를 원자 기록한다. 원본 URI나 덱 콘텐츠·hash는 장기 저장·분석 전송하지 않으며 검증 거부본은 즉시, 남은 staging은 24시간 뒤 정리한다.
+- 결정: strict 공용 reader 검증 뒤에만 덱 이름·제작자·유형·난이도·태그·항목 수·첫 3항목 미리보기를 연다. 공식/카탈로그 ID 충돌은 거부하고 동일 ID는 SHA와 version으로 신규·동일·업데이트·다운그레이드·같은 버전 충돌을 분류한다. 동일 package는 디스크 무쓰기, 다른 내용은 현재본 유지가 기본이고 교체는 별도 파괴 확인을 요구한다.
+- 결정: Room v3→v4의 `user_deck_history`는 payload 삭제와 독립해 최초/최근 import, 삭제, version/SHA와 last played를 유지한다. import/replace/recovery는 journal→atomic payload replace→Room transaction으로 설치본과 history를 함께 수렴시키고 기존 `GameRecord`·`DeckProgress`·동일 item 복습 row는 삭제하지 않는다.
+- 결정: picker·현재본 export·삭제·내보낸 뒤 삭제·같은 ID 재가져오기는 entitlement 없이 제공한다. export 성공 뒤에만 delete를 수행한다. Deck Maker 생성·편집·사본과 Play Billing은 다음 Issue에서 추가하며 무료 문서 재생 경계에는 결제 화면을 넣지 않는다.
+- 결정: 세션 중 외부 문서는 staging까지만 수행하고 미리보기·충돌·오류 UI를 노출하지 않는다. Activity intent는 소비 후 원래 launch identity를 유지한 채 `MAIN`으로 중화하고 pending sidecar로 process recreation 뒤 복구해 세션 종료 후에만 제안한다.
+- 근거: 파일 선택 자체를 설치로 간주하지 않고, untrusted archive 검증과 논리 transaction을 UI보다 아래 계층에 고정해야 악성 package·중복 import·중단 복구가 기존 덱과 기록을 변경하지 않는다. 무료 재생과 유료 제작을 분리하면 F5.9의 소유권·결제 경계를 Android에서도 유지할 수 있다.
+- 영향 범위: Android Room v4, `core:data` import repository, `core:platform` SAF gateway, 마이페이지/미리보기/충돌 Compose UI, 문서 intent filter, ja/en/ko 리소스, API 35 자동 회귀와 출시 후보 QA.

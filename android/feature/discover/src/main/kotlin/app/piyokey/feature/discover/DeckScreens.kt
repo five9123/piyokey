@@ -53,9 +53,14 @@ import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckSort
 import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
+import app.piyokey.core.data.ImportedDeckConflict
+import app.piyokey.core.data.ImportedDeckPreview
 import app.piyokey.core.deckkit.Catalog
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.DeckType
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -487,23 +492,44 @@ fun MyDecksScreen(
   onPlay: (InstalledDeck) -> Unit,
   onUpdate: (CatalogDeck) -> Unit,
   onDelete: (InstalledDeck) -> Unit,
+  onImport: () -> Unit,
+  onExport: (InstalledDeck) -> Unit,
+  onExportThenDelete: (InstalledDeck) -> Unit,
   header: @Composable () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
   var pendingDelete by remember { mutableStateOf<InstalledDeck?>(null) }
-  if (pendingDelete != null) {
+  val deckToDelete = pendingDelete
+  if (deckToDelete != null) {
+    val isUserDeck = deckToDelete.metadata.source in setOf("imported", "created")
+    val deckName = deckToDelete.deck.localizedName(languageCode) ?: deckToDelete.deck.name
     AlertDialog(
       onDismissRequest = { pendingDelete = null },
       title = { Text(stringResource(R.string.deck_delete_title)) },
-      text = { Text(stringResource(R.string.deck_delete_message)) },
+      text = {
+        Text(
+          if (isUserDeck) stringResource(R.string.user_deck_delete_message, deckName)
+          else stringResource(R.string.deck_delete_message),
+        )
+      },
       confirmButton = {
         TextButton(onClick = {
           pendingDelete?.let(onDelete)
           pendingDelete = null
         }) { Text(stringResource(R.string.deck_delete), color = MaterialTheme.colorScheme.error) }
       },
-      dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.action_cancel)) } },
+      dismissButton = {
+        Column(horizontalAlignment = Alignment.End) {
+          if (isUserDeck) {
+            TextButton(onClick = {
+              onExportThenDelete(deckToDelete)
+              pendingDelete = null
+            }) { Text(stringResource(R.string.user_deck_export_then_delete)) }
+          }
+          TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.action_cancel)) }
+        }
+      },
     )
   }
 
@@ -514,6 +540,16 @@ fun MyDecksScreen(
   ) {
     item { header() }
     item { Text(stringResource(R.string.my_decks_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
+    item {
+      Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onClick = onImport, modifier = Modifier.weight(1f).testTag("import-deck")) {
+          Text(stringResource(R.string.user_deck_import))
+        }
+        OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.weight(1f)) {
+          Text(stringResource(R.string.user_deck_new_locked))
+        }
+      }
+    }
     if (installed.isEmpty()) {
       item {
         Surface(color = Color.White, shape = RoundedCornerShape(24.dp)) {
@@ -535,6 +571,9 @@ fun MyDecksScreen(
         Surface(color = Color.White, shape = RoundedCornerShape(22.dp), shadowElevation = 2.dp) {
           Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
             Text(item.deck.localizedName(languageCode).orEmpty(), fontWeight = FontWeight.Black, fontSize = 17.sp)
+            if (item.metadata.source in setOf("imported", "created")) {
+              Text(stringResource(R.string.user_deck_badge), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+            }
             Text(stringResource(R.string.deck_item_count, item.deck.items.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
               Button(onClick = { onPlay(item) }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.deck_play)) }
@@ -542,6 +581,176 @@ fun MyDecksScreen(
                 OutlinedButton(onClick = { onUpdate(entry) }) { Text(stringResource(R.string.deck_update)) }
               }
               TextButton(onClick = { pendingDelete = item }) { Text(stringResource(R.string.deck_delete)) }
+            }
+            if (item.metadata.source in setOf("imported", "created")) {
+              OutlinedButton(
+                onClick = { onExport(item) },
+                modifier = Modifier.fillMaxWidth().testTag("export-${item.metadata.deckId}"),
+              ) { Text(stringResource(R.string.user_deck_export)) }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+enum class UserDeckImportError {
+  INVALID,
+  TOO_LARGE,
+  UPDATE_REQUIRED,
+  READ_FAILED,
+}
+
+@Composable
+fun UserDeckImportScreen(
+  preview: ImportedDeckPreview?,
+  error: UserDeckImportError?,
+  isWorking: Boolean,
+  onBack: () -> Unit,
+  onInstall: () -> Unit,
+  onKeepCurrent: () -> Unit,
+  onReplace: () -> Unit,
+  onExportCurrent: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val languageCode = LocalConfiguration.current.locales[0].language
+  val locale = Locale.forLanguageTag(languageCode)
+  val dateFormatter = remember(locale) {
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+      .withLocale(locale)
+      .withZone(ZoneId.systemDefault())
+  }
+  var confirmsReplacement by remember(preview) { mutableStateOf(false) }
+  if (confirmsReplacement) {
+    AlertDialog(
+      onDismissRequest = { confirmsReplacement = false },
+      title = { Text(stringResource(R.string.user_deck_replace_confirm_title)) },
+      text = { Text(stringResource(R.string.user_deck_replace_confirm_body)) },
+      confirmButton = {
+        TextButton(onClick = { confirmsReplacement = false; onReplace() }) {
+          Text(stringResource(R.string.user_deck_replace), color = MaterialTheme.colorScheme.error)
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { confirmsReplacement = false }) { Text(stringResource(R.string.action_cancel)) }
+      },
+    )
+  }
+  LazyColumn(
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+      .testTag("user-deck-import-screen"),
+    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
+    verticalArrangement = Arrangement.spacedBy(14.dp),
+  ) {
+    item { TextButton(onClick = onBack, enabled = !isWorking) { Text("‹ ${stringResource(R.string.action_back)}") } }
+    item { Text(stringResource(R.string.user_deck_import_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
+    if (error != null) {
+      item {
+        Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(20.dp)) {
+          Text(
+            stringResource(
+              when (error) {
+                UserDeckImportError.INVALID -> R.string.user_deck_error_invalid
+                UserDeckImportError.TOO_LARGE -> R.string.user_deck_error_too_large
+                UserDeckImportError.UPDATE_REQUIRED -> R.string.user_deck_error_update
+                UserDeckImportError.READ_FAILED -> R.string.user_deck_error_read
+              },
+            ),
+            modifier = Modifier.padding(18.dp).testTag("import-error"),
+          )
+        }
+      }
+    } else if (preview == null) {
+      item { Text(stringResource(R.string.user_deck_validating), modifier = Modifier.testTag("import-loading")) }
+    } else {
+      item {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(22.dp), shadowElevation = 2.dp) {
+          Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(preview.deck.localizedName(languageCode) ?: preview.deck.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+            Text(preview.deck.localizedAuthorNickname(languageCode) ?: preview.deck.author.nickname)
+            Text(stringResource(R.string.user_deck_file, preview.sourceDisplayName), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.user_deck_version_items, preview.deck.version, preview.deck.items.size))
+            Text(
+              stringResource(
+                if (preview.deck.type == DeckType.WORD) R.string.deck_level_word else R.string.deck_level_sentence,
+                preview.deck.level,
+              ),
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(preview.deck.localizedTags(languageCode).orEmpty().joinToString(" · "))
+          }
+        }
+      }
+      item { Text(stringResource(R.string.deck_preview), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+      items(preview.deck.items.take(3), key = { it.id }) { item ->
+        Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp)) {
+          Column(Modifier.fillMaxWidth().padding(14.dp)) {
+            Text(item.ko, fontWeight = FontWeight.Bold)
+            Text(item.localizedMeaning(languageCode).orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+          }
+        }
+      }
+      when (preview.conflict) {
+        ImportedDeckConflict.NEW -> item {
+          Button(onClick = onInstall, enabled = !isWorking, modifier = Modifier.fillMaxWidth().testTag("confirm-import")) {
+            Text(stringResource(if (isWorking) R.string.user_deck_importing else R.string.user_deck_install))
+          }
+        }
+        ImportedDeckConflict.IDENTICAL -> item {
+          Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(18.dp)) {
+            Text(stringResource(R.string.user_deck_already_imported), Modifier.padding(16.dp).testTag("import-identical"))
+          }
+        }
+        else -> {
+          item {
+            Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(18.dp)) {
+              Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                  stringResource(
+                    when (preview.conflict) {
+                      ImportedDeckConflict.OLDER_VERSION -> R.string.user_deck_conflict_downgrade
+                      ImportedDeckConflict.SAME_VERSION_DIFFERENT_CONTENT -> R.string.user_deck_conflict_same_version
+                      else -> R.string.user_deck_conflict_update
+                    },
+                  ),
+                  fontWeight = FontWeight.Bold,
+                )
+                val installed = preview.installed
+                if (installed != null) {
+                  Text(
+                    stringResource(
+                      R.string.user_deck_current_compare,
+                      installed.deck.localizedName(languageCode) ?: installed.deck.name,
+                      installed.metadata.version,
+                      dateFormatter.format(installed.deck.updatedAt),
+                      installed.deck.items.size,
+                    ),
+                  )
+                }
+                Text(
+                  stringResource(
+                    R.string.user_deck_incoming_compare,
+                    preview.deck.localizedName(languageCode) ?: preview.deck.name,
+                    preview.deck.version,
+                    dateFormatter.format(preview.deck.updatedAt),
+                    preview.deck.items.size,
+                  ),
+                )
+              }
+            }
+          }
+          item {
+            OutlinedButton(onClick = onExportCurrent, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.user_deck_export_current)) }
+          }
+          item {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+              Button(onClick = onKeepCurrent, enabled = !isWorking, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.user_deck_keep_current)) }
+              OutlinedButton(
+                onClick = { confirmsReplacement = true },
+                enabled = !isWorking,
+                modifier = Modifier.weight(1f).testTag("replace-import"),
+              ) { Text(stringResource(R.string.user_deck_replace), color = MaterialTheme.colorScheme.error) }
             }
           }
         }

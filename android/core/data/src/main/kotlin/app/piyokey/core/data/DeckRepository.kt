@@ -12,6 +12,11 @@ import app.piyokey.core.game.FlowGameRecord
 import app.piyokey.core.game.FlowRankTuning
 import app.piyokey.core.game.GameSessionRecord
 import app.piyokey.core.game.SpacingPassage
+import app.piyokey.core.piyodeck.PiyoDeckDigest
+import app.piyokey.core.piyodeck.PiyoDeckPackage
+import app.piyokey.core.piyodeck.PiyoDeckPackageLimits
+import app.piyokey.core.piyodeck.PiyoDeckPackageReader
+import app.piyokey.core.piyodeck.PiyoDeckPackageWriter
 import app.piyokey.core.retention.CurriculumPolicy
 import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.RetentionActivity
@@ -26,6 +31,8 @@ import java.nio.charset.StandardCharsets
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
@@ -92,6 +99,7 @@ class DeckRepository private constructor(
   private val store = AtomicPayloadStore(File(context.filesDir, "piyokey/content"))
   private val catalogSchema by lazy { readAssetText("catalog.schema.json") }
   private val deckSchema by lazy { readAssetText("deck.schema.json") }
+  private val userDeckMutationMutex = Mutex()
 
   suspend fun snapshot(): DeckLibrarySnapshot = withContext(Dispatchers.IO) {
     recoverPendingOperations()
@@ -199,35 +207,187 @@ class DeckRepository private constructor(
     InstalledDeck(dao.installedDeck(deck.deckId)!!, deck)
   }
 
-  suspend fun delete(deckId: String) = withContext(Dispatchers.IO) {
+  suspend fun previewImportedDeck(
+    stagingFile: File,
+    sourceDisplayName: String,
+  ): ImportedDeckPreview = withContext(Dispatchers.IO) {
     recoverPendingOperations()
-    val entity = dao.installedDeck(deckId) ?: return@withContext
-    val backupName = store.makeBackupName(entity.payloadName)
-    val journal = RecoveryJournalEntity(
-      operationId = "deck-delete:$deckId",
-      kind = JOURNAL_DECK_DELETE,
-      deckId = deckId,
-      version = entity.version,
-      targetName = entity.payloadName,
-      stagedName = null,
-      backupName = backupName,
-      expectedSha256 = entity.payloadSha256,
-      source = entity.source,
-      official = entity.official,
-      tagsJson = null,
-      catalogVersion = null,
-      etag = null,
-      lastModified = null,
-      startedAtEpochMillis = clock(),
-    )
-    database.withTransaction { dao.upsertJournal(journal) }
-    store.moveToBackup(entity.payloadName, backupName)
-    database.withTransaction {
-      dao.deleteInstalledDeck(deckId)
-      dao.deleteJournal(journal.operationId)
+    val imported = readStagedPiyoDeck(stagingFile)
+    requireUserDeckIdentifierAvailable(imported)
+    val installedEntity = dao.installedDeck(imported.deck.deckId)
+    val installed = installedEntity?.let { loadInstalled(it) }
+    if (installed != null && installed.metadata.source !in USER_DECK_SOURCES) {
+      throw ImportedDeckException.InstalledSourceCollision
     }
-    store.delete(backupName)
-    store.delete(entity.backupPayloadName)
+    val conflict = ImportedDeckConflictPolicy.classify(
+      incoming = ImportedDeckVersionSummary(imported.deck.version, imported.contentSha256),
+      installed = installed?.let {
+        ImportedDeckVersionSummary(it.metadata.version, it.metadata.payloadSha256)
+      },
+    )
+    ImportedDeckPreview(
+      deck = imported.deck,
+      contentSha256 = imported.contentSha256,
+      packageSha256 = PiyoDeckDigest.sha256Hex(stagingFile.readBytes()),
+      sourceDisplayName = sourceDisplayName,
+      conflict = conflict,
+      installed = installed,
+    )
+  }
+
+  suspend fun commitImportedDeck(
+    stagingFile: File,
+    expectedContentSha256: String,
+    replaceConfirmed: Boolean,
+  ): ImportedDeckCommitResult = withContext(Dispatchers.IO) {
+    userDeckMutationMutex.withLock {
+      recoverPendingOperations()
+      val imported = readStagedPiyoDeck(stagingFile)
+      requireUserDeckIdentifierAvailable(imported)
+      if (imported.contentSha256 != expectedContentSha256) {
+        throw ImportedDeckException.SourceChanged(expectedContentSha256, imported.contentSha256)
+      }
+      val previousEntity = dao.installedDeck(imported.deck.deckId)
+      val previous = previousEntity?.let { loadInstalled(it) }
+      if (previous != null && previous.metadata.source !in USER_DECK_SOURCES) {
+        throw ImportedDeckException.InstalledSourceCollision
+      }
+      val conflict = ImportedDeckConflictPolicy.classify(
+        incoming = ImportedDeckVersionSummary(imported.deck.version, imported.contentSha256),
+        installed = previous?.let {
+          ImportedDeckVersionSummary(it.metadata.version, it.metadata.payloadSha256)
+        },
+      )
+      if (conflict == ImportedDeckConflict.IDENTICAL) {
+        return@withLock ImportedDeckCommitResult.AlreadyInstalled(requireNotNull(previous))
+      }
+      if (ImportedDeckConflictPolicy.requiresDestructiveConfirmation(conflict) && !replaceConfirmed) {
+        throw ImportedDeckException.ReplacementConfirmationRequired(conflict)
+      }
+
+      val now = clock()
+      val targetName = store.deckTargetName(imported.deck.deckId)
+      val stagedName = store.stage(imported.deckData)
+      val backupName = if (store.exists(targetName)) store.makeBackupName(targetName) else null
+      val history = dao.userDeckHistory(imported.deck.deckId)
+      val journal = RecoveryJournalEntity(
+        operationId = "deck-install:${imported.deck.deckId}",
+        kind = JOURNAL_DECK_INSTALL,
+        deckId = imported.deck.deckId,
+        version = imported.deck.version,
+        targetName = targetName,
+        stagedName = stagedName,
+        backupName = backupName,
+        expectedSha256 = imported.contentSha256,
+        source = SOURCE_IMPORTED,
+        official = false,
+        tagsJson = null,
+        catalogVersion = null,
+        etag = null,
+        lastModified = null,
+        startedAtEpochMillis = now,
+      )
+      database.withTransaction { dao.upsertJournal(journal) }
+      store.replace(stagedName, targetName, backupName)
+      database.withTransaction {
+        dao.upsertInstalledDeck(
+          InstalledDeckEntity(
+            deckId = imported.deck.deckId,
+            version = imported.deck.version,
+            payloadName = targetName,
+            payloadSha256 = imported.contentSha256,
+            backupPayloadName = backupName,
+            backupSha256 = previousEntity?.payloadSha256,
+            backupVersion = previousEntity?.version,
+            source = SOURCE_IMPORTED,
+            official = false,
+            installedAtEpochMillis = previousEntity?.installedAtEpochMillis ?: now,
+            updatedAtEpochMillis = now,
+            lastPlayedAtEpochMillis = previousEntity?.lastPlayedAtEpochMillis
+              ?: history?.lastPlayedAtEpochMillis,
+          ),
+        )
+        dao.upsertUserDeckHistory(
+          UserDeckHistoryEntity(
+            deckId = imported.deck.deckId,
+            firstImportedAtEpochMillis = history?.firstImportedAtEpochMillis ?: now,
+            lastImportedAtEpochMillis = now,
+            lastDeletedAtEpochMillis = null,
+            lastVersion = imported.deck.version,
+            lastContentSha256 = imported.contentSha256,
+            lastPlayedAtEpochMillis = previousEntity?.lastPlayedAtEpochMillis
+              ?: history?.lastPlayedAtEpochMillis,
+          ),
+        )
+        dao.deleteJournal(journal.operationId)
+      }
+      if (previousEntity?.backupPayloadName != backupName) store.delete(previousEntity?.backupPayloadName)
+      ImportedDeckCommitResult.Installed(
+        deck = InstalledDeck(requireNotNull(dao.installedDeck(imported.deck.deckId)), imported.deck),
+        replacedExisting = previousEntity != null,
+      )
+    }
+  }
+
+  suspend fun exportUserDeck(deckId: String): ByteArray = withContext(Dispatchers.IO) {
+    userDeckMutationMutex.withLock {
+      recoverPendingOperations()
+      val entity = dao.installedDeck(deckId) ?: throw ImportedDeckException.ExportRequiresUserDeck
+      if (entity.source !in USER_DECK_SOURCES) throw ImportedDeckException.ExportRequiresUserDeck
+      val installed = loadInstalled(entity) ?: throw ImportedDeckException.ExportRequiresUserDeck
+      PiyoDeckPackageWriter.write(installed.deck, deckSchema)
+    }
+  }
+
+  suspend fun delete(deckId: String) = withContext(Dispatchers.IO) {
+    userDeckMutationMutex.withLock {
+      recoverPendingOperations()
+      val entity = dao.installedDeck(deckId) ?: return@withLock
+      val now = clock()
+      val backupName = store.makeBackupName(entity.payloadName)
+      val journal = RecoveryJournalEntity(
+        operationId = "deck-delete:$deckId",
+        kind = JOURNAL_DECK_DELETE,
+        deckId = deckId,
+        version = entity.version,
+        targetName = entity.payloadName,
+        stagedName = null,
+        backupName = backupName,
+        expectedSha256 = entity.payloadSha256,
+        source = entity.source,
+        official = entity.official,
+        tagsJson = null,
+        catalogVersion = null,
+        etag = null,
+        lastModified = null,
+        startedAtEpochMillis = now,
+      )
+      database.withTransaction { dao.upsertJournal(journal) }
+      store.moveToBackup(entity.payloadName, backupName)
+      database.withTransaction {
+        if (entity.source in USER_DECK_SOURCES) {
+          val history = dao.userDeckHistory(deckId)
+          dao.upsertUserDeckHistory(
+            UserDeckHistoryEntity(
+              deckId = deckId,
+              firstImportedAtEpochMillis = history?.firstImportedAtEpochMillis
+                ?: entity.installedAtEpochMillis,
+              lastImportedAtEpochMillis = history?.lastImportedAtEpochMillis
+                ?: entity.updatedAtEpochMillis,
+              lastDeletedAtEpochMillis = now,
+              lastVersion = entity.version,
+              lastContentSha256 = entity.payloadSha256,
+              lastPlayedAtEpochMillis = entity.lastPlayedAtEpochMillis
+                ?: history?.lastPlayedAtEpochMillis,
+            ),
+          )
+        }
+        dao.deleteInstalledDeck(deckId)
+        dao.deleteJournal(journal.operationId)
+      }
+      store.delete(backupName)
+      store.delete(entity.backupPayloadName)
+    }
   }
 
   suspend fun markPlayed(deckId: String) = withContext(Dispatchers.IO) {
@@ -617,6 +777,8 @@ class DeckRepository private constructor(
     if (targetMatches(journal.targetName, sha)) {
       val now = clock()
       val previous = dao.installedDeck(deckId)
+      val source = requireNotNull(journal.source)
+      val history = if (source in USER_DECK_SOURCES) dao.userDeckHistory(deckId) else null
       database.withTransaction {
         dao.upsertInstalledDeck(
           InstalledDeckEntity(
@@ -627,15 +789,31 @@ class DeckRepository private constructor(
             backupPayloadName = journal.backupName,
             backupSha256 = previous?.payloadSha256,
             backupVersion = previous?.version,
-            source = requireNotNull(journal.source),
+            source = source,
             official = requireNotNull(journal.official),
             installedAtEpochMillis = previous?.installedAtEpochMillis ?: journal.startedAtEpochMillis,
             updatedAtEpochMillis = now,
-            lastPlayedAtEpochMillis = previous?.lastPlayedAtEpochMillis,
+            lastPlayedAtEpochMillis = previous?.lastPlayedAtEpochMillis
+              ?: history?.lastPlayedAtEpochMillis,
           ),
         )
         journal.tagsJson?.let {
           dao.upsertDownloadHistory(DownloadHistoryEntity(deckId, it, now))
+        }
+        if (source in USER_DECK_SOURCES) {
+          dao.upsertUserDeckHistory(
+            UserDeckHistoryEntity(
+              deckId = deckId,
+              firstImportedAtEpochMillis = history?.firstImportedAtEpochMillis
+                ?: journal.startedAtEpochMillis,
+              lastImportedAtEpochMillis = now,
+              lastDeletedAtEpochMillis = null,
+              lastVersion = requireNotNull(journal.version),
+              lastContentSha256 = sha,
+              lastPlayedAtEpochMillis = previous?.lastPlayedAtEpochMillis
+                ?: history?.lastPlayedAtEpochMillis,
+            ),
+          )
         }
         dao.deleteJournal(journal.operationId)
       }
@@ -715,6 +893,27 @@ class DeckRepository private constructor(
   private fun readAssetText(path: String): String =
     readAssetBytes(path).toString(StandardCharsets.UTF_8)
 
+  private fun readStagedPiyoDeck(stagingFile: File): PiyoDeckPackage {
+    val stagingRoot = File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).canonicalFile
+    val canonical = stagingFile.canonicalFile
+    if (!canonical.path.startsWith(stagingRoot.path + File.separator) || !canonical.isFile) {
+      throw ImportedDeckException.StagingFileRequired
+    }
+    if (canonical.length() > PiyoDeckPackageLimits.MAXIMUM_PACKAGE_BYTES) {
+      throw app.piyokey.core.piyodeck.PiyoDeckImportException.PackageTooLarge(
+        canonical.length().coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+        PiyoDeckPackageLimits.MAXIMUM_PACKAGE_BYTES,
+      )
+    }
+    return PiyoDeckPackageReader.read(canonical.readBytes(), deckSchema)
+  }
+
+  private suspend fun requireUserDeckIdentifierAvailable(imported: PiyoDeckPackage) {
+    if (loadCatalog().decks.any { it.deckId == imported.deck.deckId }) {
+      throw ImportedDeckException.OfficialIdentifierCollision
+    }
+  }
+
   private suspend fun loadCatalogBackup(state: CatalogStateEntity): Catalog? {
     val backupName = state.backupPayloadName ?: return null
     val backupSha = state.backupSha256 ?: return null
@@ -759,7 +958,7 @@ class DeckRepository private constructor(
         backupPayloadName = null,
         backupSha256 = null,
         backupVersion = null,
-        source = "recovered",
+        source = if (entity.source in USER_DECK_SOURCES) entity.source else "recovered",
         official = deck.official,
         updatedAtEpochMillis = clock(),
       )
@@ -793,6 +992,8 @@ class DeckRepository private constructor(
     private const val JOURNAL_DECK_INSTALL = "deck_install"
     private const val JOURNAL_DECK_DELETE = "deck_delete"
     private const val JOURNAL_CATALOG_UPDATE = "catalog_update"
+    private const val SOURCE_IMPORTED = "imported"
+    private val USER_DECK_SOURCES = setOf(SOURCE_IMPORTED, "created")
     private val tagsJson = Json { isLenient = false }
     private const val GAME_MODE_FLOW = "flow"
     private const val INPUT_MODE_BUILTIN = "builtin"

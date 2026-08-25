@@ -70,8 +70,30 @@ class PiyokeyDatabaseMigrationTest {
     }
   }
 
+  @Test
+  fun migrateThreeToFourPreservesLearningAndAddsUserDeckHistory() {
+    helper.createDatabase(R11_DATABASE_NAME, 3).apply {
+      execSQL(
+        """INSERT INTO streak_days(day, activitiesJson)
+          |VALUES ('2026-08-25', '[\"practice\"]')""".trimMargin(),
+      )
+      close()
+    }
+    helper.runMigrationsAndValidate(R11_DATABASE_NAME, 4, true, PiyokeyDatabase.MIGRATION_3_4).use { db ->
+      db.query("SELECT COUNT(*) FROM streak_days WHERE day = '2026-08-25'").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(1, cursor.getInt(0))
+      }
+      db.query("SELECT COUNT(*) FROM user_deck_history").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+    }
+  }
+
   private companion object {
     const val DATABASE_NAME = "m4-migration-test"
     const val M5_DATABASE_NAME = "m5-migration-test"
+    const val R11_DATABASE_NAME = "r11-migration-test"
   }
 }

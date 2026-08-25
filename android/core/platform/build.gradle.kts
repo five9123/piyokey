@@ -14,6 +14,7 @@ android {
 
 dependencies {
   implementation(project(":core:data"))
+  implementation(project(":core:piyodeck"))
   implementation(project(":core:settings"))
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.room.runtime)

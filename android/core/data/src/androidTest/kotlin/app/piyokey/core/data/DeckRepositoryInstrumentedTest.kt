@@ -9,6 +9,9 @@ import app.piyokey.core.game.FlowGameRecord
 import app.piyokey.core.retention.JstDay
 import app.piyokey.core.session.PracticeItemResolution
 import app.piyokey.core.session.PracticeSessionCheckpoint
+import app.piyokey.core.piyodeck.PiyoDeckImportException
+import app.piyokey.core.piyodeck.PiyoDeckPackageReader
+import app.piyokey.core.piyodeck.PiyoDeckPackageWriter
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -28,6 +31,7 @@ class DeckRepositoryInstrumentedTest {
   @Before
   fun setUp() {
     File(context.filesDir, "piyokey/content").deleteRecursively()
+    File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
     database = Room.inMemoryDatabaseBuilder(context, PiyokeyDatabase::class.java).build()
     repository = DeckRepository.createForTesting(context, database, clock = { now++ })
   }
@@ -36,6 +40,75 @@ class DeckRepositoryInstrumentedTest {
   fun tearDown() {
     database.close()
     File(context.filesDir, "piyokey/content").deleteRecursively()
+    File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
+  }
+
+  @Test
+  fun importedDeckLifecycleIsIdempotentReplaceableExportableAndHistorySafe() = runTest {
+    val initialFile = stageFixture("valid/basic.piyodeck")
+    val preview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    assertEquals(ImportedDeckConflict.NEW, preview.conflict)
+    val first = repository.commitImportedDeck(initialFile, preview.contentSha256, false)
+    assertTrue(first is ImportedDeckCommitResult.Installed)
+
+    repository.markPlayed(preview.deck.deckId)
+    val beforeIdentical = requireNotNull(database.dao().installedDeck(preview.deck.deckId))
+    val identical = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    assertEquals(ImportedDeckConflict.IDENTICAL, identical.conflict)
+    assertTrue(repository.commitImportedDeck(initialFile, identical.contentSha256, false) is ImportedDeckCommitResult.AlreadyInstalled)
+    assertEquals(beforeIdentical, database.dao().installedDeck(preview.deck.deckId))
+
+    val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
+    val parsed = PiyoDeckPackageReader.read(initialFile.readBytes(), schema)
+    val replacementData = PiyoDeckPackageWriter.write(
+      parsed.deck.copy(version = parsed.deck.version + 1, name = "置き換えデッキ"),
+      schema,
+    )
+    val replacementFile = stageBytes(replacementData)
+    val replacement = repository.previewImportedDeck(replacementFile, "replacement.piyodeck")
+    assertEquals(ImportedDeckConflict.NEWER_VERSION, replacement.conflict)
+    try {
+      repository.commitImportedDeck(replacementFile, replacement.contentSha256, false)
+      throw AssertionError("replacement confirmation was not required")
+    } catch (_: ImportedDeckException.ReplacementConfirmationRequired) {
+      // Expected: conflict replacement is never implicit.
+    }
+    repository.commitImportedDeck(replacementFile, replacement.contentSha256, true)
+    val replaced = requireNotNull(database.dao().installedDeck(preview.deck.deckId))
+    assertEquals(parsed.deck.version + 1, replaced.version)
+    assertEquals(beforeIdentical.lastPlayedAtEpochMillis, replaced.lastPlayedAtEpochMillis)
+
+    val exported = repository.exportUserDeck(preview.deck.deckId)
+    assertEquals(parsed.deck.version + 1, PiyoDeckPackageReader.read(exported, schema).deck.version)
+
+    repository.delete(preview.deck.deckId)
+    assertTrue(repository.snapshot().installed.isEmpty())
+    assertTrue(database.dao().userDeckHistory(preview.deck.deckId)?.lastDeletedAtEpochMillis != null)
+    repository.commitImportedDeck(replacementFile, replacement.contentSha256, false)
+    assertEquals(beforeIdentical.lastPlayedAtEpochMillis, database.dao().installedDeck(preview.deck.deckId)?.lastPlayedAtEpochMillis)
+  }
+
+  @Test
+  fun maliciousImportNeverMutatesInstalledDecks() = runTest {
+    val valid = stageFixture("valid/basic.piyodeck")
+    val preview = repository.previewImportedDeck(valid, "basic.piyodeck")
+    repository.commitImportedDeck(valid, preview.contentSha256, false)
+    val before = database.dao().installedDecks()
+    val invalid = stageFixture("invalid/wrong-sha.piyodeck")
+    try {
+      repository.previewImportedDeck(invalid, "wrong-sha.piyodeck")
+      throw AssertionError("malicious import was accepted")
+    } catch (_: PiyoDeckImportException.Sha256Mismatch) {
+      // Expected.
+    }
+    assertEquals(before, database.dao().installedDecks())
+  }
+
+  private fun stageFixture(path: String): File = stageBytes(context.assets.open(path).use { it.readBytes() })
+
+  private fun stageBytes(bytes: ByteArray): File {
+    val directory = File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).apply { mkdirs() }
+    return File(directory, "${System.nanoTime()}.piyodeck").apply { writeBytes(bytes) }
   }
 
   @Test

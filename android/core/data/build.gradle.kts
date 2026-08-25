@@ -21,6 +21,9 @@ android {
         rootProject.layout.projectDirectory.dir("../shared/tuning").asFile.absolutePath,
       ),
     )
+    getByName("androidTest").assets.directories.add(
+      rootProject.layout.projectDirectory.dir("../shared/piyodeck/fixtures").asFile.absolutePath,
+    )
   }
 
   compileOptions {
@@ -41,6 +44,7 @@ kotlin {
 
 dependencies {
   implementation(project(":core:deckkit"))
+  implementation(project(":core:piyodeck"))
   implementation(project(":core:game"))
   implementation(project(":core:retention"))
   implementation(project(":core:session"))

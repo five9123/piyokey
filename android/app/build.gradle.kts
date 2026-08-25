@@ -22,7 +22,7 @@ android {
     targetSdk = 36
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     versionCode = 1
-    versionName = "0.6.2-m6c"
+    versionName = "0.7.0-r11a"
     val catalogUrl = providers.gradleProperty("PIYOKEY_CATALOG_URL").orElse("").get()
       .replace("\\", "\\\\")
       .replace("\"", "\\\"")
@@ -35,6 +35,9 @@ android {
   }
 
   sourceSets.getByName("main").res.directories.add(generatedBrandRes.get().asFile.absolutePath)
+  sourceSets.getByName("androidTest").assets.directories.add(
+    rootProject.layout.projectDirectory.dir("../shared/piyodeck/fixtures").asFile.absolutePath,
+  )
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -61,6 +64,7 @@ dependencies {
   implementation(project(":core:game"))
   implementation(project(":core:retention"))
   implementation(project(":core:platform"))
+  implementation(project(":core:piyodeck"))
   implementation(project(":core:settings"))
   implementation(project(":feature:discover"))
   implementation(project(":feature:game"))
