@@ -71,6 +71,7 @@ fun DiscoverScreen(
   filters: DeckFilters,
   onFiltersChange: (DeckFilters) -> Unit,
   onDeckClick: (CatalogDeck) -> Unit,
+  onProposeDeck: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
@@ -196,6 +197,12 @@ fun DiscoverScreen(
           modifier = Modifier.padding(horizontal = 18.dp),
         )
       }
+    }
+    item {
+      TextButton(
+        onClick = onProposeDeck,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).testTag("discover-propose-deck"),
+      ) { Text(stringResource(R.string.discover_propose_deck)) }
     }
   }
 }
@@ -378,6 +385,7 @@ fun DeckDetailScreen(
   onBack: () -> Unit,
   onInstall: () -> Unit,
   onPlay: () -> Unit,
+  onReportDeck: () -> Unit,
   onDeckClick: (CatalogDeck) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -445,6 +453,12 @@ fun DeckDetailScreen(
             onClick = { onDeckClick(recommendation) },
           )
         }
+      }
+      item {
+        TextButton(
+          onClick = onReportDeck,
+          modifier = Modifier.fillMaxWidth().testTag("deck-detail-report"),
+        ) { Text(stringResource(R.string.deck_report_content)) }
       }
     }
     Row(
@@ -633,6 +647,8 @@ fun UserDeckImportScreen(
   onInstall: () -> Unit,
   onKeepCurrent: () -> Unit,
   onReplace: () -> Unit,
+  onImportAsCopy: () -> Unit,
+  hasDeckMakerAccess: Boolean,
   onExportCurrent: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -764,6 +780,19 @@ fun UserDeckImportScreen(
           }
           item {
             OutlinedButton(onClick = onExportCurrent, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.user_deck_export_current)) }
+          }
+          item {
+            OutlinedButton(
+              onClick = onImportAsCopy,
+              enabled = !isWorking,
+              modifier = Modifier.fillMaxWidth().testTag("import-as-copy"),
+            ) {
+              Text(
+                stringResource(
+                  if (hasDeckMakerAccess) R.string.user_deck_import_as_copy else R.string.user_deck_import_as_copy_locked,
+                ),
+              )
+            }
           }
           item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -62,5 +62,7 @@ sealed class ImportedDeckException(message: String) : Exception(message) {
     ImportedDeckException("The staged import changed after preview.")
   data class ReplacementConfirmationRequired(val conflict: ImportedDeckConflict) :
     ImportedDeckException("Replacing the installed deck requires explicit confirmation: $conflict")
+  data class SeparateCopyRequiresConflict(val conflict: ImportedDeckConflict) :
+    ImportedDeckException("A separate copy requires an installed deck with different content: $conflict")
   data object ExportRequiresUserDeck : ImportedDeckException("Only imported or created user decks can be exported.")
 }
