@@ -13,13 +13,16 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.File
 import java.io.FileOutputStream
 import org.junit.Rule
+import org.junit.rules.RuleChain
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class M5RetentionInstrumentedTest {
-  @get:Rule
   val composeRule = createAndroidComposeRule<MainActivity>()
+
+  @get:Rule
+  val rules: RuleChain = RuleChain.outerRule(TestAppStateRule(skipOnboarding = true)).around(composeRule)
 
   @Test
   fun homeShowsPiyoWeekBeforeDailyAndDailyStartsOfflinePractice() {

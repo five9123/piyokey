@@ -4,9 +4,16 @@ import app.piyokey.core.deckkit.DeckItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class RetentionPolicyTest {
+  @Test
+  fun dailyChallengeIsStablePerGoalButCanReorderForAnotherGoal() {
+    val day = JstDay("2026-08-25")
+    assertEquals(DailyChallengePolicy.items(day, goalSalt = 2), DailyChallengePolicy.items(day, goalSalt = 2))
+    assertNotEquals(DailyChallengePolicy.items(day, goalSalt = 0), DailyChallengePolicy.items(day, goalSalt = 1))
+  }
   @Test fun curriculumHasSixChaptersAndTenToFifteenItemsPerStage() {
     assertEquals(6, CurriculumCatalog.chapters.size)
     assertTrue(CurriculumCatalog.stages.all { it.items.size in 10..15 })

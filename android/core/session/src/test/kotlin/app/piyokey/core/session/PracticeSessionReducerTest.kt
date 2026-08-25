@@ -14,6 +14,47 @@ import kotlin.test.assertTrue
 
 class PracticeSessionReducerTest {
   @Test
+  fun osImePreviewsCompositionAndOnlyScoresConfirmedMismatch() {
+    val initial = PracticeSessionReducer.initialState(listOf("가나"))
+    val composing = PracticeSessionReducer.reduce(
+      initial,
+      PracticeSessionEvent.IMEText(committedText = "가", composingText = "다"),
+    )
+    assertEquals(0, composing.state.mistakeCount)
+    assertEquals("가", composing.state.enteredText)
+    assertTrue(composing.effects.isEmpty())
+
+    val mismatch = PracticeSessionReducer.reduce(
+      composing.state,
+      PracticeSessionEvent.IMEText(committedText = "가다"),
+    )
+    assertEquals(1, mismatch.state.mistakeCount)
+    assertEquals("가", mismatch.state.enteredText)
+    assertEquals(PracticeFeedback.Incorrect('ㄴ'), mismatch.state.feedback)
+  }
+
+  @Test
+  fun osImeCanDeleteSwitchAndCompleteWithoutLosingSessionMetrics() {
+    var state = PracticeSessionReducer.initialState(listOf("달가", "나"))
+    state = PracticeSessionReducer.reduce(
+      state,
+      PracticeSessionEvent.IMEText(committedText = "닭"),
+    ).state
+    assertEquals("닭", state.enteredText)
+    state = PracticeSessionReducer.reduce(
+      state,
+      PracticeSessionEvent.IMEText(committedText = "다"),
+    ).state
+    assertEquals("다", state.enteredText)
+    val completed = PracticeSessionReducer.reduce(
+      state,
+      PracticeSessionEvent.IMEText(committedText = "달가"),
+    )
+    assertTrue(completed.state.isCurrentTargetComplete)
+    assertEquals(1, completed.effects.size)
+    assertEquals(0, completed.state.mistakeCount)
+  }
+  @Test
   fun activeDurationFreezesInBackgroundAndResumesWithoutCountingTheGap() {
     var clock = ActiveDurationClock().start(1_000)
     clock = clock.pause(2_500)

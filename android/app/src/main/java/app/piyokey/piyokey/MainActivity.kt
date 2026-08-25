@@ -4,11 +4,16 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +28,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -30,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,10 +49,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Density
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.ContextCompat
 import app.piyokey.core.data.CatalogRefreshResult
 import app.piyokey.core.data.DeckFilters
@@ -63,10 +74,16 @@ import app.piyokey.core.game.FlowRankTuning
 import app.piyokey.core.game.toRecord
 import app.piyokey.core.platform.DailyReminderScheduler
 import app.piyokey.core.retention.CurriculumItem
+import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
 import app.piyokey.core.retention.DailyChallengePolicy
 import app.piyokey.core.retention.JstDay
 import app.piyokey.core.retention.ReviewItem
+import app.piyokey.core.settings.AppPreferences
+import app.piyokey.core.settings.AppPreferencesStore
+import app.piyokey.core.settings.AppTheme
+import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -74,6 +91,9 @@ import app.piyokey.feature.discover.MyDecksScreen
 import app.piyokey.feature.discover.PracticeResultScreen
 import app.piyokey.feature.discover.RecommendationHome
 import app.piyokey.feature.practice.PracticeRoute
+import app.piyokey.feature.practice.PracticeDisplayOptions
+import app.piyokey.feature.practice.PracticeKeyboardOptions
+import app.piyokey.feature.practice.PracticePrompt
 import app.piyokey.feature.game.FlowDeckSelectionScreen
 import app.piyokey.feature.game.FlowGameRoute
 import app.piyokey.feature.game.FlowResultScreen
@@ -84,14 +104,71 @@ import app.piyokey.feature.retention.RetentionHomeCard
 import app.piyokey.feature.retention.ReviewDeckSection
 import app.piyokey.feature.retention.PiyoProfileSection
 import app.piyokey.feature.retention.ManualReviewCandidate
+import app.piyokey.feature.onboarding.OnboardingRoute
+import app.piyokey.feature.onboarding.HatchMissionGateScreen
+import app.piyokey.feature.onboarding.HatchMissionResultScreen
+import app.piyokey.feature.onboarding.MainAppTourOverlay
+import app.piyokey.feature.settings.CommonSettingsButton
+import app.piyokey.feature.settings.SettingsSheet
 import java.util.Locale
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    val preferencesStore = AppPreferencesStore.create(this) {
+      resources.configuration.locales.let { locales ->
+        (0 until locales.size()).map { locales[it].toLanguageTag() }
+      }
+    }
     setContent {
-      MaterialTheme { PiyokeyApp() }
+      val preferences by preferencesStore.values.collectAsStateWithLifecycle(initialValue = null)
+      val scope = rememberCoroutineScope()
+      val resolved = preferences
+      if (resolved == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+      } else {
+        val testOverrides = remember {
+          getSharedPreferences("piyokey_test_overrides", MODE_PRIVATE)
+        }
+        val freshOnboardingTest = BuildConfig.DEBUG && testOverrides.getBoolean("fresh_onboarding", false)
+        val freshOnboardingPreferences = remember(freshOnboardingTest) {
+          AppPreferences(language = resolved.language, onboardingMigrationChecked = true)
+        }
+        val launchPreferences = when {
+          freshOnboardingTest -> freshOnboardingPreferences
+          BuildConfig.DEBUG && testOverrides.getBoolean("skip_onboarding", false) -> resolved.copy(
+            firstInputCompleted = true,
+            hatchHandoffCompleted = true,
+            hatchChaptersCompleted = 3,
+            appTourCompleted = true,
+            onboardingMigrationChecked = true,
+          )
+          else -> resolved
+        }
+        var optimistic by remember(launchPreferences) { mutableStateOf(launchPreferences) }
+        LaunchedEffect(launchPreferences) { optimistic = launchPreferences }
+        LaunchedEffect(optimistic.language) {
+          val tags = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+          if (tags != optimistic.language.tag) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(optimistic.language.tag))
+          }
+        }
+        val baseDensity = LocalDensity.current
+        CompositionLocalProvider(
+          LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * optimistic.fontScale.multiplier),
+        ) {
+          MaterialTheme(colorScheme = if (optimistic.theme == AppTheme.DARK) darkColorScheme() else lightColorScheme()) {
+            PiyokeyApp(
+              preferences = optimistic,
+              onPreferencesChange = { updated ->
+                optimistic = updated
+                scope.launch { preferencesStore.update { updated } }
+              },
+            )
+          }
+        }
+      }
     }
   }
 }
@@ -111,13 +188,14 @@ private data class ActivePractice(
   val items: List<DeckItem>?,
   val sourceDeckId: String?,
   val kind: PracticeKind,
+  val inputMode: InputMode = InputMode.BUILTIN,
   val stageId: String? = null,
   val sessionDay: JstDay,
   val checkpoint: PracticeSessionCheckpoint? = null,
   val reviewSourceDeckIds: List<String>? = null,
 )
 
-private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW }
+private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW, ONBOARDING }
 
 private data class PracticeResult(
   val practice: ActivePractice,
@@ -137,8 +215,12 @@ private data class PendingPracticeCompletion(
 private enum class GameStage { HUB, FLOW_SELECT }
 
 @Composable
-private fun PiyokeyApp() {
+private fun PiyokeyApp(
+  preferences: AppPreferences,
+  onPreferencesChange: (AppPreferences) -> Unit,
+) {
   val context = LocalContext.current.applicationContext
+  val hadExistingDatabase = remember { context.getDatabasePath("piyokey.db").exists() }
   val repository = remember {
     DeckRepository.create(context, BuildConfig.CATALOG_URL.ifBlank { null })
   }
@@ -165,8 +247,28 @@ private fun PiyokeyApp() {
   var flowSeed by remember { mutableStateOf(0L) }
   var flowRankTuning by remember { mutableStateOf(FlowRankTuning()) }
   var showFreePractice by remember { mutableStateOf(false) }
+  var showSettings by remember { mutableStateOf(false) }
+  var appTourStep by remember { mutableStateOf(0) }
   val reminderScheduler = remember { DailyReminderScheduler(context) }
   var pendingReminderEnable by remember { mutableStateOf(false) }
+
+  LaunchedEffect(preferences.onboardingMigrationChecked) {
+    if (!preferences.onboardingMigrationChecked) {
+      onPreferencesChange(
+        if (hadExistingDatabase) {
+          preferences.copy(
+            firstInputCompleted = true,
+            hatchHandoffCompleted = true,
+            hatchChaptersCompleted = 3,
+            appTourCompleted = true,
+            onboardingMigrationChecked = true,
+          )
+        } else {
+          preferences.copy(onboardingMigrationChecked = true)
+        },
+      )
+    }
+  }
 
   LaunchedEffect(repository, reloadToken) {
     loadFailed = false
@@ -194,6 +296,16 @@ private fun PiyokeyApp() {
     } catch (_: Exception) {
       loadFailed = true
     }
+  }
+
+  if (!preferences.onboardingMigrationChecked) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    return
+  }
+
+  if (!preferences.firstInputCompleted || !preferences.hatchHandoffCompleted) {
+    OnboardingRoute(preferences = preferences, onUpdate = onPreferencesChange)
+    return
   }
 
   val current = snapshot
@@ -236,6 +348,7 @@ private fun PiyokeyApp() {
       items = installed.deck.items,
       sourceDeckId = installed.deck.deckId,
       kind = PracticeKind.DECK,
+      inputMode = preferences.defaultInputMode,
       sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
     )
     scope.launch { repository.markPlayed(installed.metadata.deckId) }
@@ -271,7 +384,7 @@ private fun PiyokeyApp() {
           }
         }
         val stars = when (practice.kind) {
-          PracticeKind.CURRICULUM -> repository.finishCurriculumStage(
+          PracticeKind.CURRICULUM, PracticeKind.ONBOARDING -> repository.finishCurriculumStage(
             stageId = requireNotNull(practice.stageId),
             accuracyPercent = state.accuracyPercent,
             charactersPerMinute = cpm,
@@ -286,6 +399,12 @@ private fun PiyokeyApp() {
         pendingCompletion = null
         if (pendingCheckpointSave?.first == practice.stageId) pendingCheckpointSave = null
         operationFailed = false
+        if (practice.kind == PracticeKind.ONBOARDING) {
+          val chapter = requireNotNull(practice.stageId).let { id ->
+            app.piyokey.core.retention.CurriculumCatalog.stage(id)?.chapterNumber
+          } ?: error("Missing onboarding chapter")
+          onPreferencesChange(preferences.copy(pendingHatchResultChapter = chapter))
+        }
         result = state.toResult(practice, duration, stars)
         activePractice = null
         reload()
@@ -326,9 +445,71 @@ private fun PiyokeyApp() {
 
   BackHandler(enabled = detailDeckId != null || activePractice != null || result != null) {
     when {
+      result?.practice?.kind == PracticeKind.ONBOARDING -> Unit
+      activePractice?.kind == PracticeKind.ONBOARDING -> Unit
       result != null -> result = null
       activePractice != null -> activePractice = null
       else -> detailDeckId = null
+    }
+  }
+
+  if (!preferences.hatchGateComplete && activePractice == null && result == null) {
+    val pendingChapter = preferences.pendingHatchResultChapter
+    if (pendingChapter > 0) {
+      val stage = CurriculumCatalog.chapters[pendingChapter - 1].stages.first()
+      val saved = currentLearning.progress[stage.id]
+      HatchMissionResultScreen(
+        chapter = pendingChapter,
+        accuracyPercent = saved?.bestAccuracyPercent ?: 100.0,
+        stars = saved?.stars ?: 1,
+        initialNickname = preferences.piyoNickname,
+        onContinue = { nickname ->
+          onPreferencesChange(
+            preferences.copy(
+              hatchChaptersCompleted = maxOf(preferences.hatchChaptersCompleted, pendingChapter),
+              pendingHatchResultChapter = 0,
+              piyoNickname = nickname.ifBlank { preferences.piyoNickname },
+            ),
+          )
+          tab = RootTab.HOME
+        },
+      )
+      return
+    }
+    val chapter = OnboardingPolicy.nextHatchChapter(preferences.hatchChaptersCompleted) ?: 3
+    val stage = CurriculumCatalog.chapters[chapter - 1].stages.first()
+    HatchMissionGateScreen(
+      chapter = chapter,
+      completed = preferences.hatchChaptersCompleted,
+      onStart = {
+        val items = stage.items.map(CurriculumItem::toDeckItem)
+        activePractice = ActivePractice(
+          installed = null,
+          catalogEntry = null,
+          targets = items.map(DeckItem::ko),
+          items = items,
+          sourceDeckId = "curriculum::${stage.id}",
+          kind = PracticeKind.ONBOARDING,
+          inputMode = InputMode.BUILTIN,
+          stageId = stage.id,
+          sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
+          checkpoint = currentLearning.activeSession?.takeIf { it.stageId == stage.id }?.checkpoint,
+        )
+      },
+    )
+    return
+  }
+
+  LaunchedEffect(preferences.appTourCompleted, appTourStep) {
+    if (!preferences.appTourCompleted) {
+      tab = when (appTourStep) {
+        0 -> RootTab.HOME
+        1 -> RootTab.DISCOVER
+        2 -> RootTab.PRACTICE
+        3 -> RootTab.GAMES
+        else -> RootTab.PROFILE
+      }
+      showSettings = false
     }
   }
 
@@ -408,12 +589,46 @@ private fun PiyokeyApp() {
     }
     activePractice != null -> {
       val practice = requireNotNull(activePractice)
+      val curriculumChapter = practice.stageId?.let { CurriculumCatalog.stage(it)?.chapterNumber }
+      val inputLocked = practice.kind == PracticeKind.ONBOARDING ||
+        (practice.kind == PracticeKind.CURRICULUM && curriculumChapter != null && curriculumChapter <= 4)
+      val prompts = practice.items?.map { item ->
+        PracticePrompt(
+          target = item.ko,
+          meaning = item.localizedMeaning(preferences.language.tag),
+          reading = item.localizedReading(preferences.language.tag),
+        )
+      }
       Box(Modifier.fillMaxSize()) {
         PracticeRoute(
           targets = practice.targets,
+          prompts = prompts,
           initialCheckpoint = practice.checkpoint,
+          inputMode = if (inputLocked) InputMode.BUILTIN else practice.inputMode,
+          inputModeLocked = inputLocked,
+          onInputModeChange = { mode ->
+            activePractice = practice.copy(inputMode = mode)
+            onPreferencesChange(preferences.copy(defaultInputMode = mode))
+          },
+          onOpenIMEHelp = {
+            context.startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+          },
+          keyboardOptions = PracticeKeyboardOptions(
+            showsKeyGuide = preferences.keyGuideEnabled,
+            showsRomanHints = preferences.romanHintsEnabled,
+            hapticsEnabled = preferences.hapticsEnabled,
+          ),
+          displayOptions = PracticeDisplayOptions(
+            showsTarget = preferences.showsTarget,
+            showsMeaning = preferences.showsMeaning,
+            showsReading = preferences.showsReading,
+            promptOrder = preferences.promptOrder,
+            showsJamo = preferences.showsJamo,
+            showsComposition = preferences.showsComposition,
+            showsMascot = preferences.showsMascot,
+          ),
           onCheckpointChanged = { checkpoint ->
-            if (practice.kind == PracticeKind.CURRICULUM) {
+            if (practice.kind == PracticeKind.CURRICULUM || practice.kind == PracticeKind.ONBOARDING) {
               scope.launch {
                 try {
                   repository.saveCurriculumCheckpoint(requireNotNull(practice.stageId), checkpoint)
@@ -429,17 +644,42 @@ private fun PiyokeyApp() {
             persistPracticeCompletion(PendingPracticeCompletion(practice, state, duration))
           },
         )
-        Surface(
-          modifier = Modifier.align(Alignment.TopStart).padding(top = 4.dp, start = 4.dp),
-          color = Color.White.copy(alpha = 0.92f),
-        ) {
-          TextButton(onClick = { activePractice = null }) { Text(stringResource(R.string.close_session)) }
+        if (practice.kind != PracticeKind.ONBOARDING) {
+          Surface(
+            modifier = Modifier.align(Alignment.TopStart).padding(top = 4.dp, start = 4.dp),
+            color = Color.White.copy(alpha = 0.92f),
+          ) {
+            TextButton(onClick = { activePractice = null }) { Text(stringResource(R.string.close_session)) }
+          }
         }
       }
       return
     }
     result != null -> {
       val completedResult = requireNotNull(result)
+      if (completedResult.practice.kind == PracticeKind.ONBOARDING) {
+        val chapter = requireNotNull(completedResult.practice.stageId).let { id ->
+          CurriculumCatalog.stage(id)?.chapterNumber
+        } ?: error("Missing onboarding chapter")
+        HatchMissionResultScreen(
+          chapter = chapter,
+          accuracyPercent = completedResult.accuracyPercent,
+          stars = completedResult.stars ?: 1,
+          initialNickname = preferences.piyoNickname,
+          onContinue = { nickname ->
+            onPreferencesChange(
+              preferences.copy(
+                hatchChaptersCompleted = maxOf(preferences.hatchChaptersCompleted, chapter),
+                pendingHatchResultChapter = 0,
+                piyoNickname = nickname.ifBlank { preferences.piyoNickname },
+              ),
+            )
+            result = null
+            tab = RootTab.HOME
+          },
+        )
+        return
+      }
       val source = completedResult.practice.catalogEntry
       val recommendations = if (source == null) emptyList() else {
         DiscoveryEngine.sameTagRecommendations(current.catalog, source, current.installedDeckIds)
@@ -485,6 +725,7 @@ private fun PiyokeyApp() {
             current.catalog,
             current.installedDeckIds,
             current.downloadHistoryTags,
+            preferences.onboardingGoal?.preferredTags.orEmpty(),
           ),
           installedDeckIds = current.installedDeckIds,
           onDeckClick = ::openDetail,
@@ -495,7 +736,10 @@ private fun PiyokeyApp() {
               onOpenProfile = { tab = RootTab.PROFILE },
               onDailyChallenge = {
                 val day = JstDay.fromEpochMillis(System.currentTimeMillis())
-                val items = DailyChallengePolicy.items(day).map(CurriculumItem::toDeckItem)
+                val items = DailyChallengePolicy.items(
+                  day,
+                  goalSalt = preferences.onboardingGoal?.ordinal ?: 0,
+                ).map(CurriculumItem::toDeckItem)
                 activePractice = ActivePractice(
                   installed = null,
                   catalogEntry = null,
@@ -503,6 +747,7 @@ private fun PiyokeyApp() {
                   items = items,
                   sourceDeckId = "daily::${day.value}",
                   kind = PracticeKind.DAILY,
+                  inputMode = preferences.defaultInputMode,
                   sessionDay = day,
                 )
               },
@@ -527,7 +772,13 @@ private fun PiyokeyApp() {
                 context.getString(app.piyokey.feature.practice.R.string.practice_sample_target_3),
               )
               activePractice = ActivePractice(
-                null, null, targets, null, null, PracticeKind.FREE,
+                installed = null,
+                catalogEntry = null,
+                targets = targets,
+                items = null,
+                sourceDeckId = null,
+                kind = PracticeKind.FREE,
+                inputMode = preferences.defaultInputMode,
                 sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
               )
             },
@@ -547,6 +798,7 @@ private fun PiyokeyApp() {
                 items = items,
                 sourceDeckId = "curriculum::${stage.id}",
                 kind = PracticeKind.CURRICULUM,
+                inputMode = OnboardingPolicy.resolvedInputMode(preferences.defaultInputMode, stage.chapterNumber),
                 stageId = stage.id,
                 sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
                 checkpoint = currentLearning.activeSession?.takeIf { it.stageId == stage.id }?.checkpoint,
@@ -637,6 +889,7 @@ private fun PiyokeyApp() {
                     items = reviewItems.map(ReviewItem::item),
                     sourceDeckId = null,
                     kind = PracticeKind.REVIEW,
+                    inputMode = preferences.defaultInputMode,
                     sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
                     reviewSourceDeckIds = reviewItems.map(ReviewItem::sourceDeckId),
                   )
@@ -687,6 +940,11 @@ private fun PiyokeyApp() {
         )
       }
 
+      CommonSettingsButton(
+        onClick = { showSettings = true },
+        modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
+      )
+
       if (operationFailed) {
         Surface(
           modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(12.dp),
@@ -718,7 +976,71 @@ private fun PiyokeyApp() {
           }
         }
       }
+
+      if (!preferences.appTourCompleted) {
+        MainAppTourOverlay(
+          step = appTourStep,
+          onAdvance = {
+            if (appTourStep >= 5) {
+              onPreferencesChange(preferences.copy(appTourCompleted = true))
+            } else {
+              appTourStep += 1
+            }
+          },
+          onSkip = { onPreferencesChange(preferences.copy(appTourCompleted = true)) },
+        )
+      }
     }
+  }
+
+  if (showSettings) {
+    SettingsSheet(
+      preferences = preferences,
+      reminderEnabled = currentLearning.reminder.isEnabled,
+      reminderHour = currentLearning.reminder.hour,
+      reminderMinute = currentLearning.reminder.minute,
+      onPreferencesChange = onPreferencesChange,
+      onReminderEnabled = { enabled ->
+        if (!enabled || Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+          ) == PackageManager.PERMISSION_GRANTED
+        ) {
+          applyReminderEnabled(enabled)
+        } else {
+          pendingReminderEnable = true
+          notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+      },
+      onReminderTime = { hour, minute ->
+        scope.launch {
+          try {
+            repository.saveReminderPreference(currentLearning.reminder.isEnabled, hour, minute)
+            if (currentLearning.reminder.isEnabled) reminderScheduler.schedule(hour, minute)
+            reload()
+          } catch (_: Exception) { operationFailed = true }
+        }
+      },
+      onOpenPrivacy = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, Uri.parse("https://hancoweb.vercel.app/privacy"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
+      onOpenFeedback = {
+        context.startActivity(
+          Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:contact@typee.app"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
+      onOpenSupport = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, Uri.parse("https://hancoweb.vercel.app/support"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
+      onDismiss = { showSettings = false },
+    )
   }
 }
 

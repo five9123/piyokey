@@ -187,9 +187,9 @@ object DailyChallengePolicy {
     .flatMap(CurriculumStage::items)
     .distinctBy(CurriculumItem::ko)
 
-  fun items(day: JstDay, count: Int = 5): List<CurriculumItem> {
+  fun items(day: JstDay, count: Int = 5, goalSalt: Int = 0): List<CurriculumItem> {
     require(count in 1..pool.size)
-    val start = Math.floorMod(day.date.toEpochDay(), pool.size.toLong()).toInt()
+    val start = Math.floorMod(day.date.toEpochDay() + goalSalt * 11L, pool.size.toLong()).toInt()
     return (0 until count).map { pool[(start + it * 7) % pool.size] }
   }
 }

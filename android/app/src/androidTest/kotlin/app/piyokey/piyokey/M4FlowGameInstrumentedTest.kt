@@ -7,16 +7,20 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
+import org.junit.rules.RuleChain
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class M4FlowGameInstrumentedTest {
-  @get:Rule
   val composeRule = createAndroidComposeRule<MainActivity>()
+
+  @get:Rule
+  val rules: RuleChain = RuleChain.outerRule(TestAppStateRule(skipOnboarding = true)).around(composeRule)
 
   @Test
   fun gameHubSelectsBundledFlowAndStartsCountdownWithFixedKeyboard() {
+    waitForShell()
     composeRule.onNodeWithTag("nav-games").performClick()
     composeRule.onNodeWithTag("game-flow").assertIsDisplayed().performClick()
     composeRule.onNodeWithTag("flow-deck-flow_topik_beginner").assertIsDisplayed()
@@ -30,11 +34,18 @@ class M4FlowGameInstrumentedTest {
 
   @Test
   fun weeklyCupEndsAfterThreeMissesAndOpensCommonResult() {
+    waitForShell()
     composeRule.onNodeWithTag("nav-games").performClick()
     composeRule.onNodeWithTag("weekly-cup").assertIsDisplayed().performClick()
     composeRule.waitUntil(timeoutMillis = 15_000) {
       composeRule.onAllNodesWithTag("flow-result").fetchSemanticsNodes().size == 1
     }
     composeRule.onNodeWithTag("flow-result").assertIsDisplayed()
+  }
+
+  private fun waitForShell() {
+    composeRule.waitUntil(timeoutMillis = 15_000) {
+      runCatching { composeRule.onNodeWithTag("nav-games").fetchSemanticsNode() }.isSuccess
+    }
   }
 }
