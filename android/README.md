@@ -1,6 +1,6 @@
 # PIYOKEY Android
 
-Android M7의 A0 골격, M1 공용 코어와 M2 연습 기능 베이스다. 한글 입력·덱·`.piyodeck` 계약은 순수 Kotlin으로 고정하고, M2는 순수 세션 reducer 위에 Compose 내장 두벌식 키보드와 연습 화면을 올린다.
+Android M7의 A0 골격과 M1~M3 구현이다. 한글 입력·덱·`.piyodeck` 계약은 순수 Kotlin으로 고정하고, Compose 연습 화면 위에 정적 카탈로그 발견·다운로드·오프라인 내 덱 흐름을 연결한다.
 
 ## 고정 도구 체인
 
@@ -11,7 +11,7 @@ Android M7의 A0 골격, M1 공용 코어와 M2 연습 기능 베이스다. 한�
 - `minSdk 26`, `compileSdk 37`, `targetSdk 36`
 - Java/Kotlin bytecode 17
 
-AGP 9의 built-in Kotlin을 사용하므로 Android 모듈인 `:app`과 `:feature:practice`에는 `org.jetbrains.kotlin.android` plugin을 적용하지 않는다. 순수 JVM 모듈인 `:core:hangul`, `:core:deckkit`, `:core:piyodeck`, `:core:session`은 `org.jetbrains.kotlin.jvm`을 적용한다.
+AGP 9의 built-in Kotlin을 사용하므로 Android 모듈인 `:app`, `:core:data`, `:feature:practice`, `:feature:discover`에는 `org.jetbrains.kotlin.android` plugin을 적용하지 않는다. 순수 JVM 모듈인 `:core:hangul`, `:core:deckkit`, `:core:piyodeck`, `:core:session`은 `org.jetbrains.kotlin.jvm`을 적용한다.
 
 로컬에는 Homebrew JDK 21을 Gradle 실행용으로 사용할 수 있다.
 
@@ -28,6 +28,8 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
   :feature:practice:testDebugUnitTest \
   :feature:practice:assembleDebugAndroidTest \
   :feature:practice:lintDebug \
+  :core:data:testDebugUnitTest \
+  :feature:discover:lintDebug \
   :app:lintDebug \
   :app:assembleDebug
 ```
@@ -45,12 +47,14 @@ ANDROID_HOME="$HOME/Library/Android/sdk" \
 
 ## 모듈 경계
 
-- `:app`: Compose single-activity 진입점과 플랫폼 연결. 현재 `PracticeRoute`를 시작 화면으로 표시한다.
+- `:app`: Compose single-activity 진입점, 5탭 셸과 feature 간 navigation을 연결한다.
 - `:core:hangul`: Android 및 Compose에 의존하지 않는 순수 Kotlin 상태 기계. `shared/test_vectors.json`의 15개 조합, 10개 백스페이스 계약을 직접 읽어 검증한다.
 - `:core:deckkit`: 덱·카탈로그 모델, strict codec, 공용 JSON Schema와 의미·bundle 검증. 공식 26덱, 게임 프리셋 15덱, v10→v11 snapshot을 검증한다.
 - `:core:piyodeck`: STORE-only ZIP, strict UTF-8 JSON, manifest/hash/metadata, 사용자 덱 정책과 결정적 writer. `core:deckkit`에만 단방향 의존한다.
 - `:core:session`: Android 및 Compose에 의존하지 않는 불변 연습 상태와 순수 reducer. 자모 판정, 오타 무시, 되감기, 정확도와 token 기반 650ms 자동 전환을 소유한다.
+- `:core:data`: Room 설치 메타데이터·다운로드 이력·복구 journal과 앱 전용 catalog/deck payload를 소유한다. `journal → atomic move → Room transaction` 순서와 primary/backup/quarantine 복구를 유지한다.
 - `:feature:practice`: Compose 내장 두벌식 키보드와 연습 화면. 키보드 제스처·연출·현지화만 소유하고 저장·오디오·OS IME·결과 화면은 소유하지 않는다.
+- `:feature:discover`: 발견 검색·필터·정렬, 덱 상세·미리보기, 홈 추천, 내 덱과 M3 결과 추천 화면을 소유한다.
 
 후보 `applicationId`와 namespace는 `app.piyokey.piyokey`다. Google Play Console에서 패키지 소유권과 최종 식별자를 확인하기 전까지 출시 계약으로 확정하지 않는다.
 
@@ -89,6 +93,15 @@ cd android
 
 성공·실패 모두 기기/API/주사율, 원시 touch·delivery·frame 표본과 요약을 target app external files의 `m2-touch-gate/` JSON으로 기록하고 Gradle 출력에 절대 경로를 표시한다.
 
-M2 기능 베이스의 코드 차단 이슈는 없다. 다만 연결된 실기기가 없어 위 물리 gate를 아직 실행하지 못했으므로 전체 M2 완료 게이트는 열어 둔다. 설정 영속화·F12 결과·최신 S5 헤더/뜻·읽기 연동과 OS IME는 각각 후속 M6 및 관련 기능 범위다. M3는 시작하지 않았다.
+M2 기능 베이스의 코드 차단 이슈는 없으며 물리 정량 gate는 사용자의 결정으로 출시 후보 통합 QA에 이관했다. 설정 영속화·OS IME는 M6 범위다.
 
-현재 변경은 대규모 dirty worktree를 commit·tag·정리하지 않은 상태다. 중앙 저장소로 옮길 정확한 증분 파일과 검증은 `docs/ANDROID_M7_M2_HANDOFF.md`에 기록한다.
+## M3 구현 및 검증 결과
+
+- 번들 26덱과 검증된 cache를 즉시 표시하고, 설정된 HTTPS 정적 host만 ETag/If-Modified-Since로 갱신한다.
+- Room/files 복구 journal, 원자적 move, 최신/직전 검증 payload와 quarantine으로 설치·업데이트·손상 복구를 보장한다.
+- 검색, 타입·레벨·복수 태그·항목 수 필터, 4종 정렬, 상세 10항목 미리보기, 설치·업데이트·삭제, 오프라인 연습을 제공한다.
+- 삭제 후에도 다운로드 태그 이력을 유지하고 홈 3개·결과 2개 추천과 1탭 재시작을 제공한다.
+- JVM 7 tests, API 35 Room/data instrumented 5 tests, 발견→다운로드→플레이 Compose instrumented 1 test, feature/app lint와 debug APK가 통과했다.
+- 실기기 의존 검증은 추가하지 않았으며 출시 후보 통합 QA Issue #19에 유지한다.
+
+M3 증분 파일과 검증은 `docs/ANDROID_M7_M3_HANDOFF.md`에 기록한다.

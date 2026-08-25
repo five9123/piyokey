@@ -1271,3 +1271,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 사용자는 개발 단계마다 기기를 반복 조작하기보다 앱 전체 설계·기능을 출시 가능한 수준까지 먼저 완성하고 출시 직전에 한 번에 직접 QA하기를 선택했다. 자동 검증으로 회귀를 조기에 차단하면서 수동 검증 전환 비용을 출시 후보에 모으되, 명시된 품질 기준은 그대로 보존한다.
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2~M7, §14
 - 영향 범위: Android 마일스톤 완료 판정, GitHub Project 상태, M2 성능 evidence, M3~M6 착수 조건, 출시 후보 실기기 QA 체크리스트
+
+## 2026-08-25 Android M7 M3 정적 카탈로그·원자 저장·발견 흐름 완료
+- 결정: Android M3는 `core:data`가 Room 설치 메타데이터·다운로드 이력·persistent journal을, 앱 전용 파일이 실제 catalog/deck payload를 소유하도록 고정한다. 쓰기는 `journal Room transaction → 같은 디렉터리 atomic move → metadata Room transaction` 순서이며, 현재 검증본과 직전 검증본·quarantine으로 시작 시 이전 또는 새 pair에 수렴한다. 손상된 최신 payload는 직전 검증본으로 복구하고 둘 다 유효하지 않을 때만 해당 설치를 격리하거나 번들 catalog로 fallback한다.
+- 결정: 앱은 번들 공식 26덱 또는 검증 cache를 즉시 표시하고 `PIYOKEY_CATALOG_URL`이 주입된 경우에만 동일 HTTPS content root에서 ETag와 If-Modified-Since 조건부 GET을 수행한다. 네트워크·HTTP·schema·의미 검증 실패는 현재 화면을 실패 상태로 바꾸지 않으며 계정·쓰기 API·download count mutation을 만들지 않는다.
+- 결정: `feature:discover`는 이름·태그·제작자 즉시 검색, 타입·레벨·복수 태그 교집합·항목 수 필터, 인기·신착·급상승·항목수 정렬, 섹션형 발견, 상세 통계와 최대 10항목 미리보기, 설치·업데이트·삭제, 내 덱을 제공한다. 설치된 전체 덱은 오프라인에서 기존 연습 reducer로 실행하고 세션 중 탭 bar와 파일·네트워크 UI를 숨긴다.
+- 결정: 다운로드 태그 이력은 설치 삭제 뒤에도 Room에 유지한다. 홈은 이력 태그를 온보딩 목표보다 높게 가중해 미설치 3개를, 결과는 공통 태그와 미설치 우선으로 2개를 추천하며 1탭 재시작을 제공한다. ja/en/ko UI와 콘텐츠를 로케일로 해석하고 미지원 언어는 영어로 fallback하며 영어 화면의 커버·브랜드에 일본어를 노출하지 않는다.
+- 결정: API 35 전용 AVD에서 Room install/delete/history, 최신/backup/quarantine 복구, v10→v11 ETag cache를 포함한 data instrumented 5개와 발견→다운로드→플레이 Compose 1개를 통과했다. 실제 Galaxy를 사용하지 않았고 M2 정량 입력을 포함한 실기기 항목은 출시 후보 Issue #19에서만 수행한다.
+- 근거: 읽기 전용 정적 배포와 오프라인 우선을 지키면서 파일과 DB의 부분 갱신·손상으로 설치 전체가 무너지는 경우를 fail-closed 복구해야 한다. 실제 기기 조작을 마일스톤마다 반복하지 않고도 순수·에뮬레이터 자동 gate로 M4 착수 품질을 확보할 수 있다.
+- 관련 PRD 섹션: F5.1~F5.7, F12.5, §8.1~§8.3, §9, §11, §13 M3·M7
+- 영향 범위: Android Room schema v1, static content client, catalog/deck file store, 5탭 app shell, discover/detail/home/my decks/practice result, M3 자동 검증과 로컬 evidence
