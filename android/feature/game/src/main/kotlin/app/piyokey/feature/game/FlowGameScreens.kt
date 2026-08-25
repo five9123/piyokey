@@ -55,6 +55,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -75,8 +76,11 @@ import app.piyokey.core.game.FlowGameFactory
 import app.piyokey.core.game.FlowGameReducer
 import app.piyokey.core.game.FlowGameState
 import app.piyokey.core.game.FlowPhase
+import app.piyokey.core.hangul.HangulComposer
 import app.piyokey.feature.practice.DubeolsikKeyboard
+import app.piyokey.feature.practice.KoreanIMEInput
 import app.piyokey.feature.practice.PracticeKeyboardOptions
+import app.piyokey.feature.practice.hasKoreanInputMethod
 import kotlin.math.ceil
 import kotlin.random.Random
 import kotlinx.coroutines.delay
@@ -90,19 +94,19 @@ private val Bad = Color(0xFFE45568)
 
 @Composable
 fun GameHubScreen(
-  onFlow: () -> Unit,
+  onGame: (GameKind) -> Unit,
   onWeeklyCup: () -> Unit,
 ) {
   val games = listOf(
-    GameTile(R.string.flow_title, "→", true),
-    GameTile(R.string.acid_rain_title, "↓", false),
-    GameTile(R.string.choseong_title, "ㅊ", false),
-    GameTile(R.string.dictation_title, "♪", false),
-    GameTile(R.string.word_match_title, "가", false),
-    GameTile(R.string.spacing_title, "↔", false),
+    GameTile(GameKind.FLOW, R.string.flow_title, R.string.flow_rule, "→"),
+    GameTile(GameKind.ACID_RAIN, R.string.acid_rain_title, R.string.acid_rain_rule, "↓"),
+    GameTile(GameKind.CHOSEONG, R.string.choseong_title, R.string.choseong_rule, "ㅊ"),
+    GameTile(GameKind.DICTATION, R.string.dictation_title, R.string.dictation_rule, "♪"),
+    GameTile(GameKind.WORD_MATCH, R.string.word_match_title, R.string.word_match_rule, "가"),
+    GameTile(GameKind.SPACING, R.string.spacing_title, R.string.spacing_rule, "↔"),
   )
   LazyColumn(
-    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF8F3)),
+    modifier = Modifier.fillMaxSize().background(Color(0xFFFFF8F3)).testTag("game-hub"),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(14.dp),
   ) {
@@ -129,19 +133,16 @@ fun GameHubScreen(
       Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         row.forEach { tile ->
           Card(
-            modifier = Modifier.weight(1f).aspectRatio(1.0f).then(
-              if (tile.enabled) Modifier.clickable(onClick = onFlow).testTag("game-flow") else Modifier,
-            ),
-            colors = CardDefaults.cardColors(
-              containerColor = if (tile.enabled) Color.White else Color(0xFFF2EEF0),
-            ),
+            modifier = Modifier.weight(1f).aspectRatio(1.0f)
+              .clickable { onGame(tile.kind) }.testTag("game-${tile.kind.route}"),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
           ) {
             Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-              Text(tile.symbol, fontSize = 30.sp, color = if (tile.enabled) PiyoPink else Color.Gray)
+              Text(tile.symbol, fontSize = 30.sp, color = PiyoPink)
               Column {
-                Text(stringResource(tile.title), fontWeight = FontWeight.Black, color = if (tile.enabled) Ink else Color.Gray)
+                Text(stringResource(tile.title), fontWeight = FontWeight.Black, color = Ink)
                 Text(
-                  if (tile.enabled) stringResource(R.string.flow_rule) else stringResource(R.string.coming_later),
+                  stringResource(tile.rule),
                   style = MaterialTheme.typography.bodySmall,
                   color = Color.Gray,
                   maxLines = 2,
@@ -155,7 +156,9 @@ fun GameHubScreen(
   }
 }
 
-private data class GameTile(val title: Int, val symbol: String, val enabled: Boolean)
+enum class GameKind(val route: String) { FLOW("flow"), ACID_RAIN("acid-rain"), CHOSEONG("choseong"), DICTATION("dictation"), WORD_MATCH("word-match"), SPACING("spacing") }
+
+private data class GameTile(val kind: GameKind, val title: Int, val rule: Int, val symbol: String)
 
 @Composable
 fun FlowDeckSelectionScreen(
@@ -219,6 +222,7 @@ private enum class FlowFeedback { READY, CORRECT, WRONG, COMPLETE, LIFE_LOST }
 @Composable
 fun FlowGameRoute(
   deck: Deck,
+  useOSIME: Boolean = false,
   seed: Long = Random.nextLong(),
   onClose: () -> Unit,
   onFinished: (FlowGameState) -> Unit,
@@ -285,6 +289,9 @@ fun FlowGameRoute(
     state = state,
     feedback = feedback,
     onKey = { dispatch(FlowGameEvent.Key(it)) },
+    onBackspace = { dispatch(FlowGameEvent.Backspace) },
+    onIMEText = { committed, composing -> dispatch(FlowGameEvent.IMEText(committed, composing)) },
+    useOSIME = useOSIME,
     onClose = {
       dispatch(FlowGameEvent.Close)
       onClose()
@@ -297,8 +304,12 @@ private fun FlowGameScreen(
   state: FlowGameState,
   feedback: FlowFeedback,
   onKey: (Char) -> Unit,
+  onBackspace: () -> Unit,
+  onIMEText: (String, String?) -> Unit,
+  useOSIME: Boolean,
   onClose: () -> Unit,
 ) {
+  val context = LocalContext.current
   Box(
     Modifier.fillMaxSize().background(
       Brush.verticalGradient(listOf(Color(0xFFFFE7EF), Color(0xFFEDE7FF), Color(0xFFFFFBF4))),
@@ -352,13 +363,25 @@ private fun FlowGameScreen(
         color = if (feedback == FlowFeedback.WRONG || feedback == FlowFeedback.LIFE_LOST) Bad else Good,
         fontWeight = FontWeight.Bold,
       )
-      DubeolsikKeyboard(
-        nextExpectedJamo = state.currentCard.judge.expectedNext,
-        onJamo = onKey,
-        onBackspace = {},
-        options = PracticeKeyboardOptions(),
-        modifier = Modifier.testTag("flow-keyboard"),
-      )
+      if (useOSIME) {
+        if (!hasKoreanInputMethod(context)) {
+          Text(stringResource(R.string.korean_ime_required), Modifier.fillMaxWidth().padding(10.dp), textAlign = TextAlign.Center, color = Bad)
+        }
+        KoreanIMEInput(
+          visibleText = HangulComposer.compose(state.currentCard.judge.expectedSequence.take(state.currentCard.judge.currentIndex)).text,
+          onText = { onIMEText(it.committedText, it.composingText) },
+          modifier = Modifier.fillMaxWidth().height(120.dp),
+          testTag = "flow-os-ime",
+        )
+      } else {
+        DubeolsikKeyboard(
+          nextExpectedJamo = state.currentCard.judge.expectedNext,
+          onJamo = onKey,
+          onBackspace = onBackspace,
+          options = PracticeKeyboardOptions(),
+          modifier = Modifier.testTag("flow-keyboard"),
+        )
+      }
     }
   }
 }

@@ -71,6 +71,10 @@ import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.deckkit.Deck
 import app.piyokey.core.game.FlowGameState
 import app.piyokey.core.game.FlowRankTuning
+import app.piyokey.core.game.AcidRainState
+import app.piyokey.core.game.SpacingGameState
+import app.piyokey.core.game.SpacingPassage
+import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.toRecord
 import app.piyokey.core.platform.DailyReminderScheduler
 import app.piyokey.core.retention.CurriculumItem
@@ -98,6 +102,14 @@ import app.piyokey.feature.game.FlowDeckSelectionScreen
 import app.piyokey.feature.game.FlowGameRoute
 import app.piyokey.feature.game.FlowResultScreen
 import app.piyokey.feature.game.GameHubScreen
+import app.piyokey.feature.game.GameKind
+import app.piyokey.feature.game.GameDeckSelectionScreen
+import app.piyokey.feature.game.TypingGameRoute
+import app.piyokey.feature.game.AcidRainRoute
+import app.piyokey.feature.game.SpacingSelectionScreen
+import app.piyokey.feature.game.SpacingGameRoute
+import app.piyokey.feature.game.SpacingResultScreen
+import app.piyokey.feature.game.GenericGameResultScreen
 import app.piyokey.feature.retention.CurriculumMapScreen
 import app.piyokey.feature.retention.ReminderControls
 import app.piyokey.feature.retention.RetentionHomeCard
@@ -143,6 +155,7 @@ class MainActivity : AppCompatActivity() {
             hatchChaptersCompleted = 3,
             appTourCompleted = true,
             onboardingMigrationChecked = true,
+            defaultInputMode = if (testOverrides.getBoolean("force_os_ime", false)) InputMode.OS_IME else resolved.defaultInputMode,
           )
           else -> resolved
         }
@@ -212,7 +225,7 @@ private data class PendingPracticeCompletion(
   val activeDurationMillis: Long,
 )
 
-private enum class GameStage { HUB, FLOW_SELECT }
+private enum class GameStage { HUB, DECK_SELECT, SPACING_SELECT }
 
 @Composable
 private fun PiyokeyApp(
@@ -239,13 +252,22 @@ private fun PiyokeyApp(
   var result by remember { mutableStateOf<PracticeResult?>(null) }
   var reloadToken by remember { mutableStateOf(0) }
   var gameStage by remember { mutableStateOf(GameStage.HUB) }
+  var selectedGameKind by remember { mutableStateOf(GameKind.FLOW) }
   var flowPresets by remember { mutableStateOf<List<Deck>>(emptyList()) }
-  var flowBestScores by remember { mutableStateOf<Map<String, Int>>(emptyMap()) }
+  var gamePresets by remember { mutableStateOf<Map<GameKind, List<Deck>>>(emptyMap()) }
+  var spacingPassages by remember { mutableStateOf<List<SpacingPassage>>(emptyList()) }
+  var gameBestScores by remember { mutableStateOf<Map<GameKind, Map<String, Int>>>(emptyMap()) }
   var activeFlowDeck by remember { mutableStateOf<Deck?>(null) }
   var flowResult by remember { mutableStateOf<FlowGameState?>(null) }
   var flowIsNewBest by remember { mutableStateOf(false) }
   var flowSeed by remember { mutableStateOf(0L) }
   var flowRankTuning by remember { mutableStateOf(FlowRankTuning()) }
+  var activeGameDeck by remember { mutableStateOf<Deck?>(null) }
+  var typingGameResult by remember { mutableStateOf<TypingGameState?>(null) }
+  var acidRainResult by remember { mutableStateOf<AcidRainState?>(null) }
+  var activeSpacingPassage by remember { mutableStateOf<SpacingPassage?>(null) }
+  var spacingGameResult by remember { mutableStateOf<SpacingGameState?>(null) }
+  var gameSeed by remember { mutableStateOf(0L) }
   var showFreePractice by remember { mutableStateOf(false) }
   var showSettings by remember { mutableStateOf(false) }
   var appTourStep by remember { mutableStateOf(0) }
@@ -270,20 +292,43 @@ private fun PiyokeyApp(
     }
   }
 
-  LaunchedEffect(repository, reloadToken) {
+  LaunchedEffect(repository, reloadToken, preferences.defaultInputMode) {
     loadFailed = false
     try {
       val loadedSnapshot = repository.snapshot()
       val loadedLearning = repository.learningSnapshot()
       val loadedPresets = repository.bundledFlowDecks()
+      val loadedGamePresets = mapOf(
+        GameKind.FLOW to loadedPresets,
+        GameKind.ACID_RAIN to repository.bundledGameDecks("acid_rain"),
+        GameKind.CHOSEONG to repository.bundledGameDecks("choseong"),
+        GameKind.WORD_MATCH to repository.bundledGameDecks("word_match"),
+        GameKind.DICTATION to repository.bundledGameDecks("dictation"),
+      )
+      val loadedSpacingPassages = repository.bundledSpacingPassages()
+      val loadedRankTuning = repository.flowRankTuning()
+      val loadedInputMode = if (preferences.defaultInputMode == InputMode.OS_IME) "os_ime" else "builtin"
+      val installedDecks = loadedSnapshot.installed.map { it.deck }
+      val loadedBestScores = loadedGamePresets.mapValues { (kind, presets) ->
+        val mode = when (kind) {
+          GameKind.FLOW -> "flow"
+          GameKind.ACID_RAIN -> "acid_rain"
+          GameKind.CHOSEONG -> "choseong"
+          GameKind.WORD_MATCH -> "word_match"
+          GameKind.DICTATION -> "dictation"
+          GameKind.SPACING -> "spacing"
+        }
+        (presets + installedDecks).distinctBy(Deck::deckId).mapNotNull { deck ->
+          repository.gameProgress(mode, deck.deckId, loadedInputMode)?.let { deck.deckId to it.bestScore }
+        }.toMap()
+      }
       snapshot = loadedSnapshot
       learning = loadedLearning
       flowPresets = loadedPresets
-      flowRankTuning = repository.flowRankTuning()
-      val ids = loadedPresets.map(Deck::deckId) + loadedSnapshot.installed.map { it.metadata.deckId }
-      flowBestScores = ids.distinct().mapNotNull { id ->
-        repository.flowProgress(id)?.let { id to it.bestScore }
-      }.toMap()
+      gamePresets = loadedGamePresets
+      spacingPassages = loadedSpacingPassages
+      flowRankTuning = loadedRankTuning
+      gameBestScores = loadedBestScores
       if (reloadToken == 0) {
         when (repository.refreshCatalog()) {
           is CatalogRefreshResult.Updated -> snapshot = repository.snapshot()
@@ -513,11 +558,13 @@ private fun PiyokeyApp(
     }
   }
 
+  val inputModeKey = if (preferences.defaultInputMode == InputMode.OS_IME) "os_ime" else "builtin"
   val runningFlow = activeFlowDeck
   val completedFlow = flowResult
   if (runningFlow != null && completedFlow == null) {
     FlowGameRoute(
       deck = runningFlow,
+      useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
       seed = flowSeed,
       onClose = { activeFlowDeck = null },
       onFinished = { finished ->
@@ -527,8 +574,11 @@ private fun PiyokeyApp(
               record = finished.toRecord(System.currentTimeMillis()),
               deckItems = finished.cards,
               reviewMistakeCounts = finished.reviewMistakeCounts,
+              inputMode = inputModeKey,
             )
-            flowBestScores = flowBestScores + (runningFlow.deckId to saved.progress.bestScore)
+            gameBestScores = gameBestScores + (
+              GameKind.FLOW to (gameBestScores[GameKind.FLOW].orEmpty() + (runningFlow.deckId to saved.progress.bestScore))
+            )
             saved.isNewBest
           } catch (_: Exception) {
             operationFailed = true
@@ -553,8 +603,121 @@ private fun PiyokeyApp(
       onDone = {
         flowResult = null
         activeFlowDeck = null
-        gameStage = GameStage.FLOW_SELECT
+        gameStage = GameStage.DECK_SELECT
       },
+    )
+    return
+  }
+
+  val runningGameDeck = activeGameDeck
+  if (runningGameDeck != null && typingGameResult == null && acidRainResult == null) {
+    if (selectedGameKind == GameKind.ACID_RAIN) {
+      AcidRainRoute(
+        deck = runningGameDeck,
+        useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+        seed = gameSeed,
+        onClose = { activeGameDeck = null },
+        onFinished = { finished ->
+          scope.launch {
+            try {
+              val saved = repository.saveGameRecord(
+                finished.toRecord(inputModeKey, System.currentTimeMillis()),
+                runningGameDeck.items,
+                finished.reviewMistakeCounts,
+              )
+              gameBestScores = gameBestScores + (
+                GameKind.ACID_RAIN to (gameBestScores[GameKind.ACID_RAIN].orEmpty() + (runningGameDeck.deckId to saved.progress.bestScore))
+              )
+            } catch (_: Exception) { operationFailed = true }
+            acidRainResult = finished
+            reload()
+          }
+        },
+      )
+    } else {
+      TypingGameRoute(
+        kind = selectedGameKind,
+        deck = runningGameDeck,
+        useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+        showChoseongMeaning = preferences.choseongShowsMeaning,
+        seed = gameSeed,
+        onClose = { activeGameDeck = null },
+        onFinished = { finished ->
+          scope.launch {
+            try {
+              val saved = repository.saveGameRecord(
+                finished.toRecord(runningGameDeck.deckId, inputModeKey, System.currentTimeMillis()),
+                runningGameDeck.items,
+                finished.reviewMistakeCounts,
+              )
+              gameBestScores = gameBestScores + (
+                selectedGameKind to (gameBestScores[selectedGameKind].orEmpty() + (runningGameDeck.deckId to saved.progress.bestScore))
+              )
+            } catch (_: Exception) { operationFailed = true }
+            typingGameResult = finished
+            reload()
+          }
+        },
+      )
+    }
+    return
+  }
+  typingGameResult?.let { completed ->
+    GenericGameResultScreen(
+      score = completed.score,
+      accuracy = completed.accuracyPercent,
+      maxCombo = completed.maxCombo,
+      completed = completed.completedItemCount,
+      detailLabel = stringResource(app.piyokey.feature.game.R.string.questions_per_minute),
+      detailValue = "%.1f".format(completed.questionsPerMinute),
+      reviewWords = runningGameDeck?.items.orEmpty().filter { it.id in completed.reviewMistakeCounts }.map { it.ko },
+      inputModeName = stringResource(
+        if (preferences.defaultInputMode == InputMode.OS_IME) app.piyokey.feature.game.R.string.os_ime_input
+        else app.piyokey.feature.game.R.string.builtin_input,
+      ),
+      onRetry = { typingGameResult = null; gameSeed = kotlin.random.Random.nextLong() },
+      onDone = { typingGameResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
+    )
+    return
+  }
+  acidRainResult?.let { completed ->
+    GenericGameResultScreen(
+      score = completed.score,
+      accuracy = completed.accuracyPercent,
+      maxCombo = completed.maxCombo,
+      completed = completed.completedItemCount,
+      reviewWords = runningGameDeck?.items.orEmpty().filter { it.id in completed.reviewMistakeCounts }.map { it.ko },
+      inputModeName = stringResource(
+        if (preferences.defaultInputMode == InputMode.OS_IME) app.piyokey.feature.game.R.string.os_ime_input
+        else app.piyokey.feature.game.R.string.builtin_input,
+      ),
+      onRetry = { acidRainResult = null; gameSeed = kotlin.random.Random.nextLong() },
+      onDone = { acidRainResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
+    )
+    return
+  }
+
+  val runningSpacing = activeSpacingPassage
+  if (runningSpacing != null && spacingGameResult == null) {
+    SpacingGameRoute(
+      passage = runningSpacing,
+      onClose = { activeSpacingPassage = null },
+      onFinished = { finished ->
+        scope.launch {
+          try { repository.saveGameRecord(finished.toRecord(runningSpacing.id, System.currentTimeMillis())) }
+          catch (_: Exception) { operationFailed = true }
+          spacingGameResult = finished
+          reload()
+        }
+      },
+    )
+    return
+  }
+  spacingGameResult?.let { completed ->
+    SpacingResultScreen(
+      state = completed,
+      onRetry = { spacingGameResult = null },
+      onDone = { spacingGameResult = null; activeSpacingPassage = null; gameStage = GameStage.SPACING_SELECT },
     )
     return
   }
@@ -809,27 +972,42 @@ private fun PiyokeyApp(
         }
         RootTab.GAMES -> when (gameStage) {
           GameStage.HUB -> GameHubScreen(
-            onFlow = { gameStage = GameStage.FLOW_SELECT },
+            onGame = { kind ->
+              selectedGameKind = kind
+              gameStage = if (kind == GameKind.SPACING) GameStage.SPACING_SELECT else GameStage.DECK_SELECT
+            },
             onWeeklyCup = {
               flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let {
+                selectedGameKind = GameKind.FLOW
                 activeFlowDeck = it
                 flowSeed = kotlin.random.Random.nextLong()
               }
             },
           )
-          GameStage.FLOW_SELECT -> FlowDeckSelectionScreen(
-            presets = flowPresets,
+          GameStage.DECK_SELECT -> GameDeckSelectionScreen(
+            kind = selectedGameKind,
+            presets = gamePresets[selectedGameKind].orEmpty(),
             installed = current.installed.map { it.deck },
-            bestScores = flowBestScores,
+            bestScores = gameBestScores[selectedGameKind].orEmpty(),
             onBack = { gameStage = GameStage.HUB },
             onSelect = {
-              activeFlowDeck = it
-              flowSeed = kotlin.random.Random.nextLong()
+              if (selectedGameKind == GameKind.FLOW) {
+                activeFlowDeck = it
+                flowSeed = kotlin.random.Random.nextLong()
+              } else {
+                activeGameDeck = it
+                gameSeed = kotlin.random.Random.nextLong()
+              }
             },
             onFindDeck = {
               gameStage = GameStage.HUB
               tab = RootTab.DISCOVER
             },
+          )
+          GameStage.SPACING_SELECT -> SpacingSelectionScreen(
+            passages = spacingPassages,
+            onBack = { gameStage = GameStage.HUB },
+            onSelect = { activeSpacingPassage = it },
           )
         }
         RootTab.PROFILE -> MyDecksScreen(

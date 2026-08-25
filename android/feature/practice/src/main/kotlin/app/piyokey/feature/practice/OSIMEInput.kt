@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import app.piyokey.core.session.PracticeSessionEvent
 
-internal data class IMETextSnapshot(
+data class IMETextSnapshot(
   val committedText: String,
   val composingText: String?,
 )
@@ -41,7 +41,7 @@ internal object IMETextSnapshotReader {
   }
 }
 
-internal fun hasKoreanInputMethod(context: Context): Boolean {
+fun hasKoreanInputMethod(context: Context): Boolean {
   val manager = context.getSystemService(InputMethodManager::class.java)
   return manager.enabledInputMethodList.any { info ->
     manager.getEnabledInputMethodSubtypeList(info, true).any { subtype ->
@@ -56,11 +56,24 @@ internal fun OSIMEInput(
   visibleText: String,
   onEvent: (PracticeSessionEvent.IMEText) -> Unit,
   modifier: Modifier = Modifier,
+) = KoreanIMEInput(
+  visibleText = visibleText,
+  onText = { snapshot -> onEvent(PracticeSessionEvent.IMEText(snapshot.committedText, snapshot.composingText)) },
+  modifier = modifier,
+  testTag = "practice-os-ime-field",
+)
+
+@Composable
+fun KoreanIMEInput(
+  visibleText: String,
+  onText: (IMETextSnapshot) -> Unit,
+  modifier: Modifier = Modifier,
+  testTag: String = "korean-os-ime-field",
 ) {
   val context = LocalContext.current
   val controller = remember { OSIMEEditController() }
   AndroidView(
-    modifier = modifier.testTag("practice-os-ime-field"),
+    modifier = modifier.testTag(testTag),
     factory = {
       EditText(context).apply {
         setSingleLine(false)
@@ -79,7 +92,7 @@ internal fun OSIMEInput(
           override fun afterTextChanged(editable: Editable) {
             if (controller.isSynchronizing) return
             val snapshot = IMETextSnapshotReader.read(editable)
-            onEvent(PracticeSessionEvent.IMEText(snapshot.committedText, snapshot.composingText))
+            onText(snapshot)
           }
         })
         controller.editText = this
