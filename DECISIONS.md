@@ -1355,3 +1355,15 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 실제 Play license tester의 구매·pending·취소·중복·복원·환불과 가격/상품 메타데이터, Galaxy의 Files·공유·편집 UX는 Issue #19의 출시 후보 통합 실기기 QA에서 한 번만 수행한다. API 35 에뮬레이터와 JVM에서는 draft 복구·충돌·Billing 상태 기계·Room v4→v5·무료/유료 화면 경계를 자동 검증한다.
 - 근거: 제작 권한과 사용자 문서 소유권을 분리하고 초안·설치 commit을 복구 가능한 transaction으로 고정하면 결제 중단·환불·프로세스 종료가 사용자의 덱이나 무료 기능을 손상시키지 않는다. 외부 Play 상태를 제외한 회귀를 자동화해 사용자가 요청한 단일 출시 직전 실기기 QA 원칙을 유지한다.
 - 영향 범위: Android Room v5, user-deck draft/editor core, DeckRepository created/edit commit, Play Billing adapter·entitlement cache, 마이페이지 paywall/editor, ja/en/ko 리소스, Source CI·API 35 회귀, 출시 후보 수동 gate.
+
+## 2026-08-25 Android M7 M6D Play Games v2 랭킹·업적
+
+- 관련: PRD F6f, F8, F12, §9, §11, §12.1, §13 M6·M7, Issue #36.
+- 결정: Play Games Services v2 22.0.0은 선택 어댑터다. Play Console이 발급한 project ID, 클래식 15개 leaderboard ID, 5개 achievement ID가 모두 외부 Gradle property로 주입된 빌드에서만 SDK를 초기화한다. 하나라도 없으면 로그인·프로필 UI 없이 로컬 게임·성장·Release 빌드를 그대로 제공하며 별도 검증 task가 배포 설정 누락을 실패시킨다.
+- 결정: 랭킹 자격은 `flow|acid_rain|choseong|word_match|dictation`의 정확한 v3 번들 초급·중급·고급 ID와 내장 키보드의 교집합으로 순수 정책에 고정한다. OS IME, 다운로드/사용자 덱, 띄어쓰기, Android 주간컵은 제출하지 않는다. 주간컵은 같은 flow 초급 콘텐츠를 쓰더라도 `weekly_cup` 로컬 progress 슬롯에 분리해 클래식 최고 기록과 outbox를 오염시키지 않는다.
+- 결정: Room v6의 최고점 outbox와 단조 achievement progress가 원본이다. 게임 결과·DeckProgress·복습·스트릭·누적 자모를 먼저 같은 로컬 transaction에 저장하고 인증된 경우에만 비차단 동기화한다. 실패는 pending 최대값을 보존하고, 성공 뒤 낮은 점수는 재등록하지 않는다. 연습 누적 자모는 session event ID로 중복 기록을 막으며 띄어쓰기 경계 판단은 자모 업적에서 제외한다.
+- 결정: 업적은 챕터 1·3·6 완료, 누적 정타 자모 12,000, 최장 스트릭 30만 단조 반영한다. 최초 점수 제출 성공 또는 기존 서버 점수 확인 뒤 champion trophy를 DataStore 영구 소품으로 해금한다. 현재 랭크는 성장 조건으로 사용하지 않는다.
+- 결정: 앱 시작·foreground에서는 `isAuthenticated`만 확인하고 자동 프로필 생성·로그인 창을 띄우지 않는다. 자격 있는 결과 화면의 `Play Games 랭킹` 버튼을 사용자가 누를 때만 sign-in과 해당 보드 UI를 열며 세션·온보딩·허브에는 Play Games 모달이나 CTA를 넣지 않는다.
+- 결정: 실제 Play Console 프로젝트/OAuth, 15개 보드·5개 업적 리소스 생성, license tester 로그인·서버 점수·대시보드 확인은 Issue #19의 단일 출시 후보 실기기 QA에 유지한다. 자동 gate는 순수 매핑·가짜 gateway, Room v5→v6/outbox/업적, API 35 결과 UI, 전체 Source CI와 Debug/Release 빌드를 사용한다.
+- 근거: 로컬 진행을 외부 서비스보다 먼저 확정하고 동기화 가능 범위를 exact ID 정책으로 닫으면 인증·오프라인·Play 장애가 플레이와 보상을 막지 않는다. 외부 콘솔 값과 실제 계정만 마지막 통합 QA에 남겨 사용자의 실기기 1회 원칙을 유지할 수 있다.
+- 영향 범위: `core:game` Play Games policy, Room v6, `core:platform` v2 adapter/sync manager, 결과 화면·앱 startup, 외부 release properties, Source CI, 최종 Play Console/실기기 gate.

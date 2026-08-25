@@ -76,4 +76,5 @@
   <string name="share_save_image">Save image</string><string name="share_sns">Share to SNS</string><string name="share_chooser">Share PIYOKEY result</string>
   <string name="share_saved">Image saved.</string><string name="share_save_failed">Couldn’t save the image.</string><string name="share_permission_denied">Photo permission was denied.</string><string name="share_failed">Couldn’t open sharing.</string>
   <string name="share_score">Score</string><string name="share_combo">Best combo</string><string name="share_streak">Streak</string><string name="share_download">Practice Korean typing with typee</string><string name="share_caption">I scored %1$d in %2$s on typee! #typee #KoreanTyping</string>
+  <string name="play_games_ranking">Play Games ranking</string>
 </resources>

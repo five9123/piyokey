@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
   <application
+    android:name=".PiyokeyApplication"
     android:allowBackup="false"
     android:dataExtractionRules="@xml/data_extraction_rules"
     android:fullBackupContent="@xml/backup_rules"
@@ -11,6 +12,15 @@
     android:localeConfig="@xml/locales_config"
     android:supportsRtl="true"
     android:theme="@style/Theme.Piyokey">
+    <meta-data
+      android:name="com.google.android.gms.games.APP_ID"
+      android:value="@string/game_services_project_id" />
+    <meta-data
+      android:name="com.google.android.gms.games.SUPPRESS_GAMES_SIGNIN"
+      android:value="true" />
+    <meta-data
+      android:name="com.google.android.gms.games.SUPPRESS_GAME_PROFILE_CREATION"
+      android:value="true" />
     <activity
       android:name=".MainActivity"
       android:exported="true"

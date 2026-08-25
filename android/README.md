@@ -141,3 +141,13 @@ M5 증분 파일과 검증은 `docs/ANDROID_M7_M5_HANDOFF.md`에 기록한다.
 - API 35에서 data 계측 16개와 앱 전체 23개(세션 보류→미리보기→무료 설치, 손상 staging 즉시 정리 포함)를 통과한다. Files·공유 앱 상호운용 수동 확인은 Issue #19의 출시 후보 통합 QA에서 한 번만 수행한다.
 
 세부 증거와 후속 경계는 `docs/ANDROID_R11A_PIYODECK_HANDOFF.md`에 기록한다.
+
+## Play Games v2 외부 설정
+
+Play Games는 선택 기능이다. 21개 외부 리소스가 모두 주입된 빌드에서만 SDK를 초기화하며, 누락된 로컬·CI 빌드는 로그인 UI 없이 모든 로컬 기능을 그대로 제공한다. Play Console에서 발급한 값은 `release/play_games.properties.example`의 키 이름으로 비공개 Gradle properties 또는 `-P` 인자에 주입한다.
+
+```sh
+./gradlew :app:verifyPlayGamesConfiguration
+```
+
+클래식 공식 코스의 내장 키보드 결과만 15개 보드에 제출한다. OS IME, 사용자/다운로드 덱, 띄어쓰기, Android 주간컵은 로컬 기록만 유지한다. 최초 로그인·랭킹 UI는 자격 있는 결과 화면의 명시적 버튼에서만 시작된다.

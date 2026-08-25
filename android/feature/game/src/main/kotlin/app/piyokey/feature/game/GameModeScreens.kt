@@ -570,6 +570,7 @@ fun GenericGameResultScreen(
   reviewWords: List<String> = emptyList(),
   inputModeName: String? = null,
   shareModel: ResultShareModel? = null,
+  onPlayGamesLeaderboard: (() -> Unit)? = null,
   onRetry: () -> Unit,
   onDone: () -> Unit,
 ) {
@@ -596,6 +597,12 @@ fun GenericGameResultScreen(
       }
     }
     shareModel?.let { ResultShareActions(it) }
+    onPlayGamesLeaderboard?.let { open ->
+      OutlinedButton(
+        onClick = open,
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp).testTag("play-games-leaderboard"),
+      ) { Text(stringResource(R.string.play_games_ranking), fontWeight = FontWeight.Bold) }
+    }
     Button(onClick = onRetry, Modifier.fillMaxWidth().padding(top = 22.dp).height(54.dp)) { Text(stringResource(R.string.retry), fontWeight = FontWeight.Black) }
     TextButton(onClick = onDone, Modifier.fillMaxWidth()) { Text(stringResource(R.string.done)) }
   }
