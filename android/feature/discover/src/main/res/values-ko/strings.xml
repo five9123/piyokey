@@ -50,6 +50,7 @@
   <string name="practice_result_accuracy">정확도</string>
   <string name="practice_result_misses">실수</string>
   <string name="practice_result_completed">완료</string>
+  <string name="practice_result_speed_value">%1$d자/분</string>
   <string name="practice_again">다시 연습</string>
   <string name="action_back">뒤로</string>
   <string name="error_generic">문제가 생겼습니다. 기존 덱은 안전하게 보관되어 있어요.</string>

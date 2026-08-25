@@ -42,6 +42,8 @@ kotlin {
 dependencies {
   implementation(project(":core:deckkit"))
   implementation(project(":core:game"))
+  implementation(project(":core:retention"))
+  implementation(project(":core:session"))
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.ktx)
   implementation(libs.kotlinx.coroutines.android)

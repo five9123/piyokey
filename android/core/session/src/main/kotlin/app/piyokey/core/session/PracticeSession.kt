@@ -11,6 +11,25 @@ import app.piyokey.core.hangul.JamoSequenceJudge
 
 const val PRACTICE_AUTO_ADVANCE_DELAY_MILLIS: Long = 650L
 
+data class ActiveDurationClock(
+  val accumulatedMillis: Long = 0,
+  val activeSinceMillis: Long? = null,
+) {
+  init { require(accumulatedMillis >= 0) }
+
+  fun start(nowMillis: Long): ActiveDurationClock =
+    if (activeSinceMillis == null) copy(activeSinceMillis = nowMillis) else this
+
+  fun pause(nowMillis: Long): ActiveDurationClock = if (activeSinceMillis == null) this else copy(
+    accumulatedMillis = duration(nowMillis),
+    activeSinceMillis = null,
+  )
+
+  fun duration(nowMillis: Long): Long = accumulatedMillis + (activeSinceMillis?.let {
+    (nowMillis - it).coerceAtLeast(0)
+  } ?: 0L)
+}
+
 sealed interface PracticeSessionEvent {
   data class Key(val jamo: Char) : PracticeSessionEvent
 
@@ -84,6 +103,16 @@ data class PracticeItemResolution(
   val hadMistake: Boolean
     get() = mistakeCount > 0
 }
+
+data class PracticeSessionCheckpoint(
+  val currentTargetIndex: Int,
+  val acceptedKeys: String,
+  val mistakeCount: Int,
+  val currentItemMistakeCount: Int,
+  val currentItemMistakenJamoIndices: Set<Int>,
+  val itemResolutions: List<PracticeItemResolution>,
+  val activeDurationMillis: Long,
+)
 
 @ConsistentCopyVisibility
 data class PracticeSessionState internal constructor(
@@ -185,6 +214,64 @@ object PracticeSessionReducer {
   }
 
   fun initialState(target: String): PracticeSessionState = initialState(listOf(target))
+
+  fun checkpoint(state: PracticeSessionState, activeDurationMillis: Long): PracticeSessionCheckpoint =
+    PracticeSessionCheckpoint(
+      currentTargetIndex = state.currentTargetIndex,
+      acceptedKeys = state.acceptedKeys.joinToString(""),
+      mistakeCount = state.mistakeCount,
+      currentItemMistakeCount = state.currentItemMistakeCount,
+      currentItemMistakenJamoIndices = state.currentItemMistakenJamoIndices,
+      itemResolutions = state.itemResolutions,
+      activeDurationMillis = activeDurationMillis.coerceAtLeast(0),
+    )
+
+  fun restoreState(targets: List<String>, checkpoint: PracticeSessionCheckpoint): PracticeSessionState {
+    require(targets.isNotEmpty()) { "Practice targets must not be empty" }
+    require(checkpoint.currentTargetIndex in targets.indices) { "Checkpoint target is out of range" }
+    require(checkpoint.mistakeCount >= checkpoint.currentItemMistakeCount) { "Invalid checkpoint mistakes" }
+    require(checkpoint.activeDurationMillis >= 0) { "Invalid checkpoint duration" }
+    val frozenTargets = targets.toList()
+    val targetJamoCounts = frozenTargets.map { JamoDecomposer.keySequenceFor(it).size }
+    val acceptedKeys = checkpoint.acceptedKeys.toList()
+    val rebuilt = rebuildCurrentTarget(frozenTargets[checkpoint.currentTargetIndex], acceptedKeys)
+    require(checkpoint.currentItemMistakenJamoIndices.all { it in targetJamoCounts[checkpoint.currentTargetIndex].let { count -> 0 until count } }) {
+      "Checkpoint mistake index is out of range"
+    }
+    require(checkpoint.itemResolutions.map(PracticeItemResolution::itemIndex).distinct().size == checkpoint.itemResolutions.size)
+    require(checkpoint.itemResolutions.all { it.itemIndex in 0..checkpoint.currentTargetIndex })
+    val completesTarget = rebuilt.judge.isComplete
+    val transition = if (completesTarget) {
+      PracticeCompletionTransition(
+        token = 1,
+        destination = if (checkpoint.currentTargetIndex == frozenTargets.lastIndex) {
+          PracticeCompletionDestination.RESULTS
+        } else {
+          PracticeCompletionDestination.NEXT_TARGET
+        },
+      )
+    } else null
+    return stateForTarget(
+      targets = frozenTargets,
+      targetJamoCounts = targetJamoCounts,
+      targetIndex = checkpoint.currentTargetIndex,
+      targetSequence = JamoDecomposer.keySequenceFor(frozenTargets[checkpoint.currentTargetIndex]),
+      mistakeCount = checkpoint.mistakeCount,
+      itemResolutions = checkpoint.itemResolutions,
+      transitionSequence = transition?.token ?: 0,
+      feedbackRevision = 0,
+      compositionRevision = 0,
+    ).copy(
+      acceptedKeys = acceptedKeys,
+      composition = rebuilt.composition,
+      judge = rebuilt.judge,
+      feedback = if (completesTarget) PracticeFeedback.Complete else PracticeFeedback.Idle,
+      lastAcceptedKey = acceptedKeys.lastOrNull(),
+      currentItemMistakeCount = checkpoint.currentItemMistakeCount,
+      currentItemMistakenJamoIndices = checkpoint.currentItemMistakenJamoIndices,
+      pendingTransition = transition,
+    )
+  }
 
   fun reduce(
     state: PracticeSessionState,

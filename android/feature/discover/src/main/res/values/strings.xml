@@ -50,6 +50,7 @@
   <string name="practice_result_accuracy">Accuracy</string>
   <string name="practice_result_misses">Misses</string>
   <string name="practice_result_completed">Completed</string>
+  <string name="practice_result_speed_value">%1$d characters/min</string>
   <string name="practice_again">Practice again</string>
   <string name="action_back">Back</string>
   <string name="error_generic">Something went wrong. Your existing decks are safe.</string>

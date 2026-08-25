@@ -102,6 +102,63 @@ data class DeckProgressEntity(
   val lastPlayedAtEpochMillis: Long,
 )
 
+@Entity(tableName = "user_progress")
+data class UserProgressEntity(
+  @PrimaryKey val stageId: String,
+  val stars: Int,
+  val bestAccuracyPercent: Double,
+  val completedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "curriculum_session")
+data class CurriculumSessionEntity(
+  @PrimaryKey val singletonId: Int = 1,
+  val stageId: String,
+  val currentTargetIndex: Int,
+  val acceptedKeys: String,
+  val mistakeCount: Int,
+  val currentItemMistakeCount: Int,
+  val mistakenJamoIndicesJson: String,
+  val itemResolutionsJson: String,
+  val activeDurationMillis: Long,
+  val updatedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "review_items")
+data class ReviewItemEntity(
+  @PrimaryKey val reviewId: String,
+  val itemId: String,
+  val sourceDeckId: String,
+  val ko: String,
+  val readingJa: String,
+  val meaningJa: String,
+  val localizationsJson: String?,
+  val missCount: Int,
+  val consecutivePerfect: Int,
+  val addedAtEpochMillis: Long,
+  val graduatedAtEpochMillis: Long?,
+)
+
+@Entity(tableName = "streak_days")
+data class StreakDayEntity(
+  @PrimaryKey val day: String,
+  val activitiesJson: String,
+)
+
+@Entity(tableName = "retention_rewards")
+data class RetentionRewardEntity(
+  @PrimaryKey val threshold: Int,
+  val unlockedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "reminder_preference")
+data class ReminderPreferenceEntity(
+  @PrimaryKey val singletonId: Int = 1,
+  val isEnabled: Boolean,
+  val hour: Int,
+  val minute: Int,
+)
+
 @Dao
 interface PiyokeyDao {
   @Query("SELECT * FROM installed_decks ORDER BY installedAtEpochMillis DESC")
@@ -154,6 +211,57 @@ interface PiyokeyDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsertDeckProgress(entity: DeckProgressEntity)
+
+  @Query("SELECT * FROM user_progress ORDER BY stageId")
+  suspend fun userProgress(): List<UserProgressEntity>
+
+  @Query("SELECT * FROM user_progress WHERE stageId = :stageId")
+  suspend fun userProgress(stageId: String): UserProgressEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertUserProgress(entity: UserProgressEntity)
+
+  @Query("SELECT * FROM curriculum_session WHERE singletonId = 1")
+  suspend fun curriculumSession(): CurriculumSessionEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertCurriculumSession(entity: CurriculumSessionEntity)
+
+  @Query("DELETE FROM curriculum_session WHERE singletonId = 1")
+  suspend fun clearCurriculumSession()
+
+  @Query("SELECT * FROM review_items ORDER BY addedAtEpochMillis DESC, reviewId")
+  suspend fun reviewItems(): List<ReviewItemEntity>
+
+  @Query("SELECT * FROM review_items WHERE reviewId = :reviewId")
+  suspend fun reviewItem(reviewId: String): ReviewItemEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertReviewItem(entity: ReviewItemEntity)
+
+  @Query("DELETE FROM review_items WHERE reviewId = :reviewId")
+  suspend fun deleteReviewItem(reviewId: String)
+
+  @Query("SELECT * FROM streak_days ORDER BY day")
+  suspend fun streakDays(): List<StreakDayEntity>
+
+  @Query("SELECT * FROM streak_days WHERE day = :day")
+  suspend fun streakDay(day: String): StreakDayEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertStreakDay(entity: StreakDayEntity)
+
+  @Query("SELECT * FROM retention_rewards ORDER BY threshold")
+  suspend fun retentionRewards(): List<RetentionRewardEntity>
+
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  suspend fun insertRetentionReward(entity: RetentionRewardEntity)
+
+  @Query("SELECT * FROM reminder_preference WHERE singletonId = 1")
+  suspend fun reminderPreference(): ReminderPreferenceEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertReminderPreference(entity: ReminderPreferenceEntity)
 }
 
 @Database(
@@ -164,8 +272,14 @@ interface PiyokeyDao {
     RecoveryJournalEntity::class,
     GameRecordEntity::class,
     DeckProgressEntity::class,
+    UserProgressEntity::class,
+    CurriculumSessionEntity::class,
+    ReviewItemEntity::class,
+    StreakDayEntity::class,
+    RetentionRewardEntity::class,
+    ReminderPreferenceEntity::class,
   ],
-  version = 2,
+  version = 3,
   exportSchema = true,
 )
 abstract class PiyokeyDatabase : RoomDatabase() {
@@ -179,7 +293,7 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         context.applicationContext,
         PiyokeyDatabase::class.java,
         "piyokey.db",
-      ).addMigrations(MIGRATION_1_2).build().also { instance = it }
+      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build().also { instance = it }
     }
 
     val MIGRATION_1_2: Migration = object : Migration(1, 2) {
@@ -201,6 +315,49 @@ abstract class PiyokeyDatabase : RoomDatabase() {
             |`plays` INTEGER NOT NULL, `bestScore` INTEGER NOT NULL,
             |`bestAccuracyPercent` REAL NOT NULL, `lastPlayedAtEpochMillis` INTEGER NOT NULL,
             |PRIMARY KEY(`deckId`, `mode`, `inputMode`))""".trimMargin(),
+        )
+      }
+    }
+
+    val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `user_progress` (
+            |`stageId` TEXT NOT NULL, `stars` INTEGER NOT NULL,
+            |`bestAccuracyPercent` REAL NOT NULL, `completedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`stageId`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `curriculum_session` (
+            |`singletonId` INTEGER NOT NULL, `stageId` TEXT NOT NULL,
+            |`currentTargetIndex` INTEGER NOT NULL, `acceptedKeys` TEXT NOT NULL,
+            |`mistakeCount` INTEGER NOT NULL, `currentItemMistakeCount` INTEGER NOT NULL,
+            |`mistakenJamoIndicesJson` TEXT NOT NULL, `itemResolutionsJson` TEXT NOT NULL,
+            |`activeDurationMillis` INTEGER NOT NULL, `updatedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`singletonId`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `review_items` (
+            |`reviewId` TEXT NOT NULL, `itemId` TEXT NOT NULL, `sourceDeckId` TEXT NOT NULL,
+            |`ko` TEXT NOT NULL, `readingJa` TEXT NOT NULL, `meaningJa` TEXT NOT NULL,
+            |`localizationsJson` TEXT, `missCount` INTEGER NOT NULL,
+            |`consecutivePerfect` INTEGER NOT NULL, `addedAtEpochMillis` INTEGER NOT NULL,
+            |`graduatedAtEpochMillis` INTEGER, PRIMARY KEY(`reviewId`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `streak_days` (
+            |`day` TEXT NOT NULL, `activitiesJson` TEXT NOT NULL, PRIMARY KEY(`day`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `retention_rewards` (
+            |`threshold` INTEGER NOT NULL, `unlockedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`threshold`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `reminder_preference` (
+            |`singletonId` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL,
+            |`hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL,
+            |PRIMARY KEY(`singletonId`))""".trimMargin(),
         )
       }
     }

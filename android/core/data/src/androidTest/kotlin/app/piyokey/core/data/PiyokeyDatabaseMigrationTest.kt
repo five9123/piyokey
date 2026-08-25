@@ -42,7 +42,36 @@ class PiyokeyDatabaseMigrationTest {
     }
   }
 
+  @Test
+  fun migrateTwoToThreePreservesM4RecordsAndAddsLearningTables() {
+    helper.createDatabase(M5_DATABASE_NAME, 2).apply {
+      execSQL(
+        """INSERT INTO deck_progress(deckId, mode, inputMode, plays, bestScore,
+          |bestAccuracyPercent, lastPlayedAtEpochMillis)
+          |VALUES ('kept-flow', 'flow', 'builtin', 3, 900, 95.0, 1234)""".trimMargin(),
+      )
+      close()
+    }
+
+    helper.runMigrationsAndValidate(M5_DATABASE_NAME, 3, true, PiyokeyDatabase.MIGRATION_2_3).use { db ->
+      db.query("SELECT plays, bestScore FROM deck_progress WHERE deckId = 'kept-flow'").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(3, cursor.getInt(0))
+        assertEquals(900, cursor.getInt(1))
+      }
+      db.query("SELECT COUNT(*) FROM user_progress").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+      db.query("SELECT COUNT(*) FROM review_items").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+    }
+  }
+
   private companion object {
     const val DATABASE_NAME = "m4-migration-test"
+    const val M5_DATABASE_NAME = "m5-migration-test"
   }
 }

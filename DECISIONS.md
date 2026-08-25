@@ -1292,3 +1292,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 규칙 시계와 렌더 프레임을 분리하면 테스트 clock·실기기 frame source 차이에도 점수와 생존 판정이 재현된다. M3 schema에서 명시 migration을 검증하고 로컬 기록을 단일 기준으로 두면 이후 게임·Play Games 어댑터를 사용자 데이터 손실 없이 확장할 수 있다.
 - 관련 PRD 섹션: F6, F12, §7.1, §7.3, §9, §11, §12, §13 M4·M6·M7
 - 영향 범위: Android pure game core, Room schema v2, game Compose feature, app navigation, 공용 rank tuning, Android CI·에뮬레이터 회귀
+
+## 2026-08-25 Android M7 M5 커리큘럼·복습·리텐션 계약
+- 결정: Android M5 커리큘럼은 iOS와 동일한 6챕터·7스테이지·각 10문제를 Kotlin 고정 catalog로 재현한다. 80% 클리어와 별 1/2/3의 80%·90%+40자/분·97%+60자/분 경계, 챕터1~4 순차 해금과 챕터5+ 자유 선택을 순수 `core:retention` 정책으로 둔다.
+- 결정: 연습 checkpoint는 현재 문제, 수락 자모, 오타/항목 resolution과 유효 입력 시간만 저장한다. lifecycle background 구간은 순수 active-duration clock에서 제외하고 복귀한 완료 문제도 token 지연 전환을 다시 안전하게 수행한다. Room v2→v3은 기존 설치·게임 기록을 건드리지 않고 커리큘럼/복습/스트릭/보상/리마인더 테이블을 추가한다.
+- 결정: 일반 레슨·덱은 오타 항목만 복습에 수집하고 복습 세션의 노미스 완료만 연속 perfect를 올린다. 게임의 잘못 누른 현재 카드와 바닥 이탈 카드도 item ID별로 수집하며, 세 번 연속 노미스에 졸업한다. 설치 덱의 항목은 사용자가 수동 추가하고 활성 복습 항목은 수동 제거할 수 있다.
+- 결정: 스트릭 날짜는 세션 시작 시 캡처한 JST 날짜에 귀속한다. 홈의 주간 카드는 월~일 고정이며 MY 피요 응원은 iOS와 같은 네 context·10개 현지화 문구를 날짜 기반으로 결정해 홈/마이페이지에서 동일하게 보인다. 3/5/7일 보상은 영구 threshold record로 저장하고 M6 옷장 item과 연결 가능한 계약으로 유지한다.
+- 결정: Android 데일리는 챕터5~6 고정 문구 풀에서 JST 날짜마다 결정적으로 5개를 선택한다. 리마인더는 기본 OFF, Android 13+ 권한은 사용자가 켤 때만 요청하며 정확 알람 권한 없이 JST 다음 시각의 inexact daily alarm을 사용한다. 재부팅 시 Room preference로 다시 예약하고 알림 탭은 앱을 연다. 세션 화면에는 권한·시간·복습 관리 UI를 노출하지 않는다.
+- 근거: iOS M5와 같은 학습 결과를 순수 정책으로 고정하면서 Android lifecycle·notification 차이는 platform adapter로 격리하면 실기기 반복 없이 JVM/Room/API 35에서 날짜·복구·졸업·migration을 먼저 닫을 수 있다. 실제 알림 수신과 입력/프레임 정량 측정은 사용자가 지정한 출시 후보 통합 QA에 유지한다.
+- 관련 PRD 섹션: F4, F5.6, F7, F8, F12, §9, §13 M5·M7
+- 영향 범위: `core:retention`, `core:session`, Room schema v3, 흐름 복습 수집, Compose 홈/연습/마이페이지, Android notification/boot adapter, M5 CI·출시 gate

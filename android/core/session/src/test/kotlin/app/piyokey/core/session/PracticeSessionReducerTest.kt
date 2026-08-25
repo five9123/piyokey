@@ -14,6 +14,35 @@ import kotlin.test.assertTrue
 
 class PracticeSessionReducerTest {
   @Test
+  fun activeDurationFreezesInBackgroundAndResumesWithoutCountingTheGap() {
+    var clock = ActiveDurationClock().start(1_000)
+    clock = clock.pause(2_500)
+    assertEquals(1_500, clock.duration(100_000))
+    clock = clock.start(100_000)
+    assertEquals(2_000, clock.duration(100_500))
+  }
+  @Test
+  fun checkpointRestoresCompletedProblemsCurrentPrefixAndMistakes() {
+    var state = PracticeSessionReducer.initialState(listOf("가", "나"))
+    state = PracticeSessionReducer.reduce(state, PracticeSessionEvent.Key('ㄱ')).state
+    state = PracticeSessionReducer.reduce(state, PracticeSessionEvent.Key('ㅏ')).state
+    state = PracticeSessionReducer.reduce(
+      state,
+      PracticeSessionEvent.Advance(requireNotNull(state.pendingTransition).token),
+    ).state
+    state = PracticeSessionReducer.reduce(state, PracticeSessionEvent.Key('ㄷ')).state
+    state = PracticeSessionReducer.reduce(state, PracticeSessionEvent.Key('ㄴ')).state
+    val checkpoint = PracticeSessionReducer.checkpoint(state, 1_234)
+
+    val restored = PracticeSessionReducer.restoreState(listOf("가", "나"), checkpoint)
+
+    assertEquals(1, restored.currentTargetIndex)
+    assertEquals("ㄴ", restored.acceptedKeys.joinToString(""))
+    assertEquals(1, restored.mistakeCount)
+    assertEquals(1, restored.itemResolutions.size)
+    assertEquals(1_234, checkpoint.activeDurationMillis)
+  }
+  @Test
   fun `dokkaebi target is judged by jamo sequence and schedules one transition`() {
     var state = PracticeSessionReducer.initialState("가나")
 

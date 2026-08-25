@@ -50,6 +50,7 @@
   <string name="practice_result_accuracy">正確さ</string>
   <string name="practice_result_misses">ミス</string>
   <string name="practice_result_completed">完了</string>
+  <string name="practice_result_speed_value">%1$d字/分</string>
   <string name="practice_again">もう一回</string>
   <string name="action_back">戻る</string>
   <string name="error_generic">問題が発生しました。保存済みデッキはそのままです。</string>

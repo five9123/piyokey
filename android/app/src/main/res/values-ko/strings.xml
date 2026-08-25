@@ -12,4 +12,7 @@
   <string name="games_coming_next">게임 모드를 준비하고 있습니다.</string>
   <string name="close_session">닫기</string>
   <string name="retry_load">다시 시도</string>
+  <string name="dismiss_error">닫기</string>
+  <string name="retry_save">저장 다시 시도</string>
+  <string name="back_to_curriculum">커리큘럼으로 돌아가기</string>
 </resources>

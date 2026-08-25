@@ -5,9 +5,19 @@ import androidx.room.withTransaction
 import app.piyokey.core.deckkit.Catalog
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.Deck
+import app.piyokey.core.deckkit.DeckItem
+import app.piyokey.core.deckkit.DeckItemLocalization
 import app.piyokey.core.deckkit.DeckKitJson
 import app.piyokey.core.game.FlowGameRecord
 import app.piyokey.core.game.FlowRankTuning
+import app.piyokey.core.retention.CurriculumPolicy
+import app.piyokey.core.retention.JstDay
+import app.piyokey.core.retention.RetentionActivity
+import app.piyokey.core.retention.RetentionPolicy
+import app.piyokey.core.retention.ReviewItem
+import app.piyokey.core.retention.ReviewPolicy
+import app.piyokey.core.session.PracticeItemResolution
+import app.piyokey.core.session.PracticeSessionCheckpoint
 import java.io.File
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -17,6 +27,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.double
@@ -41,6 +54,23 @@ data class SavedGameResult(
   val progress: DeckProgressEntity,
   val isNewBest: Boolean,
 )
+
+data class CurriculumActiveSession(
+  val stageId: String,
+  val checkpoint: PracticeSessionCheckpoint,
+)
+
+data class LearningSnapshot(
+  val progress: Map<String, UserProgressEntity>,
+  val activeSession: CurriculumActiveSession?,
+  val reviewItems: List<ReviewItem>,
+  val activitiesByDay: Map<JstDay, Set<RetentionActivity>>,
+  val unlockedRewards: Set<Int>,
+  val reminder: ReminderPreferenceEntity,
+) {
+  val completedDays: Set<JstDay>
+    get() = activitiesByDay.filterValues(Set<RetentionActivity>::isNotEmpty).keys
+}
 
 sealed interface CatalogRefreshResult {
   data object NotConfigured : CatalogRefreshResult
@@ -206,7 +236,11 @@ class DeckRepository private constructor(
     FLOW_PRESET_PATHS.map { path -> decodeDeck(readAssetBytes(path)) }
   }
 
-  suspend fun saveFlowRecord(record: FlowGameRecord): SavedGameResult = withContext(Dispatchers.IO) {
+  suspend fun saveFlowRecord(
+    record: FlowGameRecord,
+    deckItems: List<DeckItem> = emptyList(),
+    reviewMistakeCounts: Map<String, Int> = emptyMap(),
+  ): SavedGameResult = withContext(Dispatchers.IO) {
     database.withTransaction {
       val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
       val isNewBest = previous == null || record.score > previous.bestScore
@@ -239,12 +273,147 @@ class DeckRepository private constructor(
         lastPlayedAtEpochMillis = record.playedAtEpochMillis,
       )
       dao.upsertDeckProgress(progress)
+      val itemsById = deckItems.associateBy(DeckItem::id)
+      reviewMistakeCounts.forEach { (itemId, count) ->
+        val item = itemsById[itemId] ?: return@forEach
+        val reviewId = "${record.deckId}::$itemId"
+        var review = dao.reviewItem(reviewId)?.toModel()
+        repeat(count.coerceAtLeast(1)) {
+          review = ReviewPolicy.recordMistake(review, item, record.deckId, record.playedAtEpochMillis).item
+        }
+        review?.let { dao.upsertReviewItem(it.toEntity()) }
+      }
+      recordActivityInTransaction(
+        day = JstDay.fromEpochMillis(record.playedAtEpochMillis),
+        activity = RetentionActivity.GAME,
+        atEpochMillis = record.playedAtEpochMillis,
+      )
       SavedGameResult(progress, isNewBest)
     }
   }
 
   suspend fun flowProgress(deckId: String): DeckProgressEntity? = withContext(Dispatchers.IO) {
     dao.deckProgress(deckId, GAME_MODE_FLOW, INPUT_MODE_BUILTIN)
+  }
+
+  suspend fun learningSnapshot(): LearningSnapshot = withContext(Dispatchers.IO) {
+    val progress = dao.userProgress().associateBy(UserProgressEntity::stageId)
+    val active = dao.curriculumSession()?.let { entity ->
+      CurriculumActiveSession(entity.stageId, entity.toCheckpoint())
+    }
+    val activities = dao.streakDays().associate { entity ->
+      JstDay(entity.day) to decodeActivities(entity.activitiesJson)
+    }
+    LearningSnapshot(
+      progress = progress,
+      activeSession = active,
+      reviewItems = dao.reviewItems().map(ReviewItemEntity::toModel),
+      activitiesByDay = activities,
+      unlockedRewards = dao.retentionRewards().mapTo(mutableSetOf(), RetentionRewardEntity::threshold),
+      reminder = dao.reminderPreference() ?: ReminderPreferenceEntity(isEnabled = false, hour = 20, minute = 0),
+    )
+  }
+
+  suspend fun saveCurriculumCheckpoint(stageId: String, checkpoint: PracticeSessionCheckpoint) =
+    withContext(Dispatchers.IO) {
+      dao.upsertCurriculumSession(checkpoint.toEntity(stageId, clock()))
+    }
+
+  suspend fun clearCurriculumCheckpoint(stageId: String? = null) = withContext(Dispatchers.IO) {
+    val active = dao.curriculumSession()
+    if (stageId == null || active?.stageId == stageId) dao.clearCurriculumSession()
+  }
+
+  suspend fun finishCurriculumStage(
+    stageId: String,
+    accuracyPercent: Double,
+    charactersPerMinute: Double,
+    sessionDay: JstDay,
+    completedAtEpochMillis: Long = clock(),
+  ): Int = withContext(Dispatchers.IO) {
+    val stars = CurriculumPolicy.stars(accuracyPercent, charactersPerMinute)
+    database.withTransaction {
+      dao.clearCurriculumSession()
+      if (stars > 0) {
+        val previous = dao.userProgress(stageId)
+        dao.upsertUserProgress(
+          UserProgressEntity(
+            stageId = stageId,
+            stars = maxOf(previous?.stars ?: 0, stars),
+            bestAccuracyPercent = maxOf(previous?.bestAccuracyPercent ?: 0.0, accuracyPercent),
+            completedAtEpochMillis = previous?.completedAtEpochMillis ?: completedAtEpochMillis,
+          ),
+        )
+        recordActivityInTransaction(sessionDay, RetentionActivity.CURRICULUM, completedAtEpochMillis)
+      }
+    }
+    stars
+  }
+
+  suspend fun recordDailyCompletion(
+    sessionDay: JstDay,
+    completedAtEpochMillis: Long = clock(),
+  ) = withContext(Dispatchers.IO) {
+    database.withTransaction {
+      recordActivityInTransaction(sessionDay, RetentionActivity.DAILY_CHALLENGE, completedAtEpochMillis)
+    }
+  }
+
+  suspend fun recordPracticeReview(
+    sourceDeckId: String,
+    items: List<DeckItem>,
+    resolutions: List<PracticeItemResolution>,
+    isReviewSession: Boolean,
+    atEpochMillis: Long = clock(),
+  ) = withContext(Dispatchers.IO) {
+    database.withTransaction {
+      resolutions.forEach { resolution ->
+        val item = items.getOrNull(resolution.itemIndex) ?: return@forEach
+        val reviewId = "$sourceDeckId::${item.id}"
+        val existing = dao.reviewItem(reviewId)?.toModel()
+        val reduction = when {
+          resolution.hadMistake -> ReviewPolicy.recordMistake(existing, item, sourceDeckId, atEpochMillis)
+          isReviewSession -> ReviewPolicy.recordPerfect(existing, atEpochMillis)
+          else -> null
+        }
+        reduction?.item?.let { dao.upsertReviewItem(it.toEntity()) }
+      }
+    }
+  }
+
+  suspend fun addReviewItemManually(
+    item: DeckItem,
+    sourceDeckId: String,
+    atEpochMillis: Long = clock(),
+  ) = withContext(Dispatchers.IO) {
+    val reviewId = "$sourceDeckId::${item.id}"
+    val reduction = ReviewPolicy.addManually(dao.reviewItem(reviewId)?.toModel(), item, sourceDeckId, atEpochMillis)
+    reduction.item?.let { dao.upsertReviewItem(it.toEntity()) }
+  }
+
+  suspend fun removeReviewItemManually(reviewId: String) = withContext(Dispatchers.IO) {
+    dao.deleteReviewItem(reviewId)
+  }
+
+  suspend fun saveReminderPreference(isEnabled: Boolean, hour: Int, minute: Int) = withContext(Dispatchers.IO) {
+    require(hour in 0..23 && minute in 0..59)
+    dao.upsertReminderPreference(ReminderPreferenceEntity(isEnabled = isEnabled, hour = hour, minute = minute))
+  }
+
+  private suspend fun recordActivityInTransaction(
+    day: JstDay,
+    activity: RetentionActivity,
+    atEpochMillis: Long,
+  ) {
+    val current = dao.streakDay(day.value)?.let { decodeActivities(it.activitiesJson) }.orEmpty()
+    if (activity !in current) {
+      dao.upsertStreakDay(StreakDayEntity(day.value, encodeActivities(current + activity)))
+    }
+    val completed = dao.streakDays().mapTo(mutableSetOf()) { JstDay(it.day) }
+    val existingRewards = dao.retentionRewards().mapTo(mutableSetOf(), RetentionRewardEntity::threshold)
+    RetentionPolicy.newlyUnlockedRewards(completed, existingRewards).forEach { threshold ->
+      dao.insertRetentionReward(RetentionRewardEntity(threshold, atEpochMillis))
+    }
   }
 
   suspend fun flowRankTuning(): FlowRankTuning = withContext(Dispatchers.IO) {
@@ -587,5 +756,96 @@ class DeckRepository private constructor(
     internal fun decodeTags(source: String): List<String> = tagsJson.parseToJsonElement(source)
       .jsonArray
       .map { it.jsonPrimitive.content }
+
+    private fun encodeActivities(activities: Set<RetentionActivity>): String =
+      JsonArray(activities.sortedBy(RetentionActivity::storageValue).map { JsonPrimitive(it.storageValue) }).toString()
+
+    private fun decodeActivities(source: String): Set<RetentionActivity> =
+      tagsJson.parseToJsonElement(source).jsonArray.mapTo(mutableSetOf()) { value ->
+        RetentionActivity.entries.first { it.storageValue == value.jsonPrimitive.content }
+      }
   }
+}
+
+private fun PracticeSessionCheckpoint.toEntity(stageId: String, updatedAt: Long): CurriculumSessionEntity =
+  CurriculumSessionEntity(
+    stageId = stageId,
+    currentTargetIndex = currentTargetIndex,
+    acceptedKeys = acceptedKeys,
+    mistakeCount = mistakeCount,
+    currentItemMistakeCount = currentItemMistakeCount,
+    mistakenJamoIndicesJson = JsonArray(currentItemMistakenJamoIndices.sorted().map(::JsonPrimitive)).toString(),
+    itemResolutionsJson = buildJsonArray {
+      itemResolutions.forEach { resolution ->
+        add(buildJsonObject {
+          put("item_index", JsonPrimitive(resolution.itemIndex))
+          put("mistake_count", JsonPrimitive(resolution.mistakeCount))
+          put("mistaken_indices", JsonArray(resolution.mistakenJamoIndices.sorted().map(::JsonPrimitive)))
+        })
+      }
+    }.toString(),
+    activeDurationMillis = activeDurationMillis,
+    updatedAtEpochMillis = updatedAt,
+  )
+
+private fun CurriculumSessionEntity.toCheckpoint(): PracticeSessionCheckpoint = PracticeSessionCheckpoint(
+  currentTargetIndex = currentTargetIndex,
+  acceptedKeys = acceptedKeys,
+  mistakeCount = mistakeCount,
+  currentItemMistakeCount = currentItemMistakeCount,
+  currentItemMistakenJamoIndices = Json.parseToJsonElement(mistakenJamoIndicesJson).jsonArray
+    .mapTo(mutableSetOf()) { it.jsonPrimitive.int },
+  itemResolutions = Json.parseToJsonElement(itemResolutionsJson).jsonArray.map { value ->
+    val item = value.jsonObject
+    PracticeItemResolution(
+      itemIndex = item.getValue("item_index").jsonPrimitive.int,
+      mistakeCount = item.getValue("mistake_count").jsonPrimitive.int,
+      mistakenJamoIndices = item.getValue("mistaken_indices").jsonArray
+        .mapTo(mutableSetOf()) { it.jsonPrimitive.int },
+    )
+  },
+  activeDurationMillis = activeDurationMillis,
+)
+
+private fun ReviewItem.toEntity(): ReviewItemEntity = ReviewItemEntity(
+  reviewId = id,
+  itemId = item.id,
+  sourceDeckId = sourceDeckId,
+  ko = item.ko,
+  readingJa = item.readingJa,
+  meaningJa = item.meaningJa,
+  localizationsJson = item.localizations?.let { localizations ->
+    buildJsonObject {
+      localizations.toSortedMap().forEach { (language, localization) ->
+        put(language, buildJsonObject {
+          put("meaning", JsonPrimitive(localization.meaning))
+          put("reading", JsonPrimitive(localization.reading))
+        })
+      }
+    }.toString()
+  },
+  missCount = missCount,
+  consecutivePerfect = consecutivePerfect,
+  addedAtEpochMillis = addedAtEpochMillis,
+  graduatedAtEpochMillis = graduatedAtEpochMillis,
+)
+
+private fun ReviewItemEntity.toModel(): ReviewItem {
+  val localizations = localizationsJson?.let { source ->
+    Json.parseToJsonElement(source).jsonObject.mapValues { (_, value) ->
+      val objectValue = value.jsonObject
+      DeckItemLocalization(
+        meaning = objectValue.getValue("meaning").jsonPrimitive.content,
+        reading = objectValue.getValue("reading").jsonPrimitive.content,
+      )
+    }
+  }
+  return ReviewItem(
+    item = DeckItem(itemId, ko, readingJa, meaningJa, null, localizations),
+    sourceDeckId = sourceDeckId,
+    missCount = missCount,
+    consecutivePerfect = consecutivePerfect,
+    addedAtEpochMillis = addedAtEpochMillis,
+    graduatedAtEpochMillis = graduatedAtEpochMillis,
+  )
 }

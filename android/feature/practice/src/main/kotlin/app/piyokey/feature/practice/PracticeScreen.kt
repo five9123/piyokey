@@ -32,6 +32,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,11 +59,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.piyokey.core.session.PracticeFeedback
+import app.piyokey.core.session.ActiveDurationClock
 import app.piyokey.core.session.PracticeSessionEffect
 import app.piyokey.core.session.PracticeSessionEvent
 import app.piyokey.core.session.PracticeSessionReducer
 import app.piyokey.core.session.PracticeSessionState
+import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.session.TargetSyllableState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
@@ -77,7 +83,9 @@ fun PracticeRoute(
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
   targets: List<String>? = null,
-  onSessionCompleted: (PracticeSessionState) -> Unit = {},
+  initialCheckpoint: PracticeSessionCheckpoint? = null,
+  onCheckpointChanged: (PracticeSessionCheckpoint) -> Unit = {},
+  onSessionCompleted: (PracticeSessionState, activeDurationMillis: Long) -> Unit = { _, _ -> },
 ) {
   val sampleTargets = listOf(
     stringResource(R.string.practice_sample_target_1),
@@ -85,10 +93,44 @@ fun PracticeRoute(
     stringResource(R.string.practice_sample_target_3),
   )
   val resolvedTargets = targets?.takeIf(List<String>::isNotEmpty) ?: sampleTargets
-  var state by remember(resolvedTargets) {
-    mutableStateOf(PracticeSessionReducer.initialState(resolvedTargets))
+  var state by remember(resolvedTargets, initialCheckpoint) {
+    mutableStateOf(
+      initialCheckpoint?.let { PracticeSessionReducer.restoreState(resolvedTargets, it) }
+        ?: PracticeSessionReducer.initialState(resolvedTargets),
+    )
   }
-  var scheduledAdvance by remember { mutableStateOf<PracticeSessionEffect.ScheduleAdvance?>(null) }
+  var scheduledAdvance by remember(state.targets) {
+    mutableStateOf(
+      state.pendingTransition?.let {
+        PracticeSessionEffect.ScheduleAdvance(it.token, it.destination, it.delayMillis)
+      },
+    )
+  }
+  var activeClock by remember(resolvedTargets, initialCheckpoint) {
+    mutableStateOf(
+      ActiveDurationClock(initialCheckpoint?.activeDurationMillis ?: 0L)
+        .start(android.os.SystemClock.elapsedRealtime()),
+    )
+  }
+  val lifecycleOwner = LocalLifecycleOwner.current
+
+  fun activeDuration(): Long = activeClock.duration(android.os.SystemClock.elapsedRealtime())
+
+  val latestCheckpointCallback = rememberUpdatedState(onCheckpointChanged)
+  DisposableEffect(lifecycleOwner, state) {
+    val observer = LifecycleEventObserver { _, event ->
+      when (event) {
+        Lifecycle.Event.ON_START -> activeClock = activeClock.start(android.os.SystemClock.elapsedRealtime())
+        Lifecycle.Event.ON_STOP -> {
+          activeClock = activeClock.pause(android.os.SystemClock.elapsedRealtime())
+          latestCheckpointCallback.value(PracticeSessionReducer.checkpoint(state, activeClock.accumulatedMillis))
+        }
+        else -> Unit
+      }
+    }
+    lifecycleOwner.lifecycle.addObserver(observer)
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+  }
 
   val dispatch: (PracticeSessionEvent) -> Unit = { event ->
     val reduction = PracticeSessionReducer.reduce(state, event)
@@ -101,6 +143,7 @@ fun PracticeRoute(
       reduction.state.pendingTransition == null -> null
       else -> scheduledAdvance
     }
+    latestCheckpointCallback.value(PracticeSessionReducer.checkpoint(state, activeDuration()))
   }
   val latestDispatch = rememberUpdatedState(dispatch)
 
@@ -112,7 +155,7 @@ fun PracticeRoute(
 
   val latestCompletion = rememberUpdatedState(onSessionCompleted)
   LaunchedEffect(state.isResultReady) {
-    if (state.isResultReady) latestCompletion.value(state)
+    if (state.isResultReady) latestCompletion.value(state, activeDuration())
   }
 
   PracticeScreen(
