@@ -39,4 +39,6 @@ Issue [#10](https://github.com/five9123-maker/piyokey/issues/10)의 자동 검�
 
 `Jungmin’s iPad`(iPad Pro 11-inch 3rd generation, iPadOS 26.6 build 23G71)는 2026-08-25 현재 paired/available이고 Developer Mode도 enabled다. 그러나 CoreDevice가 `ddiServicesAvailable: false`와 `The developer disk image could not be mounted on this device`를 반환해 설치·실행 자동화가 불가능하다.
 
+현재 Xcode의 후보 이미지를 기존 이미지를 지우지 않는 `xcrun devicectl manage ddis update --no-clean`으로 다시 등록했지만 설치 전후 이미지 집합이 동일했다. 이어서 해당 UDID를 지정한 서명 Debug build도 destination 대기 시간 초과와 같은 DDI 마운트 오류로 종료되어, 앱 코드·서명 이전의 로컬 개발 이미지 호환 문제임을 확인했다.
+
 해제 조건은 현재 Xcode에서 해당 iPadOS 빌드용 Developer Disk Image를 사용할 수 있게 한 뒤(지원 Xcode/플랫폼 구성 확인, 필요 시 USB 재연결·기기 잠금 해제) 동일 기기에서 위 수동 게이트를 수행하는 것이다.
