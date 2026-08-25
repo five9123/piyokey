@@ -122,10 +122,42 @@ class PiyokeyDatabaseMigrationTest {
     }
   }
 
+  @Test
+  fun migrateFiveToSixPreservesRecordsAndAddsPlayGamesOutbox() {
+    helper.createDatabase(PLAY_GAMES_DATABASE_NAME, 5).apply {
+      execSQL(
+        """INSERT INTO deck_progress(deckId, mode, inputMode, plays, bestScore,
+          |bestAccuracyPercent, lastPlayedAtEpochMillis)
+          |VALUES ('flow_topik_beginner', 'flow', 'builtin', 2, 777, 90.0, 1234)""".trimMargin(),
+      )
+      close()
+    }
+    helper.runMigrationsAndValidate(
+      PLAY_GAMES_DATABASE_NAME,
+      6,
+      true,
+      PiyokeyDatabase.MIGRATION_5_6,
+    ).use { db ->
+      db.query("SELECT bestScore FROM deck_progress WHERE deckId = 'flow_topik_beginner'").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(777, cursor.getInt(0))
+      }
+      db.query("SELECT COUNT(*) FROM play_games_score_outbox").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+      db.query("SELECT COUNT(*) FROM play_games_achievement_progress").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+    }
+  }
+
   private companion object {
     const val DATABASE_NAME = "m4-migration-test"
     const val M5_DATABASE_NAME = "m5-migration-test"
     const val R11_DATABASE_NAME = "r11-migration-test"
     const val DECK_MAKER_DATABASE_NAME = "deck-maker-migration-test"
+    const val PLAY_GAMES_DATABASE_NAME = "play-games-migration-test"
   }
 }

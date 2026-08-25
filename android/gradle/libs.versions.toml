@@ -14,6 +14,7 @@ core-ktx = "1.17.0"
 datastore = "1.2.1"
 appcompat = "1.8.0"
 billing = "9.1.0"
+play-games-v2 = "22.0.0"
 
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
@@ -40,6 +41,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 play-billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
+play-games-v2 = { module = "com.google.android.gms:play-services-games-v2", version.ref = "play-games-v2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -11,6 +11,9 @@ import app.piyokey.core.deckkit.DeckKitJson
 import app.piyokey.core.game.FlowGameRecord
 import app.piyokey.core.game.FlowRankTuning
 import app.piyokey.core.game.GameSessionRecord
+import app.piyokey.core.game.PlayGamesAchievementKey
+import app.piyokey.core.game.PlayGamesPolicy
+import app.piyokey.core.game.PlayGamesResultIdentity
 import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.piyodeck.PiyoDeckDigest
 import app.piyokey.core.piyodeck.PiyoDeckPackage
@@ -560,9 +563,11 @@ class DeckRepository private constructor(
     deckItems: List<DeckItem> = emptyList(),
     reviewMistakeCounts: Map<String, Int> = emptyMap(),
     inputMode: String = INPUT_MODE_BUILTIN,
+    isWeeklyCup: Boolean = false,
   ): SavedGameResult = withContext(Dispatchers.IO) {
     database.withTransaction {
-      val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, inputMode)
+      val storageInputMode = if (isWeeklyCup) INPUT_MODE_WEEKLY_CUP else inputMode
+      val previous = dao.deckProgress(record.deckId, GAME_MODE_FLOW, storageInputMode)
       val isNewBest = previous == null || record.score > previous.bestScore
       dao.insertGameRecord(
         GameRecordEntity(
@@ -573,7 +578,7 @@ class DeckRepository private constructor(
           score = record.score,
           maxCombo = record.maxCombo,
           accuracyPercent = record.accuracyPercent,
-          inputMode = inputMode,
+          inputMode = storageInputMode,
           correctJamoCount = record.correctJamoCount,
           charactersPerMinute = record.charactersPerMinute,
           mistakeCount = record.mistakeCount,
@@ -586,13 +591,19 @@ class DeckRepository private constructor(
       val progress = DeckProgressEntity(
         deckId = record.deckId,
         mode = GAME_MODE_FLOW,
-        inputMode = inputMode,
+        inputMode = storageInputMode,
         plays = (previous?.plays ?: 0) + 1,
         bestScore = maxOf(previous?.bestScore ?: 0, record.score),
         bestAccuracyPercent = maxOf(previous?.bestAccuracyPercent ?: 0.0, record.accuracyPercent),
         lastPlayedAtEpochMillis = record.playedAtEpochMillis,
       )
       dao.upsertDeckProgress(progress)
+      recordAcceptedJamoInTransaction(record.correctJamoCount, record.playedAtEpochMillis)
+      if (isNewBest) {
+        PlayGamesPolicy.leaderboard(
+          PlayGamesResultIdentity(GAME_MODE_FLOW, record.deckId, inputMode, isWeeklyCup),
+        )?.let { board -> enqueuePlayGamesScoreInTransaction(board.storageKey, record.score.toLong(), record.playedAtEpochMillis) }
+      }
       val itemsById = deckItems.associateBy(DeckItem::id)
       reviewMistakeCounts.forEach { (itemId, count) ->
         val item = itemsById[itemId] ?: return@forEach
@@ -653,6 +664,14 @@ class DeckRepository private constructor(
         lastPlayedAtEpochMillis = record.playedAtEpochMillis,
       )
       dao.upsertDeckProgress(progress)
+      if (record.mode != "spacing") {
+        recordAcceptedJamoInTransaction(record.correctJamoCount, record.playedAtEpochMillis)
+      }
+      if (isNewBest) {
+        PlayGamesPolicy.leaderboard(
+          PlayGamesResultIdentity(record.mode, record.deckId, record.inputMode),
+        )?.let { board -> enqueuePlayGamesScoreInTransaction(board.storageKey, record.score.toLong(), record.playedAtEpochMillis) }
+      }
       val itemsById = deckItems.associateBy(DeckItem::id)
       reviewMistakeCounts.forEach { (itemId, count) ->
         val item = itemsById[itemId] ?: return@forEach
@@ -719,6 +738,7 @@ class DeckRepository private constructor(
           ),
         )
         recordActivityInTransaction(sessionDay, RetentionActivity.CURRICULUM, completedAtEpochMillis)
+        updateChapterAchievementsInTransaction(completedAtEpochMillis)
       }
     }
     stars
@@ -730,6 +750,21 @@ class DeckRepository private constructor(
   ) = withContext(Dispatchers.IO) {
     database.withTransaction {
       recordActivityInTransaction(sessionDay, RetentionActivity.DAILY_CHALLENGE, completedAtEpochMillis)
+    }
+  }
+
+  suspend fun recordPracticeAcceptedJamo(
+    eventId: String,
+    acceptedJamoCount: Int,
+    atEpochMillis: Long = clock(),
+  ) = withContext(Dispatchers.IO) {
+    require(eventId.isNotBlank())
+    require(acceptedJamoCount >= 0)
+    database.withTransaction {
+      val inserted = dao.insertPracticeJamoEvent(
+        PracticeJamoEventEntity(eventId, acceptedJamoCount, atEpochMillis),
+      )
+      if (inserted != -1L) recordAcceptedJamoInTransaction(acceptedJamoCount, atEpochMillis)
     }
   }
 
@@ -787,6 +822,51 @@ class DeckRepository private constructor(
     val existingRewards = dao.retentionRewards().mapTo(mutableSetOf(), RetentionRewardEntity::threshold)
     RetentionPolicy.newlyUnlockedRewards(completed, existingRewards).forEach { threshold ->
       dao.insertRetentionReward(RetentionRewardEntity(threshold, atEpochMillis))
+    }
+    val longest = RetentionPolicy.streak(completed, day).longest.toLong()
+    updatePlayGamesAchievementInTransaction(PlayGamesAchievementKey.STREAK_30, longest, atEpochMillis)
+  }
+
+  private suspend fun enqueuePlayGamesScoreInTransaction(boardKey: String, score: Long, atEpochMillis: Long) {
+    val previous = dao.pendingPlayGamesScore(boardKey)
+    if (previous == null || score > previous.bestScore) {
+      dao.upsertPlayGamesScore(PlayGamesScoreOutboxEntity(boardKey, score, atEpochMillis))
+    }
+  }
+
+  private suspend fun recordAcceptedJamoInTransaction(count: Int, atEpochMillis: Long) {
+    if (count <= 0) return
+    val total = (dao.lifetimeStats()?.acceptedJamoCount ?: 0L) + count
+    dao.upsertLifetimeStats(LifetimeStatsEntity(acceptedJamoCount = total))
+    updatePlayGamesAchievementInTransaction(PlayGamesAchievementKey.JAMO_12000, total, atEpochMillis)
+  }
+
+  private suspend fun updateChapterAchievementsInTransaction(atEpochMillis: Long) {
+    val completedStageIds = dao.userProgress().mapTo(mutableSetOf(), UserProgressEntity::stageId)
+    listOf(1 to PlayGamesAchievementKey.CHAPTER_ONE, 3 to PlayGamesAchievementKey.CHAPTER_THREE, 6 to PlayGamesAchievementKey.CHAPTER_SIX)
+      .forEach { (chapterNumber, key) ->
+        val chapter = app.piyokey.core.retention.CurriculumCatalog.chapters.first { it.number == chapterNumber }
+        val value = if (CurriculumPolicy.isChapterCompleted(chapter, completedStageIds)) 1L else 0L
+        updatePlayGamesAchievementInTransaction(key, value, atEpochMillis)
+      }
+  }
+
+  private suspend fun updatePlayGamesAchievementInTransaction(
+    key: PlayGamesAchievementKey,
+    value: Long,
+    atEpochMillis: Long,
+  ) {
+    val previous = dao.playGamesAchievementProgress(key.storageKey)
+    val next = maxOf(previous?.currentValue ?: 0L, value.coerceAtMost(key.target))
+    if (previous == null || next > previous.currentValue) {
+      dao.upsertPlayGamesAchievementProgress(
+        PlayGamesAchievementProgressEntity(
+          achievementKey = key.storageKey,
+          currentValue = next,
+          syncedValue = previous?.syncedValue ?: 0L,
+          updatedAtEpochMillis = atEpochMillis,
+        ),
+      )
     }
   }
 
@@ -1134,6 +1214,7 @@ class DeckRepository private constructor(
     private val tagsJson = Json { isLenient = false }
     private const val GAME_MODE_FLOW = "flow"
     private const val INPUT_MODE_BUILTIN = "builtin"
+    private const val INPUT_MODE_WEEKLY_CUP = "weekly_cup"
     private val FLOW_PRESET_PATHS = listOf(
       "decks/flow/flow_topik_beginner_v3.json",
       "decks/flow/flow_topik_intermediate_v3.json",

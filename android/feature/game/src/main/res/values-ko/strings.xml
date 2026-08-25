@@ -76,4 +76,5 @@
   <string name="share_save_image">이미지 저장</string><string name="share_sns">SNS로 공유</string><string name="share_chooser">피요키 결과 공유</string>
   <string name="share_saved">이미지를 저장했어요.</string><string name="share_save_failed">이미지를 저장하지 못했어요.</string><string name="share_permission_denied">사진 추가 권한이 거부됐어요.</string><string name="share_failed">공유 화면을 열지 못했어요.</string>
   <string name="share_score">점수</string><string name="share_combo">최대 콤보</string><string name="share_streak">연속 기록</string><string name="share_download">typee에서 한국어 타이핑을 연습해요</string><string name="share_caption">typee %2$s에서 %1$d점! #typee #한국어타이핑</string>
+  <string name="play_games_ranking">Play Games 랭킹</string>
 </resources>

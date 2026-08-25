@@ -182,6 +182,34 @@ data class ReminderPreferenceEntity(
   val minute: Int,
 )
 
+@Entity(tableName = "play_games_score_outbox")
+data class PlayGamesScoreOutboxEntity(
+  @PrimaryKey val boardKey: String,
+  val bestScore: Long,
+  val updatedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "play_games_achievement_progress")
+data class PlayGamesAchievementProgressEntity(
+  @PrimaryKey val achievementKey: String,
+  val currentValue: Long,
+  val syncedValue: Long,
+  val updatedAtEpochMillis: Long,
+)
+
+@Entity(tableName = "lifetime_stats")
+data class LifetimeStatsEntity(
+  @PrimaryKey val singletonId: Int = 1,
+  val acceptedJamoCount: Long,
+)
+
+@Entity(tableName = "practice_jamo_events")
+data class PracticeJamoEventEntity(
+  @PrimaryKey val eventId: String,
+  val acceptedJamoCount: Int,
+  val recordedAtEpochMillis: Long,
+)
+
 @Dao
 interface PiyokeyDao {
   @Query("SELECT * FROM installed_decks ORDER BY installedAtEpochMillis DESC")
@@ -244,6 +272,9 @@ interface PiyokeyDao {
   @Query("SELECT * FROM deck_progress WHERE deckId = :deckId AND mode = :mode AND inputMode = :inputMode")
   suspend fun deckProgress(deckId: String, mode: String, inputMode: String): DeckProgressEntity?
 
+  @Query("SELECT * FROM deck_progress ORDER BY mode, deckId, inputMode")
+  suspend fun allDeckProgress(): List<DeckProgressEntity>
+
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsertDeckProgress(entity: DeckProgressEntity)
 
@@ -297,6 +328,39 @@ interface PiyokeyDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun upsertReminderPreference(entity: ReminderPreferenceEntity)
+
+  @Query("SELECT * FROM play_games_score_outbox ORDER BY boardKey")
+  suspend fun pendingPlayGamesScores(): List<PlayGamesScoreOutboxEntity>
+
+  @Query("SELECT * FROM play_games_score_outbox WHERE boardKey = :boardKey")
+  suspend fun pendingPlayGamesScore(boardKey: String): PlayGamesScoreOutboxEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertPlayGamesScore(entity: PlayGamesScoreOutboxEntity)
+
+  @Query("DELETE FROM play_games_score_outbox WHERE boardKey = :boardKey AND bestScore <= :submittedScore")
+  suspend fun markPlayGamesScoreSubmitted(boardKey: String, submittedScore: Long)
+
+  @Query("SELECT * FROM play_games_achievement_progress ORDER BY achievementKey")
+  suspend fun playGamesAchievementProgress(): List<PlayGamesAchievementProgressEntity>
+
+  @Query("SELECT * FROM play_games_achievement_progress WHERE achievementKey = :key")
+  suspend fun playGamesAchievementProgress(key: String): PlayGamesAchievementProgressEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertPlayGamesAchievementProgress(entity: PlayGamesAchievementProgressEntity)
+
+  @Query("UPDATE play_games_achievement_progress SET syncedValue = MAX(syncedValue, :value) WHERE achievementKey = :key")
+  suspend fun markPlayGamesAchievementSynced(key: String, value: Long)
+
+  @Query("SELECT * FROM lifetime_stats WHERE singletonId = 1")
+  suspend fun lifetimeStats(): LifetimeStatsEntity?
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun upsertLifetimeStats(entity: LifetimeStatsEntity)
+
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  suspend fun insertPracticeJamoEvent(entity: PracticeJamoEventEntity): Long
 }
 
 @Database(
@@ -315,8 +379,12 @@ interface PiyokeyDao {
     StreakDayEntity::class,
     RetentionRewardEntity::class,
     ReminderPreferenceEntity::class,
+    PlayGamesScoreOutboxEntity::class,
+    PlayGamesAchievementProgressEntity::class,
+    LifetimeStatsEntity::class,
+    PracticeJamoEventEntity::class,
   ],
-  version = 5,
+  version = 6,
   exportSchema = true,
 )
 abstract class PiyokeyDatabase : RoomDatabase() {
@@ -330,7 +398,7 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         context.applicationContext,
         PiyokeyDatabase::class.java,
         "piyokey.db",
-      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+      ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .build().also { instance = it }
     }
 
@@ -427,6 +495,32 @@ abstract class PiyokeyDatabase : RoomDatabase() {
           """CREATE TABLE IF NOT EXISTS `deck_maker_entitlement_cache` (
             |`productId` TEXT NOT NULL, `isActive` INTEGER NOT NULL,
             |`lastVerifiedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`productId`))""".trimMargin(),
+        )
+      }
+    }
+
+    val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `play_games_score_outbox` (
+            |`boardKey` TEXT NOT NULL, `bestScore` INTEGER NOT NULL,
+            |`updatedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`boardKey`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `play_games_achievement_progress` (
+            |`achievementKey` TEXT NOT NULL, `currentValue` INTEGER NOT NULL,
+            |`syncedValue` INTEGER NOT NULL, `updatedAtEpochMillis` INTEGER NOT NULL,
+            |PRIMARY KEY(`achievementKey`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `lifetime_stats` (
+            |`singletonId` INTEGER NOT NULL, `acceptedJamoCount` INTEGER NOT NULL,
+            |PRIMARY KEY(`singletonId`))""".trimMargin(),
+        )
+        db.execSQL(
+          """CREATE TABLE IF NOT EXISTS `practice_jamo_events` (
+            |`eventId` TEXT NOT NULL, `acceptedJamoCount` INTEGER NOT NULL,
+            |`recordedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`eventId`))""".trimMargin(),
         )
       }
     }

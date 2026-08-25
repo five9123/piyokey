@@ -27,11 +27,26 @@ android {
       .replace("\\", "\\\\")
       .replace("\"", "\\\"")
     buildConfigField("String", "CATALOG_URL", "\"$catalogUrl\"")
+    val playGamesProjectId = providers.gradleProperty("PIYOKEY_PLAY_GAMES_PROJECT_ID").orElse("0").get()
+    resValue("string", "game_services_project_id", playGamesProjectId)
+    val playGamesKeys = listOf(
+      "flow_beginner", "flow_intermediate", "flow_advanced",
+      "acid_rain_beginner", "acid_rain_intermediate", "acid_rain_advanced",
+      "choseong_beginner", "choseong_intermediate", "choseong_advanced",
+      "word_match_beginner", "word_match_intermediate", "word_match_advanced",
+      "dictation_beginner", "dictation_intermediate", "dictation_advanced",
+      "chapter_one", "chapter_three", "chapter_six", "jamo_12000", "streak_30",
+    )
+    playGamesKeys.forEach { key ->
+      val property = "PIYOKEY_PLAY_GAMES_${key.uppercase()}_ID"
+      resValue("string", "piyokey_pgs_$key", providers.gradleProperty(property).orElse("").get())
+    }
   }
 
   buildFeatures {
     compose = true
     buildConfig = true
+    resValues = true
   }
 
   sourceSets.getByName("main").res.directories.add(generatedBrandRes.get().asFile.absolutePath)
@@ -50,6 +65,32 @@ android {
 }
 
 tasks.named("preBuild").configure { dependsOn(generatePiyokeyBrandResources) }
+
+val playGamesPropertyNames = listOf(
+  "PIYOKEY_PLAY_GAMES_PROJECT_ID",
+) + listOf(
+  "flow_beginner", "flow_intermediate", "flow_advanced",
+  "acid_rain_beginner", "acid_rain_intermediate", "acid_rain_advanced",
+  "choseong_beginner", "choseong_intermediate", "choseong_advanced",
+  "word_match_beginner", "word_match_intermediate", "word_match_advanced",
+  "dictation_beginner", "dictation_intermediate", "dictation_advanced",
+  "chapter_one", "chapter_three", "chapter_six", "jamo_12000", "streak_30",
+).map { "PIYOKEY_PLAY_GAMES_${it.uppercase()}_ID" }
+
+tasks.register("verifyPlayGamesConfiguration") {
+  group = "verification"
+  description = "Fails unless every Play Console-issued Play Games v2 resource id is supplied."
+  inputs.property(
+    "missingProperties",
+    providers.provider {
+      playGamesPropertyNames.filter { providers.gradleProperty(it).orNull.isNullOrBlank() }.joinToString()
+    },
+  )
+  doLast {
+    val missing = inputs.properties.getValue("missingProperties") as String
+    check(missing.isBlank()) { "Missing Play Games Gradle properties: $missing" }
+  }
+}
 
 kotlin {
   compilerOptions {

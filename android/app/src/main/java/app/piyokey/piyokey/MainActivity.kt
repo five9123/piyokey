@@ -70,6 +70,7 @@ import app.piyokey.core.data.DeckRepository
 import app.piyokey.core.data.ActiveUserDeckDraft
 import app.piyokey.core.data.DeckMakerEntitlementCache
 import app.piyokey.core.data.PiyokeyDatabase
+import app.piyokey.core.data.RoomPlayGamesLocalData
 import app.piyokey.core.data.UserDeckEditCommitException
 import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
@@ -89,6 +90,8 @@ import app.piyokey.core.game.SpacingGameState
 import app.piyokey.core.game.SpacingPassage
 import app.piyokey.core.game.TypingGameState
 import app.piyokey.core.game.toRecord
+import app.piyokey.core.game.PlayGamesPolicy
+import app.piyokey.core.game.PlayGamesResultIdentity
 import app.piyokey.core.platform.DailyReminderScheduler
 import app.piyokey.core.platform.DeckMakerBillingActivity
 import app.piyokey.core.platform.DeckMakerBillingManager
@@ -97,6 +100,10 @@ import app.piyokey.core.platform.PlayBillingDeckMakerGateway
 import app.piyokey.core.platform.RoomDeckMakerEntitlementCacheStore
 import app.piyokey.core.platform.PiyoDeckDocumentGateway
 import app.piyokey.core.platform.ResultShareModel
+import app.piyokey.core.platform.GooglePlayGamesGateway
+import app.piyokey.core.platform.PlayGamesConnection
+import app.piyokey.core.platform.PlayGamesManager
+import app.piyokey.core.platform.PlayGamesState
 import app.piyokey.core.platform.StagedPiyoDeckDocument
 import app.piyokey.core.piyodeck.PiyoDeckImportException
 import app.piyokey.core.piyodeck.UserDeckDraft
@@ -116,6 +123,7 @@ import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.InputMode
 import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.core.settings.PiyoWardrobePolicy
+import app.piyokey.core.settings.PiyoAccessory
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -157,6 +165,7 @@ import app.piyokey.feature.onboarding.MainAppTourOverlay
 import app.piyokey.feature.settings.CommonSettingsButton
 import app.piyokey.feature.settings.SettingsSheet
 import java.util.Locale
+import java.util.UUID
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -305,6 +314,7 @@ private data class ActivePractice(
   val sessionDay: JstDay,
   val checkpoint: PracticeSessionCheckpoint? = null,
   val reviewSourceDeckIds: List<String>? = null,
+  val sessionId: String = UUID.randomUUID().toString(),
 )
 
 private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW, ONBOARDING }
@@ -350,10 +360,35 @@ private fun PiyokeyApp(
     )
   }
   val billingState by billingManager.state.collectAsStateWithLifecycle()
+  var championUnlockRequested by remember { mutableStateOf(false) }
+  val playGamesManager = remember(hostActivity) {
+    hostActivity?.let { activity ->
+      PlayGamesManager(
+        gateway = GooglePlayGamesGateway(activity),
+        localData = RoomPlayGamesLocalData(PiyokeyDatabase.open(context)),
+        onChampionUnlocked = { championUnlockRequested = true },
+      )
+    }
+  }
+  val playGamesStateFlow = remember(playGamesManager) {
+    playGamesManager?.state ?: MutableStateFlow(PlayGamesState(PlayGamesConnection.DISABLED))
+  }
+  val playGamesState by playGamesStateFlow.collectAsStateWithLifecycle()
   DisposableEffect(billingManager) { onDispose { billingManager.close() } }
   LaunchedEffect(billingManager) { billingManager.prepare() }
+  LaunchedEffect(playGamesManager) { playGamesManager?.prepare() }
+  LaunchedEffect(championUnlockRequested) {
+    if (championUnlockRequested && PiyoAccessory.CHAMPION_TROPHY !in preferences.unlockedPiyoAccessories) {
+      onPreferencesChange(
+        preferences.copy(unlockedPiyoAccessories = preferences.unlockedPiyoAccessories + PiyoAccessory.CHAMPION_TROPHY),
+      )
+    }
+  }
   LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-    scope.launch { billingManager.onForeground() }
+    scope.launch {
+      billingManager.onForeground()
+      playGamesManager?.prepare()
+    }
   }
   var snapshot by remember { mutableStateOf<DeckLibrarySnapshot?>(null) }
   var learning by remember { mutableStateOf<LearningSnapshot?>(null) }
@@ -378,6 +413,7 @@ private fun PiyokeyApp(
   var flowResult by remember { mutableStateOf<FlowGameState?>(null) }
   var flowIsNewBest by remember { mutableStateOf(false) }
   var flowSeed by remember { mutableStateOf(0L) }
+  var flowIsWeeklyCup by remember { mutableStateOf(false) }
   var flowRankTuning by remember { mutableStateOf(FlowRankTuning()) }
   var activeGameDeck by remember { mutableStateOf<Deck?>(null) }
   var typingGameResult by remember { mutableStateOf<TypingGameState?>(null) }
@@ -737,6 +773,8 @@ private fun PiyokeyApp(
           }
           else -> null
         }
+        repository.recordPracticeAcceptedJamo(practice.sessionId, state.acceptedJamoCount)
+        playGamesManager?.syncAfterLocalSave()
         pendingCompletion = null
         if (pendingCheckpointSave?.first == practice.stageId) pendingCheckpointSave = null
         operationFailed = false
@@ -893,10 +931,14 @@ private fun PiyokeyApp(
               deckItems = finished.cards,
               reviewMistakeCounts = finished.reviewMistakeCounts,
               inputMode = inputModeKey,
+              isWeeklyCup = flowIsWeeklyCup,
             )
-            gameBestScores = gameBestScores + (
-              GameKind.FLOW to (gameBestScores[GameKind.FLOW].orEmpty() + (runningFlow.deckId to saved.progress.bestScore))
-            )
+            if (!flowIsWeeklyCup) {
+              gameBestScores = gameBestScores + (
+                GameKind.FLOW to (gameBestScores[GameKind.FLOW].orEmpty() + (runningFlow.deckId to saved.progress.bestScore))
+              )
+            }
+            playGamesManager?.syncAfterLocalSave()
             saved.isNewBest
           } catch (_: Exception) {
             operationFailed = true
@@ -910,6 +952,11 @@ private fun PiyokeyApp(
     return
   }
   if (completedFlow != null) {
+    val leaderboard = runningFlow?.let { deck ->
+      PlayGamesPolicy.leaderboard(
+        PlayGamesResultIdentity("flow", deck.deckId, inputModeKey, isWeeklyCup = flowIsWeeklyCup),
+      )
+    }?.takeIf { playGamesState.connection != PlayGamesConnection.DISABLED }
     FlowResultScreen(
       state = completedFlow,
       rank = flowRankTuning.rank(completedFlow.accuracyPercent, completedFlow.charactersPerMinute),
@@ -920,6 +967,9 @@ private fun PiyokeyApp(
         completedFlow.score,
         completedFlow.maxCombo,
       ),
+      onPlayGamesLeaderboard = leaderboard?.let { key ->
+        { scope.launch { playGamesManager?.openLeaderboard(key) } }
+      },
       onRetry = {
         flowResult = null
         flowSeed = kotlin.random.Random.nextLong()
@@ -927,6 +977,7 @@ private fun PiyokeyApp(
       onDone = {
         flowResult = null
         activeFlowDeck = null
+        flowIsWeeklyCup = false
         gameStage = GameStage.DECK_SELECT
       },
     )
@@ -957,6 +1008,7 @@ private fun PiyokeyApp(
               gameBestScores = gameBestScores + (
                 GameKind.ACID_RAIN to (gameBestScores[GameKind.ACID_RAIN].orEmpty() + (runningGameDeck.deckId to saved.progress.bestScore))
               )
+              playGamesManager?.syncAfterLocalSave()
             } catch (_: Exception) { operationFailed = true }
             acidRainResult = finished
             reload()
@@ -987,6 +1039,7 @@ private fun PiyokeyApp(
               gameBestScores = gameBestScores + (
                 selectedGameKind to (gameBestScores[selectedGameKind].orEmpty() + (runningGameDeck.deckId to saved.progress.bestScore))
               )
+              playGamesManager?.syncAfterLocalSave()
             } catch (_: Exception) { operationFailed = true }
             typingGameResult = finished
             reload()
@@ -1005,6 +1058,11 @@ private fun PiyokeyApp(
         else -> app.piyokey.feature.game.R.string.games_title
       },
     )
+    val leaderboard = runningGameDeck?.let { deck ->
+      PlayGamesPolicy.leaderboard(
+        PlayGamesResultIdentity(completed.mode.name.lowercase(), deck.deckId, inputModeKey),
+      )
+    }?.takeIf { playGamesState.connection != PlayGamesConnection.DISABLED }
     GenericGameResultScreen(
       score = completed.score,
       accuracy = completed.accuracyPercent,
@@ -1023,12 +1081,18 @@ private fun PiyokeyApp(
         completed.score,
         completed.maxCombo,
       ),
+      onPlayGamesLeaderboard = leaderboard?.let { key ->
+        { scope.launch { playGamesManager?.openLeaderboard(key) } }
+      },
       onRetry = { typingGameResult = null; gameSeed = kotlin.random.Random.nextLong() },
       onDone = { typingGameResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
     )
     return
   }
   acidRainResult?.let { completed ->
+    val leaderboard = runningGameDeck?.let { deck ->
+      PlayGamesPolicy.leaderboard(PlayGamesResultIdentity("acid_rain", deck.deckId, inputModeKey))
+    }?.takeIf { playGamesState.connection != PlayGamesConnection.DISABLED }
     GenericGameResultScreen(
       score = completed.score,
       accuracy = completed.accuracyPercent,
@@ -1045,6 +1109,9 @@ private fun PiyokeyApp(
         completed.score,
         completed.maxCombo,
       ),
+      onPlayGamesLeaderboard = leaderboard?.let { key ->
+        { scope.launch { playGamesManager?.openLeaderboard(key) } }
+      },
       onRetry = { acidRainResult = null; gameSeed = kotlin.random.Random.nextLong() },
       onDone = { acidRainResult = null; activeGameDeck = null; gameStage = GameStage.DECK_SELECT },
     )
@@ -1535,6 +1602,7 @@ private fun PiyokeyApp(
             onWeeklyCup = {
               flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let {
                 selectedGameKind = GameKind.FLOW
+                flowIsWeeklyCup = true
                 activeFlowDeck = it
                 flowSeed = kotlin.random.Random.nextLong()
               }
@@ -1548,6 +1616,7 @@ private fun PiyokeyApp(
             onBack = { gameStage = GameStage.HUB },
             onSelect = {
               if (selectedGameKind == GameKind.FLOW) {
+                flowIsWeeklyCup = false
                 activeFlowDeck = it
                 flowSeed = kotlin.random.Random.nextLong()
               } else {
