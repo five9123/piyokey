@@ -18,6 +18,7 @@ android {
       setOf(
         rootProject.layout.projectDirectory.dir("../shared/mock_catalog").asFile.absolutePath,
         rootProject.layout.projectDirectory.dir("../shared/schema").asFile.absolutePath,
+        rootProject.layout.projectDirectory.dir("../shared/tuning").asFile.absolutePath,
       ),
     )
   }
@@ -40,6 +41,7 @@ kotlin {
 
 dependencies {
   implementation(project(":core:deckkit"))
+  implementation(project(":core:game"))
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.ktx)
   implementation(libs.kotlinx.coroutines.android)

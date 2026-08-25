@@ -1281,3 +1281,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 읽기 전용 정적 배포와 오프라인 우선을 지키면서 파일과 DB의 부분 갱신·손상으로 설치 전체가 무너지는 경우를 fail-closed 복구해야 한다. 실제 기기 조작을 마일스톤마다 반복하지 않고도 순수·에뮬레이터 자동 gate로 M4 착수 품질을 확보할 수 있다.
 - 관련 PRD 섹션: F5.1~F5.7, F12.5, §8.1~§8.3, §9, §11, §13 M3·M7
 - 영향 범위: Android Room schema v1, static content client, catalog/deck file store, 5탭 app shell, discover/detail/home/my decks/practice result, M3 자동 검증과 로컬 evidence
+
+## 2026-08-25 Android M7 M4 흐름 게임·공통 결과 완료
+- 결정: M4는 PRD §13 순서대로 흐름 게임과 이후 게임이 재사용할 결과·기록 기반까지만 구현한다. `core:game`은 Android·Compose import가 없는 불변 상태와 순수 reducer로 두고, Compose frame clock은 세션 monotonic origin에 매핑하되 제한시간·카드 이동·점수·목숨 판정은 reducer만 소유한다. 산성비·초성·단어 맞추기·받아쓰기·띄어쓰기는 허브 순서만 고정하고 실제 기능은 M6에서 같은 기반 위에 추가한다.
+- 결정: 시작과 재도전은 3·2·1 뒤에만 60초와 카드 이동을 시작한다. background에서는 rule clock을 멈추고 복귀 후 다시 3·2·1을 센다. 노미스 단어는 +2초, 오타는 시간 차감 없이 콤보 0, 세 번째 카드 이탈은 즉시 종료하며 새 카드의 이동 시간만 플레이 0~50초 동안 1.0→1.8배로 가속한다. 점수는 자모 수×10과 완료 시 콤보 구간 1.0/1.2/1.5/2.0을 적용한다.
+- 결정: 흐름 선택은 일반 발견 목록과 분리한 `flow_topik_beginner|intermediate|advanced` v3 각 100단어를 먼저 표시하고 세 단계 300단어의 중복을 허용하지 않는다. 진입·재도전은 새 난수 순서를 만들고 테스트만 명시적 seed를 사용한다. 설치 덱은 그 아래 선택지로 제공하며 `+`는 발견 검색으로 이동한다.
+- 결정: `feature:game`은 게임명 우선 2열 허브, 밝은 단순 레인, 닫기·시간·점수·콤보·목숨 한 줄 HUD, 내용 맞춤 카드, 내부 자모 추적, 기기 폭 고정 두벌식 키보드, 완료 파티클과 공통 결과·재도전을 소유한다. ja/en/ko 리소스와 영어 fallback을 사용하고 뜻·읽기는 현재 언어 뒤 영어로 fallback하며 세션 중 덱·설정·네트워크 모달을 노출하지 않는다.
+- 결정: Room schema v2는 append-only `GameRecord`와 `(deckId, mode, inputMode)` 복합키 `DeckProgress`를 추가한다. v1→v2 명시 migration은 M3 설치·이력·journal을 보존하며, 매 결과에서 plays·best score·best accuracy·last played를 같은 transaction으로 갱신한다. M4 입력 방식은 `builtin`으로 기록하고 OS IME 분리는 M6에 추가한다.
+- 결정: 결과 등급은 iOS와 같은 공용 `shared/tuning/game_rank_tuning.json`의 정확도 0.6·완료 자모 CPM 0.4, 120 CPM cap, S/A/B 90/75/55를 검증해 사용한다. 로컬 단위 11개, API 35 Room/data 8개와 기존 발견 1개·새 흐름 Compose 2개, feature/app lint와 debug APK를 통과했다. 실제 기기 60초 평균/p95/jank와 M2 입력 수치는 출시 후보 Issue #19에 유지한다.
+- 근거: 규칙 시계와 렌더 프레임을 분리하면 테스트 clock·실기기 frame source 차이에도 점수와 생존 판정이 재현된다. M3 schema에서 명시 migration을 검증하고 로컬 기록을 단일 기준으로 두면 이후 게임·Play Games 어댑터를 사용자 데이터 손실 없이 확장할 수 있다.
+- 관련 PRD 섹션: F6, F12, §7.1, §7.3, §9, §11, §12, §13 M4·M6·M7
+- 영향 범위: Android pure game core, Room schema v2, game Compose feature, app navigation, 공용 rank tuning, Android CI·에뮬레이터 회귀

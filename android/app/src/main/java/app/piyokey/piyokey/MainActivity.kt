@@ -48,6 +48,10 @@ import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.session.PracticeSessionState
+import app.piyokey.core.deckkit.Deck
+import app.piyokey.core.game.FlowGameState
+import app.piyokey.core.game.FlowRankTuning
+import app.piyokey.core.game.toRecord
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -55,6 +59,10 @@ import app.piyokey.feature.discover.MyDecksScreen
 import app.piyokey.feature.discover.PracticeResultScreen
 import app.piyokey.feature.discover.RecommendationHome
 import app.piyokey.feature.practice.PracticeRoute
+import app.piyokey.feature.game.FlowDeckSelectionScreen
+import app.piyokey.feature.game.FlowGameRoute
+import app.piyokey.feature.game.FlowResultScreen
+import app.piyokey.feature.game.GameHubScreen
 import java.util.Locale
 import kotlinx.coroutines.launch
 
@@ -88,6 +96,8 @@ private data class PracticeResult(
   val completed: Int,
 )
 
+private enum class GameStage { HUB, FLOW_SELECT }
+
 @Composable
 private fun PiyokeyApp() {
   val context = LocalContext.current.applicationContext
@@ -105,11 +115,27 @@ private fun PiyokeyApp() {
   var activePractice by remember { mutableStateOf<ActivePractice?>(null) }
   var result by remember { mutableStateOf<PracticeResult?>(null) }
   var reloadToken by remember { mutableStateOf(0) }
+  var gameStage by remember { mutableStateOf(GameStage.HUB) }
+  var flowPresets by remember { mutableStateOf<List<Deck>>(emptyList()) }
+  var flowBestScores by remember { mutableStateOf<Map<String, Int>>(emptyMap()) }
+  var activeFlowDeck by remember { mutableStateOf<Deck?>(null) }
+  var flowResult by remember { mutableStateOf<FlowGameState?>(null) }
+  var flowIsNewBest by remember { mutableStateOf(false) }
+  var flowSeed by remember { mutableStateOf(0L) }
+  var flowRankTuning by remember { mutableStateOf(FlowRankTuning()) }
 
   LaunchedEffect(repository, reloadToken) {
     loadFailed = false
     try {
-      snapshot = repository.snapshot()
+      val loadedSnapshot = repository.snapshot()
+      val loadedPresets = repository.bundledFlowDecks()
+      snapshot = loadedSnapshot
+      flowPresets = loadedPresets
+      flowRankTuning = repository.flowRankTuning()
+      val ids = loadedPresets.map(Deck::deckId) + loadedSnapshot.installed.map { it.metadata.deckId }
+      flowBestScores = ids.distinct().mapNotNull { id ->
+        repository.flowProgress(id)?.let { id to it.bestScore }
+      }.toMap()
       if (reloadToken == 0) {
         when (repository.refreshCatalog()) {
           is CatalogRefreshResult.Updated -> snapshot = repository.snapshot()
@@ -163,6 +189,47 @@ private fun PiyokeyApp() {
       activePractice != null -> activePractice = null
       else -> detailDeckId = null
     }
+  }
+
+  val runningFlow = activeFlowDeck
+  val completedFlow = flowResult
+  if (runningFlow != null && completedFlow == null) {
+    FlowGameRoute(
+      deck = runningFlow,
+      seed = flowSeed,
+      onClose = { activeFlowDeck = null },
+      onFinished = { finished ->
+        scope.launch {
+          flowIsNewBest = try {
+            val saved = repository.saveFlowRecord(finished.toRecord(System.currentTimeMillis()))
+            flowBestScores = flowBestScores + (runningFlow.deckId to saved.progress.bestScore)
+            saved.isNewBest
+          } catch (_: Exception) {
+            operationFailed = true
+            false
+          }
+          flowResult = finished
+        }
+      },
+    )
+    return
+  }
+  if (completedFlow != null) {
+    FlowResultScreen(
+      state = completedFlow,
+      rank = flowRankTuning.rank(completedFlow.accuracyPercent, completedFlow.charactersPerMinute),
+      isNewBest = flowIsNewBest,
+      onRetry = {
+        flowResult = null
+        flowSeed = kotlin.random.Random.nextLong()
+      },
+      onDone = {
+        flowResult = null
+        activeFlowDeck = null
+        gameStage = GameStage.FLOW_SELECT
+      },
+    )
+    return
   }
 
   val detail = detailDeckId?.let { id -> current.catalog.decks.firstOrNull { it.deckId == id } }
@@ -274,8 +341,30 @@ private fun PiyokeyApp() {
           onSample = { activePractice = ActivePractice(null, null, null) },
           onFindDecks = { tab = RootTab.DISCOVER },
         )
-        RootTab.GAMES -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-          Text(stringResource(R.string.games_coming_next))
+        RootTab.GAMES -> when (gameStage) {
+          GameStage.HUB -> GameHubScreen(
+            onFlow = { gameStage = GameStage.FLOW_SELECT },
+            onWeeklyCup = {
+              flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let {
+                activeFlowDeck = it
+                flowSeed = kotlin.random.Random.nextLong()
+              }
+            },
+          )
+          GameStage.FLOW_SELECT -> FlowDeckSelectionScreen(
+            presets = flowPresets,
+            installed = current.installed.map { it.deck },
+            bestScores = flowBestScores,
+            onBack = { gameStage = GameStage.HUB },
+            onSelect = {
+              activeFlowDeck = it
+              flowSeed = kotlin.random.Random.nextLong()
+            },
+            onFindDeck = {
+              gameStage = GameStage.HUB
+              tab = RootTab.DISCOVER
+            },
+          )
         }
         RootTab.PROFILE -> MyDecksScreen(
           installed = current.installed,

@@ -44,7 +44,7 @@ jobs:
         run: swift test
 
   android-contracts:
-    name: Android M3 contracts and build
+    name: Android M4 contracts and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
             android/**/*.gradle.kts
             android/gradle/libs.versions.toml
             android/gradle/wrapper/gradle-wrapper.properties
-      - name: Run Android M1-M3 contracts, UI checks, lint, and build
+      - name: Run Android M1-M4 contracts, UI checks, lint, and build
         working-directory: android
         run: >-
           ./gradlew
@@ -65,6 +65,7 @@ jobs:
           :core:deckkit:test
           :core:piyodeck:test
           :core:session:test
+          :core:game:test
           :core:data:testDebugUnitTest
           :feature:practice:testDebugUnitTest
           :feature:practice:assembleDebugAndroidTest
@@ -72,6 +73,7 @@ jobs:
           :feature:practice:lintDebug
           :core:data:lintDebug
           :feature:discover:lintDebug
+          :feature:game:lintDebug
           :app:lintDebug
           :app:assembleDebug
           --no-daemon

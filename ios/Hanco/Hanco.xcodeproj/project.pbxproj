@@ -174,7 +174,7 @@
 		B0000000000000000000002C /* FlowGameResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameResultView.swift; sourceTree = "<group>"; };
 		B0000000000000000000002D /* FlowGameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameViewModelTests.swift; sourceTree = "<group>"; };
 		B0000000000000000000002E /* FlowGameRankTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameRankTuning.swift; sourceTree = "<group>"; };
-		B0000000000000000000002F /* game_rank_tuning.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = game_rank_tuning.json; sourceTree = "<group>"; };
+		B0000000000000000000002F /* game_rank_tuning.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = game_rank_tuning.json; path = ../../shared/tuning/game_rank_tuning.json; sourceTree = SOURCE_ROOT; };
 		B00000000000000000000030 /* GameProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgressStore.swift; sourceTree = "<group>"; };
 		B00000000000000000000031 /* FlowGameRankTuningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowGameRankTuningTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000032 /* GameProgressStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgressStoreTests.swift; sourceTree = "<group>"; };
