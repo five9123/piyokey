@@ -11,30 +11,77 @@ import UIKit
   import PostHog
 #endif
 
+struct AnalyticsAppOpenTracker: Equatable {
+  private(set) var analyticsEnabled: Bool
+  private(set) var capturedInCurrentForeground = false
+  private(set) var currentEntryPoint = "cold_start"
+
+  init(analyticsEnabled: Bool) {
+    self.analyticsEnabled = analyticsEnabled
+  }
+
+  mutating func configure() -> String? {
+    captureEntryPointIfNeeded()
+  }
+
+  mutating func updateConsent(_ enabled: Bool) -> String? {
+    analyticsEnabled = enabled
+    return captureEntryPointIfNeeded()
+  }
+
+  mutating func sceneDidBecomeActive() -> String? {
+    captureEntryPointIfNeeded()
+  }
+
+  mutating func sceneDidEnterBackground() {
+    capturedInCurrentForeground = false
+    currentEntryPoint = "foreground"
+  }
+
+  private mutating func captureEntryPointIfNeeded() -> String? {
+    guard analyticsEnabled, !capturedInCurrentForeground else { return nil }
+    capturedInCurrentForeground = true
+    return currentEntryPoint
+  }
+}
+
 @MainActor
 final class TelemetryService {
   static let shared = TelemetryService()
 
   private(set) var isProductAnalyticsConfigured = false
   private(set) var isCrashDiagnosticsConfigured = false
+  private var appOpenTracker = AnalyticsAppOpenTracker(analyticsEnabled: false)
 
   private init() {}
 
   func configure() {
     #if !DEBUG
-      configurePostHogIfAvailable()
+      appOpenTracker = AnalyticsAppOpenTracker(
+        analyticsEnabled: UserDefaults.standard.bool(
+          forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+        )
+      )
+      if appOpenTracker.analyticsEnabled {
+        configurePostHogIfAvailable()
+      }
       configureCrashlyticsIfAvailable()
-      capture(.appOpened, properties: [.entryPoint: "cold_start"])
+      captureAppOpened(entryPoint: appOpenTracker.configure())
     #endif
   }
 
   func updateConsent(productAnalytics: Bool, crashDiagnostics: Bool) {
     #if !DEBUG
+      let appOpenEntryPoint = appOpenTracker.updateConsent(productAnalytics)
+      if productAnalytics, !isProductAnalyticsConfigured {
+        configurePostHogIfAvailable()
+      }
       if isProductAnalyticsConfigured {
         #if canImport(PostHog)
           productAnalytics ? PostHogSDK.shared.optIn() : PostHogSDK.shared.optOut()
         #endif
       }
+      captureAppOpened(entryPoint: appOpenEntryPoint)
       if isCrashDiagnosticsConfigured {
         #if canImport(FirebaseCrashlytics)
           let crashlytics = Crashlytics.crashlytics()
@@ -45,12 +92,24 @@ final class TelemetryService {
     #endif
   }
 
+  func sceneDidBecomeActive() {
+    #if !DEBUG
+      captureAppOpened(entryPoint: appOpenTracker.sceneDidBecomeActive())
+    #endif
+  }
+
+  func sceneDidEnterBackground() {
+    #if !DEBUG
+      appOpenTracker.sceneDidEnterBackground()
+    #endif
+  }
+
   func capture(
     _ event: AnalyticsEvent,
     properties eventProperties: [AnalyticsProperty: Any] = [:]
   ) {
     #if !DEBUG
-      guard isProductAnalyticsConfigured else { return }
+      guard isProductAnalyticsConfigured, appOpenTracker.analyticsEnabled else { return }
       var properties = commonProperties()
       eventProperties.forEach { properties[$0] = $1 }
       guard AnalyticsContract.accepts(event: event, properties: properties) else {
@@ -113,6 +172,35 @@ final class TelemetryService {
     }
   }
 
+  func deckCategory(tags: [String], level: Int) -> String {
+    let normalizedTags = Set(tags.map { $0.lowercased() })
+    if normalizedTags.contains(where: { $0.contains("topik") || $0.contains("검정") }) {
+      return "topik"
+    }
+    if normalizedTags.contains(where: {
+      $0.contains("여행") || $0.contains("travel") || $0.contains("旅行")
+    }) {
+      return "travel"
+    }
+    if normalizedTags.contains(where: {
+      $0.contains("일상") || $0.contains("daily") || $0.contains("日常")
+    }) {
+      return "daily"
+    }
+    if normalizedTags.contains(where: {
+      $0.contains("k-pop") || $0.contains("kドラマ") || $0.contains("今どき")
+        || $0.contains("sns") || $0.contains("트렌드") || $0.contains("trend")
+    }) {
+      return "trend"
+    }
+    if level <= 1 || normalizedTags.contains(where: {
+      $0.contains("입문") || $0.contains("beginner") || $0.contains("入門")
+    }) {
+      return "beginner"
+    }
+    return "unknown"
+  }
+
   private func commonProperties() -> [AnalyticsProperty: Any] {
     let language = AppLanguage.current.rawValue
     return [
@@ -128,6 +216,7 @@ final class TelemetryService {
 
   private func configurePostHogIfAvailable() {
     #if canImport(PostHog)
+      guard appOpenTracker.analyticsEnabled, !isProductAnalyticsConfigured else { return }
       guard
         let token = Bundle.main.object(forInfoDictionaryKey: "PiyokeyPostHogProjectToken") as? String,
         !token.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
@@ -155,6 +244,11 @@ final class TelemetryService {
       PostHogSDK.shared.setup(config)
       isProductAnalyticsConfigured = true
     #endif
+  }
+
+  private func captureAppOpened(entryPoint: String?) {
+    guard let entryPoint else { return }
+    capture(.appOpened, properties: [.entryPoint: entryPoint])
   }
 
   private func configureCrashlyticsIfAvailable() {

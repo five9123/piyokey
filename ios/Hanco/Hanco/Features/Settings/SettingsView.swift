@@ -77,18 +77,37 @@ struct SettingsView: View {
         }
       )
     }
+    .onAppear {
+      TelemetryService.shared.capture(.featureViewed, properties: [.feature: "settings"])
+      TelemetryService.shared.setCrashContext(feature: "settings")
+    }
     .onChange(of: soundEffectsEnabled) { enabled in
       HancoSoundEngine.shared.setEnabled(enabled)
       if enabled {
         HancoTypingSoundFeedback.play(resolvedTypingPreset)
       }
+      captureSetting("sound", value: enabled ? "enabled" : "disabled")
+    }
+    .onChange(of: language) { rawValue in
+      captureSetting("language", value: AppLanguage.resolved(from: rawValue).rawValue)
+    }
+    .onChange(of: theme) { rawValue in
+      captureSetting("theme", value: HancoTheme.resolved(from: rawValue).rawValue)
+    }
+    .onChange(of: inputModeDefault) { rawValue in
+      captureSetting(
+        "input_mode",
+        value: SessionInputMode(rawValue: rawValue)?.rawValue ?? "builtin"
+      )
     }
     .onChange(of: typingSoundPreset) { _ in
       guard soundEffectsEnabled else { return }
       HancoTypingSoundFeedback.play(resolvedTypingPreset)
     }
     .onChange(of: practiceDisplayPreset) { rawValue in
-      applyPracticePreset(PracticeDisplayPreset.resolved(from: rawValue))
+      let preset = PracticeDisplayPreset.resolved(from: rawValue)
+      applyPracticePreset(preset)
+      captureSetting("practice_display", value: preset.rawValue)
     }
     .onChange(of: anonymousAnalyticsEnabled) { enabled in
       privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
@@ -117,6 +136,13 @@ struct SettingsView: View {
         ]
       )
     }
+  }
+
+  private func captureSetting(_ setting: String, value: String) {
+    TelemetryService.shared.capture(
+      .settingChanged,
+      properties: [.setting: setting, .valueBucket: value]
+    )
   }
 
   private var settingsContent: some View {

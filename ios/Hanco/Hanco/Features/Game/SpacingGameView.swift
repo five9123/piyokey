@@ -516,6 +516,9 @@ struct SpacingGameView: View {
   @State private var retentionSession = RetentionSessionContext()
   @State private var didRecordCurrentRun = false
   @State private var shakePhase: CGFloat = 0
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
 
   init(passage: SpacingPassage) {
     _viewModel = StateObject(wrappedValue: SpacingGameViewModel(passage: passage))
@@ -537,7 +540,9 @@ struct SpacingGameView: View {
     .toolbar(.hidden, for: .tabBar)
     .onAppear {
       viewModel.start()
+      captureAnalyticsStartIfNeeded()
     }
+    .onDisappear(perform: captureAnalyticsAbandonmentIfNeeded)
     .onChange(of: scenePhase) { phase in
       switch phase {
       case .active:
@@ -883,16 +888,100 @@ struct SpacingGameView: View {
   }
 
   private func submit() {
-    guard viewModel.submit() != nil else { return }
+    guard let result = viewModel.submit() else { return }
     guard !didRecordCurrentRun else { return }
     didRecordCurrentRun = true
     retention.record(.game, session: retentionSession)
+    captureAnalyticsCompletionIfNeeded(result)
   }
 
   private func retry() {
     retentionSession = RetentionSessionContext()
     didRecordCurrentRun = false
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
     viewModel.restart()
+    captureAnalyticsStartIfNeeded()
+  }
+
+  private var analyticsDifficulty: String {
+    switch viewModel.passage.level {
+    case ...2: "beginner"
+    case ...4: "intermediate"
+    default: "advanced"
+    }
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: "game",
+        .deckSource: "bundled",
+        .inputMode: "not_applicable",
+        .gameMode: "spacing",
+        .difficulty: analyticsDifficulty,
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "game",
+      sessionKind: "game",
+      inputMode: "not_applicable",
+      gameMode: "spacing"
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded(_ result: SpacingGameEvaluation) {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    let common: [AnalyticsProperty: Any] = [
+      .gameMode: "spacing",
+      .difficulty: analyticsDifficulty,
+      .result: "completed",
+      .inputMode: "not_applicable",
+      .deckSource: "bundled",
+    ]
+    TelemetryService.shared.capture(
+      .gameResult,
+      properties: common.merging([
+        .scoreBucket: TelemetryService.shared.scoreBucket(result.score)
+      ]) { current, _ in current }
+    )
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: "game",
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(result.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(result.totalBoundaryCount),
+        .deckSource: "bundled",
+        .inputMode: "not_applicable",
+        .gameMode: "spacing",
+        .difficulty: analyticsDifficulty,
+      ]
+    )
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: "game",
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.activeDuration()),
+        .deckSource: "bundled",
+        .inputMode: "not_applicable",
+        .gameMode: "spacing",
+        .difficulty: analyticsDifficulty,
+      ]
+    )
   }
 
   private func durationLabel(_ duration: TimeInterval) -> String {

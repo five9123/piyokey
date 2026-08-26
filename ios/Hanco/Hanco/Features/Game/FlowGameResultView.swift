@@ -380,7 +380,8 @@ struct FlowGameResultView: View {
 
       SessionShareButton(
         model: shareCardModel,
-        accessibilityIdentifier: "game.result.share"
+        accessibilityIdentifier: "game.result.share",
+        analyticsGameMode: presentation.analyticsValue
       )
 
       if !reviewItems.isEmpty {

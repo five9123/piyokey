@@ -61,6 +61,7 @@ struct PracticeView: View {
   @State private var enteredBackground = false
   @State private var didCaptureAnalyticsStart = false
   @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
   private let sessionTitle: String?
   private let reviewSources: [PracticeReviewSource]
   private let sourceTags: [String]
@@ -320,6 +321,7 @@ struct PracticeView: View {
       cancelPostCompletionTransition()
       targetSpeechSynthesizer.stop()
       viewModel.pauseTiming()
+      captureAnalyticsAbandonmentIfNeeded()
       if !viewModel.isLessonComplete {
         persistCheckpoint()
       }
@@ -767,6 +769,7 @@ struct PracticeView: View {
     didPersistLearningRecord = false
     didCaptureAnalyticsStart = false
     didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
     previousAcceptedInputCount = 0
     onSessionRestart?()
     viewModel.reset()
@@ -980,6 +983,23 @@ struct PracticeView: View {
         ]
       )
     }
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: analyticsSessionKind,
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.activeDuration),
+        .deckSource: analyticsDeckSource,
+        .inputMode: analyticsInputMode,
+      ]
+    )
   }
 
   private func beginCurriculumCompletionPersistence() {

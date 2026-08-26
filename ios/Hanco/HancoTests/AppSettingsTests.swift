@@ -214,6 +214,36 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
   }
 
+  func testAnalyticsAppOpenTrackerCapturesOncePerForegroundAfterConsent() {
+    var tracker = AnalyticsAppOpenTracker(analyticsEnabled: false)
+
+    XCTAssertNil(tracker.configure())
+    XCTAssertEqual(tracker.updateConsent(true), "cold_start")
+    XCTAssertNil(tracker.sceneDidBecomeActive())
+    XCTAssertNil(tracker.updateConsent(true))
+
+    tracker.sceneDidEnterBackground()
+    XCTAssertEqual(tracker.sceneDidBecomeActive(), "foreground")
+    XCTAssertNil(tracker.sceneDidBecomeActive())
+
+    XCTAssertNil(tracker.updateConsent(false))
+    tracker.sceneDidEnterBackground()
+    XCTAssertNil(tracker.sceneDidBecomeActive())
+    XCTAssertEqual(tracker.updateConsent(true), "foreground")
+  }
+
+  @MainActor
+  func testDeckCategoryUsesOnlyClosedBuckets() {
+    let telemetry = TelemetryService.shared
+
+    XCTAssertEqual(telemetry.deckCategory(tags: ["TOPIK"], level: 5), "topik")
+    XCTAssertEqual(telemetry.deckCategory(tags: ["韓国旅行"], level: 2), "travel")
+    XCTAssertEqual(telemetry.deckCategory(tags: ["日常"], level: 2), "daily")
+    XCTAssertEqual(telemetry.deckCategory(tags: ["K-POP"], level: 3), "trend")
+    XCTAssertEqual(telemetry.deckCategory(tags: ["公式"], level: 1), "beginner")
+    XCTAssertEqual(telemetry.deckCategory(tags: ["会話"], level: 3), "unknown")
+  }
+
   func testPrivacyNoticeAppearsOnlyAfterOnboardingOutsideSessionsAndOncePerVersion() {
     XCTAssertFalse(
       PrivacyNoticePolicy.shouldPresent(
@@ -282,6 +312,70 @@ final class AppSettingsTests: XCTestCase {
         properties: common.merging([.feature: "typed free text"]) { _, new in new }
       )
     )
+  }
+
+  func testIOSAnalyticsPayloadShapesMatchSharedContract() {
+    let common: [AnalyticsProperty: Any] = [
+      .schemaVersion: 1,
+      .platform: "ipados",
+      .appVersion: "1.1",
+      .buildNumber: "8",
+      .locale: "ja",
+    ]
+    let samples: [(AnalyticsEvent, [AnalyticsProperty: Any])] = [
+      (.appOpened, [.entryPoint: "foreground"]),
+      (.featureViewed, [.feature: "deck_maker"]),
+      (.onboardingStepCompleted, [.onboardingStep: "hatch_3"]),
+      (.deckDownloaded, [.deckSource: "catalog", .deckCategory: "travel"]),
+      (
+        .sessionStarted,
+        [
+          .sessionKind: "game", .deckSource: "bundled", .inputMode: "builtin",
+          .gameMode: "flow", .difficulty: "beginner",
+        ]
+      ),
+      (
+        .sessionCompleted,
+        [
+          .sessionKind: "game", .result: "completed", .durationBucket: "1_to_3m",
+          .itemCountBucket: "4_to_10", .deckSource: "bundled", .inputMode: "builtin",
+          .gameMode: "flow", .difficulty: "beginner",
+        ]
+      ),
+      (
+        .sessionAbandoned,
+        [
+          .sessionKind: "free_practice", .reason: "user_closed",
+          .durationBucket: "under_1m", .deckSource: "created", .inputMode: "os_ime",
+        ]
+      ),
+      (
+        .gameResult,
+        [
+          .gameMode: "spacing", .difficulty: "advanced", .result: "completed",
+          .scoreBucket: "1000_to_4999", .inputMode: "not_applicable",
+          .deckSource: "bundled",
+        ]
+      ),
+      (.reviewCompleted, [.itemCountBucket: "1_to_3", .result: "completed"]),
+      (
+        .deckMakerAction,
+        [.action: "imported", .itemCountBucket: "11_to_30", .deckSource: "imported"]
+      ),
+      (.purchaseFlow, [.purchaseState: "pending"]),
+      (.settingChanged, [.setting: "theme", .valueBucket: "dark"]),
+      (.shareCompleted, [.action: "saved_image", .gameMode: "dictation"]),
+    ]
+
+    for (event, properties) in samples {
+      XCTAssertTrue(
+        AnalyticsContract.accepts(
+          event: event,
+          properties: common.merging(properties) { _, new in new }
+        ),
+        "Rejected iOS sample for \(event.rawValue)"
+      )
+    }
   }
 
   func testReleaseLinksUsePublicHTTPSPages() {

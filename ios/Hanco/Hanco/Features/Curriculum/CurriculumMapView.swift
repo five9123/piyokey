@@ -725,6 +725,16 @@ private struct CurriculumPracticeDestination: View {
         )
         if saved, stars > 0 {
           retention.record(.curriculum, session: session)
+          if chainsHatchMissions,
+            let index = HatchOnboardingPolicy.requiredStages.firstIndex(where: {
+              $0.id == stage.id
+            })
+          {
+            TelemetryService.shared.capture(
+              .onboardingStepCompleted,
+              properties: [.onboardingStep: "hatch_\(index + 1)"]
+            )
+          }
         }
         return saved
       },

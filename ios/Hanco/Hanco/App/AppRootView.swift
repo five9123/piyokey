@@ -377,6 +377,12 @@ struct AppRootView: View {
       productAnalytics: analytics,
       crashDiagnostics: diagnostics
     )
+    if analytics {
+      TelemetryService.shared.capture(
+        .featureViewed,
+        properties: [.feature: selectedTab.analyticsValue]
+      )
+    }
     showsPrivacyConsent = false
   }
 
@@ -394,6 +400,10 @@ struct AppRootView: View {
 
   private func completeAppTour() {
     appTourCompleted = true
+    TelemetryService.shared.capture(
+      .onboardingStepCompleted,
+      properties: [.onboardingStep: "app_tour"]
+    )
     selectedTab = .home
     withAnimation(.easeOut(duration: 0.2)) {
       appTourStep = nil
@@ -469,6 +479,13 @@ struct AppRootView: View {
       .accessibilityIdentifier("tab.my_page")
     }
     .tint(AppPalette.accent)
+    .onAppear {
+      TelemetryService.shared.capture(
+        .featureViewed,
+        properties: [.feature: selectedTab.analyticsValue]
+      )
+      TelemetryService.shared.setCrashContext(feature: selectedTab.analyticsValue)
+    }
     .onChange(of: selectedTab) { tab in
       TelemetryService.shared.capture(.featureViewed, properties: [.feature: tab.analyticsValue])
       TelemetryService.shared.setCrashContext(feature: tab.analyticsValue)

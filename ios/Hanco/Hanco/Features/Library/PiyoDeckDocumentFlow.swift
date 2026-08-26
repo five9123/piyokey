@@ -491,7 +491,13 @@ struct PiyoDeckImportPreviewView: View {
       }
     }
     .sheet(item: $currentExportArtifact, onDismiss: finishCurrentExport) { artifact in
-      PiyoDeckActivityView(artifact: artifact) {
+      PiyoDeckActivityView(artifact: artifact) { completed in
+        if completed {
+          TelemetryService.shared.capture(
+            .deckMakerAction,
+            properties: [.action: "exported"]
+          )
+        }
         Task { @MainActor in finishCurrentExport() }
       }
     }
@@ -919,6 +925,14 @@ struct PiyoDeckImportPreviewView: View {
         // import so retained review history becomes available again in both
         // the re-import and active-replacement paths.
         _ = reviewDeck.reconcile(with: installed)
+        TelemetryService.shared.capture(
+          .deckMakerAction,
+          properties: [
+            .action: "imported",
+            .itemCountBucket: TelemetryService.shared.itemCountBucket(installed.items.count),
+            .deckSource: "imported",
+          ]
+        )
         isSaving = false
         coordinator.finishImport()
       } catch {
@@ -953,6 +967,14 @@ struct PiyoDeckImportPreviewView: View {
           packageFormatVersion: package.manifest.formatVersion,
           isLocallyModified: true
         )
+        TelemetryService.shared.capture(
+          .deckMakerAction,
+          properties: [
+            .action: "copied",
+            .itemCountBucket: TelemetryService.shared.itemCountBucket(copy.items.count),
+            .deckSource: "created",
+          ]
+        )
         isSaving = false
         coordinator.finishImport()
       } catch {
@@ -972,14 +994,14 @@ extension PiyoDeckDocumentCoordinator {
 
 struct PiyoDeckActivityView: UIViewControllerRepresentable {
   let artifact: PiyoDeckExportArtifact
-  let onComplete: () -> Void
+  let onComplete: (Bool) -> Void
 
   func makeUIViewController(context: Context) -> UIActivityViewController {
     let controller = UIActivityViewController(
       activityItems: [artifact.url],
       applicationActivities: nil
     )
-    controller.completionWithItemsHandler = { _, _, _, _ in onComplete() }
+    controller.completionWithItemsHandler = { _, completed, _, _ in onComplete(completed) }
     return controller
   }
 
