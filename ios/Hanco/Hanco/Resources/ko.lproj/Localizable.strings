@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "기본 입력 모드";
 "practice.setup.input_mode_detail" = "단어·문장 연습과 게임에서 사용할 키보드";
 "practice.setup.start" = "연습 시작";
-"practice.setup.session_note" = "연습 중에도 진행 상황을 유지한 채 입력 모드를 바꿀 수 있어요.";
+"practice.setup.session_note" = "연습 중에도 입력 모드를 바꿀 수 있어요. 내장 키보드 배열은 세션을 시작할 때 고정돼요.";
 
 "feedback.ready" = "빛나는 키부터 입력해 봐요";
 "feedback.correct" = "좋아요!";
@@ -81,6 +81,23 @@
 "keyboard.backspace" = "자모 하나 지우기";
 "keyboard.space" = "스페이스";
 "keyboard.accessibility_label" = "한국어 키보드";
+"keyboard.layout.title" = "내장 키보드 배열";
+"keyboard.layout.detail" = "챕터 5+, 자유 연습, 덱 연습에서 사용하며 세션 시작 시 고정돼요.";
+"keyboard.layout.dubeolsik" = "두벌식(기본)";
+"keyboard.layout.korean_10key" = "한국어 10키(천지인식)";
+"keyboard.layout.korean_10key_help" = "자음은 묶인 키를 반복해서 누르고, 같은 묶음이 이어지면 →로 구분해요. 모음은 빛나는 순서대로 ㅣ·ㆍ·ㅡ를 조합해요.";
+"keyboard.10key.accessibility_label" = "한국어 10키 천지인식 키보드";
+"keyboard.10key.vertical" = "세로획 ㅣ";
+"keyboard.10key.dot" = "천지인 점";
+"keyboard.10key.horizontal" = "가로획 ㅡ";
+"keyboard.10key.giyeok" = "ㄱ, ㅋ, ㄲ 묶음";
+"keyboard.10key.nieun" = "ㄴ, ㄹ 묶음";
+"keyboard.10key.digeut" = "ㄷ, ㅌ, ㄸ 묶음";
+"keyboard.10key.bieup" = "ㅂ, ㅍ, ㅃ 묶음";
+"keyboard.10key.siot" = "ㅅ, ㅎ, ㅆ 묶음";
+"keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ 묶음";
+"keyboard.10key.ieung" = "ㅇ, ㅁ 묶음";
+"keyboard.10key.next" = "다음 자음으로 진행";
 "input_mode.builtin" = "내장 키보드";
 "input_mode.os_ime" = "OS 키보드";
 "os_ime.input.title" = "기기의 한국어 키보드로 입력";

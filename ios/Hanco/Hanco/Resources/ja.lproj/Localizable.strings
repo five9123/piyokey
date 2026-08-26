@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "入力モードの初期設定";
 "practice.setup.input_mode_detail" = "単語・文章の練習とゲームで使うキーボード";
 "practice.setup.start" = "練習を始める";
-"practice.setup.session_note" = "入力モードは練習中にも切り替えられます。入力したところまでの進み具合はそのまま残ります。";
+"practice.setup.session_note" = "入力モードは練習中にも切り替えられます。内蔵キーボードの配列は開始時に固定されます。";
 
 "feedback.ready" = "光っているキーから入力してみよう";
 "feedback.correct" = "その調子！";
@@ -81,6 +81,23 @@
 "keyboard.backspace" = "一文字戻す";
 "keyboard.space" = "スペース";
 "keyboard.accessibility_label" = "韓国語キーボード";
+"keyboard.layout.title" = "内蔵キーボードの配列";
+"keyboard.layout.detail" = "チャプター5以降・自由練習・デッキ練習で使います。セッション開始時に固定されます。";
+"keyboard.layout.dubeolsik" = "2ボル式（標準）";
+"keyboard.layout.korean_10key" = "韓国語10キー（天地人式）";
+"keyboard.layout.korean_10key_help" = "子音は同じグループキーを繰り返しタップします。同じグループが続くときは→で区切り、母音はㅣ・ㆍ・ㅡを光る順に組み合わせます。";
+"keyboard.10key.accessibility_label" = "韓国語10キー、天地人式";
+"keyboard.10key.vertical" = "縦線、ㅣ";
+"keyboard.10key.dot" = "点、天地人の点";
+"keyboard.10key.horizontal" = "横線、ㅡ";
+"keyboard.10key.giyeok" = "ㄱ、ㅋ、ㄲグループ";
+"keyboard.10key.nieun" = "ㄴ、ㄹグループ";
+"keyboard.10key.digeut" = "ㄷ、ㅌ、ㄸグループ";
+"keyboard.10key.bieup" = "ㅂ、ㅍ、ㅃグループ";
+"keyboard.10key.siot" = "ㅅ、ㅎ、ㅆグループ";
+"keyboard.10key.jieut" = "ㅈ、ㅊ、ㅉグループ";
+"keyboard.10key.ieung" = "ㅇ、ㅁグループ";
+"keyboard.10key.next" = "次の子音へ進む";
 "input_mode.builtin" = "内蔵キーボード";
 "input_mode.os_ime" = "OSキーボード";
 "os_ime.input.title" = "端末の韓国語キーボードで入力";
