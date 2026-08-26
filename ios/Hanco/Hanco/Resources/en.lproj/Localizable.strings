@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "Default input mode";
 "practice.setup.input_mode_detail" = "Keyboard used for word, sentence, and game sessions";
 "practice.setup.start" = "Start practice";
-"practice.setup.session_note" = "You can switch input mode during practice without losing progress.";
+"practice.setup.session_note" = "You can switch input mode during practice. The built-in layout is fixed when the session starts.";
 
 "feedback.ready" = "Start with the highlighted key";
 "feedback.correct" = "Keep it up!";
@@ -81,6 +81,23 @@
 "keyboard.backspace" = "Delete one jamo";
 "keyboard.space" = "Space";
 "keyboard.accessibility_label" = "Korean keyboard";
+"keyboard.layout.title" = "Built-in keyboard layout";
+"keyboard.layout.detail" = "Used in Chapter 5+, free practice, and deck practice. The layout is fixed when a session starts.";
+"keyboard.layout.dubeolsik" = "2-Set (default)";
+"keyboard.layout.korean_10key" = "Korean 10-Key";
+"keyboard.layout.korean_10key_help" = "Repeat a grouped consonant key, use → between consecutive consonants in the same group, or combine ㅣ, ㆍ, and ㅡ in the highlighted order.";
+"keyboard.10key.accessibility_label" = "Korean 10-Key, Cheonjiin style";
+"keyboard.10key.vertical" = "Vertical stroke, ㅣ";
+"keyboard.10key.dot" = "Dot, Cheonjiin dot";
+"keyboard.10key.horizontal" = "Horizontal stroke, ㅡ";
+"keyboard.10key.giyeok" = "ㄱ, ㅋ, ㄲ group";
+"keyboard.10key.nieun" = "ㄴ, ㄹ group";
+"keyboard.10key.digeut" = "ㄷ, ㅌ, ㄸ group";
+"keyboard.10key.bieup" = "ㅂ, ㅍ, ㅃ group";
+"keyboard.10key.siot" = "ㅅ, ㅎ, ㅆ group";
+"keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ group";
+"keyboard.10key.ieung" = "ㅇ, ㅁ group";
+"keyboard.10key.next" = "Advance to the next consonant";
 "input_mode.builtin" = "Built-in keyboard";
 "input_mode.os_ime" = "OS keyboard";
 "os_ime.input.title" = "Type with your device's Korean keyboard";
