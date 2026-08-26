@@ -1435,3 +1435,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 이 소스 완료는 Play 배포 승인이 아니다. final application ID/Play 소유권, 공개 catalog, 콘텐츠·고정 발음 권리, upload signing, Billing·Games Console, 스토어 메타데이터·스크린샷을 동일 배포 설정으로 확정한 뒤 생성한 signed AAB만 Issue #19 실기기 QA 대상이 된다.
 - 근거: 초기 Android 화면은 핵심 기능은 연결돼 있었지만 기본 Material 색상, 문자열 아이콘, 다크 모드의 고정 밝은 surface 등으로 출시판의 시각 일관성과 접근성 기준에 미달했다. 소스 폴리싱·외부 배포 준비·실기기 품질 검증을 분리해야 “기능 완료”를 “출시 가능”으로 오인하지 않는다.
 - 영향 범위: `core:design`, app shell, onboarding/discover/practice/game/retention/settings Compose UI, Android brand resource generation, release preflight, Source CI, Issue #19·#55.
+
+## 2026-08-27 Google Play listing 소스와 외부 게이트 분리
+
+- 관련: PRD §12.1, §13 M7, Issue #19, Issue #55, Google Play 스토어 등록정보·미리보기 자산 요구사항.
+- 결정: Android `1.1.0 (8)`의 Google Play 초안은 `release/google_play_metadata.json`을 기계 판독 기준으로 삼고 en-US·ja·ko 이름·짧은 설명·전체 설명, Education·광고 없음, 지원·개인정보 URL을 함께 관리한다. `release_preflight.py`는 30/80/4,000자 제한, 로케일, target SDK 36, 512×512 알파 PNG 아이콘, 1024×500 무알파 피처 그래픽과 140자 대체 텍스트를 검증한다.
+- 결정: Play 아이콘은 `shared/brand/piyokey_app_icon_source.png`에서 파생한다. 피처 그래픽은 같은 공용 브랜드 이미지를 참조해 내장 이미지 생성으로 만든 원본을 보존하고, `tools/generate_google_play_assets.swift`가 기존 파일을 덮어쓰지 않으면서 규격 산출물의 부재만 채운다.
+- 결정: 전화 스크린샷은 임시·디버그 빌드에서 만들지 않는다. 최종 application ID·서명·운영 설정이 고정된 동일 signed release candidate에서 en-US·ja·ko 1080×1920 4장씩 캡처한다. Play Console 앱 생성·ID 소유권·콘텐츠 권리·upload signing·Billing·Games·Data safety·콘텐츠 등급·스크린샷 업로드·Issue #19 실기기 QA는 저장소 검증과 별개인 열린 외부 게이트로 유지한다.
+- 근거: 스토어 문구와 그래픽을 버전 관리·자동 검증하면 Console 입력 전 제품 약속과 자산 규격의 드리프트를 막을 수 있다. 반면 스크린샷과 서명·상품·정책 정보는 실제 배포 후보와 외부 계정 상태에 의존하므로 소스 완료와 동일시할 수 없다.
+- 영향 범위: `release/google_play_metadata.json`, `release/google_play/`, `release/GOOGLE_PLAY_QA.md`, Google Play 자산 생성기, release preflight, Android M7 readiness·global rollout 문서.

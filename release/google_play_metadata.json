@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "status": "draft_not_applied",
+  "generated_at": "2026-08-27T00:00:00+09:00",
+  "application_id": "app.piyokey.piyokey",
+  "application_id_confirmed": false,
+  "release": {
+    "version_name": "1.1.0",
+    "version_code": 8,
+    "target_sdk": 36,
+    "category": "EDUCATION",
+    "contains_ads": false,
+    "default_language": "en-US"
+  },
+  "contact": {
+    "email": "contact@typee.app",
+    "website": "https://hancoweb.vercel.app/support",
+    "privacy_policy": "https://hancoweb.vercel.app/privacy"
+  },
+  "localizations": {
+    "en-US": {
+      "title": "Korean Typing - typee",
+      "short_description": "Learn Hangul typing with guided lessons, offline decks, and six practice games",
+      "full_description": "Build Korean typing skills from the first consonant and vowel to complete words and phrases. typee combines guided Hangul lessons, an on-screen Korean keyboard, downloadable learning decks, review, daily practice, and six typing games in one focused app.\n\nLearn step by step\n• Follow a six-chapter curriculum with clear progress and review.\n• See how Korean letters combine while you type.\n• Practice with the built-in two-set keyboard or your device’s Korean keyboard.\n\nKeep practice useful and private\n• Use official decks offline after download.\n• Import, practice, export, and delete local .piyodeck files without an account.\n• Create and edit personal decks with the optional one-time My Deck Maker purchase.\n\nStay motivated\n• Play Flow, Acid Rain, Initial Sound, Word Match, Dictation, and Spacing modes.\n• Collect missed words for review and build a daily streak.\n• Grow and dress your Piyo as your learning record develops.\n\nThe app has no ads during lessons or games. Fixed Korean pronunciation is included for offline playback, and personal deck content stays on your device."
+    },
+    "ja": {
+      "title": "韓国語タイピング - ピヨキー",
+      "short_description": "ハングルの組み立てから6つのゲームまで、オフラインで学べる韓国語タイピング練習",
+      "full_description": "子音と母音の組み立てから、単語・フレーズの入力まで。ピヨキーは、段階式レッスン、韓国語キーボード、学習デッキ、復習、デイリー練習、6つのタイピングゲームをひとつにまとめた韓国語タイピング学習アプリです。\n\n順番に身につける\n• 6章のカリキュラムで、進捗を確認しながら練習できます。\n• 入力中のハングル組み立てと次のキーを画面で確認できます。\n• 内蔵の2ボル式キーボードと端末の韓国語キーボードを選べます。\n\n自分に合う内容をオフラインで\n• 公式デッキはダウンロード後にオフラインで使えます。\n• アカウントなしでローカルの.piyodeckを読み込み、練習、書き出し、削除できます。\n• 任意の買い切り「マイデッキメーカー」で自分用デッキの作成・編集もできます。\n\n続けたくなる練習\n• フロー、酸性雨、初声、単語、聞き取り、分かち書きの6モードを収録。\n• 間違えた単語を復習に集め、毎日の記録を育てられます。\n• 学習記録に合わせてピヨが成長し、衣装を選べます。\n\nレッスン中・ゲーム中に広告は表示しません。固定の韓国語発音はオフライン再生用に同梱し、個人デッキの内容は端末内に保存します。"
+    },
+    "ko": {
+      "title": "한글 타자 연습 - typee",
+      "short_description": "한글 조합부터 여섯 가지 게임까지, 오프라인으로 익히는 한국어 타자 연습",
+      "full_description": "자음과 모음 조합부터 단어와 문장 입력까지 차근차근 익혀 보세요. typee는 단계별 한글 레슨, 화면 키보드, 학습 덱, 복습, 데일리 연습, 여섯 가지 타자 게임을 한곳에 담은 한국어 타이핑 학습 앱입니다.\n\n단계별로 배우기\n• 6개 챕터 커리큘럼에서 진행 상황을 확인하며 연습합니다.\n• 입력하는 동안 한글이 조합되는 과정과 다음 키를 볼 수 있습니다.\n• 내장 두벌식 키보드와 기기의 한국어 키보드를 선택할 수 있습니다.\n\n내게 맞는 내용을 오프라인으로\n• 공식 덱은 다운로드한 뒤 오프라인에서 사용할 수 있습니다.\n• 계정 없이 로컬 .piyodeck 파일을 가져오고, 연습하고, 내보내고, 삭제할 수 있습니다.\n• 선택형 1회 구매 ‘내 덱 만들기’로 개인 덱을 생성하고 편집할 수 있습니다.\n\n꾸준히 이어 가기\n• 흐름, 산성비, 초성, 단어 맞추기, 받아쓰기, 띄어쓰기 모드를 제공합니다.\n• 틀린 단어를 복습에 모으고 매일의 학습 기록을 이어 갑니다.\n• 학습 기록에 따라 피요를 성장시키고 옷장에서 꾸밀 수 있습니다.\n\n레슨과 게임 도중에는 광고를 표시하지 않습니다. 고정 한국어 발음은 오프라인 재생용으로 포함되며 개인 덱 내용은 기기에만 저장됩니다."
+    }
+  },
+  "assets": {
+    "app_icon": {
+      "path": "release/google_play/assets/common/play-icon-512.png",
+      "width": 512,
+      "height": 512,
+      "requires_alpha_channel": true
+    },
+    "feature_graphic": {
+      "path": "release/google_play/assets/common/feature-graphic-1024x500.png",
+      "source_path": "release/google_play/assets/common/feature-graphic-source.png",
+      "width": 1024,
+      "height": 500,
+      "requires_alpha_channel": false,
+      "alt_text": {
+        "en-US": "Piyo practices Korean typing on colorful Hangul keys",
+        "ja": "カラフルなハングルキーでタイピングを練習するピヨ",
+        "ko": "알록달록한 한글 키로 타자 연습을 하는 피요"
+      }
+    },
+    "phone_screenshots": {
+      "status": "pending_exact_signed_release_candidate",
+      "count_per_locale": 4,
+      "required_size": [1080, 1920],
+      "locales": ["en-US", "ja", "ko"],
+      "scenes": ["home_and_daily", "guided_practice", "six_games", "progress_and_piyo"],
+      "alt_text_limit": 140
+    }
+  },
+  "external_gates": {
+    "play_console_app_created": false,
+    "application_id_owned": false,
+    "content_rights_approved": false,
+    "upload_signing_ready": false,
+    "deck_maker_product_ready": false,
+    "play_games_resources_ready": false,
+    "data_safety_completed": false,
+    "content_rating_completed": false,
+    "localized_screenshots_uploaded": false,
+    "signed_candidate_device_qa_completed": false
+  }
+}
