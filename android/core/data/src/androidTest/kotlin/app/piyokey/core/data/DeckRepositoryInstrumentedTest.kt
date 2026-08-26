@@ -54,14 +54,14 @@ class DeckRepositoryInstrumentedTest {
     val initialFile = stageFixture("valid/basic.piyodeck")
     val preview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
     assertEquals(ImportedDeckConflict.NEW, preview.conflict)
-    val first = repository.commitImportedDeck(initialFile, preview.contentSha256, false)
+    val first = repository.commitImportedDeck(initialFile, preview.contentSha256, false, true)
     assertTrue(first is ImportedDeckCommitResult.Installed)
 
     repository.markPlayed(preview.deck.deckId)
     val beforeIdentical = requireNotNull(database.dao().installedDeck(preview.deck.deckId))
     val identical = repository.previewImportedDeck(initialFile, "basic.piyodeck")
     assertEquals(ImportedDeckConflict.IDENTICAL, identical.conflict)
-    assertTrue(repository.commitImportedDeck(initialFile, identical.contentSha256, false) is ImportedDeckCommitResult.AlreadyInstalled)
+    assertTrue(repository.commitImportedDeck(initialFile, identical.contentSha256, false, true) is ImportedDeckCommitResult.AlreadyInstalled)
     assertEquals(beforeIdentical, database.dao().installedDeck(preview.deck.deckId))
 
     val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
@@ -74,12 +74,12 @@ class DeckRepositoryInstrumentedTest {
     val replacement = repository.previewImportedDeck(replacementFile, "replacement.piyodeck")
     assertEquals(ImportedDeckConflict.NEWER_VERSION, replacement.conflict)
     try {
-      repository.commitImportedDeck(replacementFile, replacement.contentSha256, false)
+      repository.commitImportedDeck(replacementFile, replacement.contentSha256, false, true)
       throw AssertionError("replacement confirmation was not required")
     } catch (_: ImportedDeckException.ReplacementConfirmationRequired) {
       // Expected: conflict replacement is never implicit.
     }
-    repository.commitImportedDeck(replacementFile, replacement.contentSha256, true)
+    repository.commitImportedDeck(replacementFile, replacement.contentSha256, true, true)
     val replaced = requireNotNull(database.dao().installedDeck(preview.deck.deckId))
     assertEquals(parsed.deck.version + 1, replaced.version)
     assertEquals(beforeIdentical.lastPlayedAtEpochMillis, replaced.lastPlayedAtEpochMillis)
@@ -90,7 +90,7 @@ class DeckRepositoryInstrumentedTest {
     repository.delete(preview.deck.deckId)
     assertTrue(repository.snapshot().installed.isEmpty())
     assertTrue(database.dao().userDeckHistory(preview.deck.deckId)?.lastDeletedAtEpochMillis != null)
-    repository.commitImportedDeck(replacementFile, replacement.contentSha256, false)
+    repository.commitImportedDeck(replacementFile, replacement.contentSha256, false, true)
     assertEquals(beforeIdentical.lastPlayedAtEpochMillis, database.dao().installedDeck(preview.deck.deckId)?.lastPlayedAtEpochMillis)
   }
 
@@ -98,7 +98,7 @@ class DeckRepositoryInstrumentedTest {
   fun conflictingImportCanBecomeIndependentCopyWithoutTouchingOriginalOrDraft() = runTest {
     val initialFile = stageFixture("valid/basic.piyodeck")
     val initialPreview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
-    repository.commitImportedDeck(initialFile, initialPreview.contentSha256, false)
+    repository.commitImportedDeck(initialFile, initialPreview.contentSha256, false, true)
     repository.markPlayed(initialPreview.deck.deckId)
     val originalBefore = requireNotNull(database.dao().installedDeck(initialPreview.deck.deckId))
 
@@ -134,7 +134,7 @@ class DeckRepositoryInstrumentedTest {
   fun maliciousImportNeverMutatesInstalledDecks() = runTest {
     val valid = stageFixture("valid/basic.piyodeck")
     val preview = repository.previewImportedDeck(valid, "basic.piyodeck")
-    repository.commitImportedDeck(valid, preview.contentSha256, false)
+    repository.commitImportedDeck(valid, preview.contentSha256, false, true)
     val before = database.dao().installedDecks()
     val invalid = stageFixture("invalid/wrong-sha.piyodeck")
     try {
@@ -211,6 +211,56 @@ class DeckRepositoryInstrumentedTest {
     val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
     val exported = PiyoDeckPackageReader.read(repository.exportUserDeck(copied.deck.deckId), schema)
     assertEquals(copied.deck.deckId, exported.deck.deckId)
+  }
+
+  @Test
+  fun freeUserDeckLimitBlocksOnlyFourthNewDeckAndAllowsReplacement() = runTest {
+    val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
+    val base = PiyoDeckPackageReader.read(
+      context.assets.open("valid/basic.piyodeck").use { it.readBytes() },
+      schema,
+    ).deck
+    val installedFiles = (1..3).map { index ->
+      stageBytes(
+        PiyoDeckPackageWriter.write(
+          base.copy(deckId = "user_${index.toString(16).padStart(32, '0')}", name = "무료 $index"),
+          schema,
+        ),
+      )
+    }
+    installedFiles.forEach { file ->
+      val preview = repository.previewImportedDeck(file, file.name)
+      repository.commitImportedDeck(file, preview.contentSha256, false, false)
+    }
+    assertEquals(3, repository.snapshot().installed.size)
+
+    val fourthFile = stageBytes(
+      PiyoDeckPackageWriter.write(
+        base.copy(deckId = "user_${"f".repeat(32)}", name = "네 번째"),
+        schema,
+      ),
+    )
+    val fourth = repository.previewImportedDeck(fourthFile, fourthFile.name)
+    try {
+      repository.commitImportedDeck(fourthFile, fourth.contentSha256, false, false)
+      throw AssertionError("the fourth free user deck was installed")
+    } catch (_: ImportedDeckException.FreeUserDeckLimitReached) {
+      // Expected: validation and preview remain available, but the new install is gated.
+    }
+
+    val firstInstalled = PiyoDeckPackageReader.read(installedFiles.first().readBytes(), schema).deck
+    val replacementFile = stageBytes(
+      PiyoDeckPackageWriter.write(
+        firstInstalled.copy(version = firstInstalled.version + 1, name = "무료 교체"),
+        schema,
+      ),
+    )
+    val replacement = repository.previewImportedDeck(replacementFile, replacementFile.name)
+    repository.commitImportedDeck(replacementFile, replacement.contentSha256, true, false)
+    assertEquals(firstInstalled.version + 1, database.dao().installedDeck(firstInstalled.deckId)?.version)
+
+    repository.commitImportedDeck(fourthFile, fourth.contentSha256, false, true)
+    assertEquals(4, repository.snapshot().installed.size)
   }
 
   private fun complete(draft: UserDeckDraft): UserDeckDraft = draft.copy(

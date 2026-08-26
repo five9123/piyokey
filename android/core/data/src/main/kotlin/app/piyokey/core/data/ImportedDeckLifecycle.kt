@@ -65,4 +65,11 @@ sealed class ImportedDeckException(message: String) : Exception(message) {
   data class SeparateCopyRequiresConflict(val conflict: ImportedDeckConflict) :
     ImportedDeckException("A separate copy requires an installed deck with different content: $conflict")
   data object ExportRequiresUserDeck : ImportedDeckException("Only imported or created user decks can be exported.")
+  data object FreeUserDeckLimitReached : ImportedDeckException(
+    "typee pro is required to install more than three user decks.",
+  )
+}
+
+object PiyokeyProPolicy {
+  const val FREE_INSTALLED_USER_DECK_LIMIT = 3
 }

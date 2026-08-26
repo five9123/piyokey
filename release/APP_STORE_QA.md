@@ -2,7 +2,7 @@
 
 이 문서는 App Store 제출용 Release Candidate(RC)의 단일 체크리스트다. `P0`가 하나라도 열려 있으면 제출하지 않는다.
 
-## 0A. 다음 릴리스 후보 — 1.1 Deck Maker
+## 0A. 다음 릴리스 후보 — 1.1 typee pro
 
 아래 항목은 다음 업데이트 `1.1`의 제출 게이트다. 이후 `1.0.2 (6)` 체크와 제출 ID는 과거 제출 증적으로 보존하며, `1.1` 완료 근거로 재사용하지 않는다.
 
@@ -13,14 +13,14 @@
 - [ ] 1.1 앱 UI·콘텐츠 언어를 ja/en/ko로 동결하고 App Store 메타데이터를 en-US/en-GB/en-AU/en-CA/ko/ja로 준비
 - [ ] en-GB/en-AU/en-CA의 `copy_from` 초안을 App Store Connect 필수 필드·스크린샷으로 실제 저장하고 재확인
 - [ ] 프랑스어·스페인어·중국어 등 추가 UI·metadata-only 현지화가 1.1 제출에 섞이지 않았는지 확인
-- [ ] 앱과 Deck Maker IAP 모두 `All Countries or Regions` 및 향후 storefront 자동 포함으로 설정
+- [ ] 앱과 typee pro IAP 모두 `All Countries or Regions` 및 향후 storefront 자동 포함으로 설정
 - [ ] EU DSA, 중국 본토, 베트남의 국가별 App Store 상태를 확인하고 action-required/판매 불가 예외를 제출 기록에 남김
 - [ ] availability와 별개로 승인 후 수동 출시 또는 자동 출시 중 하나를 확정하고 제출 기록과 App Store Connect 설정을 일치시킴
 - [ ] 출시 가격·스토어프런트·세금 카테고리·Family Sharing 정책 확정
 - [ ] 1.1 결제창의 가격·복원·약관·개인정보 링크가 보이는 IAP 심사용 스크린샷 업로드
 - [ ] IAP 리뷰 노트 입력 후 상품 상태 **Ready to Submit** 확인
 - [ ] 1.1 버전의 **Add for Review**에서 iOS 앱과 첫 IAP가 함께 포함됐는지 확인
-- [ ] 로컬 StoreKit에서 성공·취소·pending·복원·refund/revocation 및 무료 `.piyodeck` 경계 확인
+- [ ] 로컬 StoreKit에서 성공·취소·pending·복원·refund/revocation, 사용자 덱 3개 무료·4번째 잠금·삭제 후 슬롯 복구·동일 ID 무료 교체 경계 확인
 - [ ] Sandbox/TestFlight에서 같은 결제 시나리오와 재실행 entitlement를 정확한 1.1 빌드로 확인
 - [ ] `release/app_store_submission.json#next_submission`의 수동 게이트를 실제 증거에 맞춰 갱신
 - [ ] `python3 tools/release_preflight.py --strict` 성공
