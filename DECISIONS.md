@@ -1378,6 +1378,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 최종 스택 head의 GitHub Source CI는 계정 결제·Actions 지출 한도로 checkout 전에 거부되었으므로 원격 green으로 간주하지 않는다. 같은 head의 로컬 Source CI-equivalent 959 tasks, API 35 앱 계측 31/31, Python 56/56, Swift 42/42를 구현 증빙으로 유지하고 계정 제한 해제 뒤 원격 CI를 다시 실행한다.
 - 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
 - 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.
+
 ## 2026-08-26 전 플랫폼 익명 제품 분석·크래시 진단
 
 - 관련: PRD F10, §10, §12, Issue #43.
@@ -1396,3 +1397,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 활성 레슨/게임, 결과 자동 전환, 파일 가져오기·편집·결제·다른 모달 위에는 개인정보 안내를 표시하지 않는다. 앱의 설정/온보딩을 건너뛰는 자동 UI 테스트는 고지 검토 상태도 명시적으로 고정하고, 별도 동의 UI 회귀에서만 미검토 상태를 사용한다.
 - 근거: Apple의 익명 사용 데이터 동의·철회 요구와 Google Play의 명확한 고지·affirmative action 원칙을 만족하면서도 PRD §11의 세션 무인터럽트와 기본 OFF 계약을 보존해야 한다.
 - 영향 범위: iOS/iPadOS AppRoot·Settings·UserDefaults·현지화/UI 회귀, Android app shell·DataStore·Settings Compose·현지화/계측 회귀, 웹 통합용 동의 문구, 스토어 심사 안내·개인정보처리방침 출시 gate.
+
+## 2026-08-26 GitHub Actions 비활성화와 로컬 검증 전환
+
+- 관련: Issue #47, `docs/REPOSITORY_POLICY.md`.
+- 결정: GitHub Actions는 저장소 수준에서 비활성화하고 기존 workflow 정의는 향후 재사용 가능하도록 보존한다. 코드·콘텐츠·설정 변경은 계속 Issue별 branch와 PR로 추적하되, 담당 agent가 `AGENTS.md`의 영향 범위에 맞는 최소 로컬 테스트를 실행하고 정확한 명령·결과·대상 commit·미실행 gate를 Issue 또는 PR에 기록한다.
+- 결정: 로컬 통과는 해당 commit의 자동 검증 증빙일 뿐 사용자 승인, 실기기, 스토어, 외부 서비스, 서명 gate를 대체하지 않는다. 적용 가능한 gate가 남은 PR은 `Verify`에 유지하고 승인 뒤 수동 병합한다. Actions 재활성화는 계정 결제·spending limit 동작을 확인한 뒤 사용자의 명시적 승인으로만 수행하며 유료 초과 사용을 묵시적으로 켜지 않는다.
+- 근거: 현재 GitHub-hosted job은 코드 checkout 전 계정 결제 또는 spending limit 사유로 전부 거부되어 신뢰할 수 있는 CI 신호를 제공하지 못한다. 로컬 검증 결과와 열린 수동 gate를 명시적으로 남기면 GitHub의 소스·Issue·Project·PR 흐름을 유지하면서 유료 Actions에 의존하지 않을 수 있다.
+- 영향 범위: 저장소 Actions 권한, PR 검증 증빙, 수동 병합 절차, Tools/CI·Release/Ops 운영. 앱 바이너리와 제품 동작은 변경하지 않는다.
