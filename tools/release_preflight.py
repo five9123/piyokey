@@ -667,8 +667,9 @@ def repository_checks(root: Path) -> list[Finding]:
         add(findings, 'path="shared_results/"' in android_paths, "Android share provider must expose only result cache files")
         add(
             findings,
-            "PiyokeyLogo.imageset" in android_build and 'rename { "piyokey_logo.png" }' in android_build,
-            "Android launcher/share logo must derive from the shared iOS brand source",
+            "../shared/brand/piyokey_app_icon_source.png" in android_build
+            and 'rename { "piyokey_logo.png" }' in android_build,
+            "Android launcher/share logo must derive from the shared brand source",
         )
     except OSError as error:
         findings.append(Finding("ERROR", f"Invalid Android release resources: {error}"))

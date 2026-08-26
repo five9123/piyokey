@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,14 +25,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -49,21 +49,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Density
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.piyokey.core.data.CatalogRefreshResult
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
+import app.piyokey.core.design.PiyokeyTheme
 import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckLibrarySnapshot
 import app.piyokey.core.data.DeckRepository
@@ -229,13 +235,17 @@ class MainActivity : AppCompatActivity() {
             isAppearanceLightNavigationBars = light
           }
           @Suppress("DEPRECATION")
-          window.navigationBarColor = if (light) android.graphics.Color.WHITE else android.graphics.Color.rgb(18, 18, 20)
+          window.navigationBarColor = if (light) {
+            android.graphics.Color.rgb(255, 248, 243)
+          } else {
+            android.graphics.Color.rgb(24, 21, 29)
+          }
         }
         val baseDensity = LocalDensity.current
         CompositionLocalProvider(
           LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * optimistic.fontScale.multiplier),
         ) {
-          MaterialTheme(colorScheme = if (optimistic.theme == AppTheme.DARK) darkColorScheme() else lightColorScheme()) {
+          PiyokeyTheme(darkTheme = optimistic.theme == AppTheme.DARK) {
             PiyokeyApp(
               preferences = optimistic,
               incomingDocument = incomingDocument,
@@ -301,12 +311,12 @@ private sealed interface UserDeckImportUiState {
 
 private data class PendingUserDeckExport(val deckId: String, val deleteAfterExport: Boolean)
 
-private enum class RootTab(val label: Int, val symbol: String) {
-  HOME(R.string.nav_home, "⌂"),
-  DISCOVER(R.string.nav_discover, "⌕"),
-  PRACTICE(R.string.nav_practice, "⌨"),
-  GAMES(R.string.nav_games, "★"),
-  PROFILE(R.string.nav_profile, "●"),
+private enum class RootTab(val label: Int, val icon: PiyokeyIconKind) {
+  HOME(R.string.nav_home, PiyokeyIconKind.HOME),
+  DISCOVER(R.string.nav_discover, PiyokeyIconKind.DISCOVER),
+  PRACTICE(R.string.nav_practice, PiyokeyIconKind.PRACTICE),
+  GAMES(R.string.nav_games, PiyokeyIconKind.GAMES),
+  PROFILE(R.string.nav_profile, PiyokeyIconKind.PROFILE),
 }
 
 private data class ActivePractice(
@@ -1579,7 +1589,14 @@ private fun PiyokeyApp(
             modifier = Modifier.testTag("nav-${item.name.lowercase(Locale.ROOT)}"),
             selected = tab == item,
             onClick = { tab = item },
-            icon = { Text(item.symbol, fontWeight = FontWeight.Black) },
+            icon = {
+              PiyokeyIcon(
+                kind = item.icon,
+                contentDescription = stringResource(item.label),
+                modifier = Modifier.size(24.dp),
+                tint = if (tab == item) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            },
             label = { Text(stringResource(item.label)) },
           )
         }
@@ -1597,6 +1614,23 @@ private fun PiyokeyApp(
           ),
           installedDeckIds = current.installedDeckIds,
           onDeckClick = ::openDetail,
+          brandHeader = {
+            Row(
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+              Image(
+                painter = painterResource(R.drawable.piyokey_logo),
+                contentDescription = null,
+                modifier = Modifier.size(46.dp).clip(RoundedCornerShape(12.dp)),
+              )
+              Text(
+                stringResource(app.piyokey.feature.discover.R.string.brand_name),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Black,
+              )
+            }
+          },
           header = {
             RetentionHomeCard(
               today = JstDay.fromEpochMillis(System.currentTimeMillis()),

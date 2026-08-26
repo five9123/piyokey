@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import app.piyokey.core.data.ReminderPreferenceEntity
 import app.piyokey.core.data.UserProgressEntity
 import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.deckkit.DeckItem
 import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumPolicy
@@ -60,10 +62,6 @@ import app.piyokey.core.retention.StampState
 import app.piyokey.core.settings.PiyoAccessory
 import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.core.settings.PiyoWardrobePolicy
-
-private val Background = Color(0xFFFFF9F1)
-private val Pink = Color(0xFFFFE4EC)
-private val Yellow = Color(0xFFFFD65A)
 
 data class ManualReviewCandidate(
   val sourceDeckId: String,
@@ -104,7 +102,7 @@ fun RetentionHomeCard(
           )
           Column(Modifier.weight(1f)) {
             Text(stringResource(R.string.retention_my_piyo), fontWeight = FontWeight.Black)
-            Surface(color = Pink, shape = RoundedCornerShape(14.dp)) {
+            Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
               Text("「$message」", Modifier.padding(horizontal = 10.dp, vertical = 7.dp))
             }
           }
@@ -133,7 +131,11 @@ fun RetentionHomeCard(
               Surface(
                 modifier = Modifier.size(30.dp),
                 shape = CircleShape,
-                color = if (stamp.state == StampState.COMPLETED) Yellow else Color(0xFFF1EDE7),
+                color = if (stamp.state == StampState.COMPLETED) {
+                  MaterialTheme.colorScheme.tertiaryContainer
+                } else {
+                  MaterialTheme.colorScheme.surfaceVariant
+                },
               ) { Box(contentAlignment = Alignment.Center) { Text(symbol, fontWeight = FontWeight.Bold) } }
             }
           }
@@ -185,7 +187,7 @@ fun PiyoProfileSection(
         )
         Column(Modifier.weight(1f)) {
           Text(stringResource(R.string.retention_my_piyo), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
-          Surface(color = Pink, shape = RoundedCornerShape(14.dp)) {
+          Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
             Text("「$message」", Modifier.padding(horizontal = 10.dp, vertical = 7.dp))
           }
         }
@@ -193,7 +195,14 @@ fun PiyoProfileSection(
           onClick = { showWardrobe = true },
           modifier = Modifier.size(48.dp).testTag("piyo-wardrobe-open"),
           contentPadding = PaddingValues(0.dp),
-        ) { Text("♧", style = MaterialTheme.typography.headlineSmall) }
+        ) {
+          PiyokeyIcon(
+            kind = PiyokeyIconKind.WARDROBE,
+            contentDescription = stringResource(R.string.wardrobe_title),
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary,
+          )
+        }
       }
       Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
         ProfileMetric(stringResource(R.string.retention_current_streak), streak.current)
@@ -205,7 +214,11 @@ fun PiyoProfileSection(
         RetentionPolicy.rewardThresholds.sorted().forEach { threshold ->
           Surface(
             modifier = Modifier.weight(1f),
-            color = if (threshold in unlockedRewards) Yellow else Color(0xFFF1EDE7),
+            color = if (threshold in unlockedRewards) {
+              MaterialTheme.colorScheme.tertiaryContainer
+            } else {
+              MaterialTheme.colorScheme.surfaceVariant
+            },
             shape = RoundedCornerShape(14.dp),
           ) {
             Text(
@@ -283,7 +296,7 @@ fun CurriculumMapScreen(
 ) {
   val completed = progress.keys
   LazyColumn(
-    modifier = modifier.fillMaxSize().background(Background).testTag("curriculum-map"),
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("curriculum-map"),
     contentPadding = PaddingValues(18.dp),
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
@@ -308,13 +321,27 @@ fun CurriculumMapScreen(
             .fillMaxWidth()
             .testTag("curriculum-stage-${stage.id}${if (unlocked) "" else "-locked"}")
             .clickable(enabled = unlocked) { onStage(stage) },
-          colors = CardDefaults.cardColors(containerColor = if (unlocked) Color.White else Color(0xFFEAE7E2)),
+          colors = CardDefaults.cardColors(
+            containerColor = if (unlocked) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant,
+          ),
           shape = RoundedCornerShape(18.dp),
         ) {
           Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(shape = CircleShape, color = if (unlocked) Yellow else Color.LightGray) {
+            Surface(
+              shape = CircleShape,
+              color = if (unlocked) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.outlineVariant,
+            ) {
               Box(Modifier.size(44.dp), contentAlignment = Alignment.Center) {
-                Text(if (unlocked) stage.chapterNumber.toString() else "🔒", fontWeight = FontWeight.Black)
+                if (unlocked) {
+                  Text(stage.chapterNumber.toString(), fontWeight = FontWeight.Black)
+                } else {
+                  PiyokeyIcon(
+                    kind = PiyokeyIconKind.LOCK,
+                    contentDescription = stringResource(R.string.curriculum_locked),
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  )
+                }
               }
             }
             Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
@@ -358,7 +385,7 @@ fun ReviewDeckSection(
       }
     }
     if (active.isEmpty()) {
-      Card(colors = CardDefaults.cardColors(containerColor = Pink)) {
+      Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
         Text(stringResource(R.string.review_empty), Modifier.padding(16.dp))
       }
     } else {

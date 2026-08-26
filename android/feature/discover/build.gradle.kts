@@ -27,9 +27,11 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":core:design"))
   implementation(project(":core:data"))
   implementation(project(":core:deckkit"))
   implementation(project(":core:piyodeck"))
+  implementation(project(":core:settings"))
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.compose.ui.tooling.preview)

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.settings.AppLanguage
 import app.piyokey.core.settings.AppPreferences
 import app.piyokey.core.settings.AppTheme
@@ -56,7 +59,12 @@ fun CommonSettingsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     shadowElevation = 5.dp,
   ) {
     IconButton(onClick = onClick, modifier = Modifier.semantics { contentDescription = description }) {
-      Text("⚙", fontWeight = FontWeight.Black)
+      PiyokeyIcon(
+        kind = PiyokeyIconKind.SETTINGS,
+        contentDescription = null,
+        modifier = Modifier.size(24.dp),
+        tint = MaterialTheme.colorScheme.onSurface,
+      )
     }
   }
 }

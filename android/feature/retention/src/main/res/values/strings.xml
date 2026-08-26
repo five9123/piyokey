@@ -15,6 +15,7 @@
   <string name="curriculum_chapter_1">Basic consonants</string><string name="curriculum_chapter_2">Basic vowels</string><string name="curriculum_chapter_3">Build syllables</string><string name="curriculum_chapter_4">Batchim</string><string name="curriculum_chapter_5">Words</string><string name="curriculum_chapter_6">Sentences</string>
   <string name="curriculum_stage_consonants">Find consonant keys</string><string name="curriculum_stage_vowels">Find vowel keys</string><string name="curriculum_stage_syllables">Combine syllables</string><string name="curriculum_stage_batchim">Type final consonants</string><string name="curriculum_stage_words">Everyday words</string><string name="curriculum_stage_spacing">Practice one space</string><string name="curriculum_stage_sentences">Greetings and daily sentences</string>
   <string name="curriculum_item_count">%1$d questions · clear at 80%%</string>
+  <string name="curriculum_locked">Locked lesson</string>
   <string name="curriculum_resume">Continue where you stopped</string>
   <string name="curriculum_free_practice">Free practice with my decks</string>
   <string name="review_title">Review deck</string><string name="review_count">%1$d words to review</string><string name="review_empty">Mistyped words will appear here automatically.</string><string name="review_start">Start review practice</string><string name="review_progress">Perfect %1$d/%2$d</string><string name="review_remove">Remove</string>

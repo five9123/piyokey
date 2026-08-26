@@ -1425,3 +1425,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー pro`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다.
 - 근거: 사용자가 요청한 “3개 무료, 4개 이상 유료”를 기기 내 활성 보관 수로 정의하면 삭제로 무료 선택권을 되돌려 주면서도 반복 열람을 추적하는 불필요한 감시 상태를 만들지 않는다. 기존 상품 ID를 유지하면 이미 구매한 사용자의 entitlement와 StoreKit/Play Billing 복원 계약을 깨지 않는다.
 - 영향 범위: PRD·스토어 메타데이터, iOS `DeckLibrary`/문서 미리보기/paywall, Android `DeckRepository`/문서 미리보기/paywall, ja/en/ko 문자열, 무료 한도·교체·구매 재개 자동 회귀.
+
+## 2026-08-27 Android 출시 수준 판정과 시각·사용성 폴리싱
+
+- 관련: PRD F1~F12, §7, §12.1, §13 M7, Issue #19, Issue #55.
+- 결정: M1~M6D와 R1.1 기능 소스가 존재한다는 사실만으로 Android를 출시 후보로 부르지 않는다. 출시 후보 동결 전에는 공용 PIYOKEY light/dark color·typography·shape theme, 문자열 glyph가 아닌 접근 가능한 벡터 동작 아이콘, 공용 1024×1024 브랜드 원본의 앱 내부 표시, 홈·발견·연습·게임·마이페이지의 다크 모드·큰 글자 화면을 자동 회귀로 검증한다.
+- 결정: Android 브랜드 리소스는 iOS asset catalog 경로를 직접 참조하지 않고 `shared/brand/piyokey_app_icon_source.png`를 단일 원본으로 사용한다. iOS AppIcon과 Android launcher·앱 내부 로고가 동일한 shared 파일에서 파생되는지를 release preflight가 확인한다.
+- 결정: API 35에서 dark theme·large text 상태의 다섯 기본 목적지와 공통 설정 접근성을 계측 테스트로 고정한다. 로컬 Source CI 동등 959 tasks, Python preflight와 56개 도구 테스트, Debug/Release APK·AAB·manifest 계약을 통과해야 시각 폴리싱 소스 완료로 판단한다.
+- 결정: 이 소스 완료는 Play 배포 승인이 아니다. final application ID/Play 소유권, 공개 catalog, 콘텐츠·고정 발음 권리, upload signing, Billing·Games Console, 스토어 메타데이터·스크린샷을 동일 배포 설정으로 확정한 뒤 생성한 signed AAB만 Issue #19 실기기 QA 대상이 된다.
+- 근거: 초기 Android 화면은 핵심 기능은 연결돼 있었지만 기본 Material 색상, 문자열 아이콘, 다크 모드의 고정 밝은 surface 등으로 출시판의 시각 일관성과 접근성 기준에 미달했다. 소스 폴리싱·외부 배포 준비·실기기 품질 검증을 분리해야 “기능 완료”를 “출시 가능”으로 오인하지 않는다.
+- 영향 범위: `core:design`, app shell, onboarding/discover/practice/game/retention/settings Compose UI, Android brand resource generation, release preflight, Source CI, Issue #19·#55.
