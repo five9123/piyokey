@@ -99,6 +99,7 @@
 "keyboard.10key.ieung" = "ㅇ, ㅁ group";
 "keyboard.10key.next" = "Advance to the next consonant";
 "input_mode.builtin" = "Built-in keyboard";
+"input_mode.builtin_korean_10key" = "Korean 10-Key";
 "input_mode.os_ime" = "OS keyboard";
 "os_ime.input.title" = "Type with your device's Korean keyboard";
 "os_ime.input.live_badge" = "Real-world mode";
@@ -418,6 +419,7 @@
 "game.selection.deck_hint.dictation_unavailable" = "Needs at least one typeable Korean item";
 "game.selection.best_score" = "Best %@ pts";
 "game.selection.best_score.builtin" = "Built-in best %@ pts";
+"game.selection.best_score.korean_10key" = "10-Key best %@ pts";
 "game.selection.best_score.os_ime" = "OS best %@ pts";
 "game.selection.best_score.choseong" = "Initials best %@ pts";
 "game.selection.best_score.acid_rain" = "Word Rain best %@ pts";

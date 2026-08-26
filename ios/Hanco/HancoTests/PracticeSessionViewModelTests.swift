@@ -577,5 +577,10 @@ final class PracticeSessionViewModelTests: XCTestCase {
       BuiltInKeyboardLayout.resolved(from: BuiltInKeyboardLayout.korean10Key.rawValue),
       .korean10Key
     )
+    XCTAssertEqual(BuiltInKeyboardLayout.dubeolsik.gameRecordInputMode, .builtIn)
+    XCTAssertEqual(
+      BuiltInKeyboardLayout.korean10Key.gameRecordInputMode,
+      .builtInKorean10Key
+    )
   }
 }

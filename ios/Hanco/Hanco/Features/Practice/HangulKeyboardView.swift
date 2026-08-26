@@ -24,6 +24,31 @@ enum BuiltInKeyboardLayout: String, CaseIterable, Equatable {
   static func resolved(from rawValue: String) -> Self {
     Self(rawValue: rawValue) ?? .dubeolsik
   }
+
+  var gameRecordInputMode: SessionInputMode {
+    switch self {
+    case .dubeolsik: .builtIn
+    case .korean10Key: .builtInKorean10Key
+    }
+  }
+}
+
+extension SessionInputMode {
+  var resultLabelKey: LocalizedStringKey {
+    switch self {
+    case .builtIn: "input_mode.builtin"
+    case .builtInKorean10Key: "input_mode.builtin_korean_10key"
+    case .osIME: "input_mode.os_ime"
+    }
+  }
+
+  var resultSystemImage: String {
+    switch self {
+    case .builtIn: "rectangle.grid.3x2.fill"
+    case .builtInKorean10Key: "rectangle.grid.3x2"
+    case .osIME: "keyboard"
+    }
+  }
 }
 
 enum Korean10KeyKey: String, CaseIterable, Hashable {
