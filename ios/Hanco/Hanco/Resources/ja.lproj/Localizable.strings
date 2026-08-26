@@ -230,6 +230,12 @@
 "settings.choseong_meaning_detail" = "問題ごとに日本語の意味を表示";
 "settings.app_information" = "アプリ情報";
 "settings.privacy_policy" = "プライバシーポリシー";
+"settings.privacy" = "プライバシー";
+"settings.anonymous_analytics" = "匿名の利用状況分析";
+"settings.anonymous_analytics_detail" = "よく使われる機能やセッションの完了状況を共有します。";
+"settings.crash_diagnostics" = "クラッシュ診断";
+"settings.crash_diagnostics_detail" = "クラッシュや動作停止の診断情報を共有します。";
+"settings.analytics_privacy_note" = "入力した文字、ユーザーデッキの内容、氏名やメールアドレスは送信しません。どちらも初期設定はオフです。";
 "settings.support" = "サポート";
 "content_feedback.settings.title" = "デッキの提案・内容の報告";
 "content_feedback.suggestion.title" = "ほしいデッキを提案する";

@@ -1378,3 +1378,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 최종 스택 head의 GitHub Source CI는 계정 결제·Actions 지출 한도로 checkout 전에 거부되었으므로 원격 green으로 간주하지 않는다. 같은 head의 로컬 Source CI-equivalent 959 tasks, API 35 앱 계측 31/31, Python 56/56, Swift 42/42를 구현 증빙으로 유지하고 계정 제한 해제 뒤 원격 CI를 다시 실행한다.
 - 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
 - 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.
+## 2026-08-26 전 플랫폼 익명 제품 분석·크래시 진단
+
+- 관련: PRD F10, §10, §12, Issue #43.
+- 결정: iOS/iPadOS·Android·웹의 익명 제품 분석은 PostHog Cloud EU, iOS/iPadOS·Android의 크래시/ANR은 Firebase Crashlytics, 웹 오류는 PostHog Error Tracking을 사용한다. 무료 제공량을 운영 기준으로 하고 초과 과금은 별도 승인 전 허용하지 않는다.
+- 결정: `익명 사용 분석`과 `크래시 진단`은 서로 독립적이고 기본 OFF다. Debug/test, 프로젝트 토큰 누락, Firebase 설정 파일 누락은 모두 no-op이며 앱 핵심 기능과 일반 빌드를 실패시키지 않는다. 실제 배포 task에서만 외부 설정·심볼·mapping·정책 gate를 fail closed로 검증한다.
+- 결정: `shared/analytics/events.json`을 유일한 allowlist로 두고 Swift/Kotlin/TypeScript 계약을 생성한다. 자동 UI/키 입력 캡처, 세션 리플레이, heatmap, 사용자 identify/person profile, 광고 ID, 자유 문자열·사용자 덱 내용·경로·hash·영수증을 금지한다. 이벤트는 기능·세션·게임·덱 출처·Deck Maker·구매의 의미적 상태와 bucket 수치만 포함한다.
+- 결정: SDK는 앱/웹 어댑터 계층에만 위치하고 학습·게임 reducer와 공용 코어는 공급자를 import하지 않는다. 모바일 Crashlytics context도 같은 allowlist의 enum만 사용하며 웹 오류 자동 캡처는 진단 동의 뒤에만 켠다.
+- 근거: 선호 기능과 이탈 지점을 익명 aggregate로 확인하면서도 타이핑 학습 앱의 입력 내용과 로컬 사용자 문서를 수집 경계 밖에 유지해야 한다. 독립 동의·기본 OFF·키 누락 no-op·배포 gate를 함께 두면 개발과 오프라인 기능을 외부 서비스 상태에 종속시키지 않는다.
+- 영향 범위: 공용 이벤트 계약/생성기, iOS/iPadOS·Android 설정과 SDK 어댑터, 웹 패키지, Apple Privacy manifest·Play Data safety·개인정보처리방침·릴리스 preflight, PostHog/Firebase 운영 대시보드.

@@ -44,6 +44,12 @@
   <string name="settings_reminder_enabled">リマインダーを使う</string>
   <string name="settings_reminder_time">時刻 %1$02d:%2$02d</string>
   <string name="settings_about">アプリ情報</string>
+  <string name="settings_data_privacy">プライバシー</string>
+  <string name="settings_anonymous_analytics">匿名の利用状況分析</string>
+  <string name="settings_anonymous_analytics_detail">よく使われる機能やセッションの完了状況を共有します。</string>
+  <string name="settings_crash_diagnostics">クラッシュ診断</string>
+  <string name="settings_crash_diagnostics_detail">クラッシュや動作停止の診断情報を共有します。</string>
+  <string name="settings_analytics_privacy_note">入力した文字、ユーザーデッキの内容、氏名やメールアドレスは送信しません。どちらも初期設定はオフです。</string>
   <string name="settings_privacy">プライバシーポリシー</string>
   <string name="settings_feedback">デッキ提案・内容報告</string>
   <string name="settings_support">サポート</string>

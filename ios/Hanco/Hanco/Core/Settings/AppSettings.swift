@@ -162,6 +162,8 @@ enum SettingsPreferenceKeys {
   static let practiceShowsMascot = "settings.practice_shows_mascot"
   static let practiceShowsComposition = "settings.practice_shows_composition"
   static let choseongShowsMeaning = "settings.choseong_shows_meaning"
+  static let anonymousAnalyticsEnabled = "settings.anonymous_analytics_enabled"
+  static let crashDiagnosticsEnabled = "settings.crash_diagnostics_enabled"
 
   static let all = [
     fontScale,
@@ -177,6 +179,8 @@ enum SettingsPreferenceKeys {
     practiceShowsMascot,
     practiceShowsComposition,
     choseongShowsMeaning,
+    anonymousAnalyticsEnabled,
+    crashDiagnosticsEnabled,
   ]
 }
 

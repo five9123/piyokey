@@ -230,6 +230,12 @@
 "settings.choseong_meaning_detail" = "Show the English meaning for every question";
 "settings.app_information" = "App information";
 "settings.privacy_policy" = "Privacy policy";
+"settings.privacy" = "Privacy";
+"settings.anonymous_analytics" = "Anonymous usage analytics";
+"settings.anonymous_analytics_detail" = "Share which features are used and whether sessions finish.";
+"settings.crash_diagnostics" = "Crash diagnostics";
+"settings.crash_diagnostics_detail" = "Share diagnostics for crashes and app hangs.";
+"settings.analytics_privacy_note" = "Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.";
 "settings.support" = "Support";
 "content_feedback.settings.title" = "Deck suggestions and reports";
 "content_feedback.suggestion.title" = "Suggest a deck";

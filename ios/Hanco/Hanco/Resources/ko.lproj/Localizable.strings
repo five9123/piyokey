@@ -230,6 +230,12 @@
 "settings.choseong_meaning_detail" = "문제마다 뜻을 기본으로 보여줘요";
 "settings.app_information" = "앱 정보";
 "settings.privacy_policy" = "개인정보처리방침";
+"settings.privacy" = "개인정보";
+"settings.anonymous_analytics" = "익명 사용 분석";
+"settings.anonymous_analytics_detail" = "선호 기능과 세션 완료 여부를 공유합니다.";
+"settings.crash_diagnostics" = "크래시 진단";
+"settings.crash_diagnostics_detail" = "크래시와 앱 멈춤 진단 정보를 공유합니다.";
+"settings.analytics_privacy_note" = "입력한 글자, 사용자 덱 내용, 이름과 이메일은 전송하지 않습니다. 두 옵션 모두 기본값은 꺼짐입니다.";
 "settings.support" = "지원";
 "content_feedback.settings.title" = "덱 제안·내용 제보";
 "content_feedback.suggestion.title" = "원하는 덱 제안하기";

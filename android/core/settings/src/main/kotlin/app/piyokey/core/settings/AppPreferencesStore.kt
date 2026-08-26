@@ -63,6 +63,8 @@ class AppPreferencesStore private constructor(
     showsMascot = preferences[Keys.showsMascot] ?: true,
     autoPronouncesPractice = preferences[Keys.autoPronouncesPractice] ?: false,
     choseongShowsMeaning = preferences[Keys.choseongShowsMeaning] ?: true,
+    anonymousAnalyticsEnabled = preferences[Keys.anonymousAnalyticsEnabled] ?: false,
+    crashDiagnosticsEnabled = preferences[Keys.crashDiagnosticsEnabled] ?: false,
     onboardingGoal = preferences[Keys.onboardingGoal]?.let { raw -> enumValueOrNull<OnboardingGoal>(raw) },
     onboardingIntroStep = enumValue(preferences[Keys.onboardingIntroStep], OnboardingIntroStep.GOAL),
     onboardingIntroSkipped = preferences[Keys.onboardingIntroSkipped] ?: false,
@@ -98,6 +100,8 @@ class AppPreferencesStore private constructor(
     preferences[Keys.showsMascot] = value.showsMascot
     preferences[Keys.autoPronouncesPractice] = value.autoPronouncesPractice
     preferences[Keys.choseongShowsMeaning] = value.choseongShowsMeaning
+    preferences[Keys.anonymousAnalyticsEnabled] = value.anonymousAnalyticsEnabled
+    preferences[Keys.crashDiagnosticsEnabled] = value.crashDiagnosticsEnabled
     value.onboardingGoal?.let { preferences[Keys.onboardingGoal] = it.name }
       ?: preferences.remove(Keys.onboardingGoal)
     preferences[Keys.onboardingIntroStep] = value.onboardingIntroStep.name
@@ -140,6 +144,8 @@ class AppPreferencesStore private constructor(
     val showsMascot = booleanPreferencesKey("settings.practice_shows_mascot")
     val autoPronouncesPractice = booleanPreferencesKey("settings.practice_auto_pronounce")
     val choseongShowsMeaning = booleanPreferencesKey("settings.choseong_shows_meaning")
+    val anonymousAnalyticsEnabled = booleanPreferencesKey("settings.anonymous_analytics_enabled")
+    val crashDiagnosticsEnabled = booleanPreferencesKey("settings.crash_diagnostics_enabled")
     val onboardingGoal = stringPreferencesKey("onboarding.goal")
     val onboardingIntroStep = stringPreferencesKey("onboarding.intro_step")
     val onboardingIntroSkipped = booleanPreferencesKey("onboarding.intro_skipped")

@@ -158,7 +158,7 @@ final class AppSettingsTests: XCTestCase {
     }
   }
 
-  func testPrivacyManifestDeclaresRequiredReasonAPIsWithoutTrackingOrCollection() throws {
+  func testPrivacyManifestDeclaresOptionalUnlinkedTelemetryWithoutTracking() throws {
     let url = try XCTUnwrap(Bundle.main.url(forResource: "PrivacyInfo", withExtension: "xcprivacy"))
     let data = try Data(contentsOf: url)
     let manifest = try XCTUnwrap(
@@ -167,7 +167,19 @@ final class AppSettingsTests: XCTestCase {
 
     XCTAssertEqual(manifest["NSPrivacyTracking"] as? Bool, false)
     XCTAssertEqual(manifest["NSPrivacyTrackingDomains"] as? [String], [])
-    XCTAssertTrue(try XCTUnwrap(manifest["NSPrivacyCollectedDataTypes"] as? [Any]).isEmpty)
+    let collectedTypes = try XCTUnwrap(
+      manifest["NSPrivacyCollectedDataTypes"] as? [[String: Any]]
+    )
+    XCTAssertEqual(
+      Set(collectedTypes.compactMap { $0["NSPrivacyCollectedDataType"] as? String }),
+      [
+        "NSPrivacyCollectedDataTypeCrashData",
+        "NSPrivacyCollectedDataTypeProductInteraction",
+        "NSPrivacyCollectedDataTypeDeviceID",
+      ]
+    )
+    XCTAssertTrue(collectedTypes.allSatisfy { $0["NSPrivacyCollectedDataTypeLinked"] as? Bool == false })
+    XCTAssertTrue(collectedTypes.allSatisfy { $0["NSPrivacyCollectedDataTypeTracking"] as? Bool == false })
 
     let accessedTypes = try XCTUnwrap(
       manifest["NSPrivacyAccessedAPITypes"] as? [[String: Any]]
@@ -183,6 +195,41 @@ final class AppSettingsTests: XCTestCase {
 
     XCTAssertEqual(reasons["NSPrivacyAccessedAPICategoryUserDefaults"], ["CA92.1"])
     XCTAssertEqual(reasons["NSPrivacyAccessedAPICategoryActiveKeyboards"], ["54BD.1"])
+  }
+
+  func testTelemetryConsentsAreIndependentAndDefaultOff() throws {
+    let suiteName = "AppSettingsTests.telemetry.\(UUID().uuidString)"
+    let isolated = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defer { isolated.removePersistentDomain(forName: suiteName) }
+
+    XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled))
+    XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
+    isolated.set(true, forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+    XCTAssertTrue(isolated.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled))
+    XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
+  }
+
+  func testAnalyticsContractRequiresFieldsAndClosedEnumValues() {
+    let common: [AnalyticsProperty: Any] = [
+      .schemaVersion: 1,
+      .platform: "ios",
+      .appVersion: "1.1.0",
+      .buildNumber: "8",
+      .locale: "ja",
+    ]
+    XCTAssertFalse(AnalyticsContract.accepts(event: .featureViewed, properties: common))
+    XCTAssertTrue(
+      AnalyticsContract.accepts(
+        event: .featureViewed,
+        properties: common.merging([.feature: "practice"]) { _, new in new }
+      )
+    )
+    XCTAssertFalse(
+      AnalyticsContract.accepts(
+        event: .featureViewed,
+        properties: common.merging([.feature: "typed free text"]) { _, new in new }
+      )
+    )
   }
 
   func testReleaseLinksUsePublicHTTPSPages() {

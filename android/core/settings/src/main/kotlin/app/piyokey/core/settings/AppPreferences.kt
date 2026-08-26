@@ -75,6 +75,8 @@ data class AppPreferences(
   val showsMascot: Boolean = true,
   val autoPronouncesPractice: Boolean = false,
   val choseongShowsMeaning: Boolean = true,
+  val anonymousAnalyticsEnabled: Boolean = false,
+  val crashDiagnosticsEnabled: Boolean = false,
   val onboardingGoal: OnboardingGoal? = null,
   val onboardingIntroStep: OnboardingIntroStep = OnboardingIntroStep.GOAL,
   val onboardingIntroSkipped: Boolean = false,

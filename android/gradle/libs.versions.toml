@@ -15,6 +15,10 @@ datastore = "1.2.1"
 appcompat = "1.8.0"
 billing = "9.1.0"
 play-games-v2 = "22.0.0"
+posthog-android = "3.60.4"
+firebase-bom = "34.18.0"
+google-services = "4.5.0"
+firebase-crashlytics-plugin = "3.0.8"
 
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
@@ -42,6 +46,9 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 play-billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 play-games-v2 = { module = "com.google.android.gms:play-services-games-v2", version.ref = "play-games-v2" }
+posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthog-android" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -50,3 +57,5 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }

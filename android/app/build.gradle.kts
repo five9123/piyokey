@@ -7,6 +7,12 @@ plugins {
   alias(libs.plugins.kotlin.compose)
 }
 
+val hasFirebaseConfig = file("google-services.json").isFile
+if (hasFirebaseConfig) {
+  pluginManager.apply("com.google.gms.google-services")
+  pluginManager.apply("com.google.firebase.crashlytics")
+}
+
 fun releaseInput(name: String) = providers.gradleProperty(name).orElse(providers.environmentVariable(name))
 
 val candidateApplicationId = "app.piyokey.piyokey"
@@ -20,6 +26,9 @@ val configuredPrivacyUrl = releaseInput("PIYOKEY_PRIVACY_URL")
   .orElse("https://hancoweb.vercel.app/privacy")
 val configuredSupportUrl = releaseInput("PIYOKEY_SUPPORT_URL")
   .orElse("https://hancoweb.vercel.app/support")
+val configuredPostHogToken = releaseInput("PIYOKEY_POSTHOG_PROJECT_TOKEN").orElse("")
+val configuredPostHogHost = releaseInput("PIYOKEY_POSTHOG_HOST")
+  .orElse("https://eu.i.posthog.com")
 
 val uploadSigningPropertyNames = listOf(
   "PIYOKEY_UPLOAD_STORE_FILE",
@@ -68,6 +77,10 @@ android {
     val supportUrl = configuredSupportUrl.get().replace("\\", "\\\\").replace("\"", "\\\"")
     buildConfigField("String", "PRIVACY_URL", "\"$privacyUrl\"")
     buildConfigField("String", "SUPPORT_URL", "\"$supportUrl\"")
+    val postHogToken = configuredPostHogToken.get().replace("\\", "\\\\").replace("\"", "\\\"")
+    val postHogHost = configuredPostHogHost.get().replace("\\", "\\\\").replace("\"", "\\\"")
+    buildConfigField("String", "POSTHOG_PROJECT_TOKEN", "\"$postHogToken\"")
+    buildConfigField("String", "POSTHOG_HOST", "\"$postHogHost\"")
     val playGamesProjectId = releaseInput("PIYOKEY_PLAY_GAMES_PROJECT_ID").orElse("0").get()
     resValue("string", "game_services_project_id", playGamesProjectId)
     val playGamesKeys = listOf(
@@ -179,6 +192,12 @@ val distributionMissingKeys = providers.provider {
     if (!isPublicHttpsUrl(configuredCatalogUrl.get())) add("PIYOKEY_CATALOG_URL")
     if (!isPublicHttpsUrl(configuredPrivacyUrl.get())) add("PIYOKEY_PRIVACY_URL")
     if (!isPublicHttpsUrl(configuredSupportUrl.get())) add("PIYOKEY_SUPPORT_URL")
+    if (configuredPostHogToken.get().isBlank()) add("PIYOKEY_POSTHOG_PROJECT_TOKEN")
+    if (configuredPostHogHost.get() != "https://eu.i.posthog.com") add("PIYOKEY_POSTHOG_HOST")
+    if (!hasFirebaseConfig) add("app/google-services.json")
+    if (!releaseInput("PIYOKEY_ANALYTICS_PRIVACY_CONFIRMED").orNull.equals("true", ignoreCase = true)) {
+      add("PIYOKEY_ANALYTICS_PRIVACY_CONFIRMED")
+    }
     if (!releaseInput("PIYOKEY_CONTENT_RIGHTS_CONFIRMED").orNull.equals("true", ignoreCase = true)) {
       add("PIYOKEY_CONTENT_RIGHTS_CONFIRMED")
     }
@@ -257,6 +276,7 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":core:analytics"))
   implementation(project(":core:data"))
   implementation(project(":core:deckkit"))
   implementation(project(":core:session"))
@@ -280,6 +300,9 @@ dependencies {
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.posthog.android)
+  implementation(platform(libs.firebase.bom))
+  implementation(libs.firebase.crashlytics)
 
   debugImplementation(libs.androidx.compose.ui.tooling)
   debugImplementation(libs.androidx.compose.ui.test.manifest)

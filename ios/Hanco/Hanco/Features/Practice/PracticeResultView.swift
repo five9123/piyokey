@@ -236,7 +236,9 @@ struct PracticeResultView: View {
             sessionTitle: AppLocalization.string("review.deck.title"),
             reviewSources: reviewItems.map {
               PracticeReviewSource(item: $0.item, sourceDeckId: $0.sourceDeckId)
-            }
+            },
+            analyticsSessionKind: "review",
+            analyticsDeckSource: "review"
           )
         } label: {
           Label("result.review.start", systemImage: "arrow.triangle.2.circlepath")

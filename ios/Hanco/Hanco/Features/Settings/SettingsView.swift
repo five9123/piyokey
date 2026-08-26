@@ -22,6 +22,10 @@ struct SettingsView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private var practiceShowsComposition =
     true
   @AppStorage(SettingsPreferenceKeys.choseongShowsMeaning) private var choseongShowsMeaning = true
+  @AppStorage(SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+  private var anonymousAnalyticsEnabled = false
+  @AppStorage(SettingsPreferenceKeys.crashDiagnosticsEnabled)
+  private var crashDiagnosticsEnabled = false
 
   @AppStorage(KeyboardPreferenceKeys.showsKeyGuide) private var showsKeyGuide = true
   @AppStorage(KeyboardPreferenceKeys.showsRomanHints) private var showsRomanHints = true
@@ -73,6 +77,31 @@ struct SettingsView: View {
     .onChange(of: practiceDisplayPreset) { rawValue in
       applyPracticePreset(PracticeDisplayPreset.resolved(from: rawValue))
     }
+    .onChange(of: anonymousAnalyticsEnabled) { enabled in
+      TelemetryService.shared.updateConsent(
+        productAnalytics: enabled,
+        crashDiagnostics: crashDiagnosticsEnabled
+      )
+      if enabled {
+        TelemetryService.shared.capture(
+          .settingChanged,
+          properties: [.setting: "analytics_consent", .valueBucket: "enabled"]
+        )
+      }
+    }
+    .onChange(of: crashDiagnosticsEnabled) { enabled in
+      TelemetryService.shared.updateConsent(
+        productAnalytics: anonymousAnalyticsEnabled,
+        crashDiagnostics: enabled
+      )
+      TelemetryService.shared.capture(
+        .settingChanged,
+        properties: [
+          .setting: "diagnostics_consent",
+          .valueBucket: enabled ? "enabled" : "disabled",
+        ]
+      )
+    }
   }
 
   private var settingsContent: some View {
@@ -85,6 +114,7 @@ struct SettingsView: View {
         reminderSection
         keyboardSection
         mascotSection
+        privacySection
         appInformationSection
       }
       .padding(.horizontal, 18)
@@ -432,6 +462,30 @@ struct SettingsView: View {
       }
       .buttonStyle(.plain)
       .accessibilityIdentifier("settings.mascot")
+    }
+  }
+
+  private var privacySection: some View {
+    settingsCard(title: "settings.privacy", systemImage: "hand.raised.fill") {
+      settingToggle(
+        title: "settings.anonymous_analytics",
+        detail: "settings.anonymous_analytics_detail",
+        systemImage: "chart.bar.xaxis",
+        isOn: $anonymousAnalyticsEnabled,
+        identifier: "settings.anonymous_analytics"
+      )
+      Divider().opacity(0.5)
+      settingToggle(
+        title: "settings.crash_diagnostics",
+        detail: "settings.crash_diagnostics_detail",
+        systemImage: "stethoscope",
+        isOn: $crashDiagnosticsEnabled,
+        identifier: "settings.crash_diagnostics"
+      )
+      Text("settings.analytics_privacy_note")
+        .font(.caption)
+        .foregroundStyle(AppPalette.mutedInk)
+        .padding(.top, 4)
     }
   }
 

@@ -59,6 +59,8 @@ struct PracticeView: View {
   @State private var dismissesAfterPersistenceFailure = false
   @State private var previousAcceptedInputCount = 0
   @State private var enteredBackground = false
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
   private let sessionTitle: String?
   private let reviewSources: [PracticeReviewSource]
   private let sourceTags: [String]
@@ -75,6 +77,8 @@ struct PracticeView: View {
   private let chainsHatchMissions: Bool
   private let isFinalHatchMission: Bool
   private let allowsOSKeyboard: Bool
+  private let analyticsSessionKind: String
+  private let analyticsDeckSource: String
 
   init(
     targets: [String]? = nil,
@@ -93,7 +97,9 @@ struct PracticeView: View {
     onPersistenceFailureExit: (() -> Void)? = nil,
     chainsHatchMissions: Bool = false,
     isFinalHatchMission: Bool = false,
-    allowsOSKeyboard: Bool = true
+    allowsOSKeyboard: Bool = true,
+    analyticsSessionKind: String = "free_practice",
+    analyticsDeckSource: String = "unknown"
   ) {
     self.sessionTitle = sessionTitle
     self.sourceTags = sourceTags
@@ -110,6 +116,8 @@ struct PracticeView: View {
     self.chainsHatchMissions = chainsHatchMissions
     self.isFinalHatchMission = isFinalHatchMission
     self.allowsOSKeyboard = allowsOSKeyboard
+    self.analyticsSessionKind = analyticsSessionKind
+    self.analyticsDeckSource = analyticsDeckSource
     let resolvedTargets =
       targets ?? [
         AppLocalization.string("practice.sample_target_1"),
@@ -293,6 +301,7 @@ struct PracticeView: View {
     }
     .onAppear {
       resolveInitialInputModeIfNeeded()
+      captureAnalyticsStartIfNeeded()
       previousAcceptedInputCount = viewModel.totalAcceptedInputCount
       guard !viewModel.isLessonComplete, !exitsAfterResultDismiss,
         !dismissesAfterPersistenceFailure
@@ -756,11 +765,14 @@ struct PracticeView: View {
     didReportCurriculumCompletion = false
     didRecordCompanionOutcome = false
     didPersistLearningRecord = false
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
     previousAcceptedInputCount = 0
     onSessionRestart?()
     viewModel.reset()
     inputResetRevision += 1
     persistCheckpoint()
+    captureAnalyticsStartIfNeeded()
   }
 
   private func finishFromResult() {
@@ -907,6 +919,7 @@ struct PracticeView: View {
 
   private func finishTrackedSessionIfNeeded() {
     viewModel.pauseTiming()
+    captureAnalyticsCompletionIfNeeded()
     persistLearningRecordIfNeeded()
     if !didRecordCompanionOutcome {
       didRecordCompanionOutcome = true
@@ -920,6 +933,53 @@ struct PracticeView: View {
       beginCurriculumCompletionPersistence()
     }
     onPracticeCompletion?(viewModel.accuracyPercent, viewModel.charactersPerMinute)
+  }
+
+  private var analyticsInputMode: String {
+    inputMode == .osIME ? "os_ime" : "builtin"
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: analyticsSessionKind,
+        .deckSource: analyticsDeckSource,
+        .inputMode: analyticsInputMode,
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "practice",
+      sessionKind: analyticsSessionKind,
+      inputMode: analyticsInputMode
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded() {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: analyticsSessionKind,
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(viewModel.completedItemCount),
+        .deckSource: analyticsDeckSource,
+        .inputMode: analyticsInputMode,
+      ]
+    )
+    if analyticsSessionKind == "review" {
+      TelemetryService.shared.capture(
+        .reviewCompleted,
+        properties: [
+          .itemCountBucket: TelemetryService.shared.itemCountBucket(viewModel.completedItemCount),
+          .result: "completed",
+        ]
+      )
+    }
   }
 
   private func beginCurriculumCompletionPersistence() {

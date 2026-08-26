@@ -64,6 +64,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.piyokey.core.data.CatalogRefreshResult
+import app.piyokey.core.analytics.AnalyticsEvent
+import app.piyokey.core.analytics.AnalyticsProperty
 import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckLibrarySnapshot
 import app.piyokey.core.data.DeckRepository
@@ -230,6 +232,12 @@ class MainActivity : AppCompatActivity() {
           @Suppress("DEPRECATION")
           window.navigationBarColor = if (light) android.graphics.Color.WHITE else android.graphics.Color.rgb(18, 18, 20)
         }
+        LaunchedEffect(
+          optimistic.anonymousAnalyticsEnabled,
+          optimistic.crashDiagnosticsEnabled,
+        ) {
+          TelemetryRuntime.updateConsent(applicationContext, optimistic)
+        }
         val baseDensity = LocalDensity.current
         CompositionLocalProvider(
           LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * optimistic.fontScale.multiplier),
@@ -252,7 +260,35 @@ class MainActivity : AppCompatActivity() {
                 }
               },
               onPreferencesChange = { updated ->
+                val previous = optimistic
                 optimistic = updated
+                if (
+                  previous.anonymousAnalyticsEnabled != updated.anonymousAnalyticsEnabled ||
+                  previous.crashDiagnosticsEnabled != updated.crashDiagnosticsEnabled
+                ) {
+                  TelemetryRuntime.updateConsent(applicationContext, updated)
+                }
+                if (
+                  previous.anonymousAnalyticsEnabled != updated.anonymousAnalyticsEnabled &&
+                  updated.anonymousAnalyticsEnabled
+                ) {
+                  TelemetryRuntime.capture(
+                    AnalyticsEvent.SETTING_CHANGED,
+                    mapOf(
+                      AnalyticsProperty.SETTING to "analytics_consent",
+                      AnalyticsProperty.VALUE_BUCKET to "enabled",
+                    ),
+                  )
+                }
+                if (previous.crashDiagnosticsEnabled != updated.crashDiagnosticsEnabled) {
+                  TelemetryRuntime.capture(
+                    AnalyticsEvent.SETTING_CHANGED,
+                    mapOf(
+                      AnalyticsProperty.SETTING to "diagnostics_consent",
+                      AnalyticsProperty.VALUE_BUCKET to if (updated.crashDiagnosticsEnabled) "enabled" else "disabled",
+                    ),
+                  )
+                }
                 scope.launch { preferencesStore.update { updated } }
               },
             )
@@ -306,6 +342,16 @@ private enum class RootTab(val label: Int, val symbol: String) {
   PRACTICE(R.string.nav_practice, "⌨"),
   GAMES(R.string.nav_games, "★"),
   PROFILE(R.string.nav_profile, "●"),
+  ;
+
+  val analyticsFeature: String
+    get() = when (this) {
+      HOME -> "home"
+      DISCOVER -> "discover"
+      PRACTICE -> "practice"
+      GAMES -> "game"
+      PROFILE -> "my_page"
+    }
 }
 
 private data class ActivePractice(
@@ -324,6 +370,51 @@ private data class ActivePractice(
 )
 
 private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW, ONBOARDING }
+
+private val PracticeKind.analyticsSessionKind: String
+  get() = when (this) {
+    PracticeKind.CURRICULUM, PracticeKind.ONBOARDING -> "lesson"
+    PracticeKind.DAILY -> "daily"
+    PracticeKind.REVIEW -> "review"
+    PracticeKind.FREE, PracticeKind.DECK -> "free_practice"
+  }
+
+private val InputMode.analyticsValue: String
+  get() = if (this == InputMode.OS_IME) "os_ime" else "builtin"
+
+private val ActivePractice.analyticsDeckSource: String
+  get() = when (kind) {
+    PracticeKind.CURRICULUM, PracticeKind.ONBOARDING -> "curriculum"
+    PracticeKind.DAILY -> "daily"
+    PracticeKind.REVIEW -> "review"
+    PracticeKind.FREE -> "bundled"
+    PracticeKind.DECK -> installed?.metadata?.source
+      ?.takeIf { it in setOf("bundled", "catalog", "imported", "created") } ?: "unknown"
+  }
+
+private val GameKind.analyticsValue: String
+  get() = when (this) {
+    GameKind.FLOW -> "flow"
+    GameKind.ACID_RAIN -> "acid_rain"
+    GameKind.CHOSEONG -> "choseong"
+    GameKind.WORD_MATCH -> "word_match"
+    GameKind.DICTATION -> "dictation"
+    GameKind.SPACING -> "spacing"
+  }
+
+private fun analyticsDifficulty(deckId: String): String = when {
+  deckId.contains("beginner", ignoreCase = true) -> "beginner"
+  deckId.contains("intermediate", ignoreCase = true) -> "intermediate"
+  deckId.contains("advanced", ignoreCase = true) -> "advanced"
+  else -> "custom"
+}
+
+private fun analyticsGameDeckSource(deck: Deck?): String = when {
+  deck == null -> "unknown"
+  deck.deckId.startsWith("user_") -> "unknown"
+  deck.official -> "catalog"
+  else -> "bundled"
+}
 
 private data class PracticeResult(
   val practice: ActivePractice,
@@ -445,6 +536,115 @@ private fun PiyokeyApp(
   var pendingPaidImportCopy by remember { mutableStateOf<UserDeckImportUiState.Ready?>(null) }
   var pendingDifferentDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
   var staleEditDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
+
+  LaunchedEffect(tab) {
+    TelemetryRuntime.capture(
+      AnalyticsEvent.FEATURE_VIEWED,
+      mapOf(AnalyticsProperty.FEATURE to tab.analyticsFeature),
+    )
+    TelemetryRuntime.setCrashContext(tab.analyticsFeature)
+  }
+  LaunchedEffect(activePractice?.sessionId) {
+    activePractice?.let { practice ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to practice.kind.analyticsSessionKind,
+          AnalyticsProperty.DECK_SOURCE to practice.analyticsDeckSource,
+          AnalyticsProperty.INPUT_MODE to practice.inputMode.analyticsValue,
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "practice",
+        sessionKind = practice.kind.analyticsSessionKind,
+        inputMode = practice.inputMode.analyticsValue,
+      )
+    }
+  }
+  LaunchedEffect(activeFlowDeck?.deckId, flowSeed) {
+    activeFlowDeck?.let { deck ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to analyticsGameDeckSource(deck),
+          AnalyticsProperty.INPUT_MODE to preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.GAME_MODE to "flow",
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(deck.deckId),
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = preferences.defaultInputMode.analyticsValue,
+        gameMode = "flow",
+      )
+    }
+  }
+  LaunchedEffect(activeGameDeck?.deckId, gameSeed) {
+    activeGameDeck?.let { deck ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to analyticsGameDeckSource(deck),
+          AnalyticsProperty.INPUT_MODE to preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.GAME_MODE to selectedGameKind.analyticsValue,
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(deck.deckId),
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = preferences.defaultInputMode.analyticsValue,
+        gameMode = selectedGameKind.analyticsValue,
+      )
+    }
+  }
+  LaunchedEffect(activeSpacingPassage?.id, spacingGameResult) {
+    if (activeSpacingPassage != null && spacingGameResult == null) {
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to "bundled",
+          AnalyticsProperty.INPUT_MODE to "not_applicable",
+          AnalyticsProperty.GAME_MODE to "spacing",
+          AnalyticsProperty.DIFFICULTY to "custom",
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = "not_applicable",
+        gameMode = "spacing",
+      )
+    }
+  }
+  LaunchedEffect(flowResult, typingGameResult, acidRainResult, spacingGameResult) {
+    val game = when {
+      flowResult != null -> "flow" to (flowResult?.score ?: 0)
+      typingGameResult != null -> selectedGameKind.analyticsValue to (typingGameResult?.score ?: 0)
+      acidRainResult != null -> "acid_rain" to (acidRainResult?.score ?: 0)
+      spacingGameResult?.result != null -> "spacing" to (spacingGameResult?.result?.score ?: 0)
+      else -> null
+    }
+    game?.let { (mode, score) ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.GAME_RESULT,
+        mapOf(
+          AnalyticsProperty.GAME_MODE to mode,
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(
+            activeFlowDeck?.deckId ?: activeGameDeck?.deckId ?: "custom",
+          ),
+          AnalyticsProperty.RESULT to "completed",
+          AnalyticsProperty.SCORE_BUCKET to TelemetryRuntime.scoreBucket(score),
+          AnalyticsProperty.INPUT_MODE to if (mode == "spacing") "not_applicable" else preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.DECK_SOURCE to if (mode == "spacing") "bundled" else analyticsGameDeckSource(activeFlowDeck ?: activeGameDeck),
+        ),
+      )
+    }
+  }
 
   fun beginUserDeckImport(uri: Uri, sourceContext: String) {
     val previousDocument = when (val state = userDeckImport) {
@@ -782,6 +982,17 @@ private fun PiyokeyApp(
           else -> null
         }
         repository.recordPracticeAcceptedJamo(practice.sessionId, state.acceptedJamoCount)
+        TelemetryRuntime.capture(
+          AnalyticsEvent.SESSION_COMPLETED,
+          mapOf(
+            AnalyticsProperty.SESSION_KIND to practice.kind.analyticsSessionKind,
+            AnalyticsProperty.RESULT to "completed",
+            AnalyticsProperty.DURATION_BUCKET to TelemetryRuntime.durationBucket(duration),
+            AnalyticsProperty.ITEM_COUNT_BUCKET to TelemetryRuntime.itemCountBucket(state.itemResolutions.size),
+            AnalyticsProperty.DECK_SOURCE to practice.analyticsDeckSource,
+            AnalyticsProperty.INPUT_MODE to practice.inputMode.analyticsValue,
+          ),
+        )
         playGamesManager?.syncAfterLocalSave()
         pendingCompletion = null
         if (pendingCheckpointSave?.first == practice.stageId) pendingCheckpointSave = null

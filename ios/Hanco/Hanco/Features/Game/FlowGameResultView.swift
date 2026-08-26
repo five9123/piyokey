@@ -9,6 +9,21 @@ enum GameResultPresentation: Equatable {
   case wordMatch
   case dictation
 
+  var analyticsValue: String {
+    switch self {
+    case .flow, .piyoCup: "flow"
+    case .acidRain: "acid_rain"
+    case .choseong: "choseong"
+    case .wordMatch: "word_match"
+    case .dictation: "dictation"
+    }
+  }
+
+  func analyticsDifficulty(for deck: Deck) -> String {
+    if self == .piyoCup { return "beginner" }
+    return presetLevel(for: deck)?.rawValue ?? "custom"
+  }
+
   var modeTitle: String {
     AppLocalization.string(modeTitleKey)
   }
@@ -139,6 +154,7 @@ struct FlowGameResultView: View {
   @EnvironmentObject private var companion: MascotCompanionLibrary
   @EnvironmentObject private var gameCenter: GameCenterService
   @State private var showsReviewDeck = false
+  @State private var didCaptureAnalytics = false
 
   let deck: Deck
   let result: FlowGameResult
@@ -172,11 +188,41 @@ struct FlowGameResultView: View {
     }
     .onAppear {
       companion.registerTOPIKSessionScore(result.score, sourceTags: deck.tags)
+      captureAnalyticsIfNeeded()
     }
     .task(id: recordOutcome?.record.id) {
       if let record = recordOutcome?.record {
         gameCenter.submitScore(for: record)
       }
+    }
+  }
+
+  private func captureAnalyticsIfNeeded() {
+    guard !didCaptureAnalytics else { return }
+    didCaptureAnalytics = true
+    TelemetryService.shared.capture(
+      .gameResult,
+      properties: [
+        .gameMode: presentation.analyticsValue,
+        .difficulty: presentation.analyticsDifficulty(for: deck),
+        .result: "completed",
+        .scoreBucket: TelemetryService.shared.scoreBucket(result.score),
+        .inputMode: recordOutcome?.record.inputMode.rawValue ?? "builtin",
+        .deckSource: analyticsDeckSource,
+      ]
+    )
+  }
+
+  private var analyticsDeckSource: String {
+    if presentation == .piyoCup || presentation.presetLevel(for: deck) != nil {
+      return "bundled"
+    }
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: return "bundled"
+    case .remote: return "catalog"
+    case .imported: return "imported"
+    case .created: return "created"
+    case nil: return "unknown"
     }
   }
 
@@ -344,7 +390,9 @@ struct FlowGameResultView: View {
             sessionTitle: AppLocalization.string("review.deck.title"),
             reviewSources: reviewItems.map {
               PracticeReviewSource(item: $0.item, sourceDeckId: $0.sourceDeckId)
-            }
+            },
+            analyticsSessionKind: "review",
+            analyticsDeckSource: "review"
           )
         } label: {
           Label("result.review.start", systemImage: "arrow.triangle.2.circlepath")

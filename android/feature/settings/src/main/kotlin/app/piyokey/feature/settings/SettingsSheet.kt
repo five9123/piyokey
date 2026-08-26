@@ -200,6 +200,33 @@ fun SettingsSheet(
         }
       }
       item {
+        SettingsCard(stringResource(R.string.settings_data_privacy)) {
+          ToggleRow(
+            stringResource(R.string.settings_anonymous_analytics),
+            preferences.anonymousAnalyticsEnabled,
+          ) { onPreferencesChange(preferences.copy(anonymousAnalyticsEnabled = it)) }
+          Text(
+            stringResource(R.string.settings_anonymous_analytics_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+          ToggleRow(
+            stringResource(R.string.settings_crash_diagnostics),
+            preferences.crashDiagnosticsEnabled,
+          ) { onPreferencesChange(preferences.copy(crashDiagnosticsEnabled = it)) }
+          Text(
+            stringResource(R.string.settings_crash_diagnostics_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+          Text(
+            stringResource(R.string.settings_analytics_privacy_note),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      }
+      item {
         SettingsCard(stringResource(R.string.settings_about)) {
           ExternalButton(stringResource(R.string.settings_privacy), "settings-privacy", onOpenPrivacy)
           ExternalButton(stringResource(R.string.settings_feedback), "settings-feedback", onOpenFeedback)

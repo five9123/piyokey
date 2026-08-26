@@ -40,6 +40,16 @@ private enum AppTab: Hashable {
   case practice
   case game
   case myPage
+
+  var analyticsValue: String {
+    switch self {
+    case .home: "home"
+    case .discover: "discover"
+    case .practice: "practice"
+    case .game: "game"
+    case .myPage: "my_page"
+    }
+  }
 }
 
 private enum AppTourStep: Int, CaseIterable {
@@ -407,6 +417,10 @@ struct AppRootView: View {
       .accessibilityIdentifier("tab.my_page")
     }
     .tint(AppPalette.accent)
+    .onChange(of: selectedTab) { tab in
+      TelemetryService.shared.capture(.featureViewed, properties: [.feature: tab.analyticsValue])
+      TelemetryService.shared.setCrashContext(feature: tab.analyticsValue)
+    }
     .accessibilityHidden(appTourStep != nil)
     .overlayPreferenceValue(AppTourTargetPreferenceKey.self) { targets in
       GeometryReader { proxy in

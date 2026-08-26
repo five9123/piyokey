@@ -57,6 +57,7 @@ struct HancoApp: App {
         seedUserDeckDraftFixture()
       }
     #endif
+    TelemetryService.shared.configure()
   }
 
   var body: some Scene {

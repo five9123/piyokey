@@ -735,7 +735,9 @@ private struct CurriculumPracticeDestination: View {
       onPersistenceFailureExit: onPersistenceFailureExit,
       chainsHatchMissions: chainsHatchMissions,
       isFinalHatchMission: isFinalHatchMission,
-      allowsOSKeyboard: stage.chapterNumber >= 5
+      allowsOSKeyboard: stage.chapterNumber >= 5,
+      analyticsSessionKind: "lesson",
+      analyticsDeckSource: "curriculum"
     )
   }
 
