@@ -458,6 +458,34 @@ final class HancoUITests: XCTestCase {
     XCTAssertLessThan(myPiyoCard.frame.minY, primaryAction.frame.minY)
   }
 
+  func testHomeQuickActionStartsRandomWords() {
+    let primaryAction = element("retention.daily_challenge")
+    let piyoCup = element("home.quick.piyo_cup")
+    let randomWords = element("home.quick.random")
+
+    XCTAssertTrue(primaryAction.waitForExistence(timeout: 3))
+    scrollToHittable(piyoCup)
+    XCTAssertTrue(piyoCup.isHittable)
+    XCTAssertTrue(randomWords.isHittable)
+    XCTAssertGreaterThan(piyoCup.frame.minY, primaryAction.frame.minY)
+    XCTAssertEqual(piyoCup.frame.minY, randomWords.frame.minY, accuracy: 2)
+
+    randomWords.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    waitForValue("1 / 5", on: element("practice.overall_progress"), timeout: 3)
+  }
+
+  func testHomeQuickActionStartsWeeklyPiyoCupDirectly() {
+    let piyoCup = app.buttons["home.quick.piyo_cup"]
+
+    app.swipeUp()
+    XCTAssertTrue(piyoCup.waitForExistence(timeout: 3))
+    XCTAssertTrue(piyoCup.isHittable)
+    piyoCup.tap()
+    XCTAssertFalse(element("game.selection.screen").exists)
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+  }
+
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
     let dailyEncouragement = "「今日もいっしょに始めよう！ピヨ！」"
     let myPiyoCard = element("home.my_piyo_card")

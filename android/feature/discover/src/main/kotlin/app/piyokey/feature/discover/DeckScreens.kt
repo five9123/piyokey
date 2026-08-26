@@ -649,6 +649,7 @@ fun UserDeckImportScreen(
   onReplace: () -> Unit,
   onImportAsCopy: () -> Unit,
   hasDeckMakerAccess: Boolean,
+  canInstallNewDeck: Boolean,
   onExportCurrent: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -732,7 +733,15 @@ fun UserDeckImportScreen(
       when (preview.conflict) {
         ImportedDeckConflict.NEW -> item {
           Button(onClick = onInstall, enabled = !isWorking, modifier = Modifier.fillMaxWidth().testTag("confirm-import")) {
-            Text(stringResource(if (isWorking) R.string.user_deck_importing else R.string.user_deck_install))
+            Text(
+              stringResource(
+                when {
+                  isWorking -> R.string.user_deck_importing
+                  canInstallNewDeck -> R.string.user_deck_install
+                  else -> R.string.user_deck_unlock_pro
+                },
+              ),
+            )
           }
         }
         ImportedDeckConflict.IDENTICAL -> item {

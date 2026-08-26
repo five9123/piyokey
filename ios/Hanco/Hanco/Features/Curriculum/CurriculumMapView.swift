@@ -22,6 +22,7 @@ struct HomeView: View {
             VStack(spacing: 14) {
               RetentionHomeView(today: today)
               HomePrimaryActionView(today: today)
+              HomeQuickActionsView(catalog: catalog)
             }
           }
           HomeRecommendationsView(catalog: catalog)
@@ -58,6 +59,132 @@ struct HomeView: View {
     if curriculumProgress.saveFailed { curriculumProgress.retryLastSave() }
     if retention.saveFailed { retention.retryLastSave() }
     if onboarding.saveFailed { onboarding.retryLastSave() }
+  }
+}
+
+private struct HomeQuickActionsView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @EnvironmentObject private var deckLibrary: DeckLibrary
+  @EnvironmentObject private var onboarding: OnboardingLibrary
+
+  let catalog: Catalog?
+  @State private var randomSession: RandomWordPracticeSession?
+  @State private var showsRandomPractice = false
+  private let piyoCupDeck = PiyoCupDeckLoader.load()
+  private let history = RandomWordPracticeHistory()
+
+  var body: some View {
+    Group {
+      if dynamicTypeSize.isAccessibilitySize {
+        VStack(spacing: 12) {
+          piyoCupAction
+          randomPracticeAction
+        }
+      } else {
+        HStack(spacing: 12) {
+          piyoCupAction
+          randomPracticeAction
+        }
+      }
+    }
+    .navigationDestination(isPresented: $showsRandomPractice) {
+      if let randomSession {
+        RandomWordPracticeDestination(
+          initialSession: randomSession,
+          catalog: catalog,
+          history: history
+        )
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var piyoCupAction: some View {
+    if let piyoCupDeck {
+      NavigationLink {
+        FlowGameView(deck: piyoCupDeck, competition: .weeklyPiyoCup)
+      } label: {
+        quickActionCard(
+          title: "home.quick.piyo_cup.title",
+          detail: "home.quick.piyo_cup.detail",
+          systemImage: "crown.fill",
+          tint: .orange
+        )
+      }
+      .buttonStyle(.plain)
+      .accessibilityIdentifier("home.quick.piyo_cup")
+    } else {
+      quickActionCard(
+        title: "home.quick.piyo_cup.title",
+        detail: "piyo_cup.unavailable",
+        systemImage: "exclamationmark.circle.fill",
+        tint: .orange
+      )
+      .opacity(0.55)
+      .accessibilityIdentifier("home.quick.piyo_cup.unavailable")
+    }
+  }
+
+  private var randomPracticeAction: some View {
+    Button(action: startRandomPractice) {
+      quickActionCard(
+        title: "home.quick.random.title",
+        detail: "home.quick.random.detail",
+        systemImage: "shuffle",
+        tint: AppPalette.secondary
+      )
+    }
+    .buttonStyle(.plain)
+    .accessibilityIdentifier("home.quick.random")
+  }
+
+  private func quickActionCard(
+    title: LocalizedStringKey,
+    detail: LocalizedStringKey,
+    systemImage: String,
+    tint: Color
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Image(systemName: systemImage)
+        .font(.title2.weight(.black))
+        .foregroundStyle(tint)
+        .frame(width: 42, height: 42)
+        .background(tint.opacity(0.13), in: RoundedRectangle(cornerRadius: 14))
+      Text(title)
+        .font(.headline.weight(.heavy))
+        .foregroundStyle(AppPalette.ink)
+        .lineLimit(2)
+        .fixedSize(horizontal: false, vertical: true)
+      Text(detail)
+        .font(.caption)
+        .foregroundStyle(AppPalette.mutedInk)
+        .lineLimit(2)
+        .fixedSize(horizontal: false, vertical: true)
+      Spacer(minLength: 0)
+    }
+    .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
+    .padding(15)
+    .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 22, style: .continuous)
+        .strokeBorder(tint.opacity(0.18), lineWidth: 1)
+    }
+  }
+
+  private func startRandomPractice() {
+    let fallbackDecks = RandomWordPracticeCatalog.bundledFallbackDecks(
+      goal: onboarding.selectedGoal,
+      catalog: catalog
+    )
+    guard let session = RandomWordPracticeCatalog.makeSession(
+      installedDecks: deckLibrary.installed,
+      fallbackDecks: fallbackDecks,
+      preferredTags: onboarding.preferredTags,
+      recentWordKeys: history.recentWordKeys
+    ) else { return }
+    history.record(session)
+    randomSession = session
+    showsRandomPractice = true
   }
 }
 

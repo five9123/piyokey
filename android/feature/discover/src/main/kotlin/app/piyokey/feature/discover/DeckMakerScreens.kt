@@ -89,6 +89,7 @@ fun DeckMakerPaywallScreen(
       Card {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
           listOf(
+            R.string.deck_maker_feature_unlimited,
             R.string.deck_maker_feature_create,
             R.string.deck_maker_feature_edit,
             R.string.deck_maker_feature_copy,

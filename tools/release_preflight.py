@@ -43,9 +43,9 @@ GAME_CENTER_AVAILABILITY_KEY = "PiyokeyGameCenterAvailableLeaderboardIDs"
 GAME_CENTER_INTENDED_KEY = "PiyokeyGameCenterIntendedLeaderboardIDs"
 DECK_MAKER_PRODUCT_ID = "app.piyokey.deckmaker.lifetime"
 DECK_MAKER_LOCALIZATIONS = {
-    "ja": ("マイデッキメーカー", "デッキの作成・編集をずっと利用できます"),
-    "en-US": ("My Deck Maker", "Create and edit decks with lifetime access."),
-    "ko": ("내 덱 만들기", "덱 생성과 편집을 평생 이용할 수 있어요"),
+    "ja": ("ピヨキー pro", "ユーザーデッキ無制限と作成・編集をずっと利用"),
+    "en-US": ("typee pro", "Unlimited user decks, creation, and editing."),
+    "ko": ("피요키 프로", "사용자 덱 무제한 보관과 생성·편집을 평생 이용"),
 }
 STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
