@@ -78,6 +78,7 @@ struct OSIMEInputPanel: View {
   let onConfirmedMismatch: () -> Void
   let showsChrome: Bool
   let showsFocusRecovery: Bool
+  let isFocusSuspended: Bool
 
   @State private var fieldText = ""
   @State private var focusRevision = 0
@@ -92,7 +93,8 @@ struct OSIMEInputPanel: View {
     onAcceptedCandidateSequence: ((String, [Character]) -> Void)? = nil,
     onConfirmedMismatch: @escaping () -> Void,
     showsChrome: Bool = true,
-    showsFocusRecovery: Bool = false
+    showsFocusRecovery: Bool = false,
+    isFocusSuspended: Bool = false
   ) {
     self.target = target
     self.candidateTargets = candidateTargets
@@ -103,6 +105,7 @@ struct OSIMEInputPanel: View {
     self.onConfirmedMismatch = onConfirmedMismatch
     self.showsChrome = showsChrome
     self.showsFocusRecovery = showsFocusRecovery
+    self.isFocusSuspended = isFocusSuspended
   }
 
   var body: some View {
@@ -119,15 +122,18 @@ struct OSIMEInputPanel: View {
     }
     .onAppear {
       fieldText = acceptedText
-      requestFocus()
+      if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: resetRevision) { _ in
       fieldText = acceptedText
-      requestFocus()
+      if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
-      guard phase == .active else { return }
+      guard phase == .active, !isFocusSuspended else { return }
       requestFocus()
+    }
+    .onChange(of: isFocusSuspended) { suspended in
+      if !suspended { requestFocus() }
     }
   }
 
@@ -136,12 +142,15 @@ struct OSIMEInputPanel: View {
       inputField
         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-      Label("os_ime.input.title", systemImage: isFieldFocused ? "keyboard.fill" : "keyboard.badge.ellipsis")
-        .font(.caption.weight(.bold))
-        .foregroundStyle(isFieldFocused ? AppPalette.secondary : AppPalette.accent)
-        .padding(.horizontal, 14)
-        .allowsHitTesting(false)
-        .accessibilityIdentifier("os_ime.input.recovery")
+      Label(
+        "os_ime.input.title",
+        systemImage: isFieldFocused ? "keyboard.fill" : "keyboard.badge.ellipsis"
+      )
+      .font(.caption.weight(.bold))
+      .foregroundStyle(isFieldFocused ? AppPalette.secondary : AppPalette.accent)
+      .padding(.horizontal, 14)
+      .allowsHitTesting(false)
+      .accessibilityIdentifier("os_ime.input.recovery")
     }
     .frame(maxWidth: .infinity, minHeight: 48)
     .background(AppPalette.card.opacity(0.96), in: RoundedRectangle(cornerRadius: 15))
@@ -205,6 +214,7 @@ struct OSIMEInputPanel: View {
       text: $fieldText,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
+      isFocusSuspended: isFocusSuspended,
       isFocused: $isFieldFocused,
       onReturn: requestFocus,
       onTextChange: evaluate(committedText:markedText:)
@@ -423,6 +433,7 @@ private struct IMETextField: UIViewRepresentable {
   @Binding var text: String
   let resetRevision: Int
   let focusRevision: Int
+  let isFocusSuspended: Bool
   @Binding var isFocused: Bool
   let onReturn: () -> Void
   let onTextChange: (String, String?) -> Void
@@ -467,13 +478,23 @@ private struct IMETextField: UIViewRepresentable {
       textField.text = text
       moveCursorToEnd(of: textField)
     }
-    if context.coordinator.lastFocusRevision != focusRevision {
+    if context.coordinator.lastFocusSuspended != isFocusSuspended {
+      context.coordinator.lastFocusSuspended = isFocusSuspended
+      if isFocusSuspended {
+        DispatchQueue.main.async { [weak textField, weak coordinator = context.coordinator] in
+          guard let textField, let coordinator, coordinator.isMounted else { return }
+          textField.resignFirstResponder()
+        }
+      }
+    }
+    if !isFocusSuspended, context.coordinator.lastFocusRevision != focusRevision {
       context.coordinator.lastFocusRevision = focusRevision
       let requestedRevision = focusRevision
       DispatchQueue.main.async { [weak textField, weak coordinator = context.coordinator] in
         guard let textField, let coordinator,
           coordinator.isMounted,
           coordinator.lastFocusRevision == requestedRevision,
+          !coordinator.parent.isFocusSuspended,
           textField.window != nil
         else { return }
         textField.becomeFirstResponder()
@@ -498,6 +519,7 @@ private struct IMETextField: UIViewRepresentable {
     var parent: IMETextField
     var lastResetRevision = -1
     var lastFocusRevision = -1
+    var lastFocusSuspended: Bool?
     var isMounted = true
 
     init(parent: IMETextField) {

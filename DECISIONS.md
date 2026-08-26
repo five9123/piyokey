@@ -1279,3 +1279,10 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 사용자는 개발 단계마다 기기를 반복 조작하기보다 앱 전체 설계·기능을 출시 가능한 수준까지 먼저 완성하고 출시 직전에 한 번에 직접 QA하기를 선택했다. 자동 검증으로 회귀를 조기에 차단하면서 수동 검증 전환 비용을 출시 후보에 모으되, 명시된 품질 기준은 그대로 보존한다.
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2~M7, §14
 - 영향 범위: Android 마일스톤 완료 판정, GitHub Project 상태, M2 성능 evidence, M3~M6 착수 조건, 출시 후보 실기기 QA 체크리스트
+
+## 2026-08-26 iOS OS IME 세션 설정의 포커스 격리
+- 결정: OS IME 입력 중 세션 설정을 열 때 숨겨진 `UITextField`의 first responder를 먼저 해제하고, 다음 메인 실행 주기에 앱 내부 설정 패널을 표시한다. 패널을 닫으면 다음 실행 주기에 입력 포커스를 복구하며, 현재 문제·승인 자모·오타·세션 시간은 초기화하거나 일시정지하지 않는다. SwiftUI `Menu` 기반 세션 설정은 iPadOS 26.6의 하드웨어 키보드 keyplane 전환과 함께 AttributeGraph 재진입 크래시를 일으키므로 사용하지 않는다.
+- 결정: Android M7 M2는 내장 키보드만 구현되어 있고 OS IME `EditText` adapter와 세션 설정 진입점은 아직 없으므로 동일 크래시 경로가 현재 존재하지 않는다. 후속 Android F2a/F10 구현에서는 설정 UI를 열기 전에 IME 포커스를 명시적으로 해제하고, 설정 UI 생명주기와 순수 `core:session` 상태를 분리해 현재 입력·타이머를 보존한다.
+- 근거: 실제 iPad의 두 SIGABRT 로그가 `UIKeyboardLayoutStar` keyplane 갱신 중 `_UIContextMenuView`와 SwiftUI `UpdateContextMenuInteraction`을 거쳐 `AG::Graph::value_set` precondition에 도달했다. 포커스 해제와 설정 표시를 같은 AttributeGraph 갱신에서 분리하면 키보드 전환의 재진입을 없애면서 사용자의 타이핑 진행을 유지할 수 있다.
+- 관련 PRD 섹션: F2a, F10, §11.1, §12.2, §13 M6·M7
+- 영향 범위: `OSIMEInputPanel`, `PracticeView`, 세션 설정 UI, iOS UI 회귀, Android F2a/F10 선행 계약

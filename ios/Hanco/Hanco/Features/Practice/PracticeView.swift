@@ -32,7 +32,8 @@ struct PracticeView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsJamo) private var practiceShowsJamo = true
   @AppStorage(SettingsPreferenceKeys.practiceAutoSpeaks) private var practiceAutoSpeaks = false
   @AppStorage(SettingsPreferenceKeys.practiceShowsMascot) private var practiceShowsMascot = true
-  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private var practiceShowsComposition =
+  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private
+    var practiceShowsComposition =
     true
   @StateObject private var viewModel: PracticeSessionViewModel
   @StateObject private var targetSpeechSynthesizer = TargetSpeechSynthesizer()
@@ -54,6 +55,8 @@ struct PracticeView: View {
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var didResolveInputMode = false
   @State private var inputResetRevision = 0
+  @State private var isSessionSettingsPresented = false
+  @State private var isOSIMEFocusSuspended = false
   @State private var showsOSIMEUnavailable = false
   @State private var showsResult = false
   @State private var exitsAfterResultDismiss = false
@@ -188,7 +191,16 @@ struct PracticeView: View {
       }
 
       ToolbarItem(placement: .topBarTrailing) {
-        SessionSettingsMenu(
+        Button(action: presentSessionSettings) {
+          Image(systemName: "gearshape.fill")
+        }
+        .accessibilityLabel(Text("practice.session_settings"))
+        .accessibilityIdentifier("practice.session_settings")
+      }
+    }
+    .overlay {
+      if isSessionSettingsPresented {
+        SessionSettingsOverlay(
           showsKeyGuide: $showsKeyGuide,
           showsRomanHints: $showsRomanHints,
           hapticsEnabled: $hapticsEnabled,
@@ -204,8 +216,11 @@ struct PracticeView: View {
           practiceShowsMascot: $practiceShowsMascot,
           practiceShowsComposition: $practiceShowsComposition,
           allowsOSKeyboard: allowsOSKeyboard,
-          onUnavailableOSIME: { showsOSIMEUnavailable = true }
+          onUnavailableOSIME: { showsOSIMEUnavailable = true },
+          onClose: dismissSessionSettings
         )
+        .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .topTrailing)))
+        .zIndex(20)
       }
     }
     .navigationDestination(isPresented: $showsResult) {
@@ -324,6 +339,9 @@ struct PracticeView: View {
     .onChange(of: inputMode) { _ in
       showsOSIMEUnavailable = false
       inputResetRevision += 1
+      if isSessionSettingsPresented {
+        dismissSessionSettings()
+      }
     }
     .onChange(of: viewModel.currentTargetIndex) { _ in
       targetSpeechSynthesizer.stop()
@@ -453,7 +471,8 @@ struct PracticeView: View {
             .accessibilityLabel(Text("practice.jamo_progress"))
             .accessibilityValue(
               Text(
-                verbatim: "\(min(viewModel.completedJamoCount, viewModel.targetJamoSequence.count)) / \(viewModel.targetJamoSequence.count)"
+                verbatim:
+                  "\(min(viewModel.completedJamoCount, viewModel.targetJamoSequence.count)) / \(viewModel.targetJamoSequence.count)"
               )
             )
             .accessibilityIdentifier("practice.jamo_progress.value")
@@ -608,8 +627,34 @@ struct PracticeView: View {
       onAcceptedSequence: viewModel.synchronizeOSIME,
       onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
       showsChrome: false,
-      showsFocusRecovery: showsFocusRecovery
+      showsFocusRecovery: showsFocusRecovery,
+      isFocusSuspended: isOSIMEFocusSuspended
     )
+  }
+
+  private func presentSessionSettings() {
+    guard !isSessionSettingsPresented else { return }
+    isOSIMEFocusSuspended = true
+    // Keep the UITextField resignation and settings presentation in separate update cycles.
+    // SwiftUI Menu can otherwise re-enter AttributeGraph while iPadOS changes keyplanes.
+    DispatchQueue.main.async {
+      withAnimation(.easeOut(duration: 0.16)) {
+        isSessionSettingsPresented = true
+      }
+    }
+  }
+
+  private func dismissSessionSettings() {
+    guard isSessionSettingsPresented else {
+      isOSIMEFocusSuspended = false
+      return
+    }
+    withAnimation(.easeIn(duration: 0.12)) {
+      isSessionSettingsPresented = false
+    }
+    DispatchQueue.main.async {
+      isOSIMEFocusSuspended = false
+    }
   }
 
   private var mascotMood: MascotMood {
@@ -1338,7 +1383,7 @@ private struct SpaceKeyGlyph: Shape {
   }
 }
 
-struct SessionSettingsMenu: View {
+struct SessionSettingsOverlay: View {
   @Binding var showsKeyGuide: Bool
   @Binding var showsRomanHints: Bool
   @Binding var hapticsEnabled: Bool
@@ -1356,102 +1401,161 @@ struct SessionSettingsMenu: View {
 
   let allowsOSKeyboard: Bool
   let onUnavailableOSIME: () -> Void
+  let onClose: () -> Void
+
+  @State private var showsDisplaySettings = false
+  @State private var showsPromptOrder = false
+  @State private var showsSoundSettings = false
 
   var body: some View {
-    Menu {
-      Section {
-        Toggle(isOn: $showsKeyGuide) {
-          Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
-        }
-        .accessibilityIdentifier("practice.session_settings.key_guide")
+    ZStack {
+      Color.black.opacity(0.12)
+        .ignoresSafeArea()
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onClose)
 
-        Toggle(isOn: $showsRomanHints) {
-          Label("practice.setup.roman_hints", systemImage: "character.book.closed.fill")
-        }
-        .accessibilityIdentifier("practice.session_settings.roman_hints")
-
-        Toggle(isOn: $hapticsEnabled) {
-          Label("practice.setup.haptics", systemImage: "hand.tap.fill")
-        }
-        .accessibilityIdentifier("practice.session_settings.haptics")
-
-        if allowsOSKeyboard {
-          Picker("practice.setup.input_mode", selection: inputModeRawBinding) {
-            Text("input_mode.builtin").tag(SessionInputMode.builtIn.rawValue)
-            Text("input_mode.os_ime").tag(SessionInputMode.osIME.rawValue)
-          }
-          .accessibilityIdentifier("practice.session_settings.input_mode")
-        }
-      } header: {
-        Text("settings.keyboard")
-      }
-
-      Section {
-        Menu {
-          Menu {
-            Picker("settings.practice_order", selection: $practicePromptOrder) {
-              ForEach(PracticePromptOrder.allCases) { order in
-                Text(verbatim: order.localizedLabel).tag(order.rawValue)
-              }
+      ScrollView {
+        VStack(alignment: .leading, spacing: 14) {
+          HStack {
+            Text("practice.session_settings")
+              .font(.headline.weight(.bold))
+              .foregroundStyle(AppPalette.ink)
+            Spacer()
+            Button(action: onClose) {
+              Image(systemName: "xmark.circle.fill")
+                .font(.title3)
+                .foregroundStyle(AppPalette.mutedInk)
             }
-          } label: {
-            Label("settings.practice_order", systemImage: "arrow.up.arrow.down")
+            .accessibilityLabel(Text("common.close"))
+            .accessibilityIdentifier("practice.session_settings.close")
           }
-          .accessibilityIdentifier("practice.session_settings.order")
 
-          Toggle("settings.practice_target", isOn: $practiceShowsTarget)
-            .accessibilityIdentifier("practice.session_settings.target")
-          Toggle("settings.practice_meaning", isOn: $practiceShowsMeaning)
-            .accessibilityIdentifier("practice.session_settings.meaning")
-          Toggle("settings.practice_reading", isOn: $practiceShowsReading)
-            .accessibilityIdentifier("practice.session_settings.reading")
-          Toggle("settings.practice_jamo", isOn: $practiceShowsJamo)
-            .accessibilityIdentifier("practice.session_settings.jamo")
-          Toggle("settings.practice_mascot", isOn: $practiceShowsMascot)
-            .accessibilityIdentifier("practice.session_settings.mascot")
-          Toggle("settings.practice_composition", isOn: $practiceShowsComposition)
-            .accessibilityIdentifier("practice.session_settings.composition")
-        } label: {
-          Label("settings.practice_display", systemImage: "rectangle.3.group.fill")
+          settingsSection(title: "settings.keyboard") {
+            Toggle(isOn: $showsKeyGuide) {
+              Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
+            }
+            .accessibilityIdentifier("practice.session_settings.key_guide")
+
+            Toggle(isOn: $showsRomanHints) {
+              Label("practice.setup.roman_hints", systemImage: "character.book.closed.fill")
+            }
+            .accessibilityIdentifier("practice.session_settings.roman_hints")
+
+            Toggle(isOn: $hapticsEnabled) {
+              Label("practice.setup.haptics", systemImage: "hand.tap.fill")
+            }
+            .accessibilityIdentifier("practice.session_settings.haptics")
+
+            if allowsOSKeyboard {
+              SessionInputModeControl(
+                selection: $inputMode,
+                onUnavailableOSIME: onUnavailableOSIME
+              )
+            }
+          }
+
+          disclosureButton(
+            title: "settings.practice_display",
+            systemImage: "rectangle.3.group.fill",
+            isExpanded: $showsDisplaySettings,
+            identifier: "practice.session_settings.display"
+          )
+          if showsDisplaySettings {
+            VStack(alignment: .leading, spacing: 10) {
+              disclosureButton(
+                title: "settings.practice_order",
+                systemImage: "arrow.up.arrow.down",
+                isExpanded: $showsPromptOrder,
+                identifier: "practice.session_settings.order"
+              )
+              if showsPromptOrder {
+                VStack(alignment: .leading, spacing: 8) {
+                  ForEach(PracticePromptOrder.allCases) { order in
+                    Button {
+                      practicePromptOrder = order.rawValue
+                    } label: {
+                      HStack {
+                        Text(verbatim: order.localizedLabel)
+                        Spacer()
+                        if practicePromptOrder == order.rawValue {
+                          Image(systemName: "checkmark")
+                            .foregroundStyle(AppPalette.accent)
+                        }
+                      }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(
+                      practicePromptOrder == order.rawValue ? .isSelected : []
+                    )
+                  }
+                }
+                .padding(.leading, 8)
+              }
+
+              Toggle("settings.practice_target", isOn: $practiceShowsTarget)
+                .accessibilityIdentifier("practice.session_settings.target")
+              Toggle("settings.practice_meaning", isOn: $practiceShowsMeaning)
+                .accessibilityIdentifier("practice.session_settings.meaning")
+              Toggle("settings.practice_reading", isOn: $practiceShowsReading)
+                .accessibilityIdentifier("practice.session_settings.reading")
+              Toggle("settings.practice_jamo", isOn: $practiceShowsJamo)
+                .accessibilityIdentifier("practice.session_settings.jamo")
+              Toggle("settings.practice_mascot", isOn: $practiceShowsMascot)
+                .accessibilityIdentifier("practice.session_settings.mascot")
+              Toggle("settings.practice_composition", isOn: $practiceShowsComposition)
+                .accessibilityIdentifier("practice.session_settings.composition")
+            }
+            .padding(.top, 8)
+          }
+
+          disclosureButton(
+            title: "settings.sound",
+            systemImage: "speaker.wave.2.fill",
+            isExpanded: $showsSoundSettings,
+            identifier: "practice.session_settings.sound_menu"
+          )
+          if showsSoundSettings {
+            VStack(alignment: .leading, spacing: 10) {
+              Toggle(isOn: $practiceAutoSpeaks) {
+                Label(
+                  "settings.practice_auto_speak",
+                  systemImage: practiceAutoSpeaks ? "speaker.wave.2.fill" : "speaker.slash.fill"
+                )
+              }
+              .accessibilityIdentifier("practice.session_settings.auto_speak")
+
+              Toggle(isOn: $soundEffectsEnabled) {
+                Label(
+                  "practice.setup.sound",
+                  systemImage: soundEffectsEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill"
+                )
+              }
+              .accessibilityIdentifier("practice.session_settings.sound")
+
+              Picker("practice.setup.sound_preset", selection: $typingSoundPreset) {
+                Text("practice.setup.sound_system").tag(TypingSoundPreset.system.rawValue)
+                Text("practice.setup.sound_mechanical").tag(TypingSoundPreset.mechanical.rawValue)
+                Text("practice.setup.sound_soft").tag(TypingSoundPreset.soft.rawValue)
+              }
+              .pickerStyle(.segmented)
+              .disabled(!soundEffectsEnabled)
+              .accessibilityIdentifier("practice.session_settings.sound_preset")
+            }
+            .padding(.top, 8)
+          }
         }
-        .accessibilityIdentifier("practice.session_settings.display")
+        .padding(18)
       }
-
-      Section {
-        Menu {
-          Toggle(isOn: $practiceAutoSpeaks) {
-            Label(
-              "settings.practice_auto_speak",
-              systemImage: practiceAutoSpeaks ? "speaker.wave.2.fill" : "speaker.slash.fill"
-            )
-          }
-          .accessibilityIdentifier("practice.session_settings.auto_speak")
-
-          Toggle(isOn: $soundEffectsEnabled) {
-            Label(
-              "practice.setup.sound",
-              systemImage: soundEffectsEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill"
-            )
-          }
-          .accessibilityIdentifier("practice.session_settings.sound")
-
-          Picker("practice.setup.sound_preset", selection: $typingSoundPreset) {
-            Text("practice.setup.sound_system").tag(TypingSoundPreset.system.rawValue)
-            Text("practice.setup.sound_mechanical").tag(TypingSoundPreset.mechanical.rawValue)
-            Text("practice.setup.sound_soft").tag(TypingSoundPreset.soft.rawValue)
-          }
-          .disabled(!soundEffectsEnabled)
-          .accessibilityIdentifier("practice.session_settings.sound_preset")
-        } label: {
-          Label("settings.sound", systemImage: "speaker.wave.2.fill")
-        }
-        .accessibilityIdentifier("practice.session_settings.sound_menu")
+      .frame(maxWidth: 430, maxHeight: 620)
+      .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 24))
+      .overlay {
+        RoundedRectangle(cornerRadius: 24)
+          .stroke(AppPalette.keyShadow.opacity(0.7), lineWidth: 1)
       }
-    } label: {
-      Image(systemName: "gearshape.fill")
+      .shadow(color: .black.opacity(0.16), radius: 24, y: 10)
+      .padding(14)
     }
-    .accessibilityLabel(Text("practice.session_settings"))
-    .accessibilityIdentifier("practice.session_settings")
+    .accessibilityIdentifier("practice.session_settings.overlay")
     .onChange(of: soundEffectsEnabled) { enabled in
       HancoSoundEngine.shared.setEnabled(enabled)
       if enabled {
@@ -1464,18 +1568,43 @@ struct SessionSettingsMenu: View {
     }
   }
 
-  private var inputModeRawBinding: Binding<String> {
-    Binding(
-      get: { inputMode.rawValue },
-      set: { rawValue in
-        guard let mode = SessionInputMode(rawValue: rawValue) else { return }
-        if mode == .osIME, !KoreanKeyboardAvailability.isAvailable {
-          onUnavailableOSIME()
-        } else {
-          inputMode = mode
-        }
+  private func settingsSection<Content: View>(
+    title: LocalizedStringKey,
+    @ViewBuilder content: () -> Content
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text(title)
+        .font(.caption.weight(.bold))
+        .foregroundStyle(AppPalette.mutedInk)
+      content()
+    }
+    .padding(14)
+    .background(AppPalette.card.opacity(0.94), in: RoundedRectangle(cornerRadius: 18))
+  }
+
+  private func disclosureButton(
+    title: LocalizedStringKey,
+    systemImage: String,
+    isExpanded: Binding<Bool>,
+    identifier: String
+  ) -> some View {
+    Button {
+      withAnimation(.easeOut(duration: 0.16)) {
+        isExpanded.wrappedValue.toggle()
       }
-    )
+    } label: {
+      HStack {
+        Label(title, systemImage: systemImage)
+        Spacer()
+        Image(systemName: isExpanded.wrappedValue ? "chevron.up" : "chevron.down")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(AppPalette.mutedInk)
+      }
+      .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .accessibilityIdentifier(identifier)
+    .accessibilityAddTraits(isExpanded.wrappedValue ? .isSelected : [])
   }
 
   private var resolvedTypingPreset: TypingSoundPreset {

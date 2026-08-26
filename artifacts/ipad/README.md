@@ -72,3 +72,19 @@ Issue [#10](https://github.com/five9123-maker/piyokey/issues/10)의 자동 검�
 동일한 iPadOS 26.6 기기에서 iOS 26.5 SDK 기반 Debug 앱의 빌드·설치·실행과 위 실기기 UI 테스트가 성공했으므로 DDI 차단은 해제됐다. 재현 시 우선 USB 연결, 잠금 해제, `ddiServicesAvailable`, Xcode 계정과 기기 등록 상태를 확인한다.
 
 Split View·Stage Manager·포인터·VoiceOver와 실제 Bluetooth/USB 키보드 수동 입력은 별도의 남은 출시 게이트다.
+
+## 2026-08-26 OS IME 입력 중 세션 설정 크래시 회귀
+
+실제 iPad에서 Bluetooth 키보드 입력 중 세션 설정을 누르면 연속으로 종료되는 현상을 두 번 재현했다. 두 crash report 모두 `SIGABRT`이며, iPadOS 키보드 keyplane 변경 중 SwiftUI context menu가 AttributeGraph를 재진입한 경로를 가리켰다.
+
+수정 계약:
+
+- 설정 표시 전에 OS IME `UITextField`의 first responder를 해제한다.
+- 포커스 해제와 설정 패널 표시를 서로 다른 main run-loop cycle로 분리한다.
+- 설정을 닫으면 OS IME 포커스를 자동 복구한다.
+- 입력 중인 자모, 현재 문제, 오타와 세션 시간은 보존한다.
+- Android M7 M2에는 아직 OS IME와 세션 설정 진입점이 없어 동일 런타임 경로는 없다. 향후 F2a/F10 구현은 같은 포커스 격리 계약을 적용한다.
+
+자동 회귀는 `사` 입력 후 설정 열기·닫기를 3회 반복하고 `랑해요`를 이어 입력해 다음 문제로 자동 전환되는지 검증한다. iPhone 17 / iOS 26.5 Simulator의 관련 UI 회귀 7/7과 Jungmin’s iPad / iPadOS 26.6의 신규 회귀 1/1이 통과했다. 실기기 결과 번들은 `Test-Hanco-2026.08.26_23-52-49-+0900.xcresult`다. 실제 Bluetooth 키보드에서 동일 반복 동작과 새 crash report 부재 확인은 Issue #46의 Verify gate로 남긴다.
+
+Android M7 M2는 소스 감사에서 OS IME `EditText`·세션 설정 UI가 아직 없음을 확인했다. 따라서 동일 크래시는 현재 적용 대상이 아니며, 이번 환경에는 JDK가 없어 변경 없는 Android Gradle 회귀는 재실행하지 못했다.

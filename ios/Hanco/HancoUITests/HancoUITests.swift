@@ -566,14 +566,15 @@ final class HancoUITests: XCTestCase {
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
 
-    let automaticSpeech = app.buttons["practice.session_settings.auto_speak"]
+    let automaticSpeech = element("practice.session_settings.auto_speak")
     XCTAssertTrue(automaticSpeech.waitForExistence(timeout: 3))
-    XCTAssertFalse(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "0")
     automaticSpeech.tap()
 
+    app.buttons["practice.session_settings.close"].tap()
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
-    XCTAssertTrue(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "1")
     automaticSpeech.tap()
   }
 
@@ -582,8 +583,9 @@ final class HancoUITests: XCTestCase {
 
     app.buttons["practice.session_settings"].tap()
     app.buttons["practice.session_settings.display"].tap()
-    app.buttons["practice.session_settings.order"].tap()
+    element("practice.session_settings.order").tap()
     app.buttons["日本語の意味 → お題を表示 → 日本語式の読み方"].tap()
+    app.buttons["practice.session_settings.close"].tap()
 
     let meaning = element("practice.meaning.value")
     let target = element("practice.target.value")
@@ -717,6 +719,35 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(restoredField.waitForExistence(timeout: 5))
     restoredField.typeText("해")
     waitForValue("사랑해", on: restoredField, timeout: 3)
+  }
+
+  func testOSIMESessionSettingsPreservesProgressAndRestoresFocus() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사")
+    waitForValue("사", on: imeField, timeout: 3)
+
+    for _ in 0..<3 {
+      app.buttons["practice.session_settings"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+      app.buttons["practice.session_settings.close"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForNonExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+    }
+
+    imeField.typeText("랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
   }
 
   func testHomeRecommendationsOpenDeckDetail() {
