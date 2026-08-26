@@ -1,0 +1,63 @@
+name: Apply Korean 10-key practice UI
+
+on:
+  push:
+    branches:
+      - codex/issue-11-korean-10-key
+
+permissions:
+  contents: write
+
+jobs:
+  patch-practice-ui:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply Korean 10-key UI and practice eligibility gate
+        env:
+          KEYBOARD_SWIFT_GZIP_BASE64: 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
+        run: |
+          python3 - <<'PY'
+          import base64
+          import gzip
+          import os
+          from pathlib import Path
+
+          keyboard = Path("ios/Hanco/Hanco/Features/Practice/HangulKeyboardView.swift")
+          keyboard.write_bytes(
+              gzip.decompress(base64.b64decode(os.environ["KEYBOARD_SWIFT_GZIP_BASE64"]))
+          )
+
+          practice = Path("ios/Hanco/Hanco/Features/Practice/PracticeView.swift")
+          text = practice.read_text()
+          needle = """            hapticsEnabled: hapticsEnabled
+          ),
+          onInputStart: recordInputStart,
+"""
+          replacement = """            hapticsEnabled: hapticsEnabled
+          ),
+          allowsKorean10Key: allowsOSKeyboard,
+          onInputStart: recordInputStart,
+"""
+          if replacement not in text:
+              count = text.count(needle)
+              if count != 1:
+                  raise SystemExit(f"Expected one PracticeView insertion point, found {count}")
+              practice.write_text(text.replace(needle, replacement, 1))
+
+          Path(".github/workflows/apply-korean10key-ui.yml").unlink()
+          PY
+
+      - name: Commit scoped source updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ios/Hanco/Hanco/Features/Practice/HangulKeyboardView.swift \
+            ios/Hanco/Hanco/Features/Practice/PracticeView.swift \
+            .github/workflows/apply-korean10key-ui.yml
+          git commit -m "feat(ios): add Korean 10-key practice keyboard"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
