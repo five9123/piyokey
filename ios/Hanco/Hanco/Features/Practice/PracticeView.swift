@@ -72,6 +72,8 @@ struct PracticeView: View {
   private let onCurriculumCompletion: ((Double, Double, Int) async -> Bool)?
   private let onPracticeCompletion: ((Double, Double) -> Void)?
   private let onSessionRestart: (() -> Void)?
+  private let retryTitle: LocalizedStringKey
+  private let retrySystemImage: String
   private let onResultFinished: (() -> Void)?
   private let onPersistenceFailureExit: (() -> Void)?
   private let chainsHatchMissions: Bool
@@ -91,6 +93,8 @@ struct PracticeView: View {
     onCurriculumCompletion: ((Double, Double, Int) async -> Bool)? = nil,
     onPracticeCompletion: ((Double, Double) -> Void)? = nil,
     onSessionRestart: (() -> Void)? = nil,
+    retryTitle: LocalizedStringKey = "practice.result.retry",
+    retrySystemImage: String = "arrow.counterclockwise",
     onResultFinished: (() -> Void)? = nil,
     onPersistenceFailureExit: (() -> Void)? = nil,
     chainsHatchMissions: Bool = false,
@@ -107,6 +111,8 @@ struct PracticeView: View {
     self.onCurriculumCompletion = onCurriculumCompletion
     self.onPracticeCompletion = onPracticeCompletion
     self.onSessionRestart = onSessionRestart
+    self.retryTitle = retryTitle
+    self.retrySystemImage = retrySystemImage
     self.onResultFinished = onResultFinished
     self.onPersistenceFailureExit = onPersistenceFailureExit
     self.chainsHatchMissions = chainsHatchMissions
@@ -227,6 +233,8 @@ struct PracticeView: View {
         recommendations: resultRecommendations,
         catalogDecks: catalogDecks,
         showsRetry: !chainsHatchMissions,
+        retryTitle: retryTitle,
+        retrySystemImage: retrySystemImage,
         finishTitle: hatchResultFinishTitle,
         finishSystemImage: chainsHatchMissions ? "arrow.right.circle.fill" : "chevron.backward",
         finishAccessibilityIdentifier: chainsHatchMissions

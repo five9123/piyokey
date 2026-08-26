@@ -796,6 +796,12 @@
 "home.primary.resume_detail" = "지난 지점부터 계속 입력해요";
 "home.primary.deck_detail" = "최근 연습한 덱을 다시 입력해요";
 "home.primary.daily_personalized" = "선택한 목적에 맞춘 5문제";
+"home.quick.piyo_cup.title" = "주간 피요컵";
+"home.quick.piyo_cup.detail" = "60초 기록에 바로 도전";
+"home.quick.random.title" = "랜덤 단어 5개";
+"home.quick.random.detail" = "추천 단어로 가볍게 연습";
+"home.quick.random.session_title" = "랜덤 단어 5개";
+"home.quick.random.retry" = "다른 5문제";
 "retention.rewards.navigation_title" = "스탬프와 보상";
 "retention.rewards.current_streak" = "현재 연속 기록";
 "retention.rewards.accessibility" = "3일, 5일, 7일 보상";

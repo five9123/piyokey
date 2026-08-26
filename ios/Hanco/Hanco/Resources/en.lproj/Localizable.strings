@@ -796,6 +796,12 @@
 "home.primary.resume_detail" = "Continue from where you left off";
 "home.primary.deck_detail" = "Practice your most recent deck again";
 "home.primary.daily_personalized" = "Five prompts matched to your goal";
+"home.quick.piyo_cup.title" = "Weekly Piyo Cup";
+"home.quick.piyo_cup.detail" = "Jump into a 60-second run";
+"home.quick.random.title" = "5 random words";
+"home.quick.random.detail" = "A quick mix picked for you";
+"home.quick.random.session_title" = "5 random words";
+"home.quick.random.retry" = "Try 5 new words";
 "retention.rewards.navigation_title" = "Stamps & rewards";
 "retention.rewards.current_streak" = "Current streak";
 "retention.rewards.accessibility" = "Rewards for 3, 5, and 7 days";

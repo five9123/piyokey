@@ -796,6 +796,12 @@
 "home.primary.resume_detail" = "前回の続きから入力できます";
 "home.primary.deck_detail" = "最近練習したデッキをもう一度";
 "home.primary.daily_personalized" = "選んだ目的に合わせた5問";
+"home.quick.piyo_cup.title" = "週間ピヨカップ";
+"home.quick.piyo_cup.detail" = "60秒チャレンジをすぐ開始";
+"home.quick.random.title" = "ランダム5単語";
+"home.quick.random.detail" = "おすすめ単語でサクッと練習";
+"home.quick.random.session_title" = "ランダム5単語";
+"home.quick.random.retry" = "別の5問";
 "retention.rewards.navigation_title" = "スタンプとごほうび";
 "retention.rewards.current_streak" = "現在の連続記録";
 "retention.rewards.accessibility" = "3日、5日、7日のごほうび";
