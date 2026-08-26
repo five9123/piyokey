@@ -31,6 +31,9 @@ final class HancoUITests: XCTestCase {
     if name.contains("testR11RestoredDraft") {
       app.launchEnvironment["UITEST_SEED_USER_DECK_DRAFT"] = "1"
     }
+    if name.contains("testKorean10KeyLayoutCarriesInto") {
+      app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    }
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
   }
@@ -142,6 +145,28 @@ final class HancoUITests: XCTestCase {
     waitForValue("2 / 9", on: progress, timeout: 3)
     XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
     attachScreenshot(named: "practice-korean-10key-large-ja")
+  }
+
+  func testKorean10KeyLayoutCarriesIntoFlowGame() {
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.flow"].tap()
+    element("game.flow.preset.beginner").tap()
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.next"].exists)
+    XCTAssertFalse(app.buttons["keyboard.key.ㄱ"].exists)
+    app.buttons["game.end"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+  }
+
+  func testKorean10KeyLayoutCarriesIntoRecallGame() {
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.choseong"].tap()
+    element("game.choseong.preset.beginner").tap()
+    XCTAssertTrue(element("choseong.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.next"].exists)
+    XCTAssertFalse(app.buttons["keyboard.key.ㅎ"].exists)
   }
 
   func testCurriculumMapStartsWithSequentialCoreUnlocks() {

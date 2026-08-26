@@ -99,6 +99,7 @@
 "keyboard.10key.ieung" = "ㅇ, ㅁ 묶음";
 "keyboard.10key.next" = "다음 자음으로 진행";
 "input_mode.builtin" = "내장 키보드";
+"input_mode.builtin_korean_10key" = "한국어 10키";
 "input_mode.os_ime" = "OS 키보드";
 "os_ime.input.title" = "기기의 한국어 키보드로 입력";
 "os_ime.input.live_badge" = "실전 모드";
@@ -418,6 +419,7 @@
 "game.selection.deck_hint.dictation_unavailable" = "타이핑 가능한 한국어가 필요해요";
 "game.selection.best_score" = "최고 %@점";
 "game.selection.best_score.builtin" = "내장 최고 %@점";
+"game.selection.best_score.korean_10key" = "10키 최고 %@점";
 "game.selection.best_score.os_ime" = "OS 최고 %@점";
 "game.selection.best_score.choseong" = "초성 최고 %@점";
 "game.selection.best_score.acid_rain" = "산성비 최고 %@점";
