@@ -38,7 +38,7 @@ xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco \
 | 항목 | iPad Pro 11-inch (3세대) | iPhone 15 Pro | iPhone 16 |
 |---|---|---|---|
 | OS / build | iPadOS 26.6 / 23G71 | 기록 필요 | 기록 필요 |
-| 연결 | paired, local network | paired | paired |
+| 연결 | USB, paired/available | paired | paired |
 | Developer Mode | enabled | 기록 필요 | 기록 필요 |
 | 한국어 두벌식 입력 | 대기 | 대기 | 대기 |
 | Bluetooth 연결·해제 | 대기 | 대기 | 대기 |
@@ -60,11 +60,14 @@ xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco \
 9. 입력 중 Bluetooth 연결을 해제하고 다시 연결한다. 문제·수락 prefix가 유지되고 입력 필드를 한 번 탭하면 계속 입력할 수 있어야 한다.
 10. 입력 중 홈으로 나갔다 복귀해 현재 문제·타이머·포커스가 복구되는지 확인한다.
 
-## 현재 실기기 게이트 상태 — 2026-08-25
+## 현재 실기기 게이트 상태 — 2026-08-26
 
 - 자동 게이트: HangulEngine 11/11, `PracticeSessionViewModelTests` 26/26, 대상 OS IME UI 회귀 3/3 통과.
 - `xcrun devicectl list devices`: iPad Pro 11-inch (3세대), iPhone 15 Pro, iPhone 16 모두 paired/available.
-- iPad: iPadOS 26.6 (23G71), Developer Mode enabled, local-network tunnel connected.
-- 현재 Xcode의 iOS SDK/Developer Disk Image는 26.5이므로 iPadOS 26.6 기기에 DDI를 마운트하지 못했다.
-- 실기기 `xcodebuild test`는 destination 대기 후 `The developer disk image could not be mounted on this device`로 종료됐다.
-- Xcode가 iPadOS 26.6 DDI를 제공하는 버전으로 갱신되기 전까지 실기기 자동 실행과 Bluetooth 수동 증거는 완료 처리하지 않는다.
+- iPad: iPadOS 26.6 (23G71), Developer Mode enabled, USB connected, `ddiServicesAvailable: true`.
+- Xcode Apple Account 로그인 뒤 기기 자동 등록·프로비저닝이 성공했고 arm64 Debug 앱 설치·실행을 확인했다.
+- 실제 iPad에서 `PracticeSessionViewModelTests` 26/26 통과.
+- 실제 iPad의 iPhone 호환 실행에서 대상 OS IME UI 회귀 3/3 통과. Backspace → Return → 이어 입력, 내장→OS IME 전환, background→foreground 포커스 복구를 확인했다.
+- 호환 창의 접근성 좌표에서 전체 화면 스와이프가 창 밖으로 전달되던 테스트 하네스를 현재 보이는 `ScrollView` 우선 스와이프와 중앙 좌표 탭 폴백으로 수정했다. 앱 제품 코드는 변경하지 않았다.
+- 결과 번들: `Test-Hanco-2026.08.26_23-20-27-+0900.xcresult`, `Test-Hanco-2026.08.26_23-21-27-+0900.xcresult`.
+- 실제 Bluetooth/USB/Magic Keyboard의 한국어 두벌식 조합, 연결 해제·재연결, 한/영 전환, 키 반복과 연습·게임 전 모드 수동 매트릭스는 아직 대기다.
