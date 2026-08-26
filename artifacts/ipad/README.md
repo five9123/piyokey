@@ -62,7 +62,7 @@ Issue [#10](https://github.com/five9123-maker/piyokey/issues/10)의 자동 검�
 - 세션 진행 중 회전·리사이즈 후 문제, 입력, 점수, 타이머 보존
 - Pointer/trackpad hover·클릭, Full Keyboard Access, VoiceOver, Increase Contrast, Reduce Motion
 - Issue #12의 ANSI/JIS Bluetooth 키보드 100회 입력·동시 입력 계측
-- Issue #17의 물리 키보드 학습 모드 구현·검증
+- Issue #17의 실제 Bluetooth/USB 키보드 온보딩 첫 입력·부화 미션·설정 반복 수동 확인
 - App Store Connect의 iPad 스크린샷·현지화 메타데이터와 TestFlight 새 설치 검수
 
 ## 해제된 실기기 연결 차단
@@ -88,3 +88,18 @@ Split View·Stage Manager·포인터·VoiceOver와 실제 Bluetooth/USB 키보�
 자동 회귀는 `사` 입력 후 설정 열기·닫기를 3회 반복하고 `랑해요`를 이어 입력해 다음 문제로 자동 전환되는지 검증한다. iPhone 17 / iOS 26.5 Simulator의 관련 UI 회귀 7/7과 Jungmin’s iPad / iPadOS 26.6의 신규 회귀 1/1이 통과했다. 실기기 결과 번들은 `Test-Hanco-2026.08.26_23-52-49-+0900.xcresult`다. 실제 Bluetooth 키보드에서 동일 반복 동작과 새 crash report 부재 확인은 Issue #46의 Verify gate로 남긴다.
 
 Android M7 M2는 소스 감사에서 OS IME `EditText`·세션 설정 UI가 아직 없음을 확인했다. 따라서 동일 크래시는 현재 적용 대상이 아니며, 이번 환경에는 JDK가 없어 변경 없는 Android Gradle 회귀는 재실행하지 못했다.
+
+## 2026-08-27 초기 온보딩 기기 키보드 학습 경로
+
+두벌식 소개의 세 번째 상호작용에서 `내장 키보드로 시작` 또는 `기기 키보드로 시작`을 선택할 수 있게 했다. 기기 키보드를 선택하면 첫 `가` 입력부터 OS 한국어 IME를 사용하고, 선택한 입력 방식과 앱 소유 QWERTY 두벌식 배열 가이드는 챕터1~3 부화 미션과 챕터4에도 이어진다. 배열은 다음 자모에 대응하는 라틴 키, 권장 손·손가락, 겹자음·겹모음의 반대 손 Shift를 안내하되 실제 운지는 채점하지 않는다.
+
+자동 검증:
+
+- iPhone 17 / iOS 26.5 Simulator에서 `기기 키보드 선택 → 가 입력 → 부화 미션1 OS IME·배열 가이드 유지`: 1/1
+- 기존 내장 키보드의 네 번째 상호작용 첫 입력과 부화 미션 강제 경로: 1/1
+- OS IME 입력 중 설정 열기·닫기 3회 후 진행 보존·포커스 복구: 1/1
+- 두벌식 base/Shift/Space/home-position 매핑, 전체 내장 자모 coverage, ja/en/ko 키·format parity: 3/3
+- 실제 iPad용 arm64 Debug 서명 빌드와 설치: 성공
+- Jungmin’s iPad / iPadOS 26.6에서 `기기 키보드 선택 → 가 입력 → 부화 미션1 OS IME·배열 가이드 유지` UI 자동 테스트: 1/1 (`/tmp/piyokey-issue17-ipad-onboarding-final.xcresult`)
+
+실기기 자동화 입력은 실제 Bluetooth 키 이벤트를 대신하지 않으므로, 설치된 앱에서 Bluetooth 키보드로 새 온보딩의 `기기 키보드로 시작`을 선택해 `ㄱ`, `ㅏ`를 입력하고 부화 미션에 같은 입력 방식이 유지되는지, 입력 도중 설정을 반복해도 종료되지 않는지 확인하는 수동 Verify gate가 남아 있다.

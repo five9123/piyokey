@@ -296,7 +296,8 @@ struct CurriculumMapView: View {
         .ignoresSafeArea()
       )
       .navigationTitle(
-        Text(isHatchOnboarding ? "onboarding.hatch.navigation_title" : "curriculum.navigation_title")
+        Text(
+          isHatchOnboarding ? "onboarding.hatch.navigation_title" : "curriculum.navigation_title")
       )
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier(
@@ -498,9 +499,10 @@ struct CurriculumMapView: View {
 
   private func hatchStageRow(_ stage: CurriculumStage) -> some View {
     let completed = progress.completedStageIDs.contains(stage.id)
-    let isCurrent = HatchOnboardingPolicy.nextRequiredStage(
-      completedStageIDs: progress.completedStageIDs
-    )?.id == stage.id
+    let isCurrent =
+      HatchOnboardingPolicy.nextRequiredStage(
+        completedStageIDs: progress.completedStageIDs
+      )?.id == stage.id
     return CurriculumStageRow(
       stage: stage,
       stageProgress: progress.progress(for: stage.id),
@@ -742,7 +744,7 @@ private struct CurriculumPracticeDestination: View {
       onPersistenceFailureExit: onPersistenceFailureExit,
       chainsHatchMissions: chainsHatchMissions,
       isFinalHatchMission: isFinalHatchMission,
-      allowsOSKeyboard: stage.chapterNumber >= 5
+      allowsOSKeyboard: true
     )
   }
 

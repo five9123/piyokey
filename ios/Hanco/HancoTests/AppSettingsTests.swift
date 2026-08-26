@@ -226,6 +226,40 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertLessThanOrEqual(wide.formContentMaxWidth, wide.readableContentMaxWidth)
   }
 
+  func testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions() throws {
+    let base = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㄱ"))
+    XCTAssertEqual(base.key?.latin, "R")
+    XCTAssertEqual(base.hand, .left)
+    XCTAssertEqual(base.finger, .index)
+    XCTAssertFalse(base.requiresShift)
+
+    let shifted = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㅒ"))
+    XCTAssertEqual(shifted.key?.latin, "O")
+    XCTAssertEqual(shifted.hand, .right)
+    XCTAssertEqual(shifted.finger, .ring)
+    XCTAssertTrue(shifted.requiresShift)
+    XCTAssertEqual(shifted.shiftHand, .left)
+
+    let space = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: " "))
+    XCTAssertNil(space.key)
+    XCTAssertEqual(space.hand, .both)
+    XCTAssertEqual(space.finger, .thumb)
+
+    let homeKeys = PhysicalDubeolsikLayout.rows.joined().filter(\.isHomePosition)
+    XCTAssertEqual(Set(homeKeys.map(\.latin)), Set(["F", "J"]))
+    XCTAssertEqual(Set(homeKeys.map(\.baseJamo)), Set(["ㄹ", "ㅓ"]))
+  }
+
+  func testPhysicalDubeolsikGuideCoversEveryBuiltInBaseAndShiftJamo() {
+    let base = Array("ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔㅁㄴㅇㄹㅎㅗㅓㅏㅣㅋㅌㅊㅍㅠㅜㅡ")
+    let shifted = Array("ㅃㅉㄸㄲㅆㅒㅖ")
+
+    for jamo in base + shifted {
+      XCTAssertNotNil(PhysicalDubeolsikLayout.target(for: jamo), "Missing mapping for \(jamo)")
+    }
+    XCTAssertNil(PhysicalDubeolsikLayout.target(for: "가"))
+  }
+
   func testContentReportEmailIncludesOnlyRequiredContext() throws {
     let url = ContentFeedbackLinkBuilder.makeURL(
       context: .report(deckID: "official_daily_words", deckVersion: 4),

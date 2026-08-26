@@ -2094,7 +2094,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
     app.buttons["onboarding.next"].tap()  // Tap 3
 
-    XCTAssertTrue(element("onboarding.lesson.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
     XCTAssertEqual(element("onboarding.lesson.target.value").label, "가")
     app.buttons["keyboard.key.ㄱ"].tap()  // Tap 4: first actual input
     XCTAssertEqual(element("onboarding.lesson.entered.value").value as? String, "ㄱ")
@@ -2127,6 +2127,43 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("onboarding.goal.screen").exists)
+  }
+
+  func testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 1,
+      koreanKeyboardAvailable: true,
+      showsOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.goal.screen").waitForExistence(timeout: 5))
+    app.buttons["onboarding.goal.keyboard"].tap()  // Interaction 1
+    app.buttons["onboarding.next"].tap()  // Interaction 2
+    XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
+    app.buttons["onboarding.input_device.hardware"].tap()  // Interaction 3
+
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").waitForExistence(timeout: 3))
+    let firstInput = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(firstInput.waitForExistence(timeout: 3))
+    firstInput.typeText("가")  // Interaction 4: first real input
+
+    XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
+    let finish = app.buttons["onboarding.finish"]
+    scrollToHittable(finish)
+    finish.tap()
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+
+    let firstMission = app.buttons["ミッション1をはじめる"]
+    scrollToHittable(firstMission)
+    firstMission.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").exists)
+    XCTAssertFalse(element("keyboard.view").exists)
   }
 
   func testFirstHatchResultContinuesToSecondMissionWithoutRetry() {

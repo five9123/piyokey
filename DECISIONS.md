@@ -1286,3 +1286,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 실제 iPad의 두 SIGABRT 로그가 `UIKeyboardLayoutStar` keyplane 갱신 중 `_UIContextMenuView`와 SwiftUI `UpdateContextMenuInteraction`을 거쳐 `AG::Graph::value_set` precondition에 도달했다. 포커스 해제와 설정 표시를 같은 AttributeGraph 갱신에서 분리하면 키보드 전환의 재진입을 없애면서 사용자의 타이핑 진행을 유지할 수 있다.
 - 관련 PRD 섹션: F2a, F10, §11.1, §12.2, §13 M6·M7
 - 영향 범위: `OSIMEInputPanel`, `PracticeView`, 세션 설정 UI, iOS UI 회귀, Android F2a/F10 선행 계약
+
+## 2026-08-27 초기 온보딩의 기기 키보드 선택과 기초 레슨 허용
+- 결정: 두벌식 소개 화면의 기존 단일 체험 버튼을 `내장 키보드로 시작`과 `기기 키보드로 시작` 두 선택으로 교체한다. 선택 버튼이 바로 첫 `가` 입력 화면으로 이동하므로 목표 선택·다음·입력 방식 선택 뒤 네 번째 상호작용이 실제 입력이라는 F1 경계를 유지한다. 기기 키보드 선택은 `input_mode=os_ime`와 별도의 참조 배열 표시 설정으로 저장하고 챕터1~3 부화 미션과 챕터4에도 이어진다.
+- 결정: 물리 연결 여부는 추정하지 않는다. 기기 키보드 입력은 #12에서 검증한 `UITextField` committed/marked diff 판정을 그대로 사용하고, 앱은 QWERTY 문자 영역의 두벌식 자모·라틴 문자·다음 키·권장 손·손가락·반대 손 Shift만 안내한다. 실제 사용 손가락은 감지하거나 채점하지 않는다. 기존 사용자의 기본 입력과 참조 배열은 각각 내장·OFF로 유지한다.
+- 결정: Android M7 M2에는 아직 F1 온보딩과 F2a OS IME adapter가 없으므로 이번 iOS 구현과 같은 런타임 변경을 넣지 않는다. Android M6 포팅에서는 같은 `내장/기기` 초기 선택, 기초 챕터 허용, reducer 상태와 IME focus 분리 계약을 적용한다.
+- 근거: 실제 iPad와 Bluetooth 한국어 키보드에서 일반 연습 입력은 성공했지만 첫 온보딩과 부화 미션이 내장 키보드로 고정돼, 물리 배열을 배우려는 사용자가 가장 처음부터 원하는 입력 장치를 사용할 수 없었다. 입력 판정기를 새로 만들지 않고 이미 검증된 OS IME 경로를 확장하면 판정 일관성을 유지하면서 첫 경험의 강제를 제거할 수 있다.
+- 관련 PRD 섹션: F1, F2a, F4, F10, §7.2, §12.2, §13 M6·M7
+- 영향 범위: 온보딩 입력 선택, `PhysicalKeyboardGuideView`, 챕터1~4 입력 허용, 키보드 설정 저장, ja/en/ko 로컬라이제이션, iPad Bluetooth 키보드 QA

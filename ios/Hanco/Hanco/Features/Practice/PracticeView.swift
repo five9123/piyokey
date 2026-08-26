@@ -21,6 +21,8 @@ struct PracticeView: View {
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
     SessionInputMode.builtIn.rawValue
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
@@ -204,6 +206,7 @@ struct PracticeView: View {
           showsKeyGuide: $showsKeyGuide,
           showsRomanHints: $showsRomanHints,
           hapticsEnabled: $hapticsEnabled,
+          showsPhysicalKeyboardGuide: $showsPhysicalKeyboardGuide,
           inputMode: $inputMode,
           soundEffectsEnabled: $soundEffectsEnabled,
           typingSoundPreset: $typingSoundPreset,
@@ -379,6 +382,10 @@ struct PracticeView: View {
           onKey: viewModel.input,
           onBackspace: viewModel.backspace
         )
+      } else if showsPhysicalKeyboardGuide {
+        PhysicalKeyboardGuideView(nextExpectedKey: viewModel.nextExpectedKey)
+          .padding(.horizontal, 8)
+          .padding(.bottom, 6)
       }
     }
   }
@@ -1387,6 +1394,7 @@ struct SessionSettingsOverlay: View {
   @Binding var showsKeyGuide: Bool
   @Binding var showsRomanHints: Bool
   @Binding var hapticsEnabled: Bool
+  @Binding var showsPhysicalKeyboardGuide: Bool
   @Binding var inputMode: SessionInputMode
   @Binding var soundEffectsEnabled: Bool
   @Binding var typingSoundPreset: String
@@ -1451,6 +1459,11 @@ struct SessionSettingsOverlay: View {
                 selection: $inputMode,
                 onUnavailableOSIME: onUnavailableOSIME
               )
+
+              if inputMode == .osIME {
+                Toggle("physical_keyboard.show_guide", isOn: $showsPhysicalKeyboardGuide)
+                  .accessibilityIdentifier("practice.session_settings.physical_keyboard_guide")
+              }
             }
           }
 

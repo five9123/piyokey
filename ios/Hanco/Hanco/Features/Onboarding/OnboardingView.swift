@@ -8,10 +8,15 @@ struct OnboardingView: View {
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
+  @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
+    SessionInputMode.builtIn.rawValue
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
 
   @StateObject private var lesson = PracticeSessionViewModel(target: "가")
   @State private var eggReactionRevision = 0
   @State private var didPlayEggKnock = false
+  @State private var showsKoreanKeyboardGuide = false
 
   var body: some View {
     VStack(spacing: 0) {
@@ -37,6 +42,9 @@ struct OnboardingView: View {
       .ignoresSafeArea()
     )
     .tint(AppPalette.accent)
+    .sheet(isPresented: $showsKoreanKeyboardGuide) {
+      KoreanKeyboardGuideView()
+    }
     .onChange(of: lesson.feedbackRevision) { _ in
       playLessonFeedbackSound()
     }
@@ -93,8 +101,8 @@ struct OnboardingView: View {
           reactionRevision: eggReactionRevision,
           size: 82
         )
-          .frame(width: 112, height: 150)
-          .accessibilityIdentifier("onboarding.mascot.egg")
+        .frame(width: 112, height: 150)
+        .accessibilityIdentifier("onboarding.mascot.egg")
 
         Text("onboarding.mascot.egg_intro")
           .font(.caption.weight(.bold))
@@ -222,8 +230,8 @@ struct OnboardingView: View {
             size: 62,
             calm: true
           )
-            .frame(width: 84, height: 116)
-            .accessibilityIdentifier("onboarding.mascot.keyboard_egg")
+          .frame(width: 84, height: 116)
+          .accessibilityIdentifier("onboarding.mascot.keyboard_egg")
           VStack(alignment: .leading, spacing: 4) {
             Text("onboarding.keyboard.tip")
               .font(.subheadline.weight(.semibold))
@@ -237,10 +245,40 @@ struct OnboardingView: View {
         .padding(16)
         .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22))
 
-        primaryButton(title: "onboarding.keyboard.try", systemImage: "keyboard") {
-          onboarding.move(to: .lesson)
+        VStack(spacing: 10) {
+          primaryButton(
+            title: "onboarding.keyboard.try_builtin",
+            systemImage: "rectangle.grid.3x2.fill"
+          ) {
+            beginLesson(using: .builtIn)
+          }
+          .accessibilityIdentifier("onboarding.next")
+
+          Button {
+            beginLesson(using: .osIME)
+          } label: {
+            HStack(spacing: 8) {
+              Text("onboarding.keyboard.try_device")
+              Image(systemName: "keyboard")
+            }
+            .font(.headline.weight(.bold))
+            .foregroundStyle(AppPalette.accent)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 18))
+            .overlay {
+              RoundedRectangle(cornerRadius: 18)
+                .stroke(AppPalette.accent, lineWidth: 1.5)
+            }
+          }
+          .buttonStyle(.plain)
+          .accessibilityIdentifier("onboarding.input_device.hardware")
         }
-        .accessibilityIdentifier("onboarding.next")
+
+        Text("onboarding.keyboard.device_note")
+          .font(.caption2)
+          .foregroundStyle(AppPalette.mutedInk)
+          .multilineTextAlignment(.center)
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 18)
@@ -298,8 +336,8 @@ struct OnboardingView: View {
                 size: 56,
                 calm: true
               )
-                .frame(width: 76, height: 102)
-                .accessibilityIdentifier("onboarding.mascot.typing_egg")
+              .frame(width: 76, height: 102)
+              .accessibilityIdentifier("onboarding.mascot.typing_egg")
               VStack(alignment: .leading, spacing: 5) {
                 Text("onboarding.lesson.title")
                   .font(.system(.title3, design: .rounded, weight: .bold))
@@ -335,7 +373,9 @@ struct OnboardingView: View {
                 Text(verbatim: lesson.enteredText.isEmpty ? "…" : lesson.enteredText)
                   .font(.system(size: 40 * fontScale, weight: .bold, design: .rounded))
                   .foregroundStyle(AppPalette.accent)
-                  .accessibilityValue(Text(verbatim: lesson.enteredText.isEmpty ? "…" : lesson.enteredText))
+                  .accessibilityValue(
+                    Text(verbatim: lesson.enteredText.isEmpty ? "…" : lesson.enteredText)
+                  )
                   .accessibilityIdentifier("onboarding.lesson.entered.value")
               }
             }
@@ -367,15 +407,33 @@ struct OnboardingView: View {
             .accessibilityIdentifier("onboarding.lesson.coachmark")
         }
 
-        HangulKeyboardView(
-          nextExpectedKey: lesson.nextExpectedKey,
-          onKeyFeedback: playKeySound,
-          onKey: lesson.input,
-          onBackspace: lesson.backspace
-        )
-        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+        if usesDeviceKeyboard {
+          VStack(spacing: 7) {
+            OSIMEInputPanel(
+              target: lesson.target,
+              acceptedText: lesson.enteredText,
+              resetRevision: 0,
+              onAcceptedSequence: lesson.synchronizeOSIME,
+              onConfirmedMismatch: lesson.recordConfirmedOSIMEMistake,
+              showsChrome: false,
+              showsFocusRecovery: true
+            )
+            .padding(.horizontal, 10)
+
+            PhysicalKeyboardGuideView(nextExpectedKey: lesson.nextExpectedKey)
+              .padding(.horizontal, 8)
+          }
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: lesson.nextExpectedKey,
+            onKeyFeedback: playKeySound,
+            onKey: lesson.input,
+            onBackspace: lesson.backspace
+          )
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+        }
       }
-      .accessibilityIdentifier("onboarding.lesson.screen")
     }
   }
 
@@ -388,8 +446,8 @@ struct OnboardingView: View {
           eggPattern: companion.eggPattern,
           size: 70
         )
-          .frame(width: 94, height: 126)
-          .accessibilityIdentifier("onboarding.mascot.cracking")
+        .frame(width: 94, height: 126)
+        .accessibilityIdentifier("onboarding.mascot.cracking")
 
         Label("onboarding.reward.first", systemImage: "gift.fill")
           .font(.caption.weight(.black))
@@ -445,6 +503,20 @@ struct OnboardingView: View {
       .background(AppPalette.accent, in: RoundedRectangle(cornerRadius: 18))
       .shadow(color: AppPalette.accent.opacity(0.22), radius: 9, y: 5)
     }
+  }
+
+  private var usesDeviceKeyboard: Bool {
+    SessionInputMode(rawValue: inputModeDefault) == .osIME && showsPhysicalKeyboardGuide
+  }
+
+  private func beginLesson(using mode: SessionInputMode) {
+    if mode == .osIME, !KoreanKeyboardAvailability.isAvailable {
+      showsKoreanKeyboardGuide = true
+      return
+    }
+    inputModeDefault = mode.rawValue
+    showsPhysicalKeyboardGuide = mode == .osIME
+    onboarding.move(to: .lesson)
   }
 
   private func playKeySound(_ role: TypingSoundKeyRole) {

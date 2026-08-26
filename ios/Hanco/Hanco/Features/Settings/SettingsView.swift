@@ -20,7 +20,8 @@ struct SettingsView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsJamo) private var practiceShowsJamo = true
   @AppStorage(SettingsPreferenceKeys.practiceAutoSpeaks) private var practiceAutoSpeaks = false
   @AppStorage(SettingsPreferenceKeys.practiceShowsMascot) private var practiceShowsMascot = true
-  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private var practiceShowsComposition =
+  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private
+    var practiceShowsComposition =
     true
   @AppStorage(SettingsPreferenceKeys.choseongShowsMeaning) private var choseongShowsMeaning = true
 
@@ -29,6 +30,8 @@ struct SettingsView: View {
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
     SessionInputMode.builtIn.rawValue
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
@@ -228,6 +231,14 @@ struct SettingsView: View {
         )
       }
       .padding(.vertical, 7)
+      Divider().opacity(0.5)
+      settingToggle(
+        title: "physical_keyboard.show_guide",
+        detail: "physical_keyboard.show_guide_detail",
+        systemImage: "keyboard.badge.ellipsis",
+        isOn: $showsPhysicalKeyboardGuide,
+        identifier: "settings.physical_keyboard_guide"
+      )
     }
   }
 
