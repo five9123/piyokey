@@ -164,6 +164,7 @@ enum SettingsPreferenceKeys {
   static let choseongShowsMeaning = "settings.choseong_shows_meaning"
   static let anonymousAnalyticsEnabled = "settings.anonymous_analytics_enabled"
   static let crashDiagnosticsEnabled = "settings.crash_diagnostics_enabled"
+  static let privacyNoticeVersion = "settings.privacy_notice_version"
 
   static let all = [
     fontScale,
@@ -181,7 +182,26 @@ enum SettingsPreferenceKeys {
     choseongShowsMeaning,
     anonymousAnalyticsEnabled,
     crashDiagnosticsEnabled,
+    privacyNoticeVersion,
   ]
+}
+
+enum PrivacyNoticePolicy {
+  static let currentVersion = 1
+
+  static func shouldPresent(
+    reviewedVersion: Int,
+    onboardingCompleted: Bool,
+    appTourCompleted: Bool,
+    sessionIsActive: Bool = false,
+    hasBlockingPresentation: Bool = false
+  ) -> Bool {
+    reviewedVersion < currentVersion
+      && onboardingCompleted
+      && appTourCompleted
+      && !sessionIsActive
+      && !hasBlockingPresentation
+  }
 }
 
 enum PracticePromptField: String, CaseIterable, Identifiable {

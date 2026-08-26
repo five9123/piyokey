@@ -132,6 +132,7 @@ import app.piyokey.core.settings.InputMode
 import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.core.settings.PiyoWardrobePolicy
 import app.piyokey.core.settings.PiyoAccessory
+import app.piyokey.core.settings.PrivacyNoticePolicy
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -171,6 +172,7 @@ import app.piyokey.feature.onboarding.HatchMissionGateScreen
 import app.piyokey.feature.onboarding.HatchMissionResultScreen
 import app.piyokey.feature.onboarding.MainAppTourOverlay
 import app.piyokey.feature.settings.CommonSettingsButton
+import app.piyokey.feature.settings.PrivacyConsentDialog
 import app.piyokey.feature.settings.SettingsSheet
 import java.util.Locale
 import java.util.UUID
@@ -200,8 +202,13 @@ class MainActivity : AppCompatActivity() {
           getSharedPreferences("piyokey_test_overrides", MODE_PRIVATE)
         }
         val freshOnboardingTest = BuildConfig.DEBUG && testOverrides.getBoolean("fresh_onboarding", false)
-        val freshOnboardingPreferences = remember(freshOnboardingTest) {
-          AppPreferences(language = resolved.language, onboardingMigrationChecked = true)
+        val privacyNoticeReviewed = BuildConfig.DEBUG && testOverrides.getBoolean("privacy_notice_reviewed", false)
+        val freshOnboardingPreferences = remember(freshOnboardingTest, privacyNoticeReviewed) {
+          AppPreferences(
+            language = resolved.language,
+            privacyNoticeVersion = if (privacyNoticeReviewed) PrivacyNoticePolicy.currentVersion else 0,
+            onboardingMigrationChecked = true,
+          )
         }
         val launchPreferences = when {
           freshOnboardingTest -> freshOnboardingPreferences
@@ -210,6 +217,7 @@ class MainActivity : AppCompatActivity() {
             hatchHandoffCompleted = true,
             hatchChaptersCompleted = 3,
             appTourCompleted = true,
+            privacyNoticeVersion = if (privacyNoticeReviewed) PrivacyNoticePolicy.currentVersion else resolved.privacyNoticeVersion,
             onboardingMigrationChecked = true,
             defaultInputMode = if (testOverrides.getBoolean("force_os_ime", false)) InputMode.OS_IME else resolved.defaultInputMode,
           )
@@ -2167,6 +2175,47 @@ private fun PiyokeyApp(
         )
       },
       onDismiss = { showSettings = false },
+    )
+  }
+
+  if (
+    tab == RootTab.HOME &&
+    PrivacyNoticePolicy.shouldPresent(
+      reviewedVersion = preferences.privacyNoticeVersion,
+      onboardingCompleted = preferences.hatchGateComplete,
+      appTourCompleted = preferences.appTourCompleted,
+      sessionIsActive = activePractice != null || activeFlowDeck != null ||
+        activeGameDeck != null || activeSpacingPassage != null,
+      hasBlockingPresentation = showSettings,
+    )
+  ) {
+    PrivacyConsentDialog(
+      initialAnalyticsEnabled = preferences.anonymousAnalyticsEnabled,
+      initialDiagnosticsEnabled = preferences.crashDiagnosticsEnabled,
+      onOpenPrivacy = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
+      onSave = { analytics, diagnostics ->
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = analytics,
+            crashDiagnosticsEnabled = diagnostics,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+      },
+      onContinueWithoutSharing = {
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = false,
+            crashDiagnosticsEnabled = false,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+      },
     )
   }
 }

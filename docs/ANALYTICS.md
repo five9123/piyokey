@@ -8,7 +8,11 @@ PIYOKEY uses PostHog Cloud EU for anonymous product analytics on iOS/iPadOS, And
 
 Both `Anonymous usage analytics` and `Crash diagnostics` are off by default and independent. Debug/test builds and builds without service configuration are no-op. Do not add a session-time consent modal.
 
+The first privacy notice is versioned. Show it only after onboarding, the three hatch missions, and the app tour are complete, while the user is idle on Home and no other sheet or session is active. Both switches must still be off when the notice appears. The user can save any combination or choose **Continue without sharing**; refusing does not limit lessons, games, local decks, or purchased features. Settings must keep the same explanations, a privacy-policy link, and a way to review or withdraw either choice. Increment `PrivacyNoticePolicy.currentVersion` only when a material collection or provider change requires the notice to be shown again.
+
 Never capture typed or composing text, answers, target words, deck or item names/IDs, user-deck content/hash/path/URI, email/support content, receipts, account identifiers, advertising IDs, or free-form properties. Do not call PostHog `identify`, `alias`, `group`, or person-property APIs. Autocapture, page/screen capture, element/click capture, session replay, heatmaps, surveys, performance capture, feature-flag fetching, and mobile PostHog error tracking stay disabled.
+
+Every PostHog payload must set `$geoip_disable=true`, including semantic product events and sanitized web exceptions. Before release, verify in the PostHog project that no IP-derived country, region, city, latitude, longitude, or raw IP property is retained. Do not declare location collection in either store while this gate is satisfied.
 
 ## Environment configuration
 
@@ -42,9 +46,11 @@ Stay within PostHog/Firebase free plans. Configure PostHog billing limits/notifi
 
 ## Release gates
 
-- Update the public privacy policy before enabling either service. It must name PostHog EU and Firebase Crashlytics, explain optional anonymous device identifiers, retention, opt-out, and the excluded content above.
-- Update App Store Privacy to Product Interaction, Crash Data, and Device ID; all are not linked, not used for tracking, and collected only with consent.
-- Update Google Play Data safety consistently and provide deletion/retention wording even though there is no account.
+- Publish the copy in `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the public Privacy URL before enabling either service. The currently published page must not claim that the app has no analytics SDK or device identifiers. Confirm the named processors, retention periods, opt-out/withdrawal, deletion-request handling, and excluded content against the production projects.
+- In App Store Connect answer **Yes, data is collected** and **Tracking: No**. Declare Product Interaction, Other Usage Data, Gameplay Content, Purchase History, Crash Data, Other Diagnostic Data, and Device ID. Mark every type **not linked to the user** and **not used for tracking**. Product/usage/gameplay/purchase events are for Analytics; crash/diagnostic data and device identifiers are for App Functionality and Analytics. Do not declare exact typed content, contacts, advertising data, or location.
+- In Google Play Data safety declare App interactions, Other actions, Purchase history, Crash logs, Diagnostics, and Device or other IDs as optional collection. Mark data as not sold, not used for advertising, and processed for Analytics or App functionality as applicable. Do not declare location while `$geoip_disable` is verified. The form, privacy policy, and shipped SDK configuration must match exactly.
+- Verify the one-time notice and Settings re-entry in Japanese, English, and Korean: both choices initially off, analytics-only, diagnostics-only, both on, both off, refusal without feature loss, persistence after relaunch, and no appearance during any lesson/game/file/import/editor/paywall flow.
+- Set the production PostHog event retention to 12 months and confirm deletion thereafter. Confirm Firebase Crashlytics retention against the current Firebase policy (currently 90 days for crash reports) before publishing. Document how support handles deletion requests without an account and never promise that disabling collection retroactively erases already-sent records.
 - Archive iOS with the real Firebase plist, force a consented test crash, verify the issue and dSYM symbolication, and confirm an opted-out install sends nothing.
 - Build Android Release with the real Firebase JSON and Crashlytics Gradle plugin, force a consented test crash and ANR, verify R8 deobfuscation, and confirm an opted-out install sends nothing.
 - Build the web app with production source maps, upload them to PostHog for the exact release, remove public `.map` assets, test a sanitized exception, and confirm analytics-only/diagnostics-only/off combinations.

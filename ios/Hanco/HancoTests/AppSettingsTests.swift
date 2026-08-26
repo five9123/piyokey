@@ -176,6 +176,10 @@ final class AppSettingsTests: XCTestCase {
         "NSPrivacyCollectedDataTypeCrashData",
         "NSPrivacyCollectedDataTypeProductInteraction",
         "NSPrivacyCollectedDataTypeDeviceID",
+        "NSPrivacyCollectedDataTypeOtherUsageData",
+        "NSPrivacyCollectedDataTypeGameplayContent",
+        "NSPrivacyCollectedDataTypePurchaseHistory",
+        "NSPrivacyCollectedDataTypeOtherDiagnosticData",
       ]
     )
     XCTAssertTrue(collectedTypes.allSatisfy { $0["NSPrivacyCollectedDataTypeLinked"] as? Bool == false })
@@ -204,9 +208,57 @@ final class AppSettingsTests: XCTestCase {
 
     XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled))
     XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
+    XCTAssertEqual(isolated.integer(forKey: SettingsPreferenceKeys.privacyNoticeVersion), 0)
     isolated.set(true, forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled)
     XCTAssertTrue(isolated.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled))
     XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
+  }
+
+  func testPrivacyNoticeAppearsOnlyAfterOnboardingOutsideSessionsAndOncePerVersion() {
+    XCTAssertFalse(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: 0,
+        onboardingCompleted: false,
+        appTourCompleted: true
+      )
+    )
+    XCTAssertFalse(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: 0,
+        onboardingCompleted: true,
+        appTourCompleted: false
+      )
+    )
+    XCTAssertFalse(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: 0,
+        onboardingCompleted: true,
+        appTourCompleted: true,
+        sessionIsActive: true
+      )
+    )
+    XCTAssertFalse(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: 0,
+        onboardingCompleted: true,
+        appTourCompleted: true,
+        hasBlockingPresentation: true
+      )
+    )
+    XCTAssertTrue(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: 0,
+        onboardingCompleted: true,
+        appTourCompleted: true
+      )
+    )
+    XCTAssertFalse(
+      PrivacyNoticePolicy.shouldPresent(
+        reviewedVersion: PrivacyNoticePolicy.currentVersion,
+        onboardingCompleted: true,
+        appTourCompleted: true
+      )
+    )
   }
 
   func testAnalyticsContractRequiresFieldsAndClosedEnumValues() {

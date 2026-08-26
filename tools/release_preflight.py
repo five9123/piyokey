@@ -42,6 +42,19 @@ REQUIRED_COLLECTED_DATA = {
         "NSPrivacyCollectedDataTypePurposeAnalytics",
         "NSPrivacyCollectedDataTypePurposeAppFunctionality",
     },
+    "NSPrivacyCollectedDataTypeOtherUsageData": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeGameplayContent": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypePurchaseHistory": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeOtherDiagnosticData": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+    },
 }
 
 EXPECTED_DISPLAY_NAMES = {
@@ -378,6 +391,8 @@ def repository_checks(root: Path) -> list[Finding]:
     analytics_contract_path = root / "shared/analytics/events.json"
     analytics_doc_path = root / "docs/ANALYTICS.md"
     analytics_release_path = root / "release/analytics_release_state.json"
+    analytics_privacy_draft_path = root / "release/PRIVACY_POLICY_ANALYTICS_DRAFT.md"
+    play_data_safety_path = root / "release/PLAY_DATA_SAFETY_SETUP.md"
     web_analytics_path = root / "web/analytics/src/index.ts"
     ios_telemetry_path = app / "Core/Analytics/TelemetryService.swift"
     android_telemetry_path = root / "android/app/src/main/java/app/piyokey/piyokey/TelemetryRuntime.kt"
@@ -403,6 +418,8 @@ def repository_checks(root: Path) -> list[Finding]:
         android_build_path,
         android_file_paths,
         analytics_contract_path,
+        analytics_privacy_draft_path,
+        play_data_safety_path,
         analytics_doc_path,
         analytics_release_path,
         web_analytics_path,
@@ -528,7 +545,15 @@ def repository_checks(root: Path) -> list[Finding]:
         data_types = privacy.get("data_types", {})
         add(
             findings,
-            set(data_types) == {"product_interaction", "crash_data", "device_id"},
+            set(data_types) == {
+                "product_interaction",
+                "other_usage_data",
+                "gameplay_content",
+                "purchase_history",
+                "crash_data",
+                "other_diagnostic_data",
+                "device_id",
+            },
             "Store privacy collected data types differ",
         )
         for name, value in data_types.items():
@@ -753,6 +778,20 @@ def repository_checks(root: Path) -> list[Finding]:
         add(findings, release_state.get("provider_region") == "posthog_cloud_eu", "Analytics region must be PostHog EU")
         add(findings, release_state.get("free_tier_only") is True, "Analytics must remain free-tier only")
         add(findings, bool(release_state.get("gates")), "Analytics release gates are missing")
+        required_gates = {
+            "posthog_geoip_disabled",
+            "consent_notice_ui_verified",
+            "privacy_policy_published",
+            "privacy_retention_and_deletion_verified",
+            "live_privacy_copy_matches_build",
+            "app_store_privacy_updated",
+            "play_data_safety_updated",
+        }
+        add(
+            findings,
+            required_gates <= set(release_state.get("gates", {})),
+            "Analytics privacy release gates differ",
+        )
     except (OSError, json.JSONDecodeError) as error:
         findings.append(Finding("ERROR", f"Invalid analytics contract or release state: {error}"))
 
@@ -766,6 +805,7 @@ def repository_checks(root: Path) -> list[Finding]:
     ):
         add(findings, "sessionReplay" in source or "disable_session_recording" in source, f"{label} replay disable is missing")
         add(findings, "personProfiles" in source or "person_profiles" in source, f"{label} person-profile disable is missing")
+        add(findings, "$geoip_disable" in source, f"{label} PostHog GeoIP disable is missing")
 
     return findings
 

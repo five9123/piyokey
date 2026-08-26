@@ -86,7 +86,7 @@ object TelemetryRuntime {
     }
     PostHog.capture(
       event.wireName,
-      properties = properties.mapKeys { it.key.wireName },
+      properties = properties.mapKeys { it.key.wireName } + ("\$geoip_disable" to true),
     )
   }
 

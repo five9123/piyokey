@@ -50,6 +50,15 @@
   <string name="settings_crash_diagnostics">Crash diagnostics</string>
   <string name="settings_crash_diagnostics_detail">Share diagnostics for crashes and app hangs.</string>
   <string name="settings_analytics_privacy_note">Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.</string>
+  <string name="settings_review_privacy_choices">Review data-sharing choices</string>
+  <string name="privacy_consent_title">Help improve PIYOKEY?</string>
+  <string name="privacy_consent_introduction">Choose each type of information you want to share. Both stay off until you save your choices.</string>
+  <string name="privacy_consent_optional_note">You can use every lesson, game, and purchased feature without sharing. Change your choices anytime in Settings.</string>
+  <string name="privacy_consent_analytics_detail">Send PostHog Cloud EU the features used, session completion, app version, and a random app identifier. This is not used for ads or tracking across other companies’ services.</string>
+  <string name="privacy_consent_diagnostics_detail">Send Firebase Crashlytics crash logs, relevant app state, device and OS information, and a random installation identifier.</string>
+  <string name="privacy_consent_excluded_data">Typed text, answers, searches, user-deck names or content, names, email addresses, advertising IDs, recordings, and session replay are never sent.</string>
+  <string name="privacy_consent_save">Save choices</string>
+  <string name="privacy_consent_continue_without_sharing">Continue without sharing</string>
   <string name="settings_privacy">Privacy policy</string>
   <string name="settings_feedback">Suggest or report content</string>
   <string name="settings_support">Support</string>

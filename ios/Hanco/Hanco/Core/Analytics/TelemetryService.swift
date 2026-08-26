@@ -58,9 +58,13 @@ final class TelemetryService {
         return
       }
       #if canImport(PostHog)
+        var sdkProperties = Dictionary(
+          uniqueKeysWithValues: properties.map { ($0.key.rawValue, $0.value) }
+        )
+        sdkProperties["$geoip_disable"] = true
         PostHogSDK.shared.capture(
           event.rawValue,
-          properties: Dictionary(uniqueKeysWithValues: properties.map { ($0.key.rawValue, $0.value) })
+          properties: sdkProperties
         )
       #endif
     #endif

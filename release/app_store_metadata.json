@@ -66,7 +66,11 @@
     "answer": "Yes, data is collected only after separate in-app consent",
     "data_types": {
       "product_interaction": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics"] },
+      "other_usage_data": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics"] },
+      "gameplay_content": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics"] },
+      "purchase_history": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics"] },
       "crash_data": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics", "app_functionality"] },
+      "other_diagnostic_data": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics", "app_functionality"] },
       "device_id": { "linked_to_user": false, "used_for_tracking": false, "purpose": ["analytics", "app_functionality"] }
     }
   },

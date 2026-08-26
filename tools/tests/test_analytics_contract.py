@@ -47,6 +47,23 @@ class AnalyticsContractTests(unittest.TestCase):
                 self.assertTrue(values)
                 self.assertEqual(len(values), len(set(values)))
 
+    def test_every_platform_disables_posthog_geoip(self):
+        sources = (
+            ROOT / "ios/Hanco/Hanco/Core/Analytics/TelemetryService.swift",
+            ROOT / "android/app/src/main/java/app/piyokey/piyokey/TelemetryRuntime.kt",
+            ROOT / "web/analytics/src/index.ts",
+        )
+        for source in sources:
+            with self.subTest(source=source):
+                self.assertIn("$geoip_disable", source.read_text(encoding="utf-8"))
+
+    def test_versioned_optional_privacy_notice_contract_is_documented(self):
+        prd = (ROOT / "PRD.md").read_text(encoding="utf-8")
+        analytics = (ROOT / "docs/ANALYTICS.md").read_text(encoding="utf-8")
+        self.assertIn("고지 버전", prd)
+        self.assertIn("Continue without sharing", analytics)
+        self.assertIn("Both switches must still be off", analytics)
+
 
 if __name__ == "__main__":
     unittest.main()
