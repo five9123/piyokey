@@ -4,6 +4,16 @@
 - `PRD.md` — 단일 소스 오브 트루스. 모든 기능·AC·연출 스펙이 여기 있다. 작업 전 해당 섹션을 반드시 읽을 것.
 - `DECISIONS.md` — PRD가 모호해서 네가 내린 결정을 기록 (날짜, 결정, 근거, 관련 PRD 섹션).
 - `shared/test_vectors.json` — 한글 조합 엔진 공용 테스트 벡터 (생성기: `tools/gen_test_vectors.py`). iOS/Android 테스트 모두 이 파일을 읽는다. 수정 금지 — 케이스 추가는 생성기를 고쳐 재생성.
+- `docs/GITHUB_PROJECTS_GUIDE.md` — GitHub Issue/Projects 상태, 사용자 승인 게이트, 완료 증빙 규칙. 모든 실행성 작업에서 준수.
+
+## GitHub Issue / Projects 작업 계약
+- 코드·콘텐츠·설정·릴리스 상태를 바꾸는 모든 실행성 작업은 시작 전에 GitHub Issue를 가져야 한다. 단순 질문·읽기 전용 조사만으로 끝나는 대화는 제외하되, 후속 변경을 수용하는 즉시 Issue로 전환한다.
+- Slack·이메일·대화에서 들어온 요청은 바로 구현하지 않는다. 원문 링크와 사용자 문제를 Issue에 기록하고 Project의 `Inbox` 또는 `Needs Decision`에 둔 뒤 사용자와 범위·우선순위·AC를 확정한다.
+- `Ready`는 관련 PRD 절, 검증 가능한 AC, 영향 범위, 검증 계획이 모두 있는 작업만 사용한다. PRD가 모호하면 먼저 사용자 결정을 받고 필요 시 `DECISIONS.md`를 갱신한다.
+- 구현 시작 시 Issue를 담당자에게 배정하고 `In Progress`로 이동한다. 기본 branch는 `codex/<issue-number>-<short-slug>`이며 한 Issue는 한 주 담당자/agent와 한 주 branch를 가진다.
+- 완료 후보는 PR, 실행한 테스트와 결과, 미실행 수동 gate, UI 변경 증빙을 Issue에 연결하고 `Verify`로 이동한다. 사용자 노출 동작·우선순위·수동 실기기 gate는 사용자가 승인하기 전 `Done`으로 바꾸지 않는다.
+- 외부 승인·기기·계정·선행 Issue가 필요하면 `Blocked`와 이유·해제 조건을 기록한다. PR 병합과 필수 검증 완료 뒤에만 Issue를 닫고 `Done`으로 처리한다.
+- 세부 상태·필드·우선순위 정의와 agent 댓글 형식은 `docs/GITHUB_PROJECTS_GUIDE.md`를 따른다. Project는 실행 현황의 원본이고 기능 동작의 원본은 계속 `PRD.md`다.
 
 ## 마일스톤 (PRD §13 순서 엄수)
 M1 조합 엔진+덱 스키마 → M2 키보드 뷰+연습 화면 → M3 덱 발견·다운로드 → M4 게임 모드 → M5 커리큘럼+리텐션 → M6 폴리싱+OS 키보드 모드 → M7 Android 포팅

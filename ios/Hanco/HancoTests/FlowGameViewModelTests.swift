@@ -561,6 +561,29 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(model.remainingTime, 59, accuracy: 0.001)
   }
 
+  func testRestartWithReplacementTargetsKeepsVisibleTargetAndJudgeAligned() {
+    let origin = Date(timeIntervalSince1970: 1_600)
+    let model = FlowGameViewModel(targets: ["가", "나"], cardTravelDuration: 100)
+
+    model.restart(targets: ["다", "라"])
+
+    XCTAssertEqual(model.targets, ["다", "라"])
+    XCTAssertEqual(model.currentTargetIndex, 0)
+    XCTAssertEqual(model.target, "다")
+    XCTAssertEqual(model.nextExpectedKey, "ㄷ")
+
+    model.start(at: origin)
+    model.input("ㄱ")
+    XCTAssertEqual(model.feedback, .incorrect(expected: "ㄷ"))
+    XCTAssertEqual(model.enteredText, "")
+
+    type("ㄷㅏ", into: model)
+    XCTAssertEqual(model.lastCompletedItem?.itemIndex, 0)
+    XCTAssertEqual(model.currentTargetIndex, 1)
+    XCTAssertEqual(model.target, "라")
+    XCTAssertEqual(model.nextExpectedKey, "ㄹ")
+  }
+
   func testEscapedCardAdvancesWithoutTimePenaltyAndResetsCombo() {
     let origin = Date(timeIntervalSince1970: 2_000)
     let model = FlowGameViewModel(targets: ["가", "나"], cardTravelDuration: 8)

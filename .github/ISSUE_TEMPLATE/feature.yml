@@ -3,7 +3,14 @@ description: PRD acceptance criteria를 구현하거나 개선합니다.
 title: "[Feature] "
 labels:
   - feature
+projects:
+  - five9123-maker/1
 body:
+  - type: input
+    id: source
+    attributes:
+      label: 요청 출처
+      description: Slack, 이메일, 대화, 선행 Issue 링크를 적어 주세요.
   - type: textarea
     id: outcome
     attributes:

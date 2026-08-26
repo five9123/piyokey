@@ -432,6 +432,39 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(model.enteredText, "")
   }
 
+  func testTypingRestartWithReplacementRoundsKeepsPromptAndJudgeAligned() {
+    let origin = Date(timeIntervalSince1970: 9_500)
+    let model = typingModel()
+    let replacement = ChoseongTypingRound(
+      answer: item("music", "음악"),
+      initials: "ㅇㅇ",
+      requiresMeaningHint: false
+    )
+
+    model.restart(rounds: [replacement], at: origin)
+
+    XCTAssertEqual(model.currentRound, replacement)
+    XCTAssertEqual(model.nextExpectedKey, "ㅇ")
+    let staleAnswerInput = model.input("ㅎ", at: origin.addingTimeInterval(1))
+    guard case .incorrect(let answer, let expected, let index) = staleAnswerInput else {
+      return XCTFail("The replacement round must reject input for the previous visible answer")
+    }
+    XCTAssertEqual(answer.ko, "음악")
+    XCTAssertEqual(expected, "ㅇ")
+    XCTAssertEqual(index, 0)
+    XCTAssertEqual(model.enteredText, "")
+
+    var completion: ChoseongTypingInputOutcome?
+    for key in Array("ㅇㅡㅁㅇㅏㄱ") {
+      completion = model.input(key, at: origin.addingTimeInterval(2))
+    }
+    guard case .completed(let result) = completion else {
+      return XCTFail("The displayed replacement answer must also be the judged answer")
+    }
+    XCTAssertEqual(result.answer.id, "music")
+    XCTAssertEqual(model.enteredText, "음악")
+  }
+
   func testWordMatchTypingBuilderUsesUniqueTypeableKoreanWithMeanings() {
     let items = [
       item("school", "학교"), item("friend", "친구"), item("love", "사랑"),
@@ -542,6 +575,28 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(model.score, 0)
     XCTAssertEqual(model.correctCount, 0)
     XCTAssertNil(model.feedback)
+  }
+
+  func testChoiceRestartWithReplacementRoundsUsesReplacementAnswer() {
+    let origin = Date(timeIntervalSince1970: 4_100)
+    let model = ChoseongQuizViewModel(rounds: rounds())
+    let school = item("school-new", "학교")
+    let music = item("music-new", "음악")
+    let replacement = ChoseongQuizRound(
+      answer: music,
+      initials: "ㅇㅇ",
+      options: [school, music]
+    )
+
+    model.restart(rounds: [replacement], at: origin)
+
+    XCTAssertEqual(model.currentRound, replacement)
+    let staleAnswerSelection = model.select(
+      optionID: school.id,
+      at: origin.addingTimeInterval(1)
+    )
+    XCTAssertEqual(staleAnswerSelection?.isCorrect, false)
+    XCTAssertEqual(staleAnswerSelection?.answer.id, music.id)
   }
 
   private func rounds() -> [ChoseongQuizRound] {

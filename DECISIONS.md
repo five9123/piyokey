@@ -1264,6 +1264,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
 
+## 2026-08-24 iOS Game Center 대상 게임·리더보드 계약 확정
+- 결정: iOS Game Center 랭킹 대상은 흐름·산성비·초성 맞추기·단어 맞추기·받아쓰기의 5개 게임으로 확정한다. 각 게임은 초급·중급·고급을 분리한 클래식 리더보드 3개씩, 총 15개를 사용하며 `piyokey.v4.cup.weekly.flow` recurring 리더보드 1개를 별도로 유지한다. 띄어쓰기 게임은 Game Center 랭킹 대상에서 제외한다.
+- 결정: PRD F6f AC에 남아 있던 과거 수량인 클래식 6개·주간 1개를 현재 코드·Info.plist·App Store Connect 운영 문서와 동일한 클래식 15개·주간 1개로 정정한다. 콘텐츠나 채점 계약이 바뀌면 기존 보드를 재사용하지 않고 버전이 포함된 새 ID를 intended 상태부터 검증한다.
+- 근거: `GameCenterService`의 공식 덱 매핑, `Info.plist`의 intended/available 배열, `release/GAME_CENTER_SETUP.md`와 2026-08-20 Live 승격 기록이 모두 15+1 계약으로 일치한다. 관련 iOS 단위 테스트 19개와 저장소 출시 사전 검사가 통과했으며 사용자가 2026-08-24 이 계약을 명시적으로 승인했다.
+- 관련 PRD 섹션: F6, F6f, F12, §11.3, §12, §14
+- 영향 범위: PRD Game Center AC, GitHub Issue #7 계약 기준, 향후 App Store Connect·TestFlight 실기기 QA
+
 ## 2026-08-25 초성·단어 맞추기 세션당 3문제 발음 힌트
 - 결정: 발음 힌트는 정답 회상에 도움이 되는 초성 맞추기와 단어 맞추기에만 무료로 제공한다. 한 세션에서 합계 3문제까지 사용할 수 있고 한 문제의 첫 사용만 1회를 차감하며, 같은 문제의 다시 듣기는 추가 차감하지 않는다. 재도전하면 3회와 문제별 사용 상태를 초기화한다.
 - 결정: 첫 발음 힌트 사용 즉시 현재 콤보를 리셋하고 해당 문제 완성 점수에서 30점을 감점하며 해당 항목을 복습 대상으로 수집한다. 감점된 최종 점수는 기존 로컬 기록과 Game Center 계약을 그대로 사용한다. 동일 초성 정답의 불공정성을 해소하는 필수 뜻 단서는 횟수·점수를 소비하지 않는다.

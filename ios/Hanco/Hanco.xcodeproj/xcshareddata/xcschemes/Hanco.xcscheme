@@ -102,7 +102,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../Hanco/Resources/DeckMaker.storekit">
+         identifier = "../Hanco/Resources/DeckMaker.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
