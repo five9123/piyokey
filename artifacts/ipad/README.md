@@ -25,9 +25,39 @@ Issue [#10](https://github.com/five9123-maker/piyokey/issues/10)의 자동 검�
 - `ipad-home-portrait-ja.png`: 13-inch iPad 세로 홈과 상단 5탭 구조
 - `ipad-settings-accessibility-xxxl-ja.png`: Accessibility XXXL 설정 시트
 
+## 2026-08-26 실제 iPad 검증
+
+환경:
+
+- Jungmin’s iPad, iPad Pro 11-inch (3세대), iPadOS 26.6 (23G71)
+- Xcode 26.6 (17F113), iOS SDK 26.5
+- USB 연결, paired, Developer Mode enabled, `ddiServicesAvailable: true`
+- 자동 등록된 개발 기기·프로비저닝 프로파일로 arm64 Debug 앱 서명·설치·실행 성공
+
+통과:
+
+- 세로 홈 `medium` → 가로 홈 `wide` → 세로 홈 `medium` 폭 등급 재계산과 선택 탭 보존: 1/1
+- 연습에서 `ㅅ` 입력 후 가로↔세로 회전 시 목표·진행(1/9)·오타 보존과 내장 키보드 중앙 정렬: 1/1
+- Accessibility XXXL에서 설정 완료 버튼과 연습 시작·키 접근 가능: 1/1
+- Universal iPad의 OS 키보드 전환 후 진행 보존, Return 개행 방지, 홈 복귀 포커스 복구와 이어 입력 완료: 2/2
+- `PracticeSessionViewModelTests`: 실제 iPad에서 26/26 통과. marked/committed 중복, Backspace 되감기, Space와 도깨비 이월 상태 포함
+
+실기기 테스트 결과 번들:
+
+- 레이아웃·회전·접근성: `Test-Hanco-2026.08.26_23-04-40-+0900.xcresult`
+- OS 키보드: `Test-Hanco-2026.08.26_23-10-37-+0900.xcresult`
+
+추가 증빙 이미지:
+
+- `ipad-device-home-portrait-ja.png`: 실제 iPad 세로 홈
+- `ipad-device-home-landscape-ja.png`: 실제 iPad 가로 홈
+- `ipad-device-practice-landscape-active-ja.png`: 입력 진행을 보존한 실제 iPad 가로 연습
+- `ipad-device-settings-accessibility-xxxl-ja.png`: 실제 iPad Accessibility XXXL 설정
+- `ipad-device-os-ime-session-complete-ja.png`: 실제 iPad OS 키보드 전환·이어 입력
+
 ## 남은 필수 수동 게이트
 
-- Jungmin’s iPad에서 새 설치·실행, 세로/가로, Split View 1/2·1/3, Stage Manager 창 크기 변경
+- Jungmin’s iPad에서 Split View 1/2·1/3과 Stage Manager 창 크기 변경
 - 온보딩·홈·찾기·연습·게임·결과·마이페이지·설정·Deck Maker의 대표 폭 시각 검수
 - 세션 진행 중 회전·리사이즈 후 문제, 입력, 점수, 타이머 보존
 - Pointer/trackpad hover·클릭, Full Keyboard Access, VoiceOver, Increase Contrast, Reduce Motion
@@ -35,10 +65,10 @@ Issue [#10](https://github.com/five9123-maker/piyokey/issues/10)의 자동 검�
 - Issue #17의 물리 키보드 학습 모드 구현·검증
 - App Store Connect의 iPad 스크린샷·현지화 메타데이터와 TestFlight 새 설치 검수
 
-## 현재 실기기 차단 조건
+## 해제된 실기기 연결 차단
 
-`Jungmin’s iPad`(iPad Pro 11-inch 3rd generation, iPadOS 26.6 build 23G71)는 2026-08-25 현재 paired/available이고 Developer Mode도 enabled다. 그러나 CoreDevice가 `ddiServicesAvailable: false`와 `The developer disk image could not be mounted on this device`를 반환해 설치·실행 자동화가 불가능하다.
+2026-08-25에는 CoreDevice가 `ddiServicesAvailable: false`와 `The developer disk image could not be mounted on this device`를 반환했다. 2026-08-26 USB 재연결과 기기 잠금 해제 후 DDI 서비스가 활성화됐고, Xcode Apple Account 로그인 뒤 기기 등록과 자동 프로비저닝도 성공했다.
 
-현재 Xcode의 후보 이미지를 기존 이미지를 지우지 않는 `xcrun devicectl manage ddis update --no-clean`으로 다시 등록했지만 설치 전후 이미지 집합이 동일했다. 이어서 해당 UDID를 지정한 서명 Debug build도 destination 대기 시간 초과와 같은 DDI 마운트 오류로 종료되어, 앱 코드·서명 이전의 로컬 개발 이미지 호환 문제임을 확인했다.
+동일한 iPadOS 26.6 기기에서 iOS 26.5 SDK 기반 Debug 앱의 빌드·설치·실행과 위 실기기 UI 테스트가 성공했으므로 DDI 차단은 해제됐다. 재현 시 우선 USB 연결, 잠금 해제, `ddiServicesAvailable`, Xcode 계정과 기기 등록 상태를 확인한다.
 
-해제 조건은 현재 Xcode에서 해당 iPadOS 빌드용 Developer Disk Image를 사용할 수 있게 한 뒤(지원 Xcode/플랫폼 구성 확인, 필요 시 USB 재연결·기기 잠금 해제) 동일 기기에서 위 수동 게이트를 수행하는 것이다.
+Split View·Stage Manager·포인터·VoiceOver와 실제 Bluetooth/USB 키보드 수동 입력은 별도의 남은 출시 게이트다.
