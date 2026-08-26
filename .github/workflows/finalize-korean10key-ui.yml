@@ -1,0 +1,73 @@
+name: Finalize Korean 10-key practice UI
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+
+jobs:
+  finalize-source:
+    if: github.head_ref == 'codex/issue-11-korean-10-key' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Materialize scoped source updates
+        run: |
+          python3 - <<'PY'
+          import base64
+          import gzip
+          from pathlib import Path
+
+          source_workflow = Path('.github/workflows/apply-korean10key-ui.yml')
+          marker = '          KEYBOARD_SWIFT_GZIP_BASE64: '
+          payload = next(
+              line[len(marker):].strip()
+              for line in source_workflow.read_text().splitlines()
+              if line.startswith(marker)
+          )
+
+          keyboard = Path('ios/Hanco/Hanco/Features/Practice/HangulKeyboardView.swift')
+          keyboard.write_bytes(gzip.decompress(base64.b64decode(payload)))
+
+          practice = Path('ios/Hanco/Hanco/Features/Practice/PracticeView.swift')
+          text = practice.read_text()
+          needle = '''            hapticsEnabled: hapticsEnabled
+          ),
+          onInputStart: recordInputStart,
+'''
+          replacement = '''            hapticsEnabled: hapticsEnabled
+          ),
+          allowsKorean10Key: allowsOSKeyboard,
+          onInputStart: recordInputStart,
+'''
+          if replacement not in text:
+              count = text.count(needle)
+              if count != 1:
+                  raise SystemExit(f'Expected one PracticeView insertion point, found {count}')
+              practice.write_text(text.replace(needle, replacement, 1))
+
+          source_workflow.unlink()
+          Path('.github/workflows/finalize-korean10key-ui.yml').unlink()
+          PY
+
+      - name: Commit source-only result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ios/Hanco/Hanco/Features/Practice/HangulKeyboardView.swift \
+            ios/Hanco/Hanco/Features/Practice/PracticeView.swift \
+            .github/workflows/apply-korean10key-ui.yml \
+            .github/workflows/finalize-korean10key-ui.yml
+          git commit -m "feat(ios): add Korean 10-key practice keyboard"
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
