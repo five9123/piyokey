@@ -208,6 +208,24 @@ class ReleasePreflightTests(unittest.TestCase):
 
         self.assertIn("Google Play app_icon is 511x512, expected 512x512", messages)
 
+    def test_google_play_console_draft_keeps_data_safety_unresolved(self):
+        path = ROOT / "release/google_play_console_declarations.json"
+        self.assertEqual(release_preflight.google_play_console_declaration_findings(path), [])
+        invalid = json.loads(path.read_text(encoding="utf-8"))
+        invalid["status"] = "applied"
+        invalid["data_safety_evidence"]["final_collects_or_shares_answer"] = "NO"
+        invalid["permissions_prohibited"] = []
+        with tempfile.TemporaryDirectory() as directory:
+            draft = Path(directory) / "google_play_console_declarations.json"
+            draft.write_text(json.dumps(invalid), encoding="utf-8")
+            messages = {
+                finding.message
+                for finding in release_preflight.google_play_console_declaration_findings(draft)
+            }
+        self.assertIn("Google Play Console declarations must remain operator-review drafts", messages)
+        self.assertIn("Google Play Data safety must remain unresolved pending host and SDK review", messages)
+        self.assertIn("Google Play prohibited permission contract differs", messages)
+
     def test_screenshot_manifest_matches_release_images(self):
         messages = {finding.message for finding in release_preflight.strict_checks(ROOT)}
         self.assertNotIn("Japanese screenshot manifest is missing", messages)

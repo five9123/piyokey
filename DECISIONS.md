@@ -1444,3 +1444,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 전화 스크린샷은 임시·디버그 빌드에서 만들지 않는다. 최종 application ID·서명·운영 설정이 고정된 동일 signed release candidate에서 en-US·ja·ko 1080×1920 4장씩 캡처한다. Play Console 앱 생성·ID 소유권·콘텐츠 권리·upload signing·Billing·Games·Data safety·콘텐츠 등급·스크린샷 업로드·Issue #19 실기기 QA는 저장소 검증과 별개인 열린 외부 게이트로 유지한다.
 - 근거: 스토어 문구와 그래픽을 버전 관리·자동 검증하면 Console 입력 전 제품 약속과 자산 규격의 드리프트를 막을 수 있다. 반면 스크린샷과 서명·상품·정책 정보는 실제 배포 후보와 외부 계정 상태에 의존하므로 소스 완료와 동일시할 수 없다.
 - 영향 범위: `release/google_play_metadata.json`, `release/google_play/`, `release/GOOGLE_PLAY_QA.md`, Google Play 자산 생성기, release preflight, Android M7 readiness·global rollout 문서.
+
+## 2026-08-27 Android 홈 원탭 연습·Google Play 콘솔 초안
+
+- 관련: Issue #19·#51·#55, PRD §4 S2, F6·F7·F8·F11, §13 M7.
+- 결정: iOS에서 확정된 홈의 `주간 피요컵`과 `랜덤 단어 5개`를 Android에도 같은 계약으로 포팅한다. 다운로드한 공식 단어 덱의 온보딩 선호 태그를 우선하고, 부족하면 목표별 번들 공식 덱과 흐름 초급 풀을 사용한다. 공백·중복 한국어를 제외하고 최근 20개를 우선 회피하며 결과 재시작은 다른 5개를 뽑는다.
+- 결정: 랜덤 연습 오타는 항목별 원본 덱 ID로 복습에 수집하고 완료는 `quick_practice` 스탬프만 기록한다. 주간컵은 기본 설정이 OS IME여도 경쟁 조건을 위해 내장 두벌식으로 고정하며, 앱 초기 번들 로딩 시점과 무관하게 버튼 클릭에서 로컬 덱을 재확보한다.
+- 결정: Google Play Data safety를 `수집 없음`으로 미리 확정하지 않는다. 앱 자체 분석·광고·계정 서버는 없지만 운영 정적 호스트의 요청 로그, Play Billing 9.1.0, Play Games v2 22.0.0의 기기 밖 처리까지 최종 배포 구성에서 검토해야 한다. 저장소에는 출시 노트·상품 문구·앱 접근·대상 연령·등급·권한·데이터 경계의 근거 초안만 두고 실제 콘솔 답변은 외부 게이트로 유지한다.
+- 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
+- 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.

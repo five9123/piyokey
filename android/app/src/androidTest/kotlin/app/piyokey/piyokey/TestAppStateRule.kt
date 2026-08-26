@@ -6,6 +6,7 @@ import app.piyokey.core.data.PiyokeyDatabase
 import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.FontScale
+import app.piyokey.core.settings.InputMode
 import java.io.File
 import kotlinx.coroutines.runBlocking
 import org.junit.rules.ExternalResource
@@ -28,12 +29,17 @@ class TestAppStateRule(
       File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
       File(context.cacheDir, "shared_results").deleteRecursively()
     }
-    if (theme != null || fontScale != null) {
+    if (skipOnboarding || theme != null || fontScale != null) {
       runBlocking {
         AppPreferencesStore.create(context).update { current ->
           current.copy(
             theme = theme ?: current.theme,
             fontScale = fontScale ?: current.fontScale,
+            defaultInputMode = if (skipOnboarding) {
+              if (forceOSIME) InputMode.OS_IME else InputMode.BUILTIN
+            } else {
+              current.defaultInputMode
+            },
           )
         }
       }

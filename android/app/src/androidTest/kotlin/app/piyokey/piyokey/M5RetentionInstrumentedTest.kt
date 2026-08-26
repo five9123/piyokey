@@ -36,6 +36,26 @@ class M5RetentionInstrumentedTest {
   }
 
   @Test
+  fun homeRandomFiveStartsOfflinePractice() {
+    waitForShell()
+    composeRule.onNodeWithTag("home-quick-random").performScrollTo().assertIsDisplayed().performClick()
+    composeRule.waitUntil(timeoutMillis = 15_000) {
+      runCatching { composeRule.onNodeWithTag("practice-screen").fetchSemanticsNode() }.isSuccess
+    }
+    composeRule.onNodeWithTag("practice-screen").assertIsDisplayed()
+  }
+
+  @Test
+  fun homeWeeklyCupStartsFlowDirectlyWithBuiltinKeyboard() {
+    waitForShell()
+    composeRule.onNodeWithTag("home-quick-piyo-cup").performScrollTo().assertIsDisplayed().performClick()
+    composeRule.waitUntil(timeoutMillis = 20_000) {
+      runCatching { composeRule.onNodeWithTag("flow-result").fetchSemanticsNode() }.isSuccess
+    }
+    composeRule.onNodeWithTag("flow-result").assertIsDisplayed()
+  }
+
+  @Test
   fun curriculumStartsWithSequentialCoreUnlockAndFreePracticeExit() {
     waitForShell()
     composeRule.onNodeWithTag("nav-practice").performClick()

@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -76,6 +77,8 @@ fun RetentionHomeCard(
   appearance: PiyoSessionAppearance,
   onOpenProfile: () -> Unit,
   onDailyChallenge: () -> Unit,
+  onWeeklyCup: () -> Unit,
+  onQuickPractice: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val week = RetentionPolicy.week(today, completedDays)
@@ -154,6 +157,67 @@ fun RetentionHomeCard(
       onClick = onDailyChallenge,
       modifier = Modifier.fillMaxWidth().testTag("retention-daily-challenge"),
     ) { Text(stringResource(R.string.retention_daily_cta)) }
+    if (LocalDensity.current.fontScale >= 1.3f) {
+      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        QuickActionCard(
+          title = stringResource(R.string.home_quick_piyo_cup_title),
+          detail = stringResource(R.string.home_quick_piyo_cup_detail),
+          icon = PiyokeyIconKind.TROPHY,
+          onClick = onWeeklyCup,
+          modifier = Modifier.fillMaxWidth().testTag("home-quick-piyo-cup"),
+        )
+        QuickActionCard(
+          title = stringResource(R.string.home_quick_random_title),
+          detail = stringResource(R.string.home_quick_random_detail),
+          icon = PiyokeyIconKind.PRACTICE,
+          onClick = onQuickPractice,
+          modifier = Modifier.fillMaxWidth().testTag("home-quick-random"),
+        )
+      }
+    } else {
+      Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        QuickActionCard(
+          title = stringResource(R.string.home_quick_piyo_cup_title),
+          detail = stringResource(R.string.home_quick_piyo_cup_detail),
+          icon = PiyokeyIconKind.TROPHY,
+          onClick = onWeeklyCup,
+          modifier = Modifier.weight(1f).testTag("home-quick-piyo-cup"),
+        )
+        QuickActionCard(
+          title = stringResource(R.string.home_quick_random_title),
+          detail = stringResource(R.string.home_quick_random_detail),
+          icon = PiyokeyIconKind.PRACTICE,
+          onClick = onQuickPractice,
+          modifier = Modifier.weight(1f).testTag("home-quick-random"),
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun QuickActionCard(
+  title: String,
+  detail: String,
+  icon: PiyokeyIconKind,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Card(
+    onClick = onClick,
+    modifier = modifier,
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    shape = RoundedCornerShape(22.dp),
+  ) {
+    Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
+        Box(Modifier.size(42.dp), contentAlignment = Alignment.Center) {
+          PiyokeyIcon(icon, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.secondary)
+        }
+      }
+      Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black)
+      Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
   }
 }
 

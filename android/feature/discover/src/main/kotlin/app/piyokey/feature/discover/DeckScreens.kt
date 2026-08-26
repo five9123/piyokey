@@ -886,6 +886,7 @@ fun PracticeResultScreen(
   recommendations: List<CatalogDeck>,
   installedDeckIds: Set<String>,
   onRetry: () -> Unit,
+  retryLabel: String? = null,
   onDeckClick: (CatalogDeck) -> Unit,
   onBack: () -> Unit,
   shareActions: @Composable () -> Unit = {},
@@ -935,7 +936,11 @@ fun PracticeResultScreen(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
       )
     }
-    item { Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_again)) } }
+    item {
+      Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().testTag("practice-result-retry")) {
+        Text(retryLabel ?: stringResource(R.string.practice_again))
+      }
+    }
     item { shareActions() }
     if (recommendations.isNotEmpty()) {
       item { SectionTitle(stringResource(R.string.deck_same_tags)) }

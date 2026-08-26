@@ -127,6 +127,8 @@ import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
 import app.piyokey.core.retention.DailyChallengePolicy
 import app.piyokey.core.retention.JstDay
+import app.piyokey.core.retention.QuickPracticePolicy
+import app.piyokey.core.retention.QuickPracticeSession
 import app.piyokey.core.retention.ReviewItem
 import app.piyokey.core.retention.RetentionPolicy
 import app.piyokey.core.settings.AppPreferences
@@ -134,6 +136,7 @@ import app.piyokey.core.settings.AppLanguage
 import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.InputModePolicy
 import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.core.settings.PiyoWardrobePolicy
 import app.piyokey.core.settings.PiyoAccessory
@@ -334,7 +337,7 @@ private data class ActivePractice(
   val sessionId: String = UUID.randomUUID().toString(),
 )
 
-private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW, ONBOARDING }
+private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, QUICK, REVIEW, ONBOARDING }
 
 private data class PracticeResult(
   val practice: ActivePractice,
@@ -349,6 +352,18 @@ private data class PendingPracticeCompletion(
   val practice: ActivePractice,
   val state: PracticeSessionState,
   val activeDurationMillis: Long,
+)
+
+private fun QuickPracticeSession.toActivePractice(inputMode: InputMode): ActivePractice = ActivePractice(
+  installed = null,
+  catalogEntry = null,
+  targets = sources.map { it.item.ko },
+  items = sources.map { it.item },
+  sourceDeckId = null,
+  kind = PracticeKind.QUICK,
+  inputMode = inputMode,
+  sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
+  reviewSourceDeckIds = sources.map { it.sourceDeckId },
 )
 
 private enum class GameStage { HUB, DECK_SELECT, SPACING_SELECT }
@@ -760,7 +775,7 @@ private fun PiyokeyApp(
       try {
         val items = practice.items
         if (items != null) {
-          if (practice.kind == PracticeKind.REVIEW && practice.reviewSourceDeckIds != null) {
+          if (practice.reviewSourceDeckIds != null) {
             state.itemResolutions.forEach { resolution ->
               val item = items.getOrNull(resolution.itemIndex) ?: return@forEach
               val source = practice.reviewSourceDeckIds.getOrNull(resolution.itemIndex) ?: return@forEach
@@ -768,7 +783,7 @@ private fun PiyokeyApp(
                 sourceDeckId = source,
                 items = listOf(item),
                 resolutions = listOf(resolution.copy(itemIndex = 0)),
-                isReviewSession = true,
+                isReviewSession = practice.kind == PracticeKind.REVIEW,
               )
             }
           } else if (practice.sourceDeckId != null) {
@@ -789,6 +804,10 @@ private fun PiyokeyApp(
           )
           PracticeKind.DAILY -> {
             repository.recordDailyCompletion(practice.sessionDay)
+            null
+          }
+          PracticeKind.QUICK -> {
+            repository.recordQuickPracticeCompletion(practice.sessionDay)
             null
           }
           else -> null
@@ -812,6 +831,64 @@ private fun PiyokeyApp(
         operationFailed = true
         result = state.toResult(practice, duration, null)
         activePractice = null
+      }
+    }
+  }
+
+  fun startQuickPractice() {
+    scope.launch {
+      try {
+        val fallbackId = when (preferences.onboardingGoal) {
+          app.piyokey.core.settings.OnboardingGoal.KEYBOARD -> "official_keyboard_start"
+          app.piyokey.core.settings.OnboardingGoal.TRAVEL -> "official_daily_words"
+          app.piyokey.core.settings.OnboardingGoal.TRENDS -> "official_trending_korean"
+          app.piyokey.core.settings.OnboardingGoal.TOPIK, null -> "official_topik_one"
+        }
+        val fallbackDecks = buildList {
+          current.catalog.decks.firstOrNull { it.deckId == fallbackId }?.let { entry ->
+            runCatching { repository.bundledCatalogDeck(entry) }.getOrNull()?.let(::add)
+          }
+          flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let { flowDeck ->
+            if (none { it.deckId == flowDeck.deckId }) add(flowDeck)
+          }
+        }
+        val session = QuickPracticePolicy.makeSession(
+          installedDecks = current.installed.map { it.deck },
+          fallbackDecks = fallbackDecks,
+          preferredTags = preferences.onboardingGoal?.preferredTags.orEmpty(),
+          recentWordKeys = preferences.recentQuickPracticeWords,
+        ) ?: error("No eligible quick-practice words")
+        onPreferencesChange(
+          preferences.copy(
+            recentQuickPracticeWords = QuickPracticePolicy.updatedHistory(
+              preferences.recentQuickPracticeWords,
+              session,
+            ),
+          ),
+        )
+        result = null
+        activePractice = session.toActivePractice(preferences.defaultInputMode)
+        operationFailed = false
+      } catch (_: Exception) {
+        operationFailed = true
+      }
+    }
+  }
+
+  fun startWeeklyCup() {
+    scope.launch {
+      try {
+        val deck = flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }
+          ?: repository.bundledFlowDecks().first { it.deckId == "flow_topik_beginner" }.also { loaded ->
+            flowPresets = (flowPresets + loaded).distinctBy(Deck::deckId)
+          }
+        selectedGameKind = GameKind.FLOW
+        flowIsWeeklyCup = true
+        activeFlowDeck = deck
+        flowSeed = kotlin.random.Random.nextLong()
+        operationFailed = false
+      } catch (_: Exception) {
+        operationFailed = true
       }
     }
   }
@@ -935,7 +1012,11 @@ private fun PiyokeyApp(
   if (runningFlow != null && completedFlow == null) {
     FlowGameRoute(
       deck = runningFlow,
-      useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+      useOSIME = (if (flowIsWeeklyCup) {
+        InputModePolicy.weeklyCup(preferences.defaultInputMode)
+      } else {
+        preferences.defaultInputMode
+      }) == InputMode.OS_IME,
       piyoAppearance = preferences.sessionAppearance,
       soundEffectsEnabled = preferences.soundEffectsEnabled,
       keySoundStyle = preferences.keySoundStyle,
@@ -1557,8 +1638,17 @@ private fun PiyokeyApp(
         recommendations = recommendations,
         installedDeckIds = current.installedDeckIds,
         onRetry = {
-          result = null
-          activePractice = completedResult.practice
+          if (completedResult.practice.kind == PracticeKind.QUICK) {
+            startQuickPractice()
+          } else {
+            result = null
+            activePractice = completedResult.practice
+          }
+        },
+        retryLabel = if (completedResult.practice.kind == PracticeKind.QUICK) {
+          context.getString(app.piyokey.feature.retention.R.string.home_quick_random_retry)
+        } else {
+          null
         },
         onDeckClick = ::openDetail,
         onBack = { result = null },
@@ -1654,6 +1744,8 @@ private fun PiyokeyApp(
                   sessionDay = day,
                 )
               },
+              onWeeklyCup = ::startWeeklyCup,
+              onQuickPractice = ::startQuickPractice,
             )
           },
         )
@@ -1728,12 +1820,7 @@ private fun PiyokeyApp(
               gameStage = if (kind == GameKind.SPACING) GameStage.SPACING_SELECT else GameStage.DECK_SELECT
             },
             onWeeklyCup = {
-              flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let {
-                selectedGameKind = GameKind.FLOW
-                flowIsWeeklyCup = true
-                activeFlowDeck = it
-                flowSeed = kotlin.random.Random.nextLong()
-              }
+              startWeeklyCup()
             },
           )
           GameStage.DECK_SELECT -> GameDeckSelectionScreen(
@@ -1915,7 +2002,7 @@ private fun PiyokeyApp(
 
       if (operationFailed) {
         Surface(
-          modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(12.dp),
+          modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(12.dp).testTag("operation-error"),
           color = MaterialTheme.colorScheme.errorContainer,
           shadowElevation = 5.dp,
         ) {
