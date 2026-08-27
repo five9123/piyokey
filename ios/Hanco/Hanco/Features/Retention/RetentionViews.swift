@@ -762,7 +762,9 @@ struct DailyChallengePracticeDestination: View {
       },
       onPracticeCompletion: { _, _ in
         retention.record(.dailyChallenge, on: challenge.day)
-      }
+      },
+      analyticsSessionKind: "daily",
+      analyticsDeckSource: "daily"
     )
   }
 }

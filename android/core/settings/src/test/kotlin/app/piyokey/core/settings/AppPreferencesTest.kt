@@ -30,6 +30,21 @@ class AppPreferencesTest {
   }
 
   @Test
+  fun privacyChoicesDefaultOffAndNoticeWaitsForAnIdlePostOnboardingScreen() {
+    val defaults = AppPreferences()
+    assertFalse(defaults.anonymousAnalyticsEnabled)
+    assertFalse(defaults.crashDiagnosticsEnabled)
+    assertEquals(0, defaults.privacyNoticeVersion)
+
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, onboardingCompleted = false, appTourCompleted = true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, onboardingCompleted = true, appTourCompleted = false))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, true, true, sessionIsActive = true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, true, true, hasBlockingPresentation = true))
+    assertTrue(PrivacyNoticePolicy.shouldPresent(0, true, true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(PrivacyNoticePolicy.currentVersion, true, true))
+  }
+
+  @Test
   fun hatchGateAndGrowthNeverSkipRequiredThreeChapters() {
     val cracked = AppPreferences(firstInputCompleted = true)
     assertEquals(PiyoGrowthStage.CRACKED_EGG, cracked.growthStage)

@@ -37,6 +37,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>HancoCatalogURL</key>
 	<string>$(HANCO_CATALOG_URL)</string>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
+	<key>PiyokeyPostHogHost</key>
+	<string>https://eu.i.posthog.com</string>
+	<key>PiyokeyPostHogProjectToken</key>
+	<string>$(PIYOKEY_POSTHOG_PROJECT_TOKEN)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.education</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

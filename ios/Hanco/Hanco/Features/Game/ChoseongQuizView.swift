@@ -1477,6 +1477,9 @@ struct ChoseongTypingView: View {
   @State private var countdownAction: RecallTypingCountdownAction?
   @State private var countdownTask: Task<Void, Never>?
   @State private var pendingRestartRounds: [ChoseongTypingRound]?
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
 
   init(deck: Deck, mode: RecallTypingGameMode = .choseong) {
     self.deck = deck
@@ -1551,6 +1554,7 @@ struct ChoseongTypingView: View {
     }
     .onAppear {
       resolveInitialInputModeIfNeeded()
+      captureAnalyticsStartIfNeeded()
       if mode.requiresCountdown {
         prepareCountdownSessionOnAppear()
       } else {
@@ -1569,6 +1573,7 @@ struct ChoseongTypingView: View {
       countdownTask = nil
       targetSpeechSynthesizer.stop()
       reviewDeck.flush()
+      captureAnalyticsAbandonmentIfNeeded()
     }
     .onChange(of: scenePhase) { phase in
       switch phase {
@@ -2187,6 +2192,7 @@ struct ChoseongTypingView: View {
     )
     if recordOutcome?.isNewBest == true { companion.publish(.newBest) }
     retention.record(.game, session: retentionSession)
+    captureAnalyticsCompletionIfNeeded(result)
   }
 
   private func retry() {
@@ -2197,6 +2203,9 @@ struct ChoseongTypingView: View {
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
     recordInputMode = resolvedRecordInputMode
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
     korean10KeyInterpreter.reset()
     inputResetRevision &+= 1
     let nextRounds = randomizedPresetRounds()
@@ -2207,6 +2216,76 @@ struct ChoseongTypingView: View {
     } else {
       viewModel.restart(rounds: nextRounds)
     }
+    captureAnalyticsStartIfNeeded()
+  }
+
+  private var analyticsDeckSource: String {
+    if mode.resultPresentation.presetLevel(for: deck) != nil { return "bundled" }
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: return "bundled"
+    case .remote: return "catalog"
+    case .imported: return "imported"
+    case .created: return "created"
+    case nil: return "unknown"
+    }
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: "game",
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "game",
+      sessionKind: "game",
+      inputMode: recordInputMode.rawValue,
+      gameMode: mode.resultPresentation.analyticsValue
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded(_ result: FlowGameResult) {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: "game",
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(result.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(result.completedItemCount),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: "game",
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.result.activeDuration),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
   }
 
   private func randomizedPresetRounds() -> [ChoseongTypingRound]? {
