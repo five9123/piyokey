@@ -68,6 +68,34 @@ def claim(issue: int, owner: str, force: bool = False) -> Path:
     return destination
 
 
+def validate_unclaim(
+    branch: str,
+    dirty: bool,
+    head_tree: str,
+    origin_main_tree: str,
+) -> None:
+    if branch != "main":
+        raise ValueError("worktree can only be unclaimed after switching to main")
+    if dirty:
+        raise ValueError("worktree must be clean before ownership is removed")
+    if not head_tree or head_tree != origin_main_tree:
+        raise ValueError("HEAD tree must match origin/main before ownership is removed")
+
+
+def unclaim() -> Path | None:
+    validate_unclaim(
+        branch=git_value("branch", "--show-current"),
+        dirty=bool(git_value("status", "--porcelain")),
+        head_tree=git_value("rev-parse", "HEAD^{tree}"),
+        origin_main_tree=git_value("rev-parse", "origin/main^{tree}"),
+    )
+    destination = metadata_path()
+    if not destination.exists():
+        return None
+    destination.unlink()
+    return destination
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -78,6 +106,7 @@ def main() -> int:
     claim_parser.add_argument("--force", action="store_true")
 
     subparsers.add_parser("show")
+    subparsers.add_parser("unclaim")
     args = parser.parse_args()
 
     if args.command == "claim":
@@ -86,6 +115,14 @@ def main() -> int:
         except (FileExistsError, ValueError) as error:
             parser.error(str(error))
         print(destination)
+        return 0
+
+    if args.command == "unclaim":
+        try:
+            destination = unclaim()
+        except ValueError as error:
+            parser.error(str(error))
+        print(destination if destination is not None else "already unclaimed")
         return 0
 
     destination = metadata_path()

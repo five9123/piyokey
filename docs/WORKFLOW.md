@@ -24,6 +24,17 @@ python3 tools/workspace_doctor.py --strict
 소유권 파일은 commit 대상이 아닙니다. handoff 시 새 담당자가 `--force`로
 교체하고 Issue 또는 Draft PR에도 담당 변경을 남깁니다.
 
+PR 병합 뒤에는 해당 worktree를 clean 최신 `main`으로 전환한 다음 소유권을
+해제합니다. `unclaim`은 main, clean, `origin/main` 동일 tree 세 조건을 모두
+확인하므로 진행 중 변경을 실수로 무주 상태로 만들지 않습니다.
+
+```bash
+git fetch --prune origin
+git switch main
+git pull --ff-only origin main
+python3 tools/worktree_owner.py unclaim
+```
+
 새 디바이스와 worktree 생성 명령은 [DEVICE_SETUP.md](DEVICE_SETUP.md)를
 기준으로 합니다. 작업 시작 직후 branch를 원격에 push해 다른 작업자가
 소유권을 확인할 수 있게 합니다.

@@ -27,6 +27,15 @@ class WorktreeOwnerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "owner"):
             worktree_owner.claim(59, "")
 
+    def test_unclaim_requires_clean_main_at_origin_tree(self):
+        worktree_owner.validate_unclaim("main", False, "tree", "tree")
+        with self.assertRaisesRegex(ValueError, "switching to main"):
+            worktree_owner.validate_unclaim("codex/59-task", False, "tree", "tree")
+        with self.assertRaisesRegex(ValueError, "clean"):
+            worktree_owner.validate_unclaim("main", True, "tree", "tree")
+        with self.assertRaisesRegex(ValueError, "origin/main"):
+            worktree_owner.validate_unclaim("main", False, "tree", "other")
+
 
 if __name__ == "__main__":
     unittest.main()
