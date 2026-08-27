@@ -57,6 +57,14 @@ adaptive icon과 접근성 폴리싱을 구현해 API 35 자동 회귀와 Releas
 | source baseline | 완료 | private GitHub 원격, Issue/Project/PR/CI와 Issue별 `codex/` 브랜치 운용. 사용자 원본 dirty worktree는 별도 보존 |
 | Google Play 상태 | 미착수 | 앱 생성·서명·Play Games·Billing 상품 생성 모두 별도 외부 gate |
 
+## 2026-08-27 최종 소스 패키징 재검증
+
+- `:app:bundleRelease`와 lint vital/R8/resource shrink가 통과해 12 MiB unsigned AAB를 생성했다.
+- AAB SHA-256은 `3449e655937f137679e6889b2462622432622f18186bb2680d161e68b3d6f72c`이며 `jarsigner`로 unsigned 검증용 산출물임을 확인했다. 업로드하지 않는다.
+- `:app:verifyReleaseManifestContract`는 통과했다.
+- `:app:bundleDistributionRelease`는 application ID 확인, 공개 catalog URL, 콘텐츠 권리 승인, Play Games project·20개 resource ID, upload keystore 입력이 없어 AAB 생성 전에 fail-closed 됐다. 비밀값은 출력되지 않았다.
+- Galaxy 물리 입력 gate는 시작 뒤 USB가 분리되어 report 수집 전에 중단됐다. 소스 실패가 아니라 미완료 실기기 gate로 유지한다.
+
 ## 구현 순서
 
 1. A0 완료: wrapper/version catalog, `:app`, 순수 `:core:hangul`, Android contract CI.

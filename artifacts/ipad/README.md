@@ -113,5 +113,6 @@ Android는 JDK 17 환경에서 온보딩 3/3, 설정 2/2 Compose 계측을 클�
 - iPhone 17 / iOS 26.5 Simulator: 관련 UI 4/4, `AppSettingsTests` 17/17 통과
 - SwiftPM 42/42, generic iOS Simulator Release build, `release_preflight.py`, strict Swift format·localization XML·`git diff --check` 통과
 - Android API 35: 온보딩 3/3과 설정 2/2를 각각 전체 클래스 반복 실행해 통과. 관련 JVM, lint, Debug APK와 R8 Release APK 조립 통과
+- 미사용 catalog 바인딩 경고를 제거한 뒤 `DiscoverViewModelTests` 5/5 통과. 최종 Release archive `/tmp/Piyokey-final-keyboard-integration-clean.xcarchive`는 경고 없이 생성되고 Store validation을 통과했으며 Apple Development 서명이므로 업로드용 Distribution archive로 간주하지 않는다.
 
-실제 iPad의 Bluetooth 키보드 연결은 사용자가 확인했다. 실제 키 이벤트로 첫 `가`와 부화 미션 입력, 입력 도중 설정 반복 후 새 crash report가 없는지는 계속 수동 gate다. Android Galaxy 물리 입력 gate는 테스트 시작 뒤 USB가 분리되어 결과 수집 전에 중단됐으며, 제품 코드 실패로 판정하지 않고 재연결 후 다시 실행한다.
+실제 iPad의 Bluetooth 키보드 연결은 사용자가 확인했다. 실제 키 이벤트로 첫 `가`와 부화 미션 입력, 입력 도중 설정 반복 후 새 crash report가 없는지는 계속 수동 gate다. 기기 `systemCrashLogs`에는 기존 2026-08-26 재현 로그 2개 이후 새 Hanco crash가 없다. Android Galaxy 물리 입력 gate는 테스트 시작 뒤 USB가 분리되어 결과 수집 전에 중단됐으며, 제품 코드 실패로 판정하지 않고 재연결 후 다시 실행한다.
