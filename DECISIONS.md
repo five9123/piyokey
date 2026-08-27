@@ -1485,7 +1485,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 
 - 관련: Issue #59, 저장소 운영·릴리스 검증 체계.
 - 결정: `AGENTS.md`는 변하지 않는 제품 철칙과 문서 routing만 유지한다. 현재 main·활성 작업·출시 gate는 `PROJECT_STATUS.md`, 작업 순서와 WIP 제한은 `ROADMAP.md`에서 관리하고, 과거의 장문 상태 기록은 `docs/archive/AGENTS-2026-08-27.md`로 보존한다.
-- 결정: 모든 작업은 Issue 번호가 포함된 `codex/<issue>-<slug>` branch와 전용 worktree를 사용한다. 시작 시 담당자·Issue·branch·절대 worktree 경로를 각 worktree의 Git metadata에 기록하며 strict workspace 진단은 dirty 상태, 누락되거나 불일치하는 소유권을 실패로 처리한다.
+- 결정: 모든 작업은 Issue 번호가 포함된 `codex/<issue>-<slug>` branch와 전용 worktree를 사용한다. 시작 시 담당자·Issue·branch·절대 worktree 경로를 각 worktree의 Git metadata에 기록하며 strict workspace 진단은 dirty 상태, 누락되거나 불일치하는 작업 branch 소유권을 실패로 처리한다. 공유 기준선인 `main`은 Issue 소유권을 두지 않으며, 병합 후 main·clean·`origin/main` 동일 tree일 때만 안전하게 소유권을 해제한다.
 - 결정: GitHub Actions 비활성 기간의 로컬 검증은 clean commit에서 실행하고 `release/evidence/<검증대상 전체 SHA>.json`에 명령·결과·수동 gate를 기록한다. 증빙은 실제 실행을 대체하지 않으며 PR 본문에서 검증 대상 SHA와 연결한다.
 - 결정: 실기기 설치, archive, TestFlight·Play 배포는 `git fetch --prune origin` 후 제품 파일 tree가 `origin/main`과 같고 작업공간이 clean·소유권 일치일 때만 수행한다. 소스 완료와 기기·스토어·권리 gate는 계속 별도 상태로 관리한다.
 - 근거: 시간에 따라 변하는 상태와 영구 규칙을 분리하고, worktree 소유·검증 대상·배포 소스를 기계적으로 확인해야 비개발자 운영에서도 오래된 branch, 섞인 변경, 다른 SHA의 테스트 결과를 최신 기준선으로 오인하지 않는다.

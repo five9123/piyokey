@@ -4,16 +4,12 @@
 
 ## Now — R1.1 기준선 안정화
 
-1. 프로젝트 운영 재정비 #59
-   - 작업공간 소유·dirty 진단
-   - SHA 기반 로컬 검증 증빙
-   - Issue·PR·Project 상태 정합성
-2. 현지 20시 온보딩 리마인더 #58
+1. 현지 20시 온보딩 리마인더 #58
    - 최신 main 반영
    - iOS/Android 회귀와 실제 기기 수동 gate 분리
-3. iOS 1.1 출시 후보
+2. iOS 1.1 출시 후보
    - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
-4. Android 1.1 출시 후보
+3. Android 1.1 출시 후보
    - Play Console·서명·권리·외부 리소스 확정
    - Issue #19 동일 signed AAB 통합 실기기 QA
 

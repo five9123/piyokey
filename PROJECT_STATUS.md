@@ -2,7 +2,8 @@
 
 마지막 갱신: 2026-08-27 JST
 기준 저장소: `five9123-maker/piyokey`
-기준 `main`: `9ff9cd8` — 개인정보 우선 크로스플랫폼 애널리틱스 PR #44 병합
+기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
+최근 운영 기준선: 프로젝트 재정비 PR #60 병합
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -20,7 +21,6 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #59 프로젝트 재정비 | In Progress | `codex/59-project-reorganization` / 기본 worktree | 문서·진단·검증 증빙 체계 PR |
 | #58 현지 20시 리마인더 | In Progress | `codex/58-onboarding-local-reminder` / `/private/tmp/piyokey-issue-58` | 최신 main 반영 후 관련 회귀와 PR |
 | #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
 
@@ -36,7 +36,7 @@
 
 ## 작업공간 현황
 
-2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 보존 대상은 #59, #58, #12, #46, #17과 iPad #10 작업공간이다. PR #44의 clean #43 worktree는 해당 task 종료 뒤 정리한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
+2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 보존 대상은 #58, #12, #46, #17과 iPad #10 작업공간이다. PR #44의 clean #43 worktree는 해당 task 종료 뒤 정리한다. 기본 worktree는 #59 후속 병합 뒤 clean `main`에서 소유권을 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 
 ## 상태 갱신 체크
 

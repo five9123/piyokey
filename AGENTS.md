@@ -19,6 +19,8 @@
 4. M1 조합 엔진·덱 → M2 키보드·연습 → M3 발견·다운로드 → M4 게임 → M5 리텐션 → M6 폴리싱·OS 키보드 → M7 Android 순서를 존중한다.
 5. 외부 스토어·실기기·권리 gate는 소스 완료와 구분하며, 통과 전에는 출시 완료로 표현하지 않는다.
 
+`main`은 공유 기준선이므로 Issue 소유권을 두지 않는다. 작업 병합 후 clean `main`이 `origin/main`과 같은 때에만 `python3 tools/worktree_owner.py unclaim`으로 해당 worktree의 작업 소유권을 해제한다.
+
 ## 프로젝트 구조
 
 ```text
@@ -47,6 +49,7 @@ docs/                    workflow·handoff·운영 문서
 
 - 작업공간 점검: `python3 tools/workspace_doctor.py`
 - 작업공간 소유권: `python3 tools/worktree_owner.py claim --issue <번호> --owner '<담당자>'`
+- 작업 종료 소유권 해제: `python3 tools/worktree_owner.py unclaim`
 - SHA 검증 증빙: `python3 tools/verification_evidence.py --scope '<범위>' --check '<이름>::pass::<명령>'`
 - 배포 소스 점검: `python3 tools/workspace_doctor.py --strict --require-origin-main`
 - 테스트 벡터 생성: `python3 tools/gen_test_vectors.py`

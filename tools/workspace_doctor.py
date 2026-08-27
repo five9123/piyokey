@@ -65,6 +65,8 @@ def ownership_status(
     metadata: Optional[dict[str, object]],
 ) -> tuple[str, str]:
     if metadata is None:
+        if branch == "main":
+            return "PASS", "main 기준선은 Issue 소유권을 기록하지 않습니다"
         return "WARN", "tools/worktree_owner.py claim으로 Issue와 담당자를 기록하세요"
     if metadata.get("schema_version") != 1:
         return "FAIL", "지원하지 않는 worktree owner schema"

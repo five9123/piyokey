@@ -139,7 +139,8 @@ python3 tools/workspace_doctor.py --strict
 git switch main
 git pull --ff-only origin main
 git branch --merged main
-python3 tools/workspace_doctor.py
+python3 tools/worktree_owner.py unclaim
+python3 tools/workspace_doctor.py --strict --require-origin-main
 ```
 
 GitHub의 병합된 `main`이 유일한 공유 기준이다. App Store Connect, TestFlight,

@@ -76,6 +76,12 @@ class WorkspaceDoctorTests(unittest.TestCase):
             "WARN",
         )
 
+    def test_ownership_status_accepts_unclaimed_main_baseline(self):
+        self.assertEqual(
+            workspace_doctor.ownership_status("main", ROOT, None)[0],
+            "PASS",
+        )
+
     def test_python_version_requires_3_11(self):
         self.assertEqual(workspace_doctor.python_version_status((3, 10, 9))[0], "FAIL")
         self.assertEqual(workspace_doctor.python_version_status((3, 11, 0))[0], "PASS")
