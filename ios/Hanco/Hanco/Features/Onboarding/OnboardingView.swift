@@ -11,6 +11,7 @@ struct OnboardingView: View {
   @StateObject private var lesson = PracticeSessionViewModel(target: "가")
   @State private var eggReactionRevision = 0
   @State private var didPlayEggKnock = false
+  @State private var didCaptureFirstInput = false
 
   var body: some View {
     VStack(spacing: 0) {
@@ -38,6 +39,11 @@ struct OnboardingView: View {
     .tint(AppPalette.accent)
     .onChange(of: lesson.feedbackRevision) { _ in
       playLessonFeedbackSound()
+    }
+    .onChange(of: lesson.isComplete) { isComplete in
+      guard isComplete, !didCaptureFirstInput else { return }
+      didCaptureFirstInput = true
+      captureOnboardingStep("first_input")
     }
     .onAppear {
       guard !didPlayEggKnock else { return }
@@ -118,6 +124,7 @@ struct OnboardingView: View {
 
         primaryButton(title: "onboarding.next", systemImage: "arrow.right") {
           onboarding.move(to: .keyboard)
+          captureOnboardingStep("goal")
         }
         .disabled(onboarding.selectedGoal == nil)
         .opacity(onboarding.selectedGoal == nil ? 0.45 : 1)
@@ -236,6 +243,7 @@ struct OnboardingView: View {
 
         primaryButton(title: "onboarding.keyboard.try", systemImage: "keyboard") {
           onboarding.move(to: .lesson)
+          captureOnboardingStep("keyboard")
         }
         .accessibilityIdentifier("onboarding.next")
       }
@@ -458,5 +466,12 @@ struct OnboardingView: View {
     case .idle, .correct:
       break
     }
+  }
+
+  private func captureOnboardingStep(_ step: String) {
+    TelemetryService.shared.capture(
+      .onboardingStepCompleted,
+      properties: [.onboardingStep: step]
+    )
   }
 }

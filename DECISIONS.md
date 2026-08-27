@@ -1379,6 +1379,25 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
 - 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.
 
+## 2026-08-26 전 플랫폼 익명 제품 분석·크래시 진단
+
+- 관련: PRD F10, §10, §12, Issue #43.
+- 결정: iOS/iPadOS·Android·웹의 익명 제품 분석은 PostHog Cloud EU, iOS/iPadOS·Android의 크래시/ANR은 Firebase Crashlytics, 웹 오류는 PostHog Error Tracking을 사용한다. 무료 제공량을 운영 기준으로 하고 초과 과금은 별도 승인 전 허용하지 않는다.
+- 결정: `익명 사용 분석`과 `크래시 진단`은 서로 독립적이고 기본 OFF다. Debug/test, 프로젝트 토큰 누락, Firebase 설정 파일 누락은 모두 no-op이며 앱 핵심 기능과 일반 빌드를 실패시키지 않는다. 실제 배포 task에서만 외부 설정·심볼·mapping·정책 gate를 fail closed로 검증한다.
+- 결정: `shared/analytics/events.json`을 유일한 allowlist로 두고 Swift/Kotlin/TypeScript 계약을 생성한다. 자동 UI/키 입력 캡처, 세션 리플레이, heatmap, 사용자 identify/person profile, 광고 ID, 자유 문자열·사용자 덱 내용·경로·hash·영수증을 금지한다. 이벤트는 기능·세션·게임·덱 출처·Deck Maker·구매의 의미적 상태와 bucket 수치만 포함한다.
+- 결정: SDK는 앱/웹 어댑터 계층에만 위치하고 학습·게임 reducer와 공용 코어는 공급자를 import하지 않는다. 모바일 Crashlytics context도 같은 allowlist의 enum만 사용하며 웹 오류 자동 캡처는 진단 동의 뒤에만 켠다.
+- 근거: 선호 기능과 이탈 지점을 익명 aggregate로 확인하면서도 타이핑 학습 앱의 입력 내용과 로컬 사용자 문서를 수집 경계 밖에 유지해야 한다. 독립 동의·기본 OFF·키 누락 no-op·배포 gate를 함께 두면 개발과 오프라인 기능을 외부 서비스 상태에 종속시키지 않는다.
+- 영향 범위: 공용 이벤트 계약/생성기, iOS/iPadOS·Android 설정과 SDK 어댑터, 웹 패키지, Apple Privacy manifest·Play Data safety·개인정보처리방침·릴리스 preflight, PostHog/Firebase 운영 대시보드.
+
+## 2026-08-26 익명 분석·진단 최초 선택 안내
+
+- 관련: PRD F10, §10, §11, Issue #43.
+- 결정: 현재 개인정보 고지를 검토하지 않은 사용자는 온보딩·부화 미션·앱 투어가 끝난 홈 유휴 상태에서 최초 1회 선택 안내를 본다. 익명 사용 분석과 크래시 진단은 각각 사전 선택하지 않고, `선택 저장`과 `공유하지 않고 계속`을 같은 화면에서 제공한다. 거부는 앱 기능·결제 접근을 제한하지 않는다.
+- 결정: 검토 여부는 단순 Boolean 대신 고지 버전으로 저장한다. 목적·공급자·데이터 범주가 실질적으로 바뀔 때만 버전을 올려 다시 안내하며, 설정에서는 현재 선택·공급자·제외 범주·개인정보처리방침을 언제든 다시 확인하고 철회할 수 있다.
+- 결정: 활성 레슨/게임, 결과 자동 전환, 파일 가져오기·편집·결제·다른 모달 위에는 개인정보 안내를 표시하지 않는다. 앱의 설정/온보딩을 건너뛰는 자동 UI 테스트는 고지 검토 상태도 명시적으로 고정하고, 별도 동의 UI 회귀에서만 미검토 상태를 사용한다.
+- 근거: Apple의 익명 사용 데이터 동의·철회 요구와 Google Play의 명확한 고지·affirmative action 원칙을 만족하면서도 PRD §11의 세션 무인터럽트와 기본 OFF 계약을 보존해야 한다.
+- 영향 범위: iOS/iPadOS AppRoot·Settings·UserDefaults·현지화/UI 회귀, Android app shell·DataStore·Settings Compose·현지화/계측 회귀, 웹 통합용 동의 문구, 스토어 심사 안내·개인정보처리방침 출시 gate.
+
 ## 2026-08-26 GitHub Actions 비활성화와 로컬 검증 전환
 
 - 관련: Issue #47, `docs/REPOSITORY_POLICY.md`.
@@ -1425,6 +1444,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー pro`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다.
 - 근거: 사용자가 요청한 “3개 무료, 4개 이상 유료”를 기기 내 활성 보관 수로 정의하면 삭제로 무료 선택권을 되돌려 주면서도 반복 열람을 추적하는 불필요한 감시 상태를 만들지 않는다. 기존 상품 ID를 유지하면 이미 구매한 사용자의 entitlement와 StoreKit/Play Billing 복원 계약을 깨지 않는다.
 - 영향 범위: PRD·스토어 메타데이터, iOS `DeckLibrary`/문서 미리보기/paywall, Android `DeckRepository`/문서 미리보기/paywall, ja/en/ko 문자열, 무료 한도·교체·구매 재개 자동 회귀.
+
+## 2026-08-27 한국어 10키 분석 입력 모드 계약
+
+- 관련: PRD §10, iOS 한국어 10키 게임 연동 결정, Issue #43.
+- 결정: 공통 분석 `input_mode`의 닫힌 enum에 `builtin_korean_10key`를 추가한다. iOS 연습과 다섯 직접 입력 게임은 선택한 내장 배열이 한국어 10키일 때 이 값을 사용하고, 두벌식 `builtin` 및 `os_ime`와 구분한다.
+- 결정: exact 입력·조합 텍스트, 키 순서, 정답·오답 문자열은 계속 전송하지 않는다. 새 값은 세션 단위의 고정 배열 분류만 나타내며 Swift·Kotlin·TypeScript 생성 계약을 함께 갱신한다.
+- 근거: 병합된 로컬 기록은 이미 10키를 별도 입력 모드로 구분한다. 분석 allowlist가 이를 받지 않으면 계약 검증에서 해당 세션 이벤트 전체가 폐기되어 완료율과 게임 사용량이 누락되므로, 비민감 고정 enum으로만 구분한다.
+- 영향 범위: 공용 분석 이벤트 계약, iOS 연습·게임 의미 이벤트, 생성된 iOS/Android/웹 계약과 관련 자동 검증.
 
 ## 2026-08-27 Android 출시 수준 판정과 시각·사용성 폴리싱
 

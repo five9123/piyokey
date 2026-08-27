@@ -79,6 +79,9 @@ data class AppPreferences(
   val showsMascot: Boolean = true,
   val autoPronouncesPractice: Boolean = false,
   val choseongShowsMeaning: Boolean = true,
+  val anonymousAnalyticsEnabled: Boolean = false,
+  val crashDiagnosticsEnabled: Boolean = false,
+  val privacyNoticeVersion: Int = 0,
   val onboardingGoal: OnboardingGoal? = null,
   val onboardingIntroStep: OnboardingIntroStep = OnboardingIntroStep.GOAL,
   val onboardingIntroSkipped: Boolean = false,
@@ -96,6 +99,7 @@ data class AppPreferences(
   init {
     require(hatchChaptersCompleted in 0..3)
     require(pendingHatchResultChapter in 0..3)
+    require(privacyNoticeVersion >= 0)
   }
 
   val growthStage: PiyoGrowthStage
@@ -134,6 +138,22 @@ data class AppPreferences(
       showsMascot = false,
     )
   }
+}
+
+object PrivacyNoticePolicy {
+  const val currentVersion = 1
+
+  fun shouldPresent(
+    reviewedVersion: Int,
+    onboardingCompleted: Boolean,
+    appTourCompleted: Boolean,
+    sessionIsActive: Boolean = false,
+    hasBlockingPresentation: Boolean = false,
+  ): Boolean = reviewedVersion < currentVersion &&
+    onboardingCompleted &&
+    appTourCompleted &&
+    !sessionIsActive &&
+    !hasBlockingPresentation
 }
 
 object PiyoWardrobePolicy {

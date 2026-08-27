@@ -30,6 +30,32 @@ REQUIRED_PRIVACY_REASONS = {
     "NSPrivacyAccessedAPICategoryUserDefaults": ["CA92.1"],
     "NSPrivacyAccessedAPICategoryActiveKeyboards": ["54BD.1"],
 }
+REQUIRED_COLLECTED_DATA = {
+    "NSPrivacyCollectedDataTypeCrashData": {
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeProductInteraction": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeDeviceID": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+    },
+    "NSPrivacyCollectedDataTypeOtherUsageData": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeGameplayContent": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypePurchaseHistory": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
+    "NSPrivacyCollectedDataTypeOtherDiagnosticData": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+    },
+}
 
 EXPECTED_DISPLAY_NAMES = {
     "ja": "ピヨキー",
@@ -712,6 +738,14 @@ def repository_checks(root: Path) -> list[Finding]:
     android_manifest_path = root / "android/app/src/main/AndroidManifest.xml"
     android_build_path = root / "android/app/build.gradle.kts"
     android_file_paths = root / "android/app/src/main/res/xml/file_paths.xml"
+    analytics_contract_path = root / "shared/analytics/events.json"
+    analytics_doc_path = root / "docs/ANALYTICS.md"
+    analytics_release_path = root / "release/analytics_release_state.json"
+    analytics_privacy_draft_path = root / "release/PRIVACY_POLICY_ANALYTICS_DRAFT.md"
+    play_data_safety_path = root / "release/PLAY_DATA_SAFETY_SETUP.md"
+    web_analytics_path = root / "web/analytics/src/index.ts"
+    ios_telemetry_path = app / "Core/Analytics/TelemetryService.swift"
+    android_telemetry_path = root / "android/app/src/main/java/app/piyokey/piyokey/TelemetryRuntime.kt"
 
     for path in (
         project_path,
@@ -735,6 +769,14 @@ def repository_checks(root: Path) -> list[Finding]:
         android_manifest_path,
         android_build_path,
         android_file_paths,
+        analytics_contract_path,
+        analytics_privacy_draft_path,
+        play_data_safety_path,
+        analytics_doc_path,
+        analytics_release_path,
+        web_analytics_path,
+        ios_telemetry_path,
+        android_telemetry_path,
     ):
         add(findings, path.exists(), f"Required file is missing: {path.relative_to(root)}")
     if findings:
@@ -746,7 +788,15 @@ def repository_checks(root: Path) -> list[Finding]:
         manifest = load_plist(manifest_path)
         add(findings, manifest.get("NSPrivacyTracking") is False, "Privacy manifest must declare tracking=false")
         add(findings, manifest.get("NSPrivacyTrackingDomains") == [], "Tracking domains must be empty")
-        add(findings, manifest.get("NSPrivacyCollectedDataTypes") == [], "Collected data types must be empty")
+        collected_entries = manifest.get("NSPrivacyCollectedDataTypes", [])
+        collected = {
+            entry.get("NSPrivacyCollectedDataType"): set(entry.get("NSPrivacyCollectedDataTypePurposes", []))
+            for entry in collected_entries
+            if isinstance(entry, dict)
+            and entry.get("NSPrivacyCollectedDataTypeLinked") is False
+            and entry.get("NSPrivacyCollectedDataTypeTracking") is False
+        }
+        add(findings, collected == REQUIRED_COLLECTED_DATA, f"Collected data declarations differ: {collected!r}")
         entries = manifest.get("NSPrivacyAccessedAPITypes", [])
         reasons = {
             entry.get("NSPrivacyAccessedAPIType"): entry.get("NSPrivacyAccessedAPITypeReasons")
@@ -783,6 +833,14 @@ def repository_checks(root: Path) -> list[Finding]:
         "DeckMaker.storekit in Resources" not in project,
         "The local StoreKit configuration must not be embedded in the app bundle",
     )
+    for required in (
+        "PostHog in Frameworks",
+        "FirebaseCrashlytics in Frameworks",
+        "Upload Crashlytics Symbols",
+        "AnalyticsContract.generated.swift in Sources",
+        "TelemetryService.swift in Sources",
+    ):
+        add(findings, required in project, f"iOS telemetry project integration is missing: {required}")
     add(
         findings,
         hashlib.sha256(default_typing_sound_path.read_bytes()).hexdigest()
@@ -835,7 +893,24 @@ def repository_checks(root: Path) -> list[Finding]:
                 add(findings, len(keywords.encode("utf-8")) <= 100, f"{locale} keywords exceed 100 UTF-8 bytes")
         privacy = metadata.get("app_privacy", {})
         add(findings, privacy.get("tracking") is False, "Store privacy must declare no tracking")
-        add(findings, privacy.get("data_collected") is False, "Store privacy must declare no collected data")
+        add(findings, privacy.get("data_collected") is True, "Store privacy must declare optional collected data")
+        data_types = privacy.get("data_types", {})
+        add(
+            findings,
+            set(data_types) == {
+                "product_interaction",
+                "other_usage_data",
+                "gameplay_content",
+                "purchase_history",
+                "crash_data",
+                "other_diagnostic_data",
+                "device_id",
+            },
+            "Store privacy collected data types differ",
+        )
+        for name, value in data_types.items():
+            add(findings, value.get("linked_to_user") is False, f"Store privacy {name} must not be linked")
+            add(findings, value.get("used_for_tracking") is False, f"Store privacy {name} must not track")
 
         iap = metadata.get("in_app_purchase", {})
         add(findings, iap.get("product_id") == DECK_MAKER_PRODUCT_ID, "Deck Maker product ID differs")
@@ -1041,8 +1116,67 @@ def repository_checks(root: Path) -> list[Finding]:
             and 'rename { "piyokey_logo.png" }' in android_build,
             "Android launcher/share logo must derive from the shared brand source",
         )
+        add(findings, 'android.permission.INTERNET' in android_manifest, "Android telemetry requires INTERNET permission")
+        add(
+            findings,
+            'firebase_crashlytics_collection_enabled' in android_manifest and 'android:value="false"' in android_manifest,
+            "Android Crashlytics collection must default to false",
+        )
+        for required in (
+            "libs.posthog.android",
+            "libs.firebase.crashlytics",
+            'project(":core:analytics")',
+            'PIYOKEY_ANALYTICS_PRIVACY_CONFIRMED',
+        ):
+            add(findings, required in android_build, f"Android telemetry build integration is missing: {required}")
     except OSError as error:
         findings.append(Finding("ERROR", f"Invalid Android release resources: {error}"))
+
+    try:
+        contract = json.loads(analytics_contract_path.read_text(encoding="utf-8"))
+        add(findings, contract.get("schema_version") == 1, "Analytics contract schema version differs")
+        add(findings, len(contract.get("events", {})) >= 10, "Analytics contract has too few semantic events")
+        forbidden = set(contract.get("forbidden_properties", []))
+        allowed = set(contract.get("properties", {}))
+        add(findings, not (forbidden & allowed), "Forbidden analytics properties are allowlisted")
+        add(
+            findings,
+            {"text", "input", "answer", "user_deck_id", "path", "receipt"} <= forbidden,
+            "Analytics sensitive-property denylist differs",
+        )
+        release_state = json.loads(analytics_release_path.read_text(encoding="utf-8"))
+        add(findings, release_state.get("schema_version") == 1, "Analytics release state schema differs")
+        add(findings, release_state.get("provider_region") == "posthog_cloud_eu", "Analytics region must be PostHog EU")
+        add(findings, release_state.get("free_tier_only") is True, "Analytics must remain free-tier only")
+        add(findings, bool(release_state.get("gates")), "Analytics release gates are missing")
+        required_gates = {
+            "posthog_geoip_disabled",
+            "consent_notice_ui_verified",
+            "privacy_policy_published",
+            "privacy_retention_and_deletion_verified",
+            "live_privacy_copy_matches_build",
+            "app_store_privacy_updated",
+            "play_data_safety_updated",
+        }
+        add(
+            findings,
+            required_gates <= set(release_state.get("gates", {})),
+            "Analytics privacy release gates differ",
+        )
+    except (OSError, json.JSONDecodeError) as error:
+        findings.append(Finding("ERROR", f"Invalid analytics contract or release state: {error}"))
+
+    ios_telemetry = ios_telemetry_path.read_text(encoding="utf-8")
+    android_telemetry = android_telemetry_path.read_text(encoding="utf-8")
+    web_telemetry = web_analytics_path.read_text(encoding="utf-8")
+    for source, label in (
+        (ios_telemetry, "iOS"),
+        (android_telemetry, "Android"),
+        (web_telemetry, "Web"),
+    ):
+        add(findings, "sessionReplay" in source or "disable_session_recording" in source, f"{label} replay disable is missing")
+        add(findings, "personProfiles" in source or "person_profiles" in source, f"{label} person-profile disable is missing")
+        add(findings, "$geoip_disable" in source, f"{label} PostHog GeoIP disable is missing")
 
     return findings
 
@@ -1053,8 +1187,10 @@ def strict_checks(root: Path) -> list[Finding]:
     submission_path = root / "release/app_store_submission.json"
     screenshot_dir = root / "release/screenshots/ja-marketing"
     metadata_path = root / "release/app_store_metadata.json"
+    analytics_release_path = root / "release/analytics_release_state.json"
 
     add(findings, submission_path.exists(), "release/app_store_submission.json is missing")
+    add(findings, analytics_release_path.exists(), "release/analytics_release_state.json is missing")
     if not submission_path.exists():
         return findings
     try:
@@ -1062,6 +1198,14 @@ def strict_checks(root: Path) -> list[Finding]:
     except (OSError, json.JSONDecodeError) as error:
         return [Finding("ERROR", f"Invalid submission metadata: {error}")]
     submission = submission_document.get("next_submission", submission_document)
+
+    if analytics_release_path.exists():
+        try:
+            analytics_state = json.loads(analytics_release_path.read_text(encoding="utf-8"))
+            for key, value in analytics_state.get("gates", {}).items():
+                add(findings, value is True, f"Analytics release gate is open: {key}")
+        except (OSError, json.JSONDecodeError) as error:
+            findings.append(Finding("ERROR", f"Invalid analytics release state: {error}"))
     add(
         findings,
         submission.get("marketing_version") == "1.1",

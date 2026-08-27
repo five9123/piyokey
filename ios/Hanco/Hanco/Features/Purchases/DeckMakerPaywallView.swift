@@ -49,6 +49,7 @@ struct DeckMakerPaywallView: View {
   @ScaledMetric(relativeTo: .caption) private var legalSize: CGFloat = 12
   @ScaledMetric(relativeTo: .body) private var featureIconSize: CGFloat = 18
   @ScaledMetric(relativeTo: .body) private var featureIconFrame: CGFloat = 36
+  @State private var didCaptureView = false
 
   private let onAccessGranted: () -> Void
 
@@ -87,6 +88,14 @@ struct DeckMakerPaywallView: View {
     }
     .task {
       await purchaseStore.prepare()
+    }
+    .onAppear {
+      guard !didCaptureView else { return }
+      didCaptureView = true
+      TelemetryService.shared.capture(
+        .purchaseFlow,
+        properties: [.purchaseState: "viewed"]
+      )
     }
     .alert(item: noticeBinding) { notice in
       Alert(

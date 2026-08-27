@@ -16,6 +16,7 @@ class TestAppStateRule(
   private val freshInstall: Boolean = false,
   private val forceOSIME: Boolean = false,
   private val resetStorage: Boolean = freshInstall,
+  private val privacyNoticeReviewed: Boolean = true,
   private val theme: AppTheme? = null,
   private val fontScale: FontScale? = null,
 ) : ExternalResource() {
@@ -49,6 +50,7 @@ class TestAppStateRule(
       .putBoolean("skip_onboarding", skipOnboarding)
       .putBoolean("fresh_onboarding", freshInstall)
       .putBoolean("force_os_ime", forceOSIME)
+      .putBoolean("privacy_notice_reviewed", privacyNoticeReviewed)
       .commit()
   }
 }
