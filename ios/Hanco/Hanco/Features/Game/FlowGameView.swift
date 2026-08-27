@@ -58,6 +58,9 @@ struct FlowGameView: View {
   @State private var priorBestCombo = 0
   @State private var didCelebrateBestCombo = false
   @State private var enteredBackground = false
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
   #if DEBUG
     @StateObject private var frameRateMonitor = GameFrameRateMonitor()
   #endif
@@ -294,6 +297,7 @@ struct FlowGameView: View {
 
   private func handleAppear() {
     resolveInitialInputModeIfNeeded()
+    captureAnalyticsStartIfNeeded()
     priorBestCombo =
       gameProgress.records
       .filter {
@@ -318,6 +322,7 @@ struct FlowGameView: View {
     lifeLossFeedbackTask = nil
     resultPresentationTask?.cancel()
     resultPresentationTask = nil
+    captureAnalyticsAbandonmentIfNeeded()
   }
 
   private func handleScenePhaseChange(_ phase: ScenePhase) {
@@ -404,6 +409,9 @@ struct FlowGameView: View {
     korean10KeyInterpreter.reset()
     previousAcceptedInputCount = 0
     didCelebrateBestCombo = false
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
     lifeLossFeedbackTask?.cancel()
     lifeLossFeedbackTask = nil
     resultPresentationTask?.cancel()
@@ -424,6 +432,7 @@ struct FlowGameView: View {
     } else {
       viewModel.restart()
     }
+    captureAnalyticsStartIfNeeded()
     beginCountdown()
   }
 
@@ -1193,6 +1202,84 @@ struct FlowGameView: View {
       companion.publish(.newBest)
     }
     retention.record(.game, session: retentionSession)
+    captureAnalyticsCompletionIfNeeded(result)
+  }
+
+  private var analyticsPresentation: GameResultPresentation {
+    competition == .weeklyPiyoCup
+      ? .piyoCup
+      : (gameKind == .acidRain ? .acidRain : .flow)
+  }
+
+  private var analyticsDeckSource: String {
+    if analyticsPresentation == .piyoCup || analyticsPresentation.presetLevel(for: deck) != nil {
+      return "bundled"
+    }
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: return "bundled"
+    case .remote: return "catalog"
+    case .imported: return "imported"
+    case .created: return "created"
+    case nil: return "unknown"
+    }
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: "game",
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "game",
+      sessionKind: "game",
+      inputMode: recordInputMode.rawValue,
+      gameMode: analyticsPresentation.analyticsValue
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded(_ result: FlowGameResult) {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: "game",
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(result.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(result.completedItemCount),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: "game",
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.result.activeDuration),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
   }
 
   private func finishFromResult() {

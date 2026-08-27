@@ -2,6 +2,18 @@
 
 Android M7의 A0~M6C와 앱 1.1 무료 사용자 덱 문서 수명주기 구현이다. 한글 입력·덱·`.piyodeck`·게임 규칙 계약은 순수 Kotlin으로 고정하고, Compose 연습·발견·오프라인 덱·전체 게임·SAF 사용자 덱을 5탭 앱 셸에 연결한다.
 
+## 현재 출시 상태
+
+기능 소스와 로컬 Release 빌드는 완성 단계지만 아직 Google Play에 올릴 수 있는 최종 출시 후보는 아니다. 공용 브랜드 테마·벡터 아이콘·라이트/다크·큰 글자 회귀까지 자동 검증한 뒤에도 다음 외부 gate가 남는다.
+
+- 최종 application ID와 Play Console 앱 소유권
+- 공개 운영 카탈로그와 콘텐츠·고정 발음 권리 승인
+- upload signing identity, Deck Maker 상품, Play Games 리소스
+- 스토어 메타데이터·스크린샷과 동일 서명 AAB 생성
+- 그 AAB를 설치한 Galaxy의 Issue #19 통합 실기기 QA
+
+따라서 일반 `assembleRelease`·`bundleRelease` 산출물은 소스 증빙일 뿐 업로드하지 않는다. 모든 외부 입력과 서명이 갖춰진 `bundleDistributionRelease` 산출물만 최종 후보가 될 수 있다.
+
 ## 고정 도구 체인
 
 - Gradle Wrapper 9.5.0

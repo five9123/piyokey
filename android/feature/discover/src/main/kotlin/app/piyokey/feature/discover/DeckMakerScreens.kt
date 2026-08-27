@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -45,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import app.piyokey.core.deckkit.DeckType
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.piyodeck.UserDeckDraft
 import app.piyokey.core.piyodeck.UserDeckItemDraft
 import app.piyokey.core.piyodeck.UserDeckLanguage
@@ -362,8 +365,12 @@ private fun DeckEditorItem(
           modifier = Modifier.fillMaxWidth().focusRequester(meaningFocus),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-          TextButton(onClick = onMoveUp, enabled = index > 0) { Text("↑") }
-          TextButton(onClick = onMoveDown, enabled = canMoveDown) { Text("↓") }
+          TextButton(onClick = onMoveUp, enabled = index > 0) {
+            PiyokeyIcon(PiyokeyIconKind.MOVE_UP, stringResource(R.string.deck_editor_move_up), Modifier.size(20.dp))
+          }
+          TextButton(onClick = onMoveDown, enabled = canMoveDown) {
+            PiyokeyIcon(PiyokeyIconKind.MOVE_DOWN, stringResource(R.string.deck_editor_move_down), Modifier.size(20.dp))
+          }
           TextButton(onClick = onDelete, enabled = canDelete) { Text(stringResource(R.string.deck_editor_delete_item), color = MaterialTheme.colorScheme.error) }
         }
       }

@@ -127,6 +127,8 @@ class R11UserDeckDocumentInstrumentedTest {
     composeRule.onNodeWithTag("import-deck").assertIsDisplayed()
     composeRule.onNodeWithTag("new-deck").performClick()
     composeRule.onNodeWithTag("deck-maker-paywall").assertIsDisplayed()
+    composeRule.onNodeWithTag("deck-maker-paywall")
+      .performScrollToNode(hasTestTag("deck-maker-purchase"))
     composeRule.onNodeWithTag("deck-maker-purchase").assertIsDisplayed()
     check(composeRule.onAllNodesWithTag("user-deck-import-screen").fetchSemanticsNodes().isEmpty())
   }

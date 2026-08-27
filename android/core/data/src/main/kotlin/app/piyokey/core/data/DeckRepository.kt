@@ -639,6 +639,13 @@ class DeckRepository private constructor(
     FLOW_PRESET_PATHS.map { path -> decodeDeck(readAssetBytes(path)) }
   }
 
+  suspend fun bundledCatalogDeck(entry: CatalogDeck): Deck = withContext(Dispatchers.IO) {
+    require(entry.official && entry.fileUrl.startsWith("decks/") && ".." !in entry.fileUrl) {
+      "Only bundled official catalog decks can be loaded"
+    }
+    decodeDeck(readAssetBytes(entry.fileUrl)).also { requireDeckMatchesCatalog(it, entry) }
+  }
+
   suspend fun bundledGameDecks(mode: String): List<Deck> = withContext(Dispatchers.IO) {
     val paths = GAME_PRESET_PATHS[mode] ?: error("Unsupported bundled game mode: $mode")
     paths.map { path -> decodeDeck(readAssetBytes(path)) }
@@ -853,6 +860,15 @@ class DeckRepository private constructor(
   ) = withContext(Dispatchers.IO) {
     database.withTransaction {
       recordActivityInTransaction(sessionDay, RetentionActivity.DAILY_CHALLENGE, completedAtEpochMillis)
+    }
+  }
+
+  suspend fun recordQuickPracticeCompletion(
+    sessionDay: JstDay,
+    completedAtEpochMillis: Long = clock(),
+  ) = withContext(Dispatchers.IO) {
+    database.withTransaction {
+      recordActivityInTransaction(sessionDay, RetentionActivity.QUICK_PRACTICE, completedAtEpochMillis)
     }
   }
 

@@ -514,6 +514,15 @@ class DeckRepositoryInstrumentedTest {
     assertEquals(setOf(3, 5, 7), repository.learningSnapshot().unlockedRewards)
   }
 
+  @Test
+  fun quickPracticeCreatesStampWithoutCompletingDailyChallenge() = runTest {
+    val day = JstDay("2026-08-25")
+    repository.recordQuickPracticeCompletion(day, 1_000)
+    val activities = repository.learningSnapshot().activitiesByDay.getValue(day)
+    assertEquals(setOf(app.piyokey.core.retention.RetentionActivity.QUICK_PRACTICE), activities)
+    assertFalse(app.piyokey.core.retention.RetentionActivity.DAILY_CHALLENGE in activities)
+  }
+
   private fun sampleFlowRecord(score: Int, accuracy: Double, playedAt: Long) = FlowGameRecord(
     deckId = "flow_topik_beginner",
     course = "beginner",

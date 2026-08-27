@@ -15,9 +15,20 @@ struct DeckPracticeDestination: View {
         PracticeReviewSource(item: $0, sourceDeckId: deck.deckId)
       },
       sourceTags: deck.tags,
-      catalogDecks: discoverViewModel.catalog?.decks ?? []
+      catalogDecks: discoverViewModel.catalog?.decks ?? [],
+      analyticsDeckSource: analyticsDeckSource
     )
     .onAppear { deckLibrary.markPlayed(deck.deckId) }
+  }
+
+  private var analyticsDeckSource: String {
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: "bundled"
+    case .remote: "catalog"
+    case .imported: "imported"
+    case .created: "created"
+    case nil: "unknown"
+    }
   }
 
   private var practiceItems: [DeckItem] {
