@@ -1286,3 +1286,156 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 실제 iPad의 두 SIGABRT 로그가 `UIKeyboardLayoutStar` keyplane 갱신 중 `_UIContextMenuView`와 SwiftUI `UpdateContextMenuInteraction`을 거쳐 `AG::Graph::value_set` precondition에 도달했다. 포커스 해제와 설정 표시를 같은 AttributeGraph 갱신에서 분리하면 키보드 전환의 재진입을 없애면서 사용자의 타이핑 진행을 유지할 수 있다.
 - 관련 PRD 섹션: F2a, F10, §11.1, §12.2, §13 M6·M7
 - 영향 범위: `OSIMEInputPanel`, `PracticeView`, 세션 설정 UI, iOS UI 회귀, Android F2a/F10 선행 계약
+## 2026-08-25 Android M7 M3 정적 카탈로그·원자 저장·발견 흐름 완료
+- 결정: Android M3는 `core:data`가 Room 설치 메타데이터·다운로드 이력·persistent journal을, 앱 전용 파일이 실제 catalog/deck payload를 소유하도록 고정한다. 쓰기는 `journal Room transaction → 같은 디렉터리 atomic move → metadata Room transaction` 순서이며, 현재 검증본과 직전 검증본·quarantine으로 시작 시 이전 또는 새 pair에 수렴한다. 손상된 최신 payload는 직전 검증본으로 복구하고 둘 다 유효하지 않을 때만 해당 설치를 격리하거나 번들 catalog로 fallback한다.
+- 결정: 앱은 번들 공식 26덱 또는 검증 cache를 즉시 표시하고 `PIYOKEY_CATALOG_URL`이 주입된 경우에만 동일 HTTPS content root에서 ETag와 If-Modified-Since 조건부 GET을 수행한다. 네트워크·HTTP·schema·의미 검증 실패는 현재 화면을 실패 상태로 바꾸지 않으며 계정·쓰기 API·download count mutation을 만들지 않는다.
+- 결정: `feature:discover`는 이름·태그·제작자 즉시 검색, 타입·레벨·복수 태그 교집합·항목 수 필터, 인기·신착·급상승·항목수 정렬, 섹션형 발견, 상세 통계와 최대 10항목 미리보기, 설치·업데이트·삭제, 내 덱을 제공한다. 설치된 전체 덱은 오프라인에서 기존 연습 reducer로 실행하고 세션 중 탭 bar와 파일·네트워크 UI를 숨긴다.
+- 결정: 다운로드 태그 이력은 설치 삭제 뒤에도 Room에 유지한다. 홈은 이력 태그를 온보딩 목표보다 높게 가중해 미설치 3개를, 결과는 공통 태그와 미설치 우선으로 2개를 추천하며 1탭 재시작을 제공한다. ja/en/ko UI와 콘텐츠를 로케일로 해석하고 미지원 언어는 영어로 fallback하며 영어 화면의 커버·브랜드에 일본어를 노출하지 않는다.
+- 결정: API 35 전용 AVD에서 Room install/delete/history, 최신/backup/quarantine 복구, v10→v11 ETag cache를 포함한 data instrumented 5개와 발견→다운로드→플레이 Compose 1개를 통과했다. 실제 Galaxy를 사용하지 않았고 M2 정량 입력을 포함한 실기기 항목은 출시 후보 Issue #19에서만 수행한다.
+- 근거: 읽기 전용 정적 배포와 오프라인 우선을 지키면서 파일과 DB의 부분 갱신·손상으로 설치 전체가 무너지는 경우를 fail-closed 복구해야 한다. 실제 기기 조작을 마일스톤마다 반복하지 않고도 순수·에뮬레이터 자동 gate로 M4 착수 품질을 확보할 수 있다.
+- 관련 PRD 섹션: F5.1~F5.7, F12.5, §8.1~§8.3, §9, §11, §13 M3·M7
+- 영향 범위: Android Room schema v1, static content client, catalog/deck file store, 5탭 app shell, discover/detail/home/my decks/practice result, M3 자동 검증과 로컬 evidence
+
+## 2026-08-25 Android M7 M4 흐름 게임·공통 결과 완료
+- 결정: M4는 PRD §13 순서대로 흐름 게임과 이후 게임이 재사용할 결과·기록 기반까지만 구현한다. `core:game`은 Android·Compose import가 없는 불변 상태와 순수 reducer로 두고, Compose frame clock은 세션 monotonic origin에 매핑하되 제한시간·카드 이동·점수·목숨 판정은 reducer만 소유한다. 산성비·초성·단어 맞추기·받아쓰기·띄어쓰기는 허브 순서만 고정하고 실제 기능은 M6에서 같은 기반 위에 추가한다.
+- 결정: 시작과 재도전은 3·2·1 뒤에만 60초와 카드 이동을 시작한다. background에서는 rule clock을 멈추고 복귀 후 다시 3·2·1을 센다. 노미스 단어는 +2초, 오타는 시간 차감 없이 콤보 0, 세 번째 카드 이탈은 즉시 종료하며 새 카드의 이동 시간만 플레이 0~50초 동안 1.0→1.8배로 가속한다. 점수는 자모 수×10과 완료 시 콤보 구간 1.0/1.2/1.5/2.0을 적용한다.
+- 결정: 흐름 선택은 일반 발견 목록과 분리한 `flow_topik_beginner|intermediate|advanced` v3 각 100단어를 먼저 표시하고 세 단계 300단어의 중복을 허용하지 않는다. 진입·재도전은 새 난수 순서를 만들고 테스트만 명시적 seed를 사용한다. 설치 덱은 그 아래 선택지로 제공하며 `+`는 발견 검색으로 이동한다.
+- 결정: `feature:game`은 게임명 우선 2열 허브, 밝은 단순 레인, 닫기·시간·점수·콤보·목숨 한 줄 HUD, 내용 맞춤 카드, 내부 자모 추적, 기기 폭 고정 두벌식 키보드, 완료 파티클과 공통 결과·재도전을 소유한다. ja/en/ko 리소스와 영어 fallback을 사용하고 뜻·읽기는 현재 언어 뒤 영어로 fallback하며 세션 중 덱·설정·네트워크 모달을 노출하지 않는다.
+- 결정: Room schema v2는 append-only `GameRecord`와 `(deckId, mode, inputMode)` 복합키 `DeckProgress`를 추가한다. v1→v2 명시 migration은 M3 설치·이력·journal을 보존하며, 매 결과에서 plays·best score·best accuracy·last played를 같은 transaction으로 갱신한다. M4 입력 방식은 `builtin`으로 기록하고 OS IME 분리는 M6에 추가한다.
+- 결정: 결과 등급은 iOS와 같은 공용 `shared/tuning/game_rank_tuning.json`의 정확도 0.6·완료 자모 CPM 0.4, 120 CPM cap, S/A/B 90/75/55를 검증해 사용한다. 로컬 단위 11개, API 35 Room/data 8개와 기존 발견 1개·새 흐름 Compose 2개, feature/app lint와 debug APK를 통과했다. 실제 기기 60초 평균/p95/jank와 M2 입력 수치는 출시 후보 Issue #19에 유지한다.
+- 근거: 규칙 시계와 렌더 프레임을 분리하면 테스트 clock·실기기 frame source 차이에도 점수와 생존 판정이 재현된다. M3 schema에서 명시 migration을 검증하고 로컬 기록을 단일 기준으로 두면 이후 게임·Play Games 어댑터를 사용자 데이터 손실 없이 확장할 수 있다.
+- 관련 PRD 섹션: F6, F12, §7.1, §7.3, §9, §11, §12, §13 M4·M6·M7
+- 영향 범위: Android pure game core, Room schema v2, game Compose feature, app navigation, 공용 rank tuning, Android CI·에뮬레이터 회귀
+
+## 2026-08-25 Android M7 M5 커리큘럼·복습·리텐션 계약
+- 결정: Android M5 커리큘럼은 iOS와 동일한 6챕터·7스테이지·각 10문제를 Kotlin 고정 catalog로 재현한다. 80% 클리어와 별 1/2/3의 80%·90%+40자/분·97%+60자/분 경계, 챕터1~4 순차 해금과 챕터5+ 자유 선택을 순수 `core:retention` 정책으로 둔다.
+- 결정: 연습 checkpoint는 현재 문제, 수락 자모, 오타/항목 resolution과 유효 입력 시간만 저장한다. lifecycle background 구간은 순수 active-duration clock에서 제외하고 복귀한 완료 문제도 token 지연 전환을 다시 안전하게 수행한다. Room v2→v3은 기존 설치·게임 기록을 건드리지 않고 커리큘럼/복습/스트릭/보상/리마인더 테이블을 추가한다.
+- 결정: 일반 레슨·덱은 오타 항목만 복습에 수집하고 복습 세션의 노미스 완료만 연속 perfect를 올린다. 게임의 잘못 누른 현재 카드와 바닥 이탈 카드도 item ID별로 수집하며, 세 번 연속 노미스에 졸업한다. 설치 덱의 항목은 사용자가 수동 추가하고 활성 복습 항목은 수동 제거할 수 있다.
+- 결정: 스트릭 날짜는 세션 시작 시 캡처한 JST 날짜에 귀속한다. 홈의 주간 카드는 월~일 고정이며 MY 피요 응원은 iOS와 같은 네 context·10개 현지화 문구를 날짜 기반으로 결정해 홈/마이페이지에서 동일하게 보인다. 3/5/7일 보상은 영구 threshold record로 저장하고 M6 옷장 item과 연결 가능한 계약으로 유지한다.
+- 결정: Android 데일리는 챕터5~6 고정 문구 풀에서 JST 날짜마다 결정적으로 5개를 선택한다. 리마인더는 기본 OFF, Android 13+ 권한은 사용자가 켤 때만 요청하며 정확 알람 권한 없이 JST 다음 시각의 inexact daily alarm을 사용한다. 재부팅 시 Room preference로 다시 예약하고 알림 탭은 앱을 연다. 세션 화면에는 권한·시간·복습 관리 UI를 노출하지 않는다.
+- 근거: iOS M5와 같은 학습 결과를 순수 정책으로 고정하면서 Android lifecycle·notification 차이는 platform adapter로 격리하면 실기기 반복 없이 JVM/Room/API 35에서 날짜·복구·졸업·migration을 먼저 닫을 수 있다. 실제 알림 수신과 입력/프레임 정량 측정은 사용자가 지정한 출시 후보 통합 QA에 유지한다.
+- 관련 PRD 섹션: F4, F5.6, F7, F8, F12, §9, §13 M5·M7
+- 영향 범위: `core:retention`, `core:session`, Room schema v3, 흐름 복습 수집, Compose 홈/연습/마이페이지, Android notification/boot adapter, M5 CI·출시 gate
+
+## 2026-08-25 Android M7 M6A 온보딩·설정·OS IME 기반
+- 결정: M6의 첫 병합 단위를 F1 온보딩, F2a 연습 OS IME, F10 공통 설정으로 제한한다. 새 사용자는 목표·신뢰 안내와 두벌식 소개 뒤 네 번째 탭 이내에 실제 `ㄱ` 입력을 시작하고 `가`를 완성한 뒤 챕터1~3 부화 미션을 순서대로 완료한다. 소개 스킵은 PRD대로 설명과 첫 입력만 건너뛰고 부화 gate는 유지한다. 기존 Room DB가 있던 사용자는 1회 마이그레이션으로 온보딩을 완료 처리한다.
+- 결정: 작은 설정과 온보딩 진행은 Preferences DataStore가 소유한다. ja/en/ko, light/dark, 글자 크기 3단계, 효과음·타건음·햅틱, 로마자·가이드, 기본 입력 방식, 연습 표시 preset·개별 필드·6가지 순서, 자동 발음과 초성 뜻을 모든 탭의 공통 설정 시트에서 즉시 반영하고 영속화한다. 리마인더 권한은 사용자가 ON으로 바꿀 때만 요청한다.
+- 결정: Android OS IME는 투명한 표준 `EditText` adapter가 composing span을 committed text와 분리하고 순수 `OSIMETextJudge`에 전달한다. composing 불일치는 무시하고 확정 불일치만 오타로 기록하며 입력 방식 변경은 reducer 상태를 재생성하지 않는다. 부화 미션·챕터1~4는 내장 고정, 챕터5+·자유/덱/데일리/복습은 OS IME를 허용한다. 한국어 IME 미감지는 안내일 뿐 hard block하지 않고 시스템 설정은 사용자 탭으로만 연다.
+- 결정: Debug instrumented 회귀는 명시적 test-only preference로 새 사용자 또는 기존 사용자 시작 상태를 격리한다. Release에서는 `BuildConfig.DEBUG`가 false라 이 우회가 비활성이다. API 35에서 M3~M6 앱 10개 시나리오와 관련 JVM 41개, lint, Debug·Release APK를 자동 gate로 사용하고 실제 IME 종류·입력 지연·물리 rollover는 Issue #19 통합 QA에 남긴다.
+- 근거: 온보딩과 설정을 앱 전역 상태로 먼저 고정하면 이후 오디오·게임·캐릭터가 같은 사용자 선택을 재사용할 수 있고, OS IME의 조합 중 흔들림을 순수 판정기로 격리하면 제조사 키보드 차이를 UI reducer에 퍼뜨리지 않는다.
+- 관련 PRD 섹션: F1, F2a, F8, F10, §6.3, §7.2, §9, §12, §13 M6·M7
+- 영향 범위: Android app shell, `core:settings`, `core:session`, practice/onboarding/settings features, ja/en/ko resources, source CI, 출시 후보 실기기 gate
+
+## 2026-08-25 Android M7 M6B 게임 모드 parity
+- 결정: Android 게임 허브는 `흐름·산성비 / 초성·받아쓰기 / 단어 맞추기·띄어쓰기` 순서로 고정하고, 다섯 타이핑 게임은 각 모드의 번들 100단어 코스 3개와 덱 찾기 카드를 2×2로 먼저 표시한다. 설치 덱은 그 아래 별도 목록으로 유지한다. 띄어쓰기는 카탈로그·덱과 분리된 자체 작성 6개 글만 사용한다.
+- 결정: 산성비, 초성·단어 맞추기·받아쓰기 공통 직접 입력, 띄어쓰기는 Android/Compose 의존이 없는 `core:game` reducer가 점수·시간·pause/resume·판정·복습 데이터를 소유한다. 모든 타이핑 게임은 내장 두벌식과 OS IME의 committed/composing 계약을 공유하고, 오타 자모는 누적 조합에 넣지 않는다. 최고 기록은 mode·deck/passage·input mode별 Room record로 분리한다.
+- 결정: 산성비는 3레인·최대 4장·약 42% 생성 간격·3목숨·0~50초 1.5배 가속과 독립 이탈 판정을 사용한다. OS IME는 표시 카드 중 완성 문자열과 일치하는 어떤 카드든 완료할 수 있다. 초성은 음절 진행 색과 뜻 설정/필수 중복 초성 단서를, 단어 맞추기는 현지화 뜻만, 받아쓰기는 완료 전 정답·초성·뜻·읽기 비노출을 유지한다.
+- 결정: 받아쓰기 기본 300문구는 선언된 canonical gTTS MP3를 번들에서만 재생하고 API 35 content gate에서 모든 선언 파일의 존재·비어 있지 않음을 확인한다. 배경 진입 시 재생을 즉시 중지한다. 고정 자산 누락은 release preflight와 계측 content gate에서 출시 실패로 처리하며, 사용자·비공개 동적 덱의 기기 TTS resolver는 `.piyodeck` Android 연결 범위에서 별도로 완성한다.
+- 결정: 띄어쓰기는 비공백 문자를 편집할 수 없는 경계 집합 UI만 제공한다. 최초 판단은 한 번만 기록하고 이후 변경은 correction으로 누적하며, 결과에서 첫 판단 정확도·최종 완성도·수정 횟수와 최대 8개 오답 문맥을 제공한다. 백그라운드 시간은 풀이 시간에서 제외한다.
+- 결정: API 35 자동 gate는 다섯 새 게임 진입 5개, 흐름·직접 입력 OS IME 2개, 15개 번들 코스·1,500단어·받아쓰기 MP3 300개·띄어쓰기 6개 content 계약을 검증한다. 실제 Galaxy IME 종류·오디오 청취·60fps·터치 지연은 Issue #19 출시 후보 통합 QA에 유지하고 M6B 완료로 주장하지 않는다.
+- 근거: 게임 규칙을 순수 reducer와 정적 번들 계약으로 먼저 고정하면 제조사 IME·GPU·오디오 출력에 의존하지 않는 대부분의 회귀를 CI와 에뮬레이터에서 닫을 수 있다. 실기기 전환 비용은 사용자가 선택한 출시 직전 통합 QA에 모으면서도 성능·청취 기준은 삭제하지 않는다.
+- 관련 PRD 섹션: F6~F6e, F7, F10, §6.3, §7.3, §9~§13 M6·M7
+- 영향 범위: `core:game`, Room 게임 기록, game/practice Compose feature, 번들 게임·띄어쓰기 콘텐츠, ja/en/ko 리소스, source CI, 출시 후보 실기기 gate
+
+## 2026-08-25 Android M7 M6C 오디오·공유·성장 폴리싱
+
+- 관련: PRD F8~F12, §7, §12.1, Issue #30.
+- 결정: Android 고정 발음은 선언 asset→canonical asset만 사용하며 둘 다 열지 못하면 자동 테스트/프리플라이트 실패로 다룬다. 번들에 없는 사용자·비공개 동적 문구만 네트워크가 필요 없는 ko-KR `TextToSpeech` voice로 폴백한다. 발음 중 효과음은 억제한다.
+- 결정: 효과음은 audio-focus gain을 요청하지 않는 `USAGE_GAME` 지연식 `SoundPool`로 재생하고 48kHz mono 합성 fallback을 사용한다. 첫 재생 전에는 엔진을 만들지 않고 15초 유휴·백그라운드에서 반납한다.
+- 결정: 결과 공유는 정확히 1,200×1,200 로컬 PNG, MediaStore 저장, 캐시의 `shared_results/`만 허용한 non-exported FileProvider `content://` 공유로 구현한다. 저장소 전체 권한과 `file://`는 사용하지 않는다.
+- 결정: 3/5/7일 소품과 TOPIK 안경은 DataStore의 영구 단조 집합으로 보존한다. `자동`은 태그 기반 소품을 붙이지 않으며 선택 외형을 세션 시작 스냅샷으로 고정한다.
+- 결정: Android launcher/adaptive icon은 iOS와 동일한 공용 1024×1024 RGB 원본을 빌드 생성 리소스로 복사한다. 별도 Android 로고 원본을 만들지 않는다.
+- 결정: 실제 외부 음악 혼합·오디오 인터럽트·Galaxy IME·60fps/터치 검증은 사용자 결정대로 Issue #19 출시 후보 통합 실기기 QA에 유지한다.
+
+## 2026-08-25 Android 앱 1.1 R1.1A 무료 `.piyodeck` 수명주기
+
+- 관련: PRD F5.9, §8.4, §9, §11, §13 R1.1, Issue #32.
+- 결정: Android `ContentResolver` 원본 URI는 8 MiB+1 제한 복사 중에만 열고 앱 전용 `cache/piyodeck-imports` staging에 package와 최소 pending metadata를 원자 기록한다. 원본 URI나 덱 콘텐츠·hash는 장기 저장·분석 전송하지 않으며 검증 거부본은 즉시, 남은 staging은 24시간 뒤 정리한다.
+- 결정: strict 공용 reader 검증 뒤에만 덱 이름·제작자·유형·난이도·태그·항목 수·첫 3항목 미리보기를 연다. 공식/카탈로그 ID 충돌은 거부하고 동일 ID는 SHA와 version으로 신규·동일·업데이트·다운그레이드·같은 버전 충돌을 분류한다. 동일 package는 디스크 무쓰기, 다른 내용은 현재본 유지가 기본이고 교체는 별도 파괴 확인을 요구한다.
+- 결정: Room v3→v4의 `user_deck_history`는 payload 삭제와 독립해 최초/최근 import, 삭제, version/SHA와 last played를 유지한다. import/replace/recovery는 journal→atomic payload replace→Room transaction으로 설치본과 history를 함께 수렴시키고 기존 `GameRecord`·`DeckProgress`·동일 item 복습 row는 삭제하지 않는다.
+- 결정: picker·현재본 export·삭제·내보낸 뒤 삭제·같은 ID 재가져오기는 entitlement 없이 제공한다. export 성공 뒤에만 delete를 수행한다. Deck Maker 생성·편집·사본과 Play Billing은 다음 Issue에서 추가하며 무료 문서 재생 경계에는 결제 화면을 넣지 않는다.
+- 결정: 세션 중 외부 문서는 staging까지만 수행하고 미리보기·충돌·오류 UI를 노출하지 않는다. Activity intent는 소비 후 원래 launch identity를 유지한 채 `MAIN`으로 중화하고 pending sidecar로 process recreation 뒤 복구해 세션 종료 후에만 제안한다.
+- 근거: 파일 선택 자체를 설치로 간주하지 않고, untrusted archive 검증과 논리 transaction을 UI보다 아래 계층에 고정해야 악성 package·중복 import·중단 복구가 기존 덱과 기록을 변경하지 않는다. 무료 재생과 유료 제작을 분리하면 F5.9의 소유권·결제 경계를 Android에서도 유지할 수 있다.
+- 영향 범위: Android Room v4, `core:data` import repository, `core:platform` SAF gateway, 마이페이지/미리보기/충돌 Compose UI, 문서 intent filter, ja/en/ko 리소스, API 35 자동 회귀와 출시 후보 QA.
+
+## 2026-08-25 Android 앱 1.1 R1.1B Deck Maker·Play Billing
+
+- 관련: PRD F5.9, §8.4, §9, §11, §13 R1.1, Issue #34.
+- 결정: Android Deck Maker는 새 덱, 가져온 사용자 덱 편집, 불변 공식 덱의 사용자 사본만 제작한다. 순수 Kotlin 초안은 새 `user_`·`item_` ID와 version 1, 편집 시 기존 ID 보존·version 증가, 공식 사본의 새 ID·version 1·`official=false`와 `derived_from_deck_id`만 기록하는 계약을 소유한다.
+- 결정: 기기당 활성 초안 하나를 앱 전용 primary/backup JSON으로 자동 저장한다. 같은 흐름은 `draft_id`를 유지해 재개하고 다른 흐름은 재개·명시적 폐기·취소 선택 전 덮어쓰지 않는다. 닫기·앱 비활성 직전에 즉시 flush하며 미래 schema와 복구 불가능한 손상본은 이전 앱이 덮어쓰거나 조용히 삭제하지 않는다.
+- 결정: 편집 commit은 Room transaction 안의 `base_version` 비교, recovery journal, 검증 payload 원자 교체, 설치 metadata 갱신 뒤 같은 `draft_id`만 정리한다. 원본이 바뀌면 현재본과 초안을 유지하고 새 ID의 별도 사용자 사본 저장을 제공한다. 1,000항목은 단일 lazy 접이식 목록으로 구성하고 검증 실패 시 첫 오류를 펼쳐 자동 이동·포커스하며 TalkBack live region으로 알린다.
+- 결정: 유료 권한은 Google Play Billing Library 9.1.0 one-time product `app.piyokey.deckmaker.lifetime`만 사용한다. eligible one-time offer를 매 구매 직전 다시 조회하고 `PURCHASED`만 권한을 열며 미확인 구매는 acknowledge한다. `PENDING`은 권한을 열거나 acknowledge하지 않고, 시작·foreground·명시적 복원에서 구매를 재조회한다.
+- 결정: 마지막 성공 `PURCHASED` 조회는 Room에 오프라인 UX cache로 남겨 재실행·일시적 오프라인에서도 제작을 이어가게 한다. 이후 성공한 빈 구매 조회는 환불·취소로 간주해 제작 mutation만 다시 잠그며 기존 덱·초안·무료 가져오기·연습·게임·내보내기·삭제는 변경하지 않는다. 자체 계정·라이선스 서버·영수증 파일은 만들지 않는다.
+- 결정: 실제 Play license tester의 구매·pending·취소·중복·복원·환불과 가격/상품 메타데이터, Galaxy의 Files·공유·편집 UX는 Issue #19의 출시 후보 통합 실기기 QA에서 한 번만 수행한다. API 35 에뮬레이터와 JVM에서는 draft 복구·충돌·Billing 상태 기계·Room v4→v5·무료/유료 화면 경계를 자동 검증한다.
+- 근거: 제작 권한과 사용자 문서 소유권을 분리하고 초안·설치 commit을 복구 가능한 transaction으로 고정하면 결제 중단·환불·프로세스 종료가 사용자의 덱이나 무료 기능을 손상시키지 않는다. 외부 Play 상태를 제외한 회귀를 자동화해 사용자가 요청한 단일 출시 직전 실기기 QA 원칙을 유지한다.
+- 영향 범위: Android Room v5, user-deck draft/editor core, DeckRepository created/edit commit, Play Billing adapter·entitlement cache, 마이페이지 paywall/editor, ja/en/ko 리소스, Source CI·API 35 회귀, 출시 후보 수동 gate.
+
+## 2026-08-25 Android M7 M6D Play Games v2 랭킹·업적
+
+- 관련: PRD F6f, F8, F12, §9, §11, §12.1, §13 M6·M7, Issue #36.
+- 결정: Play Games Services v2 22.0.0은 선택 어댑터다. Play Console이 발급한 project ID, 클래식 15개 leaderboard ID, 5개 achievement ID가 모두 외부 Gradle property로 주입된 빌드에서만 SDK를 초기화한다. 하나라도 없으면 로그인·프로필 UI 없이 로컬 게임·성장·Release 빌드를 그대로 제공하며 별도 검증 task가 배포 설정 누락을 실패시킨다.
+- 결정: 랭킹 자격은 `flow|acid_rain|choseong|word_match|dictation`의 정확한 v3 번들 초급·중급·고급 ID와 내장 키보드의 교집합으로 순수 정책에 고정한다. OS IME, 다운로드/사용자 덱, 띄어쓰기, Android 주간컵은 제출하지 않는다. 주간컵은 같은 flow 초급 콘텐츠를 쓰더라도 `weekly_cup` 로컬 progress 슬롯에 분리해 클래식 최고 기록과 outbox를 오염시키지 않는다.
+- 결정: Room v6의 최고점 outbox와 단조 achievement progress가 원본이다. 게임 결과·DeckProgress·복습·스트릭·누적 자모를 먼저 같은 로컬 transaction에 저장하고 인증된 경우에만 비차단 동기화한다. 실패는 pending 최대값을 보존하고, 성공 뒤 낮은 점수는 재등록하지 않는다. 연습 누적 자모는 session event ID로 중복 기록을 막으며 띄어쓰기 경계 판단은 자모 업적에서 제외한다.
+- 결정: 업적은 챕터 1·3·6 완료, 누적 정타 자모 12,000, 최장 스트릭 30만 단조 반영한다. 최초 점수 제출 성공 또는 기존 서버 점수 확인 뒤 champion trophy를 DataStore 영구 소품으로 해금한다. 현재 랭크는 성장 조건으로 사용하지 않는다.
+- 결정: 앱 시작·foreground에서는 `isAuthenticated`만 확인하고 자동 프로필 생성·로그인 창을 띄우지 않는다. 자격 있는 결과 화면의 `Play Games 랭킹` 버튼을 사용자가 누를 때만 sign-in과 해당 보드 UI를 열며 세션·온보딩·허브에는 Play Games 모달이나 CTA를 넣지 않는다.
+- 결정: 실제 Play Console 프로젝트/OAuth, 15개 보드·5개 업적 리소스 생성, license tester 로그인·서버 점수·대시보드 확인은 Issue #19의 단일 출시 후보 실기기 QA에 유지한다. 자동 gate는 순수 매핑·가짜 gateway, Room v5→v6/outbox/업적, API 35 결과 UI, 전체 Source CI와 Debug/Release 빌드를 사용한다.
+- 근거: 로컬 진행을 외부 서비스보다 먼저 확정하고 동기화 가능 범위를 exact ID 정책으로 닫으면 인증·오프라인·Play 장애가 플레이와 보상을 막지 않는다. 외부 콘솔 값과 실제 계정만 마지막 통합 QA에 남겨 사용자의 실기기 1회 원칙을 유지할 수 있다.
+- 영향 범위: `core:game` Play Games policy, Room v6, `core:platform` v2 adapter/sync manager, 결과 화면·앱 startup, 외부 release properties, Source CI, 최종 Play Console/실기기 gate.
+
+## 2026-08-25 Android 1.1 배포 번들·출시 사전검증 계약
+
+- 관련: PRD §12·§12.1·§13 M7·R1.1·§14, Issue #40.
+- 결정: Android 소스 후보는 `1.1.0 (8)`, minSdk 26, targetSdk 36으로 고정하고 Release에 R8과 resource shrinking을 적용한다. 일반 로컬·CI는 비밀값 없이 minified unsigned APK와 AAB, merged manifest 계약을 계속 검증하며 이 산출물을 배포용으로 사용하지 않는다.
+- 결정: 실제 Play 배포는 `bundleDistributionRelease --no-configuration-cache`만 사용한다. 최종 application ID의 명시적 동일값 확인, 공개 HTTPS catalog/privacy/support, 콘텐츠·고정 발음 권리 승인, 존재하는 upload keystore와 네 서명값, Play Games project ID·20개 고유 resource ID 중 하나라도 없거나 형식이 맞지 않으면 AAB task보다 먼저 key 이름만 표시하고 실패한다.
+- 결정: upload signing 값은 저장소에 넣지 않고 private Gradle property 또는 같은 이름의 환경값으로만 주입한다. store path가 설정된 상태에서 configuration cache가 켜져 있으면 password provider를 읽기 전에 configuration 단계에서 실패시켜 서명 비밀이 cache에 직렬화되지 않게 한다. 실제 값은 로그·Issue·PR 증빙에 출력하지 않는다.
+- 결정: Release merged manifest는 `debuggable=true`를 금지하고 로컬-only 사용자 덱을 위해 `allowBackup=false`를 요구하며 cleartext opt-in을 금지한다. privacy/support URL은 현재 공개 200 응답을 확인했지만, 공개 static catalog·application ID 소유권·upload identity·Play Console 상품·랭킹·업적과 `content_rights_confirmed`는 소스 구현으로 대신하지 않는다.
+- 결정: 최종 스택 head의 GitHub Source CI는 계정 결제·Actions 지출 한도로 checkout 전에 거부되었으므로 원격 green으로 간주하지 않는다. 같은 head의 로컬 Source CI-equivalent 959 tasks, API 35 앱 계측 31/31, Python 56/56, Swift 42/42를 구현 증빙으로 유지하고 계정 제한 해제 뒤 원격 CI를 다시 실행한다.
+- 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
+- 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.
+
+## 2026-08-26 GitHub Actions 비활성화와 로컬 검증 전환
+
+- 관련: Issue #47, `docs/REPOSITORY_POLICY.md`.
+- 결정: GitHub Actions는 저장소 수준에서 비활성화하고 기존 workflow 정의는 향후 재사용 가능하도록 보존한다. 코드·콘텐츠·설정 변경은 계속 Issue별 branch와 PR로 추적하되, 담당 agent가 `AGENTS.md`의 영향 범위에 맞는 최소 로컬 테스트를 실행하고 정확한 명령·결과·대상 commit·미실행 gate를 Issue 또는 PR에 기록한다.
+- 결정: 로컬 통과는 해당 commit의 자동 검증 증빙일 뿐 사용자 승인, 실기기, 스토어, 외부 서비스, 서명 gate를 대체하지 않는다. 적용 가능한 gate가 남은 PR은 `Verify`에 유지하고 승인 뒤 수동 병합한다. Actions 재활성화는 계정 결제·spending limit 동작을 확인한 뒤 사용자의 명시적 승인으로만 수행하며 유료 초과 사용을 묵시적으로 켜지 않는다.
+- 근거: 현재 GitHub-hosted job은 코드 checkout 전 계정 결제 또는 spending limit 사유로 전부 거부되어 신뢰할 수 있는 CI 신호를 제공하지 못한다. 로컬 검증 결과와 열린 수동 gate를 명시적으로 남기면 GitHub의 소스·Issue·Project·PR 흐름을 유지하면서 유료 Actions에 의존하지 않을 수 있다.
+- 영향 범위: 저장소 Actions 권한, PR 검증 증빙, 수동 병합 절차, Tools/CI·Release/Ops 운영. 앱 바이너리와 제품 동작은 변경하지 않는다.
+
+## 2026-08-27 iOS 한국어 10키(천지인식) 연습 우선 지원
+
+- 관련: Issue #11, PRD F2·F2a·F3, §6.3, §7.2, §13 M6.
+- 결정: 제품 명칭은 ko=`한국어 10키(천지인식)`, ja=`韓国語10キー（天地人式）`, en=`Korean 10-Key`로 고정하고 Apple 한국어 10키의 3×4 `ㅣ·ㆍ·ㅡ`, 묶음 자음, `→` 진행 키와 별도 스페이스 바를 사용한다. `→`는 같은 묶음 자음이 다음 자모로 이어질 때 경계를 확정한다. 두벌식은 기본값으로 유지하며 OS 키보드 모드와 별도인 내장 배열 설정으로 제공한다.
+- 결정: 1단계 범위는 iOS 챕터5+, 자유 연습, 덱 연습이다. 챕터1~4와 온보딩 자판 학습은 두벌식으로 고정하고 게임은 후속 2단계에서 같은 인터프리터·기록 분리·리더보드 제외를 함께 연결한다. 세션 시작 뒤에는 내장 배열을 바꾸지 않는다.
+- 결정: 순수 `Korean10KeyInterpreter`는 목표의 다음 자모에 대한 golden recipe를 따라 미확정 raw 획만 보유하고, recipe가 완성되면 표준 호환 자모 하나를 기존 HangulEngine과 자모 판정기에 전달한다. 미완성 획은 오타가 아니며 프리뷰에 표시한다. 잘못된 물리 키는 오타 1회로 기록하고 pending recipe를 초기화한다.
+- 결정: Backspace는 미확정 recipe의 마지막 raw 획을 먼저 되감고 pending이 비었을 때 기존 HangulEngine Backspace로 전달한다. 자음 19개·모음 21개·스페이스 recipe, 복합 모음·된소리·띄어쓰기 목표, 오입력·Backspace를 단위 회귀로 고정한다.
+- 근거: 10키의 반복·획 조합을 기존 조합 엔진에 직접 섞으면 플랫폼 공용 자모 상태 기계와 정답 판정이 입력 배열에 종속된다. 목표 recipe를 완성한 뒤 표준 자모로 정규화하면 도깨비·복합모음·오타 무시 계약을 그대로 재사용하면서 중간 획도 학습 피드백으로 보여 줄 수 있다.
+- 영향 범위: iOS 키보드 설정·연습 화면·3×4 키보드·ja/en/ko 로컬라이제이션·연습 단위/UI 회귀. Android와 게임 입력·Game Center 계약은 변경하지 않는다.
+
+## 2026-08-27 iOS 한국어 10키 게임 연동
+
+- 관련: Issue #11, PRD F2·F2a·F6·F6f·F12, §9, 사용자 연습 단계 실기기 확인.
+- 결정: 사용자가 1단계 연습 화면의 10키 동작에 이상이 없음을 확인했으므로 같은 `Korean10KeyInterpreter`를 흐름·산성비·초성 맞추기·단어 맞추기·받아쓰기에 연결한다. 선택 배열은 각 게임 세션 시작 시 스냅샷으로 고정하며 완료·이탈로 다음 문제가 바뀔 때 미확정 raw 획을 초기화한다.
+- 결정: 로컬 `SessionInputMode`에 `builtin_korean_10key`를 추가해 두벌식 `builtin`, 한국어 10키, `os_ime` 최고 기록을 덱·게임별로 분리한다. 기존 JSON의 `builtin`·`built_in`·`os_keyboard` 호환은 유지한다.
+- 결정: Game Center는 종전처럼 `inputMode == builtin`인 두벌식 기록만 허용한다. 10키 점수는 로컬 결과·최고 기록에는 표시하지만 기존 두벌식 리더보드에는 제출하지 않는다. 주간 피요컵도 선택 설정과 무관하게 두벌식으로 고정한다.
+- 결정: 띄어쓰기는 한글 자모 키보드가 아니라 공백 경계를 고르는 별도 게임이므로 10키 적용 대상과 입력 모드 기록 분리에서 제외한다.
+- 근거: 연습에서 검증된 raw 획→표준 자모 어댑터를 게임 판정 앞에도 재사용하면 게임 상태 기계를 배열과 분리할 수 있다. 반면 입력 효율이 다른 10키 점수를 두벌식 원격·로컬 기록과 합치면 자기 기록과 경쟁 공정성을 훼손한다.
+- 영향 범위: iOS 다섯 직접 입력 게임, 로컬 GameRecord/DeckProgress 입력 모드, 게임 선택·결과 표시, Game Center 자격 회귀, ja/en/ko 로컬라이제이션. Android는 변경하지 않는다.
+
+## 2026-08-27 홈 원탭 주간 피요컵·랜덤 단어 5개
+
+- 관련: Issue #51, PRD §4 S2, F6, F7, F8, §11.
+- 결정: 홈의 기존 큰 이어하기/데일리 CTA 아래에 주간 피요컵과 랜덤 단어 5개를 보조 CTA로 항상 표시한다. 피요컵은 게임 탭의 기존 선택 화면으로 우회하지 않고 동일한 번들 덱·경쟁 계약을 직접 시작한다.
+- 결정: 실제 집계 근거가 없는 `인기 단어` 표현은 사용하지 않는다. 랜덤 연습은 다운로드한 공식 단어 덱을 우선하되 선호 태그 일치를 먼저 섞고, 부족하면 온보딩 목표별 번들 공식 단어 덱과 피요컵 초급 풀을 사용한다. 공백이 있는 문장·표현과 동일 한국어 표기는 제외한다.
+- 결정: 최근 출제 한국어 20개를 로컬에 보존해 우선 회피하고 한 세션은 정확히 5개로 고정한다. 결과의 재시작은 같은 세트를 초기화하지 않고 `다른 5문제`를 새로 추출한다. 오타는 원본 덱 ID와 함께 복습 덱에 수집한다.
+- 결정: 랜덤 연습 완료는 별도 `quick_practice` 리텐션 활동으로 오늘 스탬프를 만들지만 `daily_challenge` 완료 상태는 변경하지 않는다. 새 한국어 목표 문구는 만들지 않고 기존 canonical gTTS MP3가 있는 공식 번들·다운로드 덱 항목만 사용한다.
+- 근거: 홈의 보조 원탭 루프를 추가하면서도 근거 없는 인기 표현, 네트워크 의존, 새 콘텐츠·발음 생성과 데일리 챌린지 의미 혼선을 피한다.
+- 영향 범위: iOS 홈·연습 결과 재시작·리텐션 저장·복습 수집·ja/en/ko 로컬라이제이션·단위/UI 회귀. Android 포팅은 별도 M7 후속 범위다.
+
+## 2026-08-27 사용자 덱 3개 무료 한도와 `pro` 상품 리브랜딩
+
+- 관련: PRD F5.9, §8.4, §11, 앱 1.1 iOS·Android 사용자 덱/결제 경계.
+- 결정: 미구매 사용자는 서로 다른 사용자 덱을 동시에 3개까지 설치한다. 네 번째 새 `deck_id`의 파일은 검증·미리보기까지 허용하고 설치 commit 직전에만 구매 설명을 열며, 구매·복원 성공 시 동일 staging 파일 설치를 재개한다. 공식·번들·복습 덱은 세지 않고, 삭제는 슬롯을 즉시 반환한다.
+- 결정: 누적 파일 열람 횟수는 기록하거나 제한하지 않는다. 동일 ID·동일 SHA no-op과 동일 ID 교체는 무료이며, 이미 3개를 넘겨 보유한 상태도 읽기·연습·게임·내보내기·삭제를 잠그거나 데이터를 삭제하지 않고 새 ID 추가만 제한한다. 한도 판단은 UI 표시뿐 아니라 설치 mutation 경계에서 다시 검증한다.
+- 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー pro`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다.
+- 근거: 사용자가 요청한 “3개 무료, 4개 이상 유료”를 기기 내 활성 보관 수로 정의하면 삭제로 무료 선택권을 되돌려 주면서도 반복 열람을 추적하는 불필요한 감시 상태를 만들지 않는다. 기존 상품 ID를 유지하면 이미 구매한 사용자의 entitlement와 StoreKit/Play Billing 복원 계약을 깨지 않는다.
+- 영향 범위: PRD·스토어 메타데이터, iOS `DeckLibrary`/문서 미리보기/paywall, Android `DeckRepository`/문서 미리보기/paywall, ja/en/ko 문자열, 무료 한도·교체·구매 재개 자동 회귀.

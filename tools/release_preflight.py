@@ -43,9 +43,9 @@ GAME_CENTER_AVAILABILITY_KEY = "PiyokeyGameCenterAvailableLeaderboardIDs"
 GAME_CENTER_INTENDED_KEY = "PiyokeyGameCenterIntendedLeaderboardIDs"
 DECK_MAKER_PRODUCT_ID = "app.piyokey.deckmaker.lifetime"
 DECK_MAKER_LOCALIZATIONS = {
-    "ja": ("マイデッキメーカー", "デッキの作成・編集をずっと利用できます"),
-    "en-US": ("My Deck Maker", "Create and edit decks with lifetime access."),
-    "ko": ("내 덱 만들기", "덱 생성과 편집을 평생 이용할 수 있어요"),
+    "ja": ("ピヨキー pro", "ユーザーデッキ無制限と作成・編集をずっと利用"),
+    "en-US": ("typee pro", "Unlimited user decks, creation, and editing."),
+    "ko": ("피요키 프로", "사용자 덱 무제한 보관과 생성·편집을 평생 이용"),
 }
 STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
@@ -404,6 +404,9 @@ def repository_checks(root: Path) -> list[Finding]:
     scheme_path = root / "ios/Hanco/Hanco.xcodeproj/xcshareddata/xcschemes/Hanco.xcscheme"
     export_options_path = root / "release/ExportOptions.plist"
     upload_options_path = root / "release/ExportOptionsUpload.plist"
+    android_manifest_path = root / "android/app/src/main/AndroidManifest.xml"
+    android_build_path = root / "android/app/build.gradle.kts"
+    android_file_paths = root / "android/app/src/main/res/xml/file_paths.xml"
 
     for path in (
         project_path,
@@ -422,6 +425,9 @@ def repository_checks(root: Path) -> list[Finding]:
         scheme_path,
         export_options_path,
         upload_options_path,
+        android_manifest_path,
+        android_build_path,
+        android_file_paths,
     ):
         add(findings, path.exists(), f"Required file is missing: {path.relative_to(root)}")
     if findings:
@@ -693,6 +699,23 @@ def repository_checks(root: Path) -> list[Finding]:
         )
     except (OSError, ValueError, struct.error) as error:
         findings.append(Finding("ERROR", f"Invalid AppIcon: {error}"))
+
+    try:
+        android_manifest = android_manifest_path.read_text(encoding="utf-8")
+        android_build = android_build_path.read_text(encoding="utf-8")
+        android_paths = android_file_paths.read_text(encoding="utf-8")
+        add(findings, 'android:icon="@mipmap/ic_launcher"' in android_manifest, "Android launcher icon is missing")
+        add(findings, 'android:roundIcon="@mipmap/ic_launcher_round"' in android_manifest, "Android round launcher icon is missing")
+        add(findings, '${applicationId}.files' in android_manifest, "Android FileProvider must use the application ID authority")
+        add(findings, 'android:exported="false"' in android_manifest, "Android FileProvider must not be exported")
+        add(findings, 'path="shared_results/"' in android_paths, "Android share provider must expose only result cache files")
+        add(
+            findings,
+            "PiyokeyLogo.imageset" in android_build and 'rename { "piyokey_logo.png" }' in android_build,
+            "Android launcher/share logo must derive from the shared iOS brand source",
+        )
+    except OSError as error:
+        findings.append(Finding("ERROR", f"Invalid Android release resources: {error}"))
 
     return findings
 

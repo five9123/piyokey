@@ -417,6 +417,7 @@ struct PiyoDeckImportPreviewView: View {
   @State private var showsPaywall = false
   @State private var showsReplaceConfirmation = false
   @State private var shouldCopyAfterPurchase = false
+  @State private var shouldInstallAfterPurchase = false
   @State private var currentExportArtifact: PiyoDeckExportArtifact?
   @State private var isExportingCurrent = false
   @State private var showsExportError = false
@@ -487,9 +488,13 @@ struct PiyoDeckImportPreviewView: View {
     }
     .sheet(isPresented: $showsPaywall) {
       DeckMakerPaywallView(purchaseStore: purchaseStore) {
-        guard shouldCopyAfterPurchase else { return }
-        shouldCopyAfterPurchase = false
-        importAsCopy()
+        if shouldInstallAfterPurchase {
+          shouldInstallAfterPurchase = false
+          install(replacing: false)
+        } else if shouldCopyAfterPurchase {
+          shouldCopyAfterPurchase = false
+          importAsCopy()
+        }
       }
     }
     .sheet(item: $currentExportArtifact, onDismiss: finishCurrentExport) { artifact in
@@ -752,10 +757,13 @@ struct PiyoDeckImportPreviewView: View {
       switch collision {
       case .new:
         primaryButton(
-          "piyodeck.import.action.import",
-          systemImage: "square.and.arrow.down",
+          canInstallNewDeck
+            ? "piyodeck.import.action.import"
+            : "piyodeck.import.action.unlock_pro",
+          systemImage: canInstallNewDeck ? "square.and.arrow.down" : "lock.fill",
           accessibilityIdentifier: "piyodeck.import.action.import"
         ) {
+          shouldCopyAfterPurchase = false
           install(replacing: false)
         }
       case .identical:
@@ -778,6 +786,7 @@ struct PiyoDeckImportPreviewView: View {
           if purchaseStore.hasAccess {
             importAsCopy()
           } else {
+            shouldInstallAfterPurchase = false
             shouldCopyAfterPurchase = true
             showsPaywall = true
           }
@@ -897,6 +906,12 @@ struct PiyoDeckImportPreviewView: View {
 
   private func install(replacing: Bool) {
     guard replacing || collision == .new else { return }
+    if !replacing, !canInstallNewDeck {
+      shouldCopyAfterPurchase = false
+      shouldInstallAfterPurchase = true
+      showsPaywall = true
+      return
+    }
     // Re-importing a derived user deck replaces its payload, but it must not
     // erase where that deck originated. The incoming package intentionally
     // carries no local installation metadata, so retain lineage from the
@@ -914,6 +929,7 @@ struct PiyoDeckImportPreviewView: View {
           contentSHA256: candidate.package.contentSHA256,
           packageFormatVersion: candidate.package.manifest.formatVersion,
           isLocallyModified: false,
+          hasPiyokeyProAccess: purchaseStore.hasAccess,
           derivedFromDeckId: derivedFromDeckId
         )
         // A same-ID import after deletion is classified as a new install
@@ -923,6 +939,10 @@ struct PiyoDeckImportPreviewView: View {
         _ = reviewDeck.reconcile(with: installed)
         isSaving = false
         coordinator.finishImport()
+      } catch PiyokeyProAccessError.freeUserDeckLimitReached {
+        isSaving = false
+        shouldInstallAfterPurchase = true
+        showsPaywall = true
       } catch {
         isSaving = false
         coordinator.dismissCandidate(showNext: false)
@@ -953,7 +973,8 @@ struct PiyoDeckImportPreviewView: View {
           source: .created,
           contentSHA256: package.contentSHA256,
           packageFormatVersion: package.manifest.formatVersion,
-          isLocallyModified: true
+          isLocallyModified: true,
+          hasPiyokeyProAccess: purchaseStore.hasAccess
         )
         isSaving = false
         coordinator.finishImport()
@@ -963,6 +984,10 @@ struct PiyoDeckImportPreviewView: View {
         coordinator.reportSaveFailure()
       }
     }
+  }
+
+  private var canInstallNewDeck: Bool {
+    deckLibrary.canInstallNewUserDeck(hasPiyokeyProAccess: purchaseStore.hasAccess)
   }
 }
 

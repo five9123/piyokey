@@ -47,6 +47,8 @@ struct FlowGameView: View {
   @State private var retentionSession = RetentionSessionContext()
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var recordInputMode: SessionInputMode = .builtIn
+  @State private var builtInKeyboardLayout: BuiltInKeyboardLayout
+  @State private var korean10KeyInterpreter = Korean10KeyInterpreter()
   @State private var hasUsedBuiltInInput = false
   @State private var didResolveInputMode = false
   @State private var inputResetRevision = 0
@@ -72,6 +74,14 @@ struct FlowGameView: View {
     self.gameKind = gameKind
     self.competition = competition
     self.mascotAppearance = MascotSessionAppearance()
+    let storedBuiltInLayout = BuiltInKeyboardLayout.resolved(
+      from: UserDefaults.standard.string(
+        forKey: KeyboardPreferenceKeys.builtInLayoutDefault
+      ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+    )
+    _builtInKeyboardLayout = State(
+      initialValue: competition == nil ? storedBuiltInLayout : .dubeolsik
+    )
     var sessionItems = GamePresetSessionRandomizer.shuffledItems(
       from: deck,
       gameKind: gameKind
@@ -208,6 +218,7 @@ struct FlowGameView: View {
       .onChange(of: viewModel.reviewResolutionRevision, perform: handleReviewRevision)
       .onChange(of: viewModel.phase, perform: handlePhaseChange)
       .onChange(of: inputMode, perform: handleInputModeChange)
+      .onChange(of: viewModel.cardRevision) { _ in korean10KeyInterpreter.reset() }
   }
 
   private var decoratedContent: some View {
@@ -392,7 +403,8 @@ struct FlowGameView: View {
     sessionReviewItems.removeAll(keepingCapacity: true)
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
-    recordInputMode = inputMode
+    recordInputMode = resolvedRecordInputMode
+    korean10KeyInterpreter.reset()
     previousAcceptedInputCount = 0
     didCelebrateBestCombo = false
     lifeLossFeedbackTask?.cancel()
@@ -420,6 +432,7 @@ struct FlowGameView: View {
 
   private func handleInputModeChange(_ mode: SessionInputMode) {
     showsOSIMEUnavailable = false
+    korean10KeyInterpreter.reset()
     inputResetRevision += 1
     if mode == .osIME, !hasUsedBuiltInInput {
       recordInputMode = .osIME
@@ -444,25 +457,57 @@ struct FlowGameView: View {
           onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake
         )
       } else {
-        HangulKeyboardView(
-          nextExpectedKey: viewModel.nextExpectedKey,
-          options: HangulKeyboardOptions(
-            showsKeyGuide: showsKeyGuide,
-            showsRomanHints: showsRomanHints,
-            hapticsEnabled: hapticsEnabled
-          ),
-          onKeyFeedback: playKeySound,
-          onKey: { key in
-            markBuiltInInputUsed()
-            viewModel.input(key)
-          },
-          onBackspace: {
-            markBuiltInInputUsed()
-            viewModel.backspace()
-          }
-        )
+        if builtInKeyboardLayout == .korean10Key {
+          Korean10KeyKeyboardView(
+            nextExpectedKey: korean10KeyInterpreter.nextKey(for: viewModel.nextExpectedKey),
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: false,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: inputKorean10Key,
+            onBackspace: backspaceKorean10Key
+          )
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: viewModel.nextExpectedKey,
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: showsRomanHints,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: { key in
+              markBuiltInInputUsed()
+              viewModel.input(key)
+            },
+            onBackspace: {
+              markBuiltInInputUsed()
+              viewModel.backspace()
+            }
+          )
+        }
       }
     }
+  }
+
+  private func inputKorean10Key(_ key: Korean10KeyKey) {
+    markBuiltInInputUsed()
+    switch korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey) {
+    case .pending, .separatorAccepted:
+      break
+    case .committed(let jamo):
+      viewModel.input(jamo)
+    case .incorrect:
+      viewModel.input(key.displayText.first ?? "ㆍ")
+    }
+  }
+
+  private func backspaceKorean10Key() {
+    markBuiltInInputUsed()
+    guard korean10KeyInterpreter.backspace() == .forwardToHangulEngine else { return }
+    viewModel.backspace()
   }
 
   @ViewBuilder
@@ -961,6 +1006,13 @@ struct FlowGameView: View {
       )
       .id(viewModel.cardRevision)
 
+      if let pending = korean10KeyPendingDisplay {
+        Text(verbatim: pending)
+          .font(.caption.weight(.bold))
+          .foregroundStyle(AppPalette.secondary)
+          .accessibilityIdentifier("game.10key.pending")
+      }
+
       feedbackLabel
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, minHeight: 25, alignment: .center)
@@ -1154,7 +1206,16 @@ struct FlowGameView: View {
 
   private func markBuiltInInputUsed() {
     hasUsedBuiltInInput = true
-    recordInputMode = .builtIn
+    recordInputMode = builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var resolvedRecordInputMode: SessionInputMode {
+    inputMode == .osIME ? .osIME : builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var korean10KeyPendingDisplay: String? {
+    guard inputMode == .builtIn, builtInKeyboardLayout == .korean10Key else { return nil }
+    return korean10KeyInterpreter.pendingDisplay
   }
 
   private func resolveInitialInputModeIfNeeded() {
@@ -1172,7 +1233,7 @@ struct FlowGameView: View {
       recordInputMode = .osIME
     } else {
       inputMode = .builtIn
-      recordInputMode = .builtIn
+      recordInputMode = builtInKeyboardLayout.gameRecordInputMode
       if SessionInputMode(rawValue: inputModeDefault) == .osIME {
         showsOSIMEUnavailable = true
       }
