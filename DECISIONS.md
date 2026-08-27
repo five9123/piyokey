@@ -1452,3 +1452,31 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: exact 입력·조합 텍스트, 키 순서, 정답·오답 문자열은 계속 전송하지 않는다. 새 값은 세션 단위의 고정 배열 분류만 나타내며 Swift·Kotlin·TypeScript 생성 계약을 함께 갱신한다.
 - 근거: 병합된 로컬 기록은 이미 10키를 별도 입력 모드로 구분한다. 분석 allowlist가 이를 받지 않으면 계약 검증에서 해당 세션 이벤트 전체가 폐기되어 완료율과 게임 사용량이 누락되므로, 비민감 고정 enum으로만 구분한다.
 - 영향 범위: 공용 분석 이벤트 계약, iOS 연습·게임 의미 이벤트, 생성된 iOS/Android/웹 계약과 관련 자동 검증.
+
+## 2026-08-27 Android 출시 수준 판정과 시각·사용성 폴리싱
+
+- 관련: PRD F1~F12, §7, §12.1, §13 M7, Issue #19, Issue #55.
+- 결정: M1~M6D와 R1.1 기능 소스가 존재한다는 사실만으로 Android를 출시 후보로 부르지 않는다. 출시 후보 동결 전에는 공용 PIYOKEY light/dark color·typography·shape theme, 문자열 glyph가 아닌 접근 가능한 벡터 동작 아이콘, 공용 1024×1024 브랜드 원본의 앱 내부 표시, 홈·발견·연습·게임·마이페이지의 다크 모드·큰 글자 화면을 자동 회귀로 검증한다.
+- 결정: Android 브랜드 리소스는 iOS asset catalog 경로를 직접 참조하지 않고 `shared/brand/piyokey_app_icon_source.png`를 단일 원본으로 사용한다. iOS AppIcon과 Android launcher·앱 내부 로고가 동일한 shared 파일에서 파생되는지를 release preflight가 확인한다.
+- 결정: API 35에서 dark theme·large text 상태의 다섯 기본 목적지와 공통 설정 접근성을 계측 테스트로 고정한다. 로컬 Source CI 동등 959 tasks, Python preflight와 56개 도구 테스트, Debug/Release APK·AAB·manifest 계약을 통과해야 시각 폴리싱 소스 완료로 판단한다.
+- 결정: 이 소스 완료는 Play 배포 승인이 아니다. final application ID/Play 소유권, 공개 catalog, 콘텐츠·고정 발음 권리, upload signing, Billing·Games Console, 스토어 메타데이터·스크린샷을 동일 배포 설정으로 확정한 뒤 생성한 signed AAB만 Issue #19 실기기 QA 대상이 된다.
+- 근거: 초기 Android 화면은 핵심 기능은 연결돼 있었지만 기본 Material 색상, 문자열 아이콘, 다크 모드의 고정 밝은 surface 등으로 출시판의 시각 일관성과 접근성 기준에 미달했다. 소스 폴리싱·외부 배포 준비·실기기 품질 검증을 분리해야 “기능 완료”를 “출시 가능”으로 오인하지 않는다.
+- 영향 범위: `core:design`, app shell, onboarding/discover/practice/game/retention/settings Compose UI, Android brand resource generation, release preflight, Source CI, Issue #19·#55.
+
+## 2026-08-27 Google Play listing 소스와 외부 게이트 분리
+
+- 관련: PRD §12.1, §13 M7, Issue #19, Issue #55, Google Play 스토어 등록정보·미리보기 자산 요구사항.
+- 결정: Android `1.1.0 (8)`의 Google Play 초안은 `release/google_play_metadata.json`을 기계 판독 기준으로 삼고 en-US·ja·ko 이름·짧은 설명·전체 설명, Education·광고 없음, 지원·개인정보 URL을 함께 관리한다. `release_preflight.py`는 30/80/4,000자 제한, 로케일, target SDK 36, 512×512 알파 PNG 아이콘, 1024×500 무알파 피처 그래픽과 140자 대체 텍스트를 검증한다.
+- 결정: Play 아이콘은 `shared/brand/piyokey_app_icon_source.png`에서 파생한다. 피처 그래픽은 같은 공용 브랜드 이미지를 참조해 내장 이미지 생성으로 만든 원본을 보존하고, `tools/generate_google_play_assets.swift`가 기존 파일을 덮어쓰지 않으면서 규격 산출물의 부재만 채운다.
+- 결정: 전화 스크린샷은 임시·디버그 빌드에서 만들지 않는다. 최종 application ID·서명·운영 설정이 고정된 동일 signed release candidate에서 en-US·ja·ko 1080×1920 4장씩 캡처한다. Play Console 앱 생성·ID 소유권·콘텐츠 권리·upload signing·Billing·Games·Data safety·콘텐츠 등급·스크린샷 업로드·Issue #19 실기기 QA는 저장소 검증과 별개인 열린 외부 게이트로 유지한다.
+- 근거: 스토어 문구와 그래픽을 버전 관리·자동 검증하면 Console 입력 전 제품 약속과 자산 규격의 드리프트를 막을 수 있다. 반면 스크린샷과 서명·상품·정책 정보는 실제 배포 후보와 외부 계정 상태에 의존하므로 소스 완료와 동일시할 수 없다.
+- 영향 범위: `release/google_play_metadata.json`, `release/google_play/`, `release/GOOGLE_PLAY_QA.md`, Google Play 자산 생성기, release preflight, Android M7 readiness·global rollout 문서.
+
+## 2026-08-27 Android 홈 원탭 연습·Google Play 콘솔 초안
+
+- 관련: Issue #19·#51·#55, PRD §4 S2, F6·F7·F8·F11, §13 M7.
+- 결정: iOS에서 확정된 홈의 `주간 피요컵`과 `랜덤 단어 5개`를 Android에도 같은 계약으로 포팅한다. 다운로드한 공식 단어 덱의 온보딩 선호 태그를 우선하고, 부족하면 목표별 번들 공식 덱과 흐름 초급 풀을 사용한다. 공백·중복 한국어를 제외하고 최근 20개를 우선 회피하며 결과 재시작은 다른 5개를 뽑는다.
+- 결정: 랜덤 연습 오타는 항목별 원본 덱 ID로 복습에 수집하고 완료는 `quick_practice` 스탬프만 기록한다. 주간컵은 기본 설정이 OS IME여도 경쟁 조건을 위해 내장 두벌식으로 고정하며, 앱 초기 번들 로딩 시점과 무관하게 버튼 클릭에서 로컬 덱을 재확보한다.
+- 결정: Google Play Data safety를 `수집 없음`으로 미리 확정하지 않는다. 앱 자체 분석·광고·계정 서버는 없지만 운영 정적 호스트의 요청 로그, Play Billing 9.1.0, Play Games v2 22.0.0의 기기 밖 처리까지 최종 배포 구성에서 검토해야 한다. 저장소에는 출시 노트·상품 문구·앱 접근·대상 연령·등급·권한·데이터 경계의 근거 초안만 두고 실제 콘솔 답변은 외부 게이트로 유지한다.
+- 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
+- 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.

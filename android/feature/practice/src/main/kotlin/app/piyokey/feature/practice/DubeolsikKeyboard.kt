@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -121,7 +122,7 @@ fun DubeolsikKeyboard(
   Box(
     modifier = modifier
       .fillMaxWidth()
-      .background(KeyboardColors.KeyboardBackground)
+      .background(MaterialTheme.colorScheme.surfaceVariant)
       .padding(horizontal = 8.dp, vertical = 8.dp)
       .semantics { contentDescription = keyboardLabel },
   ) {
@@ -320,9 +321,9 @@ private fun KeyboardKeycap(
   val elevation = if (highlighted) (5 + guidePulse * 7).dp else 2.dp
   val shape = RoundedCornerShape(11.dp)
   val color = when {
-    highlighted -> KeyboardColors.GuideSoft
-    selected -> KeyboardColors.SelectedKey
-    else -> KeyboardColors.Key
+    highlighted -> MaterialTheme.colorScheme.secondaryContainer
+    selected -> MaterialTheme.colorScheme.primaryContainer
+    else -> MaterialTheme.colorScheme.surface
   }
 
   Surface(
@@ -332,8 +333,8 @@ private fun KeyboardKeycap(
       .shadow(
         elevation = elevation,
         shape = shape,
-        ambientColor = if (highlighted) KeyboardColors.Guide.copy(alpha = guidePulse) else Color.Black,
-        spotColor = if (highlighted) KeyboardColors.Guide.copy(alpha = guidePulse) else Color.Black,
+        ambientColor = if (highlighted) MaterialTheme.colorScheme.primary.copy(alpha = guidePulse) else Color.Black,
+        spotColor = if (highlighted) MaterialTheme.colorScheme.primary.copy(alpha = guidePulse) else Color.Black,
       )
       .onGloballyPositioned { targetRegistry.register(action, it.boundsInRoot()) }
       .testTag("keyboard-key-${action.testId()}")
@@ -357,13 +358,13 @@ private fun KeyboardKeycap(
           Modifier
             .fillMaxWidth(0.34f)
             .height(4.dp)
-            .background(KeyboardColors.MutedInk.copy(alpha = 0.28f), RoundedCornerShape(99.dp)),
+            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.34f), RoundedCornerShape(99.dp)),
         )
       } else {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Text(
             text = title,
-            color = KeyboardColors.Ink,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 21.sp,
             fontWeight = FontWeight.SemiBold,
             lineHeight = KeyboardKeycapMetrics.MainLineHeightSp.sp,
@@ -374,7 +375,7 @@ private fun KeyboardKeycap(
           if (romanHint != null) {
             Text(
               text = romanHint,
-              color = KeyboardColors.MutedInk,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
               fontSize = 9.sp,
               fontWeight = FontWeight.Medium,
               lineHeight = KeyboardKeycapMetrics.RomanLineHeightSp.sp,
@@ -452,14 +453,4 @@ private class KeyboardTouchTargetRegistry {
     val dy = maxOf(rect.top - point.y, 0f, point.y - rect.bottom)
     return dx * dx + dy * dy
   }
-}
-
-internal object KeyboardColors {
-  val KeyboardBackground = Color(0xFFF8F4FF)
-  val Key = Color(0xFFFFFFFF)
-  val SelectedKey = Color(0xFFE9E1FF)
-  val Guide = Color(0xFF7557FF)
-  val GuideSoft = Color(0xFFECE7FF)
-  val Ink = Color(0xFF242034)
-  val MutedInk = Color(0xFF716B7C)
 }

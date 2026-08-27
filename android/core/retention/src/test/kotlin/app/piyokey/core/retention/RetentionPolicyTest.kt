@@ -1,6 +1,11 @@
 package app.piyokey.core.retention
 
 import app.piyokey.core.deckkit.DeckItem
+import app.piyokey.core.deckkit.Deck
+import app.piyokey.core.deckkit.DeckAuthor
+import app.piyokey.core.deckkit.DeckType
+import java.time.Instant
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -13,6 +18,52 @@ class RetentionPolicyTest {
     val day = JstDay("2026-08-25")
     assertEquals(DailyChallengePolicy.items(day, goalSalt = 2), DailyChallengePolicy.items(day, goalSalt = 2))
     assertNotEquals(DailyChallengePolicy.items(day, goalSalt = 0), DailyChallengePolicy.items(day, goalSalt = 1))
+  }
+
+  @Test fun quickPracticePrefersGoalTagsAvoidsRecentAndKeepsSourceDecks() {
+    val preferred = deck("preferred", listOf("TOPIK"), listOf("가", "나", "다", "라", "마", "바"))
+    val other = deck("other", listOf("日常"), listOf("사", "아", "자", "차", "카"))
+    val session = requireNotNull(
+      QuickPracticePolicy.makeSession(
+        installedDecks = listOf(other, preferred),
+        fallbackDecks = emptyList(),
+        preferredTags = setOf("TOPIK"),
+        recentWordKeys = listOf("가"),
+        random = Random(7),
+      ),
+    )
+    assertEquals(5, session.sources.size)
+    assertTrue(session.sources.all { it.sourceDeckId == "preferred" })
+    assertFalse("가" in session.wordKeys)
+  }
+
+  @Test fun quickPracticeFallsBackFiltersPhrasesAndCanonicalDuplicates() {
+    val installed = deck("installed", emptyList(), listOf("가", "같이 가요"))
+    val fallback = deck("fallback", emptyList(), listOf("가", "나", "다", "라", "마", "바"))
+    val session = requireNotNull(
+      QuickPracticePolicy.makeSession(
+        installedDecks = listOf(installed),
+        fallbackDecks = listOf(fallback),
+        preferredTags = emptySet(),
+        recentWordKeys = emptyList(),
+        random = Random(3),
+      ),
+    )
+    assertEquals(5, session.wordKeys.toSet().size)
+    assertFalse("같이 가요" in session.wordKeys)
+    assertEquals("installed", session.sources.first { it.wordKey == "가" }.sourceDeckId)
+  }
+
+  @Test fun quickPracticeHistoryKeepsLatestTwentyUniqueWords() {
+    val first = QuickPracticeSession((1..20).map { source("단어$it", "first") })
+    val second = QuickPracticeSession(listOf(source("단어1", "second"), source("새단어", "second")))
+    val updated = QuickPracticePolicy.updatedHistory(
+      QuickPracticePolicy.updatedHistory(emptyList(), first),
+      second,
+    )
+    assertEquals(20, updated.size)
+    assertEquals(listOf("단어1", "새단어"), updated.takeLast(2))
+    assertFalse("단어2" in updated)
   }
   @Test fun curriculumHasSixChaptersAndTenToFifteenItemsPerStage() {
     assertEquals(6, CurriculumCatalog.chapters.size)
@@ -81,4 +132,26 @@ class RetentionPolicyTest {
     repeat(3) { review = ReviewPolicy.recordPerfect(review, (5 + it).toLong()).item }
     assertFalse(requireNotNull(review).isActive)
   }
+
+  private fun deck(id: String, tags: List<String>, words: List<String>) = Deck(
+    deckId = id,
+    version = 1,
+    name = id,
+    author = DeckAuthor("official", "Piyokey"),
+    official = true,
+    type = DeckType.WORD,
+    level = 1,
+    tags = tags,
+    createdAt = Instant.EPOCH,
+    updatedAt = Instant.EPOCH,
+    items = words.mapIndexed { index, word ->
+      DeckItem("$id-$index", word, "reading", "meaning", "audio/$index.mp3")
+    },
+  )
+
+  private fun source(word: String, deckId: String) = QuickPracticeSource(
+    DeckItem("$deckId-$word", word, "reading", "meaning", "audio/$word.mp3"),
+    deckId,
+    emptyList(),
+  )
 }

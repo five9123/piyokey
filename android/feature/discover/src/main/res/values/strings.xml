@@ -55,7 +55,7 @@
   <string name="action_back">Back</string>
   <string name="error_generic">Something went wrong. Your existing decks are safe.</string>
   <string name="user_deck_import">Import Deck</string>
-  <string name="user_deck_new_locked">New Deck 🔒</string>
+  <string name="user_deck_new_locked">New Deck</string>
   <string name="user_deck_new">New Deck</string>
   <string name="action_close">Close</string>
   <string name="action_ok">OK</string>
@@ -135,4 +135,6 @@
   <string name="deck_report_content">Report this deck’s content</string>
   <string name="user_deck_import_as_copy">Import as a separate copy</string>
   <string name="user_deck_import_as_copy_locked">Import as a separate copy · typee pro</string>
+  <string name="deck_editor_move_up">Move item up</string>
+  <string name="deck_editor_move_down">Move item down</string>
 </resources>

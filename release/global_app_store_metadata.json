@@ -91,7 +91,7 @@
     ],
     "additional_app_languages": "deferred_until_post_launch_demand_review",
     "additional_metadata_only_locales": "deferred_until_post_launch_territory_metrics_review",
-    "android_m7": "hold_until_explicit_resume_decision"
+    "android_m7": "resumed_separate_google_play_release_track"
   },
   "content_localization": {
     "ja": {

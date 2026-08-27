@@ -51,8 +51,7 @@ val hasCompleteUploadSigning = uploadSigningValues.values.all { !it.isNullOrBlan
 
 val generatedBrandRes = layout.buildDirectory.dir("generated/piyokeyBrand/res")
 val generatePiyokeyBrandResources by tasks.registering(Sync::class) {
-  from(rootProject.layout.projectDirectory.dir("../ios/Hanco/Hanco/Resources/Assets.xcassets/PiyokeyLogo.imageset")) {
-    include("PiyokeyLogo.png")
+  from(rootProject.layout.projectDirectory.file("../shared/brand/piyokey_app_icon_source.png")) {
     rename { "piyokey_logo.png" }
   }
   into(generatedBrandRes.map { it.dir("drawable-nodpi") })
@@ -285,6 +284,7 @@ dependencies {
   implementation(project(":core:platform"))
   implementation(project(":core:piyodeck"))
   implementation(project(":core:settings"))
+  implementation(project(":core:design"))
   implementation(project(":feature:discover"))
   implementation(project(":feature:game"))
   implementation(project(":feature:practice"))
