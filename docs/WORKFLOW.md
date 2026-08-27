@@ -88,6 +88,6 @@ git fetch --prune origin
 python3 tools/workspace_doctor.py --strict --require-origin-main
 ```
 
-이 검사는 commit SHA가 아니라 파일 tree를 비교하므로, 검증 증빙만 추가한 후속
-commit처럼 제품 소스가 같은 경우는 허용합니다. 실패하면 해당 작업공간에서
-배포하지 않습니다.
+이 검사는 commit SHA가 아니라 저장소 전체 파일 tree를 비교하므로, merge commit처럼
+SHA가 달라도 전체 tree가 같은 경우만 허용합니다. 증빙·문서만 추가했더라도
+`origin/main`에 병합되기 전에는 실패하며, 실패한 작업공간에서는 배포하지 않습니다.
