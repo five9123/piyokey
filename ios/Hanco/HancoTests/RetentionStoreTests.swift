@@ -1,3 +1,4 @@
+import DeckKit
 import HangulEngine
 import XCTest
 
@@ -195,6 +196,93 @@ final class RetentionStoreTests: XCTestCase {
     }
   }
 
+  func testRandomWordPracticePrefersDownloadedGoalTagsAndAvoidsRecentWords() throws {
+    let preferred = makeWordDeck(
+      id: "preferred",
+      tags: ["TOPIK"],
+      words: ["가방", "학교", "친구", "공부", "시험", "교실"]
+    )
+    let other = makeWordDeck(
+      id: "other",
+      tags: ["日常"],
+      words: ["날씨", "주말", "가족", "회사", "식사", "사진"]
+    )
+    var generator = ChoseongRandomNumberGenerator(seed: 7)
+
+    let session = try XCTUnwrap(
+      RandomWordPracticeCatalog.makeSession(
+        installedDecks: [other, preferred],
+        fallbackDecks: [],
+        preferredTags: ["TOPIK"],
+        recentWordKeys: ["가방"],
+        using: &generator
+      )
+    )
+
+    XCTAssertEqual(session.sources.count, 5)
+    XCTAssertEqual(Set(session.wordKeys).count, 5)
+    XCTAssertTrue(session.sources.allSatisfy { $0.sourceDeckID == preferred.deckId })
+    XCTAssertFalse(session.wordKeys.contains("가방"))
+  }
+
+  func testRandomWordPracticeFillsFromFallbackAndFiltersPhrasesAndDuplicateWords() throws {
+    let installed = makeWordDeck(
+      id: "installed",
+      tags: ["日常"],
+      words: ["학교", "학교", "두 단어"]
+    )
+    let fallback = makeWordDeck(
+      id: "fallback",
+      tags: ["TOPIK"],
+      words: ["가방", "친구", "공부", "시험", "교실", "선생님"]
+    )
+    var generator = ChoseongRandomNumberGenerator(seed: 11)
+
+    let session = try XCTUnwrap(
+      RandomWordPracticeCatalog.makeSession(
+        installedDecks: [installed],
+        fallbackDecks: [fallback],
+        preferredTags: [],
+        recentWordKeys: [],
+        using: &generator
+      )
+    )
+
+    XCTAssertEqual(session.sources.count, 5)
+    XCTAssertEqual(Set(session.wordKeys).count, 5)
+    XCTAssertEqual(session.wordKeys.filter { $0 == "학교" }.count, 1)
+    XCTAssertFalse(session.wordKeys.contains("두 단어"))
+    XCTAssertTrue(session.sources.contains { $0.sourceDeckID == fallback.deckId })
+  }
+
+  func testRandomWordPracticeHistoryKeepsLatestTwentyUniqueWords() {
+    let history = RandomWordPracticeHistory(defaults: defaults)
+    for index in 0..<5 {
+      let sources = (0..<5).map { offset in
+        RandomWordPracticeSource(
+          item: makeDeckItem(id: "\(index)-\(offset)", word: "단어\(index * 5 + offset)"),
+          sourceDeckID: "deck",
+          sourceTags: []
+        )
+      }
+      history.record(RandomWordPracticeSession(sources: sources))
+    }
+
+    XCTAssertEqual(history.recentWordKeys.count, 20)
+    XCTAssertFalse(history.recentWordKeys.contains("단어0"))
+    XCTAssertEqual(history.recentWordKeys.last, "단어24")
+  }
+
+  func testQuickPracticeCreatesStampWithoutCompletingDailyChallenge() throws {
+    let day = try XCTUnwrap(JSTDay(rawValue: "2026-07-19"))
+    XCTAssertEqual(try store.record(.quickPractice, on: day), .inserted)
+
+    let record = try XCTUnwrap(store.loadSnapshot().records[day])
+    XCTAssertTrue(record.isStamped)
+    XCTAssertFalse(record.completedDailyChallenge)
+    XCTAssertEqual(record.activities, [.quickPractice])
+  }
+
   func testDailyMascotEncouragementUsesEveryMessageAcrossLearningContexts() throws {
     let day = try XCTUnwrap(JSTDay(rawValue: "2026-07-24"))
     let contexts: [MascotDailyEncouragement.Context] = [
@@ -239,6 +327,34 @@ final class RetentionStoreTests: XCTestCase {
     XCTAssertEqual(StampReward.three.prop, .lightstick)
     XCTAssertEqual(StampReward.five.prop, .ribbon)
     XCTAssertEqual(StampReward.seven.prop, .headphones)
+  }
+
+  private func makeWordDeck(id: String, tags: [String], words: [String]) -> Deck {
+    Deck(
+      deckId: id,
+      version: 1,
+      name: id,
+      author: DeckAuthor(id: "official", nickname: "PIYOKEY"),
+      official: true,
+      type: .word,
+      level: 1,
+      tags: tags,
+      createdAt: Date(timeIntervalSince1970: 0),
+      updatedAt: Date(timeIntervalSince1970: 0),
+      items: words.enumerated().map { index, word in
+        makeDeckItem(id: "\(id)-\(index)", word: word)
+      }
+    )
+  }
+
+  private func makeDeckItem(id: String, word: String) -> DeckItem {
+    DeckItem(
+      id: id,
+      ko: word,
+      readingJa: "テスト",
+      meaningJa: "テスト",
+      audio: nil
+    )
   }
 
   func testReminderDefaultsOffAndPersistsCustomTime() {

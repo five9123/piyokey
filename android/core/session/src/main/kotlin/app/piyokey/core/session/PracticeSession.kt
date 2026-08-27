@@ -8,13 +8,40 @@ import app.piyokey.core.hangul.JamoDecomposer
 import app.piyokey.core.hangul.JamoJudgeResult
 import app.piyokey.core.hangul.JamoJudgeState
 import app.piyokey.core.hangul.JamoSequenceJudge
+import app.piyokey.core.hangul.OSIMETextJudge
+import app.piyokey.core.hangul.OSIMETextJudgeStatus
 
 const val PRACTICE_AUTO_ADVANCE_DELAY_MILLIS: Long = 650L
+
+data class ActiveDurationClock(
+  val accumulatedMillis: Long = 0,
+  val activeSinceMillis: Long? = null,
+) {
+  init { require(accumulatedMillis >= 0) }
+
+  fun start(nowMillis: Long): ActiveDurationClock =
+    if (activeSinceMillis == null) copy(activeSinceMillis = nowMillis) else this
+
+  fun pause(nowMillis: Long): ActiveDurationClock = if (activeSinceMillis == null) this else copy(
+    accumulatedMillis = duration(nowMillis),
+    activeSinceMillis = null,
+  )
+
+  fun duration(nowMillis: Long): Long = accumulatedMillis + (activeSinceMillis?.let {
+    (nowMillis - it).coerceAtLeast(0)
+  } ?: 0L)
+}
 
 sealed interface PracticeSessionEvent {
   data class Key(val jamo: Char) : PracticeSessionEvent
 
   data object Backspace : PracticeSessionEvent
+
+  /** Full text snapshot from an OS IME. Composing text is previewed but never scored as wrong. */
+  data class IMEText(
+    val committedText: String,
+    val composingText: String? = null,
+  ) : PracticeSessionEvent
 
   /**
    * Confirms a previously scheduled completion transition.
@@ -84,6 +111,16 @@ data class PracticeItemResolution(
   val hadMistake: Boolean
     get() = mistakeCount > 0
 }
+
+data class PracticeSessionCheckpoint(
+  val currentTargetIndex: Int,
+  val acceptedKeys: String,
+  val mistakeCount: Int,
+  val currentItemMistakeCount: Int,
+  val currentItemMistakenJamoIndices: Set<Int>,
+  val itemResolutions: List<PracticeItemResolution>,
+  val activeDurationMillis: Long,
+)
 
 @ConsistentCopyVisibility
 data class PracticeSessionState internal constructor(
@@ -186,12 +223,71 @@ object PracticeSessionReducer {
 
   fun initialState(target: String): PracticeSessionState = initialState(listOf(target))
 
+  fun checkpoint(state: PracticeSessionState, activeDurationMillis: Long): PracticeSessionCheckpoint =
+    PracticeSessionCheckpoint(
+      currentTargetIndex = state.currentTargetIndex,
+      acceptedKeys = state.acceptedKeys.joinToString(""),
+      mistakeCount = state.mistakeCount,
+      currentItemMistakeCount = state.currentItemMistakeCount,
+      currentItemMistakenJamoIndices = state.currentItemMistakenJamoIndices,
+      itemResolutions = state.itemResolutions,
+      activeDurationMillis = activeDurationMillis.coerceAtLeast(0),
+    )
+
+  fun restoreState(targets: List<String>, checkpoint: PracticeSessionCheckpoint): PracticeSessionState {
+    require(targets.isNotEmpty()) { "Practice targets must not be empty" }
+    require(checkpoint.currentTargetIndex in targets.indices) { "Checkpoint target is out of range" }
+    require(checkpoint.mistakeCount >= checkpoint.currentItemMistakeCount) { "Invalid checkpoint mistakes" }
+    require(checkpoint.activeDurationMillis >= 0) { "Invalid checkpoint duration" }
+    val frozenTargets = targets.toList()
+    val targetJamoCounts = frozenTargets.map { JamoDecomposer.keySequenceFor(it).size }
+    val acceptedKeys = checkpoint.acceptedKeys.toList()
+    val rebuilt = rebuildCurrentTarget(frozenTargets[checkpoint.currentTargetIndex], acceptedKeys)
+    require(checkpoint.currentItemMistakenJamoIndices.all { it in targetJamoCounts[checkpoint.currentTargetIndex].let { count -> 0 until count } }) {
+      "Checkpoint mistake index is out of range"
+    }
+    require(checkpoint.itemResolutions.map(PracticeItemResolution::itemIndex).distinct().size == checkpoint.itemResolutions.size)
+    require(checkpoint.itemResolutions.all { it.itemIndex in 0..checkpoint.currentTargetIndex })
+    val completesTarget = rebuilt.judge.isComplete
+    val transition = if (completesTarget) {
+      PracticeCompletionTransition(
+        token = 1,
+        destination = if (checkpoint.currentTargetIndex == frozenTargets.lastIndex) {
+          PracticeCompletionDestination.RESULTS
+        } else {
+          PracticeCompletionDestination.NEXT_TARGET
+        },
+      )
+    } else null
+    return stateForTarget(
+      targets = frozenTargets,
+      targetJamoCounts = targetJamoCounts,
+      targetIndex = checkpoint.currentTargetIndex,
+      targetSequence = JamoDecomposer.keySequenceFor(frozenTargets[checkpoint.currentTargetIndex]),
+      mistakeCount = checkpoint.mistakeCount,
+      itemResolutions = checkpoint.itemResolutions,
+      transitionSequence = transition?.token ?: 0,
+      feedbackRevision = 0,
+      compositionRevision = 0,
+    ).copy(
+      acceptedKeys = acceptedKeys,
+      composition = rebuilt.composition,
+      judge = rebuilt.judge,
+      feedback = if (completesTarget) PracticeFeedback.Complete else PracticeFeedback.Idle,
+      lastAcceptedKey = acceptedKeys.lastOrNull(),
+      currentItemMistakeCount = checkpoint.currentItemMistakeCount,
+      currentItemMistakenJamoIndices = checkpoint.currentItemMistakenJamoIndices,
+      pendingTransition = transition,
+    )
+  }
+
   fun reduce(
     state: PracticeSessionState,
     event: PracticeSessionEvent,
   ): PracticeSessionReduction = when (event) {
     is PracticeSessionEvent.Key -> reduceKey(state, event.jamo)
     PracticeSessionEvent.Backspace -> reduceBackspace(state)
+    is PracticeSessionEvent.IMEText -> reduceIMEText(state, event.committedText, event.composingText)
     is PracticeSessionEvent.Advance -> reduceAdvance(state, event.transitionToken)
     PracticeSessionEvent.Restart -> reduceRestart(state)
   }
@@ -298,6 +394,82 @@ object PracticeSessionReducer {
         correctStreak = 0,
         pendingTransition = null,
       ),
+    )
+  }
+
+  private fun reduceIMEText(
+    state: PracticeSessionState,
+    committedText: String,
+    composingText: String?,
+  ): PracticeSessionReduction {
+    if (state.isResultReady) return PracticeSessionReduction(state)
+    val evaluation = OSIMETextJudge.evaluate(state.currentTarget, committedText, composingText)
+    val accepted = evaluation.acceptedSequence
+    val rebuilt = rebuildCurrentTarget(state.currentTarget, accepted)
+    val status = evaluation.status
+    val confirmedComplete = status is OSIMETextJudgeStatus.Matching && status.completed && !status.isComposing
+    val confirmedMismatch = status as? OSIMETextJudgeStatus.ConfirmedMismatch
+    val previousResolution = state.itemResolutions.lastOrNull()?.takeIf { it.itemIndex == state.currentTargetIndex }
+    val currentMistakeCount = state.currentItemMistakeCount + if (confirmedMismatch == null) 0 else 1
+    val currentMistakenIndices = state.currentItemMistakenJamoIndices + listOfNotNull(confirmedMismatch?.expectedIndex)
+    val resolutionsWithoutCurrent = if (previousResolution == null) state.itemResolutions else state.itemResolutions.dropLast(1)
+    val resolutions = if (confirmedComplete) {
+      resolutionsWithoutCurrent + PracticeItemResolution(
+        itemIndex = state.currentTargetIndex,
+        mistakeCount = currentMistakeCount,
+        mistakenJamoIndices = currentMistakenIndices,
+      )
+    } else {
+      resolutionsWithoutCurrent
+    }
+    val transition = if (confirmedComplete) {
+      PracticeCompletionTransition(
+        token = state.transitionSequence + 1,
+        destination = if (state.currentTargetIndex == state.targets.lastIndex) {
+          PracticeCompletionDestination.RESULTS
+        } else {
+          PracticeCompletionDestination.NEXT_TARGET
+        },
+      )
+    } else null
+    val acceptedMore = accepted.size > state.acceptedKeys.size
+    val feedback = when (status) {
+      is OSIMETextJudgeStatus.ConfirmedMismatch -> PracticeFeedback.Incorrect(
+        state.targetJamoSequence.getOrNull(status.expectedIndex) ?: state.nextExpected ?: ' ',
+      )
+      OSIMETextJudgeStatus.ComposingMismatch -> PracticeFeedback.Idle
+      is OSIMETextJudgeStatus.Matching -> when {
+        confirmedComplete -> PracticeFeedback.Complete
+        acceptedMore -> PracticeFeedback.Correct
+        else -> PracticeFeedback.Idle
+      }
+    }
+    val nextState = state.copy(
+      acceptedKeys = accepted,
+      composition = rebuilt.composition,
+      judge = rebuilt.judge,
+      feedback = feedback,
+      feedbackRevision = state.feedbackRevision + 1,
+      compositionRevision = state.compositionRevision + 1,
+      lastAcceptedKey = accepted.lastOrNull(),
+      shouldAnimateSyllableJoin = acceptedMore,
+      mistakeCount = state.mistakeCount + if (confirmedMismatch == null) 0 else 1,
+      currentItemMistakeCount = currentMistakeCount,
+      currentItemMistakenJamoIndices = currentMistakenIndices,
+      itemResolutions = resolutions,
+      correctStreak = when {
+        confirmedMismatch != null -> 0
+        acceptedMore -> state.correctStreak + (accepted.size - state.acceptedKeys.size)
+        else -> state.correctStreak
+      },
+      pendingTransition = transition,
+      transitionSequence = transition?.token ?: state.transitionSequence,
+    )
+    return PracticeSessionReduction(
+      state = nextState,
+      effects = transition?.let {
+        listOf(PracticeSessionEffect.ScheduleAdvance(it.token, it.destination, it.delayMillis))
+      }.orEmpty(),
     )
   }
 

@@ -20,8 +20,8 @@ struct SettingsView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsJamo) private var practiceShowsJamo = true
   @AppStorage(SettingsPreferenceKeys.practiceAutoSpeaks) private var practiceAutoSpeaks = false
   @AppStorage(SettingsPreferenceKeys.practiceShowsMascot) private var practiceShowsMascot = true
-  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private var practiceShowsComposition =
-    true
+  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition)
+  private var practiceShowsComposition = true
   @AppStorage(SettingsPreferenceKeys.choseongShowsMeaning) private var choseongShowsMeaning = true
 
   @AppStorage(KeyboardPreferenceKeys.showsKeyGuide) private var showsKeyGuide = true
@@ -29,6 +29,8 @@ struct SettingsView: View {
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
     SessionInputMode.builtIn.rawValue
+  @AppStorage(KeyboardPreferenceKeys.builtInLayoutDefault) private var builtInLayoutDefault =
+    BuiltInKeyboardLayout.dubeolsik.rawValue
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
@@ -191,6 +193,31 @@ struct SettingsView: View {
 
   private var keyboardSection: some View {
     settingsCard(title: "settings.keyboard", systemImage: "keyboard") {
+      VStack(alignment: .leading, spacing: 8) {
+        Text("keyboard.layout.title")
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(AppPalette.ink)
+        Text("keyboard.layout.detail")
+          .font(.caption)
+          .foregroundStyle(AppPalette.mutedInk)
+        Picker("keyboard.layout.title", selection: $builtInLayoutDefault) {
+          Text("keyboard.layout.dubeolsik")
+            .tag(BuiltInKeyboardLayout.dubeolsik.rawValue)
+          Text("keyboard.layout.korean_10key")
+            .tag(BuiltInKeyboardLayout.korean10Key.rawValue)
+        }
+        .pickerStyle(.menu)
+        .accessibilityIdentifier("settings.builtin_keyboard_layout")
+        if BuiltInKeyboardLayout.resolved(from: builtInLayoutDefault) == .korean10Key {
+          Text("keyboard.layout.korean_10key_help")
+            .font(.caption2)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+      }
+      .padding(.vertical, 7)
+
+      Divider().opacity(0.5)
+
       settingToggle(
         title: "practice.setup.key_guide",
         detail: "practice.setup.key_guide_detail",

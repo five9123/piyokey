@@ -23,6 +23,8 @@ struct PracticeResultView: View {
   let recommendations: [CatalogDeck]
   let catalogDecks: [CatalogDeck]
   let showsRetry: Bool
+  let retryTitle: LocalizedStringKey
+  let retrySystemImage: String
   let finishTitle: LocalizedStringKey
   let finishSystemImage: String
   let finishAccessibilityIdentifier: String
@@ -288,7 +290,7 @@ struct PracticeResultView: View {
       onRetry()
       dismiss()
     } label: {
-      Label("practice.result.retry", systemImage: "arrow.counterclockwise")
+      Label(retryTitle, systemImage: retrySystemImage)
         .font(.headline.weight(.bold))
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)

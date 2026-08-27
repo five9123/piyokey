@@ -34,6 +34,7 @@ struct HancoApp: App {
       if ProcessInfo.processInfo.environment["UITEST_RESET_RETENTION"] == "1" {
         try? RetentionStore.live.reset()
         DailyReminderSettingsStore().reset()
+        UserDefaults.standard.removeObject(forKey: RandomWordPracticeHistory.storageKey)
       }
       if ProcessInfo.processInfo.environment["UITEST_RESET_ONBOARDING"] == "1" {
         OnboardingStore().reset()

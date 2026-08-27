@@ -14,6 +14,8 @@ struct PracticeSetupView: View {
   @AppStorage(KeyboardPreferenceKeys.showsKeyGuide) private var showsKeyGuide = true
   @AppStorage(KeyboardPreferenceKeys.showsRomanHints) private var showsRomanHints = true
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
+  @AppStorage(KeyboardPreferenceKeys.builtInLayoutDefault) private var builtInLayoutDefault =
+    BuiltInKeyboardLayout.dubeolsik.rawValue
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
@@ -87,9 +89,15 @@ struct PracticeSetupView: View {
         .frame(width: 96, height: 150)
 
       VStack(alignment: .leading, spacing: 10) {
-        Text("practice.setup.eyebrow")
-          .font(.caption.weight(.bold))
-          .foregroundStyle(AppPalette.secondary)
+        Group {
+          if selectedBuiltInLayout == .korean10Key {
+            Text("keyboard.layout.korean_10key")
+          } else {
+            Text("practice.setup.eyebrow")
+          }
+        }
+        .font(.caption.weight(.bold))
+        .foregroundStyle(AppPalette.secondary)
 
         HStack(spacing: 7) {
           jamoSticker("ㄱ", rotation: -5, size: 42)
@@ -127,6 +135,31 @@ struct PracticeSetupView: View {
         .font(.headline.weight(.bold))
         .foregroundStyle(AppPalette.ink)
         .padding(.bottom, 8)
+
+      VStack(alignment: .leading, spacing: 7) {
+        Text("keyboard.layout.title")
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(AppPalette.ink)
+        Text("keyboard.layout.detail")
+          .font(.caption)
+          .foregroundStyle(AppPalette.mutedInk)
+        Picker("keyboard.layout.title", selection: $builtInLayoutDefault) {
+          Text("keyboard.layout.dubeolsik")
+            .tag(BuiltInKeyboardLayout.dubeolsik.rawValue)
+          Text("keyboard.layout.korean_10key")
+            .tag(BuiltInKeyboardLayout.korean10Key.rawValue)
+        }
+        .pickerStyle(.menu)
+        .accessibilityIdentifier("settings.builtin_keyboard_layout")
+        if selectedBuiltInLayout == .korean10Key {
+          Text("keyboard.layout.korean_10key_help")
+            .font(.caption2)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+      }
+      .padding(.vertical, 7)
+
+      Divider().opacity(0.5)
 
       optionToggle(
         title: "practice.setup.key_guide",
@@ -255,6 +288,10 @@ struct PracticeSetupView: View {
       .shadow(color: AppPalette.accent.opacity(0.24), radius: 10, y: 6)
     }
     .accessibilityIdentifier("practice.start")
+  }
+
+  private var selectedBuiltInLayout: BuiltInKeyboardLayout {
+    BuiltInKeyboardLayout.resolved(from: builtInLayoutDefault)
   }
 
   private func optionToggle(
