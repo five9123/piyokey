@@ -78,6 +78,8 @@ import app.piyokey.core.game.FlowGameState
 import app.piyokey.core.game.FlowPhase
 import app.piyokey.core.hangul.HangulComposer
 import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.platform.PiyokeySoundEngine
 import app.piyokey.core.platform.SoundCue
 import app.piyokey.core.platform.ResultShareModel
@@ -105,12 +107,12 @@ fun GameHubScreen(
   onWeeklyCup: () -> Unit,
 ) {
   val games = listOf(
-    GameTile(GameKind.FLOW, R.string.flow_title, R.string.flow_rule, "→"),
-    GameTile(GameKind.ACID_RAIN, R.string.acid_rain_title, R.string.acid_rain_rule, "↓"),
-    GameTile(GameKind.CHOSEONG, R.string.choseong_title, R.string.choseong_rule, "ㅊ"),
-    GameTile(GameKind.DICTATION, R.string.dictation_title, R.string.dictation_rule, "♪"),
-    GameTile(GameKind.WORD_MATCH, R.string.word_match_title, R.string.word_match_rule, "가"),
-    GameTile(GameKind.SPACING, R.string.spacing_title, R.string.spacing_rule, "↔"),
+    GameTile(GameKind.FLOW, R.string.flow_title, R.string.flow_rule, PiyokeyIconKind.FLOW),
+    GameTile(GameKind.ACID_RAIN, R.string.acid_rain_title, R.string.acid_rain_rule, PiyokeyIconKind.RAIN),
+    GameTile(GameKind.CHOSEONG, R.string.choseong_title, R.string.choseong_rule, PiyokeyIconKind.INITIALS),
+    GameTile(GameKind.DICTATION, R.string.dictation_title, R.string.dictation_rule, PiyokeyIconKind.DICTATION),
+    GameTile(GameKind.WORD_MATCH, R.string.word_match_title, R.string.word_match_rule, PiyokeyIconKind.WORD_MATCH),
+    GameTile(GameKind.SPACING, R.string.spacing_title, R.string.spacing_rule, PiyokeyIconKind.SPACING),
   )
   LazyColumn(
     modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("game-hub"),
@@ -119,19 +121,29 @@ fun GameHubScreen(
   ) {
     item {
       Text(stringResource(R.string.games_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
-      Text(stringResource(R.string.games_subtitle), color = Color(0xFF6F6879))
+      Text(stringResource(R.string.games_subtitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
     item {
       Card(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onWeeklyCup).testTag("weekly-cup"),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE9A9)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
       ) {
         Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
-          Text("🏆", fontSize = 30.sp)
+          PiyokeyIcon(
+            kind = PiyokeyIconKind.TROPHY,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+          )
           Spacer(Modifier.width(12.dp))
           Column {
-            Text(stringResource(R.string.weekly_cup), fontWeight = FontWeight.Black, fontSize = 18.sp)
-            Text(stringResource(R.string.weekly_cup_rule), color = Color(0xFF645532))
+            Text(
+              stringResource(R.string.weekly_cup),
+              fontWeight = FontWeight.Black,
+              fontSize = 18.sp,
+              color = MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+            Text(stringResource(R.string.weekly_cup_rule), color = MaterialTheme.colorScheme.onTertiaryContainer)
           }
         }
       }
@@ -145,13 +157,18 @@ fun GameHubScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           ) {
             Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-              Text(tile.symbol, fontSize = 30.sp, color = PiyoPink)
+              PiyokeyIcon(
+                kind = tile.icon,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.secondary,
+              )
               Column {
-                Text(stringResource(tile.title), fontWeight = FontWeight.Black, color = Ink)
+                Text(stringResource(tile.title), fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface)
                 Text(
                   stringResource(tile.rule),
                   style = MaterialTheme.typography.bodySmall,
-                  color = Color.Gray,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
                   maxLines = 2,
                 )
               }
@@ -165,7 +182,7 @@ fun GameHubScreen(
 
 enum class GameKind(val route: String) { FLOW("flow"), ACID_RAIN("acid-rain"), CHOSEONG("choseong"), DICTATION("dictation"), WORD_MATCH("word-match"), SPACING("spacing") }
 
-private data class GameTile(val kind: GameKind, val title: Int, val rule: Int, val symbol: String)
+private data class GameTile(val kind: GameKind, val title: Int, val rule: Int, val icon: PiyokeyIconKind)
 
 @Composable
 fun FlowDeckSelectionScreen(
@@ -184,7 +201,11 @@ fun FlowDeckSelectionScreen(
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
     item {
-      TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.games_title)}") }
+      TextButton(onClick = onBack) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(stringResource(R.string.games_title))
+      }
       Text(stringResource(R.string.choose_course), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
       Text(stringResource(R.string.built_in_courses), color = Color.Gray)
     }
@@ -431,7 +452,11 @@ private fun FlowHud(state: FlowGameState, onClose: () -> Unit) {
       modifier = Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription },
       shape = CircleShape,
       color = Color.White,
-    ) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
+    ) {
+      Box(contentAlignment = Alignment.Center) {
+        PiyokeyIcon(PiyokeyIconKind.CLOSE, null, Modifier.size(22.dp), tint = Ink)
+      }
+    }
     HudMetric("⏱", stringResource(R.string.time), ceil(state.remainingTimeMillis / 1000.0).toInt().toString(), Modifier.weight(1f))
     HudMetric("★", stringResource(R.string.score), state.score.toString(), Modifier.weight(1f))
     HudMetric("⚡", stringResource(R.string.combo), state.combo.toString(), Modifier.weight(1f))

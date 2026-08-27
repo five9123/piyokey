@@ -76,6 +76,13 @@ class AppPreferencesStore private constructor(
       .mapNotNull { enumValueOrNull<PiyoAccessory>(it) }.toSet(),
     appTourCompleted = preferences[Keys.appTourCompleted] ?: false,
     onboardingMigrationChecked = preferences[Keys.onboardingMigrationChecked] ?: false,
+    recentQuickPracticeWords = preferences[Keys.recentQuickPracticeWords]
+      .orEmpty()
+      .lineSequence()
+      .filter(String::isNotBlank)
+      .distinct()
+      .toList()
+      .takeLast(20),
   )
 
   private fun encode(value: AppPreferences, preferences: MutablePreferences) {
@@ -111,6 +118,11 @@ class AppPreferencesStore private constructor(
     preferences[Keys.unlockedPiyoAccessories] = value.unlockedPiyoAccessories.mapTo(mutableSetOf()) { it.name }
     preferences[Keys.appTourCompleted] = value.appTourCompleted
     preferences[Keys.onboardingMigrationChecked] = value.onboardingMigrationChecked
+    preferences[Keys.recentQuickPracticeWords] = value.recentQuickPracticeWords
+      .filter { it.isNotBlank() && it.none(Char::isWhitespace) }
+      .distinct()
+      .takeLast(20)
+      .joinToString("\n")
   }
 
   companion object {
@@ -152,6 +164,7 @@ class AppPreferencesStore private constructor(
     val unlockedPiyoAccessories = stringSetPreferencesKey("piyo.unlocked_accessories")
     val appTourCompleted = booleanPreferencesKey("onboarding.app_tour_completed")
     val onboardingMigrationChecked = booleanPreferencesKey("onboarding.migration_checked")
+    val recentQuickPracticeWords = stringPreferencesKey("retention.random_word_practice.recent_words")
   }
 }
 

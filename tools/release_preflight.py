@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Static App Store release checks for typee / ピヨキー.
+"""Static mobile-store release checks for typee / ピヨキー.
 
-The default mode verifies deterministic repository and bundle requirements.
-Use --strict for submission readiness, including manually recorded QA gates.
+The default mode verifies deterministic repository, bundle, and listing requirements.
+Use --strict for iOS submission readiness, including manually recorded QA gates.
 """
 
 from __future__ import annotations
@@ -59,8 +59,24 @@ GLOBAL_APP_STORE_NAMES = {
     "en-AU": "Korean Typing - typee",
     "en-CA": "Korean Typing - typee",
 }
-ANDROID_M7_HOLD_STATE = "hold_until_explicit_resume_decision"
+ANDROID_M7_STATE = "resumed_separate_google_play_release_track"
 ALL_COUNTRIES_SELECTION = "ALL_COUNTRIES_OR_REGIONS"
+GOOGLE_PLAY_LOCALES = frozenset({"en-US", "ja", "ko"})
+GOOGLE_PLAY_EXTERNAL_GATES = frozenset(
+    {
+        "play_console_app_created",
+        "application_id_owned",
+        "content_rights_approved",
+        "upload_signing_ready",
+        "deck_maker_product_ready",
+        "play_games_resources_ready",
+        "data_safety_completed",
+        "content_rating_completed",
+        "localized_screenshots_uploaded",
+        "signed_candidate_device_qa_completed",
+    }
+)
+GOOGLE_PLAY_CONSOLE_STATUS = "operator_review_required_not_applied"
 
 IPHONE_SCREENSHOT_SIZES = {
     (1260, 2736),
@@ -231,8 +247,8 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
     )
     add(
         findings,
-        scope.get("android_m7") == ANDROID_M7_HOLD_STATE,
-        "Android M7 must remain on hold until an explicit resume decision",
+        scope.get("android_m7") == ANDROID_M7_STATE,
+        "Android M7 must remain on its resumed, separate Google Play release track",
     )
 
     availability = document.get("availability", {})
@@ -287,6 +303,338 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
             f"Global availability requires a non-empty {region} compliance gate list",
         )
 
+    return findings
+
+
+def google_play_metadata_findings(path: Path, root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    add(findings, path.exists(), f"Google Play metadata draft is missing: {path}")
+    if not path.exists():
+        return findings
+
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [Finding("ERROR", f"Invalid Google Play metadata: {error}")]
+    if not isinstance(document, dict):
+        return [Finding("ERROR", "Google Play metadata root must be an object")]
+
+    add(findings, document.get("schema_version") == 1, "Google Play metadata schema must be 1")
+    add(
+        findings,
+        document.get("status") == "draft_not_applied",
+        "Google Play metadata must remain draft_not_applied until Console work is recorded",
+    )
+    add(
+        findings,
+        document.get("application_id") == "app.piyokey.piyokey",
+        "Google Play application ID candidate differs",
+    )
+    add(
+        findings,
+        document.get("application_id_confirmed") is False,
+        "Google Play application ID must remain unconfirmed until Play ownership is checked",
+    )
+
+    release = document.get("release", {})
+    if not isinstance(release, dict):
+        release = {}
+    add(findings, release.get("version_name") == "1.1.0", "Google Play version name must be 1.1.0")
+    add(findings, release.get("version_code") == 8, "Google Play version code must be 8")
+    add(findings, release.get("target_sdk") == 36, "Google Play target SDK must be 36")
+    add(findings, release.get("category") == "EDUCATION", "Google Play category must be Education")
+    add(findings, release.get("contains_ads") is False, "Google Play listing must declare no ads")
+    add(findings, release.get("default_language") == "en-US", "Google Play default language must be en-US")
+
+    contact = document.get("contact", {})
+    if not isinstance(contact, dict):
+        contact = {}
+    email = contact.get("email")
+    add(
+        findings,
+        isinstance(email, str) and re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email) is not None,
+        "Google Play contact email is invalid",
+    )
+    for key in ("website", "privacy_policy"):
+        value = contact.get(key)
+        add(
+            findings,
+            isinstance(value, str) and value.startswith("https://"),
+            f"Google Play {key} must be an HTTPS URL",
+        )
+
+    localizations = document.get("localizations", {})
+    if not isinstance(localizations, dict):
+        localizations = {}
+    add(
+        findings,
+        set(localizations) == GOOGLE_PLAY_LOCALES,
+        "Google Play localization keys must be exactly en-US, ja, and ko",
+    )
+    prohibited_promotional_copy = re.compile(
+        r"(?:#\s*1|no\.\s*1|best\s+app|download\s+now|install\s+now|limited\s+time|\bfree\b|무료|無料)",
+        re.IGNORECASE,
+    )
+    for locale in sorted(GOOGLE_PLAY_LOCALES):
+        values = localizations.get(locale, {})
+        if not isinstance(values, dict):
+            values = {}
+        for key, limit in (("title", 30), ("short_description", 80), ("full_description", 4_000)):
+            value = values.get(key)
+            add(
+                findings,
+                isinstance(value, str) and bool(value.strip()),
+                f"Missing {locale} Google Play field: {key}",
+            )
+            if isinstance(value, str):
+                add(findings, len(value) <= limit, f"{locale} Google Play {key} exceeds {limit} characters")
+                add(
+                    findings,
+                    prohibited_promotional_copy.search(value) is None,
+                    f"{locale} Google Play {key} contains prohibited promotional copy",
+                )
+        short_description = values.get("short_description")
+        if isinstance(short_description, str):
+            add(
+                findings,
+                "\n" not in short_description and "\r" not in short_description,
+                f"{locale} Google Play short description must be one line",
+            )
+
+    release_notes = document.get("release_notes", {})
+    if not isinstance(release_notes, dict):
+        release_notes = {}
+    add(
+        findings,
+        set(release_notes) == GOOGLE_PLAY_LOCALES,
+        "Google Play release notes must cover exactly en-US, ja, and ko",
+    )
+    for locale, value in release_notes.items():
+        add(
+            findings,
+            isinstance(value, str) and bool(value.strip()) and len(value) <= 500,
+            f"{locale} Google Play release notes must contain at most 500 characters",
+        )
+
+    product = document.get("in_app_product", {})
+    if not isinstance(product, dict):
+        product = {}
+    add(findings, product.get("product_id") == DECK_MAKER_PRODUCT_ID, "Google Play Deck Maker product ID differs")
+    add(findings, product.get("product_type") == "ONE_TIME_PRODUCT", "Google Play Deck Maker must be a one-time product")
+    add(findings, product.get("purchase_option_id") == "lifetime", "Google Play Deck Maker purchase option ID differs")
+    product_localizations = product.get("localizations", {})
+    if not isinstance(product_localizations, dict):
+        product_localizations = {}
+    add(
+        findings,
+        set(product_localizations) == GOOGLE_PLAY_LOCALES,
+        "Google Play Deck Maker localizations must cover exactly en-US, ja, and ko",
+    )
+    for locale, expected in DECK_MAKER_LOCALIZATIONS.items():
+        values = product_localizations.get(locale, {})
+        actual = (values.get("name"), values.get("description")) if isinstance(values, dict) else (None, None)
+        add(findings, actual == expected, f"Google Play Deck Maker {locale} metadata differs: {actual!r}")
+
+    assets = document.get("assets", {})
+    if not isinstance(assets, dict):
+        assets = {}
+    expected_assets = {
+        "app_icon": ((512, 512), True, 1_048_576),
+        "feature_graphic": ((1024, 500), False, None),
+    }
+    for key, (expected_size, expected_alpha, max_bytes) in expected_assets.items():
+        contract = assets.get(key, {})
+        if not isinstance(contract, dict):
+            contract = {}
+        relative_path = contract.get("path")
+        add(findings, isinstance(relative_path, str) and bool(relative_path), f"Google Play {key} path is missing")
+        if not isinstance(relative_path, str) or not relative_path:
+            continue
+        asset_path = root / relative_path
+        add(findings, asset_path.exists(), f"Google Play asset is missing: {relative_path}")
+        if not asset_path.exists():
+            continue
+        try:
+            width, height, has_alpha = png_info(asset_path)
+            add(
+                findings,
+                (width, height) == expected_size,
+                f"Google Play {key} is {width}x{height}, expected {expected_size[0]}x{expected_size[1]}",
+            )
+            add(findings, has_alpha is expected_alpha, f"Google Play {key} alpha channel differs")
+            add(
+                findings,
+                contract.get("width") == expected_size[0] and contract.get("height") == expected_size[1],
+                f"Google Play {key} metadata dimensions differ",
+            )
+            add(
+                findings,
+                contract.get("requires_alpha_channel") is expected_alpha,
+                f"Google Play {key} metadata alpha contract differs",
+            )
+            if max_bytes is not None:
+                add(
+                    findings,
+                    asset_path.stat().st_size <= max_bytes,
+                    f"Google Play {key} exceeds {max_bytes} bytes",
+                )
+        except (OSError, ValueError, struct.error) as error:
+            findings.append(Finding("ERROR", f"Invalid Google Play {key}: {error}"))
+
+    feature = assets.get("feature_graphic", {})
+    if not isinstance(feature, dict):
+        feature = {}
+    source_path = feature.get("source_path")
+    add(
+        findings,
+        isinstance(source_path, str) and (root / source_path).exists(),
+        "Google Play feature graphic source is missing",
+    )
+    alt_text = feature.get("alt_text", {})
+    if not isinstance(alt_text, dict):
+        alt_text = {}
+    add(
+        findings,
+        set(alt_text) == GOOGLE_PLAY_LOCALES,
+        "Google Play feature graphic alt text must cover en-US, ja, and ko",
+    )
+    for locale, value in alt_text.items():
+        add(
+            findings,
+            isinstance(value, str) and bool(value.strip()) and len(value) <= 140,
+            f"{locale} Google Play feature graphic alt text must contain at most 140 characters",
+        )
+
+    screenshots = assets.get("phone_screenshots", {})
+    if not isinstance(screenshots, dict):
+        screenshots = {}
+    add(
+        findings,
+        screenshots.get("status") == "pending_exact_signed_release_candidate",
+        "Google Play screenshots must remain pending the exact signed release candidate",
+    )
+    add(findings, screenshots.get("count_per_locale") == 4, "Google Play needs four phone screenshots per locale")
+    add(findings, screenshots.get("required_size") == [1080, 1920], "Google Play phone screenshot size must be 1080x1920")
+    add(
+        findings,
+        is_exact_string_list(screenshots.get("locales"), GOOGLE_PLAY_LOCALES),
+        "Google Play screenshot locales must be exactly en-US, ja, and ko",
+    )
+
+    external_gates = document.get("external_gates", {})
+    if not isinstance(external_gates, dict):
+        external_gates = {}
+    add(findings, set(external_gates) == GOOGLE_PLAY_EXTERNAL_GATES, "Google Play external gate keys differ")
+    add(
+        findings,
+        all(value is False for value in external_gates.values()),
+        "Google Play external gates must remain open until verified outside the repository",
+    )
+    return findings
+
+
+def google_play_console_declaration_findings(path: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    add(findings, path.exists(), f"Google Play Console declaration draft is missing: {path}")
+    if not path.exists():
+        return findings
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [Finding("ERROR", f"Invalid Google Play Console declaration draft: {error}")]
+    if not isinstance(document, dict):
+        return [Finding("ERROR", "Google Play Console declaration root must be an object")]
+
+    add(findings, document.get("schema_version") == 1, "Google Play Console declaration schema must be 1")
+    add(findings, document.get("status") == GOOGLE_PLAY_CONSOLE_STATUS, "Google Play Console declarations must remain operator-review drafts")
+    source = document.get("source_candidate", {})
+    add(
+        findings,
+        isinstance(source, dict)
+        and source.get("application_id") == "app.piyokey.piyokey"
+        and source.get("version_name") == "1.1.0"
+        and source.get("version_code") == 8,
+        "Google Play Console declaration source candidate differs",
+    )
+    access = document.get("app_access", {})
+    add(
+        findings,
+        isinstance(access, dict)
+        and access.get("all_features_available_without_developer_account") is True
+        and access.get("restricted_access_credentials_required") is False
+        and access.get("optional_google_play_games_sign_in") is True,
+        "Google Play app-access draft differs from the accountless product contract",
+    )
+    ads = document.get("ads", {})
+    add(
+        findings,
+        isinstance(ads, dict)
+        and ads.get("contains_ads") is False
+        and ads.get("advertising_sdk_present") is False
+        and ads.get("advertising_id_permission_expected") is False,
+        "Google Play ads draft differs from the no-ad contract",
+    )
+    target = document.get("target_audience_draft", {})
+    add(
+        findings,
+        isinstance(target, dict)
+        and target.get("operator_confirmation_required") is True
+        and target.get("recommended_age_groups") == ["13-15", "16-17", "18+"]
+        and target.get("designed_for_children") is False,
+        "Google Play target-audience draft differs",
+    )
+    rating = document.get("content_rating_draft", {})
+    add(
+        findings,
+        isinstance(rating, dict)
+        and rating.get("operator_confirmation_required") is True
+        and rating.get("app_or_game") == "APP"
+        and rating.get("category") == "EDUCATION"
+        and rating.get("contains_in_app_purchases") is True,
+        "Google Play content-rating draft differs",
+    )
+    safety = document.get("data_safety_evidence", {})
+    add(
+        findings,
+        isinstance(safety, dict)
+        and safety.get("operator_confirmation_required") is True
+        and safety.get("tracking") is False
+        and safety.get("analytics_sdk_present") is False
+        and safety.get("advertising_sdk_present") is False
+        and safety.get("final_collects_or_shares_answer")
+        == "UNRESOLVED_UNTIL_PRODUCTION_HOST_AND_SDK_DISCLOSURES_ARE_REVIEWED",
+        "Google Play Data safety must remain unresolved pending host and SDK review",
+    )
+    boundaries = safety.get("off_device_boundaries", []) if isinstance(safety, dict) else []
+    services = {value.get("service") for value in boundaries if isinstance(value, dict)}
+    add(
+        findings,
+        services == {
+            "Static HTTPS catalog host",
+            "Google Play Billing Library 9.1.0",
+            "Google Play Games Services v2 22.0.0",
+            "User-selected mail or browser app",
+        },
+        "Google Play off-device data boundaries differ",
+    )
+    prohibited = document.get("permissions_prohibited", [])
+    add(
+        findings,
+        set(prohibited) == {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.MANAGE_EXTERNAL_STORAGE",
+            "com.google.android.gms.permission.AD_ID",
+        },
+        "Google Play prohibited permission contract differs",
+    )
+    references = document.get("official_references", [])
+    add(
+        findings,
+        isinstance(references, list)
+        and len(references) == 4
+        and all(isinstance(value, str) and value.startswith("https://") for value in references),
+        "Google Play Console declaration references must contain four official HTTPS sources",
+    )
     return findings
 
 
@@ -354,6 +702,8 @@ def repository_checks(root: Path) -> list[Finding]:
     game_center_service_path = app / "Core/GameCenter/GameCenterService.swift"
     metadata_path = root / "release/app_store_metadata.json"
     global_metadata_path = root / "release/global_app_store_metadata.json"
+    google_play_metadata_path = root / "release/google_play_metadata.json"
+    google_play_console_path = root / "release/google_play_console_declarations.json"
     purchase_source_path = app / "Core/Purchases/DeckMakerPurchaseStore.swift"
     storekit_config_path = app / "Resources/DeckMaker.storekit"
     scheme_path = root / "ios/Hanco/Hanco.xcodeproj/xcshareddata/xcschemes/Hanco.xcscheme"
@@ -375,6 +725,8 @@ def repository_checks(root: Path) -> list[Finding]:
         game_center_service_path,
         metadata_path,
         global_metadata_path,
+        google_play_metadata_path,
+        google_play_console_path,
         purchase_source_path,
         storekit_config_path,
         scheme_path,
@@ -514,6 +866,8 @@ def repository_checks(root: Path) -> list[Finding]:
         findings.append(Finding("ERROR", f"Invalid App Store metadata: {error}"))
 
     findings.extend(global_app_store_metadata_findings(global_metadata_path))
+    findings.extend(google_play_metadata_findings(google_play_metadata_path, root))
+    findings.extend(google_play_console_declaration_findings(google_play_console_path))
 
     purchase_source = purchase_source_path.read_text(encoding="utf-8")
     for contract in (
@@ -664,11 +1018,28 @@ def repository_checks(root: Path) -> list[Finding]:
         add(findings, 'android:roundIcon="@mipmap/ic_launcher_round"' in android_manifest, "Android round launcher icon is missing")
         add(findings, '${applicationId}.files' in android_manifest, "Android FileProvider must use the application ID authority")
         add(findings, 'android:exported="false"' in android_manifest, "Android FileProvider must not be exported")
+        add(
+            findings,
+            'android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"' in android_manifest,
+            "Android legacy image-save permission must be limited to API 28",
+        )
+        for prohibited_permission in (
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.MANAGE_EXTERNAL_STORAGE",
+            "com.google.android.gms.permission.AD_ID",
+        ):
+            add(
+                findings,
+                prohibited_permission not in android_manifest,
+                f"Android manifest must not request {prohibited_permission}",
+            )
+        add(findings, 'android:allowBackup="false"' in android_manifest, "Android local-only data must not be backed up")
         add(findings, 'path="shared_results/"' in android_paths, "Android share provider must expose only result cache files")
         add(
             findings,
-            "PiyokeyLogo.imageset" in android_build and 'rename { "piyokey_logo.png" }' in android_build,
-            "Android launcher/share logo must derive from the shared iOS brand source",
+            "../shared/brand/piyokey_app_icon_source.png" in android_build
+            and 'rename { "piyokey_logo.png" }' in android_build,
+            "Android launcher/share logo must derive from the shared brand source",
         )
     except OSError as error:
         findings.append(Finding("ERROR", f"Invalid Android release resources: {error}"))

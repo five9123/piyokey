@@ -55,6 +55,12 @@ class AppPreferencesTest {
   }
 
   @Test
+  fun weeklyCupAlwaysUsesBuiltinForCompetitiveParity() {
+    assertEquals(InputMode.BUILTIN, InputModePolicy.weeklyCup(InputMode.BUILTIN))
+    assertEquals(InputMode.BUILTIN, InputModePolicy.weeklyCup(InputMode.OS_IME))
+  }
+
+  @Test
   fun wardrobeUnlocksAreMonotonicAndAutoNeverAddsContextAccessories() {
     val streak = PiyoWardrobePolicy.unlockedAfterStreakRewards(emptySet(), setOf(3, 7))
     assertEquals(setOf(PiyoAccessory.STREAK_RIBBON, PiyoAccessory.RAINBOW_BOW), streak)
@@ -77,5 +83,12 @@ class AppPreferencesTest {
     val changed = preferences.copy(selectedPiyoAccessory = PiyoAccessory.NONE)
     assertEquals(PiyoAccessory.TOPIK_GLASSES, appearance.accessory)
     assertEquals(null, changed.sessionAppearance.accessory)
+  }
+
+  @Test
+  fun quickPracticeHistoryDefaultsEmptyAndSurvivesPreferenceCopies() {
+    val preferences = AppPreferences(recentQuickPracticeWords = listOf("가", "나"))
+    assertEquals(listOf("가", "나"), preferences.copy(theme = AppTheme.DARK).recentQuickPracticeWords)
+    assertTrue(AppPreferences().recentQuickPracticeWords.isEmpty())
   }
 }

@@ -1,6 +1,7 @@
 import copy
 import importlib.util
 import json
+import struct
 import sys
 import tempfile
 import unittest
@@ -123,7 +124,7 @@ class ReleasePreflightTests(unittest.TestCase):
             "Version 1.1 App Store metadata locales must be exactly en-US, en-GB, en-AU, en-CA, ko, and ja",
             messages,
         )
-        self.assertIn("Android M7 must remain on hold until an explicit resume decision", messages)
+        self.assertIn("Android M7 must remain on its resumed, separate Google Play release track", messages)
         self.assertIn("Version 1.1 availability must select All Countries or Regions", messages)
         self.assertIn("Version 1.1 availability must include future storefronts", messages)
         self.assertIn("App and Deck Maker IAP availability must match", messages)
@@ -153,6 +154,77 @@ class ReleasePreflightTests(unittest.TestCase):
                 for finding in release_preflight.global_app_store_metadata_findings(path)
             }
             self.assertTrue(any(message.startswith("Invalid global App Store metadata:") for message in invalid_messages))
+
+    def test_google_play_metadata_contract_is_repository_valid(self):
+        path = ROOT / "release/google_play_metadata.json"
+        self.assertEqual(release_preflight.google_play_metadata_findings(path, ROOT), [])
+
+    def test_google_play_metadata_contract_rejects_listing_drift(self):
+        source = json.loads((ROOT / "release/google_play_metadata.json").read_text(encoding="utf-8"))
+        invalid = copy.deepcopy(source)
+        invalid["release"]["target_sdk"] = 35
+        invalid["localizations"].pop("ko")
+        invalid["localizations"]["ja"]["title"] = "長" * 31
+        invalid["localizations"]["en-US"]["short_description"] = "Download now"
+        invalid["assets"]["phone_screenshots"]["status"] = "complete"
+        invalid["external_gates"]["play_console_app_created"] = True
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "google_play_metadata.json"
+            path.write_text(json.dumps(invalid), encoding="utf-8")
+            messages = {
+                finding.message
+                for finding in release_preflight.google_play_metadata_findings(path, ROOT)
+            }
+
+        self.assertIn("Google Play target SDK must be 36", messages)
+        self.assertIn("Google Play localization keys must be exactly en-US, ja, and ko", messages)
+        self.assertIn("ja Google Play title exceeds 30 characters", messages)
+        self.assertIn("en-US Google Play short_description contains prohibited promotional copy", messages)
+        self.assertIn("Google Play screenshots must remain pending the exact signed release candidate", messages)
+        self.assertIn("Google Play external gates must remain open until verified outside the repository", messages)
+
+    def test_google_play_metadata_contract_rejects_invalid_icon_dimensions(self):
+        source = json.loads((ROOT / "release/google_play_metadata.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            temp_root = Path(directory)
+            invalid_icon = temp_root / "invalid-icon.png"
+            data = bytearray((ROOT / source["assets"]["app_icon"]["path"]).read_bytes()[:33])
+            struct.pack_into(">I", data, 16, 511)
+            invalid_icon.write_bytes(data)
+            source["assets"]["app_icon"]["path"] = str(invalid_icon)
+            source["assets"]["feature_graphic"]["path"] = str(
+                ROOT / source["assets"]["feature_graphic"]["path"]
+            )
+            source["assets"]["feature_graphic"]["source_path"] = str(
+                ROOT / source["assets"]["feature_graphic"]["source_path"]
+            )
+            path = temp_root / "google_play_metadata.json"
+            path.write_text(json.dumps(source), encoding="utf-8")
+            messages = {
+                finding.message
+                for finding in release_preflight.google_play_metadata_findings(path, temp_root)
+            }
+
+        self.assertIn("Google Play app_icon is 511x512, expected 512x512", messages)
+
+    def test_google_play_console_draft_keeps_data_safety_unresolved(self):
+        path = ROOT / "release/google_play_console_declarations.json"
+        self.assertEqual(release_preflight.google_play_console_declaration_findings(path), [])
+        invalid = json.loads(path.read_text(encoding="utf-8"))
+        invalid["status"] = "applied"
+        invalid["data_safety_evidence"]["final_collects_or_shares_answer"] = "NO"
+        invalid["permissions_prohibited"] = []
+        with tempfile.TemporaryDirectory() as directory:
+            draft = Path(directory) / "google_play_console_declarations.json"
+            draft.write_text(json.dumps(invalid), encoding="utf-8")
+            messages = {
+                finding.message
+                for finding in release_preflight.google_play_console_declaration_findings(draft)
+            }
+        self.assertIn("Google Play Console declarations must remain operator-review drafts", messages)
+        self.assertIn("Google Play Data safety must remain unresolved pending host and SDK review", messages)
+        self.assertIn("Google Play prohibited permission contract differs", messages)
 
     def test_screenshot_manifest_matches_release_images(self):
         messages = {finding.message for finding in release_preflight.strict_checks(ROOT)}

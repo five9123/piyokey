@@ -55,7 +55,7 @@
   <string name="action_back">뒤로</string>
   <string name="error_generic">문제가 생겼습니다. 기존 덱은 안전하게 보관되어 있어요.</string>
   <string name="user_deck_import">덱 가져오기</string>
-  <string name="user_deck_new_locked">새 덱 🔒</string>
+  <string name="user_deck_new_locked">새 덱</string>
   <string name="user_deck_new">새 덱</string>
   <string name="action_close">닫기</string>
   <string name="action_ok">확인</string>
@@ -135,4 +135,6 @@
   <string name="deck_report_content">이 덱 내용 신고하기</string>
   <string name="user_deck_import_as_copy">별도 사본으로 가져오기</string>
   <string name="user_deck_import_as_copy_locked">별도 사본으로 가져오기 · 피요키 프로</string>
+  <string name="deck_editor_move_up">항목 위로 이동</string>
+  <string name="deck_editor_move_down">항목 아래로 이동</string>
 </resources>

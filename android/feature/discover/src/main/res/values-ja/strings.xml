@@ -55,7 +55,7 @@
   <string name="action_back">戻る</string>
   <string name="error_generic">問題が発生しました。保存済みデッキはそのままです。</string>
   <string name="user_deck_import">デッキを読み込む</string>
-  <string name="user_deck_new_locked">新しいデッキ 🔒</string>
+  <string name="user_deck_new_locked">新しいデッキ</string>
   <string name="user_deck_new">新しいデッキ</string>
   <string name="action_close">閉じる</string>
   <string name="action_ok">OK</string>
@@ -135,4 +135,6 @@
   <string name="deck_report_content">このデッキの内容を報告</string>
   <string name="user_deck_import_as_copy">別のコピーとして読み込む</string>
   <string name="user_deck_import_as_copy_locked">別のコピーとして読み込む・ピヨキー pro</string>
+  <string name="deck_editor_move_up">項目を上へ移動</string>
+  <string name="deck_editor_move_down">項目を下へ移動</string>
 </resources>
