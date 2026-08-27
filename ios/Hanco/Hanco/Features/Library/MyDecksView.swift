@@ -1464,6 +1464,7 @@ struct MyPageView: View {
         contentSHA256: package.contentSHA256,
         packageFormatVersion: package.manifest.formatVersion,
         isLocallyModified: true,
+        hasPiyokeyProAccess: purchaseStore.hasAccess,
         derivedFromDeckId: presentation.derivedFromDeckID,
         expectedCurrentVersion: expectedCurrentVersion
       )
@@ -1507,6 +1508,7 @@ struct MyPageView: View {
       contentSHA256: package.contentSHA256,
       packageFormatVersion: package.manifest.formatVersion,
       isLocallyModified: true,
+      hasPiyokeyProAccess: purchaseStore.hasAccess,
       derivedFromDeckId: presentation.draft.deckID
     )
     _ = reviewDeck.reconcile(with: installed)

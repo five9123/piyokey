@@ -13,6 +13,7 @@ enum GameCompetition: String, Codable, Equatable {
 
 enum SessionInputMode: String, Codable, CaseIterable, Equatable {
   case builtIn = "builtin"
+  case builtInKorean10Key = "builtin_korean_10key"
   case osIME = "os_ime"
 
   init(from decoder: Decoder) throws {
@@ -20,6 +21,7 @@ enum SessionInputMode: String, Codable, CaseIterable, Equatable {
     let value = try container.decode(String.self)
     switch value {
     case Self.builtIn.rawValue, "built_in": self = .builtIn
+    case Self.builtInKorean10Key.rawValue: self = .builtInKorean10Key
     case Self.osIME.rawValue, "os_keyboard": self = .osIME
     default:
       throw DecodingError.dataCorruptedError(

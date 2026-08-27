@@ -1464,6 +1464,8 @@ struct ChoseongTypingView: View {
   @State private var retentionSession = RetentionSessionContext()
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var recordInputMode: SessionInputMode = .builtIn
+  @State private var builtInKeyboardLayout: BuiltInKeyboardLayout
+  @State private var korean10KeyInterpreter = Korean10KeyInterpreter()
   @State private var hasUsedBuiltInInput = false
   @State private var didResolveInputMode = false
   @State private var inputResetRevision = 0
@@ -1483,6 +1485,13 @@ struct ChoseongTypingView: View {
     self.deck = deck
     self.mode = mode
     self.mascotAppearance = MascotSessionAppearance()
+    _builtInKeyboardLayout = State(
+      initialValue: BuiltInKeyboardLayout.resolved(
+        from: UserDefaults.standard.string(
+          forKey: KeyboardPreferenceKeys.builtInLayoutDefault
+        ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+      )
+    )
     let seed = GamePresetSessionRandomizer.seed(for: deck, gameKind: mode.gameKind)
     let rounds: [ChoseongTypingRound]
     switch mode {
@@ -1602,8 +1611,12 @@ struct ChoseongTypingView: View {
     }
     .onChange(of: inputMode) { mode in
       showsOSIMEUnavailable = false
+      korean10KeyInterpreter.reset()
       inputResetRevision &+= 1
       if mode == .osIME, !hasUsedBuiltInInput { recordInputMode = .osIME }
+    }
+    .onChange(of: viewModel.roundRevision) { _ in
+      korean10KeyInterpreter.reset()
     }
     .onChange(of: showsResult) { isPresented in
       guard !isPresented, exitsAfterResultDismiss else { return }
@@ -1909,7 +1922,7 @@ struct ChoseongTypingView: View {
 
         VStack(spacing: 4) {
           SyllableAssemblyPreview(
-            text: viewModel.composingPreview,
+            text: compositionPreviewText,
             incomingJamo: viewModel.lastAcceptedKey,
             revision: viewModel.compositionRevision,
             shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin
@@ -1989,19 +2002,53 @@ struct ChoseongTypingView: View {
           onConfirmedMismatch: recordOSIMEMistake
         )
       } else {
-        HangulKeyboardView(
-          nextExpectedKey: nil,
-          options: HangulKeyboardOptions(
-            showsKeyGuide: false,
-            showsRomanHints: showsRomanHints,
-            hapticsEnabled: hapticsEnabled
-          ),
-          onKeyFeedback: playKeySound,
-          onKey: handleInput,
-          onBackspace: handleBackspace
-        )
+        if builtInKeyboardLayout == .korean10Key {
+          Korean10KeyKeyboardView(
+            nextExpectedKey: korean10KeyInterpreter.nextKey(for: viewModel.nextExpectedKey),
+            options: HangulKeyboardOptions(
+              showsKeyGuide: false,
+              showsRomanHints: false,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: inputKorean10Key,
+            onBackspace: backspaceKorean10Key
+          )
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: nil,
+            options: HangulKeyboardOptions(
+              showsKeyGuide: false,
+              showsRomanHints: showsRomanHints,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: handleInput,
+            onBackspace: handleBackspace
+          )
+        }
       }
     }
+  }
+
+  private func inputKorean10Key(_ key: Korean10KeyKey) {
+    markBuiltInInputUsed()
+    switch korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey) {
+    case .pending, .separatorAccepted:
+      break
+    case .committed(let jamo):
+      guard let outcome = viewModel.input(jamo) else { return }
+      handle(outcome)
+    case .incorrect:
+      guard let outcome = viewModel.input(key.displayText.first ?? "ㆍ") else { return }
+      handle(outcome)
+    }
+  }
+
+  private func backspaceKorean10Key() {
+    markBuiltInInputUsed()
+    guard korean10KeyInterpreter.backspace() == .forwardToHangulEngine else { return }
+    viewModel.backspace()
   }
 
   private var gameBackground: some View {
@@ -2155,10 +2202,11 @@ struct ChoseongTypingView: View {
     sessionReviewItems.removeAll(keepingCapacity: true)
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
-    recordInputMode = inputMode
+    recordInputMode = resolvedRecordInputMode
     didCaptureAnalyticsStart = false
     didCaptureAnalyticsCompletion = false
     didCaptureAnalyticsAbandonment = false
+    korean10KeyInterpreter.reset()
     inputResetRevision &+= 1
     let nextRounds = randomizedPresetRounds()
     if mode.requiresCountdown {
@@ -2265,7 +2313,18 @@ struct ChoseongTypingView: View {
 
   private func markBuiltInInputUsed() {
     hasUsedBuiltInInput = true
-    recordInputMode = .builtIn
+    recordInputMode = builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var resolvedRecordInputMode: SessionInputMode {
+    inputMode == .osIME ? .osIME : builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var compositionPreviewText: String {
+    guard inputMode == .builtIn, builtInKeyboardLayout == .korean10Key,
+      let pending = korean10KeyInterpreter.pendingDisplay
+    else { return viewModel.composingPreview }
+    return viewModel.composingPreview + pending
   }
 
   private func resolveInitialInputModeIfNeeded() {
@@ -2278,7 +2337,7 @@ struct ChoseongTypingView: View {
       recordInputMode = .osIME
     } else {
       inputMode = .builtIn
-      recordInputMode = .builtIn
+      recordInputMode = builtInKeyboardLayout.gameRecordInputMode
       if SessionInputMode(rawValue: inputModeDefault) == .osIME {
         showsOSIMEUnavailable = true
       }

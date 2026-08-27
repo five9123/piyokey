@@ -247,6 +247,7 @@ class DeckRepository private constructor(
     stagingFile: File,
     expectedContentSha256: String,
     replaceConfirmed: Boolean,
+    hasPiyokeyProAccess: Boolean,
   ): ImportedDeckCommitResult = withContext(Dispatchers.IO) {
     userDeckMutationMutex.withLock {
       recoverPendingOperations()
@@ -271,6 +272,12 @@ class DeckRepository private constructor(
       }
       if (ImportedDeckConflictPolicy.requiresDestructiveConfirmation(conflict) && !replaceConfirmed) {
         throw ImportedDeckException.ReplacementConfirmationRequired(conflict)
+      }
+      if (previousEntity == null && !hasPiyokeyProAccess) {
+        val userDeckCount = dao.installedDecks().count { it.source in USER_DECK_SOURCES }
+        if (userDeckCount >= PiyokeyProPolicy.FREE_INSTALLED_USER_DECK_LIMIT) {
+          throw ImportedDeckException.FreeUserDeckLimitReached
+        }
       }
 
       val now = clock()

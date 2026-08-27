@@ -269,8 +269,8 @@ struct FlowGameResultView: View {
         }
         if presentation.showsInputMode, let inputMode = recordOutcome?.record.inputMode {
           Label(
-            inputMode == .builtIn ? "input_mode.builtin" : "input_mode.os_ime",
-            systemImage: inputMode == .builtIn ? "rectangle.grid.3x2.fill" : "keyboard"
+            inputMode.resultLabelKey,
+            systemImage: inputMode.resultSystemImage
           )
           .font(.caption2.weight(.bold))
           .foregroundStyle(AppPalette.secondary)

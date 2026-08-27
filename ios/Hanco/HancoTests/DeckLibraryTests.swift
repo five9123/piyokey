@@ -663,7 +663,8 @@ final class DeckLibraryTests: XCTestCase {
       source: .created,
       contentSHA256: sha256Hex(firstData),
       packageFormatVersion: 1,
-      isLocallyModified: true
+      isLocallyModified: true,
+      hasPiyokeyProAccess: true
     )
     let second = makeUserDeck(
       version: 2,
@@ -677,6 +678,7 @@ final class DeckLibraryTests: XCTestCase {
       contentSHA256: sha256Hex(secondData),
       packageFormatVersion: 1,
       isLocallyModified: true,
+      hasPiyokeyProAccess: true,
       expectedCurrentVersion: 1
     )
     let indexURL = temporaryRoot.appendingPathComponent("installed-decks.json")
@@ -695,6 +697,7 @@ final class DeckLibraryTests: XCTestCase {
         contentSHA256: sha256Hex(thirdData),
         packageFormatVersion: 1,
         isLocallyModified: true,
+        hasPiyokeyProAccess: true,
         expectedCurrentVersion: 1
       )
       XCTFail("Expected sourceChanged")
@@ -712,14 +715,92 @@ final class DeckLibraryTests: XCTestCase {
     XCTAssertEqual(try store.data(for: first.deckId), secondData)
   }
 
+  func testFreeUserDeckLimitBlocksOnlyFourthNewDeckAndAllowsReplacement() async throws {
+    let library = DeckLibrary(source: FailingDeckSource(), store: store)
+    for index in 1...3 {
+      let deck = makeUserDeck(
+        id: String(format: "user_%032x", index),
+        version: 1,
+        meaning: "無料\(index)",
+        updatedAt: Date(timeIntervalSince1970: TimeInterval(100 + index))
+      )
+      let data = try DeckKitJSON.makeEncoder().encode(deck)
+      _ = try await library.installUserDeck(
+        data: data,
+        source: .imported,
+        contentSHA256: sha256Hex(data),
+        packageFormatVersion: 1,
+        isLocallyModified: false,
+        hasPiyokeyProAccess: false
+      )
+    }
+
+    XCTAssertEqual(library.installedUserDeckCount, 3)
+    XCTAssertFalse(library.canInstallNewUserDeck(hasPiyokeyProAccess: false))
+    XCTAssertTrue(library.canInstallNewUserDeck(hasPiyokeyProAccess: true))
+
+    let fourth = makeUserDeck(
+      id: "user_ffffffffffffffffffffffffffffffff",
+      version: 1,
+      meaning: "四つ目",
+      updatedAt: Date(timeIntervalSince1970: 104)
+    )
+    let fourthData = try DeckKitJSON.makeEncoder().encode(fourth)
+    do {
+      _ = try await library.installUserDeck(
+        data: fourthData,
+        source: .imported,
+        contentSHA256: sha256Hex(fourthData),
+        packageFormatVersion: 1,
+        isLocallyModified: false,
+        hasPiyokeyProAccess: false
+      )
+      XCTFail("Expected the free user-deck limit")
+    } catch let error as PiyokeyProAccessError {
+      XCTAssertEqual(error, .freeUserDeckLimitReached)
+    }
+
+    let replacement = makeUserDeck(
+      id: "user_00000000000000000000000000000001",
+      version: 2,
+      meaning: "無料置換",
+      updatedAt: Date(timeIntervalSince1970: 105)
+    )
+    let replacementData = try DeckKitJSON.makeEncoder().encode(replacement)
+    _ = try await library.installUserDeck(
+      data: replacementData,
+      source: .imported,
+      contentSHA256: sha256Hex(replacementData),
+      packageFormatVersion: 1,
+      isLocallyModified: false,
+      hasPiyokeyProAccess: false
+    )
+    XCTAssertEqual(library.installedDeck(replacement.deckId)?.version, 2)
+
+    _ = try await library.installUserDeck(
+      data: fourthData,
+      source: .imported,
+      contentSHA256: sha256Hex(fourthData),
+      packageFormatVersion: 1,
+      isLocallyModified: false,
+      hasPiyokeyProAccess: true
+    )
+    XCTAssertEqual(library.installedUserDeckCount, 4)
+  }
+
   private func catalogEntry(id: String) throws -> CatalogDeck {
     let catalog = try BundleCatalogRepository().loadCatalog()
     return try XCTUnwrap(catalog.decks.first { $0.deckId == id })
   }
 
-  private func makeUserDeck(version: Int, meaning: String, updatedAt: Date) -> Deck {
+  private func makeUserDeck(
+    id: String = "user_0123456789abcdef0123456789abcdef",
+    version: Int,
+    meaning: String,
+    updatedAt: Date
+  ) -> Deck {
     Deck(
-      deckId: "user_0123456789abcdef0123456789abcdef",
+      deckId: id,
       version: version,
       name: "私のデッキ",
       author: DeckAuthor(id: "user_local", nickname: "Learner"),

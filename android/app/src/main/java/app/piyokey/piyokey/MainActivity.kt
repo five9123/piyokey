@@ -72,6 +72,7 @@ import app.piyokey.core.data.DeckRepository
 import app.piyokey.core.data.ActiveUserDeckDraft
 import app.piyokey.core.data.DeckMakerEntitlementCache
 import app.piyokey.core.data.PiyokeyDatabase
+import app.piyokey.core.data.PiyokeyProPolicy
 import app.piyokey.core.data.RoomPlayGamesLocalData
 import app.piyokey.core.data.UserDeckEditCommitException
 import app.piyokey.core.data.DiscoveryEngine
@@ -541,6 +542,7 @@ private fun PiyokeyApp(
   var editorSaveError by remember { mutableStateOf(false) }
   var showDeckMakerPaywall by remember { mutableStateOf(false) }
   var pendingPaidDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
+  var pendingPaidImport by remember { mutableStateOf<UserDeckImportUiState.Ready?>(null) }
   var pendingPaidImportCopy by remember { mutableStateOf<UserDeckImportUiState.Ready?>(null) }
   var pendingDifferentDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
   var staleEditDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
@@ -1389,7 +1391,11 @@ private fun PiyokeyApp(
     userDeckImport = null
   }
 
-  fun commitUserDeckImport(ready: UserDeckImportUiState.Ready, replaceConfirmed: Boolean) {
+  fun commitUserDeckImport(
+    ready: UserDeckImportUiState.Ready,
+    replaceConfirmed: Boolean,
+    hasPiyokeyProAccess: Boolean = billingState.hasAccess,
+  ) {
     userDeckImport = ready.copy(isWorking = true)
     scope.launch {
       try {
@@ -1397,6 +1403,7 @@ private fun PiyokeyApp(
           stagingFile = ready.document.file,
           expectedContentSha256 = ready.preview.contentSha256,
           replaceConfirmed = replaceConfirmed,
+          hasPiyokeyProAccess = hasPiyokeyProAccess,
         )) {
           is ImportedDeckCommitResult.Installed,
           is ImportedDeckCommitResult.AlreadyInstalled,
@@ -1405,6 +1412,10 @@ private fun PiyokeyApp(
         closeUserDeckImport()
         tab = RootTab.PROFILE
         reload()
+      } catch (_: ImportedDeckException.FreeUserDeckLimitReached) {
+        userDeckImport = ready
+        pendingPaidImport = ready
+        showDeckMakerPaywall = true
       } catch (error: Exception) {
         documentGateway.discard(ready.document)
         userDeckImport = UserDeckImportUiState.Failed(error.toUserDeckImportError())
@@ -1456,6 +1467,9 @@ private fun PiyokeyApp(
         }
       },
       hasDeckMakerAccess = billingState.hasAccess,
+      canInstallNewDeck = billingState.hasAccess || current.installed.count {
+        it.metadata.source == "imported" || it.metadata.source == "created"
+      } < PiyokeyProPolicy.FREE_INSTALLED_USER_DECK_LIMIT,
       onExportCurrent = { ready?.preview?.installed?.let { exportUserDeck(it) } },
     )
     return
@@ -1541,9 +1555,13 @@ private fun PiyokeyApp(
           scope.launch {
             if (billingManager.purchase(activity)) {
               showDeckMakerPaywall = false
-              val paidImport = pendingPaidImportCopy
+              val paidImport = pendingPaidImport
+              pendingPaidImport = null
+              val paidImportCopy = pendingPaidImportCopy
               pendingPaidImportCopy = null
-              if (paidImport != null) commitUserDeckImportAsCopy(paidImport)
+              if (paidImport != null) {
+                commitUserDeckImport(paidImport, replaceConfirmed = false, hasPiyokeyProAccess = true)
+              } else if (paidImportCopy != null) commitUserDeckImportAsCopy(paidImportCopy)
               else pendingPaidDraft?.let(::requestDeckMakerDraft)
               pendingPaidDraft = null
             }
@@ -1554,9 +1572,13 @@ private fun PiyokeyApp(
         scope.launch {
           if (billingManager.restore()) {
             showDeckMakerPaywall = false
-            val paidImport = pendingPaidImportCopy
+            val paidImport = pendingPaidImport
+            pendingPaidImport = null
+            val paidImportCopy = pendingPaidImportCopy
             pendingPaidImportCopy = null
-            if (paidImport != null) commitUserDeckImportAsCopy(paidImport)
+            if (paidImport != null) {
+              commitUserDeckImport(paidImport, replaceConfirmed = false, hasPiyokeyProAccess = true)
+            } else if (paidImportCopy != null) commitUserDeckImportAsCopy(paidImportCopy)
             else pendingPaidDraft?.let(::requestDeckMakerDraft)
             pendingPaidDraft = null
           }
@@ -1566,6 +1588,7 @@ private fun PiyokeyApp(
       onClose = {
         showDeckMakerPaywall = false
         pendingPaidDraft = null
+        pendingPaidImport = null
         pendingPaidImportCopy = null
       },
     )

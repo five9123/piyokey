@@ -86,7 +86,7 @@ object AnalyticsContract {
     AnalyticsProperty.DECK_SOURCE to setOf("bundled", "catalog", "imported", "created", "review", "daily", "curriculum", "unknown"),
     AnalyticsProperty.DECK_CATEGORY to setOf("beginner", "travel", "daily", "topik", "trend", "custom", "unknown"),
     AnalyticsProperty.SESSION_KIND to setOf("lesson", "free_practice", "review", "daily", "game"),
-    AnalyticsProperty.INPUT_MODE to setOf("builtin", "os_ime", "not_applicable"),
+    AnalyticsProperty.INPUT_MODE to setOf("builtin", "builtin_korean_10key", "os_ime", "not_applicable"),
     AnalyticsProperty.GAME_MODE to setOf("flow", "acid_rain", "choseong", "word_match", "dictation", "spacing", "not_applicable"),
     AnalyticsProperty.DIFFICULTY to setOf("beginner", "intermediate", "advanced", "custom", "not_applicable"),
     AnalyticsProperty.RESULT to setOf("completed", "failed", "cancelled"),

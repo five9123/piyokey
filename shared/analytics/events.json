@@ -35,7 +35,7 @@
     "deck_source": { "type": "enum", "values": ["bundled", "catalog", "imported", "created", "review", "daily", "curriculum", "unknown"] },
     "deck_category": { "type": "enum", "values": ["beginner", "travel", "daily", "topik", "trend", "custom", "unknown"] },
     "session_kind": { "type": "enum", "values": ["lesson", "free_practice", "review", "daily", "game"] },
-    "input_mode": { "type": "enum", "values": ["builtin", "os_ime", "not_applicable"] },
+    "input_mode": { "type": "enum", "values": ["builtin", "builtin_korean_10key", "os_ime", "not_applicable"] },
     "game_mode": { "type": "enum", "values": ["flow", "acid_rain", "choseong", "word_match", "dictation", "spacing", "not_applicable"] },
     "difficulty": { "type": "enum", "values": ["beginner", "intermediate", "advanced", "custom", "not_applicable"] },
     "result": { "type": "enum", "values": ["completed", "failed", "cancelled"] },

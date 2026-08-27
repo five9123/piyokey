@@ -86,7 +86,7 @@ enum AnalyticsContract {
     .deckSource: ["bundled", "catalog", "imported", "created", "review", "daily", "curriculum", "unknown"],
     .deckCategory: ["beginner", "travel", "daily", "topik", "trend", "custom", "unknown"],
     .sessionKind: ["lesson", "free_practice", "review", "daily", "game"],
-    .inputMode: ["builtin", "os_ime", "not_applicable"],
+    .inputMode: ["builtin", "builtin_korean_10key", "os_ime", "not_applicable"],
     .gameMode: ["flow", "acid_rain", "choseong", "word_match", "dictation", "spacing", "not_applicable"],
     .difficulty: ["beginner", "intermediate", "advanced", "custom", "not_applicable"],
     .result: ["completed", "failed", "cancelled"],

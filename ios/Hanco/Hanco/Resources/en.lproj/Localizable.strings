@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "Default input mode";
 "practice.setup.input_mode_detail" = "Keyboard used for word, sentence, and game sessions";
 "practice.setup.start" = "Start practice";
-"practice.setup.session_note" = "You can switch input mode during practice without losing progress.";
+"practice.setup.session_note" = "You can switch input mode during practice. The built-in layout is fixed when the session starts.";
 
 "feedback.ready" = "Start with the highlighted key";
 "feedback.correct" = "Keep it up!";
@@ -81,7 +81,25 @@
 "keyboard.backspace" = "Delete one jamo";
 "keyboard.space" = "Space";
 "keyboard.accessibility_label" = "Korean keyboard";
+"keyboard.layout.title" = "Built-in keyboard layout";
+"keyboard.layout.detail" = "Used in Chapter 5+, free practice, and deck practice. The layout is fixed when a session starts.";
+"keyboard.layout.dubeolsik" = "2-Set (default)";
+"keyboard.layout.korean_10key" = "Korean 10-Key";
+"keyboard.layout.korean_10key_help" = "Repeat a grouped consonant key, use → between consecutive consonants in the same group, or combine ㅣ, ㆍ, and ㅡ in the highlighted order.";
+"keyboard.10key.accessibility_label" = "Korean 10-Key, Cheonjiin style";
+"keyboard.10key.vertical" = "Vertical stroke, ㅣ";
+"keyboard.10key.dot" = "Dot, Cheonjiin dot";
+"keyboard.10key.horizontal" = "Horizontal stroke, ㅡ";
+"keyboard.10key.giyeok" = "ㄱ, ㅋ, ㄲ group";
+"keyboard.10key.nieun" = "ㄴ, ㄹ group";
+"keyboard.10key.digeut" = "ㄷ, ㅌ, ㄸ group";
+"keyboard.10key.bieup" = "ㅂ, ㅍ, ㅃ group";
+"keyboard.10key.siot" = "ㅅ, ㅎ, ㅆ group";
+"keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ group";
+"keyboard.10key.ieung" = "ㅇ, ㅁ group";
+"keyboard.10key.next" = "Advance to the next consonant";
 "input_mode.builtin" = "Built-in keyboard";
+"input_mode.builtin_korean_10key" = "Korean 10-Key";
 "input_mode.os_ime" = "OS keyboard";
 "os_ime.input.title" = "Type with your device's Korean keyboard";
 "os_ime.input.live_badge" = "Real-world mode";
@@ -417,6 +435,7 @@
 "game.selection.deck_hint.dictation_unavailable" = "Needs at least one typeable Korean item";
 "game.selection.best_score" = "Best %@ pts";
 "game.selection.best_score.builtin" = "Built-in best %@ pts";
+"game.selection.best_score.korean_10key" = "10-Key best %@ pts";
 "game.selection.best_score.os_ime" = "OS best %@ pts";
 "game.selection.best_score.choseong" = "Initials best %@ pts";
 "game.selection.best_score.acid_rain" = "Word Rain best %@ pts";
@@ -793,6 +812,12 @@
 "home.primary.resume_detail" = "Continue from where you left off";
 "home.primary.deck_detail" = "Practice your most recent deck again";
 "home.primary.daily_personalized" = "Five prompts matched to your goal";
+"home.quick.piyo_cup.title" = "Weekly Piyo Cup";
+"home.quick.piyo_cup.detail" = "Jump into a 60-second run";
+"home.quick.random.title" = "5 random words";
+"home.quick.random.detail" = "A quick mix picked for you";
+"home.quick.random.session_title" = "5 random words";
+"home.quick.random.retry" = "Try 5 new words";
 "retention.rewards.navigation_title" = "Stamps & rewards";
 "retention.rewards.current_streak" = "Current streak";
 "retention.rewards.accessibility" = "Rewards for 3, 5, and 7 days";
@@ -920,10 +945,12 @@
 "closet.prop_game_center" = "Champion trophy";
 "closet.cond_game_center" = "Submit a score to Game Center";
 
-/* Deck Maker lifetime purchase */
-"deck_maker.paywall.navigation_title" = "My Deck Maker";
-"deck_maker.paywall.title" = "Build a deck of your own";
-"deck_maker.paywall.subtitle" = "Create new decks on your iPhone and freely edit the decks you import.";
+/* typee pro lifetime purchase */
+"deck_maker.paywall.navigation_title" = "typee pro";
+"deck_maker.paywall.title" = "Do more with your own decks";
+"deck_maker.paywall.subtitle" = "Unlock your fourth user deck plus on-device creation and editing with one purchase.";
+"deck_maker.paywall.feature.unlimitedImports.title" = "Keep unlimited user decks";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "Go beyond the three free decks and import as many .piyodeck files as you like.";
 "deck_maker.paywall.feature.create.title" = "Create new decks";
 "deck_maker.paywall.feature.create.detail" = "Build custom learning material with Korean, meanings, and readings.";
 "deck_maker.paywall.feature.edit.title" = "Edit imported decks";
@@ -932,9 +959,9 @@
 "deck_maker.paywall.feature.copyOfficial.detail" = "Make a personal copy of an official deck and tailor its content.";
 "deck_maker.paywall.feature.lifetime.title" = "One purchase, lifetime access";
 "deck_maker.paywall.feature.lifetime.detail" = "This is not a subscription. Create and edit without an expiry date.";
-"deck_maker.paywall.free_import_note" = "Importing .piyodeck files, practicing, and playing games remain free without a purchase.";
+"deck_maker.paywall.free_import_note" = "Keep up to three user decks for free. Practice, games, export, delete, and same-ID replacement remain available without a purchase.";
 "deck_maker.paywall.purchase_format" = "Buy for %@";
-"deck_maker.paywall.already_owned" = "Purchased · Open Deck Maker";
+"deck_maker.paywall.already_owned" = "Purchased · Use typee pro";
 "deck_maker.paywall.loading" = "Loading price…";
 "deck_maker.paywall.retry" = "Reload price";
 "deck_maker.paywall.restore" = "Restore Purchase";
@@ -942,11 +969,11 @@
 "deck_maker.paywall.privacy" = "Privacy Policy";
 "deck_maker.alert.ok" = "OK";
 "deck_maker.purchase.pending.title" = "Awaiting approval";
-"deck_maker.purchase.pending.message" = "Deck Maker will unlock when the purchase is approved.";
+"deck_maker.purchase.pending.message" = "typee pro will unlock when the purchase is approved.";
 "deck_maker.purchase.failed.title" = "Purchase couldn't be completed";
 "deck_maker.purchase.failed.message" = "Check your connection and try again. If you've already purchased, try Restore Purchase.";
 "deck_maker.restore.succeeded.title" = "Purchase restored";
-"deck_maker.restore.succeeded.message" = "Deck Maker is now available.";
+"deck_maker.restore.succeeded.message" = "typee pro is now available.";
 "deck_maker.restore.empty.title" = "No purchase found";
 "deck_maker.restore.empty.message" = "Make sure you're using the same Apple Account you used for the purchase.";
 "deck_maker.restore.failed.title" = "Purchase couldn't be restored";
@@ -1022,7 +1049,8 @@
 "piyodeck.import.status.downgrade" = "This is older than the installed version.";
 "piyodeck.import.status.same_version" = "The version number matches, but the content differs.";
 "piyodeck.import.status.different_detail" = "Nothing is merged automatically. Replace the current deck or save a separate copy.";
-"piyodeck.import.action.import" = "Import for Free";
+"piyodeck.import.action.import" = "Import Deck";
+"piyodeck.import.action.unlock_pro" = "Import a Fourth Deck with typee pro";
 "piyodeck.import.action.done" = "Done";
 "piyodeck.import.action.replace" = "Replace with Imported Deck";
 "piyodeck.import.action.copy" = "Save as Separate Copy";
@@ -1069,8 +1097,8 @@
 "my_decks.delete.failure.message_format" = "\"%@\" was not deleted. Check free storage and try again.";
 "deck_maker.accessibility.status.unlocked" = "Available";
 "deck_maker.accessibility.status.locked" = "Purchase required";
-"deck_maker.accessibility.hint.available" = "Opens Deck Maker.";
-"deck_maker.accessibility.hint.locked" = "Opens the Deck Maker purchase screen.";
+"deck_maker.accessibility.hint.available" = "Opens typee pro features.";
+"deck_maker.accessibility.hint.locked" = "Opens the typee pro purchase screen.";
 "piyodeck.import.compare.title" = "Current vs. Imported";
 "piyodeck.import.compare.current" = "Current";
 "piyodeck.import.compare.incoming" = "Imported File";
@@ -1082,7 +1110,7 @@
 "piyodeck.import.action.export_current.hint" = "Shares the current deck as a .piyodeck file.";
 "piyodeck.import.action.copy.locked_label" = "Save as Separate Copy, purchase required";
 "piyodeck.import.action.copy.hint" = "Saves a new user deck with a new ID.";
-"piyodeck.import.action.copy.locked_hint" = "Opens My Deck Maker purchase. Importing and replacing remain free.";
+"piyodeck.import.action.copy.locked_hint" = "Opens typee pro purchase. Replacing the same deck ID remains free.";
 "piyodeck.import.action.replace.hint" = "Replaces the current deck with the imported content. Opens a confirmation.";
 "piyodeck.import.action.replace.downgrade_hint" = "Replaces the current deck with an older version. Opens a confirmation.";
 "piyodeck.import.action.replace.same_version_hint" = "Replaces the current deck with different content using the same version number. Opens a confirmation.";

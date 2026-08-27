@@ -8,6 +8,7 @@ enum DeckMakerLegalLinks {
 }
 
 private enum DeckMakerPaywallFeature: String, CaseIterable {
+  case unlimitedImports
   case create
   case edit
   case copyOfficial
@@ -15,6 +16,7 @@ private enum DeckMakerPaywallFeature: String, CaseIterable {
 
   var systemImage: String {
     switch self {
+    case .unlimitedImports: "rectangle.stack.badge.plus"
     case .create: "rectangle.stack.badge.plus"
     case .edit: "pencil.and.list.clipboard"
     case .copyOfficial: "doc.on.doc.fill"

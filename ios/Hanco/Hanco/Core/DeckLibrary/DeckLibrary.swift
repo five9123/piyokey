@@ -1,6 +1,14 @@
 import DeckKit
 import Foundation
 
+enum PiyokeyProAccessError: Error, Equatable {
+  case freeUserDeckLimitReached
+}
+
+enum PiyokeyProPolicy {
+  static let freeInstalledUserDeckLimit = 3
+}
+
 private actor DeckInstallationWriter {
   private let store: DeckInstallationStore
 
@@ -49,6 +57,8 @@ final class DeckLibrary: ObservableObject {
   @Published private(set) var failedDeckIDs: Set<String> = []
   @Published private(set) var downloadHistory: [String: [String]] = [:]
 
+  private var installingNewUserDeckIDs: Set<String> = []
+
   private let source: any DeckSource
   private let store: DeckInstallationStore
   private let writer: DeckInstallationWriter
@@ -72,6 +82,16 @@ final class DeckLibrary: ObservableObject {
       if lhsDate == rhsDate { return lhs.appName < rhs.appName }
       return lhsDate > rhsDate
     }
+  }
+
+  var installedUserDeckCount: Int {
+    records.values.filter { $0.source == .imported || $0.source == .created }.count
+  }
+
+  func canInstallNewUserDeck(hasPiyokeyProAccess: Bool) -> Bool {
+    hasPiyokeyProAccess
+      || installedUserDeckCount + installingNewUserDeckIDs.count
+        < PiyokeyProPolicy.freeInstalledUserDeckLimit
   }
 
   func isInstalled(_ deckId: String) -> Bool {
@@ -122,6 +142,7 @@ final class DeckLibrary: ObservableObject {
     contentSHA256: String,
     packageFormatVersion: Int,
     isLocallyModified: Bool,
+    hasPiyokeyProAccess: Bool,
     derivedFromDeckId: String? = nil,
     expectedCurrentVersion: Int? = nil
   ) async throws -> Deck {
@@ -130,6 +151,17 @@ final class DeckLibrary: ObservableObject {
     let userDeckIssues = UserDeckValidator.validate(deck)
     guard userDeckIssues.isEmpty else {
       throw PiyoDeckImportError.invalidUserDeck(userDeckIssues)
+    }
+    let reservesNewUserDeckSlot = records[deck.deckId] == nil
+      && !installingNewUserDeckIDs.contains(deck.deckId)
+    if reservesNewUserDeckSlot,
+      !canInstallNewUserDeck(hasPiyokeyProAccess: hasPiyokeyProAccess)
+    {
+      throw PiyokeyProAccessError.freeUserDeckLimitReached
+    }
+    if reservesNewUserDeckSlot { installingNewUserDeckIDs.insert(deck.deckId) }
+    defer {
+      if reservesNewUserDeckSlot { installingNewUserDeckIDs.remove(deck.deckId) }
     }
     let record = try await writer.install(
       data: data,

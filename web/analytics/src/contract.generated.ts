@@ -45,7 +45,7 @@ export const ENUM_VALUES: Readonly<Partial<Record<AnalyticsProperty, ReadonlySet
   deck_source: new Set(["bundled", "catalog", "imported", "created", "review", "daily", "curriculum", "unknown"]),
   deck_category: new Set(["beginner", "travel", "daily", "topik", "trend", "custom", "unknown"]),
   session_kind: new Set(["lesson", "free_practice", "review", "daily", "game"]),
-  input_mode: new Set(["builtin", "os_ime", "not_applicable"]),
+  input_mode: new Set(["builtin", "builtin_korean_10key", "os_ime", "not_applicable"]),
   game_mode: new Set(["flow", "acid_rain", "choseong", "word_match", "dictation", "spacing", "not_applicable"]),
   difficulty: new Set(["beginner", "intermediate", "advanced", "custom", "not_applicable"]),
   result: new Set(["completed", "failed", "cancelled"]),
