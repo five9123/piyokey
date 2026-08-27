@@ -83,11 +83,11 @@ Split View·Stage Manager·포인터·VoiceOver와 실제 Bluetooth/USB 키보�
 - 포커스 해제와 설정 패널 표시를 서로 다른 main run-loop cycle로 분리한다.
 - 설정을 닫으면 OS IME 포커스를 자동 복구한다.
 - 입력 중인 자모, 현재 문제, 오타와 세션 시간은 보존한다.
-- Android M7 M2에는 아직 OS IME와 세션 설정 진입점이 없어 동일 런타임 경로는 없다. 향후 F2a/F10 구현은 같은 포커스 격리 계약을 적용한다.
+- Android M6 포팅은 OS IME `EditText` adapter를 사용하지만 연습 중 전역 설정 시트나 SwiftUI context menu를 열지 않는다. 입력 방식 `DropdownMenu`와 순수 session reducer만 유지하므로 iPadOS keyplane/AttributeGraph 재진입과 동일한 런타임 경로는 없다.
 
 자동 회귀는 `사` 입력 후 설정 열기·닫기를 3회 반복하고 `랑해요`를 이어 입력해 다음 문제로 자동 전환되는지 검증한다. iPhone 17 / iOS 26.5 Simulator의 관련 UI 회귀 7/7과 Jungmin’s iPad / iPadOS 26.6의 신규 회귀 1/1이 통과했다. 실기기 결과 번들은 `Test-Hanco-2026.08.26_23-52-49-+0900.xcresult`다. 실제 Bluetooth 키보드에서 동일 반복 동작과 새 crash report 부재 확인은 Issue #46의 Verify gate로 남긴다.
 
-Android M7 M2는 소스 감사에서 OS IME `EditText`·세션 설정 UI가 아직 없음을 확인했다. 따라서 동일 크래시는 현재 적용 대상이 아니며, 이번 환경에는 JDK가 없어 변경 없는 Android Gradle 회귀는 재실행하지 못했다.
+Android는 JDK 17 환경에서 온보딩 3/3, 설정 2/2 Compose 계측을 클래스 단위 반복 실행했고, OS IME·배열 가이드 설정 영속화와 세션 외 설정 진입이 모두 통과했다. SwiftUI/iPadOS 전용 크래시 수정은 적용 대상이 아니지만 동일 사용자 요구인 첫 온보딩 기기 키보드 선택과 챕터1~4 유지 정책은 함께 반영했다.
 
 ## 2026-08-27 초기 온보딩 기기 키보드 학습 경로
 
@@ -103,3 +103,15 @@ Android M7 M2는 소스 감사에서 OS IME `EditText`·세션 설정 UI가 아�
 - Jungmin’s iPad / iPadOS 26.6에서 `기기 키보드 선택 → 가 입력 → 부화 미션1 OS IME·배열 가이드 유지` UI 자동 테스트: 1/1 (`/tmp/piyokey-issue17-ipad-onboarding-final.xcresult`)
 
 실기기 자동화 입력은 실제 Bluetooth 키 이벤트를 대신하지 않으므로, 설치된 앱에서 Bluetooth 키보드로 새 온보딩의 `기기 키보드로 시작`을 선택해 `ㄱ`, `ㅏ`를 입력하고 부화 미션에 같은 입력 방식이 유지되는지, 입력 도중 설정을 반복해도 종료되지 않는지 확인하는 수동 Verify gate가 남아 있다.
+
+## 2026-08-27 최종 통합본 재검증
+
+기능 소스 기준은 `416d3d036bb08dd4a3c28eef34409cbbccac0d42`이다. iPad Universal, OS IME 설정 크래시 수정, iOS·Android 초기 기기 키보드 학습 경로를 한 브랜치에서 통합한 뒤 다음을 재검증했다.
+
+- Jungmin’s iPad / iPadOS 26.6: 기기 키보드 온보딩·부화 미션 유지와 OS IME 입력 중 설정 3회 반복·포커스 복구 2/2 통과. 결과 번들 `/tmp/piyokey-final-ipad-device-input-settings.xcresult`
+- iPad Pro 11-inch (M5) / iOS 26.5 Simulator: 적응형 폭·탭 보존, 연습 입력 회전 보존, Accessibility XXXL 접근성 3/3 통과. 결과 번들 `/tmp/piyokey-final-ipad-layout.xcresult`
+- iPhone 17 / iOS 26.5 Simulator: 관련 UI 4/4, `AppSettingsTests` 17/17 통과
+- SwiftPM 42/42, generic iOS Simulator Release build, `release_preflight.py`, strict Swift format·localization XML·`git diff --check` 통과
+- Android API 35: 온보딩 3/3과 설정 2/2를 각각 전체 클래스 반복 실행해 통과. 관련 JVM, lint, Debug APK와 R8 Release APK 조립 통과
+
+실제 iPad의 Bluetooth 키보드 연결은 사용자가 확인했다. 실제 키 이벤트로 첫 `가`와 부화 미션 입력, 입력 도중 설정 반복 후 새 crash report가 없는지는 계속 수동 gate다. Android Galaxy 물리 입력 gate는 테스트 시작 뒤 USB가 분리되어 결과 수집 전에 중단됐으며, 제품 코드 실패로 판정하지 않고 재연결 후 다시 실행한다.
