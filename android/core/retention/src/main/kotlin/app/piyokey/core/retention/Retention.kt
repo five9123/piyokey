@@ -114,6 +114,7 @@ enum class RetentionActivity(val storageValue: String) {
   CURRICULUM("curriculum"),
   GAME("game"),
   DAILY_CHALLENGE("daily_challenge"),
+  QUICK_PRACTICE("quick_practice"),
 }
 
 enum class StampState { COMPLETED, MISSED, TODAY_PENDING, UPCOMING }

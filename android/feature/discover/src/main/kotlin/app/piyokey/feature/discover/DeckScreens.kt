@@ -50,6 +50,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.piyokey.core.data.DeckFilters
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.data.DeckSort
 import app.piyokey.core.data.DiscoveryEngine
 import app.piyokey.core.data.InstalledDeck
@@ -58,6 +61,8 @@ import app.piyokey.core.data.ImportedDeckPreview
 import app.piyokey.core.deckkit.Catalog
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.DeckType
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -83,7 +88,7 @@ fun DiscoverScreen(
     filters.canonicalTags.isNotEmpty() || filters.minimumItems != null || filters.maximumItems != null
 
   LazyColumn(
-    modifier = modifier.fillMaxSize().background(PiyokeyColors.Background),
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(bottom = 24.dp),
     verticalArrangement = Arrangement.spacedBy(14.dp),
   ) {
@@ -304,7 +309,7 @@ fun DeckCard(
   Card(
     modifier = modifier.fillMaxWidth().testTag("deck-card-${deck.deckId}").clickable(onClick = onClick),
     shape = RoundedCornerShape(22.dp),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
   ) {
     Row(Modifier.padding(15.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -331,7 +336,7 @@ fun DeckCard(
           deck.localizedTags(languageCode).orEmpty().take(2).forEach { tag ->
             Text(
               text = "#$tag",
-              color = PiyokeyColors.AccentDark,
+              color = MaterialTheme.colorScheme.secondary,
               fontSize = 11.sp,
               fontWeight = FontWeight.Bold,
             )
@@ -396,12 +401,16 @@ fun DeckDetailScreen(
   val averageLength = deck.previewItems.map { it.ko.length }.average().takeUnless(Double::isNaN) ?: 0.0
   val needsUpdate = installedVersion != null && installedVersion < deck.version
 
-  Column(modifier.fillMaxSize().background(PiyokeyColors.Background)) {
+  Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
     Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.action_back)}") }
+      TextButton(onClick = onBack) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(stringResource(R.string.action_back))
+      }
     }
     LazyColumn(
       modifier = Modifier.weight(1f),
@@ -415,7 +424,7 @@ fun DeckDetailScreen(
           Column(Modifier.weight(1f)) {
             Text(deck.localizedName(languageCode).orEmpty(), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
             Text(deck.localizedAuthorNickname(languageCode).orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (deck.official) Text(stringResource(R.string.deck_official), color = PiyokeyColors.AccentDark, fontWeight = FontWeight.Bold)
+            if (deck.official) Text(stringResource(R.string.deck_official), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
           }
         }
       }
@@ -425,7 +434,7 @@ fun DeckDetailScreen(
         }
       }
       item {
-        Surface(color = Color.White, shape = RoundedCornerShape(20.dp)) {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)) {
           Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceAround) {
             Stat(stringResource(R.string.deck_item_count, deck.itemCount))
             Stat(stringResource(R.string.deck_average_length, averageLength))
@@ -435,7 +444,7 @@ fun DeckDetailScreen(
       }
       item { SectionTitle(stringResource(R.string.deck_preview)) }
       items(deck.previewItems.take(10)) { preview ->
-        Surface(color = Color.White, shape = RoundedCornerShape(15.dp)) {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(15.dp)) {
           Row(Modifier.fillMaxWidth().padding(14.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(preview.ko, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
             Spacer(Modifier.width(16.dp))
@@ -462,7 +471,7 @@ fun DeckDetailScreen(
       }
     }
     Row(
-      modifier = Modifier.fillMaxWidth().background(Color.White).padding(14.dp),
+      modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(14.dp),
       horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
       if (installedVersion != null) {
@@ -554,7 +563,7 @@ fun MyDecksScreen(
   }
 
   LazyColumn(
-    modifier = modifier.fillMaxSize().background(PiyokeyColors.Background),
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
     verticalArrangement = Arrangement.spacedBy(13.dp),
   ) {
@@ -565,6 +574,15 @@ fun MyDecksScreen(
           Text(stringResource(R.string.user_deck_import))
         }
         OutlinedButton(onClick = onNewDeck, modifier = Modifier.weight(1f).testTag("new-deck")) {
+          if (!hasDeckMakerAccess) {
+            PiyokeyIcon(
+              kind = PiyokeyIconKind.LOCK,
+              contentDescription = null,
+              modifier = Modifier.size(17.dp),
+              tint = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.width(6.dp))
+          }
           Text(stringResource(if (hasDeckMakerAccess) R.string.user_deck_new else R.string.user_deck_new_locked))
         }
       }
@@ -579,13 +597,17 @@ fun MyDecksScreen(
     item { header() }
     if (installed.isEmpty()) {
       item {
-        Surface(color = Color.White, shape = RoundedCornerShape(24.dp)) {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp)) {
           Column(
             modifier = Modifier.fillMaxWidth().padding(28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
           ) {
-            Text("🐣", fontSize = 48.sp)
+            PiyoAvatar(
+              appearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+              contentDescription = stringResource(R.string.my_decks_empty_title),
+              modifier = Modifier.size(76.dp),
+            )
             Text(stringResource(R.string.my_decks_empty_title), fontWeight = FontWeight.Black)
             Text(stringResource(R.string.my_decks_empty_body), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Button(onClick = onFindDecks) { Text(stringResource(R.string.my_decks_find)) }
@@ -595,7 +617,7 @@ fun MyDecksScreen(
     } else {
       items(installed, key = { it.metadata.deckId }) { item ->
         val entry = catalog.decks.firstOrNull { it.deckId == item.metadata.deckId }
-        Surface(color = Color.White, shape = RoundedCornerShape(22.dp), shadowElevation = 2.dp) {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(22.dp), shadowElevation = 2.dp) {
           Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
             Text(item.deck.localizedName(languageCode).orEmpty(), fontWeight = FontWeight.Black, fontSize = 17.sp)
             if (item.metadata.source in setOf("imported", "created")) {
@@ -682,7 +704,13 @@ fun UserDeckImportScreen(
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
     verticalArrangement = Arrangement.spacedBy(14.dp),
   ) {
-    item { TextButton(onClick = onBack, enabled = !isWorking) { Text("‹ ${stringResource(R.string.action_back)}") } }
+    item {
+      TextButton(onClick = onBack, enabled = !isWorking) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(stringResource(R.string.action_back))
+      }
+    }
     item { Text(stringResource(R.string.user_deck_import_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
     if (error != null) {
       item {
@@ -825,16 +853,19 @@ fun RecommendationHome(
   installedDeckIds: Set<String>,
   onDeckClick: (CatalogDeck) -> Unit,
   header: @Composable () -> Unit = {},
+  brandHeader: @Composable () -> Unit = {
+    Text(stringResource(R.string.brand_name), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
+  },
   modifier: Modifier = Modifier,
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
   LazyColumn(
-    modifier = modifier.fillMaxSize().background(PiyokeyColors.Background),
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 20.dp),
     verticalArrangement = Arrangement.spacedBy(13.dp),
   ) {
     item { header() }
-    item { Text(stringResource(R.string.brand_name), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black) }
+    item { brandHeader() }
     item {
       Text(stringResource(R.string.home_recommended), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
       Text(stringResource(R.string.home_recommended_body), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -855,6 +886,7 @@ fun PracticeResultScreen(
   recommendations: List<CatalogDeck>,
   installedDeckIds: Set<String>,
   onRetry: () -> Unit,
+  retryLabel: String? = null,
   onDeckClick: (CatalogDeck) -> Unit,
   onBack: () -> Unit,
   shareActions: @Composable () -> Unit = {},
@@ -862,11 +894,17 @@ fun PracticeResultScreen(
 ) {
   val languageCode = LocalConfiguration.current.locales[0].language
   LazyColumn(
-    modifier = modifier.fillMaxSize().background(PiyokeyColors.Background),
+    modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 20.dp),
     verticalArrangement = Arrangement.spacedBy(14.dp),
   ) {
-    item { TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.action_back)}") } }
+    item {
+      TextButton(onClick = onBack) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(stringResource(R.string.action_back))
+      }
+    }
     item {
       Text(stringResource(R.string.practice_result_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
     }
@@ -877,12 +915,12 @@ fun PracticeResultScreen(
           modifier = Modifier.fillMaxWidth(),
           textAlign = TextAlign.Center,
           fontSize = 36.sp,
-          color = PiyokeyColors.AccentDark,
+          color = MaterialTheme.colorScheme.secondary,
         )
       }
     }
     item {
-      Surface(color = Color.White, shape = RoundedCornerShape(24.dp)) {
+      Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp)) {
         Row(Modifier.fillMaxWidth().padding(22.dp), horizontalArrangement = Arrangement.SpaceAround) {
           ResultStat(stringResource(R.string.practice_result_accuracy), "${accuracyPercent.roundToInt()}%")
           ResultStat(stringResource(R.string.practice_result_misses), misses.toString())
@@ -898,7 +936,11 @@ fun PracticeResultScreen(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
       )
     }
-    item { Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_again)) } }
+    item {
+      Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().testTag("practice-result-retry")) {
+        Text(retryLabel ?: stringResource(R.string.practice_again))
+      }
+    }
     item { shareActions() }
     if (recommendations.isNotEmpty()) {
       item { SectionTitle(stringResource(R.string.deck_same_tags)) }
@@ -912,7 +954,7 @@ fun PracticeResultScreen(
 @Composable
 private fun ResultStat(label: String, value: String) {
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(value, fontSize = 26.sp, fontWeight = FontWeight.Black, color = PiyokeyColors.AccentDark)
+    Text(value, fontSize = 26.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.secondary)
     Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
   }
 }
@@ -924,8 +966,6 @@ private fun compactCount(value: Int): String = when {
 }
 
 private object PiyokeyColors {
-  val Background = Color(0xFFFFF9F1)
-  val AccentDark = Color(0xFFC94368)
   val Green = Color(0xFF2B9A68)
   val Ink = Color(0xFF3F3540)
 }

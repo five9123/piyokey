@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,14 +25,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -49,21 +49,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Density
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.piyokey.core.data.CatalogRefreshResult
+import app.piyokey.core.analytics.AnalyticsEvent
+import app.piyokey.core.analytics.AnalyticsProperty
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
+import app.piyokey.core.design.PiyokeyTheme
 import app.piyokey.core.data.DeckFilters
 import app.piyokey.core.data.DeckLibrarySnapshot
 import app.piyokey.core.data.DeckRepository
@@ -121,6 +129,8 @@ import app.piyokey.core.retention.CurriculumCatalog
 import app.piyokey.core.retention.CurriculumStage
 import app.piyokey.core.retention.DailyChallengePolicy
 import app.piyokey.core.retention.JstDay
+import app.piyokey.core.retention.QuickPracticePolicy
+import app.piyokey.core.retention.QuickPracticeSession
 import app.piyokey.core.retention.ReviewItem
 import app.piyokey.core.retention.RetentionPolicy
 import app.piyokey.core.settings.AppPreferences
@@ -128,9 +138,11 @@ import app.piyokey.core.settings.AppLanguage
 import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.InputModePolicy
 import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.core.settings.PiyoWardrobePolicy
 import app.piyokey.core.settings.PiyoAccessory
+import app.piyokey.core.settings.PrivacyNoticePolicy
 import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
@@ -170,6 +182,7 @@ import app.piyokey.feature.onboarding.HatchMissionGateScreen
 import app.piyokey.feature.onboarding.HatchMissionResultScreen
 import app.piyokey.feature.onboarding.MainAppTourOverlay
 import app.piyokey.feature.settings.CommonSettingsButton
+import app.piyokey.feature.settings.PrivacyConsentDialog
 import app.piyokey.feature.settings.SettingsSheet
 import java.util.Locale
 import java.util.UUID
@@ -199,8 +212,13 @@ class MainActivity : AppCompatActivity() {
           getSharedPreferences("piyokey_test_overrides", MODE_PRIVATE)
         }
         val freshOnboardingTest = BuildConfig.DEBUG && testOverrides.getBoolean("fresh_onboarding", false)
-        val freshOnboardingPreferences = remember(freshOnboardingTest) {
-          AppPreferences(language = resolved.language, onboardingMigrationChecked = true)
+        val privacyNoticeReviewed = BuildConfig.DEBUG && testOverrides.getBoolean("privacy_notice_reviewed", false)
+        val freshOnboardingPreferences = remember(freshOnboardingTest, privacyNoticeReviewed) {
+          AppPreferences(
+            language = resolved.language,
+            privacyNoticeVersion = if (privacyNoticeReviewed) PrivacyNoticePolicy.currentVersion else 0,
+            onboardingMigrationChecked = true,
+          )
         }
         val launchPreferences = when {
           freshOnboardingTest -> freshOnboardingPreferences
@@ -209,6 +227,7 @@ class MainActivity : AppCompatActivity() {
             hatchHandoffCompleted = true,
             hatchChaptersCompleted = 3,
             appTourCompleted = true,
+            privacyNoticeVersion = if (privacyNoticeReviewed) PrivacyNoticePolicy.currentVersion else resolved.privacyNoticeVersion,
             onboardingMigrationChecked = true,
             defaultInputMode = if (testOverrides.getBoolean("force_os_ime", false)) InputMode.OS_IME else resolved.defaultInputMode,
           )
@@ -229,13 +248,23 @@ class MainActivity : AppCompatActivity() {
             isAppearanceLightNavigationBars = light
           }
           @Suppress("DEPRECATION")
-          window.navigationBarColor = if (light) android.graphics.Color.WHITE else android.graphics.Color.rgb(18, 18, 20)
+          window.navigationBarColor = if (light) {
+            android.graphics.Color.rgb(255, 248, 243)
+          } else {
+            android.graphics.Color.rgb(24, 21, 29)
+          }
+        }
+        LaunchedEffect(
+          optimistic.anonymousAnalyticsEnabled,
+          optimistic.crashDiagnosticsEnabled,
+        ) {
+          TelemetryRuntime.updateConsent(applicationContext, optimistic)
         }
         val baseDensity = LocalDensity.current
         CompositionLocalProvider(
           LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * optimistic.fontScale.multiplier),
         ) {
-          MaterialTheme(colorScheme = if (optimistic.theme == AppTheme.DARK) darkColorScheme() else lightColorScheme()) {
+          PiyokeyTheme(darkTheme = optimistic.theme == AppTheme.DARK) {
             PiyokeyApp(
               preferences = optimistic,
               incomingDocument = incomingDocument,
@@ -253,7 +282,35 @@ class MainActivity : AppCompatActivity() {
                 }
               },
               onPreferencesChange = { updated ->
+                val previous = optimistic
                 optimistic = updated
+                if (
+                  previous.anonymousAnalyticsEnabled != updated.anonymousAnalyticsEnabled ||
+                  previous.crashDiagnosticsEnabled != updated.crashDiagnosticsEnabled
+                ) {
+                  TelemetryRuntime.updateConsent(applicationContext, updated)
+                }
+                if (
+                  previous.anonymousAnalyticsEnabled != updated.anonymousAnalyticsEnabled &&
+                  updated.anonymousAnalyticsEnabled
+                ) {
+                  TelemetryRuntime.capture(
+                    AnalyticsEvent.SETTING_CHANGED,
+                    mapOf(
+                      AnalyticsProperty.SETTING to "analytics_consent",
+                      AnalyticsProperty.VALUE_BUCKET to "enabled",
+                    ),
+                  )
+                }
+                if (previous.crashDiagnosticsEnabled != updated.crashDiagnosticsEnabled) {
+                  TelemetryRuntime.capture(
+                    AnalyticsEvent.SETTING_CHANGED,
+                    mapOf(
+                      AnalyticsProperty.SETTING to "diagnostics_consent",
+                      AnalyticsProperty.VALUE_BUCKET to if (updated.crashDiagnosticsEnabled) "enabled" else "disabled",
+                    ),
+                  )
+                }
                 scope.launch { preferencesStore.update { updated } }
               },
             )
@@ -301,12 +358,22 @@ private sealed interface UserDeckImportUiState {
 
 private data class PendingUserDeckExport(val deckId: String, val deleteAfterExport: Boolean)
 
-private enum class RootTab(val label: Int, val symbol: String) {
-  HOME(R.string.nav_home, "⌂"),
-  DISCOVER(R.string.nav_discover, "⌕"),
-  PRACTICE(R.string.nav_practice, "⌨"),
-  GAMES(R.string.nav_games, "★"),
-  PROFILE(R.string.nav_profile, "●"),
+private enum class RootTab(val label: Int, val icon: PiyokeyIconKind) {
+  HOME(R.string.nav_home, PiyokeyIconKind.HOME),
+  DISCOVER(R.string.nav_discover, PiyokeyIconKind.DISCOVER),
+  PRACTICE(R.string.nav_practice, PiyokeyIconKind.PRACTICE),
+  GAMES(R.string.nav_games, PiyokeyIconKind.GAMES),
+  PROFILE(R.string.nav_profile, PiyokeyIconKind.PROFILE),
+  ;
+
+  val analyticsFeature: String
+    get() = when (this) {
+      HOME -> "home"
+      DISCOVER -> "discover"
+      PRACTICE -> "practice"
+      GAMES -> "game"
+      PROFILE -> "my_page"
+    }
 }
 
 private data class ActivePractice(
@@ -324,7 +391,53 @@ private data class ActivePractice(
   val sessionId: String = UUID.randomUUID().toString(),
 )
 
-private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, REVIEW, ONBOARDING }
+private enum class PracticeKind { FREE, DECK, CURRICULUM, DAILY, QUICK, REVIEW, ONBOARDING }
+
+private val PracticeKind.analyticsSessionKind: String
+  get() = when (this) {
+    PracticeKind.CURRICULUM, PracticeKind.ONBOARDING -> "lesson"
+    PracticeKind.DAILY -> "daily"
+    PracticeKind.REVIEW -> "review"
+    PracticeKind.FREE, PracticeKind.DECK, PracticeKind.QUICK -> "free_practice"
+  }
+
+private val InputMode.analyticsValue: String
+  get() = if (this == InputMode.OS_IME) "os_ime" else "builtin"
+
+private val ActivePractice.analyticsDeckSource: String
+  get() = when (kind) {
+    PracticeKind.CURRICULUM, PracticeKind.ONBOARDING -> "curriculum"
+    PracticeKind.DAILY -> "daily"
+    PracticeKind.REVIEW -> "review"
+    PracticeKind.FREE -> "bundled"
+    PracticeKind.QUICK -> "unknown"
+    PracticeKind.DECK -> installed?.metadata?.source
+      ?.takeIf { it in setOf("bundled", "catalog", "imported", "created") } ?: "unknown"
+  }
+
+private val GameKind.analyticsValue: String
+  get() = when (this) {
+    GameKind.FLOW -> "flow"
+    GameKind.ACID_RAIN -> "acid_rain"
+    GameKind.CHOSEONG -> "choseong"
+    GameKind.WORD_MATCH -> "word_match"
+    GameKind.DICTATION -> "dictation"
+    GameKind.SPACING -> "spacing"
+  }
+
+private fun analyticsDifficulty(deckId: String): String = when {
+  deckId.contains("beginner", ignoreCase = true) -> "beginner"
+  deckId.contains("intermediate", ignoreCase = true) -> "intermediate"
+  deckId.contains("advanced", ignoreCase = true) -> "advanced"
+  else -> "custom"
+}
+
+private fun analyticsGameDeckSource(deck: Deck?): String = when {
+  deck == null -> "unknown"
+  deck.deckId.startsWith("user_") -> "unknown"
+  deck.official -> "catalog"
+  else -> "bundled"
+}
 
 private data class PracticeResult(
   val practice: ActivePractice,
@@ -339,6 +452,18 @@ private data class PendingPracticeCompletion(
   val practice: ActivePractice,
   val state: PracticeSessionState,
   val activeDurationMillis: Long,
+)
+
+private fun QuickPracticeSession.toActivePractice(inputMode: InputMode): ActivePractice = ActivePractice(
+  installed = null,
+  catalogEntry = null,
+  targets = sources.map { it.item.ko },
+  items = sources.map { it.item },
+  sourceDeckId = null,
+  kind = PracticeKind.QUICK,
+  inputMode = inputMode,
+  sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
+  reviewSourceDeckIds = sources.map { it.sourceDeckId },
 )
 
 private enum class GameStage { HUB, DECK_SELECT, SPACING_SELECT }
@@ -447,6 +572,115 @@ private fun PiyokeyApp(
   var pendingPaidImportCopy by remember { mutableStateOf<UserDeckImportUiState.Ready?>(null) }
   var pendingDifferentDraft by remember { mutableStateOf<UserDeckDraft?>(null) }
   var staleEditDraft by remember { mutableStateOf<ActiveUserDeckDraft?>(null) }
+
+  LaunchedEffect(tab) {
+    TelemetryRuntime.capture(
+      AnalyticsEvent.FEATURE_VIEWED,
+      mapOf(AnalyticsProperty.FEATURE to tab.analyticsFeature),
+    )
+    TelemetryRuntime.setCrashContext(tab.analyticsFeature)
+  }
+  LaunchedEffect(activePractice?.sessionId) {
+    activePractice?.let { practice ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to practice.kind.analyticsSessionKind,
+          AnalyticsProperty.DECK_SOURCE to practice.analyticsDeckSource,
+          AnalyticsProperty.INPUT_MODE to practice.inputMode.analyticsValue,
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "practice",
+        sessionKind = practice.kind.analyticsSessionKind,
+        inputMode = practice.inputMode.analyticsValue,
+      )
+    }
+  }
+  LaunchedEffect(activeFlowDeck?.deckId, flowSeed) {
+    activeFlowDeck?.let { deck ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to analyticsGameDeckSource(deck),
+          AnalyticsProperty.INPUT_MODE to preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.GAME_MODE to "flow",
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(deck.deckId),
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = preferences.defaultInputMode.analyticsValue,
+        gameMode = "flow",
+      )
+    }
+  }
+  LaunchedEffect(activeGameDeck?.deckId, gameSeed) {
+    activeGameDeck?.let { deck ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to analyticsGameDeckSource(deck),
+          AnalyticsProperty.INPUT_MODE to preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.GAME_MODE to selectedGameKind.analyticsValue,
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(deck.deckId),
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = preferences.defaultInputMode.analyticsValue,
+        gameMode = selectedGameKind.analyticsValue,
+      )
+    }
+  }
+  LaunchedEffect(activeSpacingPassage?.id, spacingGameResult) {
+    if (activeSpacingPassage != null && spacingGameResult == null) {
+      TelemetryRuntime.capture(
+        AnalyticsEvent.SESSION_STARTED,
+        mapOf(
+          AnalyticsProperty.SESSION_KIND to "game",
+          AnalyticsProperty.DECK_SOURCE to "bundled",
+          AnalyticsProperty.INPUT_MODE to "not_applicable",
+          AnalyticsProperty.GAME_MODE to "spacing",
+          AnalyticsProperty.DIFFICULTY to "custom",
+        ),
+      )
+      TelemetryRuntime.setCrashContext(
+        feature = "game",
+        sessionKind = "game",
+        inputMode = "not_applicable",
+        gameMode = "spacing",
+      )
+    }
+  }
+  LaunchedEffect(flowResult, typingGameResult, acidRainResult, spacingGameResult) {
+    val game = when {
+      flowResult != null -> "flow" to (flowResult?.score ?: 0)
+      typingGameResult != null -> selectedGameKind.analyticsValue to (typingGameResult?.score ?: 0)
+      acidRainResult != null -> "acid_rain" to (acidRainResult?.score ?: 0)
+      spacingGameResult?.result != null -> "spacing" to (spacingGameResult?.result?.score ?: 0)
+      else -> null
+    }
+    game?.let { (mode, score) ->
+      TelemetryRuntime.capture(
+        AnalyticsEvent.GAME_RESULT,
+        mapOf(
+          AnalyticsProperty.GAME_MODE to mode,
+          AnalyticsProperty.DIFFICULTY to analyticsDifficulty(
+            activeFlowDeck?.deckId ?: activeGameDeck?.deckId ?: "custom",
+          ),
+          AnalyticsProperty.RESULT to "completed",
+          AnalyticsProperty.SCORE_BUCKET to TelemetryRuntime.scoreBucket(score),
+          AnalyticsProperty.INPUT_MODE to if (mode == "spacing") "not_applicable" else preferences.defaultInputMode.analyticsValue,
+          AnalyticsProperty.DECK_SOURCE to if (mode == "spacing") "bundled" else analyticsGameDeckSource(activeFlowDeck ?: activeGameDeck),
+        ),
+      )
+    }
+  }
 
   fun beginUserDeckImport(uri: Uri, sourceContext: String) {
     val previousDocument = when (val state = userDeckImport) {
@@ -758,7 +992,7 @@ private fun PiyokeyApp(
       try {
         val items = practice.items
         if (items != null) {
-          if (practice.kind == PracticeKind.REVIEW && practice.reviewSourceDeckIds != null) {
+          if (practice.reviewSourceDeckIds != null) {
             state.itemResolutions.forEach { resolution ->
               val item = items.getOrNull(resolution.itemIndex) ?: return@forEach
               val source = practice.reviewSourceDeckIds.getOrNull(resolution.itemIndex) ?: return@forEach
@@ -766,7 +1000,7 @@ private fun PiyokeyApp(
                 sourceDeckId = source,
                 items = listOf(item),
                 resolutions = listOf(resolution.copy(itemIndex = 0)),
-                isReviewSession = true,
+                isReviewSession = practice.kind == PracticeKind.REVIEW,
               )
             }
           } else if (practice.sourceDeckId != null) {
@@ -789,9 +1023,24 @@ private fun PiyokeyApp(
             repository.recordDailyCompletion(practice.sessionDay)
             null
           }
+          PracticeKind.QUICK -> {
+            repository.recordQuickPracticeCompletion(practice.sessionDay)
+            null
+          }
           else -> null
         }
         repository.recordPracticeAcceptedJamo(practice.sessionId, state.acceptedJamoCount)
+        TelemetryRuntime.capture(
+          AnalyticsEvent.SESSION_COMPLETED,
+          mapOf(
+            AnalyticsProperty.SESSION_KIND to practice.kind.analyticsSessionKind,
+            AnalyticsProperty.RESULT to "completed",
+            AnalyticsProperty.DURATION_BUCKET to TelemetryRuntime.durationBucket(duration),
+            AnalyticsProperty.ITEM_COUNT_BUCKET to TelemetryRuntime.itemCountBucket(state.itemResolutions.size),
+            AnalyticsProperty.DECK_SOURCE to practice.analyticsDeckSource,
+            AnalyticsProperty.INPUT_MODE to practice.inputMode.analyticsValue,
+          ),
+        )
         playGamesManager?.syncAfterLocalSave()
         pendingCompletion = null
         if (pendingCheckpointSave?.first == practice.stageId) pendingCheckpointSave = null
@@ -810,6 +1059,64 @@ private fun PiyokeyApp(
         operationFailed = true
         result = state.toResult(practice, duration, null)
         activePractice = null
+      }
+    }
+  }
+
+  fun startQuickPractice() {
+    scope.launch {
+      try {
+        val fallbackId = when (preferences.onboardingGoal) {
+          app.piyokey.core.settings.OnboardingGoal.KEYBOARD -> "official_keyboard_start"
+          app.piyokey.core.settings.OnboardingGoal.TRAVEL -> "official_daily_words"
+          app.piyokey.core.settings.OnboardingGoal.TRENDS -> "official_trending_korean"
+          app.piyokey.core.settings.OnboardingGoal.TOPIK, null -> "official_topik_one"
+        }
+        val fallbackDecks = buildList {
+          current.catalog.decks.firstOrNull { it.deckId == fallbackId }?.let { entry ->
+            runCatching { repository.bundledCatalogDeck(entry) }.getOrNull()?.let(::add)
+          }
+          flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let { flowDeck ->
+            if (none { it.deckId == flowDeck.deckId }) add(flowDeck)
+          }
+        }
+        val session = QuickPracticePolicy.makeSession(
+          installedDecks = current.installed.map { it.deck },
+          fallbackDecks = fallbackDecks,
+          preferredTags = preferences.onboardingGoal?.preferredTags.orEmpty(),
+          recentWordKeys = preferences.recentQuickPracticeWords,
+        ) ?: error("No eligible quick-practice words")
+        onPreferencesChange(
+          preferences.copy(
+            recentQuickPracticeWords = QuickPracticePolicy.updatedHistory(
+              preferences.recentQuickPracticeWords,
+              session,
+            ),
+          ),
+        )
+        result = null
+        activePractice = session.toActivePractice(preferences.defaultInputMode)
+        operationFailed = false
+      } catch (_: Exception) {
+        operationFailed = true
+      }
+    }
+  }
+
+  fun startWeeklyCup() {
+    scope.launch {
+      try {
+        val deck = flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }
+          ?: repository.bundledFlowDecks().first { it.deckId == "flow_topik_beginner" }.also { loaded ->
+            flowPresets = (flowPresets + loaded).distinctBy(Deck::deckId)
+          }
+        selectedGameKind = GameKind.FLOW
+        flowIsWeeklyCup = true
+        activeFlowDeck = deck
+        flowSeed = kotlin.random.Random.nextLong()
+        operationFailed = false
+      } catch (_: Exception) {
+        operationFailed = true
       }
     }
   }
@@ -933,7 +1240,11 @@ private fun PiyokeyApp(
   if (runningFlow != null && completedFlow == null) {
     FlowGameRoute(
       deck = runningFlow,
-      useOSIME = preferences.defaultInputMode == InputMode.OS_IME,
+      useOSIME = (if (flowIsWeeklyCup) {
+        InputModePolicy.weeklyCup(preferences.defaultInputMode)
+      } else {
+        preferences.defaultInputMode
+      }) == InputMode.OS_IME,
       piyoAppearance = preferences.sessionAppearance,
       soundEffectsEnabled = preferences.soundEffectsEnabled,
       keySoundStyle = preferences.keySoundStyle,
@@ -1556,8 +1867,17 @@ private fun PiyokeyApp(
         recommendations = recommendations,
         installedDeckIds = current.installedDeckIds,
         onRetry = {
-          result = null
-          activePractice = completedResult.practice
+          if (completedResult.practice.kind == PracticeKind.QUICK) {
+            startQuickPractice()
+          } else {
+            result = null
+            activePractice = completedResult.practice
+          }
+        },
+        retryLabel = if (completedResult.practice.kind == PracticeKind.QUICK) {
+          context.getString(app.piyokey.feature.retention.R.string.home_quick_random_retry)
+        } else {
+          null
         },
         onDeckClick = ::openDetail,
         onBack = { result = null },
@@ -1588,7 +1908,14 @@ private fun PiyokeyApp(
             modifier = Modifier.testTag("nav-${item.name.lowercase(Locale.ROOT)}"),
             selected = tab == item,
             onClick = { tab = item },
-            icon = { Text(item.symbol, fontWeight = FontWeight.Black) },
+            icon = {
+              PiyokeyIcon(
+                kind = item.icon,
+                contentDescription = stringResource(item.label),
+                modifier = Modifier.size(24.dp),
+                tint = if (tab == item) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            },
             label = { Text(stringResource(item.label)) },
           )
         }
@@ -1606,6 +1933,23 @@ private fun PiyokeyApp(
           ),
           installedDeckIds = current.installedDeckIds,
           onDeckClick = ::openDetail,
+          brandHeader = {
+            Row(
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+              Image(
+                painter = painterResource(R.drawable.piyokey_logo),
+                contentDescription = null,
+                modifier = Modifier.size(46.dp).clip(RoundedCornerShape(12.dp)),
+              )
+              Text(
+                stringResource(app.piyokey.feature.discover.R.string.brand_name),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Black,
+              )
+            }
+          },
           header = {
             RetentionHomeCard(
               today = JstDay.fromEpochMillis(System.currentTimeMillis()),
@@ -1629,6 +1973,8 @@ private fun PiyokeyApp(
                   sessionDay = day,
                 )
               },
+              onWeeklyCup = ::startWeeklyCup,
+              onQuickPractice = ::startQuickPractice,
             )
           },
         )
@@ -1703,12 +2049,7 @@ private fun PiyokeyApp(
               gameStage = if (kind == GameKind.SPACING) GameStage.SPACING_SELECT else GameStage.DECK_SELECT
             },
             onWeeklyCup = {
-              flowPresets.firstOrNull { it.deckId == "flow_topik_beginner" }?.let {
-                selectedGameKind = GameKind.FLOW
-                flowIsWeeklyCup = true
-                activeFlowDeck = it
-                flowSeed = kotlin.random.Random.nextLong()
-              }
+              startWeeklyCup()
             },
           )
           GameStage.DECK_SELECT -> GameDeckSelectionScreen(
@@ -1890,7 +2231,7 @@ private fun PiyokeyApp(
 
       if (operationFailed) {
         Surface(
-          modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(12.dp),
+          modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(12.dp).testTag("operation-error"),
           color = MaterialTheme.colorScheme.errorContainer,
           shadowElevation = 5.dp,
         ) {
@@ -1988,6 +2329,47 @@ private fun PiyokeyApp(
         )
       },
       onDismiss = { showSettings = false },
+    )
+  }
+
+  if (
+    tab == RootTab.HOME &&
+    PrivacyNoticePolicy.shouldPresent(
+      reviewedVersion = preferences.privacyNoticeVersion,
+      onboardingCompleted = preferences.hatchGateComplete,
+      appTourCompleted = preferences.appTourCompleted,
+      sessionIsActive = activePractice != null || activeFlowDeck != null ||
+        activeGameDeck != null || activeSpacingPassage != null,
+      hasBlockingPresentation = showSettings,
+    )
+  ) {
+    PrivacyConsentDialog(
+      initialAnalyticsEnabled = preferences.anonymousAnalyticsEnabled,
+      initialDiagnosticsEnabled = preferences.crashDiagnosticsEnabled,
+      onOpenPrivacy = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
+      onSave = { analytics, diagnostics ->
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = analytics,
+            crashDiagnosticsEnabled = diagnostics,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+      },
+      onContinueWithoutSharing = {
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = false,
+            crashDiagnosticsEnabled = false,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+      },
     )
   }
 }

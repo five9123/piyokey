@@ -76,6 +76,8 @@ import app.piyokey.core.session.PracticeSessionState
 import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.session.TargetSyllableState
 import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.platform.PiyokeySoundEngine
 import app.piyokey.core.platform.PronunciationPlayer
 import app.piyokey.core.platform.SoundCue
@@ -349,7 +351,7 @@ fun PracticeScreen(
     modifier = modifier
       .fillMaxSize()
       .testTag("practice-screen")
-      .background(PracticeColors.Background)
+      .background(MaterialTheme.colorScheme.background)
       .windowInsetsPadding(WindowInsets.safeDrawing),
   ) {
     Column(Modifier.fillMaxSize()) {
@@ -454,8 +456,8 @@ private fun PracticeProgressHeader(
         .weight(1f)
         .height(8.dp)
         .clip(RoundedCornerShape(99.dp)),
-      color = PracticeColors.Accent,
-      trackColor = PracticeColors.Track,
+      color = MaterialTheme.colorScheme.primary,
+      trackColor = MaterialTheme.colorScheme.outlineVariant,
       strokeCap = StrokeCap.Round,
       gapSize = 0.dp,
       drawStopIndicator = {},
@@ -467,7 +469,7 @@ private fun PracticeProgressHeader(
         state.currentTargetIndex + 1,
         state.targets.size,
       ),
-      color = PracticeColors.MutedInk,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       fontSize = 13.sp,
       fontWeight = FontWeight.Bold,
     )
@@ -497,7 +499,7 @@ private fun PracticeProgressHeader(
 private fun IMEGuidanceBanner(onOpenHelp: () -> Unit) {
   Surface(
     modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag("practice-ime-guidance"),
-    color = PracticeColors.AccentSoft.copy(alpha = 0.25f),
+    color = MaterialTheme.colorScheme.primaryContainer,
     shape = RoundedCornerShape(14.dp),
   ) {
     Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -532,7 +534,7 @@ private fun TargetCard(
         contentDescription = state.currentTarget
         stateDescription = progressDescription
       },
-    color = PracticeColors.Card,
+    color = MaterialTheme.colorScheme.surface,
     shape = shape,
     shadowElevation = 7.dp,
   ) {
@@ -548,12 +550,12 @@ private fun TargetCard(
           when (field) {
             PracticePromptField.TARGET -> if (displayOptions.showsTarget) TargetSyllableTrack(state)
             PracticePromptField.MEANING -> if (displayOptions.showsMeaning && !prompt.meaning.isNullOrBlank()) {
-              Surface(color = Color(0xFFEAF7FF), shape = RoundedCornerShape(99.dp)) {
+              Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(99.dp)) {
                 Text(prompt.meaning, Modifier.padding(horizontal = 12.dp, vertical = 7.dp), fontWeight = FontWeight.SemiBold)
               }
             }
             PracticePromptField.READING -> if (displayOptions.showsReading && !prompt.reading.isNullOrBlank()) {
-              Text(prompt.reading, color = PracticeColors.MutedInk.copy(alpha = 0.68f), fontWeight = FontWeight.Medium)
+              Text(prompt.reading, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
             }
           }
         }
@@ -565,11 +567,18 @@ private fun TargetCard(
           contentDescription = pronunciationDescription
         },
         contentPadding = PaddingValues(0.dp),
-      ) { Text("▶") }
+      ) {
+        PiyokeyIcon(
+          kind = PiyokeyIconKind.SPEAKER,
+          contentDescription = null,
+          modifier = Modifier.size(22.dp),
+          tint = MaterialTheme.colorScheme.primary,
+        )
+      }
       Box(
         Modifier
           .matchParentSize()
-          .background(PracticeColors.Error.copy(alpha = errorFlash), shape),
+          .background(MaterialTheme.colorScheme.error.copy(alpha = errorFlash), shape),
       )
     }
   }
@@ -606,10 +615,10 @@ private fun TargetSyllableTrack(state: PracticeSessionState) {
           modifier = Modifier
             .size(fittedSize)
             .clip(RoundedCornerShape(13.dp))
-            .background(if (completed) PracticeColors.SuccessSoft else PracticeColors.TargetChip)
+            .background(if (completed) PracticeColors.SuccessSoft else MaterialTheme.colorScheme.surfaceVariant)
             .then(
               if (current) {
-                Modifier.border(2.dp, PracticeColors.Accent, RoundedCornerShape(13.dp))
+                Modifier.border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(13.dp))
               } else {
                 Modifier
               },
@@ -629,14 +638,14 @@ private fun TargetSyllableTrack(state: PracticeSessionState) {
                 .fillMaxWidth(0.56f)
                 .height(4.dp)
                 .background(
-                  PracticeColors.MutedInk.copy(alpha = 0.35f),
+                  MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
                   RoundedCornerShape(99.dp),
                 ),
             )
           } else {
             Text(
               text = unit.character,
-              color = if (completed) PracticeColors.SuccessInk else PracticeColors.Ink,
+              color = if (completed) PracticeColors.SuccessInk else MaterialTheme.colorScheme.onSurface,
               fontSize = textSize,
               fontWeight = FontWeight.Bold,
               textAlign = TextAlign.Center,
@@ -690,15 +699,15 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
           modifier = Modifier
             .size(36.dp)
             .clip(shape)
-            .background(if (completed) PracticeColors.Success else PracticeColors.JamoChip)
+            .background(if (completed) PracticeColors.Success else MaterialTheme.colorScheme.surfaceVariant)
             .then(
-              if (current) Modifier.border(2.dp, PracticeColors.Accent, shape) else Modifier
+              if (current) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, shape) else Modifier
             ),
           contentAlignment = Alignment.Center,
         ) {
           Text(
             text = if (jamo == ' ') "␣" else jamo.toString(),
-            color = if (completed) Color.White else PracticeColors.Ink,
+            color = if (completed) Color.White else MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
           )
@@ -733,10 +742,10 @@ private fun CompositionCard(
 ) {
   val shape = RoundedCornerShape(24.dp)
   val cardColor = when (state.feedback) {
-    PracticeFeedback.Idle -> PracticeColors.Card
-    PracticeFeedback.Correct -> PracticeColors.CorrectCard
-    is PracticeFeedback.Incorrect -> PracticeColors.Card
-    PracticeFeedback.Complete -> PracticeColors.CompleteCard
+    PracticeFeedback.Idle -> MaterialTheme.colorScheme.surface
+    PracticeFeedback.Correct -> MaterialTheme.colorScheme.secondaryContainer
+    is PracticeFeedback.Incorrect -> MaterialTheme.colorScheme.surface
+    PracticeFeedback.Complete -> MaterialTheme.colorScheme.primaryContainer
   }
   val compositionLabel = stringResource(R.string.practice_composition_label)
   val placeholder = stringResource(R.string.practice_composition_placeholder)
@@ -777,13 +786,13 @@ private fun CompositionCard(
         modifier = Modifier
           .size(76.dp)
           .scale(assemblyScale)
-          .background(PracticeColors.PreviewCircle, CircleShape)
-          .border(2.dp, PracticeColors.AccentSoft, CircleShape),
+          .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+          .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
         contentAlignment = Alignment.Center,
       ) {
         Text(
           text = preview,
-          color = PracticeColors.Ink,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
           fontSize = 33.sp,
           fontWeight = FontWeight.Bold,
           textAlign = TextAlign.Center,
@@ -803,7 +812,7 @@ private fun CompositionCard(
                 scaleY = incomingScale
               }
               .clearAndSetSemantics {},
-            color = PracticeColors.Accent,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -821,13 +830,17 @@ private fun CompositionCard(
       ) {
         Text(
           text = compositionLabel,
-          color = PracticeColors.MutedInk,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           fontSize = 12.sp,
           fontWeight = FontWeight.Medium,
         )
         Text(
           text = entered,
-          color = if (state.enteredText.isEmpty()) PracticeColors.MutedInk else PracticeColors.Ink,
+          color = if (state.enteredText.isEmpty()) {
+            MaterialTheme.colorScheme.onSurfaceVariant
+          } else {
+            MaterialTheme.colorScheme.onSurface
+          },
           fontSize = 22.sp,
           fontWeight = FontWeight.Bold,
           maxLines = 2,
@@ -843,13 +856,14 @@ private fun CompletionSparkles(
   modifier: Modifier = Modifier,
 ) {
   if (progress <= 0f || progress >= 1f) return
+  val primary = MaterialTheme.colorScheme.primary
   Canvas(modifier = modifier) {
     val eased = FastOutSlowInEasing.transform(progress)
     val center = Offset(size.width / 2f, size.height * 0.43f)
     val radius = size.minDimension * (0.05f + eased * 0.20f)
     val alpha = (1f - progress).coerceIn(0f, 1f)
     val colors = listOf(
-      PracticeColors.Accent,
+      primary,
       PracticeColors.SparkleYellow,
       PracticeColors.Success,
       PracticeColors.SparklePink,
@@ -874,22 +888,9 @@ private fun CompletionSparkles(
 }
 
 private object PracticeColors {
-  val Background = Color(0xFFFFF8F1)
-  val Card = Color(0xFFFFFFFF)
-  val TargetChip = Color(0xFFF3F0F8)
-  val JamoChip = Color(0xFFF0EDF5)
-  val PreviewCircle = Color(0xFFF5F0FF)
-  val Track = Color(0xFFE9E3F0)
-  val Accent = Color(0xFF7557FF)
-  val AccentSoft = Color(0xFFB9A8FF)
-  val Ink = Color(0xFF252032)
-  val MutedInk = Color(0xFF716A7B)
   val Success = Color(0xFF35B879)
   val SuccessSoft = Color(0xFFDDF7E9)
   val SuccessInk = Color(0xFF176A45)
-  val Error = Color(0xFFFF5D6C)
-  val CorrectCard = Color(0xFFF2FFF8)
-  val CompleteCard = Color(0xFFEFFFF6)
   val SparkleYellow = Color(0xFFFFC83D)
   val SparklePink = Color(0xFFFF7FB2)
 }

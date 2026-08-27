@@ -30,6 +30,21 @@ class AppPreferencesTest {
   }
 
   @Test
+  fun privacyChoicesDefaultOffAndNoticeWaitsForAnIdlePostOnboardingScreen() {
+    val defaults = AppPreferences()
+    assertFalse(defaults.anonymousAnalyticsEnabled)
+    assertFalse(defaults.crashDiagnosticsEnabled)
+    assertEquals(0, defaults.privacyNoticeVersion)
+
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, onboardingCompleted = false, appTourCompleted = true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, onboardingCompleted = true, appTourCompleted = false))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, true, true, sessionIsActive = true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(0, true, true, hasBlockingPresentation = true))
+    assertTrue(PrivacyNoticePolicy.shouldPresent(0, true, true))
+    assertFalse(PrivacyNoticePolicy.shouldPresent(PrivacyNoticePolicy.currentVersion, true, true))
+  }
+
+  @Test
   fun hatchGateAndGrowthNeverSkipRequiredThreeChapters() {
     val cracked = AppPreferences(firstInputCompleted = true)
     assertEquals(PiyoGrowthStage.CRACKED_EGG, cracked.growthStage)
@@ -55,6 +70,12 @@ class AppPreferencesTest {
   }
 
   @Test
+  fun weeklyCupAlwaysUsesBuiltinForCompetitiveParity() {
+    assertEquals(InputMode.BUILTIN, InputModePolicy.weeklyCup(InputMode.BUILTIN))
+    assertEquals(InputMode.BUILTIN, InputModePolicy.weeklyCup(InputMode.OS_IME))
+  }
+
+  @Test
   fun wardrobeUnlocksAreMonotonicAndAutoNeverAddsContextAccessories() {
     val streak = PiyoWardrobePolicy.unlockedAfterStreakRewards(emptySet(), setOf(3, 7))
     assertEquals(setOf(PiyoAccessory.STREAK_RIBBON, PiyoAccessory.RAINBOW_BOW), streak)
@@ -77,5 +98,12 @@ class AppPreferencesTest {
     val changed = preferences.copy(selectedPiyoAccessory = PiyoAccessory.NONE)
     assertEquals(PiyoAccessory.TOPIK_GLASSES, appearance.accessory)
     assertEquals(null, changed.sessionAppearance.accessory)
+  }
+
+  @Test
+  fun quickPracticeHistoryDefaultsEmptyAndSurvivesPreferenceCopies() {
+    val preferences = AppPreferences(recentQuickPracticeWords = listOf("가", "나"))
+    assertEquals(listOf("가", "나"), preferences.copy(theme = AppTheme.DARK).recentQuickPracticeWords)
+    assertTrue(AppPreferences().recentQuickPracticeWords.isEmpty())
   }
 }

@@ -19,6 +19,10 @@ enum class AppTheme { LIGHT, DARK }
 enum class FontScale(val multiplier: Float) { SMALL(0.88f), STANDARD(1f), LARGE(1.16f) }
 enum class KeySoundStyle { DEFAULT, MECHANICAL, SOFT }
 enum class InputMode { BUILTIN, OS_IME }
+
+object InputModePolicy {
+  fun weeklyCup(@Suppress("UNUSED_PARAMETER") preferred: InputMode): InputMode = InputMode.BUILTIN
+}
 enum class PracticeDisplayPreset { LEARNING, FOCUS }
 enum class PracticePromptField { TARGET, MEANING, READING }
 
@@ -76,6 +80,9 @@ data class AppPreferences(
   val showsMascot: Boolean = true,
   val autoPronouncesPractice: Boolean = false,
   val choseongShowsMeaning: Boolean = true,
+  val anonymousAnalyticsEnabled: Boolean = false,
+  val crashDiagnosticsEnabled: Boolean = false,
+  val privacyNoticeVersion: Int = 0,
   val onboardingGoal: OnboardingGoal? = null,
   val onboardingIntroStep: OnboardingIntroStep = OnboardingIntroStep.GOAL,
   val onboardingIntroSkipped: Boolean = false,
@@ -88,10 +95,12 @@ data class AppPreferences(
   val unlockedPiyoAccessories: Set<PiyoAccessory> = emptySet(),
   val appTourCompleted: Boolean = false,
   val onboardingMigrationChecked: Boolean = false,
+  val recentQuickPracticeWords: List<String> = emptyList(),
 ) {
   init {
     require(hatchChaptersCompleted in 0..3)
     require(pendingHatchResultChapter in 0..3)
+    require(privacyNoticeVersion >= 0)
   }
 
   val growthStage: PiyoGrowthStage
@@ -130,6 +139,22 @@ data class AppPreferences(
       showsMascot = false,
     )
   }
+}
+
+object PrivacyNoticePolicy {
+  const val currentVersion = 1
+
+  fun shouldPresent(
+    reviewedVersion: Int,
+    onboardingCompleted: Boolean,
+    appTourCompleted: Boolean,
+    sessionIsActive: Boolean = false,
+    hasBlockingPresentation: Boolean = false,
+  ): Boolean = reviewedVersion < currentVersion &&
+    onboardingCompleted &&
+    appTourCompleted &&
+    !sessionIsActive &&
+    !hasBlockingPresentation
 }
 
 object PiyoWardrobePolicy {

@@ -1,6 +1,6 @@
 # Android M7 착수 준비 현황
 
-기준일: 2026-08-25 (JST)
+기준일: 2026-08-27 (JST)
 
 ## 결론
 
@@ -9,8 +9,10 @@ iOS 1.1 build 7과 PRD v6.3, `shared/` 계약을 포팅 기준으로 사용한�
 M1 공용 코어부터 M5 커리큘럼·리텐션까지 중앙 저장소 `main`에 반영했다. M6A는
 온보딩·설정·OS IME 기반을 구현했고 M6B는 나머지 다섯 게임과 번들 콘텐츠 계약을
 완성했다. M6C는 오프라인 발음·효과음, 결과 공유, 성장 피요·옷장,
-adaptive icon과 접근성 폴리싱을 구현해 API 35 자동 회귀와 Release 빌드를 통과한
-상태다. 사용자의 요청에 따라 입력 지연·실제 두 손가락·알림 수신·외부 음악·IME
+adaptive icon과 접근성 폴리싱을 구현해 API 35 자동 회귀와 Release 빌드를 통과했다.
+출시 전 공용 light/dark 테마·벡터 아이콘·큰 글자 화면을 추가로 정리했고,
+Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 저장소 계약으로
+준비했다. 사용자의 요청에 따라 입력 지연·실제 두 손가락·알림 수신·외부 음악·IME
 종류별 확인은 기능 개발을 막지 않고 출시 후보 통합 실기기 QA에 유지한다.
 
 공개 App Store lookup으로 일본 storefront의 iOS 1.0.2가 2026-08-18에 출시된
@@ -55,7 +57,8 @@ adaptive icon과 접근성 폴리싱을 구현해 API 35 자동 회귀와 Releas
 | 교차 플랫폼 package | 완료 | canonical 1,109 bytes writer 일치, pretty golden reader 수용, SHA·Unicode malicious golden 거부 |
 | application ID | 후보 | `app.piyokey.piyokey`; Play Console 충돌 확인과 사용자 확정 전 외부 사용 금지 |
 | source baseline | 완료 | private GitHub 원격, Issue/Project/PR/CI와 Issue별 `codex/` 브랜치 운용. 사용자 원본 dirty worktree는 별도 보존 |
-| Google Play 상태 | 미착수 | 앱 생성·서명·Play Games·Billing 상품 생성 모두 별도 외부 gate |
+| Google Play listing 소스 | 자동 완료 | en-US·ja·ko 문구, 512 아이콘, 1024×500 무알파 피처 그래픽과 preflight 계약 |
+| Google Play Console | 미착수 | 앱 ID 소유권·서명·Play Games·Billing·정책 설문·스크린샷은 별도 외부 gate |
 
 ## 2026-08-27 최종 소스 패키징 재검증
 
@@ -114,3 +117,6 @@ M6A 뒤에도 기기 수동 QA를 요구하지 않는 기능 묶음을 연속 �
    함께 다시 동결한다.
 6. Android launcher/adaptive icon은 공용 1024 RGB 원본을 빌드 생성 리소스로
    사용한다. Play Console 등록 전 실제 런처 마스크별 시각 확인만 통합 QA에 남긴다.
+7. 최종 서명 후보가 고정된 뒤 그 빌드에서 en-US·ja·ko 1080×1920 전화
+   스크린샷 4장씩을 캡처하고 `release/google_play_metadata.json`의 보류 상태를
+   실제 Console 기록과 함께 갱신한다.

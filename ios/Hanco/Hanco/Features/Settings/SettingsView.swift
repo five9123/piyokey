@@ -23,6 +23,12 @@ struct SettingsView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsComposition)
   private var practiceShowsComposition = true
   @AppStorage(SettingsPreferenceKeys.choseongShowsMeaning) private var choseongShowsMeaning = true
+  @AppStorage(SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+  private var anonymousAnalyticsEnabled = false
+  @AppStorage(SettingsPreferenceKeys.crashDiagnosticsEnabled)
+  private var crashDiagnosticsEnabled = false
+  @AppStorage(SettingsPreferenceKeys.privacyNoticeVersion)
+  private var privacyNoticeVersion = 0
 
   @AppStorage(KeyboardPreferenceKeys.showsKeyGuide) private var showsKeyGuide = true
   @AppStorage(KeyboardPreferenceKeys.showsRomanHints) private var showsRomanHints = true
@@ -39,6 +45,7 @@ struct SettingsView: View {
 
   @State private var showsKoreanKeyboardGuide = false
   @State private var showsMascotCloset = false
+  @State private var showsPrivacyChoices = false
 
   let createsNavigationStack: Bool
   let showsCloseButton: Bool
@@ -65,20 +72,83 @@ struct SettingsView: View {
     .sheet(isPresented: $showsMascotCloset) {
       MascotClosetView()
     }
+    .sheet(isPresented: $showsPrivacyChoices) {
+      PrivacyConsentView(
+        initialAnalyticsEnabled: anonymousAnalyticsEnabled,
+        initialDiagnosticsEnabled: crashDiagnosticsEnabled,
+        onSave: applyPrivacyChoices,
+        onContinueWithoutSharing: {
+          applyPrivacyChoices(analytics: false, diagnostics: false)
+        }
+      )
+    }
+    .onAppear {
+      TelemetryService.shared.capture(.featureViewed, properties: [.feature: "settings"])
+      TelemetryService.shared.setCrashContext(feature: "settings")
+    }
     .onChange(of: soundEffectsEnabled) { enabled in
       HancoSoundEngine.shared.setEnabled(enabled)
       if enabled {
         HancoTypingSoundFeedback.play(resolvedTypingPreset)
       }
+      captureSetting("sound", value: enabled ? "enabled" : "disabled")
+    }
+    .onChange(of: language) { rawValue in
+      captureSetting("language", value: AppLanguage.resolved(from: rawValue).rawValue)
+    }
+    .onChange(of: theme) { rawValue in
+      captureSetting("theme", value: HancoTheme.resolved(from: rawValue).rawValue)
+    }
+    .onChange(of: inputModeDefault) { rawValue in
+      captureSetting(
+        "input_mode",
+        value: SessionInputMode(rawValue: rawValue)?.rawValue ?? "builtin"
+      )
     }
     .onChange(of: typingSoundPreset) { _ in
       guard soundEffectsEnabled else { return }
       HancoTypingSoundFeedback.play(resolvedTypingPreset)
     }
     .onChange(of: practiceDisplayPreset) { rawValue in
-      applyPracticePreset(PracticeDisplayPreset.resolved(from: rawValue))
+      let preset = PracticeDisplayPreset.resolved(from: rawValue)
+      applyPracticePreset(preset)
+      captureSetting("practice_display", value: preset.rawValue)
+    }
+    .onChange(of: anonymousAnalyticsEnabled) { enabled in
+      privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
+      TelemetryService.shared.updateConsent(
+        productAnalytics: enabled,
+        crashDiagnostics: crashDiagnosticsEnabled
+      )
+      if enabled {
+        TelemetryService.shared.capture(
+          .settingChanged,
+          properties: [.setting: "analytics_consent", .valueBucket: "enabled"]
+        )
+      }
+    }
+    .onChange(of: crashDiagnosticsEnabled) { enabled in
+      privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
+      TelemetryService.shared.updateConsent(
+        productAnalytics: anonymousAnalyticsEnabled,
+        crashDiagnostics: enabled
+      )
+      TelemetryService.shared.capture(
+        .settingChanged,
+        properties: [
+          .setting: "diagnostics_consent",
+          .valueBucket: enabled ? "enabled" : "disabled",
+        ]
+      )
     }
     .hancoUITestDynamicTypeOverride()
+  }
+
+  private func captureSetting(_ setting: String, value: String) {
+    TelemetryService.shared.capture(
+      .settingChanged,
+      properties: [.setting: setting, .valueBucket: value]
+    )
   }
 
   private var settingsContent: some View {
@@ -91,6 +161,7 @@ struct SettingsView: View {
         reminderSection
         keyboardSection
         mascotSection
+        privacySection
         appInformationSection
       }
       .padding(.horizontal, 18)
@@ -480,6 +551,47 @@ struct SettingsView: View {
     }
   }
 
+  private var privacySection: some View {
+    settingsCard(title: "settings.privacy", systemImage: "hand.raised.fill") {
+      settingToggle(
+        title: "settings.anonymous_analytics",
+        detail: "settings.anonymous_analytics_detail",
+        systemImage: "chart.bar.xaxis",
+        isOn: $anonymousAnalyticsEnabled,
+        identifier: "settings.anonymous_analytics"
+      )
+      Divider().opacity(0.5)
+      settingToggle(
+        title: "settings.crash_diagnostics",
+        detail: "settings.crash_diagnostics_detail",
+        systemImage: "stethoscope",
+        isOn: $crashDiagnosticsEnabled,
+        identifier: "settings.crash_diagnostics"
+      )
+      Text("settings.analytics_privacy_note")
+        .font(.caption)
+        .foregroundStyle(AppPalette.mutedInk)
+        .padding(.top, 4)
+      Button {
+        showsPrivacyChoices = true
+      } label: {
+        HStack(spacing: 10) {
+          Image(systemName: "checklist")
+          Text("settings.review_privacy_choices")
+          Spacer()
+          Image(systemName: "chevron.right")
+            .font(.caption.weight(.bold))
+        }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(AppPalette.accent)
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+      }
+      .buttonStyle(.plain)
+      .accessibilityIdentifier("settings.review_privacy_choices")
+    }
+  }
+
   private var appInformationSection: some View {
     settingsCard(title: "settings.app_information", systemImage: "info.circle.fill") {
       legalLink(
@@ -670,6 +782,165 @@ struct SettingsView: View {
       practiceShowsMascot = false
       practiceShowsComposition = true
     }
+  }
+
+  private func applyPrivacyChoices(analytics: Bool, diagnostics: Bool) {
+    anonymousAnalyticsEnabled = analytics
+    crashDiagnosticsEnabled = diagnostics
+    privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
+    TelemetryService.shared.updateConsent(
+      productAnalytics: analytics,
+      crashDiagnostics: diagnostics
+    )
+  }
+}
+
+struct PrivacyConsentView: View {
+  @Environment(\.dismiss) private var dismiss
+  @State private var analyticsEnabled: Bool
+  @State private var diagnosticsEnabled: Bool
+
+  let onSave: (_ analytics: Bool, _ diagnostics: Bool) -> Void
+  let onContinueWithoutSharing: () -> Void
+
+  init(
+    initialAnalyticsEnabled: Bool,
+    initialDiagnosticsEnabled: Bool,
+    onSave: @escaping (_ analytics: Bool, _ diagnostics: Bool) -> Void,
+    onContinueWithoutSharing: @escaping () -> Void
+  ) {
+    _analyticsEnabled = State(initialValue: initialAnalyticsEnabled)
+    _diagnosticsEnabled = State(initialValue: initialDiagnosticsEnabled)
+    self.onSave = onSave
+    self.onContinueWithoutSharing = onContinueWithoutSharing
+  }
+
+  var body: some View {
+    NavigationStack {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 18) {
+          privacyHeader
+          consentOption(
+            title: "settings.anonymous_analytics",
+            detail: "privacy_consent.analytics_detail",
+            systemImage: "chart.bar.xaxis",
+            isOn: $analyticsEnabled,
+            identifier: "privacy_consent.analytics"
+          )
+          consentOption(
+            title: "settings.crash_diagnostics",
+            detail: "privacy_consent.diagnostics_detail",
+            systemImage: "stethoscope",
+            isOn: $diagnosticsEnabled,
+            identifier: "privacy_consent.diagnostics"
+          )
+
+          Text("privacy_consent.excluded_data")
+            .font(.footnote)
+            .foregroundStyle(AppPalette.mutedInk)
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppPalette.accentSoft.opacity(0.35), in: RoundedRectangle(cornerRadius: 16))
+
+          Link(destination: AppReleaseLinks.privacyPolicy) {
+            Label("settings.privacy_policy", systemImage: "arrow.up.right")
+              .font(.subheadline.weight(.semibold))
+              .frame(minHeight: 44)
+          }
+          .accessibilityIdentifier("privacy_consent.privacy_policy")
+
+          VStack(spacing: 10) {
+            Button {
+              onSave(analyticsEnabled, diagnosticsEnabled)
+              dismiss()
+            } label: {
+              Text("privacy_consent.save")
+                .font(.headline.weight(.bold))
+                .frame(maxWidth: .infinity, minHeight: 50)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(AppPalette.accent)
+            .accessibilityIdentifier("privacy_consent.save")
+
+            Button {
+              analyticsEnabled = false
+              diagnosticsEnabled = false
+              onContinueWithoutSharing()
+              dismiss()
+            } label: {
+              Text("privacy_consent.continue_without_sharing")
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(AppPalette.mutedInk)
+            .accessibilityIdentifier("privacy_consent.continue_without_sharing")
+          }
+        }
+        .padding(20)
+      }
+      .background(
+        LinearGradient(
+          colors: [AppPalette.backgroundTop, AppPalette.backgroundBottom],
+          startPoint: .topLeading,
+          endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+      )
+      .navigationTitle(Text("privacy_consent.navigation_title"))
+      .navigationBarTitleDisplayMode(.inline)
+    }
+    .interactiveDismissDisabled()
+    .accessibilityIdentifier("privacy_consent.screen")
+  }
+
+  private var privacyHeader: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Image(systemName: "hand.raised.fill")
+        .font(.system(size: 34, weight: .bold))
+        .foregroundStyle(AppPalette.accent)
+        .accessibilityHidden(true)
+      Text("privacy_consent.title")
+        .font(.title2.weight(.heavy))
+        .foregroundStyle(AppPalette.ink)
+      Text("privacy_consent.introduction")
+        .font(.body)
+        .foregroundStyle(AppPalette.mutedInk)
+      Text("privacy_consent.optional_note")
+        .font(.footnote.weight(.semibold))
+        .foregroundStyle(AppPalette.ink)
+    }
+  }
+
+  private func consentOption(
+    title: LocalizedStringKey,
+    detail: LocalizedStringKey,
+    systemImage: String,
+    isOn: Binding<Bool>,
+    identifier: String
+  ) -> some View {
+    Toggle(isOn: isOn) {
+      HStack(alignment: .top, spacing: 12) {
+        Image(systemName: systemImage)
+          .font(.system(size: 18, weight: .semibold))
+          .foregroundStyle(AppPalette.accent)
+          .frame(width: 34, height: 34)
+          .background(AppPalette.accentSoft.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+          .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 4) {
+          Text(title)
+            .font(.headline)
+            .foregroundStyle(AppPalette.ink)
+          Text(detail)
+            .font(.footnote)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+      }
+    }
+    .tint(AppPalette.accent)
+    .padding(16)
+    .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    .accessibilityIdentifier(identifier)
   }
 }
 

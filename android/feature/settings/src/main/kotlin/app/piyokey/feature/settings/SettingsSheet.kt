@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.settings.AppLanguage
 import app.piyokey.core.settings.AppPreferences
 import app.piyokey.core.settings.AppTheme
@@ -45,6 +48,7 @@ import app.piyokey.core.settings.InputMode
 import app.piyokey.core.settings.KeySoundStyle
 import app.piyokey.core.settings.PracticeDisplayPreset
 import app.piyokey.core.settings.PracticePromptOrder
+import app.piyokey.core.settings.PrivacyNoticePolicy
 
 @Composable
 fun CommonSettingsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -56,7 +60,12 @@ fun CommonSettingsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     shadowElevation = 5.dp,
   ) {
     IconButton(onClick = onClick, modifier = Modifier.semantics { contentDescription = description }) {
-      Text("⚙", fontWeight = FontWeight.Black)
+      PiyokeyIcon(
+        kind = PiyokeyIconKind.SETTINGS,
+        contentDescription = null,
+        modifier = Modifier.size(24.dp),
+        tint = MaterialTheme.colorScheme.onSurface,
+      )
     }
   }
 }
@@ -77,6 +86,7 @@ fun SettingsSheet(
   onDismiss: () -> Unit,
 ) {
   var showTimePicker by remember { mutableStateOf(false) }
+  var showPrivacyChoices by remember { mutableStateOf(false) }
   val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
   ModalBottomSheet(
     onDismissRequest = onDismiss,
@@ -201,10 +211,59 @@ fun SettingsSheet(
       }
       item {
         SettingsCard(stringResource(R.string.settings_reminder)) {
-          ToggleRow(stringResource(R.string.settings_reminder_enabled), reminderEnabled, onReminderEnabled)
+          ToggleRow(
+            stringResource(R.string.settings_reminder_enabled),
+            reminderEnabled,
+            onChecked = onReminderEnabled,
+          )
           TextButton(onClick = { showTimePicker = true }, modifier = Modifier.testTag("settings-reminder-time")) {
             Text(stringResource(R.string.settings_reminder_time, reminderHour, reminderMinute))
           }
+        }
+      }
+      item {
+        SettingsCard(stringResource(R.string.settings_data_privacy)) {
+          ToggleRow(
+            stringResource(R.string.settings_anonymous_analytics),
+            preferences.anonymousAnalyticsEnabled,
+          ) {
+            onPreferencesChange(
+              preferences.copy(
+                anonymousAnalyticsEnabled = it,
+                privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+              ),
+            )
+          }
+          Text(
+            stringResource(R.string.settings_anonymous_analytics_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+          ToggleRow(
+            stringResource(R.string.settings_crash_diagnostics),
+            preferences.crashDiagnosticsEnabled,
+          ) {
+            onPreferencesChange(
+              preferences.copy(
+                crashDiagnosticsEnabled = it,
+                privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+              ),
+            )
+          }
+          Text(
+            stringResource(R.string.settings_crash_diagnostics_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+          Text(
+            stringResource(R.string.settings_analytics_privacy_note),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+          TextButton(
+            onClick = { showPrivacyChoices = true },
+            modifier = Modifier.fillMaxWidth().testTag("settings-review-privacy-choices"),
+          ) { Text(stringResource(R.string.settings_review_privacy_choices)) }
         }
       }
       item {
@@ -239,6 +298,107 @@ fun SettingsSheet(
       },
     )
   }
+
+  if (showPrivacyChoices) {
+    PrivacyConsentDialog(
+      initialAnalyticsEnabled = preferences.anonymousAnalyticsEnabled,
+      initialDiagnosticsEnabled = preferences.crashDiagnosticsEnabled,
+      onOpenPrivacy = onOpenPrivacy,
+      onSave = { analytics, diagnostics ->
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = analytics,
+            crashDiagnosticsEnabled = diagnostics,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+        showPrivacyChoices = false
+      },
+      onContinueWithoutSharing = {
+        onPreferencesChange(
+          preferences.copy(
+            anonymousAnalyticsEnabled = false,
+            crashDiagnosticsEnabled = false,
+            privacyNoticeVersion = PrivacyNoticePolicy.currentVersion,
+          ),
+        )
+        showPrivacyChoices = false
+      },
+    )
+  }
+}
+
+@Composable
+fun PrivacyConsentDialog(
+  initialAnalyticsEnabled: Boolean,
+  initialDiagnosticsEnabled: Boolean,
+  onOpenPrivacy: () -> Unit,
+  onSave: (analyticsEnabled: Boolean, diagnosticsEnabled: Boolean) -> Unit,
+  onContinueWithoutSharing: () -> Unit,
+) {
+  var analyticsEnabled by remember(initialAnalyticsEnabled) { mutableStateOf(initialAnalyticsEnabled) }
+  var diagnosticsEnabled by remember(initialDiagnosticsEnabled) { mutableStateOf(initialDiagnosticsEnabled) }
+
+  AlertDialog(
+    onDismissRequest = {},
+    modifier = Modifier.testTag("privacy-consent-dialog"),
+    title = { Text(stringResource(R.string.privacy_consent_title)) },
+    text = {
+      Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(stringResource(R.string.privacy_consent_introduction))
+        Text(
+          stringResource(R.string.privacy_consent_optional_note),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        ToggleRow(
+          stringResource(R.string.settings_anonymous_analytics),
+          analyticsEnabled,
+          tag = "privacy-consent-analytics",
+        ) {
+          analyticsEnabled = it
+        }
+        Text(
+          stringResource(R.string.privacy_consent_analytics_detail),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        ToggleRow(
+          stringResource(R.string.settings_crash_diagnostics),
+          diagnosticsEnabled,
+          tag = "privacy-consent-diagnostics",
+        ) {
+          diagnosticsEnabled = it
+        }
+        Text(
+          stringResource(R.string.privacy_consent_diagnostics_detail),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+          stringResource(R.string.privacy_consent_excluded_data),
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TextButton(
+          onClick = onOpenPrivacy,
+          modifier = Modifier.testTag("privacy-consent-privacy-policy"),
+        ) { Text(stringResource(R.string.settings_privacy)) }
+      }
+    },
+    confirmButton = {
+      TextButton(
+        onClick = { onSave(analyticsEnabled, diagnosticsEnabled) },
+        modifier = Modifier.testTag("privacy-consent-save"),
+      ) { Text(stringResource(R.string.privacy_consent_save)) }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onContinueWithoutSharing,
+        modifier = Modifier.testTag("privacy-consent-continue-without-sharing"),
+      ) { Text(stringResource(R.string.privacy_consent_continue_without_sharing)) }
+    },
+  )
 }
 
 @Composable
@@ -252,10 +412,19 @@ private fun SettingsCard(title: String, content: @Composable () -> Unit) {
 }
 
 @Composable
-private fun ToggleRow(title: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
+private fun ToggleRow(
+  title: String,
+  checked: Boolean,
+  tag: String? = null,
+  onChecked: (Boolean) -> Unit,
+) {
   Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
     Text(title, modifier = Modifier.weight(1f))
-    Switch(checked = checked, onCheckedChange = onChecked)
+    Switch(
+      checked = checked,
+      onCheckedChange = onChecked,
+      modifier = if (tag == null) Modifier else Modifier.testTag(tag),
+    )
   }
 }
 

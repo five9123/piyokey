@@ -4,6 +4,8 @@ import SwiftUI
 
 @main
 struct HancoApp: App {
+  @Environment(\.scenePhase) private var scenePhase
+
   init() {
     #if DEBUG
       if ProcessInfo.processInfo.environment["UITEST_RESET_KEYBOARD_PREFERENCES"] == "1" {
@@ -58,11 +60,24 @@ struct HancoApp: App {
         seedUserDeckDraftFixture()
       }
     #endif
+    TelemetryService.shared.configure()
   }
 
   var body: some Scene {
     WindowGroup {
       AppRootView()
+        .onChange(of: scenePhase) { phase in
+          switch phase {
+          case .active:
+            TelemetryService.shared.sceneDidBecomeActive()
+          case .background:
+            TelemetryService.shared.sceneDidEnterBackground()
+          case .inactive:
+            break
+          @unknown default:
+            break
+          }
+        }
     }
   }
 }

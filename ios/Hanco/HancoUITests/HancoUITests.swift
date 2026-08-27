@@ -2681,6 +2681,48 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.tabBars.buttons["홈"].exists)
   }
 
+  func testPrivacyChoicesAreOptionalIndependentAndShownOncePerNoticeVersion() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    let analytics = app.switches["privacy_consent.analytics"]
+    let diagnostics = app.switches["privacy_consent.diagnostics"]
+    XCTAssertEqual(analytics.value as? String, "0")
+    XCTAssertEqual(diagnostics.value as? String, "0")
+    XCTAssertTrue(app.buttons["privacy_consent.continue_without_sharing"].isHittable)
+    analytics.tap()
+    XCTAssertEqual(analytics.value as? String, "1")
+    XCTAssertEqual(diagnostics.value as? String, "0")
+    app.buttons["privacy_consent.save"].tap()
+
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      showsPrivacyConsent: true
+    )
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+
+    openSettings()
+    let review = app.buttons["settings.review_privacy_choices"]
+    scrollToHittable(review)
+    review.tap()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(app.switches["privacy_consent.analytics"].value as? String, "1")
+    XCTAssertEqual(app.switches["privacy_consent.diagnostics"].value as? String, "0")
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("settings.screen").waitForExistence(timeout: 5))
+  }
+
   func testSettingsExposePublicPrivacySupportAndContentFeedbackLinks() {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
@@ -2733,6 +2775,7 @@ final class HancoUITests: XCTestCase {
     showsHatchOnboarding: Bool = false,
     respectsOnboardingState: Bool = false,
     forcesAppTour: Bool = false,
+    showsPrivacyConsent: Bool = false,
     practiceAutoSpeaks: Bool? = nil,
     audioProbe: Bool = false,
     seedsAppStoreCaptureState: Bool = false,
@@ -2761,6 +2804,15 @@ final class HancoUITests: XCTestCase {
     }
     if forcesAppTour {
       application.launchEnvironment["UITEST_FORCE_APP_TOUR"] = "1"
+    }
+    if showsPrivacyConsent {
+      application.launchArguments += [
+        "-onboarding.app_tour.completed", "YES",
+      ]
+    } else {
+      application.launchArguments += [
+        "-settings.privacy_notice_version", "1",
+      ]
     }
     application.launchEnvironment["UITEST_JST_DAY"] = "2026-07-19"
     application.launchEnvironment["UITEST_GAME_COUNTDOWN_STEP_SECONDS"] = "0.05"

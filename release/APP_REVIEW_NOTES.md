@@ -27,7 +27,9 @@ The catalog is read-only static content. All launch content is also bundled, so 
 
 Version 1.1 also recognizes `.piyodeck` local document files. Validation and preview are always free, and users may keep up to three distinct user decks installed without purchase. Practicing/playing, exporting, deleting, and replacing the same deck ID remain free. A fourth distinct user deck requires typee pro; deleting one of the three restores a free slot. Purchase status is not written into the document. Files are opened from or exported to Files, iCloud Drive, AirDrop, or the iOS share sheet and are stored locally on device.
 
-Personal decks are not public user-generated content: PIYOKEY has no upload service, public user catalog, search/indexing, social feed, comments, messaging, moderation service, or remote write API. The only network catalog remains first-party, static, and read-only. There is no advertising, analytics SDK, or tracking.
+Personal decks are not public user-generated content: PIYOKEY has no upload service, public user catalog, search/indexing, social feed, comments, messaging, moderation service, or remote write API. The only network catalog remains first-party, static, and read-only. There is no advertising or cross-company tracking.
+
+After onboarding, the hatch missions, and the app tour, an idle Home screen presents one privacy-choice notice. Both anonymous usage analytics and crash diagnostics are off by default and can be enabled independently. Reviewers may tap **Continue without sharing** and retain access to every lesson, game, local deck feature, and purchased feature. The same choices and the privacy-policy link remain available in Settings. PIYOKEY sends no typed text, answers, searches, user-deck names or content, contact information, advertising ID, recordings, or session replay. Product events use PostHog Cloud EU with IP geolocation disabled; native crash diagnostics use Firebase Crashlytics only when separately enabled.
 
 Privacy policy: https://hancoweb.vercel.app/privacy
 
