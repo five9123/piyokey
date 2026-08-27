@@ -15,9 +15,9 @@ class TestAppStateRule(
   override fun before() {
     val context = InstrumentationRegistry.getInstrumentation().targetContext
     if (resetStorage) {
-      PiyokeyDatabase.closeSingletonForTesting()
+      val reusedOpenDatabase = PiyokeyDatabase.clearSingletonForTesting()
       File(context.filesDir, "datastore/piyokey_preferences.preferences_pb").delete()
-      context.deleteDatabase("piyokey.db")
+      if (!reusedOpenDatabase) context.deleteDatabase("piyokey.db")
       File(context.filesDir, "piyokey").deleteRecursively()
       File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).deleteRecursively()
       File(context.cacheDir, "shared_results").deleteRecursively()
