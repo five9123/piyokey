@@ -320,7 +320,10 @@ private fun FirstRewardScreen(
       Text(stringResource(R.string.onboarding_reward_badge), Modifier.padding(16.dp), fontWeight = FontWeight.Black)
     }
     Text(stringResource(R.string.onboarding_hatch_handoff), textAlign = TextAlign.Center)
-    Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
+    Card(
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+      shape = RoundedCornerShape(20.dp),
+    ) {
       Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(stringResource(R.string.onboarding_reminder_title), fontWeight = FontWeight.Black)
         Text(stringResource(R.string.onboarding_reminder_detail), style = MaterialTheme.typography.bodySmall)
