@@ -11,6 +11,47 @@ import UIKit
   import PostHog
 #endif
 
+enum AnalyticsTransportPrivacy {
+  private static let sdkOperationalProperties: Set<String> = [
+    "$geoip_disable",
+    "$process_person_profile",
+    "$lib",
+    "$lib_version",
+  ]
+
+  static func sanitizedProperties(
+    eventName: String,
+    properties: [String: Any]
+  ) -> [String: Any]? {
+    guard
+      let event = AnalyticsEvent(rawValue: eventName),
+      let eventProperties = AnalyticsContract.allowedProperties[event]
+    else { return nil }
+
+    let allowed = Set(eventProperties.map(\.rawValue)).union(sdkOperationalProperties)
+    return properties.filter { allowed.contains($0.key) }
+  }
+
+  static func platform(
+    idiom: UIUserInterfaceIdiom,
+    deviceModel: String,
+    simulatorModelIdentifier: String?
+  ) -> String {
+    let isIPad = idiom == .pad
+      || deviceModel.lowercased().hasPrefix("ipad")
+      || simulatorModelIdentifier?.lowercased().hasPrefix("ipad") == true
+    return isIPad ? "ipados" : "ios"
+  }
+
+  static var currentPlatform: String {
+    platform(
+      idiom: UIDevice.current.userInterfaceIdiom,
+      deviceModel: UIDevice.current.model,
+      simulatorModelIdentifier: ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"]
+    )
+  }
+}
+
 struct AnalyticsAppOpenTracker: Equatable {
   private(set) var analyticsEnabled: Bool
   private(set) var capturedInCurrentForeground = false
@@ -205,7 +246,7 @@ final class TelemetryService {
     let language = AppLanguage.current.rawValue
     return [
       .schemaVersion: AnalyticsContract.schemaVersion,
-      .platform: UIDevice.current.userInterfaceIdiom == .pad ? "ipados" : "ios",
+      .platform: AnalyticsTransportPrivacy.currentPlatform,
       .appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         ?? "unknown",
       .buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
@@ -241,6 +282,16 @@ final class TelemetryService {
       config.surveys = false
       config.preloadFeatureFlags = false
       config.sendFeatureFlagEvent = false
+      config.setBeforeSend { event in
+        guard
+          let properties = AnalyticsTransportPrivacy.sanitizedProperties(
+            eventName: event.event,
+            properties: event.properties
+          )
+        else { return nil }
+        event.properties = properties
+        return event
+      }
       PostHogSDK.shared.setup(config)
       isProductAnalyticsConfigured = true
     #endif

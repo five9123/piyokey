@@ -378,6 +378,74 @@ final class AppSettingsTests: XCTestCase {
     }
   }
 
+  func testPostHogTransportStripsSDKDeviceAndSessionProperties() throws {
+    let sanitized = try XCTUnwrap(
+      AnalyticsTransportPrivacy.sanitizedProperties(
+        eventName: AnalyticsEvent.appOpened.rawValue,
+        properties: [
+          AnalyticsProperty.schemaVersion.rawValue: AnalyticsContract.schemaVersion,
+          AnalyticsProperty.platform.rawValue: "ios",
+          AnalyticsProperty.appVersion.rawValue: "1.1",
+          AnalyticsProperty.buildNumber.rawValue: "7",
+          AnalyticsProperty.locale.rawValue: "ja",
+          AnalyticsProperty.entryPoint.rawValue: "cold_start",
+          "$geoip_disable": true,
+          "$process_person_profile": false,
+          "$lib": "posthog-ios",
+          "$lib_version": "3.69.5",
+          "$device_model": "iPhone18,3",
+          "$os_version": "26.5",
+          "$network_wifi": true,
+          "$session_id": "must-not-leave-device",
+          "$timezone": "Asia/Tokyo",
+        ]
+      )
+    )
+
+    XCTAssertEqual(sanitized[AnalyticsProperty.platform.rawValue] as? String, "ios")
+    XCTAssertEqual(sanitized["$geoip_disable"] as? Bool, true)
+    XCTAssertEqual(sanitized["$process_person_profile"] as? Bool, false)
+    XCTAssertEqual(sanitized["$lib"] as? String, "posthog-ios")
+    XCTAssertNil(sanitized["$device_model"])
+    XCTAssertNil(sanitized["$os_version"])
+    XCTAssertNil(sanitized["$network_wifi"])
+    XCTAssertNil(sanitized["$session_id"])
+    XCTAssertNil(sanitized["$timezone"])
+    XCTAssertNil(
+      AnalyticsTransportPrivacy.sanitizedProperties(
+        eventName: "$screen",
+        properties: ["$screen_name": "Home"]
+      )
+    )
+  }
+
+  func testAnalyticsPlatformDetectsIPadCompatibilityMode() {
+    XCTAssertEqual(
+      AnalyticsTransportPrivacy.platform(
+        idiom: .phone,
+        deviceModel: "iPad",
+        simulatorModelIdentifier: nil
+      ),
+      "ipados"
+    )
+    XCTAssertEqual(
+      AnalyticsTransportPrivacy.platform(
+        idiom: .phone,
+        deviceModel: "iPhone",
+        simulatorModelIdentifier: "iPad16,6"
+      ),
+      "ipados"
+    )
+    XCTAssertEqual(
+      AnalyticsTransportPrivacy.platform(
+        idiom: .phone,
+        deviceModel: "iPhone",
+        simulatorModelIdentifier: "iPhone18,3"
+      ),
+      "ios"
+    )
+  }
+
   func testReleaseLinksUsePublicHTTPSPages() {
     XCTAssertEqual(
       AppReleaseLinks.privacyPolicy.absoluteString, "https://hancoweb.vercel.app/privacy")
