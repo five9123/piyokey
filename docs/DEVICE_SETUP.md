@@ -71,6 +71,8 @@ git switch main
 git pull --ff-only origin main
 git switch -c codex/123-short-slug
 git push -u origin codex/123-short-slug
+python3 tools/worktree_owner.py claim --issue 123 --owner '담당자 또는 agent task ID'
+python3 tools/workspace_doctor.py --strict
 ```
 
 branch를 일찍 push하면 다른 디바이스와 agent가 소유권을 확인할 수 있다.
@@ -84,7 +86,8 @@ branch를 일찍 push하면 다른 디바이스와 agent가 소유권을 확인�
 git fetch --prune origin
 git worktree add ../piyokey-123 -b codex/123-short-slug origin/main
 cd ../piyokey-123
-python3 tools/workspace_doctor.py
+python3 tools/worktree_owner.py claim --issue 123 --owner '담당자 또는 agent task ID'
+python3 tools/workspace_doctor.py --strict
 ```
 
 worktree 경로와 branch를 issue에 기록한다. agent를 종료한 뒤에도 미병합 변경이
@@ -122,6 +125,14 @@ branch/worktree: codex/123-short-slug | ../piyokey-123
 다음 agent는 이 기록, `AGENTS.md`, 관련 PRD 절, 현재 diff를 읽은 뒤 작업한다.
 채팅 기록만을 handoff의 단일 근거로 사용하지 않는다.
 
+handoff를 받는 담당자는 Issue·branch·worktree가 맞는지 확인한 뒤 소유권을
+명시적으로 교체한다.
+
+```bash
+python3 tools/worktree_owner.py claim --issue 123 --owner '새 담당자' --force
+python3 tools/workspace_doctor.py --strict
+```
+
 ## 8. 병합 뒤 다른 디바이스 갱신
 
 ```bash
@@ -134,3 +145,7 @@ python3 tools/workspace_doctor.py
 GitHub의 병합된 `main`이 유일한 공유 기준이다. App Store Connect, TestFlight,
 로컬 Xcode archive는 GitHub branch를 대신하지 않으며, 릴리스 시에만 정확한
 commit SHA와 build 번호로 연결한다.
+
+실기기 설치·archive·스토어 업로드 직전에는 `git fetch --prune origin` 후
+`python3 tools/workspace_doctor.py --strict --require-origin-main`을 통과해야 한다.
+실패한 작업공간의 산출물은 배포 기준선으로 사용하지 않는다.

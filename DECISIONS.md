@@ -1453,3 +1453,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: Google Play Data safety를 `수집 없음`으로 미리 확정하지 않는다. 앱 자체 분석·광고·계정 서버는 없지만 운영 정적 호스트의 요청 로그, Play Billing 9.1.0, Play Games v2 22.0.0의 기기 밖 처리까지 최종 배포 구성에서 검토해야 한다. 저장소에는 출시 노트·상품 문구·앱 접근·대상 연령·등급·권한·데이터 경계의 근거 초안만 두고 실제 콘솔 답변은 외부 게이트로 유지한다.
 - 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
 - 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.
+
+## 2026-08-27 프로젝트 운영 기준선과 검증 증빙
+
+- 관련: Issue #59, 저장소 운영·릴리스 검증 체계.
+- 결정: `AGENTS.md`는 변하지 않는 제품 철칙과 문서 routing만 유지한다. 현재 main·활성 작업·출시 gate는 `PROJECT_STATUS.md`, 작업 순서와 WIP 제한은 `ROADMAP.md`에서 관리하고, 과거의 장문 상태 기록은 `docs/archive/AGENTS-2026-08-27.md`로 보존한다.
+- 결정: 모든 작업은 Issue 번호가 포함된 `codex/<issue>-<slug>` branch와 전용 worktree를 사용한다. 시작 시 담당자·Issue·branch·절대 worktree 경로를 각 worktree의 Git metadata에 기록하며 strict workspace 진단은 dirty 상태, 누락되거나 불일치하는 소유권을 실패로 처리한다.
+- 결정: GitHub Actions 비활성 기간의 로컬 검증은 clean commit에서 실행하고 `release/evidence/<검증대상 전체 SHA>.json`에 명령·결과·수동 gate를 기록한다. 증빙은 실제 실행을 대체하지 않으며 PR 본문에서 검증 대상 SHA와 연결한다.
+- 결정: 실기기 설치, archive, TestFlight·Play 배포는 `git fetch --prune origin` 후 제품 파일 tree가 `origin/main`과 같고 작업공간이 clean·소유권 일치일 때만 수행한다. 소스 완료와 기기·스토어·권리 gate는 계속 별도 상태로 관리한다.
+- 근거: 시간에 따라 변하는 상태와 영구 규칙을 분리하고, worktree 소유·검증 대상·배포 소스를 기계적으로 확인해야 비개발자 운영에서도 오래된 branch, 섞인 변경, 다른 SHA의 테스트 결과를 최신 기준선으로 오인하지 않는다.
+- 영향 범위: `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, workflow·device setup·PR template, workspace doctor, worktree ownership, commit-addressed local evidence.
