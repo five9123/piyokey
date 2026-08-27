@@ -124,9 +124,9 @@ M4 증분 파일과 검증은 `docs/ANDROID_M7_M4_HANDOFF.md`에 기록한다.
 
 - `core:retention`은 iOS parity 6챕터·7스테이지, 별/해금, JST 주간·스트릭·보상, 결정적 5문제 데일리와 복습 졸업 정책을 Android 없이 검증한다.
 - 연습 checkpoint는 현재 문제·수락 자모·오타 resolution·유효 시간만 저장하며 background 구간을 제외하고 정확히 복구한다.
-- Room v2→v3은 M3/M4 데이터를 보존하면서 커리큘럼, 복습, 스트릭 활동, 3/5/7 영구 보상과 기본 OFF 리마인더 preference를 추가한다.
+- Room v2→v3은 M3/M4 데이터를 보존하면서 커리큘럼, 복습, 스트릭 활동, 3/5/7 영구 보상과 리마인더 preference를 추가한다.
 - 홈 MY 피요+7일 카드·데일리·추천, 연습 탭 커리큘럼/자유연습, 마이페이지 피요 상세·수동 복습·시간 지정 리마인더를 ja/en/ko로 제공한다.
-- 로컬 리마인더는 exact-alarm 권한 없이 예약하고 재부팅 뒤 복원하며, Android 13+ 알림 권한은 사용자가 켤 때만 요청한다.
+- 로컬 리마인더는 온보딩에서 Android 13+ 알림 권한을 허용하면 현지 시각 20:00로 자동 활성화한다. exact-alarm 권한 없이 다음 현지 시각을 매일 다시 계산하고 재부팅·시각·시간대 변경 뒤 복원하며, 설정의 ON/OFF·시간 지정은 선택 사항이다.
 - JVM session 14·game 11·retention 9·data 7 tests, API 35 data 12 tests와 app M3~M5 6 tests, 관련 lint와 debug APK가 통과했다.
 - 실기기 입력·60초 frame·최종 알림 수신은 출시 후보 통합 QA Issue #19에 유지한다.
 

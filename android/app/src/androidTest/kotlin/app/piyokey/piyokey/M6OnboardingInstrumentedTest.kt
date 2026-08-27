@@ -44,6 +44,7 @@ class M6OnboardingInstrumentedTest {
     composeRule.onNodeWithTag("keyboard-key-ㄱ").performClick() // tap 4: first real typing input
     composeRule.onNodeWithTag("keyboard-key-ㅏ").performClick()
     composeRule.onNodeWithTag("onboarding-first-reward").assertIsDisplayed()
+    // Permission consent is verified separately; this path verifies the explicit no-reminder choice.
     composeRule.onNodeWithTag("onboarding-begin-hatch").performClick()
     composeRule.onNodeWithTag("hatch-start-1").assertIsDisplayed()
   }

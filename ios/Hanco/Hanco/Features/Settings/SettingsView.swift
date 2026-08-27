@@ -384,7 +384,7 @@ struct SettingsView: View {
         .pickerStyle(.menu)
         .accessibilityIdentifier("retention.reminder.minute")
 
-        Text("retention.reminder.jst")
+        Text("retention.reminder.local_time")
           .font(.caption.weight(.bold))
           .foregroundStyle(AppPalette.mutedInk)
         Spacer()

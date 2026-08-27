@@ -42,7 +42,7 @@
   <string name="settings_choseong_meaning">初声ゲームの意味</string>
   <string name="settings_reminder">練習リマインダー</string>
   <string name="settings_reminder_enabled">リマインダーを使う</string>
-  <string name="settings_reminder_time">時刻 %1$02d:%2$02d</string>
+  <string name="settings_reminder_time">現地時刻 %1$02d:%2$02d</string>
   <string name="settings_about">アプリ情報</string>
   <string name="settings_privacy">プライバシーポリシー</string>
   <string name="settings_feedback">デッキ提案・内容報告</string>

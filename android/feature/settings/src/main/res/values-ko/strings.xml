@@ -42,7 +42,7 @@
   <string name="settings_choseong_meaning">초성 게임 뜻 표시</string>
   <string name="settings_reminder">연습 알림</string>
   <string name="settings_reminder_enabled">알림 사용</string>
-  <string name="settings_reminder_time">시간 %1$02d:%2$02d</string>
+  <string name="settings_reminder_time">현지 시각 %1$02d:%2$02d</string>
   <string name="settings_about">앱 정보</string>
   <string name="settings_privacy">개인정보처리방침</string>
   <string name="settings_feedback">덱 제안·내용 제보</string>
