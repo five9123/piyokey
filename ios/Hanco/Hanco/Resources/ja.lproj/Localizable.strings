@@ -828,10 +828,10 @@
 "retention.rewards.7.title" = "7日：ヘッドホン";
 "retention.rewards.7.condition" = "今週7日すべてスタンプすると獲得";
 "retention.reminder.title" = "練習リマインダー";
-"retention.reminder.detail" = "好きな時間に、1日1回だけお知らせします。初期設定はOFFです。";
+"retention.reminder.detail" = "許可すると現地時刻20:00にお知らせします。時刻は変更できます。";
 "retention.reminder.hour" = "時";
 "retention.reminder.minute" = "分";
-"retention.reminder.jst" = "JST";
+"retention.reminder.local_time" = "現地時刻";
 "retention.reminder.denied" = "通知が許可されていません。iPhoneの設定から変更できます。";
 "retention.reminder.failed" = "リマインダーを設定できませんでした。もう一度お試しください。";
 "retention.reminder.notification_title" = "今日のハングル、3分だけ！";
@@ -873,8 +873,10 @@
 "onboarding.bulk.download" = "3つをまとめてダウンロード";
 "onboarding.bulk.complete" = "3つを追加しました";
 "onboarding.bulk.failed" = "一部を追加できませんでした。アプリ内からもう一度試せます。";
-"onboarding.reminder.title" = "毎日20:00にお知らせ";
-"onboarding.reminder.detail" = "初期設定はOFFです。時間はあとから変更できます。";
+"onboarding.reminder.title" = "退勤後の20:00に毎日お知らせ";
+"onboarding.reminder.detail" = "通知を許可するだけで、端末の現地時刻20:00に自動設定します。時刻はあとから変更できます。";
+"onboarding.reminder.allow_and_begin" = "通知を受け取ってミッション開始";
+"onboarding.reminder.not_now" = "通知なしで始める";
 "onboarding.finish" = "ピヨキーを始める";
 
 "app.name" = "ピヨキー";

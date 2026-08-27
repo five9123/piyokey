@@ -2185,6 +2185,8 @@ final class HancoUITests: XCTestCase {
     app.buttons["keyboard.key.ㅏ"].tap()
 
     XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.staticTexts["退勤後の20:00に毎日お知らせ"].exists)
+    XCTAssertTrue(app.buttons["通知を受け取ってミッション開始"].exists)
 
     let finish = app.buttons["onboarding.finish"]
     scrollToHittable(finish)

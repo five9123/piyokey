@@ -25,7 +25,7 @@
   <string name="curriculum_free_practice">Free practice with my decks</string>
   <string name="review_title">Review deck</string><string name="review_count">%1$d words to review</string><string name="review_empty">Mistyped words will appear here automatically.</string><string name="review_start">Start review practice</string><string name="review_progress">Perfect %1$d/%2$d</string><string name="review_remove">Remove</string>
   <string name="review_add_manually">Add a word</string><string name="review_choose_word">Choose from my decks</string>
-  <string name="reminder_title">Daily reminder</string><string name="reminder_default_off">Off by default. You choose when to practice.</string><string name="reminder_time">%1$02d:%2$02d</string><string name="reminder_choose_time">Choose reminder time</string>
+  <string name="reminder_title">Daily reminder</string><string name="reminder_default_off">Allow notifications for a daily 20:00 local-time reminder. You can change the time.</string><string name="reminder_time">Local time %1$02d:%2$02d</string><string name="reminder_choose_time">Choose reminder time</string>
   <string name="action_save">Save</string><string name="action_cancel">Cancel</string>
   <string name="retention_piyo_accessibility">My Piyo character</string>
   <string name="wardrobe_title">Piyo wardrobe</string><string name="wardrobe_preview">Final Piyo appearance preview</string>

@@ -102,6 +102,7 @@ import app.piyokey.core.game.toRecord
 import app.piyokey.core.game.PlayGamesPolicy
 import app.piyokey.core.game.PlayGamesResultIdentity
 import app.piyokey.core.platform.DailyReminderScheduler
+import app.piyokey.core.platform.DailyReminderDefaults
 import app.piyokey.core.platform.ContentFeedbackController
 import app.piyokey.core.platform.ContentFeedbackDeck
 import app.piyokey.core.platform.ContentFeedbackKind
@@ -830,13 +831,59 @@ private fun PiyokeyApp(
     }
   }
 
+  fun finishOnboardingReminderChoice(enabled: Boolean) {
+    if (!enabled) {
+      onPreferencesChange(preferences.copy(hatchHandoffCompleted = true))
+      return
+    }
+    scope.launch {
+      try {
+        reminderScheduler.schedule(
+          DailyReminderDefaults.LOCAL_WORKDAY_END_HOUR,
+          DailyReminderDefaults.MINUTE,
+        )
+        repository.saveReminderPreference(
+          true,
+          DailyReminderDefaults.LOCAL_WORKDAY_END_HOUR,
+          DailyReminderDefaults.MINUTE,
+        )
+      } catch (_: Exception) {
+        reminderScheduler.cancel()
+        operationFailed = true
+      } finally {
+        onPreferencesChange(preferences.copy(hatchHandoffCompleted = true))
+      }
+    }
+  }
+
+  val onboardingNotificationPermission = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission(),
+  ) { granted ->
+    finishOnboardingReminderChoice(granted)
+  }
+
   if (!preferences.onboardingMigrationChecked) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
     return
   }
 
   if (!preferences.firstInputCompleted || !preferences.hatchHandoffCompleted) {
-    OnboardingRoute(preferences = preferences, onUpdate = onPreferencesChange)
+    OnboardingRoute(
+      preferences = preferences,
+      onUpdate = onPreferencesChange,
+      onEnableReminder = {
+        if (Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+          ) == PackageManager.PERMISSION_GRANTED
+        ) {
+          finishOnboardingReminderChoice(true)
+        } else {
+          onboardingNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+      },
+      onSkipReminder = { finishOnboardingReminderChoice(false) },
+    )
     return
   }
 

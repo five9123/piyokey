@@ -4,6 +4,7 @@ struct OnboardingView: View {
   @Environment(\.hancoFontScale) private var fontScale
   @EnvironmentObject private var onboarding: OnboardingLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
+  @EnvironmentObject private var reminder: DailyReminderLibrary
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
   @AppStorage(SoundPreferenceKeys.typingPreset) private var typingSoundPreset =
     TypingSoundPreset.system.rawValue
@@ -11,6 +12,7 @@ struct OnboardingView: View {
   @StateObject private var lesson = PracticeSessionViewModel(target: "가")
   @State private var eggReactionRevision = 0
   @State private var didPlayEggKnock = false
+  @State private var isRequestingReminder = false
   @State private var didCaptureFirstInput = false
 
   var body: some View {
@@ -418,9 +420,36 @@ struct OnboardingView: View {
           .padding(16)
           .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 20))
 
-        primaryButton(title: "onboarding.hatch.begin", systemImage: "arrow.right.circle.fill") {
+        VStack(alignment: .leading, spacing: 8) {
+          Label("onboarding.reminder.title", systemImage: "bell.badge.fill")
+            .font(.subheadline.weight(.bold))
+            .foregroundStyle(AppPalette.ink)
+          Text("onboarding.reminder.detail")
+            .font(.caption)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 20))
+
+        primaryButton(title: "onboarding.reminder.allow_and_begin", systemImage: "bell.badge.fill") {
+          guard !isRequestingReminder else { return }
+          isRequestingReminder = true
+          Task { @MainActor in
+            _ = await reminder.enableFromOnboarding()
+            onboarding.complete(skipped: false)
+          }
+        }
+        .disabled(isRequestingReminder)
+        .opacity(isRequestingReminder ? 0.55 : 1)
+        .accessibilityIdentifier("onboarding.reminder.allow")
+
+        Button("onboarding.reminder.not_now") {
           onboarding.complete(skipped: false)
         }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(AppPalette.mutedInk)
+        .disabled(isRequestingReminder)
         .accessibilityIdentifier("onboarding.finish")
       }
       .padding(.horizontal, 20)

@@ -357,7 +357,7 @@ final class RetentionStoreTests: XCTestCase {
     )
   }
 
-  func testReminderDefaultsOffAndPersistsCustomTime() {
+  func testReminderDefaultsToLocalWorkdayEndAndPersistsCustomTime() {
     let settings = DailyReminderSettingsStore(defaults: defaults)
     XCTAssertEqual(
       settings.load(),
@@ -371,9 +371,10 @@ final class RetentionStoreTests: XCTestCase {
     )
   }
 
-  func testReminderScheduleUsesJSTAndDeniedAuthorizationKeepsToggleOff() async {
+  func testReminderScheduleUsesFloatingLocalTimeAndDeniedAuthorizationKeepsToggleOff() async {
     let components = DailyReminderRequest.dateComponents(hour: 7, minute: 15)
-    XCTAssertEqual(components.timeZone?.identifier, "Asia/Tokyo")
+    XCTAssertNil(components.timeZone)
+    XCTAssertNil(components.calendar)
     XCTAssertEqual(components.hour, 7)
     XCTAssertEqual(components.minute, 15)
 
@@ -412,6 +413,21 @@ final class RetentionStoreTests: XCTestCase {
     library.setEnabled(false)
     XCTAssertEqual(scheduler.cancelCount, 1)
     XCTAssertFalse(settings.load().isEnabled)
+  }
+
+  func testOnboardingConsentEnablesLocalWorkdayEndWithoutAnotherSettingStep() async {
+    let scheduler = ReminderSchedulerSpy(result: .scheduled)
+    let settings = DailyReminderSettingsStore(defaults: defaults)
+    let library = DailyReminderLibrary(store: settings, scheduler: scheduler)
+
+    let result = await library.enableFromOnboarding()
+
+    XCTAssertEqual(result, .scheduled)
+    XCTAssertEqual(scheduler.scheduledTimes, [ReminderTime(hour: 20, minute: 0)])
+    XCTAssertEqual(
+      settings.load(),
+      DailyReminderPreference(isEnabled: true, hour: 20, minute: 0)
+    )
   }
 
   func testUnsupportedSchemaAndDuplicateDaysAreRejected() throws {
