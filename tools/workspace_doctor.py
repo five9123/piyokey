@@ -20,10 +20,13 @@ ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_REMOTE = "github.com/five9123-maker/piyokey"
 REQUIRED_FILES = (
     "AGENTS.md",
+    "PROJECT_STATUS.md",
+    "ROADMAP.md",
     "PRD.md",
     "DECISIONS.md",
     "shared/test_vectors.json",
 )
+OWNER_FILENAME = "piyokey-owner.json"
 
 
 @dataclass(frozen=True)
@@ -49,6 +52,49 @@ def branch_status(branch: str) -> tuple[str, str]:
     if branch == "main":
         return "WARN", "편집 전 issue 전용 branch 또는 worktree를 만드세요"
     return "PASS", branch
+
+
+def issue_from_branch(branch: str) -> Optional[int]:
+    match = re.match(r"^codex/(\d+)-", branch)
+    return int(match.group(1)) if match else None
+
+
+def ownership_status(
+    branch: str,
+    worktree: Path,
+    metadata: Optional[dict[str, object]],
+) -> tuple[str, str]:
+    if metadata is None:
+        return "WARN", "tools/worktree_owner.py claim으로 Issue와 담당자를 기록하세요"
+    if metadata.get("schema_version") != 1:
+        return "FAIL", "지원하지 않는 worktree owner schema"
+
+    issue = metadata.get("issue")
+    owner = metadata.get("owner")
+    recorded_branch = metadata.get("branch")
+    recorded_worktree = metadata.get("worktree")
+    if not isinstance(issue, int) or issue <= 0 or not isinstance(owner, str) or not owner:
+        return "FAIL", "worktree owner의 issue 또는 owner가 올바르지 않습니다"
+    if recorded_branch != branch:
+        return "FAIL", f"owner branch {recorded_branch!r} != current {branch!r}"
+    if Path(str(recorded_worktree)).resolve() != worktree.resolve():
+        return "FAIL", "owner worktree 경로가 현재 작업공간과 다릅니다"
+
+    branch_issue = issue_from_branch(branch)
+    if branch_issue is not None and branch_issue != issue:
+        return "FAIL", f"branch Issue #{branch_issue}와 owner Issue #{issue}가 다릅니다"
+    return "PASS", f"Issue #{issue} / {owner}"
+
+
+def load_owner_metadata(git_dir: Path) -> Optional[dict[str, object]]:
+    source = git_dir / OWNER_FILENAME
+    if not source.exists():
+        return None
+    try:
+        value = json.loads(source.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"schema_version": "invalid"}
+    return value if isinstance(value, dict) else {"schema_version": "invalid"}
 
 
 def python_version_status(version: Sequence[int]) -> tuple[str, str]:
@@ -101,7 +147,12 @@ def git_value(*args: str) -> str:
     return result.stdout.strip() if result.returncode == 0 else ""
 
 
-def collect_checks(scope: str) -> list[Check]:
+def collect_checks(
+    scope: str,
+    *,
+    strict: bool = False,
+    require_origin_main: bool = False,
+) -> list[Check]:
     checks: list[Check] = []
 
     root = git_value("rev-parse", "--show-toplevel")
@@ -123,10 +174,35 @@ def collect_checks(scope: str) -> list[Check]:
     checks.append(
         Check(
             "working_tree",
-            "WARN" if dirty else "PASS",
+            "FAIL" if dirty and strict else "WARN" if dirty else "PASS",
             "커밋되지 않은 변경이 있습니다" if dirty else "clean",
         )
     )
+
+    git_dir_value = git_value("rev-parse", "--absolute-git-dir")
+    git_dir = Path(git_dir_value) if git_dir_value else ROOT / ".git"
+    owner_status, owner_detail = ownership_status(
+        branch,
+        ROOT,
+        load_owner_metadata(git_dir),
+    )
+    if strict and owner_status == "WARN":
+        owner_status = "FAIL"
+    checks.append(Check("worktree_owner", owner_status, owner_detail))
+
+    if require_origin_main:
+        head_tree = git_value("rev-parse", "HEAD^{tree}")
+        main_tree = git_value("rev-parse", "origin/main^{tree}")
+        matches = bool(head_tree and main_tree and head_tree == main_tree)
+        checks.append(
+            Check(
+                "origin_main_source",
+                "PASS" if matches else "FAIL",
+                "HEAD tree matches origin/main"
+                if matches
+                else "배포 소스가 origin/main과 다릅니다",
+            )
+        )
 
     status, detail = python_version_status(sys.version_info)
     checks.append(Check("python", status, detail))
@@ -249,9 +325,23 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scope", choices=("repo", "ios", "android"), default="repo")
     parser.add_argument("--json", action="store_true", dest="as_json")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="dirty 또는 소유 정보 없는 worktree를 실패로 처리합니다",
+    )
+    parser.add_argument(
+        "--require-origin-main",
+        action="store_true",
+        help="HEAD 파일 트리가 origin/main과 같지 않으면 실패합니다",
+    )
     args = parser.parse_args()
 
-    checks = collect_checks(args.scope)
+    checks = collect_checks(
+        args.scope,
+        strict=args.strict,
+        require_origin_main=args.require_origin_main,
+    )
     if args.as_json:
         print(json.dumps([asdict(check) for check in checks], ensure_ascii=False, indent=2))
     else:
