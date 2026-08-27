@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "기본 입력 모드";
 "practice.setup.input_mode_detail" = "단어·문장 연습과 게임에서 사용할 키보드";
 "practice.setup.start" = "연습 시작";
-"practice.setup.session_note" = "연습 중에도 진행 상황을 유지한 채 입력 모드를 바꿀 수 있어요.";
+"practice.setup.session_note" = "연습 중에도 입력 모드를 바꿀 수 있어요. 내장 키보드 배열은 세션을 시작할 때 고정돼요.";
 
 "feedback.ready" = "빛나는 키부터 입력해 봐요";
 "feedback.correct" = "좋아요!";
@@ -81,7 +81,25 @@
 "keyboard.backspace" = "자모 하나 지우기";
 "keyboard.space" = "스페이스";
 "keyboard.accessibility_label" = "한국어 키보드";
+"keyboard.layout.title" = "내장 키보드 배열";
+"keyboard.layout.detail" = "챕터 5+, 자유 연습, 덱 연습에서 사용하며 세션 시작 시 고정돼요.";
+"keyboard.layout.dubeolsik" = "두벌식(기본)";
+"keyboard.layout.korean_10key" = "한국어 10키(천지인식)";
+"keyboard.layout.korean_10key_help" = "자음은 묶인 키를 반복해서 누르고, 같은 묶음이 이어지면 →로 구분해요. 모음은 빛나는 순서대로 ㅣ·ㆍ·ㅡ를 조합해요.";
+"keyboard.10key.accessibility_label" = "한국어 10키 천지인식 키보드";
+"keyboard.10key.vertical" = "세로획 ㅣ";
+"keyboard.10key.dot" = "천지인 점";
+"keyboard.10key.horizontal" = "가로획 ㅡ";
+"keyboard.10key.giyeok" = "ㄱ, ㅋ, ㄲ 묶음";
+"keyboard.10key.nieun" = "ㄴ, ㄹ 묶음";
+"keyboard.10key.digeut" = "ㄷ, ㅌ, ㄸ 묶음";
+"keyboard.10key.bieup" = "ㅂ, ㅍ, ㅃ 묶음";
+"keyboard.10key.siot" = "ㅅ, ㅎ, ㅆ 묶음";
+"keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ 묶음";
+"keyboard.10key.ieung" = "ㅇ, ㅁ 묶음";
+"keyboard.10key.next" = "다음 자음으로 진행";
 "input_mode.builtin" = "내장 키보드";
+"input_mode.builtin_korean_10key" = "한국어 10키";
 "input_mode.os_ime" = "OS 키보드";
 "os_ime.input.title" = "기기의 한국어 키보드로 입력";
 "os_ime.input.live_badge" = "실전 모드";
@@ -401,6 +419,7 @@
 "game.selection.deck_hint.dictation_unavailable" = "타이핑 가능한 한국어가 필요해요";
 "game.selection.best_score" = "최고 %@점";
 "game.selection.best_score.builtin" = "내장 최고 %@점";
+"game.selection.best_score.korean_10key" = "10키 최고 %@점";
 "game.selection.best_score.os_ime" = "OS 최고 %@점";
 "game.selection.best_score.choseong" = "초성 최고 %@점";
 "game.selection.best_score.acid_rain" = "산성비 최고 %@점";
@@ -777,6 +796,12 @@
 "home.primary.resume_detail" = "지난 지점부터 계속 입력해요";
 "home.primary.deck_detail" = "최근 연습한 덱을 다시 입력해요";
 "home.primary.daily_personalized" = "선택한 목적에 맞춘 5문제";
+"home.quick.piyo_cup.title" = "주간 피요컵";
+"home.quick.piyo_cup.detail" = "60초 기록에 바로 도전";
+"home.quick.random.title" = "랜덤 단어 5개";
+"home.quick.random.detail" = "추천 단어로 가볍게 연습";
+"home.quick.random.session_title" = "랜덤 단어 5개";
+"home.quick.random.retry" = "다른 5문제";
 "retention.rewards.navigation_title" = "스탬프와 보상";
 "retention.rewards.current_streak" = "현재 연속 기록";
 "retention.rewards.accessibility" = "3일, 5일, 7일 보상";
@@ -923,10 +948,12 @@
 "closet.prop_game_center" = "챔피언 트로피";
 "closet.cond_game_center" = "Game Center에 점수 제출";
 
-/* Deck Maker lifetime purchase */
-"deck_maker.paywall.navigation_title" = "내 덱 만들기";
-"deck_maker.paywall.title" = "나만의 덱을 만들어 보세요";
-"deck_maker.paywall.subtitle" = "iPhone에서 새 덱을 만들고 가져온 덱도 자유롭게 편집할 수 있어요.";
+/* 피요키 프로 lifetime purchase */
+"deck_maker.paywall.navigation_title" = "피요키 프로";
+"deck_maker.paywall.title" = "사용자 덱을 더 자유롭게";
+"deck_maker.paywall.subtitle" = "4번째 사용자 덱부터 기기 내 생성·편집까지 한 번의 구매로 이용하세요.";
+"deck_maker.paywall.feature.unlimitedImports.title" = "사용자 덱 무제한 보관";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "무료 3개를 넘어 원하는 만큼 .piyodeck 파일을 가져올 수 있어요.";
 "deck_maker.paywall.feature.create.title" = "새로운 덱 만들기";
 "deck_maker.paywall.feature.create.detail" = "한국어·뜻·읽는 법을 입력해 나만의 학습 자료를 만들어요.";
 "deck_maker.paywall.feature.edit.title" = "가져온 덱 편집하기";
@@ -935,9 +962,9 @@
 "deck_maker.paywall.feature.copyOfficial.detail" = "공식 덱의 개인용 사본을 만들고 내용을 원하는 대로 바꿔요.";
 "deck_maker.paywall.feature.lifetime.title" = "한 번 구매로 평생 이용";
 "deck_maker.paywall.feature.lifetime.detail" = "구독이 아니며 사용 기한 없이 덱을 만들고 편집할 수 있어요.";
-"deck_maker.paywall.free_import_note" = ".piyodeck 가져오기·연습·게임은 구매하지 않아도 무료로 이용할 수 있어요.";
+"deck_maker.paywall.free_import_note" = "사용자 덱 3개까지 무료예요. 저장된 덱의 연습·게임·내보내기·삭제·동일 ID 교체는 구매 없이 계속 이용할 수 있어요.";
 "deck_maker.paywall.purchase_format" = "%@에 구매";
-"deck_maker.paywall.already_owned" = "구매 완료 · 덱 만들기 열기";
+"deck_maker.paywall.already_owned" = "구매 완료 · 피요키 프로 사용";
 "deck_maker.paywall.loading" = "가격 불러오는 중…";
 "deck_maker.paywall.retry" = "가격 다시 불러오기";
 "deck_maker.paywall.restore" = "구매 복원";
@@ -945,11 +972,11 @@
 "deck_maker.paywall.privacy" = "개인정보처리방침";
 "deck_maker.alert.ok" = "확인";
 "deck_maker.purchase.pending.title" = "승인을 기다리고 있어요";
-"deck_maker.purchase.pending.message" = "구매가 승인되면 덱 만들기를 이용할 수 있어요.";
+"deck_maker.purchase.pending.message" = "구매가 승인되면 피요키 프로를 이용할 수 있어요.";
 "deck_maker.purchase.failed.title" = "구매를 완료하지 못했어요";
 "deck_maker.purchase.failed.message" = "네트워크 상태를 확인하고 다시 시도해 주세요. 이미 구매했다면 구매 복원을 이용해 주세요.";
 "deck_maker.restore.succeeded.title" = "구매를 복원했어요";
-"deck_maker.restore.succeeded.message" = "이제 덱 만들기를 이용할 수 있어요.";
+"deck_maker.restore.succeeded.message" = "이제 피요키 프로를 이용할 수 있어요.";
 "deck_maker.restore.empty.title" = "복원할 구매를 찾지 못했어요";
 "deck_maker.restore.empty.message" = "구매할 때 사용한 Apple Account와 같은 계정인지 확인해 주세요.";
 "deck_maker.restore.failed.title" = "구매를 복원하지 못했어요";
@@ -1025,7 +1052,8 @@
 "piyodeck.import.status.downgrade" = "현재 덱보다 이전 버전이에요.";
 "piyodeck.import.status.same_version" = "버전 번호는 같지만 내용이 달라요.";
 "piyodeck.import.status.different_detail" = "자동으로 합치지 않아요. 현재 덱을 교체하거나 별도 사본으로 저장할 수 있어요.";
-"piyodeck.import.action.import" = "무료로 가져오기";
+"piyodeck.import.action.import" = "덱 가져오기";
+"piyodeck.import.action.unlock_pro" = "피요키 프로로 4번째 덱 가져오기";
 "piyodeck.import.action.done" = "완료";
 "piyodeck.import.action.replace" = "가져온 내용으로 교체";
 "piyodeck.import.action.copy" = "별도 사본으로 저장";
@@ -1072,8 +1100,8 @@
 "my_decks.delete.failure.message_format" = "\"%@\" 덱은 삭제되지 않았어요. 저장 공간을 확인한 뒤 다시 시도해 주세요.";
 "deck_maker.accessibility.status.unlocked" = "사용 가능";
 "deck_maker.accessibility.status.locked" = "구매 필요";
-"deck_maker.accessibility.hint.available" = "덱 만들기를 엽니다.";
-"deck_maker.accessibility.hint.locked" = "덱 만들기 구매 화면을 엽니다.";
+"deck_maker.accessibility.hint.available" = "피요키 프로 기능을 엽니다.";
+"deck_maker.accessibility.hint.locked" = "피요키 프로 구매 화면을 엽니다.";
 "piyodeck.import.compare.title" = "현재 덱과 비교";
 "piyodeck.import.compare.current" = "현재본";
 "piyodeck.import.compare.incoming" = "가져온 파일";
@@ -1085,7 +1113,7 @@
 "piyodeck.import.action.export_current.hint" = "현재 덱을 .piyodeck 파일로 공유해요.";
 "piyodeck.import.action.copy.locked_label" = "별도 사본으로 저장, 구매 필요";
 "piyodeck.import.action.copy.hint" = "새로운 ID의 사용자 덱으로 저장해요.";
-"piyodeck.import.action.copy.locked_hint" = "내 덱 만들기 구매 화면을 열어요. 가져오기와 교체는 무료예요.";
+"piyodeck.import.action.copy.locked_hint" = "피요키 프로 구매 화면을 열어요. 동일 ID 교체는 무료예요.";
 "piyodeck.import.action.replace.hint" = "현재 덱을 가져온 내용으로 교체하며 확인 화면을 열어요.";
 "piyodeck.import.action.replace.downgrade_hint" = "이전 버전으로 현재 덱을 교체하며 확인 화면을 열어요.";
 "piyodeck.import.action.replace.same_version_hint" = "같은 버전 번호의 다른 내용으로 현재 덱을 교체하며 확인 화면을 열어요.";

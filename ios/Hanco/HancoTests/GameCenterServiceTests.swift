@@ -105,6 +105,11 @@ final class GameCenterServiceTests: XCTestCase {
     )
     XCTAssertTrue(
       GameCenterLeaderboard.leaderboards(
+        for: record(competition: .officialDeck, inputMode: .builtInKorean10Key)
+      ).isEmpty
+    )
+    XCTAssertTrue(
+      GameCenterLeaderboard.leaderboards(
         for: record(deckVersion: 999, competition: .officialDeck)
       ).isEmpty
     )

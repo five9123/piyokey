@@ -1,0 +1,8 @@
+<resources>
+  <string name="reminder_channel_name">毎日の練習</string><string name="reminder_notification_title">ピヨキーを3分だけ練習しよう</string><string name="reminder_notification_body">今日も韓国語タイピングの連続記録をつなごう。</string>
+  <string name="feedback_proposal_subject">【ピヨキー】ほしいデッキの提案</string><string name="feedback_report_subject">【ピヨキー】デッキ内容の報告</string><string name="feedback_combined_subject">【ピヨキー】コンテンツへのご意見</string>
+  <string name="feedback_proposal_body">テーマ：\n対象レベル：\n入れてほしい単語：\nほしい理由：\n\nパスワード・住所・歌詞やドラマの台詞そのものは入力しないでください。内容は手動で確認し、自動公開はしません。</string>
+  <string name="feedback_report_body">対象の表現：\n種類（誤字／意味／読み／音声／権利）：\n詳しい内容：\n\nパスワード・住所・歌詞やドラマの台詞そのものは入力しないでください。内容は手動で確認し、自動公開はしません。</string>
+  <string name="feedback_combined_body">種類（デッキ提案／内容の報告）：\nテーマまたは対象の表現：\n対象レベルまたは問題の種類：\n詳しい内容：\n\nパスワード・住所・歌詞やドラマの台詞そのものは入力しないでください。内容は手動で確認し、自動公開はしません。</string>
+  <string name="feedback_metadata_heading">--- アプリが自動追加する情報 ---</string><string name="feedback_metadata_type">種類</string><string name="feedback_metadata_source">画面</string><string name="feedback_metadata_app">アプリのバージョン／ビルド</string><string name="feedback_metadata_language">言語</string><string name="feedback_metadata_deck">デッキID／バージョン</string>
+</resources>

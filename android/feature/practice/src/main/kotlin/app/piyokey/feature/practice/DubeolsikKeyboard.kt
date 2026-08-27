@@ -43,6 +43,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -62,6 +63,7 @@ data class PracticeKeyboardOptions(
   val showsKeyGuide: Boolean = true,
   val showsRomanHints: Boolean = true,
   val hapticsEnabled: Boolean = true,
+  val showsPhysicalKeyboardGuide: Boolean = false,
 )
 
 /**
@@ -335,6 +337,7 @@ private fun KeyboardKeycap(
         spotColor = if (highlighted) KeyboardColors.Guide.copy(alpha = guidePulse) else Color.Black,
       )
       .onGloballyPositioned { targetRegistry.register(action, it.boundsInRoot()) }
+      .testTag("keyboard-key-${action.testId()}")
       .semantics {
         contentDescription = accessibilityLabel
         role = Role.Button
@@ -385,6 +388,13 @@ private fun KeyboardKeycap(
       }
     }
   }
+}
+
+private fun KeyboardAction.testId(): String = when (this) {
+  is JamoKey -> base.toString()
+  Backspace -> "backspace"
+  Shift -> "shift"
+  Space -> "space"
 }
 
 @Composable

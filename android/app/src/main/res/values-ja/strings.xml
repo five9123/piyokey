@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">ピヨキー</string>
+  <string name="nav_home">ホーム</string>
+  <string name="nav_discover">さがす</string>
+  <string name="nav_practice">練習</string>
+  <string name="nav_games">ゲーム</string>
+  <string name="nav_profile">マイページ</string>
+  <string name="loading_content">検証済みのオフラインコンテンツを読み込み中…</string>
+  <string name="practice_choose_deck">ダウンロード済みデッキから選ぶ</string>
+  <string name="practice_sample">サンプルを試す</string>
+  <string name="games_coming_next">ゲームモードを準備しています。</string>
+  <string name="close_session">閉じる</string>
+  <string name="retry_load">もう一度試す</string>
+  <string name="dismiss_error">閉じる</string>
+  <string name="retry_save">保存を再試行</string>
+  <string name="back_to_curriculum">カリキュラムへ戻る</string>
+  <string name="practice_result_share_title">韓国語タイピング練習</string><string name="practice_result_share_level">練習セッション</string>
 </resources>

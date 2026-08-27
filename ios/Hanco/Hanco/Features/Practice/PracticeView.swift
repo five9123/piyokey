@@ -34,9 +34,8 @@ struct PracticeView: View {
   @AppStorage(SettingsPreferenceKeys.practiceShowsJamo) private var practiceShowsJamo = true
   @AppStorage(SettingsPreferenceKeys.practiceAutoSpeaks) private var practiceAutoSpeaks = false
   @AppStorage(SettingsPreferenceKeys.practiceShowsMascot) private var practiceShowsMascot = true
-  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition) private
-    var practiceShowsComposition =
-    true
+  @AppStorage(SettingsPreferenceKeys.practiceShowsComposition)
+  private var practiceShowsComposition = true
   @StateObject private var viewModel: PracticeSessionViewModel
   @StateObject private var targetSpeechSynthesizer = TargetSpeechSynthesizer()
   #if DEBUG
@@ -56,6 +55,8 @@ struct PracticeView: View {
   @State private var didPersistLearningRecord = false
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var didResolveInputMode = false
+  @State private var builtInKeyboardLayout: BuiltInKeyboardLayout
+  @State private var korean10KeyInterpreter = Korean10KeyInterpreter()
   @State private var inputResetRevision = 0
   @State private var isSessionSettingsPresented = false
   @State private var isOSIMEFocusSuspended = false
@@ -76,11 +77,14 @@ struct PracticeView: View {
   private let onCurriculumCompletion: ((Double, Double, Int) async -> Bool)?
   private let onPracticeCompletion: ((Double, Double) -> Void)?
   private let onSessionRestart: (() -> Void)?
+  private let retryTitle: LocalizedStringKey
+  private let retrySystemImage: String
   private let onResultFinished: (() -> Void)?
   private let onPersistenceFailureExit: (() -> Void)?
   private let chainsHatchMissions: Bool
   private let isFinalHatchMission: Bool
   private let allowsOSKeyboard: Bool
+  private let allowsKorean10Key: Bool
 
   init(
     targets: [String]? = nil,
@@ -95,11 +99,14 @@ struct PracticeView: View {
     onCurriculumCompletion: ((Double, Double, Int) async -> Bool)? = nil,
     onPracticeCompletion: ((Double, Double) -> Void)? = nil,
     onSessionRestart: (() -> Void)? = nil,
+    retryTitle: LocalizedStringKey = "practice.result.retry",
+    retrySystemImage: String = "arrow.counterclockwise",
     onResultFinished: (() -> Void)? = nil,
     onPersistenceFailureExit: (() -> Void)? = nil,
     chainsHatchMissions: Bool = false,
     isFinalHatchMission: Bool = false,
-    allowsOSKeyboard: Bool = true
+    allowsOSKeyboard: Bool = true,
+    allowsKorean10Key: Bool = true
   ) {
     self.sessionTitle = sessionTitle
     self.sourceTags = sourceTags
@@ -111,11 +118,22 @@ struct PracticeView: View {
     self.onCurriculumCompletion = onCurriculumCompletion
     self.onPracticeCompletion = onPracticeCompletion
     self.onSessionRestart = onSessionRestart
+    self.retryTitle = retryTitle
+    self.retrySystemImage = retrySystemImage
     self.onResultFinished = onResultFinished
     self.onPersistenceFailureExit = onPersistenceFailureExit
     self.chainsHatchMissions = chainsHatchMissions
     self.isFinalHatchMission = isFinalHatchMission
     self.allowsOSKeyboard = allowsOSKeyboard
+    self.allowsKorean10Key = allowsKorean10Key
+    let storedBuiltInLayout = BuiltInKeyboardLayout.resolved(
+      from: UserDefaults.standard.string(
+        forKey: KeyboardPreferenceKeys.builtInLayoutDefault
+      ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+    )
+    _builtInKeyboardLayout = State(
+      initialValue: allowsKorean10Key ? storedBuiltInLayout : .dubeolsik
+    )
     let resolvedTargets =
       targets ?? [
         AppLocalization.string("practice.sample_target_1"),
@@ -238,6 +256,8 @@ struct PracticeView: View {
         recommendations: resultRecommendations,
         catalogDecks: catalogDecks,
         showsRetry: !chainsHatchMissions,
+        retryTitle: retryTitle,
+        retrySystemImage: retrySystemImage,
         finishTitle: hatchResultFinishTitle,
         finishSystemImage: chainsHatchMissions ? "arrow.right.circle.fill" : "chevron.backward",
         finishAccessibilityIdentifier: chainsHatchMissions
@@ -341,6 +361,7 @@ struct PracticeView: View {
     }
     .onChange(of: inputMode) { _ in
       showsOSIMEUnavailable = false
+      korean10KeyInterpreter.reset()
       inputResetRevision += 1
       if isSessionSettingsPresented {
         dismissSessionSettings()
@@ -348,6 +369,7 @@ struct PracticeView: View {
     }
     .onChange(of: viewModel.currentTargetIndex) { _ in
       targetSpeechSynthesizer.stop()
+      korean10KeyInterpreter.reset()
       inputResetRevision += 1
       speakCurrentTargetIfNeeded()
     }
@@ -370,23 +392,64 @@ struct PracticeView: View {
       }
 
       if inputMode != .osIME || !allowsOSKeyboard {
-        HangulKeyboardView(
-          nextExpectedKey: viewModel.nextExpectedKey,
-          options: HangulKeyboardOptions(
-            showsKeyGuide: showsKeyGuide,
-            showsRomanHints: showsRomanHints,
-            hapticsEnabled: hapticsEnabled
-          ),
-          onInputStart: recordInputStart,
-          onKeyFeedback: playKeySound,
-          onKey: viewModel.input,
-          onBackspace: viewModel.backspace
-        )
+        if builtInKeyboardLayout == .korean10Key, allowsKorean10Key {
+          Korean10KeyKeyboardView(
+            nextExpectedKey: korean10KeyInterpreter.nextKey(for: viewModel.nextExpectedKey),
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: false,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onInputStart: recordInputStart,
+            onKeyFeedback: playKeySound,
+            onKey: inputKorean10Key,
+            onBackspace: backspaceKorean10Key
+          )
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: viewModel.nextExpectedKey,
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: showsRomanHints,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onInputStart: recordInputStart,
+            onKeyFeedback: playKeySound,
+            onKey: viewModel.input,
+            onBackspace: viewModel.backspace
+          )
+        }
       } else if showsPhysicalKeyboardGuide {
         PhysicalKeyboardGuideView(nextExpectedKey: viewModel.nextExpectedKey)
           .padding(.horizontal, 8)
           .padding(.bottom, 6)
       }
+    }
+  }
+
+  private func inputKorean10Key(_ key: Korean10KeyKey) {
+    let interpretation = korean10KeyInterpreter.input(
+      key,
+      expecting: viewModel.nextExpectedKey
+    )
+    switch interpretation {
+    case .pending:
+      break
+    case .separatorAccepted:
+      break
+    case .committed(let jamo):
+      viewModel.input(jamo)
+    case .incorrect:
+      viewModel.input(key.displayText.first ?? "ㆍ")
+    }
+  }
+
+  private func backspaceKorean10Key() {
+    switch korean10KeyInterpreter.backspace() {
+    case .pendingChanged:
+      break
+    case .forwardToHangulEngine:
+      viewModel.backspace()
     }
   }
 
@@ -478,8 +541,7 @@ struct PracticeView: View {
             .accessibilityLabel(Text("practice.jamo_progress"))
             .accessibilityValue(
               Text(
-                verbatim:
-                  "\(min(viewModel.completedJamoCount, viewModel.targetJamoSequence.count)) / \(viewModel.targetJamoSequence.count)"
+                verbatim: "\(completedJamoProgress) / \(viewModel.targetJamoSequence.count)"
               )
             )
             .accessibilityIdentifier("practice.jamo_progress.value")
@@ -496,6 +558,10 @@ struct PracticeView: View {
     }
     .shadow(color: AppPalette.keyShadow, radius: 14, y: 8)
     .modifier(ShakeEffect(animatableData: shakeStep))
+  }
+
+  private var completedJamoProgress: Int {
+    min(viewModel.completedJamoCount, viewModel.targetJamoSequence.count)
   }
 
   @ViewBuilder
@@ -576,7 +642,7 @@ struct PracticeView: View {
         if practiceShowsComposition {
           VStack(spacing: 4) {
             SyllableAssemblyPreview(
-              text: viewModel.composingPreview,
+              text: compositionPreviewText,
               incomingJamo: viewModel.lastAcceptedKey,
               revision: viewModel.compositionRevision,
               shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin
@@ -701,7 +767,19 @@ struct PracticeView: View {
 
   private var mascotGazeX: CGFloat {
     guard case .incorrect(let expected) = viewModel.feedback else { return 0 }
+    if builtInKeyboardLayout == .korean10Key, allowsKorean10Key {
+      return Korean10KeyGeometry.normalizedHorizontalPosition(
+        for: Korean10KeyInterpreter().nextKey(for: expected)
+      )
+    }
     return HangulKeyboardGeometry.normalizedHorizontalPosition(for: expected)
+  }
+
+  private var compositionPreviewText: String {
+    guard inputMode == .builtIn, builtInKeyboardLayout == .korean10Key,
+      allowsKorean10Key, let pending = korean10KeyInterpreter.pendingDisplay
+    else { return viewModel.composingPreview }
+    return viewModel.composingPreview + pending
   }
 
   private var mascotGazeY: CGFloat {
@@ -813,6 +891,7 @@ struct PracticeView: View {
     didPersistLearningRecord = false
     previousAcceptedInputCount = 0
     onSessionRestart?()
+    korean10KeyInterpreter.reset()
     viewModel.reset()
     inputResetRevision += 1
     persistCheckpoint()
@@ -885,6 +964,7 @@ struct PracticeView: View {
 
   private func advanceSession(persistingCheckpoint: Bool = true) {
     cancelPostCompletionTransition()
+    korean10KeyInterpreter.reset()
     viewModel.advance()
     if persistingCheckpoint {
       persistCheckpoint()

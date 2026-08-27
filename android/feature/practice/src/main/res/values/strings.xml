@@ -17,4 +17,25 @@
   <string name="keyboard_backspace">Backspace</string>
   <string name="keyboard_space">Space</string>
   <string name="keyboard_key_with_roman">%1$s, %2$s</string>
+  <string name="practice_input_builtin_short">App</string>
+  <string name="practice_input_os_short">OS</string>
+  <string name="practice_input_builtin">Built-in keyboard</string>
+  <string name="practice_input_os">OS keyboard</string>
+  <string name="practice_ime_missing">A Korean keyboard was not detected. You can keep typing or open system settings.</string>
+  <string name="practice_ime_open_settings">Keyboard settings</string>
+  <string name="practice_play_pronunciation">Play Korean pronunciation</string>
+  <string name="practice_piyo_accessibility">Piyo reacting to your typing</string>
+  <string name="physical_keyboard_hand_left">left hand</string>
+  <string name="physical_keyboard_hand_right">right hand</string>
+  <string name="physical_keyboard_hand_both">both hands</string>
+  <string name="physical_keyboard_finger_little">little finger</string>
+  <string name="physical_keyboard_finger_ring">ring finger</string>
+  <string name="physical_keyboard_finger_middle">middle finger</string>
+  <string name="physical_keyboard_finger_index">index finger</string>
+  <string name="physical_keyboard_finger_thumb">thumb</string>
+  <string name="physical_keyboard_space">Space</string>
+  <string name="physical_keyboard_next_key">Next: %1$s (%2$s)</string>
+  <string name="physical_keyboard_finger">%1$s · %2$s</string>
+  <string name="physical_keyboard_shift_finger">%1$s Shift + %2$s · %3$s</string>
+  <string name="physical_keyboard_ready">Type with your device’s Korean Dubeolsik keyboard</string>
 </resources>
