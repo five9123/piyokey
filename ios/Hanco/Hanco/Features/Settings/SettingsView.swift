@@ -114,7 +114,6 @@ struct SettingsView: View {
       applyPracticePreset(preset)
       captureSetting("practice_display", value: preset.rawValue)
     }
-    .hancoUITestDynamicTypeOverride()
     .onChange(of: anonymousAnalyticsEnabled) { enabled in
       privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
       TelemetryService.shared.updateConsent(

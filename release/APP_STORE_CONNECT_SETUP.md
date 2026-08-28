@@ -26,9 +26,9 @@ submission history. Do not edit the historical App Store version record when pre
 | Copyright | 2026 Jungmin Oh |
 
 Use `release/global_app_store_metadata.json` for the 1.1 rollout. App UI languages are
-limited to Japanese and English; Korean learning content is unchanged. App Store metadata is prepared for English
+Japanese, English, and Spanish; Korean learning content is unchanged. App Store metadata is prepared for English
 (U.S.), English (U.K.), English (Australia), English (Canada), Korean, and Japanese;
-other UI and metadata-only localizations are deferred until post-launch demand review.
+The approved ten-locale store media work is tracked separately; store upload and final RC media matching remain open gates.
 
 ## URLs
 
