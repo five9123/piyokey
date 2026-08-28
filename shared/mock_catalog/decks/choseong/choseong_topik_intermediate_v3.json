@@ -18,7 +18,7 @@
     "公式"
   ],
   "created_at": "2026-07-25T00:00:00Z",
-  "updated_at": "2026-08-11T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
   "items": [
     {
       "id": "i_001",
@@ -29,6 +29,18 @@
       "localizations": {
         "en": {
           "meaning": "news",
+          "reading": "nyuseu"
+        },
+        "es": {
+          "meaning": "noticias",
+          "reading": "nyuseu"
+        },
+        "de": {
+          "meaning": "Nachrichten",
+          "reading": "nyuseu"
+        },
+        "fr": {
+          "meaning": "actualités",
           "reading": "nyuseu"
         }
       }
@@ -43,6 +55,18 @@
         "en": {
           "meaning": "comparison",
           "reading": "bigyo"
+        },
+        "es": {
+          "meaning": "comparación",
+          "reading": "bigyo"
+        },
+        "de": {
+          "meaning": "Vergleich",
+          "reading": "bigyo"
+        },
+        "fr": {
+          "meaning": "comparaison",
+          "reading": "bigyo"
         }
       }
     },
@@ -55,6 +79,18 @@
       "localizations": {
         "en": {
           "meaning": "consumption",
+          "reading": "sobi"
+        },
+        "es": {
+          "meaning": "consumo",
+          "reading": "sobi"
+        },
+        "de": {
+          "meaning": "Konsum",
+          "reading": "sobi"
+        },
+        "fr": {
+          "meaning": "consommation",
           "reading": "sobi"
         }
       }
@@ -69,6 +105,18 @@
         "en": {
           "meaning": "cooking",
           "reading": "yori"
+        },
+        "es": {
+          "meaning": "cocina",
+          "reading": "yori"
+        },
+        "de": {
+          "meaning": "Kochen",
+          "reading": "yori"
+        },
+        "fr": {
+          "meaning": "cuisine",
+          "reading": "yori"
         }
       }
     },
@@ -81,6 +129,18 @@
       "localizations": {
         "en": {
           "meaning": "reason",
+          "reading": "iyu"
+        },
+        "es": {
+          "meaning": "razón",
+          "reading": "iyu"
+        },
+        "de": {
+          "meaning": "Grund",
+          "reading": "iyu"
+        },
+        "fr": {
+          "meaning": "raison",
           "reading": "iyu"
         }
       }
@@ -95,6 +155,18 @@
         "en": {
           "meaning": "materials",
           "reading": "jaryo"
+        },
+        "es": {
+          "meaning": "materiales",
+          "reading": "jaryo"
+        },
+        "de": {
+          "meaning": "Materialien",
+          "reading": "jaryo"
+        },
+        "fr": {
+          "meaning": "documents",
+          "reading": "jaryo"
         }
       }
     },
@@ -107,6 +179,18 @@
       "localizations": {
         "en": {
           "meaning": "investigation",
+          "reading": "josa"
+        },
+        "es": {
+          "meaning": "investigación",
+          "reading": "josa"
+        },
+        "de": {
+          "meaning": "Untersuchung",
+          "reading": "josa"
+        },
+        "fr": {
+          "meaning": "enquête",
           "reading": "josa"
         }
       }
@@ -121,6 +205,18 @@
         "en": {
           "meaning": "opportunity",
           "reading": "gihoe"
+        },
+        "es": {
+          "meaning": "oportunidad",
+          "reading": "gihoe"
+        },
+        "de": {
+          "meaning": "Gelegenheit",
+          "reading": "gihoe"
+        },
+        "fr": {
+          "meaning": "occasion",
+          "reading": "gihoe"
         }
       }
     },
@@ -132,6 +228,18 @@
       "audio": "audio/ko_b3e53098ffdf8c9118d2.mp3",
       "localizations": {
         "en": {
+          "meaning": "conversation",
+          "reading": "daehwa"
+        },
+        "es": {
+          "meaning": "conversación",
+          "reading": "daehwa"
+        },
+        "de": {
+          "meaning": "Gespräch",
+          "reading": "daehwa"
+        },
+        "fr": {
           "meaning": "conversation",
           "reading": "daehwa"
         }
@@ -147,6 +255,18 @@
         "en": {
           "meaning": "society",
           "reading": "sahoe"
+        },
+        "es": {
+          "meaning": "sociedad",
+          "reading": "sahoe"
+        },
+        "de": {
+          "meaning": "Gesellschaft",
+          "reading": "sahoe"
+        },
+        "fr": {
+          "meaning": "société",
+          "reading": "sahoe"
         }
       }
     },
@@ -159,6 +279,18 @@
       "localizations": {
         "en": {
           "meaning": "hobby",
+          "reading": "chwimi"
+        },
+        "es": {
+          "meaning": "afición",
+          "reading": "chwimi"
+        },
+        "de": {
+          "meaning": "Hobby",
+          "reading": "chwimi"
+        },
+        "fr": {
+          "meaning": "loisir",
           "reading": "chwimi"
         }
       }
@@ -173,6 +305,18 @@
         "en": {
           "meaning": "company",
           "reading": "hoesa"
+        },
+        "es": {
+          "meaning": "empresa",
+          "reading": "hoesa"
+        },
+        "de": {
+          "meaning": "Unternehmen",
+          "reading": "hoesa"
+        },
+        "fr": {
+          "meaning": "entreprise",
+          "reading": "hoesa"
         }
       }
     },
@@ -185,6 +329,18 @@
       "localizations": {
         "en": {
           "meaning": "payment",
+          "reading": "gyeolje"
+        },
+        "es": {
+          "meaning": "pago",
+          "reading": "gyeolje"
+        },
+        "de": {
+          "meaning": "Zahlung",
+          "reading": "gyeolje"
+        },
+        "fr": {
+          "meaning": "paiement",
           "reading": "gyeolje"
         }
       }
@@ -199,6 +355,18 @@
         "en": {
           "meaning": "contract",
           "reading": "gyeyak"
+        },
+        "es": {
+          "meaning": "contrato",
+          "reading": "gyeyak"
+        },
+        "de": {
+          "meaning": "Vertrag",
+          "reading": "gyeyak"
+        },
+        "fr": {
+          "meaning": "contrat",
+          "reading": "gyeyak"
         }
       }
     },
@@ -211,6 +379,18 @@
       "localizations": {
         "en": {
           "meaning": "malfunction",
+          "reading": "gojang"
+        },
+        "es": {
+          "meaning": "avería",
+          "reading": "gojang"
+        },
+        "de": {
+          "meaning": "Defekt",
+          "reading": "gojang"
+        },
+        "fr": {
+          "meaning": "panne",
           "reading": "gojang"
         }
       }
@@ -225,6 +405,18 @@
         "en": {
           "meaning": "announcement",
           "reading": "gongji"
+        },
+        "es": {
+          "meaning": "anuncio",
+          "reading": "gongji"
+        },
+        "de": {
+          "meaning": "Bekanntmachung",
+          "reading": "gongji"
+        },
+        "fr": {
+          "meaning": "annonce",
+          "reading": "gongji"
         }
       }
     },
@@ -237,6 +429,18 @@
       "localizations": {
         "en": {
           "meaning": "education",
+          "reading": "gyoyuk"
+        },
+        "es": {
+          "meaning": "educación",
+          "reading": "gyoyuk"
+        },
+        "de": {
+          "meaning": "Bildung",
+          "reading": "gyoyuk"
+        },
+        "fr": {
+          "meaning": "éducation",
           "reading": "gyoyuk"
         }
       }
@@ -251,6 +455,18 @@
         "en": {
           "meaning": "transportation",
           "reading": "gyotong"
+        },
+        "es": {
+          "meaning": "transporte",
+          "reading": "gyotong"
+        },
+        "de": {
+          "meaning": "Verkehr",
+          "reading": "gyotong"
+        },
+        "fr": {
+          "meaning": "transport",
+          "reading": "gyotong"
         }
       }
     },
@@ -262,6 +478,18 @@
       "audio": "audio/ko_1119b060db74766fb336.mp3",
       "localizations": {
         "en": {
+          "meaning": "effort",
+          "reading": "noryeok"
+        },
+        "es": {
+          "meaning": "esfuerzo",
+          "reading": "noryeok"
+        },
+        "de": {
+          "meaning": "Anstrengung",
+          "reading": "noryeok"
+        },
+        "fr": {
           "meaning": "effort",
           "reading": "noryeok"
         }
@@ -277,6 +505,18 @@
         "en": {
           "meaning": "problem",
           "reading": "munje"
+        },
+        "es": {
+          "meaning": "problema",
+          "reading": "munje"
+        },
+        "de": {
+          "meaning": "Problem",
+          "reading": "munje"
+        },
+        "fr": {
+          "meaning": "problème",
+          "reading": "munje"
         }
       }
     },
@@ -289,6 +529,18 @@
       "localizations": {
         "en": {
           "meaning": "presentation",
+          "reading": "balpyo"
+        },
+        "es": {
+          "meaning": "presentación",
+          "reading": "balpyo"
+        },
+        "de": {
+          "meaning": "Präsentation",
+          "reading": "balpyo"
+        },
+        "fr": {
+          "meaning": "présentation",
           "reading": "balpyo"
         }
       }
@@ -303,6 +555,18 @@
         "en": {
           "meaning": "delivery",
           "reading": "baesong"
+        },
+        "es": {
+          "meaning": "entrega",
+          "reading": "baesong"
+        },
+        "de": {
+          "meaning": "Lieferung",
+          "reading": "baesong"
+        },
+        "fr": {
+          "meaning": "livraison",
+          "reading": "baesong"
         }
       }
     },
@@ -315,6 +579,18 @@
       "localizations": {
         "en": {
           "meaning": "insurance",
+          "reading": "boheom"
+        },
+        "es": {
+          "meaning": "seguro",
+          "reading": "boheom"
+        },
+        "de": {
+          "meaning": "Versicherung",
+          "reading": "boheom"
+        },
+        "fr": {
+          "meaning": "assurance",
           "reading": "boheom"
         }
       }
@@ -329,6 +605,18 @@
         "en": {
           "meaning": "use",
           "reading": "sayong"
+        },
+        "es": {
+          "meaning": "uso",
+          "reading": "sayong"
+        },
+        "de": {
+          "meaning": "Nutzung",
+          "reading": "sayong"
+        },
+        "fr": {
+          "meaning": "utilisation",
+          "reading": "sayong"
         }
       }
     },
@@ -340,6 +628,18 @@
       "audio": "audio/ko_5ef1b43a168ea45fe587.mp3",
       "localizations": {
         "en": {
+          "meaning": "communication",
+          "reading": "sotong"
+        },
+        "es": {
+          "meaning": "comunicación",
+          "reading": "sotong"
+        },
+        "de": {
+          "meaning": "Kommunikation",
+          "reading": "sotong"
+        },
+        "fr": {
           "meaning": "communication",
           "reading": "sotong"
         }
@@ -355,6 +655,18 @@
         "en": {
           "meaning": "income",
           "reading": "suip"
+        },
+        "es": {
+          "meaning": "ingresos",
+          "reading": "suip"
+        },
+        "de": {
+          "meaning": "Einkommen",
+          "reading": "suip"
+        },
+        "fr": {
+          "meaning": "revenus",
+          "reading": "suip"
         }
       }
     },
@@ -367,6 +679,18 @@
       "localizations": {
         "en": {
           "meaning": "export",
+          "reading": "suchul"
+        },
+        "es": {
+          "meaning": "exportación",
+          "reading": "suchul"
+        },
+        "de": {
+          "meaning": "Export",
+          "reading": "suchul"
+        },
+        "fr": {
+          "meaning": "exportation",
           "reading": "suchul"
         }
       }
@@ -381,6 +705,18 @@
         "en": {
           "meaning": "facility",
           "reading": "siseol"
+        },
+        "es": {
+          "meaning": "instalación",
+          "reading": "siseol"
+        },
+        "de": {
+          "meaning": "Einrichtung",
+          "reading": "siseol"
+        },
+        "fr": {
+          "meaning": "installation",
+          "reading": "siseol"
         }
       }
     },
@@ -393,6 +729,18 @@
       "localizations": {
         "en": {
           "meaning": "guidance",
+          "reading": "annae"
+        },
+        "es": {
+          "meaning": "orientación",
+          "reading": "annae"
+        },
+        "de": {
+          "meaning": "Anleitung",
+          "reading": "annae"
+        },
+        "fr": {
+          "meaning": "orientation",
           "reading": "annae"
         }
       }
@@ -407,6 +755,18 @@
         "en": {
           "meaning": "work duties",
           "reading": "eopmu"
+        },
+        "es": {
+          "meaning": "tareas laborales",
+          "reading": "eopmu"
+        },
+        "de": {
+          "meaning": "Arbeitsaufgaben",
+          "reading": "eopmu"
+        },
+        "fr": {
+          "meaning": "tâches professionnelles",
+          "reading": "eopmu"
         }
       }
     },
@@ -419,6 +779,18 @@
       "localizations": {
         "en": {
           "meaning": "travel",
+          "reading": "yeohaeng"
+        },
+        "es": {
+          "meaning": "viaje",
+          "reading": "yeohaeng"
+        },
+        "de": {
+          "meaning": "Reise",
+          "reading": "yeohaeng"
+        },
+        "fr": {
+          "meaning": "voyage",
           "reading": "yeohaeng"
         }
       }
@@ -433,6 +805,18 @@
         "en": {
           "meaning": "reservation",
           "reading": "yeyak"
+        },
+        "es": {
+          "meaning": "reserva",
+          "reading": "yeyak"
+        },
+        "de": {
+          "meaning": "Reservierung",
+          "reading": "yeyak"
+        },
+        "fr": {
+          "meaning": "réservation",
+          "reading": "yeyak"
         }
       }
     },
@@ -445,6 +829,18 @@
       "localizations": {
         "en": {
           "meaning": "use",
+          "reading": "iyong"
+        },
+        "es": {
+          "meaning": "uso",
+          "reading": "iyong"
+        },
+        "de": {
+          "meaning": "Nutzung",
+          "reading": "iyong"
+        },
+        "fr": {
+          "meaning": "utilisation",
           "reading": "iyong"
         }
       }
@@ -459,6 +855,18 @@
         "en": {
           "meaning": "savings",
           "reading": "jeochuk"
+        },
+        "es": {
+          "meaning": "ahorros",
+          "reading": "jeochuk"
+        },
+        "de": {
+          "meaning": "Ersparnisse",
+          "reading": "jeochuk"
+        },
+        "fr": {
+          "meaning": "épargne",
+          "reading": "jeochuk"
         }
       }
     },
@@ -471,6 +879,18 @@
       "localizations": {
         "en": {
           "meaning": "procedure",
+          "reading": "jeolcha"
+        },
+        "es": {
+          "meaning": "procedimiento",
+          "reading": "jeolcha"
+        },
+        "de": {
+          "meaning": "Verfahren",
+          "reading": "jeolcha"
+        },
+        "fr": {
+          "meaning": "procédure",
           "reading": "jeolcha"
         }
       }
@@ -485,6 +905,18 @@
         "en": {
           "meaning": "registration",
           "reading": "jeopsu"
+        },
+        "es": {
+          "meaning": "inscripción",
+          "reading": "jeopsu"
+        },
+        "de": {
+          "meaning": "Anmeldung",
+          "reading": "jeopsu"
+        },
+        "fr": {
+          "meaning": "inscription",
+          "reading": "jeopsu"
         }
       }
     },
@@ -497,6 +929,18 @@
       "localizations": {
         "en": {
           "meaning": "preparation",
+          "reading": "junbi"
+        },
+        "es": {
+          "meaning": "preparación",
+          "reading": "junbi"
+        },
+        "de": {
+          "meaning": "Vorbereitung",
+          "reading": "junbi"
+        },
+        "fr": {
+          "meaning": "préparation",
           "reading": "junbi"
         }
       }
@@ -511,6 +955,18 @@
         "en": {
           "meaning": "spending",
           "reading": "jichul"
+        },
+        "es": {
+          "meaning": "gasto",
+          "reading": "jichul"
+        },
+        "de": {
+          "meaning": "Ausgaben",
+          "reading": "jichul"
+        },
+        "fr": {
+          "meaning": "dépenses",
+          "reading": "jichul"
         }
       }
     },
@@ -523,6 +979,18 @@
       "localizations": {
         "en": {
           "meaning": "medical care",
+          "reading": "jinryo"
+        },
+        "es": {
+          "meaning": "atención médica",
+          "reading": "jinryo"
+        },
+        "de": {
+          "meaning": "Ärztliche Behandlung",
+          "reading": "jinryo"
+        },
+        "fr": {
+          "meaning": "soins médicaux",
           "reading": "jinryo"
         }
       }
@@ -537,6 +1005,18 @@
         "en": {
           "meaning": "recruitment",
           "reading": "chaeyong"
+        },
+        "es": {
+          "meaning": "contratación",
+          "reading": "chaeyong"
+        },
+        "de": {
+          "meaning": "Personalbeschaffung",
+          "reading": "chaeyong"
+        },
+        "fr": {
+          "meaning": "recrutement",
+          "reading": "chaeyong"
         }
       }
     },
@@ -550,6 +1030,18 @@
         "en": {
           "meaning": "discussion",
           "reading": "toron"
+        },
+        "es": {
+          "meaning": "debate",
+          "reading": "toron"
+        },
+        "de": {
+          "meaning": "Diskussion",
+          "reading": "toron"
+        },
+        "fr": {
+          "meaning": "débat",
+          "reading": "toron"
         }
       }
     },
@@ -561,6 +1053,18 @@
       "audio": "audio/ko_774be83e44842779b3fd.mp3",
       "localizations": {
         "en": {
+          "meaning": "solution",
+          "reading": "haegyeol"
+        },
+        "es": {
+          "meaning": "solución",
+          "reading": "haegyeol"
+        },
+        "de": {
+          "meaning": "Lösung",
+          "reading": "haegyeol"
+        },
+        "fr": {
           "meaning": "solution",
           "reading": "haegyeol"
         }
@@ -576,6 +1080,18 @@
         "en": {
           "meaning": "event",
           "reading": "haengsa"
+        },
+        "es": {
+          "meaning": "evento",
+          "reading": "haengsa"
+        },
+        "de": {
+          "meaning": "Veranstaltung",
+          "reading": "haengsa"
+        },
+        "fr": {
+          "meaning": "événement",
+          "reading": "haengsa"
         }
       }
     },
@@ -588,6 +1104,18 @@
       "localizations": {
         "en": {
           "meaning": "rest",
+          "reading": "hyusik"
+        },
+        "es": {
+          "meaning": "descanso",
+          "reading": "hyusik"
+        },
+        "de": {
+          "meaning": "Erholung",
+          "reading": "hyusik"
+        },
+        "fr": {
+          "meaning": "repos",
           "reading": "hyusik"
         }
       }
@@ -602,6 +1130,18 @@
         "en": {
           "meaning": "report",
           "reading": "bogoseo"
+        },
+        "es": {
+          "meaning": "informe",
+          "reading": "bogoseo"
+        },
+        "de": {
+          "meaning": "Bericht",
+          "reading": "bogoseo"
+        },
+        "fr": {
+          "meaning": "rapport",
+          "reading": "bogoseo"
         }
       }
     },
@@ -613,6 +1153,18 @@
       "audio": "audio/ko_06aff97f69dc060dd759.mp3",
       "localizations": {
         "en": {
+          "meaning": "service",
+          "reading": "seobiseu"
+        },
+        "es": {
+          "meaning": "servicio",
+          "reading": "seobiseu"
+        },
+        "de": {
+          "meaning": "Dienstleistung",
+          "reading": "seobiseu"
+        },
+        "fr": {
           "meaning": "service",
           "reading": "seobiseu"
         }
@@ -628,6 +1180,18 @@
         "en": {
           "meaning": "meeting",
           "reading": "hoeui"
+        },
+        "es": {
+          "meaning": "reunión",
+          "reading": "hoeui"
+        },
+        "de": {
+          "meaning": "Besprechung",
+          "reading": "hoeui"
+        },
+        "fr": {
+          "meaning": "réunion",
+          "reading": "hoeui"
         }
       }
     },
@@ -641,6 +1205,18 @@
         "en": {
           "meaning": "result",
           "reading": "gyeolgwa"
+        },
+        "es": {
+          "meaning": "resultado",
+          "reading": "gyeolgwa"
+        },
+        "de": {
+          "meaning": "Ergebnis",
+          "reading": "gyeolgwa"
+        },
+        "fr": {
+          "meaning": "résultat",
+          "reading": "gyeolgwa"
         }
       }
     },
@@ -652,6 +1228,18 @@
       "audio": "audio/ko_b0fe4ea3ac5ac4022d19.mp3",
       "localizations": {
         "en": {
+          "meaning": "plan",
+          "reading": "gyehoek"
+        },
+        "es": {
+          "meaning": "plan",
+          "reading": "gyehoek"
+        },
+        "de": {
+          "meaning": "Plan",
+          "reading": "gyehoek"
+        },
+        "fr": {
           "meaning": "plan",
           "reading": "gyehoek"
         }
@@ -667,6 +1255,18 @@
         "en": {
           "meaning": "process",
           "reading": "gwajeong"
+        },
+        "es": {
+          "meaning": "proceso",
+          "reading": "gwajeong"
+        },
+        "de": {
+          "meaning": "Prozess",
+          "reading": "gwajeong"
+        },
+        "fr": {
+          "meaning": "processus",
+          "reading": "gwajeong"
         }
       }
     },
@@ -679,6 +1279,18 @@
       "localizations": {
         "en": {
           "meaning": "relationship",
+          "reading": "gwangye"
+        },
+        "es": {
+          "meaning": "relación",
+          "reading": "gwangye"
+        },
+        "de": {
+          "meaning": "Beziehung",
+          "reading": "gwangye"
+        },
+        "fr": {
+          "meaning": "relation",
           "reading": "gwangye"
         }
       }
@@ -693,6 +1305,18 @@
         "en": {
           "meaning": "management",
           "reading": "gwanri"
+        },
+        "es": {
+          "meaning": "gestión",
+          "reading": "gwanri"
+        },
+        "de": {
+          "meaning": "Verwaltung",
+          "reading": "gwanri"
+        },
+        "fr": {
+          "meaning": "gestion",
+          "reading": "gwanri"
         }
       }
     },
@@ -706,6 +1330,18 @@
         "en": {
           "meaning": "exchange",
           "reading": "gyohwan"
+        },
+        "es": {
+          "meaning": "intercambio",
+          "reading": "gyohwan"
+        },
+        "de": {
+          "meaning": "Austausch",
+          "reading": "gyohwan"
+        },
+        "fr": {
+          "meaning": "échange",
+          "reading": "gyohwan"
         }
       }
     },
@@ -717,6 +1353,18 @@
       "audio": "audio/ko_580bb8d061b97e66f221.mp3",
       "localizations": {
         "en": {
+          "meaning": "culture",
+          "reading": "munhwa"
+        },
+        "es": {
+          "meaning": "cultura",
+          "reading": "munhwa"
+        },
+        "de": {
+          "meaning": "Kultur",
+          "reading": "munhwa"
+        },
+        "fr": {
           "meaning": "culture",
           "reading": "munhwa"
         }
@@ -732,6 +1380,18 @@
         "en": {
           "meaning": "change",
           "reading": "byeonhwa"
+        },
+        "es": {
+          "meaning": "cambio",
+          "reading": "byeonhwa"
+        },
+        "de": {
+          "meaning": "Veränderung",
+          "reading": "byeonhwa"
+        },
+        "fr": {
+          "meaning": "changement",
+          "reading": "byeonhwa"
         }
       }
     },
@@ -743,6 +1403,18 @@
       "audio": "audio/ko_1eaed37a207480d88b78.mp3",
       "localizations": {
         "en": {
+          "meaning": "opinion",
+          "reading": "uigyeon"
+        },
+        "es": {
+          "meaning": "opinión",
+          "reading": "uigyeon"
+        },
+        "de": {
+          "meaning": "Meinung",
+          "reading": "uigyeon"
+        },
+        "fr": {
           "meaning": "opinion",
           "reading": "uigyeon"
         }
@@ -758,6 +1430,18 @@
         "en": {
           "meaning": "employment",
           "reading": "chwieop"
+        },
+        "es": {
+          "meaning": "empleo",
+          "reading": "chwieop"
+        },
+        "de": {
+          "meaning": "Beschäftigung",
+          "reading": "chwieop"
+        },
+        "fr": {
+          "meaning": "emploi",
+          "reading": "chwieop"
         }
       }
     },
@@ -770,6 +1454,18 @@
       "localizations": {
         "en": {
           "meaning": "leaving work",
+          "reading": "toegeun"
+        },
+        "es": {
+          "meaning": "salir del trabajo",
+          "reading": "toegeun"
+        },
+        "de": {
+          "meaning": "Feierabend",
+          "reading": "toegeun"
+        },
+        "fr": {
+          "meaning": "sortie du travail",
           "reading": "toegeun"
         }
       }
@@ -784,6 +1480,18 @@
         "en": {
           "meaning": "conflict",
           "reading": "galdeung"
+        },
+        "es": {
+          "meaning": "conflicto",
+          "reading": "galdeung"
+        },
+        "de": {
+          "meaning": "Konflikt",
+          "reading": "galdeung"
+        },
+        "fr": {
+          "meaning": "conflit",
+          "reading": "galdeung"
         }
       }
     },
@@ -796,6 +1504,18 @@
       "localizations": {
         "en": {
           "meaning": "health",
+          "reading": "geongang"
+        },
+        "es": {
+          "meaning": "salud",
+          "reading": "geongang"
+        },
+        "de": {
+          "meaning": "Gesundheit",
+          "reading": "geongang"
+        },
+        "fr": {
+          "meaning": "santé",
           "reading": "geongang"
         }
       }
@@ -810,6 +1530,18 @@
         "en": {
           "meaning": "experience",
           "reading": "gyeongheom"
+        },
+        "es": {
+          "meaning": "experiencia",
+          "reading": "gyeongheom"
+        },
+        "de": {
+          "meaning": "Erfahrung",
+          "reading": "gyeongheom"
+        },
+        "fr": {
+          "meaning": "expérience",
+          "reading": "gyeongheom"
         }
       }
     },
@@ -822,6 +1554,18 @@
       "localizations": {
         "en": {
           "meaning": "airport",
+          "reading": "gonghang"
+        },
+        "es": {
+          "meaning": "aeropuerto",
+          "reading": "gonghang"
+        },
+        "de": {
+          "meaning": "Flughafen",
+          "reading": "gonghang"
+        },
+        "fr": {
+          "meaning": "aéroport",
           "reading": "gonghang"
         }
       }
@@ -836,6 +1580,18 @@
         "en": {
           "meaning": "ability",
           "reading": "neungryeok"
+        },
+        "es": {
+          "meaning": "capacidad",
+          "reading": "neungryeok"
+        },
+        "de": {
+          "meaning": "Fähigkeit",
+          "reading": "neungryeok"
+        },
+        "fr": {
+          "meaning": "capacité",
+          "reading": "neungryeok"
         }
       }
     },
@@ -848,6 +1604,18 @@
       "localizations": {
         "en": {
           "meaning": "answer",
+          "reading": "dapbyeon"
+        },
+        "es": {
+          "meaning": "respuesta",
+          "reading": "dapbyeon"
+        },
+        "de": {
+          "meaning": "Antwort",
+          "reading": "dapbyeon"
+        },
+        "fr": {
+          "meaning": "réponse",
           "reading": "dapbyeon"
         }
       }
@@ -862,6 +1630,18 @@
         "en": {
           "meaning": "method",
           "reading": "bangbeop"
+        },
+        "es": {
+          "meaning": "método",
+          "reading": "bangbeop"
+        },
+        "de": {
+          "meaning": "Methode",
+          "reading": "bangbeop"
+        },
+        "fr": {
+          "meaning": "méthode",
+          "reading": "bangbeop"
         }
       }
     },
@@ -873,6 +1653,18 @@
       "audio": "audio/ko_b3df362a51cdd23e8944.mp3",
       "localizations": {
         "en": {
+          "meaning": "production",
+          "reading": "saengsan"
+        },
+        "es": {
+          "meaning": "producción",
+          "reading": "saengsan"
+        },
+        "de": {
+          "meaning": "Produktion",
+          "reading": "saengsan"
+        },
+        "fr": {
           "meaning": "production",
           "reading": "saengsan"
         }
@@ -888,6 +1680,18 @@
         "en": {
           "meaning": "choice",
           "reading": "seontaek"
+        },
+        "es": {
+          "meaning": "elección",
+          "reading": "seontaek"
+        },
+        "de": {
+          "meaning": "Wahl",
+          "reading": "seontaek"
+        },
+        "fr": {
+          "meaning": "choix",
+          "reading": "seontaek"
         }
       }
     },
@@ -900,6 +1704,18 @@
       "localizations": {
         "en": {
           "meaning": "explanation",
+          "reading": "seolmyeong"
+        },
+        "es": {
+          "meaning": "explicación",
+          "reading": "seolmyeong"
+        },
+        "de": {
+          "meaning": "Erklärung",
+          "reading": "seolmyeong"
+        },
+        "fr": {
+          "meaning": "explication",
           "reading": "seolmyeong"
         }
       }
@@ -914,6 +1730,18 @@
         "en": {
           "meaning": "growth",
           "reading": "seongjang"
+        },
+        "es": {
+          "meaning": "crecimiento",
+          "reading": "seongjang"
+        },
+        "de": {
+          "meaning": "Wachstum",
+          "reading": "seongjang"
+        },
+        "fr": {
+          "meaning": "croissance",
+          "reading": "seongjang"
         }
       }
     },
@@ -925,6 +1753,18 @@
       "audio": "audio/ko_fe047fb6c566f2771257.mp3",
       "localizations": {
         "en": {
+          "meaning": "restaurant",
+          "reading": "sikdang"
+        },
+        "es": {
+          "meaning": "restaurante",
+          "reading": "sikdang"
+        },
+        "de": {
+          "meaning": "Restaurant",
+          "reading": "sikdang"
+        },
+        "fr": {
           "meaning": "restaurant",
           "reading": "sikdang"
         }
@@ -940,6 +1780,18 @@
         "en": {
           "meaning": "application",
           "reading": "sincheong"
+        },
+        "es": {
+          "meaning": "solicitud",
+          "reading": "sincheong"
+        },
+        "de": {
+          "meaning": "Antrag",
+          "reading": "sincheong"
+        },
+        "fr": {
+          "meaning": "demande",
+          "reading": "sincheong"
         }
       }
     },
@@ -952,6 +1804,18 @@
       "localizations": {
         "en": {
           "meaning": "safety",
+          "reading": "anjeon"
+        },
+        "es": {
+          "meaning": "seguridad",
+          "reading": "anjeon"
+        },
+        "de": {
+          "meaning": "Sicherheit",
+          "reading": "anjeon"
+        },
+        "fr": {
+          "meaning": "sécurité",
           "reading": "anjeon"
         }
       }
@@ -966,6 +1830,18 @@
         "en": {
           "meaning": "promise",
           "reading": "yaksok"
+        },
+        "es": {
+          "meaning": "promesa",
+          "reading": "yaksok"
+        },
+        "de": {
+          "meaning": "Versprechen",
+          "reading": "yaksok"
+        },
+        "fr": {
+          "meaning": "promesse",
+          "reading": "yaksok"
         }
       }
     },
@@ -977,6 +1853,18 @@
       "audio": "audio/ko_b1c3b94a6a87c1f5d675.mp3",
       "localizations": {
         "en": {
+          "meaning": "contact",
+          "reading": "yeonrak"
+        },
+        "es": {
+          "meaning": "contacto",
+          "reading": "yeonrak"
+        },
+        "de": {
+          "meaning": "Kontakt",
+          "reading": "yeonrak"
+        },
+        "fr": {
           "meaning": "contact",
           "reading": "yeonrak"
         }
@@ -992,6 +1880,18 @@
         "en": {
           "meaning": "driving",
           "reading": "unjeon"
+        },
+        "es": {
+          "meaning": "conducción",
+          "reading": "unjeon"
+        },
+        "de": {
+          "meaning": "Autofahren",
+          "reading": "unjeon"
+        },
+        "fr": {
+          "meaning": "conduite",
+          "reading": "unjeon"
         }
       }
     },
@@ -1004,6 +1904,18 @@
       "localizations": {
         "en": {
           "meaning": "schedule",
+          "reading": "iljeong"
+        },
+        "es": {
+          "meaning": "calendario",
+          "reading": "iljeong"
+        },
+        "de": {
+          "meaning": "Zeitplan",
+          "reading": "iljeong"
+        },
+        "fr": {
+          "meaning": "programme",
           "reading": "iljeong"
         }
       }
@@ -1018,6 +1930,18 @@
         "en": {
           "meaning": "workplace",
           "reading": "jikjang"
+        },
+        "es": {
+          "meaning": "lugar de trabajo",
+          "reading": "jikjang"
+        },
+        "de": {
+          "meaning": "Arbeitsplatz",
+          "reading": "jikjang"
+        },
+        "fr": {
+          "meaning": "lieu de travail",
+          "reading": "jikjang"
         }
       }
     },
@@ -1029,6 +1953,18 @@
       "audio": "audio/ko_32729cc3f7b6d44a6210.mp3",
       "localizations": {
         "en": {
+          "meaning": "question",
+          "reading": "jilmun"
+        },
+        "es": {
+          "meaning": "pregunta",
+          "reading": "jilmun"
+        },
+        "de": {
+          "meaning": "Frage",
+          "reading": "jilmun"
+        },
+        "fr": {
           "meaning": "question",
           "reading": "jilmun"
         }
@@ -1044,6 +1980,18 @@
         "en": {
           "meaning": "responsibility",
           "reading": "chaekim"
+        },
+        "es": {
+          "meaning": "responsabilidad",
+          "reading": "chaekim"
+        },
+        "de": {
+          "meaning": "Verantwortung",
+          "reading": "chaekim"
+        },
+        "fr": {
+          "meaning": "responsabilité",
+          "reading": "chaekim"
         }
       }
     },
@@ -1056,6 +2004,18 @@
       "localizations": {
         "en": {
           "meaning": "going to work",
+          "reading": "chulgeun"
+        },
+        "es": {
+          "meaning": "ir al trabajo",
+          "reading": "chulgeun"
+        },
+        "de": {
+          "meaning": "Zur Arbeit gehen",
+          "reading": "chulgeun"
+        },
+        "fr": {
+          "meaning": "départ au travail",
           "reading": "chulgeun"
         }
       }
@@ -1070,6 +2030,18 @@
         "en": {
           "meaning": "business trip",
           "reading": "chuljang"
+        },
+        "es": {
+          "meaning": "viaje de negocios",
+          "reading": "chuljang"
+        },
+        "de": {
+          "meaning": "Geschäftsreise",
+          "reading": "chuljang"
+        },
+        "fr": {
+          "meaning": "voyage d’affaires",
+          "reading": "chuljang"
         }
       }
     },
@@ -1082,6 +2054,18 @@
       "localizations": {
         "en": {
           "meaning": "Korea",
+          "reading": "hanguk"
+        },
+        "es": {
+          "meaning": "Corea",
+          "reading": "hanguk"
+        },
+        "de": {
+          "meaning": "Korea",
+          "reading": "hanguk"
+        },
+        "fr": {
+          "meaning": "Corée",
           "reading": "hanguk"
         }
       }
@@ -1096,6 +2080,18 @@
         "en": {
           "meaning": "discount",
           "reading": "halin"
+        },
+        "es": {
+          "meaning": "descuento",
+          "reading": "halin"
+        },
+        "de": {
+          "meaning": "Rabatt",
+          "reading": "halin"
+        },
+        "fr": {
+          "meaning": "réduction",
+          "reading": "halin"
         }
       }
     },
@@ -1109,6 +2105,18 @@
         "en": {
           "meaning": "interest",
           "reading": "gwansim"
+        },
+        "es": {
+          "meaning": "interés",
+          "reading": "gwansim"
+        },
+        "de": {
+          "meaning": "Interesse",
+          "reading": "gwansim"
+        },
+        "fr": {
+          "meaning": "intérêt",
+          "reading": "gwansim"
         }
       }
     },
@@ -1120,6 +2128,18 @@
       "audio": "audio/ko_946f8147acaaf499e924.mp3",
       "localizations": {
         "en": {
+          "meaning": "situation",
+          "reading": "sanghwang"
+        },
+        "es": {
+          "meaning": "situación",
+          "reading": "sanghwang"
+        },
+        "de": {
+          "meaning": "Situation",
+          "reading": "sanghwang"
+        },
+        "fr": {
           "meaning": "situation",
           "reading": "sanghwang"
         }
@@ -1135,6 +2155,18 @@
         "en": {
           "meaning": "daily life",
           "reading": "saenghwal"
+        },
+        "es": {
+          "meaning": "vida cotidiana",
+          "reading": "saenghwal"
+        },
+        "de": {
+          "meaning": "Alltag",
+          "reading": "saenghwal"
+        },
+        "fr": {
+          "meaning": "vie quotidienne",
+          "reading": "saenghwal"
         }
       }
     },
@@ -1146,6 +2178,18 @@
       "audio": "audio/ko_b84254868f623d278671.mp3",
       "localizations": {
         "en": {
+          "meaning": "cause",
+          "reading": "wonin"
+        },
+        "es": {
+          "meaning": "causa",
+          "reading": "wonin"
+        },
+        "de": {
+          "meaning": "Ursache",
+          "reading": "wonin"
+        },
+        "fr": {
           "meaning": "cause",
           "reading": "wonin"
         }
@@ -1161,6 +2205,18 @@
         "en": {
           "meaning": "salary",
           "reading": "wolgeup"
+        },
+        "es": {
+          "meaning": "sueldo",
+          "reading": "wolgeup"
+        },
+        "de": {
+          "meaning": "Gehalt",
+          "reading": "wolgeup"
+        },
+        "fr": {
+          "meaning": "salaire",
+          "reading": "wolgeup"
         }
       }
     },
@@ -1172,6 +2228,18 @@
       "audio": "audio/ko_1aacb54c499242964cc0.mp3",
       "localizations": {
         "en": {
+          "meaning": "confirmation",
+          "reading": "hwakin"
+        },
+        "es": {
+          "meaning": "confirmación",
+          "reading": "hwakin"
+        },
+        "de": {
+          "meaning": "Bestätigung",
+          "reading": "hwakin"
+        },
+        "fr": {
           "meaning": "confirmation",
           "reading": "hwakin"
         }
@@ -1187,6 +2255,18 @@
         "en": {
           "meaning": "environment",
           "reading": "hwangyeong"
+        },
+        "es": {
+          "meaning": "medio ambiente",
+          "reading": "hwangyeong"
+        },
+        "de": {
+          "meaning": "Umwelt",
+          "reading": "hwangyeong"
+        },
+        "fr": {
+          "meaning": "environnement",
+          "reading": "hwangyeong"
         }
       }
     },
@@ -1199,6 +2279,18 @@
       "localizations": {
         "en": {
           "meaning": "refund",
+          "reading": "hwanbul"
+        },
+        "es": {
+          "meaning": "reembolso",
+          "reading": "hwanbul"
+        },
+        "de": {
+          "meaning": "Rückerstattung",
+          "reading": "hwanbul"
+        },
+        "fr": {
+          "meaning": "remboursement",
           "reading": "hwanbul"
         }
       }
@@ -1213,6 +2305,18 @@
         "en": {
           "meaning": "library",
           "reading": "doseogwan"
+        },
+        "es": {
+          "meaning": "biblioteca",
+          "reading": "doseogwan"
+        },
+        "de": {
+          "meaning": "Bibliothek",
+          "reading": "doseogwan"
+        },
+        "fr": {
+          "meaning": "bibliothèque",
+          "reading": "doseogwan"
         }
       }
     },
@@ -1225,6 +2329,18 @@
       "localizations": {
         "en": {
           "meaning": "certificate",
+          "reading": "jeungmyeongseo"
+        },
+        "es": {
+          "meaning": "certificado",
+          "reading": "jeungmyeongseo"
+        },
+        "de": {
+          "meaning": "Bescheinigung",
+          "reading": "jeungmyeongseo"
+        },
+        "fr": {
+          "meaning": "certificat",
           "reading": "jeungmyeongseo"
         }
       }
@@ -1239,6 +2355,18 @@
         "en": {
           "meaning": "Korean language",
           "reading": "hangukeo"
+        },
+        "es": {
+          "meaning": "idioma coreano",
+          "reading": "hangukeo"
+        },
+        "de": {
+          "meaning": "Koreanische Sprache",
+          "reading": "hangukeo"
+        },
+        "fr": {
+          "meaning": "langue coréenne",
+          "reading": "hangukeo"
         }
       }
     },
@@ -1251,6 +2379,18 @@
       "localizations": {
         "en": {
           "meaning": "tourism",
+          "reading": "gwangwang"
+        },
+        "es": {
+          "meaning": "turismo",
+          "reading": "gwangwang"
+        },
+        "de": {
+          "meaning": "Tourismus",
+          "reading": "gwangwang"
+        },
+        "fr": {
+          "meaning": "tourisme",
           "reading": "gwangwang"
         }
       }
@@ -1265,6 +2405,18 @@
         "en": {
           "meaning": "department store",
           "reading": "baekhwajeom"
+        },
+        "es": {
+          "meaning": "grandes almacenes",
+          "reading": "baekhwajeom"
+        },
+        "de": {
+          "meaning": "Kaufhaus",
+          "reading": "baekhwajeom"
+        },
+        "fr": {
+          "meaning": "grand magasin",
+          "reading": "baekhwajeom"
         }
       }
     },
@@ -1277,6 +2429,18 @@
       "localizations": {
         "en": {
           "meaning": "convenience store",
+          "reading": "pyeonuijeom"
+        },
+        "es": {
+          "meaning": "tienda de conveniencia",
+          "reading": "pyeonuijeom"
+        },
+        "de": {
+          "meaning": "Minimarkt",
+          "reading": "pyeonuijeom"
+        },
+        "fr": {
+          "meaning": "supérette",
           "reading": "pyeonuijeom"
         }
       }
@@ -1291,6 +2455,18 @@
         "en": {
           "meaning": "restroom",
           "reading": "hwajangsil"
+        },
+        "es": {
+          "meaning": "baño",
+          "reading": "hwajangsil"
+        },
+        "de": {
+          "meaning": "Toilette",
+          "reading": "hwajangsil"
+        },
+        "fr": {
+          "meaning": "toilettes",
+          "reading": "hwajangsil"
         }
       }
     },
@@ -1304,6 +2480,18 @@
         "en": {
           "meaning": "sports field",
           "reading": "undongjang"
+        },
+        "es": {
+          "meaning": "campo de deportes",
+          "reading": "undongjang"
+        },
+        "de": {
+          "meaning": "Sportplatz",
+          "reading": "undongjang"
+        },
+        "fr": {
+          "meaning": "terrain de sport",
+          "reading": "undongjang"
         }
       }
     },
@@ -1316,6 +2504,18 @@
       "localizations": {
         "en": {
           "meaning": "museum",
+          "reading": "bakmulgwan"
+        },
+        "es": {
+          "meaning": "museo",
+          "reading": "bakmulgwan"
+        },
+        "de": {
+          "meaning": "Museum",
+          "reading": "bakmulgwan"
+        },
+        "fr": {
+          "meaning": "musée",
           "reading": "bakmulgwan"
         }
       }
@@ -1344,6 +2544,42 @@
         "초성",
         "게임",
         "공식"
+      ]
+    },
+    "es": {
+      "name": "Quiz de iniciales: intermedio",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "TOPIK",
+        "Mecanografía",
+        "Intermedio",
+        "Consonantes iniciales",
+        "Juegos",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Anlautquiz: Mittelstufe",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "TOPIK",
+        "Tippen",
+        "Mittelstufe",
+        "Anlaute",
+        "Spiele",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Quiz des initiales: intermédiaire",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "TOPIK",
+        "Saisie",
+        "Intermédiaire",
+        "Consonnes initiales",
+        "Jeux",
+        "Officiel"
       ]
     }
   }

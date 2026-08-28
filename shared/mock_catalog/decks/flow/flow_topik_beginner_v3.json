@@ -18,7 +18,7 @@
     "公式"
   ],
   "created_at": "2026-07-25T00:00:00Z",
-  "updated_at": "2026-08-11T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
   "items": [
     {
       "id": "i_001",
@@ -29,6 +29,18 @@
       "localizations": {
         "en": {
           "meaning": "I",
+          "reading": "na"
+        },
+        "es": {
+          "meaning": "yo",
+          "reading": "na"
+        },
+        "de": {
+          "meaning": "Ich",
+          "reading": "na"
+        },
+        "fr": {
+          "meaning": "je",
           "reading": "na"
         }
       }
@@ -43,6 +55,18 @@
         "en": {
           "meaning": "you",
           "reading": "neo"
+        },
+        "es": {
+          "meaning": "tú",
+          "reading": "neo"
+        },
+        "de": {
+          "meaning": "Du",
+          "reading": "neo"
+        },
+        "fr": {
+          "meaning": "tu",
+          "reading": "neo"
         }
       }
     },
@@ -55,6 +79,18 @@
       "localizations": {
         "en": {
           "meaning": "rain",
+          "reading": "bi"
+        },
+        "es": {
+          "meaning": "lluvia",
+          "reading": "bi"
+        },
+        "de": {
+          "meaning": "Regen",
+          "reading": "bi"
+        },
+        "fr": {
+          "meaning": "pluie",
           "reading": "bi"
         }
       }
@@ -69,6 +105,18 @@
         "en": {
           "meaning": "road",
           "reading": "gil"
+        },
+        "es": {
+          "meaning": "camino",
+          "reading": "gil"
+        },
+        "de": {
+          "meaning": "Weg",
+          "reading": "gil"
+        },
+        "fr": {
+          "meaning": "chemin",
+          "reading": "gil"
         }
       }
     },
@@ -81,6 +129,18 @@
       "localizations": {
         "en": {
           "meaning": "snow",
+          "reading": "nun"
+        },
+        "es": {
+          "meaning": "nieve",
+          "reading": "nun"
+        },
+        "de": {
+          "meaning": "Schnee",
+          "reading": "nun"
+        },
+        "fr": {
+          "meaning": "neige",
           "reading": "nun"
         }
       }
@@ -95,6 +155,18 @@
         "en": {
           "meaning": "door",
           "reading": "mun"
+        },
+        "es": {
+          "meaning": "puerta",
+          "reading": "mun"
+        },
+        "de": {
+          "meaning": "Tür",
+          "reading": "mun"
+        },
+        "fr": {
+          "meaning": "porte",
+          "reading": "mun"
         }
       }
     },
@@ -107,6 +179,18 @@
       "localizations": {
         "en": {
           "meaning": "water",
+          "reading": "mul"
+        },
+        "es": {
+          "meaning": "agua",
+          "reading": "mul"
+        },
+        "de": {
+          "meaning": "Wasser",
+          "reading": "mul"
+        },
+        "fr": {
+          "meaning": "eau",
           "reading": "mul"
         }
       }
@@ -121,6 +205,18 @@
         "en": {
           "meaning": "foot",
           "reading": "bal"
+        },
+        "es": {
+          "meaning": "pie",
+          "reading": "bal"
+        },
+        "de": {
+          "meaning": "Fuß",
+          "reading": "bal"
+        },
+        "fr": {
+          "meaning": "pied",
+          "reading": "bal"
         }
       }
     },
@@ -133,6 +229,18 @@
       "localizations": {
         "en": {
           "meaning": "rice",
+          "reading": "bap"
+        },
+        "es": {
+          "meaning": "arroz cocido",
+          "reading": "bap"
+        },
+        "de": {
+          "meaning": "Gekochter Reis",
+          "reading": "bap"
+        },
+        "fr": {
+          "meaning": "riz cuit",
           "reading": "bap"
         }
       }
@@ -147,6 +255,18 @@
         "en": {
           "meaning": "room",
           "reading": "bang"
+        },
+        "es": {
+          "meaning": "habitación",
+          "reading": "bang"
+        },
+        "de": {
+          "meaning": "Zimmer",
+          "reading": "bang"
+        },
+        "fr": {
+          "meaning": "chambre",
+          "reading": "bang"
         }
       }
     },
@@ -159,6 +279,18 @@
       "localizations": {
         "en": {
           "meaning": "spring",
+          "reading": "bom"
+        },
+        "es": {
+          "meaning": "primavera",
+          "reading": "bom"
+        },
+        "de": {
+          "meaning": "Frühling",
+          "reading": "bom"
+        },
+        "fr": {
+          "meaning": "printemps",
           "reading": "bom"
         }
       }
@@ -173,6 +305,18 @@
         "en": {
           "meaning": "hand",
           "reading": "son"
+        },
+        "es": {
+          "meaning": "mano",
+          "reading": "son"
+        },
+        "de": {
+          "meaning": "Hand",
+          "reading": "son"
+        },
+        "fr": {
+          "meaning": "main",
+          "reading": "son"
         }
       }
     },
@@ -185,6 +329,18 @@
       "localizations": {
         "en": {
           "meaning": "clothes",
+          "reading": "ot"
+        },
+        "es": {
+          "meaning": "ropa",
+          "reading": "ot"
+        },
+        "de": {
+          "meaning": "Kleidung",
+          "reading": "ot"
+        },
+        "fr": {
+          "meaning": "vêtements",
           "reading": "ot"
         }
       }
@@ -199,6 +355,18 @@
         "en": {
           "meaning": "home",
           "reading": "jip"
+        },
+        "es": {
+          "meaning": "casa",
+          "reading": "jip"
+        },
+        "de": {
+          "meaning": "Zuhause",
+          "reading": "jip"
+        },
+        "fr": {
+          "meaning": "maison",
+          "reading": "jip"
         }
       }
     },
@@ -211,6 +379,18 @@
       "localizations": {
         "en": {
           "meaning": "book",
+          "reading": "chaek"
+        },
+        "es": {
+          "meaning": "libro",
+          "reading": "chaek"
+        },
+        "de": {
+          "meaning": "Buch",
+          "reading": "chaek"
+        },
+        "fr": {
+          "meaning": "livre",
           "reading": "chaek"
         }
       }
@@ -225,6 +405,18 @@
         "en": {
           "meaning": "bread",
           "reading": "ppang"
+        },
+        "es": {
+          "meaning": "pan",
+          "reading": "ppang"
+        },
+        "de": {
+          "meaning": "Brot",
+          "reading": "ppang"
+        },
+        "fr": {
+          "meaning": "pain",
+          "reading": "ppang"
         }
       }
     },
@@ -237,6 +429,18 @@
       "localizations": {
         "en": {
           "meaning": "store",
+          "reading": "gage"
+        },
+        "es": {
+          "meaning": "tienda",
+          "reading": "gage"
+        },
+        "de": {
+          "meaning": "Geschäft",
+          "reading": "gage"
+        },
+        "fr": {
+          "meaning": "magasin",
           "reading": "gage"
         }
       }
@@ -251,6 +455,18 @@
         "en": {
           "meaning": "to go",
           "reading": "gada"
+        },
+        "es": {
+          "meaning": "ir",
+          "reading": "gada"
+        },
+        "de": {
+          "meaning": "Gehen",
+          "reading": "gada"
+        },
+        "fr": {
+          "meaning": "aller",
+          "reading": "gada"
         }
       }
     },
@@ -264,6 +480,18 @@
         "en": {
           "meaning": "meat",
           "reading": "gogi"
+        },
+        "es": {
+          "meaning": "carne",
+          "reading": "gogi"
+        },
+        "de": {
+          "meaning": "Fleisch",
+          "reading": "gogi"
+        },
+        "fr": {
+          "meaning": "viande",
+          "reading": "gogi"
         }
       }
     },
@@ -275,6 +503,18 @@
       "audio": "audio/ko_d0ab4116e9831f86ef6e.mp3",
       "localizations": {
         "en": {
+          "meaning": "train",
+          "reading": "gicha"
+        },
+        "es": {
+          "meaning": "tren",
+          "reading": "gicha"
+        },
+        "de": {
+          "meaning": "Zug",
+          "reading": "gicha"
+        },
+        "fr": {
           "meaning": "train",
           "reading": "gicha"
         }
@@ -290,6 +530,18 @@
         "en": {
           "meaning": "country",
           "reading": "nara"
+        },
+        "es": {
+          "meaning": "país",
+          "reading": "nara"
+        },
+        "de": {
+          "meaning": "Land",
+          "reading": "nara"
+        },
+        "fr": {
+          "meaning": "pays",
+          "reading": "nara"
         }
       }
     },
@@ -302,6 +554,18 @@
       "localizations": {
         "en": {
           "meaning": "tree",
+          "reading": "namu"
+        },
+        "es": {
+          "meaning": "árbol",
+          "reading": "namu"
+        },
+        "de": {
+          "meaning": "Baum",
+          "reading": "namu"
+        },
+        "fr": {
+          "meaning": "arbre",
           "reading": "namu"
         }
       }
@@ -316,6 +580,18 @@
         "en": {
           "meaning": "song",
           "reading": "norae"
+        },
+        "es": {
+          "meaning": "canción",
+          "reading": "norae"
+        },
+        "de": {
+          "meaning": "Lied",
+          "reading": "norae"
+        },
+        "fr": {
+          "meaning": "chanson",
+          "reading": "norae"
         }
       }
     },
@@ -328,6 +604,18 @@
       "localizations": {
         "en": {
           "meaning": "older sister (male speaker)",
+          "reading": "nuna"
+        },
+        "es": {
+          "meaning": "hermana mayor (hablante masculino)",
+          "reading": "nuna"
+        },
+        "de": {
+          "meaning": "Ältere Schwester (männlicher Sprecher)",
+          "reading": "nuna"
+        },
+        "fr": {
+          "meaning": "grande sœur (locuteur masculin)",
           "reading": "nuna"
         }
       }
@@ -342,6 +630,18 @@
         "en": {
           "meaning": "leg",
           "reading": "dari"
+        },
+        "es": {
+          "meaning": "pierna",
+          "reading": "dari"
+        },
+        "de": {
+          "meaning": "Bein",
+          "reading": "dari"
+        },
+        "fr": {
+          "meaning": "jambe",
+          "reading": "dari"
         }
       }
     },
@@ -354,6 +654,18 @@
       "localizations": {
         "en": {
           "meaning": "city",
+          "reading": "dosi"
+        },
+        "es": {
+          "meaning": "ciudad",
+          "reading": "dosi"
+        },
+        "de": {
+          "meaning": "Stadt",
+          "reading": "dosi"
+        },
+        "fr": {
+          "meaning": "ville",
           "reading": "dosi"
         }
       }
@@ -368,6 +680,18 @@
         "en": {
           "meaning": "head",
           "reading": "meori"
+        },
+        "es": {
+          "meaning": "cabeza",
+          "reading": "meori"
+        },
+        "de": {
+          "meaning": "Kopf",
+          "reading": "meori"
+        },
+        "fr": {
+          "meaning": "tête",
+          "reading": "meori"
         }
       }
     },
@@ -380,6 +704,18 @@
       "localizations": {
         "en": {
           "meaning": "hat",
+          "reading": "moja"
+        },
+        "es": {
+          "meaning": "sombrero",
+          "reading": "moja"
+        },
+        "de": {
+          "meaning": "Hut",
+          "reading": "moja"
+        },
+        "fr": {
+          "meaning": "chapeau",
           "reading": "moja"
         }
       }
@@ -394,6 +730,18 @@
         "en": {
           "meaning": "sea",
           "reading": "bada"
+        },
+        "es": {
+          "meaning": "mar",
+          "reading": "bada"
+        },
+        "de": {
+          "meaning": "Meer",
+          "reading": "bada"
+        },
+        "fr": {
+          "meaning": "mer",
+          "reading": "bada"
         }
       }
     },
@@ -407,6 +755,18 @@
         "en": {
           "meaning": "pants",
           "reading": "baji"
+        },
+        "es": {
+          "meaning": "pantalones",
+          "reading": "baji"
+        },
+        "de": {
+          "meaning": "Hose",
+          "reading": "baji"
+        },
+        "fr": {
+          "meaning": "pantalon",
+          "reading": "baji"
         }
       }
     },
@@ -418,6 +778,18 @@
       "audio": "audio/ko_fb84fa7f86eac62eca5f.mp3",
       "localizations": {
         "en": {
+          "meaning": "bus",
+          "reading": "beoseu"
+        },
+        "es": {
+          "meaning": "autobús",
+          "reading": "beoseu"
+        },
+        "de": {
+          "meaning": "Bus",
+          "reading": "beoseu"
+        },
+        "fr": {
           "meaning": "bus",
           "reading": "beoseu"
         }
@@ -433,6 +805,18 @@
         "en": {
           "meaning": "to see",
           "reading": "boda"
+        },
+        "es": {
+          "meaning": "ver",
+          "reading": "boda"
+        },
+        "de": {
+          "meaning": "Sehen",
+          "reading": "boda"
+        },
+        "fr": {
+          "meaning": "voir",
+          "reading": "boda"
         }
       }
     },
@@ -444,6 +828,18 @@
       "audio": "audio/ko_881a8172c7dcec2e64dc.mp3",
       "localizations": {
         "en": {
+          "meaning": "parents",
+          "reading": "bumo"
+        },
+        "es": {
+          "meaning": "padres",
+          "reading": "bumo"
+        },
+        "de": {
+          "meaning": "Eltern",
+          "reading": "bumo"
+        },
+        "fr": {
           "meaning": "parents",
           "reading": "bumo"
         }
@@ -459,6 +855,18 @@
         "en": {
           "meaning": "sound",
           "reading": "sori"
+        },
+        "es": {
+          "meaning": "sonido",
+          "reading": "sori"
+        },
+        "de": {
+          "meaning": "Geräusch",
+          "reading": "sori"
+        },
+        "fr": {
+          "meaning": "son",
+          "reading": "sori"
         }
       }
     },
@@ -471,6 +879,18 @@
       "localizations": {
         "en": {
           "meaning": "baby",
+          "reading": "agi"
+        },
+        "es": {
+          "meaning": "bebé",
+          "reading": "agi"
+        },
+        "de": {
+          "meaning": "Baby",
+          "reading": "agi"
+        },
+        "fr": {
+          "meaning": "bébé",
           "reading": "agi"
         }
       }
@@ -485,6 +905,18 @@
         "en": {
           "meaning": "to come",
           "reading": "oda"
+        },
+        "es": {
+          "meaning": "venir",
+          "reading": "oda"
+        },
+        "de": {
+          "meaning": "Kommen",
+          "reading": "oda"
+        },
+        "fr": {
+          "meaning": "venir",
+          "reading": "oda"
         }
       }
     },
@@ -497,6 +929,18 @@
       "localizations": {
         "en": {
           "meaning": "milk",
+          "reading": "uyu"
+        },
+        "es": {
+          "meaning": "leche",
+          "reading": "uyu"
+        },
+        "de": {
+          "meaning": "Milch",
+          "reading": "uyu"
+        },
+        "fr": {
+          "meaning": "lait",
           "reading": "uyu"
         }
       }
@@ -511,6 +955,18 @@
         "en": {
           "meaning": "sisters",
           "reading": "jamae"
+        },
+        "es": {
+          "meaning": "hermanas",
+          "reading": "jamae"
+        },
+        "de": {
+          "meaning": "Schwestern",
+          "reading": "jamae"
+        },
+        "fr": {
+          "meaning": "sœurs",
+          "reading": "jamae"
         }
       }
     },
@@ -523,6 +979,18 @@
       "localizations": {
         "en": {
           "meaning": "address",
+          "reading": "juso"
+        },
+        "es": {
+          "meaning": "dirección",
+          "reading": "juso"
+        },
+        "de": {
+          "meaning": "Adresse",
+          "reading": "juso"
+        },
+        "fr": {
+          "meaning": "adresse",
           "reading": "juso"
         }
       }
@@ -537,6 +1005,18 @@
         "en": {
           "meaning": "map",
           "reading": "jido"
+        },
+        "es": {
+          "meaning": "mapa",
+          "reading": "jido"
+        },
+        "de": {
+          "meaning": "Karte",
+          "reading": "jido"
+        },
+        "fr": {
+          "meaning": "carte",
+          "reading": "jido"
         }
       }
     },
@@ -549,6 +1029,18 @@
       "localizations": {
         "en": {
           "meaning": "card",
+          "reading": "kadeu"
+        },
+        "es": {
+          "meaning": "tarjeta",
+          "reading": "kadeu"
+        },
+        "de": {
+          "meaning": "Karte",
+          "reading": "kadeu"
+        },
+        "fr": {
+          "meaning": "carte",
           "reading": "kadeu"
         }
       }
@@ -563,6 +1055,18 @@
         "en": {
           "meaning": "coffee",
           "reading": "keopi"
+        },
+        "es": {
+          "meaning": "café",
+          "reading": "keopi"
+        },
+        "de": {
+          "meaning": "Kaffee",
+          "reading": "keopi"
+        },
+        "fr": {
+          "meaning": "café",
+          "reading": "keopi"
         }
       }
     },
@@ -575,6 +1079,18 @@
       "localizations": {
         "en": {
           "meaning": "to be big",
+          "reading": "keuda"
+        },
+        "es": {
+          "meaning": "ser grande",
+          "reading": "keuda"
+        },
+        "de": {
+          "meaning": "Groß sein",
+          "reading": "keuda"
+        },
+        "fr": {
+          "meaning": "être grand",
           "reading": "keuda"
         }
       }
@@ -589,6 +1105,18 @@
         "en": {
           "meaning": "to do",
           "reading": "hada"
+        },
+        "es": {
+          "meaning": "hacer",
+          "reading": "hada"
+        },
+        "de": {
+          "meaning": "Tun",
+          "reading": "hada"
+        },
+        "fr": {
+          "meaning": "faire",
+          "reading": "hada"
         }
       }
     },
@@ -601,6 +1129,18 @@
       "localizations": {
         "en": {
           "meaning": "day",
+          "reading": "haru"
+        },
+        "es": {
+          "meaning": "día",
+          "reading": "haru"
+        },
+        "de": {
+          "meaning": "Tag",
+          "reading": "haru"
+        },
+        "fr": {
+          "meaning": "jour",
           "reading": "haru"
         }
       }
@@ -615,6 +1155,18 @@
         "en": {
           "meaning": "apple",
           "reading": "sagwa"
+        },
+        "es": {
+          "meaning": "manzana",
+          "reading": "sagwa"
+        },
+        "de": {
+          "meaning": "Apfel",
+          "reading": "sagwa"
+        },
+        "fr": {
+          "meaning": "pomme",
+          "reading": "sagwa"
         }
       }
     },
@@ -627,6 +1179,18 @@
       "localizations": {
         "en": {
           "meaning": "chair",
+          "reading": "uija"
+        },
+        "es": {
+          "meaning": "silla",
+          "reading": "uija"
+        },
+        "de": {
+          "meaning": "Stuhl",
+          "reading": "uija"
+        },
+        "fr": {
+          "meaning": "chaise",
           "reading": "uija"
         }
       }
@@ -641,6 +1205,18 @@
         "en": {
           "meaning": "bag",
           "reading": "gabang"
+        },
+        "es": {
+          "meaning": "bolso",
+          "reading": "gabang"
+        },
+        "de": {
+          "meaning": "Tasche",
+          "reading": "gabang"
+        },
+        "fr": {
+          "meaning": "sac",
+          "reading": "gabang"
         }
       }
     },
@@ -653,6 +1229,18 @@
       "localizations": {
         "en": {
           "meaning": "autumn",
+          "reading": "gaeul"
+        },
+        "es": {
+          "meaning": "otoño",
+          "reading": "gaeul"
+        },
+        "de": {
+          "meaning": "Herbst",
+          "reading": "gaeul"
+        },
+        "fr": {
+          "meaning": "automne",
           "reading": "gaeul"
         }
       }
@@ -667,6 +1255,18 @@
         "en": {
           "meaning": "family",
           "reading": "gajok"
+        },
+        "es": {
+          "meaning": "familia",
+          "reading": "gajok"
+        },
+        "de": {
+          "meaning": "Familie",
+          "reading": "gajok"
+        },
+        "fr": {
+          "meaning": "famille",
+          "reading": "gajok"
         }
       }
     },
@@ -679,6 +1279,18 @@
       "localizations": {
         "en": {
           "meaning": "winter",
+          "reading": "gyeoul"
+        },
+        "es": {
+          "meaning": "invierno",
+          "reading": "gyeoul"
+        },
+        "de": {
+          "meaning": "Winter",
+          "reading": "gyeoul"
+        },
+        "fr": {
+          "meaning": "hiver",
           "reading": "gyeoul"
         }
       }
@@ -693,6 +1305,18 @@
         "en": {
           "meaning": "study",
           "reading": "gongbu"
+        },
+        "es": {
+          "meaning": "estudio",
+          "reading": "gongbu"
+        },
+        "de": {
+          "meaning": "Lernen",
+          "reading": "gongbu"
+        },
+        "fr": {
+          "meaning": "étude",
+          "reading": "gongbu"
         }
       }
     },
@@ -706,6 +1330,18 @@
         "en": {
           "meaning": "tomorrow",
           "reading": "naeil"
+        },
+        "es": {
+          "meaning": "mañana",
+          "reading": "naeil"
+        },
+        "de": {
+          "meaning": "Morgen",
+          "reading": "naeil"
+        },
+        "fr": {
+          "meaning": "demain",
+          "reading": "naeil"
         }
       }
     },
@@ -717,6 +1353,18 @@
       "audio": "audio/ko_6454befbdb61c843cbd2.mp3",
       "localizations": {
         "en": {
+          "meaning": "ramen",
+          "reading": "ramyeon"
+        },
+        "es": {
+          "meaning": "ramen",
+          "reading": "ramyeon"
+        },
+        "de": {
+          "meaning": "Ramen",
+          "reading": "ramyeon"
+        },
+        "fr": {
           "meaning": "ramen",
           "reading": "ramyeon"
         }
@@ -732,6 +1380,18 @@
         "en": {
           "meaning": "village",
           "reading": "maeul"
+        },
+        "es": {
+          "meaning": "pueblo",
+          "reading": "maeul"
+        },
+        "de": {
+          "meaning": "Dorf",
+          "reading": "maeul"
+        },
+        "fr": {
+          "meaning": "village",
+          "reading": "maeul"
         }
       }
     },
@@ -744,6 +1404,18 @@
       "localizations": {
         "en": {
           "meaning": "heart",
+          "reading": "maeum"
+        },
+        "es": {
+          "meaning": "corazón",
+          "reading": "maeum"
+        },
+        "de": {
+          "meaning": "Herz",
+          "reading": "maeum"
+        },
+        "fr": {
+          "meaning": "cœur",
           "reading": "maeum"
         }
       }
@@ -758,6 +1430,18 @@
         "en": {
           "meaning": "to eat",
           "reading": "meokda"
+        },
+        "es": {
+          "meaning": "comer",
+          "reading": "meokda"
+        },
+        "de": {
+          "meaning": "Essen",
+          "reading": "meokda"
+        },
+        "fr": {
+          "meaning": "manger",
+          "reading": "meokda"
         }
       }
     },
@@ -770,6 +1454,18 @@
       "localizations": {
         "en": {
           "meaning": "person",
+          "reading": "saram"
+        },
+        "es": {
+          "meaning": "persona",
+          "reading": "saram"
+        },
+        "de": {
+          "meaning": "Person",
+          "reading": "saram"
+        },
+        "fr": {
+          "meaning": "personne",
           "reading": "saram"
         }
       }
@@ -784,6 +1480,18 @@
         "en": {
           "meaning": "time",
           "reading": "sigan"
+        },
+        "es": {
+          "meaning": "tiempo",
+          "reading": "sigan"
+        },
+        "de": {
+          "meaning": "Zeit",
+          "reading": "sigan"
+        },
+        "fr": {
+          "meaning": "temps",
+          "reading": "sigan"
         }
       }
     },
@@ -796,6 +1504,18 @@
       "localizations": {
         "en": {
           "meaning": "market",
+          "reading": "sijang"
+        },
+        "es": {
+          "meaning": "mercado",
+          "reading": "sijang"
+        },
+        "de": {
+          "meaning": "Markt",
+          "reading": "sijang"
+        },
+        "fr": {
+          "meaning": "marché",
           "reading": "sijang"
         }
       }
@@ -810,6 +1530,18 @@
         "en": {
           "meaning": "morning",
           "reading": "achim"
+        },
+        "es": {
+          "meaning": "mañana",
+          "reading": "achim"
+        },
+        "de": {
+          "meaning": "Morgen",
+          "reading": "achim"
+        },
+        "fr": {
+          "meaning": "matin",
+          "reading": "achim"
         }
       }
     },
@@ -822,6 +1554,18 @@
       "localizations": {
         "en": {
           "meaning": "summer",
+          "reading": "yeoreum"
+        },
+        "es": {
+          "meaning": "verano",
+          "reading": "yeoreum"
+        },
+        "de": {
+          "meaning": "Sommer",
+          "reading": "yeoreum"
+        },
+        "fr": {
+          "meaning": "été",
           "reading": "yeoreum"
         }
       }
@@ -836,6 +1580,18 @@
         "en": {
           "meaning": "today",
           "reading": "oneul"
+        },
+        "es": {
+          "meaning": "hoy",
+          "reading": "oneul"
+        },
+        "de": {
+          "meaning": "Heute",
+          "reading": "oneul"
+        },
+        "fr": {
+          "meaning": "aujourd’hui",
+          "reading": "oneul"
         }
       }
     },
@@ -848,6 +1604,18 @@
       "localizations": {
         "en": {
           "meaning": "umbrella",
+          "reading": "usan"
+        },
+        "es": {
+          "meaning": "paraguas",
+          "reading": "usan"
+        },
+        "de": {
+          "meaning": "Regenschirm",
+          "reading": "usan"
+        },
+        "fr": {
+          "meaning": "parapluie",
           "reading": "usan"
         }
       }
@@ -862,6 +1630,18 @@
         "en": {
           "meaning": "name",
           "reading": "ireum"
+        },
+        "es": {
+          "meaning": "nombre",
+          "reading": "ireum"
+        },
+        "de": {
+          "meaning": "Name",
+          "reading": "ireum"
+        },
+        "fr": {
+          "meaning": "nom",
+          "reading": "ireum"
         }
       }
     },
@@ -874,6 +1654,18 @@
       "localizations": {
         "en": {
           "meaning": "to be small",
+          "reading": "jakda"
+        },
+        "es": {
+          "meaning": "ser pequeño",
+          "reading": "jakda"
+        },
+        "de": {
+          "meaning": "Klein sein",
+          "reading": "jakda"
+        },
+        "fr": {
+          "meaning": "être petit",
           "reading": "jakda"
         }
       }
@@ -888,6 +1680,18 @@
         "en": {
           "meaning": "dinner",
           "reading": "jeonyeok"
+        },
+        "es": {
+          "meaning": "cena",
+          "reading": "jeonyeok"
+        },
+        "de": {
+          "meaning": "Abendessen",
+          "reading": "jeonyeok"
+        },
+        "fr": {
+          "meaning": "dîner",
+          "reading": "jeonyeok"
         }
       }
     },
@@ -900,6 +1704,18 @@
       "localizations": {
         "en": {
           "meaning": "to be good",
+          "reading": "johda"
+        },
+        "es": {
+          "meaning": "ser bueno",
+          "reading": "johda"
+        },
+        "de": {
+          "meaning": "Gut sein",
+          "reading": "johda"
+        },
+        "fr": {
+          "meaning": "être bon",
           "reading": "johda"
         }
       }
@@ -914,6 +1730,18 @@
         "en": {
           "meaning": "weekend",
           "reading": "jumal"
+        },
+        "es": {
+          "meaning": "fin de semana",
+          "reading": "jumal"
+        },
+        "de": {
+          "meaning": "Wochenende",
+          "reading": "jumal"
+        },
+        "fr": {
+          "meaning": "week-end",
+          "reading": "jumal"
         }
       }
     },
@@ -926,6 +1754,18 @@
       "localizations": {
         "en": {
           "meaning": "friend",
+          "reading": "chingu"
+        },
+        "es": {
+          "meaning": "amigo",
+          "reading": "chingu"
+        },
+        "de": {
+          "meaning": "Freund",
+          "reading": "chingu"
+        },
+        "fr": {
+          "meaning": "ami",
           "reading": "chingu"
         }
       }
@@ -940,6 +1780,18 @@
         "en": {
           "meaning": "bed",
           "reading": "chimdae"
+        },
+        "es": {
+          "meaning": "cama",
+          "reading": "chimdae"
+        },
+        "de": {
+          "meaning": "Bett",
+          "reading": "chimdae"
+        },
+        "fr": {
+          "meaning": "lit",
+          "reading": "chimdae"
         }
       }
     },
@@ -951,6 +1803,18 @@
       "audio": "audio/ko_94be61a73763ee4ccdbe.mp3",
       "localizations": {
         "en": {
+          "meaning": "taxi",
+          "reading": "taeksi"
+        },
+        "es": {
+          "meaning": "taxi",
+          "reading": "taeksi"
+        },
+        "de": {
+          "meaning": "Taxi",
+          "reading": "taeksi"
+        },
+        "fr": {
           "meaning": "taxi",
           "reading": "taeksi"
         }
@@ -966,6 +1830,18 @@
         "en": {
           "meaning": "sky",
           "reading": "haneul"
+        },
+        "es": {
+          "meaning": "cielo",
+          "reading": "haneul"
+        },
+        "de": {
+          "meaning": "Himmel",
+          "reading": "haneul"
+        },
+        "fr": {
+          "meaning": "ciel",
+          "reading": "haneul"
         }
       }
     },
@@ -978,6 +1854,18 @@
       "localizations": {
         "en": {
           "meaning": "school",
+          "reading": "hakgyo"
+        },
+        "es": {
+          "meaning": "escuela",
+          "reading": "hakgyo"
+        },
+        "de": {
+          "meaning": "Schule",
+          "reading": "hakgyo"
+        },
+        "fr": {
+          "meaning": "école",
           "reading": "hakgyo"
         }
       }
@@ -992,6 +1880,18 @@
         "en": {
           "meaning": "brothers",
           "reading": "hyeongje"
+        },
+        "es": {
+          "meaning": "hermanos",
+          "reading": "hyeongje"
+        },
+        "de": {
+          "meaning": "Brüder",
+          "reading": "hyeongje"
+        },
+        "fr": {
+          "meaning": "frères",
+          "reading": "hyeongje"
         }
       }
     },
@@ -1004,6 +1904,18 @@
       "localizations": {
         "en": {
           "meaning": "day off",
+          "reading": "hyuil"
+        },
+        "es": {
+          "meaning": "día libre",
+          "reading": "hyuil"
+        },
+        "de": {
+          "meaning": "Freier Tag",
+          "reading": "hyuil"
+        },
+        "fr": {
+          "meaning": "jour de repos",
           "reading": "hyuil"
         }
       }
@@ -1018,6 +1930,18 @@
         "en": {
           "meaning": "weather",
           "reading": "nalssi"
+        },
+        "es": {
+          "meaning": "tiempo atmosférico",
+          "reading": "nalssi"
+        },
+        "de": {
+          "meaning": "Wetter",
+          "reading": "nalssi"
+        },
+        "fr": {
+          "meaning": "météo",
+          "reading": "nalssi"
         }
       }
     },
@@ -1030,6 +1954,18 @@
       "localizations": {
         "en": {
           "meaning": "father",
+          "reading": "abeoji"
+        },
+        "es": {
+          "meaning": "padre",
+          "reading": "abeoji"
+        },
+        "de": {
+          "meaning": "Vater",
+          "reading": "abeoji"
+        },
+        "fr": {
+          "meaning": "père",
           "reading": "abeoji"
         }
       }
@@ -1044,6 +1980,18 @@
         "en": {
           "meaning": "mother",
           "reading": "eomeoni"
+        },
+        "es": {
+          "meaning": "madre",
+          "reading": "eomeoni"
+        },
+        "de": {
+          "meaning": "Mutter",
+          "reading": "eomeoni"
+        },
+        "fr": {
+          "meaning": "mère",
+          "reading": "eomeoni"
         }
       }
     },
@@ -1056,6 +2004,18 @@
       "localizations": {
         "en": {
           "meaning": "to be fast",
+          "reading": "ppareuda"
+        },
+        "es": {
+          "meaning": "ser rápido",
+          "reading": "ppareuda"
+        },
+        "de": {
+          "meaning": "Schnell sein",
+          "reading": "ppareuda"
+        },
+        "fr": {
+          "meaning": "être rapide",
           "reading": "ppareuda"
         }
       }
@@ -1070,6 +2030,18 @@
         "en": {
           "meaning": "to be pretty",
           "reading": "yeppeuda"
+        },
+        "es": {
+          "meaning": "ser bonito",
+          "reading": "yeppeuda"
+        },
+        "de": {
+          "meaning": "Hübsch sein",
+          "reading": "yeppeuda"
+        },
+        "fr": {
+          "meaning": "être joli",
+          "reading": "yeppeuda"
         }
       }
     },
@@ -1083,6 +2055,18 @@
         "en": {
           "meaning": "phone call",
           "reading": "jeonhwa"
+        },
+        "es": {
+          "meaning": "llamada telefónica",
+          "reading": "jeonhwa"
+        },
+        "de": {
+          "meaning": "Telefonanruf",
+          "reading": "jeonhwa"
+        },
+        "fr": {
+          "meaning": "appel téléphonique",
+          "reading": "jeonhwa"
         }
       }
     },
@@ -1094,6 +2078,18 @@
       "audio": "audio/ko_227e25cceb2f8449c2a4.mp3",
       "localizations": {
         "en": {
+          "meaning": "animal",
+          "reading": "dongmul"
+        },
+        "es": {
+          "meaning": "animal",
+          "reading": "dongmul"
+        },
+        "de": {
+          "meaning": "Tier",
+          "reading": "dongmul"
+        },
+        "fr": {
           "meaning": "animal",
           "reading": "dongmul"
         }
@@ -1109,6 +2105,18 @@
         "en": {
           "meaning": "walk",
           "reading": "sanchaek"
+        },
+        "es": {
+          "meaning": "paseo",
+          "reading": "sanchaek"
+        },
+        "de": {
+          "meaning": "Spaziergang",
+          "reading": "sanchaek"
+        },
+        "fr": {
+          "meaning": "promenade",
+          "reading": "sanchaek"
         }
       }
     },
@@ -1121,6 +2129,18 @@
       "localizations": {
         "en": {
           "meaning": "shoes",
+          "reading": "sinbal"
+        },
+        "es": {
+          "meaning": "zapatos",
+          "reading": "sinbal"
+        },
+        "de": {
+          "meaning": "Schuhe",
+          "reading": "sinbal"
+        },
+        "fr": {
+          "meaning": "chaussures",
           "reading": "sinbal"
         }
       }
@@ -1135,6 +2155,18 @@
         "en": {
           "meaning": "bank",
           "reading": "eunhaeng"
+        },
+        "es": {
+          "meaning": "banco",
+          "reading": "eunhaeng"
+        },
+        "de": {
+          "meaning": "Bank",
+          "reading": "eunhaeng"
+        },
+        "fr": {
+          "meaning": "banque",
+          "reading": "eunhaeng"
         }
       }
     },
@@ -1147,6 +2179,18 @@
       "localizations": {
         "en": {
           "meaning": "food",
+          "reading": "eumsik"
+        },
+        "es": {
+          "meaning": "comida",
+          "reading": "eumsik"
+        },
+        "de": {
+          "meaning": "Essen",
+          "reading": "eumsik"
+        },
+        "fr": {
+          "meaning": "nourriture",
           "reading": "eumsik"
         }
       }
@@ -1161,6 +2205,18 @@
         "en": {
           "meaning": "lunch",
           "reading": "jeomsim"
+        },
+        "es": {
+          "meaning": "almuerzo",
+          "reading": "jeomsim"
+        },
+        "de": {
+          "meaning": "Mittagessen",
+          "reading": "jeomsim"
+        },
+        "fr": {
+          "meaning": "déjeuner",
+          "reading": "jeomsim"
         }
       }
     },
@@ -1173,6 +2229,18 @@
       "localizations": {
         "en": {
           "meaning": "window",
+          "reading": "changmun"
+        },
+        "es": {
+          "meaning": "ventana",
+          "reading": "changmun"
+        },
+        "de": {
+          "meaning": "Fenster",
+          "reading": "changmun"
+        },
+        "fr": {
+          "meaning": "fenêtre",
           "reading": "changmun"
         }
       }
@@ -1187,6 +2255,18 @@
         "en": {
           "meaning": "desk",
           "reading": "chaeksang"
+        },
+        "es": {
+          "meaning": "escritorio",
+          "reading": "chaeksang"
+        },
+        "de": {
+          "meaning": "Schreibtisch",
+          "reading": "chaeksang"
+        },
+        "fr": {
+          "meaning": "bureau",
+          "reading": "chaeksang"
         }
       }
     },
@@ -1199,6 +2279,18 @@
       "localizations": {
         "en": {
           "meaning": "student",
+          "reading": "haksaeng"
+        },
+        "es": {
+          "meaning": "estudiante",
+          "reading": "haksaeng"
+        },
+        "de": {
+          "meaning": "Schüler",
+          "reading": "haksaeng"
+        },
+        "fr": {
+          "meaning": "élève",
           "reading": "haksaeng"
         }
       }
@@ -1213,6 +2305,18 @@
         "en": {
           "meaning": "post office",
           "reading": "ucheguk"
+        },
+        "es": {
+          "meaning": "oficina de correos",
+          "reading": "ucheguk"
+        },
+        "de": {
+          "meaning": "Postamt",
+          "reading": "ucheguk"
+        },
+        "fr": {
+          "meaning": "bureau de poste",
+          "reading": "ucheguk"
         }
       }
     },
@@ -1225,6 +2329,18 @@
       "localizations": {
         "en": {
           "meaning": "bicycle",
+          "reading": "jajeongeo"
+        },
+        "es": {
+          "meaning": "bicicleta",
+          "reading": "jajeongeo"
+        },
+        "de": {
+          "meaning": "Fahrrad",
+          "reading": "jajeongeo"
+        },
+        "fr": {
+          "meaning": "vélo",
           "reading": "jajeongeo"
         }
       }
@@ -1239,6 +2355,18 @@
         "en": {
           "meaning": "subway",
           "reading": "jihacheol"
+        },
+        "es": {
+          "meaning": "metro",
+          "reading": "jihacheol"
+        },
+        "de": {
+          "meaning": "U-Bahn",
+          "reading": "jihacheol"
+        },
+        "fr": {
+          "meaning": "métro",
+          "reading": "jihacheol"
         }
       }
     },
@@ -1251,6 +2379,18 @@
       "localizations": {
         "en": {
           "meaning": "park",
+          "reading": "gongwon"
+        },
+        "es": {
+          "meaning": "parque",
+          "reading": "gongwon"
+        },
+        "de": {
+          "meaning": "Park",
+          "reading": "gongwon"
+        },
+        "fr": {
+          "meaning": "parc",
           "reading": "gongwon"
         }
       }
@@ -1265,6 +2405,18 @@
         "en": {
           "meaning": "hospital",
           "reading": "byeongwon"
+        },
+        "es": {
+          "meaning": "hospital",
+          "reading": "byeongwon"
+        },
+        "de": {
+          "meaning": "Krankenhaus",
+          "reading": "byeongwon"
+        },
+        "fr": {
+          "meaning": "hôpital",
+          "reading": "byeongwon"
         }
       }
     },
@@ -1277,6 +2429,18 @@
       "localizations": {
         "en": {
           "meaning": "refrigerator",
+          "reading": "naengjanggo"
+        },
+        "es": {
+          "meaning": "nevera",
+          "reading": "naengjanggo"
+        },
+        "de": {
+          "meaning": "Kühlschrank",
+          "reading": "naengjanggo"
+        },
+        "fr": {
+          "meaning": "réfrigérateur",
           "reading": "naengjanggo"
         }
       }
@@ -1291,6 +2455,18 @@
         "en": {
           "meaning": "to be fun",
           "reading": "jaemiitda"
+        },
+        "es": {
+          "meaning": "ser divertido",
+          "reading": "jaemiitda"
+        },
+        "de": {
+          "meaning": "Spaß machen",
+          "reading": "jaemiitda"
+        },
+        "fr": {
+          "meaning": "être amusant",
+          "reading": "jaemiitda"
         }
       }
     },
@@ -1304,6 +2480,18 @@
         "en": {
           "meaning": "teacher",
           "reading": "seonsaengnim"
+        },
+        "es": {
+          "meaning": "profesor",
+          "reading": "seonsaengnim"
+        },
+        "de": {
+          "meaning": "Lehrer",
+          "reading": "seonsaengnim"
+        },
+        "fr": {
+          "meaning": "enseignant",
+          "reading": "seonsaengnim"
         }
       }
     },
@@ -1316,6 +2504,18 @@
       "localizations": {
         "en": {
           "meaning": "to be okay",
+          "reading": "gwaenchanda"
+        },
+        "es": {
+          "meaning": "estar bien",
+          "reading": "gwaenchanda"
+        },
+        "de": {
+          "meaning": "In Ordnung sein",
+          "reading": "gwaenchanda"
+        },
+        "fr": {
+          "meaning": "aller bien",
           "reading": "gwaenchanda"
         }
       }
@@ -1344,6 +2544,42 @@
         "플로우",
         "게임",
         "공식"
+      ]
+    },
+    "es": {
+      "name": "Flow: principiante",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "TOPIK",
+        "Mecanografía",
+        "Principiante",
+        "Flow",
+        "Juegos",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Flow: Anfänger",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "TOPIK",
+        "Tippen",
+        "Anfänger",
+        "Flow",
+        "Spiele",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Flow: débutant",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "TOPIK",
+        "Saisie",
+        "Débutant",
+        "Flow",
+        "Jeux",
+        "Officiel"
       ]
     }
   }

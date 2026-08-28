@@ -11,6 +11,8 @@
 		<string>ja</string>
 		<string>en</string>
 		<string>es</string>
+		<string>de</string>
+		<string>fr</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>

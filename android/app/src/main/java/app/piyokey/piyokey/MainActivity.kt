@@ -2582,7 +2582,10 @@ private fun UserDeckDraft.isSameDeckMakerFlow(other: UserDeckDraft): Boolean {
 
 private fun AppLanguage.toUserDeckLanguage(): UserDeckLanguage = when (this) {
   AppLanguage.JAPANESE -> UserDeckLanguage.JAPANESE
-  AppLanguage.ENGLISH, AppLanguage.SPANISH -> UserDeckLanguage.ENGLISH
+  AppLanguage.ENGLISH -> UserDeckLanguage.ENGLISH
+  AppLanguage.SPANISH -> UserDeckLanguage.SPANISH
+  AppLanguage.GERMAN -> UserDeckLanguage.GERMAN
+  AppLanguage.FRENCH -> UserDeckLanguage.FRENCH
 }
 
 private fun DeckMakerBillingNotice.toDeckMakerUiNotice(): DeckMakerUiNotice = when (this) {

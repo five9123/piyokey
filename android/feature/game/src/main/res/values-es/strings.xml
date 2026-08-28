@@ -76,7 +76,7 @@
   <string name="game_piyo_accessibility">Piyo siguiendo el juego actual</string>
   <string name="share_save_image">Guardar imagen</string>
   <string name="share_sns">Compartir en redes</string>
-  <string name="share_chooser">Compartir resultado de PIYOKEY</string>
+  <string name="share_chooser">Compartir resultado de typee</string>
   <string name="share_saved">Imagen guardada.</string>
   <string name="share_save_failed">No se ha podido guardar la imagen.</string>
   <string name="share_permission_denied">Se ha denegado el permiso para fotos.</string>

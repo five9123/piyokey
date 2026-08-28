@@ -390,6 +390,9 @@ private fun UserDeckValidationField.itemIndexOrNull(): Int? = when (this) {
 private fun currentUserDeckLanguage(): UserDeckLanguage = when (LocalConfiguration.current.locales[0].language) {
   "ja" -> UserDeckLanguage.JAPANESE
   "ko" -> UserDeckLanguage.KOREAN
+  "es" -> UserDeckLanguage.SPANISH
+  "de" -> UserDeckLanguage.GERMAN
+  "fr" -> UserDeckLanguage.FRENCH
   else -> UserDeckLanguage.ENGLISH
 }
 

@@ -31,16 +31,14 @@ data class DeckItem(
   val audio: String?,
   val localizations: Map<String, DeckItemLocalization>? = null,
 ) {
-  fun localizedMeaning(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedMeaning(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> meaningJa
-    "ko" -> localizations?.get("ko")?.meaning ?: localizations?.get("en")?.meaning
-    else -> localizations?.get("en")?.meaning
+    else -> localizations?.get(code)?.meaning ?: localizations?.get("en")?.meaning
   }
 
-  fun localizedReading(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedReading(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> readingJa
-    "ko" -> localizations?.get("ko")?.reading ?: localizations?.get("en")?.reading
-    else -> localizations?.get("en")?.reading
+    else -> localizations?.get(code)?.reading ?: localizations?.get("en")?.reading
   }
 }
 
@@ -58,31 +56,27 @@ data class Deck(
   val items: List<DeckItem>,
   val localizations: Map<String, DeckMetadataLocalization>? = null,
 ) {
-  fun localizedName(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedName(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> name
-    "ko" -> metadataLocalization("ko")?.name ?: metadataLocalization("en")?.name
-    else -> metadataLocalization("en")?.name
+    else -> metadataLocalization(code)?.name ?: metadataLocalization("en")?.name
   }
 
   fun localizedAuthorNickname(languageCode: String): String? =
-    when (normalizeLanguageCode(languageCode)) {
+    when (val code = normalizeLanguageCode(languageCode)) {
       "ja" -> author.nickname
-      "ko" -> metadataLocalization("ko")?.authorNickname
+      else -> metadataLocalization(code)?.authorNickname
         ?: metadataLocalization("en")?.authorNickname
-      else -> metadataLocalization("en")?.authorNickname
     }
 
   fun localizedTags(languageCode: String): List<String>? =
-    when (normalizeLanguageCode(languageCode)) {
+    when (val code = normalizeLanguageCode(languageCode)) {
       "ja" -> tags
-      "ko" -> metadataLocalization("ko")?.tags ?: metadataLocalization("en")?.tags
-      else -> metadataLocalization("en")?.tags
+      else -> metadataLocalization(code)?.tags ?: metadataLocalization("en")?.tags
     }
 
-  fun hasLocalization(languageCode: String): Boolean = when (normalizeLanguageCode(languageCode)) {
+  fun hasLocalization(languageCode: String): Boolean = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> true
-    "ko" -> localizations?.containsKey("ko") == true || localizations?.containsKey("en") == true
-    else -> localizations?.containsKey("en") == true
+    else -> localizations?.containsKey(code) == true || localizations?.containsKey("en") == true
   }
 
   private fun metadataLocalization(languageCode: String): DeckMetadataLocalization? =
@@ -98,10 +92,9 @@ data class CatalogPreviewItem(
   val meaningJa: String,
   val localizations: Map<String, CatalogPreviewItemLocalization>? = null,
 ) {
-  fun localizedMeaning(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedMeaning(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> meaningJa
-    "ko" -> localizations?.get("ko")?.meaning ?: localizations?.get("en")?.meaning
-    else -> localizations?.get("en")?.meaning
+    else -> localizations?.get(code)?.meaning ?: localizations?.get("en")?.meaning
   }
 }
 
@@ -124,31 +117,27 @@ data class CatalogDeck(
   val fileUrl: String,
   val localizations: Map<String, DeckMetadataLocalization>? = null,
 ) {
-  fun localizedName(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedName(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> name
-    "ko" -> metadataLocalization("ko")?.name ?: metadataLocalization("en")?.name
-    else -> metadataLocalization("en")?.name
+    else -> metadataLocalization(code)?.name ?: metadataLocalization("en")?.name
   }
 
   fun localizedAuthorNickname(languageCode: String): String? =
-    when (normalizeLanguageCode(languageCode)) {
+    when (val code = normalizeLanguageCode(languageCode)) {
       "ja" -> authorNickname
-      "ko" -> metadataLocalization("ko")?.authorNickname
+      else -> metadataLocalization(code)?.authorNickname
         ?: metadataLocalization("en")?.authorNickname
-      else -> metadataLocalization("en")?.authorNickname
     }
 
   fun localizedTags(languageCode: String): List<String>? =
-    when (normalizeLanguageCode(languageCode)) {
+    when (val code = normalizeLanguageCode(languageCode)) {
       "ja" -> tags
-      "ko" -> metadataLocalization("ko")?.tags ?: metadataLocalization("en")?.tags
-      else -> metadataLocalization("en")?.tags
+      else -> metadataLocalization(code)?.tags ?: metadataLocalization("en")?.tags
     }
 
-  fun hasLocalization(languageCode: String): Boolean = when (normalizeLanguageCode(languageCode)) {
+  fun hasLocalization(languageCode: String): Boolean = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> true
-    "ko" -> localizations?.containsKey("ko") == true || localizations?.containsKey("en") == true
-    else -> localizations?.containsKey("en") == true
+    else -> localizations?.containsKey(code) == true || localizations?.containsKey("en") == true
   }
 
   val trendingRatio: Double
@@ -164,10 +153,9 @@ data class CatalogTag(
   val category: String,
   val localizations: Map<String, String>? = null,
 ) {
-  fun localizedTag(languageCode: String): String? = when (normalizeLanguageCode(languageCode)) {
+  fun localizedTag(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
     "ja" -> tag
-    "ko" -> localizations?.get("ko") ?: localizations?.get("en")
-    else -> localizations?.get("en")
+    else -> localizations?.get(code) ?: localizations?.get("en")
   }
 }
 

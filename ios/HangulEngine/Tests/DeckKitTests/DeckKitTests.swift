@@ -5,6 +5,33 @@ import HangulEngine
 import XCTest
 
 final class DeckKitTests: XCTestCase {
+  func testExpandedLocalesResolveRegionalCluesAndRejectIncompleteContent() throws {
+    let root = try RepositoryFixtureLocator.root(from: #filePath)
+    let catalog = try DeckKitJSON.decodeCatalog(from: Data(contentsOf:
+      root.appendingPathComponent("shared/mock_catalog/catalog.json")))
+    let entry = try XCTUnwrap(catalog.decks.first)
+    let data = try Data(contentsOf: root.appendingPathComponent("shared/mock_catalog/\(entry.fileUrl)"))
+    let deck = try DeckKitJSON.decodeDeck(from: data)
+    let item = try XCTUnwrap(deck.items.first)
+    for (language, region) in [("es", "es-MX"), ("de", "de-AT"), ("fr", "fr-CA")] {
+      XCTAssertEqual(deck.localizedName(languageCode: region), deck.localizations?[language]?.name)
+      XCTAssertEqual(item.localizedMeaning(languageCode: region), item.localizations?[language]?.meaning)
+      XCTAssertEqual(item.localizedReading(languageCode: region), item.localizations?["en"]?.reading)
+      XCTAssertEqual(entry.previewItems.first?.localizedMeaning(languageCode: region),
+                     item.localizedMeaning(languageCode: region))
+      var object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+      var items = try XCTUnwrap(object["items"] as? [[String: Any]])
+      var localizations = try XCTUnwrap(items[0]["localizations"] as? [String: Any])
+      localizations.removeValue(forKey: language)
+      items[0]["localizations"] = localizations
+      object["items"] = items
+      let broken = try DeckKitJSON.decodeDeck(from: JSONSerialization.data(withJSONObject: object))
+      XCTAssertTrue(DeckValidator.validate(broken).contains {
+        $0.code == "missing_localization" && $0.path == "items[0].localizations.\(language)"
+      })
+    }
+  }
+
   func testMockCatalogPassesJSONSchemasAndSwiftValidators() throws {
     let root = try RepositoryFixtureLocator.root(from: #filePath)
     let catalogData = try Data(
@@ -123,7 +150,7 @@ final class DeckKitTests: XCTestCase {
     XCTAssertEqual(
       try JSONSchemaValidator.validate(instanceData: catalogData, schemaData: catalogSchema), [])
     let catalog = try DeckKitJSON.decodeCatalog(from: catalogData)
-    XCTAssertEqual(catalog.catalogVersion, 11)
+    XCTAssertEqual(catalog.catalogVersion, 12)
     XCTAssertEqual(CatalogValidator.validate(catalog), [])
 
     var decks: [Deck] = []
@@ -140,7 +167,7 @@ final class DeckKitTests: XCTestCase {
 
     XCTAssertEqual(CatalogBundleValidator.validate(catalog: catalog, decks: decks), [])
     let updated = try XCTUnwrap(decks.first { $0.deckId == "official_daily_words" })
-    XCTAssertEqual(updated.version, 5)
+    XCTAssertEqual(updated.version, 6)
     XCTAssertEqual(updated.items.last?.ko, "약속")
   }
 
@@ -241,47 +268,47 @@ final class DeckKitTests: XCTestCase {
     let item = try XCTUnwrap(deck.items.first)
     let tag = try XCTUnwrap(catalog.tags.first)
 
-    XCTAssertTrue(entry.hasLocalization(languageCode: "fr-FR"))
+    XCTAssertTrue(entry.hasLocalization(languageCode: "zh-Hant"))
     XCTAssertEqual(
-      entry.localizedName(languageCode: "fr-FR"),
+      entry.localizedName(languageCode: "zh-Hant"),
       entry.localizedName(languageCode: "en")
     )
     XCTAssertEqual(
-      entry.localizedAuthorNickname(languageCode: "fr-FR"),
+      entry.localizedAuthorNickname(languageCode: "zh-Hant"),
       entry.localizedAuthorNickname(languageCode: "en")
     )
     XCTAssertEqual(
-      entry.localizedTags(languageCode: "fr-FR"),
+      entry.localizedTags(languageCode: "zh-Hant"),
       entry.localizedTags(languageCode: "en")
     )
     XCTAssertEqual(
-      preview.localizedMeaning(languageCode: "fr-FR"),
+      preview.localizedMeaning(languageCode: "zh-Hant"),
       preview.localizedMeaning(languageCode: "en")
     )
 
-    XCTAssertTrue(deck.hasLocalization(languageCode: "fr-FR"))
+    XCTAssertTrue(deck.hasLocalization(languageCode: "zh-Hant"))
     XCTAssertEqual(
-      deck.localizedName(languageCode: "fr-FR"),
+      deck.localizedName(languageCode: "zh-Hant"),
       deck.localizedName(languageCode: "en")
     )
     XCTAssertEqual(
-      deck.localizedAuthorNickname(languageCode: "fr-FR"),
+      deck.localizedAuthorNickname(languageCode: "zh-Hant"),
       deck.localizedAuthorNickname(languageCode: "en")
     )
     XCTAssertEqual(
-      deck.localizedTags(languageCode: "fr-FR"),
+      deck.localizedTags(languageCode: "zh-Hant"),
       deck.localizedTags(languageCode: "en")
     )
     XCTAssertEqual(
-      item.localizedMeaning(languageCode: "fr-FR"),
+      item.localizedMeaning(languageCode: "zh-Hant"),
       item.localizedMeaning(languageCode: "en")
     )
     XCTAssertEqual(
-      item.localizedReading(languageCode: "fr-FR"),
+      item.localizedReading(languageCode: "zh-Hant"),
       item.localizedReading(languageCode: "en")
     )
     XCTAssertEqual(
-      tag.localizedTag(languageCode: "fr-FR"),
+      tag.localizedTag(languageCode: "zh-Hant"),
       tag.localizedTag(languageCode: "en")
     )
   }

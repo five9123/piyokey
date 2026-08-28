@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "verified_commit": "14917329e8f8ee5a4bca6f9565c889771713dbc1",
+  "verified_tree": "a87a653610298e8919766c41d0425b6bfa27b9eb",
+  "branch": "codex/local-es-de-fr",
+  "scope": "Local es/de/fr UI, learning content and shared-core verification only; full app and release gates remain open",
+  "result": "pass",
+  "recorded_at": "2026-08-28T11:16:50.207074+00:00",
+  "checks": [
+    {
+      "name": "Python regression",
+      "status": "pass",
+      "command": "python3 -m unittest discover -s tools/tests",
+      "note": "92 tests; artifacts/language-expansion/python.log"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3 tools/release_preflight.py",
+      "note": "artifacts/language-expansion/preflight.log"
+    },
+    {
+      "name": "Swift shared-core XCTest",
+      "status": "pass",
+      "command": "python3 artifacts/language-expansion/offline_checks.py swift",
+      "note": "45 tests via installed swiftc/XCTest, not SwiftPM or app build"
+    },
+    {
+      "name": "Kotlin shared/settings JUnit",
+      "status": "pass",
+      "command": "python3 artifacts/language-expansion/offline_checks.py kotlin",
+      "note": "57 tests via installed compiler/JUnit, not Gradle or app build"
+    },
+    {
+      "name": "Preservation and resources",
+      "status": "pass",
+      "command": "python3 artifacts/language-expansion/audit.py",
+      "note": "67 deck/2 catalog snapshots and 585 audio/vector/English files preserved; strings parse and 8 AAPT2 modules pass"
+    },
+    {
+      "name": "iOS changed source parse",
+      "status": "pass",
+      "command": "swiftc -frontend -parse AppSettings.swift SettingsView.swift CurriculumCatalog.swift DeckEditorView.swift AppSettingsTests.swift DeckEditorTests.swift HancoUITests.swift",
+      "note": "Parse only; full repository paths used, no app typecheck or UI run"
+    },
+    {
+      "name": "Standard app builds",
+      "status": "skip",
+      "command": "swift test; xcodebuild; gradle",
+      "note": "SwiftPM sandbox creation, Xcode cache/CoreSimulator and Gradle local socket blocked; security settings unchanged"
+    }
+  ],
+  "manual_gates": [
+    "Actual Issue/Project/PR and worktree owner registration deferred by user local-first request; strict workspace doctor ownership not passed; no CI exception inherited",
+    "iOS app/settings/editor/UI tests; Android full Gradle app/lint/instrumentation; real device smoke, accessibility, large text, purchases and file exchange",
+    "Native human review of es/de/fr translations; support/privacy review; final RC screenshots/video and store upload/readback",
+    "Publish and verify a separate catalog namespace for new locale keys; preserve existing URLs for old apps; no remote deployment done"
+  ]
+}

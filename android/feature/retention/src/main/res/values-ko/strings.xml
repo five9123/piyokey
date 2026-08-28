@@ -18,4 +18,11 @@
     <string name="home_primary_recommend_detail">레벨과 관심사에 맞춰 골랐어요</string>
     <string name="home_primary_resume_eyebrow">이어하기</string>
     <string name="home_primary_resume_detail">이전 연습을 이어가요</string>
+
+<plurals name="review_count">
+  <item quantity="other">복습할 단어 %1$d개</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="other">이번 주 %1$d/7 · %2$d일 연속</item>
+</plurals>
 </resources>

@@ -137,4 +137,8 @@
   <string name="user_deck_import_as_copy_locked">별도 사본으로 가져오기 · 피요키 프로</string>
   <string name="deck_editor_move_up">항목 위로 이동</string>
   <string name="deck_editor_move_down">항목 아래로 이동</string>
+
+<plurals name="deck_item_count">
+  <item quantity="other">%1$d개 항목</item>
+</plurals>
 </resources>

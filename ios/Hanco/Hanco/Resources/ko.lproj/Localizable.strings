@@ -1151,6 +1151,13 @@
 "onboarding.level.words.detail" = "속도를 높이고 유용한 표현에 도전하고 싶어요.";
 "onboarding.level.sentences.title" = "문장도 입력해요";
 "onboarding.level.sentences.detail" = "긴 표현도 자연스럽게 입력하고 싶어요.";
-"onboarding.back" = "이전";
 "home.primary.recommend_eyebrow" = "이 덱으로 시작해요";
 "home.primary.recommend_detail" = "레벨과 관심사에 맞춰 골랐어요";
+
+"onboarding.level.beginner.example" = "ㄱ · ㅏ";
+
+"onboarding.level.jamo.example" = "가 · 나";
+
+"onboarding.level.words.example" = "학교";
+
+"onboarding.level.sentences.example" = "같이 걷고 싶어요";

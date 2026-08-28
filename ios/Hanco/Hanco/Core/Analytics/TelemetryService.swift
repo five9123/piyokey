@@ -251,7 +251,7 @@ final class TelemetryService {
         ?? "unknown",
       .buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
         ?? "unknown",
-      .locale: ["ja", "en", "ko"].contains(language) ? language : "other",
+      .locale: ["ja", "en", "ko", "es", "de", "fr"].contains(language) ? language : "other",
     ]
   }
 

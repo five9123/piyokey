@@ -97,8 +97,7 @@ struct DeckDetailView: View {
           .font(.headline.weight(.bold))
         Spacer()
         Text(
-          String(
-            format: AppLocalization.string("deck.detail.preview_count"),
+          AppLocalization.format("deck.detail.preview_count",
             deck.previewItems.count
           )
         )
@@ -288,7 +287,7 @@ struct DeckDetailView: View {
   private var averageLengthText: String {
     guard !deck.previewItems.isEmpty else { return "—" }
     let total = deck.previewItems.reduce(0) { $0 + $1.ko.count }
-    return String(format: "%.1f", Double(total) / Double(deck.previewItems.count))
+    return String(format: "%.1f", locale: AppLocalization.locale, Double(total) / Double(deck.previewItems.count))
   }
 
   private var sizeText: String {

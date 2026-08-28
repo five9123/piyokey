@@ -190,6 +190,12 @@ final class DailyReminderLibrary: ObservableObject {
     }
   }
 
+  /// Refresh scheduled copy after a language change without enabling reminders.
+  func refreshLocalizedContent() {
+    guard preference.isEnabled else { return }
+    reschedule()
+  }
+
   private func reschedule() {
     schedulingTask?.cancel()
     status = .scheduling

@@ -134,7 +134,17 @@ object DiscoveryEngine {
     }
   }
 
-  private fun normalize(value: String): String = Normalizer
-    .normalize(value.trim(), Normalizer.Form.NFKC)
-    .lowercase(Locale.ROOT)
+  // Fold Latin accents for keyboards without accented keys, without removing
+  // Korean jamo or Japanese voicing marks from canonical tags and searches.
+  private val latinMarks = Regex("(?<=\\p{IsLatin})\\p{M}+")
+
+  private fun normalize(value: String): String = Normalizer.normalize(
+    Normalizer.normalize(value.trim(), Normalizer.Form.NFKD)
+      .lowercase(Locale.ROOT)
+      .replace(latinMarks, "")
+      .replace("ß", "ss")
+      .replace("œ", "oe")
+      .replace("æ", "ae"),
+    Normalizer.Form.NFC,
+  )
 }

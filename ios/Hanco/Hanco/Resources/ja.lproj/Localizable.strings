@@ -1006,7 +1006,7 @@
 "deck_maker.product.unavailable.title" = "価格を取得できませんでした";
 "deck_maker.product.unavailable.message" = "しばらくしてから、価格をもう一度読み込んでください。";
 
-/* PIYOKEY deck documents and editor */
+/* ピヨキー deck documents and editor */
 "deck_editor.title.new" = "新しいデッキ";
 "deck_editor.title.edit" = "デッキを編集";
 "deck_editor.title.copy" = "自分用コピーを編集";
@@ -1153,6 +1153,16 @@
 "onboarding.level.words.detail" = "速さを伸ばして、役立つ表現にも挑戦したい";
 "onboarding.level.sentences.title" = "文も入力できる";
 "onboarding.level.sentences.detail" = "長めのフレーズをスムーズに入力したい";
-"onboarding.back" = "戻る";
 "home.primary.recommend_eyebrow" = "最初におすすめのデッキ";
 "home.primary.recommend_detail" = "あなたのレベルと目的に合わせて選びました";
+
+"settings.language.german" = "Deutsch";
+"settings.language.french" = "Français";
+
+"onboarding.level.beginner.example" = "ㄱ · ㅏ";
+
+"onboarding.level.jamo.example" = "가 · 나";
+
+"onboarding.level.words.example" = "학교";
+
+"onboarding.level.sentences.example" = "같이 걷고 싶어요";

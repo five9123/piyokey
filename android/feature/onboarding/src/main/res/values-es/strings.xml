@@ -75,5 +75,8 @@
     <string name="onboarding_level_words_detail">Quiero ganar velocidad y practicar expresiones útiles.</string>
     <string name="onboarding_level_sentences_title">Puedo escribir frases</string>
     <string name="onboarding_level_sentences_detail">Quiero practicar frases más largas con confianza.</string>
-    <string name="onboarding_back">Volver</string>
+    <string name="onboarding_level_beginner_example">ㄱ · ㅏ</string>
+    <string name="onboarding_level_jamo_example">가 · 나</string>
+    <string name="onboarding_level_words_example">학교</string>
+    <string name="onboarding_level_sentences_example">같이 걷고 싶어요</string>
 </resources>

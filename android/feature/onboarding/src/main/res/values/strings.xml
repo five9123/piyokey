@@ -74,5 +74,8 @@
     <string name="onboarding_level_words_detail">I want to build speed and try useful expressions.</string>
     <string name="onboarding_level_sentences_title">I can type sentences</string>
     <string name="onboarding_level_sentences_detail">I want to practice longer phrases with confidence.</string>
-    <string name="onboarding_back">Back</string>
+    <string name="onboarding_level_beginner_example">ㄱ · ㅏ</string>
+    <string name="onboarding_level_jamo_example">가 · 나</string>
+    <string name="onboarding_level_words_example">학교</string>
+    <string name="onboarding_level_sentences_example">같이 걷고 싶어요</string>
 </resources>

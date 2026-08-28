@@ -79,7 +79,7 @@ object AnalyticsContract {
 
   val enumValues: Map<AnalyticsProperty, Set<String>> = mapOf(
     AnalyticsProperty.PLATFORM to setOf("ios", "ipados", "android", "web"),
-    AnalyticsProperty.LOCALE to setOf("ja", "en", "ko", "other"),
+    AnalyticsProperty.LOCALE to setOf("ja", "en", "ko", "es", "de", "fr", "other"),
     AnalyticsProperty.ENTRY_POINT to setOf("cold_start", "foreground", "deep_link", "notification", "unknown"),
     AnalyticsProperty.FEATURE to setOf("home", "discover", "practice", "game", "my_page", "settings", "deck_maker", "web_landing", "web_support"),
     AnalyticsProperty.ONBOARDING_STEP to setOf("goal", "keyboard", "first_input", "hatch_1", "hatch_2", "hatch_3", "app_tour"),
@@ -97,7 +97,7 @@ object AnalyticsContract {
     AnalyticsProperty.ACTION to setOf("created", "edited", "copied", "imported", "exported", "deleted", "shared", "saved_image"),
     AnalyticsProperty.PURCHASE_STATE to setOf("viewed", "started", "pending", "completed", "cancelled", "failed", "restored"),
     AnalyticsProperty.SETTING to setOf("language", "theme", "input_mode", "practice_display", "sound", "analytics_consent", "diagnostics_consent"),
-    AnalyticsProperty.VALUE_BUCKET to setOf("enabled", "disabled", "ja", "en", "ko", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"),
+    AnalyticsProperty.VALUE_BUCKET to setOf("enabled", "disabled", "ja", "en", "ko", "es", "de", "fr", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"),
   )
 
   fun accepts(event: AnalyticsEvent, properties: Map<AnalyticsProperty, Any>): Boolean {

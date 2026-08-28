@@ -27,10 +27,33 @@ class StoreAssetCopyTests(unittest.TestCase):
 
     def test_real_ui_without_language_disclaimer(self):
         for loc in self.data["locales"]:
-            self.assertEqual(loc["ui"], {"ja": "ja", "ko": "ko"}.get(loc["locale"], "en"))
+            self.assertEqual(loc["ui"], {"ja": "ja", "es-ES": "es", "de-DE": "de", "fr-FR": "fr"}.get(loc["locale"], "en"))
             self.assertEqual(loc["brand"], "ピヨキー" if loc["locale"] == "ja" else "typee")
             self.assertEqual(loc["disclosure"], "")
             self.assertEqual(loc["video_disclosure"], "")
+
+    def test_new_locale_store_drafts_are_complete_and_not_published(self):
+        root = Path(__file__).resolve().parents[2]
+        draft = json.loads((root / "release/language_expansion_store_draft.json").read_text())
+        self.assertFalse(draft["uploaded"])
+        self.assertTrue(draft["catalog_delivery"]["new_namespace_required"])
+        self.assertEqual(set(draft["locales"]), {"es-ES", "de-DE", "fr-FR"})
+        for locale, content in draft["locales"].items():
+            for field, limit in (("name", 30), ("subtitle", 30), ("keywords", 100),
+                                 ("description", 4000), ("play_short_description", 80),
+                                 ("pro_name", 30), ("pro_description", 45)):
+                self.assertTrue(0 < len(content[field]) <= limit, f"{locale}:{field}")
+            self.assertEqual(content["ui_language"], locale[:2])
+            self.assertTrue(all(content["support"].values()))
+
+    def test_release_gates_do_not_classify_french_as_unsupported(self):
+        root = Path(__file__).resolve().parents[2]
+        metadata = json.loads((root / "release/global_app_store_metadata.json").read_text())
+        for code in ("es", "de", "fr"):
+            self.assertEqual(metadata["brand_resolution"]["locales"][code], "typee")
+        gate = next(g for g in metadata["release_gates"]["common"] if g["id"] == "unsupported_language_english_fallback")
+        self.assertNotIn("including fr", gate["requirement"])
+        self.assertIn("supported UI", gate["requirement"])
 
 
 if __name__ == "__main__":

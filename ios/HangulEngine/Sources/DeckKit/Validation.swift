@@ -235,15 +235,15 @@ public enum CatalogBundleValidator {
   }
 }
 
-private let supportedContentLocalizationCodes: Set<String> = ["en", "ko"]
+private let supportedContentLocalizationCodes: Set<String> = ["en", "ko", "es", "de", "fr"]
 
 /// Korean metadata is localized for Korean-language devices while its learning
 /// clues intentionally reuse the complete English meaning and romanization.
-/// Publishing English metadata, however, always requires complete English clues.
+/// Every other published metadata locale requires complete clues in that language.
 private func requiredItemLocalizationCodes(
   for metadata: [String: DeckMetadataLocalization]?
 ) -> Set<String> {
-  metadata?["en"] == nil ? [] : ["en"]
+  Set(metadata?.keys.filter { $0 != "ko" } ?? [])
 }
 
 private func validateMetadataLocalizations(

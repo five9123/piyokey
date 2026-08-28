@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="reminder_channel_name">Práctica diaria</string>
-  <string name="reminder_notification_title">Tus 3 minutos de práctica con PIYOKEY</string>
+  <string name="reminder_notification_title">Tus 3 minutos de práctica con typee</string>
   <string name="reminder_notification_body">Hoy sigue ampliando tu racha de escritura en coreano.</string>
-  <string name="feedback_proposal_subject">[PIYOKEY] Propuesta de mazo</string>
-  <string name="feedback_report_subject">[PIYOKEY] Aviso sobre contenido de un mazo</string>
-  <string name="feedback_combined_subject">[PIYOKEY] Comentarios sobre contenido</string>
+  <string name="feedback_proposal_subject">[typee] Propuesta de mazo</string>
+  <string name="feedback_report_subject">[typee] Aviso sobre contenido de un mazo</string>
+  <string name="feedback_combined_subject">[typee] Comentarios sobre contenido</string>
   <string name="feedback_proposal_body">Tema:\nNivel:\nPalabras que quieres incluir:\nPor qué quieres este mazo:\n\nNo introduzcas contraseñas, direcciones ni letras de canciones o diálogos de series reales. Los envíos se revisan manualmente y no se publican automáticamente.</string>
   <string name="feedback_report_body">Expresión sobre la que informar:\nTipo (errata / significado / lectura / audio / derechos):\nDetalles:\n\nNo introduzcas contraseñas, direcciones ni letras de canciones o diálogos de series reales. Los avisos se revisan manualmente y no se publican automáticamente.</string>
   <string name="feedback_combined_body">Tipo de comentario (propuesta de mazo / aviso de contenido):\nTema o expresión:\nNivel o tipo de problema:\nDetalles:\n\nNo introduzcas contraseñas, direcciones ni letras de canciones o diálogos de series reales. Los envíos se revisan manualmente y no se publican automáticamente.</string>

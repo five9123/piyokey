@@ -223,15 +223,30 @@ struct SettingsView: View {
 
       Divider().opacity(0.5)
 
-      settingPicker(
-        title: "settings.language",
-        selection: $language,
-        identifier: "settings.language"
-      ) {
-        Text("settings.language.japanese").tag(AppLanguage.japanese.rawValue)
-        Text("settings.language.english").tag(AppLanguage.english.rawValue)
-        Text("settings.language.spanish").tag(AppLanguage.spanish.rawValue)
+      VStack(alignment: .leading, spacing: 8) {
+        Text("settings.language")
+          .font(.subheadline.weight(.semibold))
+        ForEach(AppLanguage.allCases) { option in
+          Button {
+            language = option.rawValue
+          } label: {
+            HStack {
+              Text(LocalizedStringKey(option.nameKey))
+              Spacer()
+              if language == option.rawValue {
+                Image(systemName: "checkmark").accessibilityHidden(true)
+              }
+            }
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+          }
+          .buttonStyle(.plain)
+          .accessibilityAddTraits(language == option.rawValue ? .isSelected : [])
+          .accessibilityIdentifier("settings.language.\(option.rawValue)")
+        }
       }
+      .foregroundStyle(AppPalette.ink)
+      .accessibilityIdentifier("settings.language")
     }
   }
 

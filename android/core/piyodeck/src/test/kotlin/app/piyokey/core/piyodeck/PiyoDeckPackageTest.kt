@@ -70,6 +70,16 @@ class PiyoDeckPackageTest {
   }
 
   @Test
+  fun expandedLanguagePackageMatchesCrossPlatformGolden() {
+    val deck = DeckKitJson.decodeDeck(fixture("valid/localized-deck.json").decodeToString())
+    val golden = fixture("valid/localized.typedeck")
+    assertContentEquals(golden, PiyoDeckPackageWriter.write(deck, deckSchemaSource))
+    val imported = readPackage(golden).deck
+    assertEquals(deck, imported)
+    assertEquals(setOf("en", "ko", "es", "de", "fr"), imported.localizations?.keys)
+  }
+
+  @Test
   fun sharedMaliciousBinaryGoldensFailClosed() {
     assertIs<PiyoDeckImportException.Sha256Mismatch>(
       assertFailsWith { readPackage(fixture("invalid/wrong-sha.typedeck")) },

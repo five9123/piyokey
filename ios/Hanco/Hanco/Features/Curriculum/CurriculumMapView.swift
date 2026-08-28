@@ -532,8 +532,7 @@ struct CurriculumMapView: View {
             .foregroundStyle(AppPalette.secondary)
           Spacer()
           Text(
-            String(
-              format: AppLocalization.string("onboarding.hatch.progress_format"),
+            AppLocalization.format("onboarding.hatch.progress_format",
               completedHatchMissionCount,
               HatchOnboardingPolicy.requiredChapterCount
             )
@@ -558,8 +557,7 @@ struct CurriculumMapView: View {
           )
         } label: {
           Label(
-            String(
-              format: AppLocalization.string("onboarding.hatch.continue_format"),
+            AppLocalization.format("onboarding.hatch.continue_format",
               nextStage.chapterNumber
             ),
             systemImage: "arrow.right.circle.fill"
@@ -592,8 +590,7 @@ struct CurriculumMapView: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("curriculum.chapter_number_format"),
+          AppLocalization.format("curriculum.chapter_number_format",
             chapter.number
           )
         )

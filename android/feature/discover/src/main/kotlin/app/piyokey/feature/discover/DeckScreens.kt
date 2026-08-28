@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -343,7 +344,7 @@ fun DeckCard(
           }
         }
         Text(
-          text = stringResource(R.string.deck_item_count, deck.itemCount) + " · " +
+          text = pluralStringResource(R.plurals.deck_item_count, deck.itemCount, deck.itemCount) + " · " +
             if (deck.type == DeckType.WORD) {
               stringResource(R.string.deck_level_word, deck.level)
             } else {
@@ -436,7 +437,7 @@ fun DeckDetailScreen(
       item {
         Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)) {
           Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceAround) {
-            Stat(stringResource(R.string.deck_item_count, deck.itemCount))
+            Stat(pluralStringResource(R.plurals.deck_item_count, deck.itemCount, deck.itemCount))
             Stat(stringResource(R.string.deck_average_length, averageLength))
             Stat(stringResource(R.string.deck_file_size, deck.sizeBytes / 1024.0))
           }
@@ -623,7 +624,7 @@ fun MyDecksScreen(
             if (item.metadata.source in setOf("imported", "created")) {
               Text(stringResource(R.string.user_deck_badge), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             }
-            Text(stringResource(R.string.deck_item_count, item.deck.items.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(pluralStringResource(R.plurals.deck_item_count, item.deck.items.size, item.deck.items.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
               Button(onClick = { onPlay(item) }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.deck_play)) }
               if (entry != null && entry.version > item.metadata.version) {

@@ -430,6 +430,22 @@ final class RetentionStoreTests: XCTestCase {
     )
   }
 
+  func testLanguageRefreshOnlyReschedulesAnEnabledReminder() async {
+    let scheduler = ReminderSchedulerSpy(result: .scheduled)
+    let settings = DailyReminderSettingsStore(defaults: defaults)
+    let library = DailyReminderLibrary(store: settings, scheduler: scheduler)
+    library.refreshLocalizedContent()
+    await settleReminderTask()
+    XCTAssertTrue(scheduler.scheduledTimes.isEmpty)
+    library.setEnabled(true)
+    await settleReminderTask()
+    let preference = settings.load()
+    library.refreshLocalizedContent()
+    await settleReminderTask()
+    XCTAssertEqual(scheduler.scheduledTimes.count, 2)
+    XCTAssertEqual(settings.load(), preference)
+  }
+
   func testUnsupportedSchemaAndDuplicateDaysAreRejected() throws {
     try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     let fileURL = rootURL.appendingPathComponent("retention-progress.json")

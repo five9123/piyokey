@@ -1,187 +1,635 @@
 {
   "schema_version": 1,
   "app_version": "1.1 (7)",
-  "app_ui_languages": ["ja", "en", "ko"],
+  "app_ui_languages": [
+    "ja",
+    "en",
+    "es",
+    "de",
+    "fr"
+  ],
   "market_selection": "User requested ten major markets; selected for language coverage, not a verified revenue ranking.",
-  "screenshot_scenes": ["curriculum-mission", "flow", "attendance-home", "acid-rain", "word-match", "choseong", "daily-mission", "rewards", "tenkey", "editor"],
-  "preview_scenes": ["practice", "game-hub", "flow", "acid-rain", "result", "home"],
+  "screenshot_scenes": [
+    "curriculum-mission",
+    "flow",
+    "attendance-home",
+    "acid-rain",
+    "word-match",
+    "choseong",
+    "daily-mission",
+    "rewards",
+    "tenkey",
+    "editor"
+  ],
+  "preview_scenes": [
+    "practice",
+    "game-hub",
+    "flow",
+    "acid-rain",
+    "result",
+    "home"
+  ],
   "locales": [
     {
-      "locale": "ja", "market": "일본", "language": "日本語", "ui": "ja", "brand": "ピヨキー",
-      "disclosure": "", "video_disclosure": "", "purchase_disclosure": "広告なし・登録なし・プロは任意購入",
-      "screenshots": [
-        ["光るキーを追って、\n韓国語を打とう", "韓国語キーボード未設定でも、すぐ練習"],
-        ["流れる単語を追って、\nコンボをつなごう", "6つのゲームで、スピードと正確さに挑戦"],
-        ["今日も達成、\n4日連続", "スタンプとピヨの応援で、自然に続く"],
-        ["落ちてくる単語を、\n地面に着く前に！", "危ない単語を見きわめて、すばやく入力"],
-        ["意味を見て、\n韓国語で答えよう", "日本語のヒントから、ハングルを直接入力"],
-        ["初声をヒントに、\n答えをタイピング", "考えながら、韓国語の語彙も強くなる"],
-        ["今日の3分を、\nピヨと進めよう", "毎日のミッションで、少しずつ上達"],
-        ["あと1日で、\n次のごほうび", "学ぶほど、ピヨのアイテムが増えていく"],
-        ["10キーでも、\n韓国語を打とう", "内蔵キーボードは2つの配列から選べる"],
-        ["自分だけのデッキを、\nピヨキー プロで", "作成・編集と無制限の保管はプロの購入が必要"]
-      ],
-      "preview": ["読める韓国語を、打てる韓国語へ", "6つのゲームで楽しく練習", "打つほど、コンボが続く", "速さも、正確さも。", "上達が、ちゃんと見える", "ピヨキーで、最初の一文字から。"]
-    },
-    {
-      "locale": "en-US", "market": "미국", "language": "English", "ui": "en", "brand": "typee",
-      "disclosure": "", "video_disclosure": "", "purchase_disclosure": "No ads · No sign-up · Optional Pro purchase",
-      "screenshots": [
-        ["Follow the glow.\nType in Korean.", "Start with the built-in Korean keyboard"],
-        ["Find your flow.\nBuild your combo.", "Six games to train speed and accuracy"],
-        ["Four days strong.\nKeep it going.", "Daily stamps and a little cheer from Piyo"],
-        ["Catch the words\nbefore they fall.", "Spot the next word and type it in time"],
-        ["Read the meaning.\nType the Korean.", "English clues. Real Hangul typing."],
-        ["A consonant clue.\nA Korean answer.", "Think, type, and build your vocabulary"],
-        ["Three minutes.\nOne little habit.", "Make progress with a daily mission"],
-        ["One more day.\nOne more reward.", "Keep learning to unlock items for Piyo"],
-        ["Less keyboard.\nMore possibilities.", "Try the built-in Korean 10-key layout"],
-        ["Your words.\nYour own decks.", "Create, edit and keep unlimited decks with paid typee pro"]
-      ],
-      "preview": ["From reading Korean to typing it", "Six games. Plenty of practice.", "Keep typing. Keep the combo.", "Build speed and accuracy", "See your progress", "Your first Korean keystroke, with typee"]
-    },
-    {
-      "locale": "ko", "market": "한국", "language": "한국어", "ui": "ko", "brand": "typee",
-      "disclosure": "", "video_disclosure": "", "purchase_disclosure": "광고 없이 · 가입 없이 · 프로는 선택 구매",
-      "screenshots": [
-        ["빛나는 키를 따라,\n한글을 입력해요", "한글 키보드 설정 없이 바로 시작"],
-        ["흐르는 단어를 따라,\n콤보를 이어가요", "6가지 게임으로 속도와 정확도에 도전"],
-        ["오늘도 성공,\n4일 연속 달성", "출석 스탬프와 피요의 응원으로 꾸준하게"],
-        ["단어가 떨어지기 전,\n빠르게 입력해요", "위험한 단어를 찾아 차례로 해결"],
-        ["뜻을 보고,\n한글로 답해요", "힌트를 읽고 정답을 직접 타이핑"],
-        ["초성 힌트로,\n정답을 찾아요", "생각하고 입력하며 어휘도 탄탄하게"],
-        ["오늘의 3분,\n피요와 함께해요", "매일 미션 하나로 조금씩 성장"],
-        ["하루만 더 하면,\n다음 보상이!", "배울수록 늘어나는 피요의 아이템"],
-        ["익숙한 10키로,\n한글을 입력해요", "내장 두벌식과 10키 중 원하는 배열 선택"],
-        ["나만의 학습 덱,\n피요키 프로로", "덱 만들기·편집·무제한 보관은 프로 구매 필요"]
-      ],
-      "preview": ["읽는 한글에서, 입력하는 한글로", "6가지 게임으로 즐겁게 연습", "입력할수록 이어지는 콤보", "빠르게, 그리고 정확하게", "눈으로 확인하는 나의 성장", "typee와 첫 한 글자부터"]
-    },
-    {
-      "locale": "zh-Hans", "market": "중국", "language": "简体中文", "ui": "en", "brand": "typee",
+      "locale": "ja",
+      "market": "일본",
+      "language": "日本語",
+      "ui": "ja",
+      "brand": "ピヨキー",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "无广告 · 无需注册 · Pro 为可选购买",
+      "video_disclosure": "",
+      "purchase_disclosure": "広告なし・登録なし・プロは任意購入",
       "screenshots": [
-        ["跟着亮起的按键，\n轻松输入韩语", "使用内置韩语键盘，马上开始练习"],
-        ["跟上单词的节奏，\n让连击继续", "6款游戏，练习速度与准确度"],
-        ["今天也完成了，\n连续打卡4天", "每日印章和 Piyo 的鼓励，让坚持更轻松"],
-        ["在单词落地前，\n把它打出来", "看准下一个单词，及时输入"],
-        ["看懂词义，\n输入韩语答案", "根据英语提示，直接输入韩文"],
-        ["从首辅音出发，\n找出韩语单词", "边思考边打字，积累更多词汇"],
-        ["每天3分钟，\n养成小习惯", "完成每日任务，一点点进步"],
-        ["再坚持一天，\n解锁下一份奖励", "持续学习，为 Piyo 解锁更多装扮"],
-        ["10键布局，\n也能输入韩语", "试试内置韩语10键键盘"],
-        ["你的单词，\n你的专属词卡组", "创建、编辑和无限保存需购买 typee pro"]
+        [
+          "光るキーを追って、\n韓国語を打とう",
+          "韓国語キーボード未設定でも、すぐ練習"
+        ],
+        [
+          "流れる単語を追って、\nコンボをつなごう",
+          "6つのゲームで、スピードと正確さに挑戦"
+        ],
+        [
+          "今日も達成、\n4日連続",
+          "スタンプとピヨの応援で、自然に続く"
+        ],
+        [
+          "落ちてくる単語を、\n地面に着く前に！",
+          "危ない単語を見きわめて、すばやく入力"
+        ],
+        [
+          "意味を見て、\n韓国語で答えよう",
+          "日本語のヒントから、ハングルを直接入力"
+        ],
+        [
+          "初声をヒントに、\n答えをタイピング",
+          "考えながら、韓国語の語彙も強くなる"
+        ],
+        [
+          "今日の3分を、\nピヨと進めよう",
+          "毎日のミッションで、少しずつ上達"
+        ],
+        [
+          "あと1日で、\n次のごほうび",
+          "学ぶほど、ピヨのアイテムが増えていく"
+        ],
+        [
+          "10キーでも、\n韓国語を打とう",
+          "内蔵キーボードは2つの配列から選べる"
+        ],
+        [
+          "自分だけのデッキを、\nピヨキー プロで",
+          "作成・編集と無制限の保管はプロの購入が必要"
+        ]
       ],
-      "preview": ["从读懂韩语，到打出韩语", "6款游戏，快乐练习", "不断输入，不断连击", "提升速度与准确度", "看见自己的进步", "和 typee 一起，开始韩语打字"]
+      "preview": [
+        "読める韓国語を、打てる韓国語へ",
+        "6つのゲームで楽しく練習",
+        "打つほど、コンボが続く",
+        "速さも、正確さも。",
+        "上達が、ちゃんと見える",
+        "ピヨキーで、最初の一文字から。"
+      ]
     },
     {
-      "locale": "zh-Hant", "market": "대만", "language": "繁體中文", "ui": "en", "brand": "typee",
+      "locale": "en-US",
+      "market": "미국",
+      "language": "English",
+      "ui": "en",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "無廣告 · 不用註冊 · Pro 可選購",
+      "video_disclosure": "",
+      "purchase_disclosure": "No ads · No sign-up · Optional Pro purchase",
       "screenshots": [
-        ["跟著亮起的按鍵，\n輕鬆輸入韓文", "使用內建韓文鍵盤，馬上開始練習"],
-        ["跟上單字的節奏，\n讓連擊繼續", "6款遊戲，練習速度與準確度"],
-        ["今天也完成了，\n連續打卡4天", "每日印章和 Piyo 的鼓勵，讓習慣延續"],
-        ["在單字落地前，\n把它打出來", "看準下一個單字，及時輸入"],
-        ["看懂詞義，\n輸入韓文答案", "根據英文提示，直接輸入韓文"],
-        ["從初聲提示，\n找出韓文單字", "一邊思考一邊打字，累積更多詞彙"],
-        ["每天3分鐘，\n養成小習慣", "完成每日任務，一點一滴進步"],
-        ["再堅持一天，\n解鎖下一份獎勵", "持續學習，為 Piyo 解鎖更多配件"],
-        ["10鍵配置，\n也能輸入韓文", "試試內建韓文10鍵鍵盤"],
-        ["你的單字，\n你的專屬字卡組", "建立、編輯與無限儲存需購買 typee pro"]
+        [
+          "Follow the glow.\nType in Korean.",
+          "Start with the built-in Korean keyboard"
+        ],
+        [
+          "Find your flow.\nBuild your combo.",
+          "Six games to train speed and accuracy"
+        ],
+        [
+          "Four days strong.\nKeep it going.",
+          "Daily stamps and a little cheer from Piyo"
+        ],
+        [
+          "Catch the words\nbefore they fall.",
+          "Spot the next word and type it in time"
+        ],
+        [
+          "Read the meaning.\nType the Korean.",
+          "English clues. Real Hangul typing."
+        ],
+        [
+          "A consonant clue.\nA Korean answer.",
+          "Think, type, and build your vocabulary"
+        ],
+        [
+          "Three minutes.\nOne little habit.",
+          "Make progress with a daily mission"
+        ],
+        [
+          "One more day.\nOne more reward.",
+          "Keep learning to unlock items for Piyo"
+        ],
+        [
+          "Less keyboard.\nMore possibilities.",
+          "Try the built-in Korean 10-key layout"
+        ],
+        [
+          "Your words.\nYour own decks.",
+          "Create, edit and keep unlimited decks with paid typee pro"
+        ]
       ],
-      "preview": ["從讀懂韓文，到打出韓文", "6款遊戲，開心練習", "持續輸入，連擊不斷", "提升速度與準確度", "看見自己的進步", "和 typee 一起，開始韓文打字"]
+      "preview": [
+        "From reading Korean to typing it",
+        "Six games. Plenty of practice.",
+        "Keep typing. Keep the combo.",
+        "Build speed and accuracy",
+        "See your progress",
+        "Your first Korean keystroke, with typee"
+      ]
     },
     {
-      "locale": "de-DE", "market": "독일", "language": "Deutsch", "ui": "en", "brand": "typee",
+      "locale": "ko",
+      "market": "한국",
+      "language": "한국어",
+      "ui": "en",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "Ohne Werbung und Anmeldung · Pro optional erhältlich",
+      "video_disclosure": "",
+      "purchase_disclosure": "광고 없이 · 가입 없이 · 프로는 선택 구매",
       "screenshots": [
-        ["Folge dem Leuchten.\nTippe Koreanisch.", "Direkt loslegen mit der integrierten Tastatur"],
-        ["Finde deinen Flow.\nHalte die Kombo.", "Sechs Spiele für Tempo und Genauigkeit"],
-        ["Vier Tage in Folge.\nBleib dran.", "Tägliche Stempel. Piyo feuert dich an."],
-        ["Tippe die Wörter,\nbevor sie fallen.", "Erkenne das nächste Wort und tippe rechtzeitig"],
-        ["Lies die Bedeutung.\nTippe Koreanisch.", "Englische Hinweise, echte Hangul-Eingabe"],
-        ["Ein Konsonant.\nDein Hinweis.", "Rätsle, tippe und erweitere deinen Wortschatz"],
-        ["Drei Minuten.\nDein täglicher Start.", "Kleine Fortschritte mit täglichen Aufgaben"],
-        ["Noch ein Tag.\nNoch eine Belohnung.", "Lerne weiter und schalte Zubehör für Piyo frei"],
-        ["Koreanisch tippen.\nMit nur zehn Tasten.", "Probiere die integrierte 10-Tasten-Tastatur"],
-        ["Deine Wörter.\nDeine Lernsets.", "Erstellen, bearbeiten, unbegrenzt speichern: mit kostenpflichtigem Pro"]
+        [
+          "빛나는 키를 따라,\n한글을 입력해요",
+          "한글 키보드 설정 없이 바로 시작"
+        ],
+        [
+          "흐르는 단어를 따라,\n콤보를 이어가요",
+          "6가지 게임으로 속도와 정확도에 도전"
+        ],
+        [
+          "오늘도 성공,\n4일 연속 달성",
+          "출석 스탬프와 피요의 응원으로 꾸준하게"
+        ],
+        [
+          "단어가 떨어지기 전,\n빠르게 입력해요",
+          "위험한 단어를 찾아 차례로 해결"
+        ],
+        [
+          "뜻을 보고,\n한글로 답해요",
+          "힌트를 읽고 정답을 직접 타이핑"
+        ],
+        [
+          "초성 힌트로,\n정답을 찾아요",
+          "생각하고 입력하며 어휘도 탄탄하게"
+        ],
+        [
+          "오늘의 3분,\n피요와 함께해요",
+          "매일 미션 하나로 조금씩 성장"
+        ],
+        [
+          "하루만 더 하면,\n다음 보상이!",
+          "배울수록 늘어나는 피요의 아이템"
+        ],
+        [
+          "익숙한 10키로,\n한글을 입력해요",
+          "내장 두벌식과 10키 중 원하는 배열 선택"
+        ],
+        [
+          "나만의 학습 덱,\n피요키 프로로",
+          "덱 만들기·편집·무제한 보관은 프로 구매 필요"
+        ]
       ],
-      "preview": ["Koreanisch lesen. Koreanisch tippen.", "Sechs Spiele zum Üben", "Tippe weiter. Halte die Kombo.", "Mehr Tempo und Genauigkeit", "Sieh deine Fortschritte", "Dein erster Tastendruck mit typee"]
+      "preview": [
+        "읽는 한글에서, 입력하는 한글로",
+        "6가지 게임으로 즐겁게 연습",
+        "입력할수록 이어지는 콤보",
+        "빠르게, 그리고 정확하게",
+        "눈으로 확인하는 나의 성장",
+        "typee와 첫 한 글자부터"
+      ]
     },
     {
-      "locale": "fr-FR", "market": "프랑스", "language": "Français", "ui": "en", "brand": "typee",
+      "locale": "zh-Hans",
+      "market": "중국",
+      "language": "简体中文",
+      "ui": "en",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "Sans pub ni inscription · Pro en achat facultatif",
+      "video_disclosure": "",
+      "purchase_disclosure": "无广告 · 无需注册 · Pro 为可选购买",
       "screenshots": [
-        ["Suivez les touches.\nTapez en coréen.", "Commencez avec le clavier coréen intégré"],
-        ["Trouvez le rythme.\nEnchaînez les combos.", "Six jeux pour gagner en vitesse et en précision"],
-        ["Quatre jours de suite.\nGardez le rythme.", "Des tampons quotidiens et Piyo pour vous encourager"],
-        ["Tapez les mots\navant leur chute.", "Repérez le prochain mot et tapez-le à temps"],
-        ["Lisez le sens.\nTapez en coréen.", "Des indices en anglais, des réponses en hangeul"],
-        ["Une consonne.\nÀ vous de trouver.", "Réfléchissez, tapez et enrichissez votre vocabulaire"],
-        ["Trois minutes.\nUne petite habitude.", "Progressez avec une mission par jour"],
-        ["Encore un jour.\nUne récompense.", "Apprenez pour débloquer des accessoires pour Piyo"],
-        ["Le coréen,\nen dix touches.", "Essayez le clavier coréen intégré à 10 touches"],
-        ["Vos mots.\nVos fiches de révision.", "Création, édition et stockage illimité avec Pro payant"]
+        [
+          "跟着亮起的按键，\n轻松输入韩语",
+          "使用内置韩语键盘，马上开始练习"
+        ],
+        [
+          "跟上单词的节奏，\n让连击继续",
+          "6款游戏，练习速度与准确度"
+        ],
+        [
+          "今天也完成了，\n连续打卡4天",
+          "每日印章和 Piyo 的鼓励，让坚持更轻松"
+        ],
+        [
+          "在单词落地前，\n把它打出来",
+          "看准下一个单词，及时输入"
+        ],
+        [
+          "看懂词义，\n输入韩语答案",
+          "根据英语提示，直接输入韩文"
+        ],
+        [
+          "从首辅音出发，\n找出韩语单词",
+          "边思考边打字，积累更多词汇"
+        ],
+        [
+          "每天3分钟，\n养成小习惯",
+          "完成每日任务，一点点进步"
+        ],
+        [
+          "再坚持一天，\n解锁下一份奖励",
+          "持续学习，为 Piyo 解锁更多装扮"
+        ],
+        [
+          "10键布局，\n也能输入韩语",
+          "试试内置韩语10键键盘"
+        ],
+        [
+          "你的单词，\n你的专属词卡组",
+          "创建、编辑和无限保存需购买 typee pro"
+        ]
       ],
-      "preview": ["Du coréen lu au coréen tapé", "Six jeux pour pratiquer", "Tapez et enchaînez les combos", "Vitesse et précision", "Voyez vos progrès", "Vos premières touches avec typee"]
+      "preview": [
+        "从读懂韩语，到打出韩语",
+        "6款游戏，快乐练习",
+        "不断输入，不断连击",
+        "提升速度与准确度",
+        "看见自己的进步",
+        "和 typee 一起，开始韩语打字"
+      ]
     },
     {
-      "locale": "es-ES", "market": "스페인", "language": "Español", "ui": "en", "brand": "typee",
+      "locale": "zh-Hant",
+      "market": "대만",
+      "language": "繁體中文",
+      "ui": "en",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "Sin anuncios ni registro · Pro es una compra opcional",
+      "video_disclosure": "",
+      "purchase_disclosure": "無廣告 · 不用註冊 · Pro 可選購",
       "screenshots": [
-        ["Sigue las teclas.\nEscribe en coreano.", "Empieza con el teclado coreano integrado"],
-        ["Encuentra el ritmo.\nEncadena combos.", "Seis juegos para practicar velocidad y precisión"],
-        ["Cuatro días seguidos.\n¡Sigue así!", "Sellos diarios y el ánimo de Piyo para continuar"],
-        ["Escribe las palabras\nantes de que caigan.", "Detecta la siguiente palabra y escríbela a tiempo"],
-        ["Lee el significado.\nEscribe en coreano.", "Pistas en inglés, respuestas en hangul"],
-        ["Una consonante.\nTu primera pista.", "Piensa, escribe y amplía tu vocabulario"],
-        ["Tres minutos.\nUn pequeño hábito.", "Avanza con una misión cada día"],
-        ["Un día más.\nOtra recompensa.", "Sigue aprendiendo y desbloquea accesorios para Piyo"],
-        ["Coreano,\ncon diez teclas.", "Prueba el teclado coreano integrado de 10 teclas"],
-        ["Tus palabras.\nTus propias tarjetas.", "Crea, edita y guarda sin límite con Pro de pago"]
+        [
+          "跟著亮起的按鍵，\n輕鬆輸入韓文",
+          "使用內建韓文鍵盤，馬上開始練習"
+        ],
+        [
+          "跟上單字的節奏，\n讓連擊繼續",
+          "6款遊戲，練習速度與準確度"
+        ],
+        [
+          "今天也完成了，\n連續打卡4天",
+          "每日印章和 Piyo 的鼓勵，讓習慣延續"
+        ],
+        [
+          "在單字落地前，\n把它打出來",
+          "看準下一個單字，及時輸入"
+        ],
+        [
+          "看懂詞義，\n輸入韓文答案",
+          "根據英文提示，直接輸入韓文"
+        ],
+        [
+          "從初聲提示，\n找出韓文單字",
+          "一邊思考一邊打字，累積更多詞彙"
+        ],
+        [
+          "每天3分鐘，\n養成小習慣",
+          "完成每日任務，一點一滴進步"
+        ],
+        [
+          "再堅持一天，\n解鎖下一份獎勵",
+          "持續學習，為 Piyo 解鎖更多配件"
+        ],
+        [
+          "10鍵配置，\n也能輸入韓文",
+          "試試內建韓文10鍵鍵盤"
+        ],
+        [
+          "你的單字，\n你的專屬字卡組",
+          "建立、編輯與無限儲存需購買 typee pro"
+        ]
       ],
-      "preview": ["De leer coreano a escribirlo", "Seis juegos para practicar", "Sigue escribiendo y suma combos", "Velocidad y precisión", "Mira cómo progresas", "Tu primera tecla, con typee"]
+      "preview": [
+        "從讀懂韓文，到打出韓文",
+        "6款遊戲，開心練習",
+        "持續輸入，連擊不斷",
+        "提升速度與準確度",
+        "看見自己的進步",
+        "和 typee 一起，開始韓文打字"
+      ]
     },
     {
-      "locale": "pt-BR", "market": "브라질", "language": "Português (Brasil)", "ui": "en", "brand": "typee",
+      "locale": "de-DE",
+      "market": "독일",
+      "language": "Deutsch",
+      "ui": "de",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "Sem anúncios nem cadastro · Pro é uma compra opcional",
+      "video_disclosure": "",
+      "purchase_disclosure": "Ohne Werbung und Anmeldung · Pro optional erhältlich",
       "screenshots": [
-        ["Siga as teclas.\nDigite em coreano.", "Comece com o teclado coreano integrado"],
-        ["Entre no ritmo.\nMantenha o combo.", "Seis jogos para treinar velocidade e precisão"],
-        ["Quatro dias seguidos.\nContinue assim!", "Carimbos diários e o incentivo do Piyo"],
-        ["Digite as palavras\nantes que caiam.", "Encontre a próxima palavra e digite a tempo"],
-        ["Leia o significado.\nDigite em coreano.", "Dicas em inglês, respostas em hangul"],
-        ["Uma consoante.\nSua primeira dica.", "Pense, digite e amplie seu vocabulário"],
-        ["Três minutos.\nUm novo hábito.", "Avance com uma missão por dia"],
-        ["Mais um dia.\nMais uma recompensa.", "Continue aprendendo e libere acessórios para o Piyo"],
-        ["Coreano,\ncom dez teclas.", "Experimente o teclado coreano integrado de 10 teclas"],
-        ["Suas palavras.\nSeus próprios baralhos.", "Crie, edite e guarde sem limite com o Pro pago"]
+        [
+          "Folge dem Leuchten.\nTippe Koreanisch.",
+          "Direkt loslegen mit der integrierten Tastatur"
+        ],
+        [
+          "Finde deinen Flow.\nHalte die Kombo.",
+          "Sechs Spiele für Tempo und Genauigkeit"
+        ],
+        [
+          "Vier Tage in Folge.\nBleib dran.",
+          "Tägliche Stempel. Piyo feuert dich an."
+        ],
+        [
+          "Tippe die Wörter,\nbevor sie fallen.",
+          "Erkenne das nächste Wort und tippe rechtzeitig"
+        ],
+        [
+          "Lies die Bedeutung.\nTippe Koreanisch.",
+          "Deutsche Hinweise, echte Hangul-Eingabe"
+        ],
+        [
+          "Ein Konsonant.\nDein Hinweis.",
+          "Rätsle, tippe und erweitere deinen Wortschatz"
+        ],
+        [
+          "Drei Minuten.\nDein täglicher Start.",
+          "Kleine Fortschritte mit täglichen Aufgaben"
+        ],
+        [
+          "Noch ein Tag.\nNoch eine Belohnung.",
+          "Lerne weiter und schalte Zubehör für Piyo frei"
+        ],
+        [
+          "Koreanisch tippen.\nMit nur zehn Tasten.",
+          "Probiere die integrierte 10-Tasten-Tastatur"
+        ],
+        [
+          "Deine Wörter.\nDeine Lernsets.",
+          "Erstellen, bearbeiten, unbegrenzt speichern: mit kostenpflichtigem Pro"
+        ]
       ],
-      "preview": ["De ler coreano a digitar em coreano", "Seis jogos para praticar", "Continue digitando e faça combos", "Velocidade e precisão", "Veja seu progresso", "Sua primeira tecla, com typee"]
+      "preview": [
+        "Koreanisch lesen. Koreanisch tippen.",
+        "Sechs Spiele zum Üben",
+        "Tippe weiter. Halte die Kombo.",
+        "Mehr Tempo und Genauigkeit",
+        "Sieh deine Fortschritte",
+        "Dein erster Tastendruck mit typee"
+      ]
     },
     {
-      "locale": "id", "market": "인도네시아", "language": "Bahasa Indonesia", "ui": "en", "brand": "typee",
+      "locale": "fr-FR",
+      "market": "프랑스",
+      "language": "Français",
+      "ui": "fr",
+      "brand": "typee",
       "disclosure": "",
-      "video_disclosure": "", "purchase_disclosure": "Tanpa iklan dan akun · Pro dibeli secara opsional",
+      "video_disclosure": "",
+      "purchase_disclosure": "Sans pub ni inscription · Pro en achat facultatif",
       "screenshots": [
-        ["Ikuti tombolnya.\nKetik bahasa Korea.", "Langsung mulai dengan papan ketik Korea bawaan"],
-        ["Temukan ritmenya.\nLanjutkan kombo.", "Enam gim untuk melatih kecepatan dan ketepatan"],
-        ["Empat hari beruntun.\nTeruskan!", "Stempel harian dan semangat dari Piyo"],
-        ["Ketik katanya\nsebelum jatuh.", "Temukan kata berikutnya dan ketik tepat waktu"],
-        ["Baca artinya.\nKetik bahasa Korea.", "Petunjuk bahasa Inggris, jawaban dalam Hangul"],
-        ["Satu konsonan.\nPetunjuk pertama.", "Pikirkan, ketik, dan tambah kosakatamu"],
-        ["Tiga menit.\nKebiasaan kecil.", "Maju sedikit demi sedikit lewat misi harian"],
-        ["Satu hari lagi.\nHadiah berikutnya.", "Terus belajar untuk membuka aksesori Piyo"],
-        ["Bahasa Korea,\ndengan sepuluh tombol.", "Coba tata letak 10 tombol Korea bawaan"],
-        ["Kata-katamu.\nKartu belajarmu.", "Buat, edit, dan simpan tanpa batas dengan Pro berbayar"]
+        [
+          "Suivez les touches.\nTapez en coréen.",
+          "Commencez avec le clavier coréen intégré"
+        ],
+        [
+          "Trouvez le rythme.\nEnchaînez les combos.",
+          "Six jeux pour gagner en vitesse et en précision"
+        ],
+        [
+          "Quatre jours de suite.\nGardez le rythme.",
+          "Des tampons quotidiens et Piyo pour vous encourager"
+        ],
+        [
+          "Tapez les mots\navant leur chute.",
+          "Repérez le prochain mot et tapez-le à temps"
+        ],
+        [
+          "Lisez le sens.\nTapez en coréen.",
+          "Des indices en français, des réponses en hangeul"
+        ],
+        [
+          "Une consonne.\nÀ vous de trouver.",
+          "Réfléchissez, tapez et enrichissez votre vocabulaire"
+        ],
+        [
+          "Trois minutes.\nUne petite habitude.",
+          "Progressez avec une mission par jour"
+        ],
+        [
+          "Encore un jour.\nUne récompense.",
+          "Apprenez pour débloquer des accessoires pour Piyo"
+        ],
+        [
+          "Le coréen,\nen dix touches.",
+          "Essayez le clavier coréen intégré à 10 touches"
+        ],
+        [
+          "Vos mots.\nVos fiches de révision.",
+          "Création, édition et stockage illimité avec Pro payant"
+        ]
       ],
-      "preview": ["Dari membaca ke mengetik Korea", "Enam gim untuk berlatih", "Terus mengetik, lanjutkan kombo", "Lebih cepat dan tepat", "Lihat kemajuanmu", "Tombol pertamamu bersama typee"]
+      "preview": [
+        "Du coréen lu au coréen tapé",
+        "Six jeux pour pratiquer",
+        "Tapez et enchaînez les combos",
+        "Vitesse et précision",
+        "Voyez vos progrès",
+        "Vos premières touches avec typee"
+      ]
+    },
+    {
+      "locale": "es-ES",
+      "market": "스페인",
+      "language": "Español",
+      "ui": "es",
+      "brand": "typee",
+      "disclosure": "",
+      "video_disclosure": "",
+      "purchase_disclosure": "Sin anuncios ni registro · Pro es una compra opcional",
+      "screenshots": [
+        [
+          "Sigue las teclas.\nEscribe en coreano.",
+          "Empieza con el teclado coreano integrado"
+        ],
+        [
+          "Encuentra el ritmo.\nEncadena combos.",
+          "Seis juegos para practicar velocidad y precisión"
+        ],
+        [
+          "Cuatro días seguidos.\n¡Sigue así!",
+          "Sellos diarios y el ánimo de Piyo para continuar"
+        ],
+        [
+          "Escribe las palabras\nantes de que caigan.",
+          "Detecta la siguiente palabra y escríbela a tiempo"
+        ],
+        [
+          "Lee el significado.\nEscribe en coreano.",
+          "Pistas en español, respuestas en hangul"
+        ],
+        [
+          "Una consonante.\nTu primera pista.",
+          "Piensa, escribe y amplía tu vocabulario"
+        ],
+        [
+          "Tres minutos.\nUn pequeño hábito.",
+          "Avanza con una misión cada día"
+        ],
+        [
+          "Un día más.\nOtra recompensa.",
+          "Sigue aprendiendo y desbloquea accesorios para Piyo"
+        ],
+        [
+          "Coreano,\ncon diez teclas.",
+          "Prueba el teclado coreano integrado de 10 teclas"
+        ],
+        [
+          "Tus palabras.\nTus propias tarjetas.",
+          "Crea, edita y guarda sin límite con Pro de pago"
+        ]
+      ],
+      "preview": [
+        "De leer coreano a escribirlo",
+        "Seis juegos para practicar",
+        "Sigue escribiendo y suma combos",
+        "Velocidad y precisión",
+        "Mira cómo progresas",
+        "Tu primera tecla, con typee"
+      ]
+    },
+    {
+      "locale": "pt-BR",
+      "market": "브라질",
+      "language": "Português (Brasil)",
+      "ui": "en",
+      "brand": "typee",
+      "disclosure": "",
+      "video_disclosure": "",
+      "purchase_disclosure": "Sem anúncios nem cadastro · Pro é uma compra opcional",
+      "screenshots": [
+        [
+          "Siga as teclas.\nDigite em coreano.",
+          "Comece com o teclado coreano integrado"
+        ],
+        [
+          "Entre no ritmo.\nMantenha o combo.",
+          "Seis jogos para treinar velocidade e precisão"
+        ],
+        [
+          "Quatro dias seguidos.\nContinue assim!",
+          "Carimbos diários e o incentivo do Piyo"
+        ],
+        [
+          "Digite as palavras\nantes que caiam.",
+          "Encontre a próxima palavra e digite a tempo"
+        ],
+        [
+          "Leia o significado.\nDigite em coreano.",
+          "Dicas em inglês, respostas em hangul"
+        ],
+        [
+          "Uma consoante.\nSua primeira dica.",
+          "Pense, digite e amplie seu vocabulário"
+        ],
+        [
+          "Três minutos.\nUm novo hábito.",
+          "Avance com uma missão por dia"
+        ],
+        [
+          "Mais um dia.\nMais uma recompensa.",
+          "Continue aprendendo e libere acessórios para o Piyo"
+        ],
+        [
+          "Coreano,\ncom dez teclas.",
+          "Experimente o teclado coreano integrado de 10 teclas"
+        ],
+        [
+          "Suas palavras.\nSeus próprios baralhos.",
+          "Crie, edite e guarde sem limite com o Pro pago"
+        ]
+      ],
+      "preview": [
+        "De ler coreano a digitar em coreano",
+        "Seis jogos para praticar",
+        "Continue digitando e faça combos",
+        "Velocidade e precisão",
+        "Veja seu progresso",
+        "Sua primeira tecla, com typee"
+      ]
+    },
+    {
+      "locale": "id",
+      "market": "인도네시아",
+      "language": "Bahasa Indonesia",
+      "ui": "en",
+      "brand": "typee",
+      "disclosure": "",
+      "video_disclosure": "",
+      "purchase_disclosure": "Tanpa iklan dan akun · Pro dibeli secara opsional",
+      "screenshots": [
+        [
+          "Ikuti tombolnya.\nKetik bahasa Korea.",
+          "Langsung mulai dengan papan ketik Korea bawaan"
+        ],
+        [
+          "Temukan ritmenya.\nLanjutkan kombo.",
+          "Enam gim untuk melatih kecepatan dan ketepatan"
+        ],
+        [
+          "Empat hari beruntun.\nTeruskan!",
+          "Stempel harian dan semangat dari Piyo"
+        ],
+        [
+          "Ketik katanya\nsebelum jatuh.",
+          "Temukan kata berikutnya dan ketik tepat waktu"
+        ],
+        [
+          "Baca artinya.\nKetik bahasa Korea.",
+          "Petunjuk bahasa Inggris, jawaban dalam Hangul"
+        ],
+        [
+          "Satu konsonan.\nPetunjuk pertama.",
+          "Pikirkan, ketik, dan tambah kosakatamu"
+        ],
+        [
+          "Tiga menit.\nKebiasaan kecil.",
+          "Maju sedikit demi sedikit lewat misi harian"
+        ],
+        [
+          "Satu hari lagi.\nHadiah berikutnya.",
+          "Terus belajar untuk membuka aksesori Piyo"
+        ],
+        [
+          "Bahasa Korea,\ndengan sepuluh tombol.",
+          "Coba tata letak 10 tombol Korea bawaan"
+        ],
+        [
+          "Kata-katamu.\nKartu belajarmu.",
+          "Buat, edit, dan simpan tanpa batas dengan Pro berbayar"
+        ]
+      ],
+      "preview": [
+        "Dari membaca ke mengetik Korea",
+        "Enam gim untuk berlatih",
+        "Terus mengetik, lanjutkan kombo",
+        "Lebih cepat dan tepat",
+        "Lihat kemajuanmu",
+        "Tombol pertamamu bersama typee"
+      ]
     }
-  ]
+  ],
+  "capture_status": "recapture_required_for_new_language_candidate"
 }

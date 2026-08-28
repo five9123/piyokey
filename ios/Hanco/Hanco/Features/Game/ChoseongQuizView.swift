@@ -665,11 +665,10 @@ struct ChoseongQuizView: View {
     switch viewModel.feedback {
     case .correct(let points):
       Text(
-        String(
-          format: AppLocalization.string(
+        AppLocalization.format(
             mode == .choseong
               ? "choseong.feedback.correct" : "word_match.feedback.correct"
-          ),
+          ,
           points
         )
       )
@@ -677,11 +676,10 @@ struct ChoseongQuizView: View {
         .foregroundStyle(AppPalette.success)
     case .incorrect:
       Text(
-        String(
-          format: AppLocalization.string(
+        AppLocalization.format(
             mode == .choseong
               ? "choseong.feedback.incorrect" : "word_match.feedback.incorrect"
-          ),
+          ,
           viewModel.currentRound.answer.ko
         )
       )
@@ -1924,8 +1922,7 @@ struct ChoseongTypingView: View {
     } else {
       key = "game.pronunciation_hint.exhausted_format"
     }
-    return String(
-      format: AppLocalization.string(key),
+    return AppLocalization.format(key,
       viewModel.pronunciationHintsRemaining
     )
   }
@@ -2051,7 +2048,7 @@ struct ChoseongTypingView: View {
       Text(feedbackIncorrectKey)
         .foregroundStyle(AppPalette.error)
     case .completed(let points):
-      Text(String(format: AppLocalization.string(feedbackCompletedKey), points))
+      Text(AppLocalization.format(feedbackCompletedKey, points))
         .foregroundStyle(AppPalette.success)
     }
   }
@@ -2523,8 +2520,7 @@ struct ChoseongTypingView: View {
       reviewDeck.recordMistake(item: answer, sourceDeckId: deck.deckId)
       collectReviewItem(answer, mistakenJamoIndices: [])
       reviewDeck.flush()
-      let announcement = String(
-        format: AppLocalization.string("game.pronunciation_hint.used_announcement_format"),
+      let announcement = AppLocalization.format("game.pronunciation_hint.used_announcement_format",
         viewModel.pronunciationHintsRemaining
       )
       UIAccessibility.post(notification: .announcement, argument: announcement)

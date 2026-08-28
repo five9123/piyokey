@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "verified_commit": "d8812d9d138fd36af85ba5f3671d6af810fbe9bd",
+  "verified_tree": "540f095d34277c492e582369ca298bb8d7932e18",
+  "branch": "codex/local-es-de-fr",
+  "scope": "Local language review: copy, Latin search, plural/number resource runtime and shared regressions only; full app and release gates remain open",
+  "result": "pass",
+  "recorded_at": "2026-08-28T12:04:42.672887+00:00",
+  "checks": [
+    {
+      "name": "Python regressions",
+      "status": "pass",
+      "command": "python3 -m unittest discover -s tools/tests",
+      "note": "96 tests passed on clean d8812d9; log artifacts/language-review/python.log"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3 tools/release_preflight.py",
+      "note": "Clean source; generated catalog, translations and release source checks"
+    },
+    {
+      "name": "Swift shared core XCTest",
+      "status": "pass",
+      "command": "python3 artifacts/language-review/offline_checks.py swift",
+      "note": "45 actual shared tests; current tests/resources linked to previously compiled identical shared module source. Not SwiftPM or app tests."
+    },
+    {
+      "name": "Kotlin shared settings discovery JUnit",
+      "status": "pass",
+      "command": "python3 artifacts/language-review/offline_checks.py kotlin",
+      "note": "63 actual tests; includes Latin search, language fallback and package goldens. Not Gradle app build."
+    },
+    {
+      "name": "Resource compile and original content preservation",
+      "status": "pass",
+      "command": "python3 artifacts/language-review/preservation_resources.py",
+      "note": "Apple strings parse and duplicate check; Android 8 modules AAPT2; 67 decks + 2 catalogs and 585 MP3/vector/English source files preserved against 47371de."
+    },
+    {
+      "name": "Swift parse and project plists",
+      "status": "pass",
+      "command": "python3 artifacts/language-review/final_static.py",
+      "note": "26 changed Swift sources parse only; stringsdict/plist/project checks. Not Swift app typecheck."
+    },
+    {
+      "name": "Native Foundation plural runtime",
+      "status": "pass",
+      "command": "artifacts/language-review/resource-check",
+      "note": "340 actual plural renderings plus 5 decimal assertions against app resource bundles. Harness build command in artifacts/language-review/README.md."
+    },
+    {
+      "name": "Full application validation",
+      "status": "skip",
+      "command": "swift test; xcodebuild test; ./gradlew :app:lintDebug :app:assembleDebug",
+      "note": "Not rerun: prior sandbox creation, global cache/CoreSimulator access and Gradle local socket failures remain documented in artifacts/language-expansion. No security restrictions changed."
+    }
+  ],
+  "manual_gates": [
+    "Run standard Xcode/Gradle app suites, new iOS language formatting/reminder tests and actual UI/device checks including narrow screens, large text and accessibility.",
+    "Native human review for es/de/fr; automated coverage is not translation fluency approval.",
+    "Verify Android background reminder locale when system/app languages differ, especially API 26-32; not reproduced or fixed here.",
+    "Follow up multi-quantity/share/hint plurals, explicit content-editing language UX, and regional number/date formatting; see docs/LANGUAGE_REVIEW.md.",
+    "Register real Issue/worktree ownership/PR and pass strict workspace doctor before remote work. Local-only exception does not satisfy CI/review or reuse PR70 approval.",
+    "Preserve legacy catalog URLs and deploy expanded content only to a new verified namespace; no remote publication performed.",
+    "Final RC recapture, store metadata/human review, support/privacy pages, upload and re-query, IAP/device and rights release gates remain open."
+  ]
+}

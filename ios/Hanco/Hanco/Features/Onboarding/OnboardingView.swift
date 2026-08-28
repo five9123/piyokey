@@ -70,8 +70,7 @@ struct OnboardingView: View {
     VStack(spacing: 8) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("onboarding.progress_format"),
+          AppLocalization.format("onboarding.progress_format",
             onboarding.snapshot.step.position,
             OnboardingStep.allCases.count
           )
@@ -166,43 +165,23 @@ struct OnboardingView: View {
 
   private var levelStep: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 14) {
-        Text("onboarding.level.title")
-          .font(.system(.title2, design: .rounded, weight: .bold))
-          .foregroundStyle(AppPalette.ink)
-        Text("onboarding.level.subtitle")
-          .font(.subheadline)
-          .foregroundStyle(AppPalette.mutedInk)
-
-        ForEach(OnboardingLevel.allCases) { level in
-          let selected = onboarding.selectedLevel == level
-          Button {
-            onboarding.selectLevel(level)
-          } label: {
-            HStack(spacing: 12) {
-              VStack(alignment: .leading, spacing: 6) {
-                Text(LocalizedStringKey(level.titleKey))
-                  .font(.headline.weight(.bold))
-                Text(LocalizedStringKey(level.detailKey))
-                  .font(.subheadline)
-              }
-              .fixedSize(horizontal: false, vertical: true)
-              Spacer(minLength: 0)
-              Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(selected ? AppPalette.accent : AppPalette.mutedInk)
-            }
+      VStack(spacing: 20) {
+        MascotView(stage: .egg, eggPattern: companion.eggPattern, size: 82)
+          .frame(width: 112, height: 150)
+        VStack(spacing: 7) {
+          Text("onboarding.level.title")
+            .font(.system(.title2, design: .rounded, weight: .bold))
             .foregroundStyle(AppPalette.ink)
-            .frame(maxWidth: .infinity, minHeight: 62, alignment: .leading)
-            .padding(16)
-            .background(selected ? AppPalette.accentSoft : AppPalette.card, in: RoundedRectangle(cornerRadius: 20))
-            .overlay {
-              RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(selected ? AppPalette.accent : .clear, lineWidth: 2)
-            }
+          Text("onboarding.level.subtitle")
+            .font(.subheadline)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+        .multilineTextAlignment(.center)
+
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+          ForEach(OnboardingLevel.allCases) { level in
+            levelCard(level)
           }
-          .buttonStyle(.plain)
-          .accessibilityAddTraits(selected ? .isSelected : [])
-          .accessibilityIdentifier("onboarding.level.\(level.rawValue)")
         }
 
         primaryButton(title: "onboarding.next", systemImage: "arrow.right") {
@@ -211,15 +190,44 @@ struct OnboardingView: View {
         .disabled(onboarding.selectedLevel == nil)
         .opacity(onboarding.selectedLevel == nil ? 0.45 : 1)
         .accessibilityIdentifier("onboarding.next")
-
-        Button("onboarding.back") { onboarding.move(to: .goal) }
-          .frame(maxWidth: .infinity, minHeight: 44)
-          .accessibilityIdentifier("onboarding.back")
       }
-      .padding(20)
+      .padding(.horizontal, 20)
+      .padding(.bottom, 24)
       .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .accessibilityIdentifier("onboarding.level.screen")
+  }
+
+  private func levelCard(_ level: OnboardingLevel) -> some View {
+    let selected = onboarding.selectedLevel == level
+    return Button {
+      onboarding.selectLevel(level)
+    } label: {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(verbatim: AppLocalization.string("onboarding.level.\(level.rawValue).example"))
+          .font(.title2.weight(.bold))
+          .foregroundStyle(AppPalette.accent)
+        Text(LocalizedStringKey(level.titleKey))
+          .font(.headline.weight(.bold))
+        Text(LocalizedStringKey(level.detailKey))
+          .font(.caption)
+      }
+      .fixedSize(horizontal: false, vertical: true)
+      .foregroundStyle(AppPalette.ink)
+      .frame(maxWidth: .infinity, minHeight: 105, alignment: .leading)
+      .padding(15)
+      .background(
+        selected ? AppPalette.accentSoft : AppPalette.card,
+        in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+      )
+      .overlay {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+          .strokeBorder(selected ? AppPalette.accent : AppPalette.keyShadow, lineWidth: 1.5)
+      }
+    }
+    .buttonStyle(.plain)
+    .accessibilityAddTraits(selected ? .isSelected : [])
+    .accessibilityIdentifier("onboarding.level.\(level.rawValue)")
   }
 
   private func goalCard(_ goal: OnboardingGoal) -> some View {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -101,7 +102,6 @@ fun OnboardingRoute(
       selected = preferences.onboardingLevel,
       onSelect = { onUpdate(preferences.copy(onboardingLevel = it)) },
       onNext = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.KEYBOARD)) },
-      onBack = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.GOAL)) },
       onSkip = {
         onUpdate(preferences.copy(
           onboardingIntroSkipped = true,
@@ -210,20 +210,16 @@ private fun GoalScreen(
         Spacer(Modifier.height(8.dp))
         TrustCard()
       }
-      items(OnboardingGoal.entries) { goal ->
-        val active = selected == goal
-        Card(
-          modifier = Modifier
-            .fillMaxWidth()
-            .testTag("onboarding-goal-${goal.name.lowercase()}")
-            .clickable { onSelect(goal) }
-            .then(if (active) Modifier.border(3.dp, Accent, RoundedCornerShape(20.dp)) else Modifier),
-          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-          shape = RoundedCornerShape(20.dp),
-        ) {
-          Column(Modifier.padding(16.dp)) {
-            Text(stringResource(goal.titleResource()), fontWeight = FontWeight.Black)
-            Text(stringResource(goal.detailResource()), style = MaterialTheme.typography.bodySmall)
+      items(OnboardingGoal.entries.chunked(2)) { goals ->
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+          goals.forEach { goal ->
+            OnboardingChoiceCard(
+              title = stringResource(goal.titleResource()),
+              detail = stringResource(goal.detailResource()),
+              selected = selected == goal,
+              onClick = { onSelect(goal) },
+              modifier = Modifier.weight(1f).testTag("onboarding-goal-${goal.name.lowercase()}"),
+            )
           }
         }
       }
@@ -243,7 +239,6 @@ private fun LevelScreen(
   selected: OnboardingLevel?,
   onSelect: (OnboardingLevel) -> Unit,
   onNext: () -> Unit,
-  onBack: () -> Unit,
   onSkip: () -> Unit,
   modifier: Modifier,
 ) {
@@ -254,23 +249,23 @@ private fun LevelScreen(
       verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
       item {
-        Text(stringResource(R.string.onboarding_level_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
-        Text(stringResource(R.string.onboarding_level_subtitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+          PiyoMark(PiyoGrowthStage.EGG)
+          Text(stringResource(R.string.onboarding_level_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
+          Text(stringResource(R.string.onboarding_level_subtitle), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+        }
       }
-      items(OnboardingLevel.entries) { level ->
-        val active = selected == level
-        Card(
-          onClick = { onSelect(level) },
-          modifier = Modifier.fillMaxWidth()
-            .testTag("onboarding-level-${level.name.lowercase()}")
-            .semantics { this.selected = active }
-            .then(if (active) Modifier.border(3.dp, Accent, RoundedCornerShape(20.dp)) else Modifier),
-          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-          shape = RoundedCornerShape(20.dp),
-        ) {
-          Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(level.titleResource()), fontWeight = FontWeight.Black)
-            Text(stringResource(level.detailResource()), style = MaterialTheme.typography.bodyMedium)
+      items(OnboardingLevel.entries.chunked(2)) { levels ->
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+          levels.forEach { level ->
+            OnboardingChoiceCard(
+              example = stringResource(level.exampleResource()),
+              title = stringResource(level.titleResource()),
+              detail = stringResource(level.detailResource()),
+              selected = selected == level,
+              onClick = { onSelect(level) },
+              modifier = Modifier.weight(1f).testTag("onboarding-level-${level.name.lowercase()}"),
+            )
           }
         }
       }
@@ -278,12 +273,37 @@ private fun LevelScreen(
         Button(onClick = onNext, enabled = selected != null, modifier = Modifier.fillMaxWidth().testTag("onboarding-next")) {
           Text(stringResource(R.string.onboarding_next))
         }
-        TextButton(onClick = onBack, modifier = Modifier.fillMaxWidth().testTag("onboarding-back")) {
-          Text(stringResource(R.string.onboarding_back))
-        }
       }
     }
   }
+}
+
+@Composable
+private fun OnboardingChoiceCard(
+  title: String,
+  detail: String,
+  selected: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  example: String? = null,
+) {
+  Card(
+    onClick = onClick,
+    modifier = modifier
+      .semantics { this.selected = selected }
+      .then(if (selected) Modifier.border(3.dp, Accent, RoundedCornerShape(20.dp)) else Modifier),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    shape = RoundedCornerShape(20.dp),
+  ) {
+    Column(Modifier.fillMaxWidth().heightIn(min = 135.dp).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      if (example != null) {
+        Text(example, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+      }
+      Text(title, fontWeight = FontWeight.Black)
+      Text(detail, style = MaterialTheme.typography.bodySmall)
+    }
+  }
+
 }
 
 @Composable
@@ -683,4 +703,11 @@ private fun mainTourDetail(step: Int): Int = when (step) {
   3 -> R.string.main_tour_games_detail
   4 -> R.string.main_tour_profile_detail
   else -> R.string.main_tour_settings_detail
+}
+
+private fun OnboardingLevel.exampleResource(): Int = when (this) {
+  OnboardingLevel.BEGINNER -> R.string.onboarding_level_beginner_example
+  OnboardingLevel.JAMO -> R.string.onboarding_level_jamo_example
+  OnboardingLevel.WORDS -> R.string.onboarding_level_words_example
+  OnboardingLevel.SENTENCES -> R.string.onboarding_level_sentences_example
 }

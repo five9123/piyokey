@@ -14,16 +14,19 @@ struct CurriculumItem: Equatable, Identifiable {
       readingJa: AppLocalization.string(readingKey, language: .japanese),
       meaningJa: AppLocalization.string(meaningKey, language: .japanese),
       audio: BundledPronunciationAudio.relativePath(for: ko),
-      localizations: [
-        AppLanguage.english.rawValue: DeckItemLocalization(
-          meaning: AppLocalization.string(meaningKey, language: .english),
-          reading: AppLocalization.string(readingKey, language: .english)
-        ),
+      localizations: Dictionary(uniqueKeysWithValues:
+        AppLanguage.allCases.filter { $0 != .japanese }.map { language in
+          (language.rawValue, DeckItemLocalization(
+            meaning: AppLocalization.string(meaningKey, language: language),
+            reading: AppLocalization.string(readingKey, language: .english)
+          ))
+        }
+      ).merging([
         "ko": DeckItemLocalization(
           meaning: KoreanLearningContent.string(meaningKey),
           reading: KoreanLearningContent.string(readingKey)
         ),
-      ]
+      ]) { current, _ in current }
     )
   }
 }

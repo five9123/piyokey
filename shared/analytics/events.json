@@ -28,7 +28,7 @@
     "platform": { "type": "enum", "values": ["ios", "ipados", "android", "web"] },
     "app_version": { "type": "version" },
     "build_number": { "type": "build" },
-    "locale": { "type": "enum", "values": ["ja", "en", "ko", "other"] },
+    "locale": { "type": "enum", "values": ["ja", "en", "ko", "es", "de", "fr", "other"] },
     "entry_point": { "type": "enum", "values": ["cold_start", "foreground", "deep_link", "notification", "unknown"] },
     "feature": { "type": "enum", "values": ["home", "discover", "practice", "game", "my_page", "settings", "deck_maker", "web_landing", "web_support"] },
     "onboarding_step": { "type": "enum", "values": ["goal", "keyboard", "first_input", "hatch_1", "hatch_2", "hatch_3", "app_tour"] },
@@ -46,7 +46,7 @@
     "action": { "type": "enum", "values": ["created", "edited", "copied", "imported", "exported", "deleted", "shared", "saved_image"] },
     "purchase_state": { "type": "enum", "values": ["viewed", "started", "pending", "completed", "cancelled", "failed", "restored"] },
     "setting": { "type": "enum", "values": ["language", "theme", "input_mode", "practice_display", "sound", "analytics_consent", "diagnostics_consent"] },
-    "value_bucket": { "type": "enum", "values": ["enabled", "disabled", "ja", "en", "ko", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"] }
+    "value_bucket": { "type": "enum", "values": ["enabled", "disabled", "ja", "en", "ko", "es", "de", "fr", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"] }
   },
   "common_required": ["schema_version", "platform", "app_version", "build_number", "locale"],
   "events": {

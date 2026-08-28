@@ -127,9 +127,9 @@
   <string name="user_deck_export_current">Export current deck first</string>
   <string name="user_deck_replace_confirm_title">Replace the current deck?</string>
   <string name="user_deck_replace_confirm_body">The imported file will replace the current deck. Play history and matching item review progress are kept.</string>
-  <string name="user_deck_error_invalid">This file is not a valid PIYOKEY user deck. Your existing decks were not changed.</string>
+  <string name="user_deck_error_invalid">This file is not a valid typee user deck. Your existing decks were not changed.</string>
   <string name="user_deck_error_too_large">This deck exceeds the 8 MiB safety limit. Your existing decks were not changed.</string>
-  <string name="user_deck_error_update">This deck was made for a newer PIYOKEY format. Update the app before importing it.</string>
+  <string name="user_deck_error_update">This deck was made for a newer typee format. Update the app before importing it.</string>
   <string name="user_deck_error_read">The selected file could not be read. Your existing decks were not changed.</string>
   <string name="discover_propose_deck">Propose a deck you want</string>
   <string name="deck_report_content">Report this deck’s content</string>
@@ -137,4 +137,9 @@
   <string name="user_deck_import_as_copy_locked">Import as a separate copy · typee pro</string>
   <string name="deck_editor_move_up">Move item up</string>
   <string name="deck_editor_move_down">Move item down</string>
+
+<plurals name="deck_item_count">
+  <item quantity="one">%1$d item</item>
+  <item quantity="other">%1$d items</item>
+</plurals>
 </resources>

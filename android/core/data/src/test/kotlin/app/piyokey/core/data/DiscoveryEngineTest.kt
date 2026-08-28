@@ -44,13 +44,32 @@ class DiscoveryEngineTest {
     val english = DiscoveryEngine.filterAndSort(
       catalog,
       DeckFilters(query = "travel"),
-      "fr",
+      "ar",
     )
     assertTrue(english.any { it.deckId == "official_travel_phrases" })
-    assertFalse(english.any { it.localizedName("fr").orEmpty().contains("韓国旅行") })
+    assertFalse(english.any { it.localizedName("ar").orEmpty().contains("韓国旅行") })
 
     val korean = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = "여행"), "ko")
     assertTrue(korean.any { it.deckId == "official_travel_phrases" })
+  }
+
+  @Test
+  fun supportedLanguageSearchFoldsLatinAccentsAndPreservesCanonicalTags() {
+    for ((language, query) in listOf("fr" to "cafe", "es" to "cafe", "de" to "cafe")) {
+      val results = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = query), language)
+      assertTrue(results.any { it.deckId == "official_fun_food_cafe" }, language)
+    }
+    val french = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = "voyage"), "fr-CA")
+    assertTrue(french.any { it.deckId == "official_travel_phrases" })
+    assertEquals("韓国旅行", DiscoveryEngine.canonicalTag(catalog, "韓国旅行", "fr"))
+    assertEquals("会話", DiscoveryEngine.canonicalTag(catalog, "conversacion", "es"))
+    val voicedTag = catalog.copy(tags = listOf(catalog.tags.first().copy(tag = "が", localizations = null)))
+    assertEquals(null, DiscoveryEngine.canonicalTag(voicedTag, "か", "ja"))
+    assertEquals("が", DiscoveryEngine.canonicalTag(voicedTag, "か\u3099", "ja"))
+    for ((tag, query) in listOf("Straße" to "strasse", "cœur" to "coeur", "æ" to "ae", "한" to "\u1112\u1161\u11ab")) {
+      val taggedCatalog = catalog.copy(tags = listOf(catalog.tags.first().copy(tag = tag, localizations = null)))
+      assertEquals(tag, DiscoveryEngine.canonicalTag(taggedCatalog, query, "de"))
+    }
   }
 
   @Test

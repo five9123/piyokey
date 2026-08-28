@@ -18,4 +18,11 @@
     <string name="home_primary_recommend_detail">あなたのレベルと目的に合わせて選びました</string>
     <string name="home_primary_resume_eyebrow">つづきから</string>
     <string name="home_primary_resume_detail">前の練習をつづけましょう</string>
+
+<plurals name="review_count">
+  <item quantity="other">復習する単語 %1$d件</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="other">今週 %1$d/7・%2$d日連続</item>
+</plurals>
 </resources>

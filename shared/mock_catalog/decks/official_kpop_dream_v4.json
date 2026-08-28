@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_kpop_dream",
+  "version": 4,
+  "name": "オリジナルK-POP：夢とエール",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "K-POP",
+    "歌詞風",
+    "公式"
+  ],
+  "created_at": "2026-03-07T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "끝없는 길",
+      "reading_ja": "クドムヌン キル",
+      "meaning_ja": "果てしない道",
+      "audio": "audio/ko_ab0398c48be0ffcc640a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "endless road",
+          "reading": "kkeuteopneun gil"
+        },
+        "es": {
+          "meaning": "camino sin fin",
+          "reading": "kkeuteopneun gil"
+        },
+        "de": {
+          "meaning": "Endloser Weg",
+          "reading": "kkeuteopneun gil"
+        },
+        "fr": {
+          "meaning": "chemin sans fin",
+          "reading": "kkeuteopneun gil"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "겁내지 마",
+      "reading_ja": "コムネジ マ",
+      "meaning_ja": "怖がらないで",
+      "audio": "audio/ko_b74777e7c5bd97dbe04a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Don't be afraid",
+          "reading": "geopnaeji ma"
+        },
+        "es": {
+          "meaning": "No tengas miedo",
+          "reading": "geopnaeji ma"
+        },
+        "de": {
+          "meaning": "Hab keine Angst",
+          "reading": "geopnaeji ma"
+        },
+        "fr": {
+          "meaning": "N’aie pas peur",
+          "reading": "geopnaeji ma"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "손을 잡아",
+      "reading_ja": "ソヌル チャバ",
+      "meaning_ja": "手を取って",
+      "audio": "audio/ko_4bc466c7398d29773664.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Take my hand",
+          "reading": "soneul japa"
+        },
+        "es": {
+          "meaning": "Toma mi mano",
+          "reading": "soneul japa"
+        },
+        "de": {
+          "meaning": "Nimm meine Hand",
+          "reading": "soneul japa"
+        },
+        "fr": {
+          "meaning": "Prends ma main",
+          "reading": "soneul japa"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "더 크게 외쳐",
+      "reading_ja": "ト クゲ ウェチョ",
+      "meaning_ja": "もっと大きく叫んで",
+      "audio": "audio/ko_20307cf2b20ffe7048f4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Shout louder",
+          "reading": "deo keuge oechyeo"
+        },
+        "es": {
+          "meaning": "Grita más fuerte",
+          "reading": "deo keuge oechyeo"
+        },
+        "de": {
+          "meaning": "Ruf lauter",
+          "reading": "deo keuge oechyeo"
+        },
+        "fr": {
+          "meaning": "Crie plus fort",
+          "reading": "deo keuge oechyeo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "꿈을 향해 달려",
+      "reading_ja": "クムル ヒャンヘ タルリョ",
+      "meaning_ja": "夢へ向かって走って",
+      "audio": "audio/ko_4b59f628fe6abce27712.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Run toward your dream",
+          "reading": "kkumeul hyanghae dalryeo"
+        },
+        "es": {
+          "meaning": "Corre hacia tu sueño",
+          "reading": "kkumeul hyanghae dalryeo"
+        },
+        "de": {
+          "meaning": "Lauf deinem Traum entgegen",
+          "reading": "kkumeul hyanghae dalryeo"
+        },
+        "fr": {
+          "meaning": "Cours vers ton rêve",
+          "reading": "kkumeul hyanghae dalryeo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "넘어져도 괜찮아",
+      "reading_ja": "ノモジョド クェンチャナ",
+      "meaning_ja": "転んでも大丈夫",
+      "audio": "audio/ko_e46318a1cff3284a0126.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "It's okay if you fall",
+          "reading": "neomeojyeodo gwaenchana"
+        },
+        "es": {
+          "meaning": "No pasa nada si te caes",
+          "reading": "neomeojyeodo gwaenchana"
+        },
+        "de": {
+          "meaning": "Es ist okay, wenn du hinfällst",
+          "reading": "neomeojyeodo gwaenchana"
+        },
+        "fr": {
+          "meaning": "Ce n’est pas grave si tu tombes",
+          "reading": "neomeojyeodo gwaenchana"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "우리가 답을 만들자",
+      "reading_ja": "ウリガ タブル マンドゥルジャ",
+      "meaning_ja": "私たちで答えを作ろう",
+      "audio": "audio/ko_68e822b07a56a49aa7b9.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's create the answer together",
+          "reading": "uriga dapeul mandeulja"
+        },
+        "es": {
+          "meaning": "Creemos la respuesta juntos",
+          "reading": "uriga dapeul mandeulja"
+        },
+        "de": {
+          "meaning": "Finden wir gemeinsam die Antwort",
+          "reading": "uriga dapeul mandeulja"
+        },
+        "fr": {
+          "meaning": "Créons la réponse ensemble",
+          "reading": "uriga dapeul mandeulja"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "끝까지 빛을 내",
+      "reading_ja": "クッカジ ピチュル ネ",
+      "meaning_ja": "最後まで輝いて",
+      "audio": "audio/ko_dcb81a915337f7c895f5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Keep shining till the end",
+          "reading": "kkeutkkaji biteul nae"
+        },
+        "es": {
+          "meaning": "Sigue brillando hasta el final",
+          "reading": "kkeutkkaji biteul nae"
+        },
+        "de": {
+          "meaning": "Strahle bis zum Schluss",
+          "reading": "kkeutkkaji biteul nae"
+        },
+        "fr": {
+          "meaning": "Continue de briller jusqu’au bout",
+          "reading": "kkeutkkaji biteul nae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "내일은 더 가까워",
+      "reading_ja": "ネイルン ト カッカウォ",
+      "meaning_ja": "明日はもっと近い",
+      "audio": "audio/ko_7cd876aa2f5afdb0caf0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "We'll be closer tomorrow",
+          "reading": "naeileun deo gakkawo"
+        },
+        "es": {
+          "meaning": "Mañana estaremos más cerca",
+          "reading": "naeileun deo gakkawo"
+        },
+        "de": {
+          "meaning": "Morgen sind wir uns näher",
+          "reading": "naeileun deo gakkawo"
+        },
+        "fr": {
+          "meaning": "Demain, nous serons plus proches",
+          "reading": "naeileun deo gakkawo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "꿈결",
+      "reading_ja": "クムキョル",
+      "meaning_ja": "夢うつつ",
+      "audio": "audio/ko_1122e3715c57c2063128.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "dreamlike haze",
+          "reading": "kkumgyeol"
+        },
+        "es": {
+          "meaning": "ensoñación",
+          "reading": "kkumgyeol"
+        },
+        "de": {
+          "meaning": "Traumzustand",
+          "reading": "kkumgyeol"
+        },
+        "fr": {
+          "meaning": "rêverie",
+          "reading": "kkumgyeol"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "날개",
+      "reading_ja": "ナルゲ",
+      "meaning_ja": "翼",
+      "audio": "audio/ko_c000ef4cba7a6b5830d4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "wing",
+          "reading": "nalgae"
+        },
+        "es": {
+          "meaning": "ala",
+          "reading": "nalgae"
+        },
+        "de": {
+          "meaning": "Flügel",
+          "reading": "nalgae"
+        },
+        "fr": {
+          "meaning": "aile",
+          "reading": "nalgae"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "한 걸음",
+      "reading_ja": "ハン コルム",
+      "meaning_ja": "一歩",
+      "audio": "audio/ko_8c65eaa6f7717dbcb738.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "one step",
+          "reading": "han geoleum"
+        },
+        "es": {
+          "meaning": "un paso",
+          "reading": "han geoleum"
+        },
+        "de": {
+          "meaning": "Ein Schritt",
+          "reading": "han geoleum"
+        },
+        "fr": {
+          "meaning": "un pas",
+          "reading": "han geoleum"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Original K-Pop: Dreams & Cheers",
+      "author_nickname": "typee Official",
+      "tags": [
+        "K-Pop",
+        "Lyric-Inspired",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "오리지널 K-POP: 꿈과 응원",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "K-POP",
+        "가사풍",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "K-pop original: sueños y ánimo",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "K-pop",
+        "Estilo de letras",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Original-K-Pop: Träume & Ermutigung",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "K-Pop",
+        "Von Songtexten inspiriert",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "K-pop original : rêves et encouragements",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "K-pop",
+        "Inspiré des paroles",
+        "Officiel"
+      ]
+    }
+  }
+}

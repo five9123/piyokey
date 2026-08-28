@@ -21,8 +21,17 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #73 / Draft PR #74 온보딩 레벨·첫 홈 추천 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 핵심 저장·추천/전환 회귀 통과. 추가 iOS 부화→홈 UI 1건 실패 조사, 로컬 5언어 후보와 통합 및 CI/리뷰 gate |
+| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | In Progress | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 최종 2열 레벨 카드/부화→홈 검증과 SHA 증빙 정리 후 CI/리뷰 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+
+## #73 5언어·온보딩 통합 후보
+
+- 사용자 진행 승인으로 `dcc32bf` 로컬 5언어 후보를 #73/PR #74에 통합했다. 원본 언어/리텐션 clone은 보존했다. 새 온보딩은 관심사 뒤 4단계·2열 예시 카드이며 돌아가기 버튼이 없다. 첫 홈은 추천, 실제 학습 뒤 이어하기다.
+- ja/en/es/de/fr 모두 iOS 1,124개 키·Android 517개 리소스 누락 0개, 공식 es/de/fr 뜻 627개·덱 이름 41개·태그 42개를 포함한다. 공용 schema/reader/writer·카탈로그 호환 계약을 함께 반영했다.
+- Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 365개와 5언어 선택 복원 통과. 최종 레벨 카드와 부화→홈 UI 재검증의 상세는 최신 SHA 증빙을 따른다.
+- 부화 실패는 시뮬레이터의 촬영용 성장 값이 앱 컨테이너 밖에 남아 새 설치 테스트에 유입된 문제였다. DEBUG 테스트 초기값을 명시하고, 투어 배경 접근성이 숨겨진 동안에는 카드 존재를 검사하지 않도록 검증 시점을 정리했다. 실제 성장 정책은 변경하지 않았다.
+- GitHub Actions/리뷰와 원어민·전체 화면/실기기·새 카탈로그 namespace·최종 RC 촬영·스토어 gate는 별도다. 과거 로컬 환경의 앱 빌드/기기 접근 실패 기록은 역사적 증빙이며 현재 통합 검증과 구분한다.
+- 상세: `docs/LANGUAGE_COVERAGE.md`, `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`.
 
 ## 최근 소스 통합
 
@@ -49,12 +58,12 @@
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
-- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 ja/en/es RC와 일치하지 않으므로 ko 스토어는 영어 UI, es-ES 스토어는 스페인어 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
+- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 main ja/en/es와 로컬 ja/en/es/de/fr 후보에 일치하지 않으므로 ko 스토어는 영어 UI, es/de/fr 스토어는 각각 해당 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
 
-`outputs/local-language-expansion`은 별도 clone의 `codex/local-es-de-fr` (`dcc32bf`)이며 ja/en/es/de/fr UI와 공식 es/de/fr 콘텐츠를 제공하는 로컬 후보다. #73에서 96개 Python 회귀와 preflight를 다시 통과했으나 main/PR #74에 통합하지 않았다. 신규 온보딩·추천 de/fr 문구 통합과 5언어 앱/기기·원어민·스토어 gate가 남아 있다. 상세는 `docs/LANGUAGE_COVERAGE.md`를 참조한다. 원본 clone과 후속 로컬 리텐션 작업은 수정하지 않았다.
+`outputs/local-language-expansion`의 `codex/local-es-de-fr` (`dcc32bf`)를 사용자 진행 승인에 따라 #73 작업 후보에 통합했다. 원본 언어 clone과 후속 `outputs/local-retention-improvements`, 기본 dirty 작업공간은 수정하지 않았다. 로컬 후보의 과거 독립 작업 예외는 해당 시점 기록이며 현재 통합 작업은 Issue #73 소유권·PR #74로 관리한다.
 
 2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 

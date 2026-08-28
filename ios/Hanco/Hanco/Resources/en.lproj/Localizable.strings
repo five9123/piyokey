@@ -245,7 +245,7 @@
 "settings.practice_mascot_detail" = "Show or hide the character during practice";
 "settings.game_display" = "Game display";
 "settings.choseong_meaning" = "Initials game meaning";
-"settings.choseong_meaning_detail" = "Show the English meaning for every question";
+"settings.choseong_meaning_detail" = "Show the meaning for every question";
 "settings.app_information" = "App information";
 "settings.privacy_policy" = "Privacy policy";
 "settings.privacy" = "Privacy";
@@ -256,7 +256,7 @@
 "settings.analytics_privacy_note" = "Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.";
 "settings.review_privacy_choices" = "Review data-sharing choices";
 "privacy_consent.navigation_title" = "Privacy choices";
-"privacy_consent.title" = "Help improve PIYOKEY?";
+"privacy_consent.title" = "Help improve typee?";
 "privacy_consent.introduction" = "Choose each type of information you want to share. Both stay off until you save your choices.";
 "privacy_consent.optional_note" = "You can use every lesson, game, and purchased feature without sharing. Change your choices anytime in Settings.";
 "privacy_consent.analytics_detail" = "Send PostHog Cloud EU the features used, session completion, app version, and a random app identifier. This is not used for ads or tracking across other companies' services.";
@@ -525,7 +525,7 @@
 "game.mode.flow_detail" = "Type as many flowing cards as you can in 60 seconds.";
 "game.mode.acid_rain_detail" = "Type the Korean words falling from above before they reach the ground.";
 "game.mode.choseong_detail" = "Read the Korean initials and type the full answer yourself.";
-"game.mode.word_match_detail" = "Read the English meaning and type the full Korean answer yourself.";
+"game.mode.word_match_detail" = "Read the meaning and type the full Korean answer yourself.";
 "game.mode.dictation_detail" = "Listen to the Korean audio without a text clue and type what you hear.";
 "game.mode.spacing_detail" = "Restore the missing spaces in a Korean passage of 100–200 characters.";
 "game.mode.choose_deck" = "Choose a deck";
@@ -1153,6 +1153,16 @@
 "onboarding.level.words.detail" = "I want to build speed and try useful expressions.";
 "onboarding.level.sentences.title" = "I can type sentences";
 "onboarding.level.sentences.detail" = "I want to practice longer phrases with confidence.";
-"onboarding.back" = "Back";
 "home.primary.recommend_eyebrow" = "A deck to start with";
 "home.primary.recommend_detail" = "Picked for your level and interests";
+
+"settings.language.german" = "Deutsch";
+"settings.language.french" = "Français";
+
+"onboarding.level.beginner.example" = "ㄱ · ㅏ";
+
+"onboarding.level.jamo.example" = "가 · 나";
+
+"onboarding.level.words.example" = "학교";
+
+"onboarding.level.sentences.example" = "같이 걷고 싶어요";

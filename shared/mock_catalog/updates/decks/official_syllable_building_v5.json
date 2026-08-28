@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_syllable_building",
+  "version": 5,
+  "name": "子音＋母音で組み立てる",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 1,
+  "tags": [
+    "入門",
+    "組み立て",
+    "公式"
+  ],
+  "created_at": "2026-01-21T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "다",
+      "reading_ja": "タ",
+      "meaning_ja": "ㄷ + ㅏ",
+      "audio": "audio/ko_822b7db6f6886f572413.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "es": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "de": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "fr": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "라",
+      "reading_ja": "ラ",
+      "meaning_ja": "ㄹ + ㅏ",
+      "audio": "audio/ko_d2121a871ca59e3b9a3a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "es": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "de": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "fr": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "마",
+      "reading_ja": "マ",
+      "meaning_ja": "ㅁ + ㅏ",
+      "audio": "audio/ko_0a8a81fee098641dbae5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅁ + ㅏ",
+          "reading": "ma"
+        },
+        "es": {
+          "meaning": "ㅁ + ㅏ",
+          "reading": "ma"
+        },
+        "de": {
+          "meaning": "ㅁ + ㅏ",
+          "reading": "ma"
+        },
+        "fr": {
+          "meaning": "ㅁ + ㅏ",
+          "reading": "ma"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "보",
+      "reading_ja": "ポ",
+      "meaning_ja": "ㅂ + ㅗ",
+      "audio": "audio/ko_5bded62d50c159833b06.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅂ + ㅗ",
+          "reading": "bo"
+        },
+        "es": {
+          "meaning": "ㅂ + ㅗ",
+          "reading": "bo"
+        },
+        "de": {
+          "meaning": "ㅂ + ㅗ",
+          "reading": "bo"
+        },
+        "fr": {
+          "meaning": "ㅂ + ㅗ",
+          "reading": "bo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "소",
+      "reading_ja": "ソ",
+      "meaning_ja": "ㅅ + ㅗ",
+      "audio": "audio/ko_8c57fafb0573bcf5d4c3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅅ + ㅗ",
+          "reading": "so"
+        },
+        "es": {
+          "meaning": "ㅅ + ㅗ",
+          "reading": "so"
+        },
+        "de": {
+          "meaning": "ㅅ + ㅗ",
+          "reading": "so"
+        },
+        "fr": {
+          "meaning": "ㅅ + ㅗ",
+          "reading": "so"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "우",
+      "reading_ja": "ウ",
+      "meaning_ja": "ㅇ + ㅜ",
+      "audio": "audio/ko_637bfe7928f524a3c40d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅇ + ㅜ",
+          "reading": "u"
+        },
+        "es": {
+          "meaning": "ㅇ + ㅜ",
+          "reading": "u"
+        },
+        "de": {
+          "meaning": "ㅇ + ㅜ",
+          "reading": "u"
+        },
+        "fr": {
+          "meaning": "ㅇ + ㅜ",
+          "reading": "u"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "지",
+      "reading_ja": "チ",
+      "meaning_ja": "ㅈ + ㅣ",
+      "audio": "audio/ko_32e608b594bece7ab3a3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅈ + ㅣ",
+          "reading": "ji"
+        },
+        "es": {
+          "meaning": "ㅈ + ㅣ",
+          "reading": "ji"
+        },
+        "de": {
+          "meaning": "ㅈ + ㅣ",
+          "reading": "ji"
+        },
+        "fr": {
+          "meaning": "ㅈ + ㅣ",
+          "reading": "ji"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "해",
+      "reading_ja": "ヘ",
+      "meaning_ja": "ㅎ + ㅐ",
+      "audio": "audio/ko_b4ec4274b7799f1f17e5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㅎ + ㅐ",
+          "reading": "hae"
+        },
+        "es": {
+          "meaning": "ㅎ + ㅐ",
+          "reading": "hae"
+        },
+        "de": {
+          "meaning": "ㅎ + ㅐ",
+          "reading": "hae"
+        },
+        "fr": {
+          "meaning": "ㅎ + ㅐ",
+          "reading": "hae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "가",
+      "reading_ja": "カ",
+      "meaning_ja": "ㄱ + ㅏ",
+      "audio": "audio/ko_64ee5293d31bc58b72d7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄱ + ㅏ",
+          "reading": "ga"
+        },
+        "es": {
+          "meaning": "ㄱ + ㅏ",
+          "reading": "ga"
+        },
+        "de": {
+          "meaning": "ㄱ + ㅏ",
+          "reading": "ga"
+        },
+        "fr": {
+          "meaning": "ㄱ + ㅏ",
+          "reading": "ga"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "나",
+      "reading_ja": "ナ",
+      "meaning_ja": "ㄴ + ㅏ",
+      "audio": "audio/ko_1098bbe54520ab2a367c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄴ + ㅏ",
+          "reading": "na"
+        },
+        "es": {
+          "meaning": "ㄴ + ㅏ",
+          "reading": "na"
+        },
+        "de": {
+          "meaning": "ㄴ + ㅏ",
+          "reading": "na"
+        },
+        "fr": {
+          "meaning": "ㄴ + ㅏ",
+          "reading": "na"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "다",
+      "reading_ja": "タ",
+      "meaning_ja": "ㄷ + ㅏ",
+      "audio": "audio/ko_822b7db6f6886f572413.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "es": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "de": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        },
+        "fr": {
+          "meaning": "ㄷ + ㅏ",
+          "reading": "da"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "라",
+      "reading_ja": "ラ",
+      "meaning_ja": "ㄹ + ㅏ",
+      "audio": "audio/ko_d2121a871ca59e3b9a3a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "es": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "de": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        },
+        "fr": {
+          "meaning": "ㄹ + ㅏ",
+          "reading": "ra"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Build Korean Syllables",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Beginner Basics",
+        "Syllable Building",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "자음과 모음으로 음절 만들기",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "입문",
+        "음절 조합",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Forma sílabas coreanas",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Iniciación",
+        "Formación de sílabas",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Koreanische Silben bilden",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Einstieg",
+        "Silbenbildung",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Former des syllabes coréennes",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Initiation",
+        "Formation des syllabes",
+        "Officiel"
+      ]
+    }
+  }
+}

@@ -74,5 +74,8 @@
     <string name="onboarding_level_words_detail">속도를 높이고 유용한 표현에 도전하고 싶어요.</string>
     <string name="onboarding_level_sentences_title">문장도 입력해요</string>
     <string name="onboarding_level_sentences_detail">긴 표현도 자연스럽게 입력하고 싶어요.</string>
-    <string name="onboarding_back">이전</string>
+    <string name="onboarding_level_beginner_example">ㄱ · ㅏ</string>
+    <string name="onboarding_level_jamo_example">가 · 나</string>
+    <string name="onboarding_level_words_example">학교</string>
+    <string name="onboarding_level_sentences_example">같이 걷고 싶어요</string>
 </resources>

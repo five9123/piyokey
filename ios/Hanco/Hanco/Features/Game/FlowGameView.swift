@@ -265,8 +265,7 @@ struct FlowGameView: View {
 
             if let snapshot = frameRateMonitor.snapshot {
               Text(
-                String(
-                  format: AppLocalization.string("debug.game_fps.format"),
+                AppLocalization.format("debug.game_fps.format",
                   snapshot.averageFPS,
                   snapshot.p95FrameDurationMilliseconds,
                   snapshot.overBudgetFrameCount
@@ -915,8 +914,7 @@ struct FlowGameView: View {
     guard viewModel.consecutiveMistakes >= 3,
       case .incorrect(let expected) = viewModel.feedback
     else { return nil }
-    return String(
-      format: AppLocalization.string("mascot.speech.missed_jamo"),
+    return AppLocalization.format("mascot.speech.missed_jamo",
       String(expected)
     )
   }
@@ -1044,7 +1042,7 @@ struct FlowGameView: View {
     case .incorrect:
       Text("game.feedback.incorrect").foregroundStyle(AppPalette.error)
     case .completed(let points):
-      Text(String(format: AppLocalization.string("game.feedback.completed"), points))
+      Text(AppLocalization.format("game.feedback.completed", points))
         .foregroundStyle(AppPalette.accent)
     case .escaped:
       Text("game.feedback.escaped")

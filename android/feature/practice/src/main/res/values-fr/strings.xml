@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="practice_overall_progress">Question %1$d sur %2$d</string>
+  <string name="practice_overall_progress_accessibility">Progression : question %1$d sur %2$d</string>
+  <string name="practice_jamo_progress_accessibility">Progression des jamos : %1$d sur %2$d</string>
+  <string name="practice_composition_label">Composition</string>
+  <string name="practice_composition_placeholder">Commencer à saisir</string>
+  <string name="practice_feedback_idle">Suis la touche en surbrillance</string>
+  <string name="practice_feedback_correct">Bien !</string>
+  <string name="practice_feedback_incorrect">Essaie %1$s</string>
+  <string name="practice_feedback_complete">Terminé !</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">Clavier coréen intégré</string>
+  <string name="keyboard_shift">Maj</string>
+  <string name="keyboard_backspace">Retour arrière</string>
+  <string name="keyboard_space">Espace</string>
+  <string name="keyboard_key_with_roman">%1$s, %2$s</string>
+  <string name="practice_input_builtin_short">Appli</string>
+  <string name="practice_input_os_short">Système</string>
+  <string name="practice_input_builtin">Clavier intégré</string>
+  <string name="practice_input_os">Clavier du système</string>
+  <string name="practice_ime_missing">Aucun clavier coréen détecté. Tu peux continuer à saisir ou ouvrir les réglages système.</string>
+  <string name="practice_ime_open_settings">Réglages du clavier</string>
+  <string name="practice_play_pronunciation">Écouter la prononciation coréenne</string>
+  <string name="practice_piyo_accessibility">Piyo réagit à ta saisie</string>
+  <string name="physical_keyboard_hand_left">main gauche</string>
+  <string name="physical_keyboard_hand_right">main droite</string>
+  <string name="physical_keyboard_hand_both">les deux mains</string>
+  <string name="physical_keyboard_finger_little">auriculaire</string>
+  <string name="physical_keyboard_finger_ring">annulaire</string>
+  <string name="physical_keyboard_finger_middle">majeur</string>
+  <string name="physical_keyboard_finger_index">index</string>
+  <string name="physical_keyboard_finger_thumb">pouce</string>
+  <string name="physical_keyboard_space">Espace</string>
+  <string name="physical_keyboard_next_key">Ensuite : %1$s (%2$s)</string>
+  <string name="physical_keyboard_finger">%1$s · %2$s</string>
+  <string name="physical_keyboard_shift_finger">%1$s Maj + %2$s · %3$s</string>
+  <string name="physical_keyboard_ready">Utilise le clavier coréen Dubeolsik de ton appareil</string>
+</resources>

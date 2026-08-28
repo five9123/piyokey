@@ -61,7 +61,10 @@
       "minProperties": 1,
       "properties": {
         "en": { "$ref": "#/$defs/previewLocalization" },
-        "ko": { "$ref": "#/$defs/previewLocalization" }
+        "ko": { "$ref": "#/$defs/previewLocalization" },
+        "es": { "$ref": "#/$defs/previewLocalization" },
+        "de": { "$ref": "#/$defs/previewLocalization" },
+        "fr": { "$ref": "#/$defs/previewLocalization" }
       }
     },
     "deckLocalization": {
@@ -80,7 +83,10 @@
       "minProperties": 1,
       "properties": {
         "en": { "$ref": "#/$defs/deckLocalization" },
-        "ko": { "$ref": "#/$defs/deckLocalization" }
+        "ko": { "$ref": "#/$defs/deckLocalization" },
+        "es": { "$ref": "#/$defs/deckLocalization" },
+        "de": { "$ref": "#/$defs/deckLocalization" },
+        "fr": { "$ref": "#/$defs/deckLocalization" }
       }
     },
     "catalogDeck": {
@@ -154,7 +160,10 @@
       "minProperties": 1,
       "properties": {
         "en": { "type": "string", "minLength": 1, "maxLength": 40 },
-        "ko": { "type": "string", "minLength": 1, "maxLength": 40 }
+        "ko": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "es": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "de": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "fr": { "type": "string", "minLength": 1, "maxLength": 40 }
       }
     }
   }
