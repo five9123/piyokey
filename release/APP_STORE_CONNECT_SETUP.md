@@ -26,7 +26,7 @@ submission history. Do not edit the historical App Store version record when pre
 | Copyright | 2026 Jungmin Oh |
 
 Use `release/global_app_store_metadata.json` for the 1.1 rollout. App UI languages are
-Japanese, English, and Spanish; Korean learning content is unchanged. App Store metadata is prepared for English
+Japanese, English, Spanish, German, and French; Korean learning content is unchanged. App Store metadata is prepared for English
 (U.S.), English (U.K.), English (Australia), English (Canada), Korean, and Japanese;
 The approved ten-locale store media work is tracked separately; store upload and final RC media matching remain open gates.
 
@@ -196,7 +196,7 @@ device gates are still open so the exact build can be tested. Do not submit it u
 strict preflight and every 1.1 manual gate, including the in-app purchase gates above,
 is complete.
 
-After processing completes in App Store Connect, install that exact build from TestFlight and complete `release/TESTFLIGHT_SMOKE.md`. Record the archive checksum and do not rebuild between the passing TestFlight run and submission.
+After processing completes in App Store Connect, install that exact build from TestFlight and complete `release/TESTFLIGHT_1_1_SMOKE.md`. The older `release/TESTFLIGHT_SMOKE.md` is retained for 1.0.2 only. Record the archive checksum and do not rebuild between the passing TestFlight run and submission.
 
 ## Historical 1.0–1.0.2 submission record (retained)
 

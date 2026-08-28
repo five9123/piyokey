@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "6aaef0531f1943e09e0a63e0d8e389b22cd9d35f",
+  "verified_tree": "86bb70adefee74c4bf66eda427ee1e439ecb0209",
+  "branch": "codex/75-ios11-release",
+  "scope": "Issue #75 release records only; archive source is main 9af01ef and exact tree 3d9bb035",
+  "result": "fail",
+  "recorded_at": "2026-08-28T16:32:23.309957+00:00",
+  "checks": [
+    {
+      "name": "Python tools tests",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests",
+      "note": "96 tests"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Clean worktree",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "Release readiness",
+      "status": "fail",
+      "command": "python3.12 tools/release_preflight.py --strict",
+      "note": "39 open external/manual findings; App Review not submitted"
+    }
+  ],
+  "manual_gates": [
+    "Paid Apps/legal entity/tax/banking, IAP review, rights/privacy, final RC media/native review, full regression and exact-build device/Sandbox QA remain open. TestFlight upload and build association are complete."
+  ]
+}
