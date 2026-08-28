@@ -798,15 +798,16 @@ final class HancoUITests: XCTestCase {
 
   func testJapaneseSettingsDefaultsCarryIntoDeckPractice() {
     openSettings()
-    scrollToHittable(app.switches["settings.key_guide"])
-    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
-    XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
-    XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
     let sound = app.switches["settings.sound"]
     scrollToHittable(sound)
     XCTAssertEqual(sound.value as? String, "1")
     XCTAssertTrue(element("settings.sound_preset").isEnabled)
     attachScreenshot(named: "practice-common-settings-ja")
+
+    scrollToHittable(app.switches["settings.key_guide"])
+    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+    XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
+    XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
 
     app.buttons["settings.done"].tap()
     startPractice()
