@@ -836,6 +836,33 @@ final class HancoUITests: XCTestCase {
     waitForValue("사랑해", on: restoredField, timeout: 3)
   }
 
+  func testOSIMEHardwareStyleDeleteAndReturnKeepAcceptedPrefixAligned() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사랑")
+    waitForValue("사랑", on: imeField, timeout: 3)
+
+    imeField.typeText(XCUIKeyboardKey.delete.rawValue)
+    waitForValue("사", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+
+    imeField.typeText("\n")
+    imeField.typeText("랑해")
+    waitForValue("사랑해", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사랑해")
+  }
+
+
   func testOSIMESessionSettingsPreservesProgressAndRestoresFocus() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
@@ -2913,8 +2940,7 @@ final class HancoUITests: XCTestCase {
   private func startPractice() {
     openFreePracticeSetup()
     let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    start.tap()
+    scrollAndTap(start)
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
   }
 
@@ -2940,9 +2966,7 @@ final class HancoUITests: XCTestCase {
 
   private func openFreePracticeSetup() {
     openPracticeTab()
-    let freePractice = element("curriculum.free_practice")
-    scrollToHittable(freePractice)
-    freePractice.tap()
+    scrollAndTap(element("curriculum.free_practice"))
     XCTAssertTrue(app.buttons["practice.start"].waitForExistence(timeout: 5))
   }
 
@@ -3010,19 +3034,47 @@ final class HancoUITests: XCTestCase {
     maximumSwipes: Int = 12
   ) {
     for _ in 0..<maximumSwipes where !target.exists {
-      switch direction {
-      case .up: app.swipeUp()
-      case .down: app.swipeDown()
-      }
+      scrollVisibleSurface(direction)
     }
     XCTAssertTrue(target.waitForExistence(timeout: 3), app.debugDescription)
     for _ in 0..<maximumSwipes where !isFullyVisible(target) {
-      switch direction {
-      case .up: app.swipeUp()
-      case .down: app.swipeDown()
-      }
+      scrollVisibleSurface(direction)
     }
     XCTAssertTrue(isFullyVisible(target), app.debugDescription)
+  }
+
+  private func scrollVisibleSurface(_ direction: ScrollDirection) {
+    let visibleScrollView = app.scrollViews.allElementsBoundByIndex.first {
+      $0.exists && $0.isHittable
+    }
+    let surface: XCUIElement
+    if let visibleScrollView {
+      surface = visibleScrollView
+    } else {
+      surface = app
+    }
+    switch direction {
+    case .up: surface.swipeUp()
+    case .down: surface.swipeDown()
+    }
+  }
+
+  private func scrollAndTap(
+    _ target: XCUIElement,
+    direction: ScrollDirection = .up,
+    maximumSwipes: Int = 12
+  ) {
+    XCTAssertTrue(target.waitForExistence(timeout: 3), app.debugDescription)
+    for _ in 0..<maximumSwipes where !target.isHittable {
+      scrollVisibleSurface(direction)
+    }
+    if target.isHittable {
+      target.tap()
+    } else {
+      let windowFrame = app.windows.element(boundBy: 0).frame.insetBy(dx: 8, dy: 8)
+      XCTAssertTrue(windowFrame.intersects(target.frame), app.debugDescription)
+      target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
   }
 
   private func isFullyVisible(_ target: XCUIElement) -> Bool {

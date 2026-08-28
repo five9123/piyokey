@@ -408,6 +408,28 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(model.enteredText, "가나")
   }
 
+  func testOSIMEPhysicalKeyboardSnapshotsDoNotDuplicateMarkedCommitOrBackspace() {
+    let model = PracticeSessionViewModel(targets: ["한국 사람"])
+    let markedSnapshot = Array("ㅎㅏㄴㄱㅜㄱ ㅅㅏ")
+
+    model.synchronizeOSIME(acceptedSequence: markedSnapshot)
+    XCTAssertEqual(model.enteredText, "한국 사")
+    XCTAssertEqual(model.totalAcceptedInputCount, markedSnapshot.count)
+
+    model.synchronizeOSIME(acceptedSequence: markedSnapshot)
+    XCTAssertEqual(model.enteredText, "한국 사")
+    XCTAssertEqual(model.totalAcceptedInputCount, markedSnapshot.count)
+
+    model.synchronizeOSIME(acceptedSequence: Array("ㅎㅏㄴㄱㅜㄱ "))
+    XCTAssertEqual(model.enteredText, "한국 ")
+    XCTAssertEqual(model.mistakeCount, 0)
+
+    model.synchronizeOSIME(acceptedSequence: Array("ㅎㅏㄴㄱㅜㄱ ㅅㅏㄹㅏㅁ"))
+    XCTAssertTrue(model.isComplete)
+    XCTAssertEqual(model.enteredText, "한국 사람")
+    XCTAssertEqual(model.mistakeCount, 0)
+  }
+
   func testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition() {
     let model = PracticeSessionViewModel(target: "가")
 

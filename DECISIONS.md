@@ -1272,6 +1272,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: §2.3, F2, F2a, F4, F6, F10, §7, §12.2, §13
 - 영향 범위: iOS target device family·Info.plist 방향, 공통 adaptive layout, 홈·둘러보기·연습·게임·결과·마이페이지·설정, iPad 자동·수동 QA와 App Store 증빙
 
+## 2026-08-25 iOS 물리 키보드는 OS IME 입력 경로로 지원
+- 결정: Bluetooth·USB·Magic Keyboard는 새 raw key event 경로나 하드웨어별 자판 매핑을 만들지 않고, 기존 OS 키보드 모드의 `UITextField` committed/marked text와 `OSIMETextJudge`를 사용한다. 지원 기준은 iOS에서 한국어 두벌식 입력 소스를 선택한 iPhone 및 iPad의 iPhone 호환 실행이다.
+- 결정: Backspace·Space·Return·한/영 전환·키 반복은 OS 표준 편집 동작을 우선한다. 앱은 Backspace에 따른 target prefix 되감기, 목표 Space 수락, Return의 개행 방지·포커스 유지, 연결 해제·재연결 및 foreground 복귀 후 세션 진행·포커스 보존을 검증한다. 내장 키보드 모드에서 물리 키를 별도 수신하지 않는다.
+- 결정: iPad 적응형 레이아웃·정식 Universal 대상 기기 전환은 Issue #10 범위로 유지한다. Issue #12는 현재 iPhone 앱의 iPad 호환 실행과 iPhone에서 물리 입력이 정확히 판정되는지만 다룬다.
+- 근거: iOS IME는 물리 키보드에서도 자모 raw key보다 조합 중·확정 텍스트를 제공하므로 기존 diff 판정 경로를 재사용해야 소프트웨어 키보드와 판정이 갈라지지 않는다. 하드웨어별 raw mapping은 한/영 전환·도깨비 이월·사용자 배열을 중복 구현해 오판정 위험을 높인다.
+- 관련 PRD 섹션: F2a, F3, §6.3~6.4, §12
+- 영향 범위: iOS OS IME 입력 패널, HangulEngine/연습/UI 회귀, 실기기 QA 문서; iPad 레이아웃·Android 제외
 ## 2026-08-25 Android 실기기 QA의 출시 후보 통합 gate 이관
 - 결정: 사용자의 명시적 요청에 따라 Android 개발 중 반복적으로 로컬 실기기를 요구하는 수동·정량 QA는 기능별 면제로 처리하지 않고 M3~M6 전체 구현과 자동 검증이 끝난 출시 후보 단계의 통합 실기기 QA로 이관한다. 각 마일스톤은 JVM·instrumented 자동 회귀, lint, debug/release build와 가능한 에뮬레이터 검증을 계속 통과해야 한다.
 - 결정: M2는 다양한 단어 16개·자모 101/101 실기기 기능 gate, 사용자 직접 입력 확인, 자동 representative-plan·2-pointer MotionEvent 회귀를 근거로 후속 구현을 허용한다. 물리 touch-down→frame-commit p95 50ms 이하와 50쌍 rollover 누락·중복 0은 삭제하거나 완화하지 않는다. 마지막 유효 정량 측정은 짧은 자모열 불필요 스크롤 제거 뒤 p50 38ms·p95 54ms·max 64ms였고, 키 가이드 애니메이션 재구성 범위 최적화는 자동 테스트·lint·빌드까지 통과했으나 이 결정에 따라 실기기 재측정은 출시 후보로 남긴다.
