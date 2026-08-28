@@ -32,6 +32,7 @@
 - 통과: Python 96개, Swift 공용 코어 45개, Kotlin 공용/설정·발견 코어 63개, preflight, 수정 iOS source parse, Apple strings 파싱·중복 검사, Android 8개 모듈 AAPT2 리소스 compile. 실제 Foundation plural 렌더링 340개·선택 언어 소수점 5개도 통과했다. Swift/Kotlin은 실제 기존 XCTest/JUnit을 설치 컴파일러로 직접 실행했으며 전체 앱 빌드는 아니다. 새 `.typedeck`는 세 구현의 동일 바이트 golden 왕복 검증을 포함한다.
 - 보존: 덱 snapshot 67개와 catalog 2개의 기존 의미/ID/순서/ja/en/ko 값이 동일하다(새 번역·버전·시각·경로/size 변경 제외). 기존 MP3·벡터·영어 번역 원본 585개 파일도 byte 일치. 공식 덱 버전은 증가하고 게임 preset v3의 경쟁 identity는 유지한다.
 - 미완료: SwiftPM sandbox 생성, Xcode cache/CoreSimulator 접근, Gradle 로컬 socket 권한 제한으로 정상 전체 앱 빌드·앱 단위/UI/계측은 검증하지 못했다. 보호 설정을 해제하지 않았다. 현지어 사람 검수·작은 화면/큰 글자·결제/공유·최종 RC 촬영·스토어 저장/업로드도 남아 있다.
+- 에뮬레이터 재시도(2026-08-28 21:24 JST, `16b0aa1`): iOS `simctl`은 CoreSimulator 연결/로그 접근 거부, Android `adb devices`는 로컬 listener 권한 거부로 실패했다. `hantap_test` AVD 등록만 확인했으며 앱 빌드·설치·UI/계측 실행은 시작하지 못했다. 접속 가능한 실행 환경이 필요하다. 실패/미실행 증빙: `release/evidence/16b0aa1aa93481638df361a3ef9d6f9f6977819a.json`.
 - 배포 호환: 구버전 앱은 es/de/fr locale 키를 거부하므로 새 카탈로그는 별도 namespace로 게시해야 한다. 기존 URL·실제 앱 배포 설정은 변경하지 않았다. 새 번역이 든 파일은 받는 앱 업데이트가 필요하다.
 - 소유권: 로컬 우선 요청에 따른 독립 clone 예외다. 실제 Issue 없이 claim metadata를 만들지 않았으며 strict workspace doctor의 소유권 gate와 CI/리뷰를 통과했다고 기록하지 않는다. PR #70의 일회성 CI 예외는 재사용하지 않는다.
 - 인계: `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`, `release/language_expansion_store_draft.json`, `artifacts/language-review/README.md`. 복합 수량 문구·편집 언어 UX·지역별 포맷은 후속 개선이며 Android 백그라운드 알림 언어는 기기 확인 전이다.

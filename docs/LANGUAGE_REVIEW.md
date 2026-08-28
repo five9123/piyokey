@@ -42,3 +42,18 @@ ja/en/es/de/fr UI 리소스, 공용 콘텐츠 사전 627개 의미 쌍, 공식 �
 - 기존 한국어 목표·ID·ja/en/ko 값·순서를 보존한 덱 snapshot 67개와 catalog 2개 비교 통과. 기존 MP3·벡터·영어 번역 원본 585개 파일도 byte 일치.
 
 로그와 환경 한정 실행기는 `artifacts/language-review/`에 보존한다. 소스 재현 명령은 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따르고, 새 commit SHA의 증빙과 위 미완료 gate를 함께 인계한다.
+
+## 시뮬레이터·에뮬레이터 실행 요청 — 2026-08-28 21:24 JST
+
+사용자 요청에 따라 `16b0aa1` clean 후보에서 기기 연결을 다시 시도했다. **앱 테스트는 실행하지 못했으며 통과로 처리하지 않는다.**
+
+| 실제 실행한 명령 | 결과 |
+|---|---|
+| `xcrun simctl list devices available --json` | exit 1. CoreSimulatorService 연결 무효, 로그 접근 `Operation not permitted`, 기기 목록 접근 실패 |
+| Android SDK `adb devices -l` | exit 1. ADB 서버의 smartsocket listener 생성 `Operation not permitted` |
+| Android SDK `emulator -list-avds` | exit 0. `hantap_test` 등록 확인. 부팅/앱 실행 확인은 아님 |
+| Python 3.12 `tools/workspace_doctor.py --strict` | Python gate 통과, 기존 Issue 소유권 미등록 gate 실패. 원격 작업은 하지 않음 |
+
+이 실행 환경은 추가 실행 권한을 요청할 수 없다. CoreSimulator 및 ADB 접근이 허용된 환경이 필요하며, 접근 거부를 다른 실행 도구로 우회하거나 보호 설정을 변경하지 않았다. 실패 증빙은 `release/evidence/16b0aa1aa93481638df361a3ef9d6f9f6977819a.json`이다.
+
+재개 시 기존 iOS `AppSettingsTests`, `RetentionStoreTests`와 UI의 `testSpanishDeviceLanguageSwitchAndPersistence`, `testGermanAndFrenchLanguageSelectionSurvivesRelaunch`, `testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice`, `testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable`를 우선 실행한다. Android는 `M6SettingsInstrumentedTest`, `M3DiscoveryFlowInstrumentedTest`, `R11DeckMakerEditorInstrumentedTest`, `M5RetentionInstrumentedTest`, `AndroidReleasePolishInstrumentedTest`를 사용하되, 이 기존 suite만으로 신규 언어별 화면 검증이 끝나지는 않는다. es/de/fr 각각 선택·재실행·뜻/검색/편집·좁은 화면/큰 글자와 알림 언어를 별도로 확인하고 화면 증거를 남긴다. 실제 하드웨어의 알림 시각·성능·구매 gate는 에뮬레이터 통과와 구분한다.
