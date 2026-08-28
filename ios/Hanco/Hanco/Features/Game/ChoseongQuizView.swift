@@ -1046,8 +1046,15 @@ enum ChoseongTypingInputOutcome: Equatable {
   case completed(ChoseongTypingCompletion)
 }
 
+enum PronunciationHintUse: Equatable {
+  case firstUse(answer: DeckItem)
+  case replay(answer: DeckItem)
+}
+
 @MainActor
 final class ChoseongTypingViewModel: ObservableObject {
+  static let pronunciationHintLimit = 3
+
   enum Phase: Equatable {
     case ready
     case running
@@ -1082,6 +1089,9 @@ final class ChoseongTypingViewModel: ObservableObject {
   @Published private(set) var shouldAnimateSyllableJoin = false
   @Published private(set) var isHintVisible = false
   @Published private(set) var isHintPenaltyApplied = false
+  @Published private(set) var pronunciationHintsRemaining =
+    ChoseongTypingViewModel.pronunciationHintLimit
+  @Published private(set) var didUsePronunciationHintForCurrentRound = false
   @Published private(set) var totalAcceptedInputCount = 0
 
   private var acceptedKeys: [Character] = []
@@ -1150,7 +1160,27 @@ final class ChoseongTypingViewModel: ObservableObject {
   func useHint(shouldPenalize: Bool = true) {
     guard phase == .running, !isRoundComplete else { return }
     isHintVisible = true
-    isHintPenaltyApplied = shouldPenalize
+    isHintPenaltyApplied = isHintPenaltyApplied || shouldPenalize
+  }
+
+  var canUsePronunciationHint: Bool {
+    phase == .running && !isRoundComplete
+      && (didUsePronunciationHintForCurrentRound || pronunciationHintsRemaining > 0)
+  }
+
+  @discardableResult
+  func usePronunciationHint() -> PronunciationHintUse? {
+    guard phase == .running, !isRoundComplete else { return nil }
+    if didUsePronunciationHintForCurrentRound {
+      return .replay(answer: currentRound.answer)
+    }
+    guard pronunciationHintsRemaining > 0 else { return nil }
+
+    pronunciationHintsRemaining -= 1
+    didUsePronunciationHintForCurrentRound = true
+    isHintPenaltyApplied = true
+    combo = 0
+    return .firstUse(answer: currentRound.answer)
   }
 
   @discardableResult
@@ -1276,6 +1306,7 @@ final class ChoseongTypingViewModel: ObservableObject {
     imperfectItemCount = 0
     mistakeCount = 0
     totalAcceptedInputCount = 0
+    pronunciationHintsRemaining = Self.pronunciationHintLimit
     activeElapsed = 0
     questionStartedAt = 0
     feedbackRevision = 0
@@ -1360,6 +1391,7 @@ final class ChoseongTypingViewModel: ObservableObject {
     currentWordMistakenJamoIndices.removeAll(keepingCapacity: true)
     isHintVisible = false
     isHintPenaltyApplied = false
+    didUsePronunciationHintForCurrentRound = false
     feedback = .ready
   }
 
@@ -1738,6 +1770,7 @@ struct ChoseongTypingView: View {
         .transition(.opacity)
       }
       hint
+      pronunciationHintButton
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(.horizontal, 22)
@@ -1840,6 +1873,8 @@ struct ChoseongTypingView: View {
         .font(.caption.weight(.semibold))
         .foregroundStyle(AppPalette.mutedInk)
         .multilineTextAlignment(.center)
+
+      pronunciationHintButton
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(.horizontal, 22)
@@ -1862,6 +1897,37 @@ struct ChoseongTypingView: View {
       calm: true
     )
     .accessibilityIdentifier("\(mode.accessibilityNamespace).mascot")
+  }
+
+  private var pronunciationHintButton: some View {
+    Button(action: usePronunciationHint) {
+      Label(pronunciationHintTitle, systemImage: "speaker.wave.2.fill")
+        .font(.caption.weight(.bold))
+        .foregroundStyle(
+          viewModel.canUsePronunciationHint ? AppPalette.accent : AppPalette.mutedInk
+        )
+        .padding(.horizontal, 13)
+        .padding(.vertical, 8)
+        .background(AppPalette.accentSoft.opacity(0.46), in: Capsule())
+    }
+    .buttonStyle(.plain)
+    .disabled(!viewModel.canUsePronunciationHint)
+    .accessibilityIdentifier("\(mode.accessibilityNamespace).pronunciation_hint")
+  }
+
+  private var pronunciationHintTitle: String {
+    let key: String
+    if viewModel.didUsePronunciationHintForCurrentRound {
+      key = "game.pronunciation_hint.replay_format"
+    } else if viewModel.pronunciationHintsRemaining > 0 {
+      key = "game.pronunciation_hint.use_format"
+    } else {
+      key = "game.pronunciation_hint.exhausted_format"
+    }
+    return String(
+      format: AppLocalization.string(key),
+      viewModel.pronunciationHintsRemaining
+    )
   }
 
   @ViewBuilder
@@ -2119,7 +2185,7 @@ struct ChoseongTypingView: View {
       withAnimation(.linear(duration: 0.24)) { shakeStep += 1 }
     case .completed(let completion):
       companion.recordTypedJamo(1)
-      if !completion.resolution.hadMistake,
+      if !completion.usedHint, !completion.resolution.hadMistake,
         reviewDeck.recordPerfect(itemId: completion.answer.id, sourceDeckId: deck.deckId)
           == .graduated
       {
@@ -2155,11 +2221,15 @@ struct ChoseongTypingView: View {
   }
 
   private func collectReviewItem(_ item: DeckItem, jamoIndex: Int) {
+    collectReviewItem(item, mistakenJamoIndices: [jamoIndex])
+  }
+
+  private func collectReviewItem(_ item: DeckItem, mistakenJamoIndices: Set<Int>) {
     let resolution = SessionItemResolution(
       itemIndex: deck.items.firstIndex(where: { $0.id == item.id }) ?? 0,
       hadMistake: true,
       mistakeCount: 1,
-      mistakenJamoIndices: [jamoIndex]
+      mistakenJamoIndices: mistakenJamoIndices
     )
     let id = ReviewDeckItem.id(itemId: item.id, sourceDeckId: deck.deckId)
     if let index = sessionReviewItems.firstIndex(where: { $0.id == id }) {
@@ -2438,6 +2508,29 @@ struct ChoseongTypingView: View {
     guard mode == .dictation, viewModel.phase == .running else { return }
     if case .completed = viewModel.feedback { return }
     let answer = viewModel.currentRound.answer
+    targetSpeechSynthesizer.speak(answer.ko, bundledAudioPath: answer.audio)
+  }
+
+  private func usePronunciationHint() {
+    guard mode == .choseong || mode == .wordMatch,
+      let hintUse = viewModel.usePronunciationHint()
+    else { return }
+
+    let answer: DeckItem
+    switch hintUse {
+    case .firstUse(let firstAnswer):
+      answer = firstAnswer
+      reviewDeck.recordMistake(item: answer, sourceDeckId: deck.deckId)
+      collectReviewItem(answer, mistakenJamoIndices: [])
+      reviewDeck.flush()
+      let announcement = String(
+        format: AppLocalization.string("game.pronunciation_hint.used_announcement_format"),
+        viewModel.pronunciationHintsRemaining
+      )
+      UIAccessibility.post(notification: .announcement, argument: announcement)
+    case .replay(let replayAnswer):
+      answer = replayAnswer
+    }
     targetSpeechSynthesizer.speak(answer.ko, bundledAudioPath: answer.audio)
   }
 

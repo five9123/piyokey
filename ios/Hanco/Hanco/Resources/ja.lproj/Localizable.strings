@@ -621,6 +621,10 @@
 "choseong.initials.title" = "この初声はどの単語？";
 "choseong.hint.used" = "意味ヒント";
 "choseong.hint.show" = "意味ヒントを見る";
+"game.pronunciation_hint.use_format" = "発音を聞く・残り%d問・−30点";
+"game.pronunciation_hint.replay_format" = "もう一度聞く・残り%d問";
+"game.pronunciation_hint.exhausted_format" = "発音ヒント終了・残り%d問";
+"game.pronunciation_hint.used_announcement_format" = "発音ヒントを使いました。残り%d問です。コンボをリセットし、30点減点します。";
 "choseong.feedback.ready" = "初声から答えを考えてタイピングしよう";
 "choseong.feedback.correct" = "正解！ +%d点";
 "choseong.feedback.incorrect" = "正解は「%@」";
