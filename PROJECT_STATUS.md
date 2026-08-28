@@ -3,7 +3,7 @@
 마지막 갱신: 2026-08-28 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 운영 기준선: 프로젝트 재정비 PR #60·#61 병합
+최근 통합 기준선: 기존 작업 8개와 스페인어 UI를 포함한 PR #70
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -21,22 +21,29 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #67 / PR #70 스페인어 UI·기존 작업 통합 | Blocked (병합 승인) | `codex/67-spanish-ui` / `/private/tmp/piyokey-issue67-spanish` | 기존 PR 8개를 통합하고 ja/en/es UI·학습 원본 보존 검증 완료. CI/리뷰 또는 이번 병합의 사용자 예외 승인 대기; main 미병합 |
-| #68 / PR #69 미커밋 스토어·Pro 작업 보존 | Verify (Draft) | `codex/68-preserve-store-work` / `/private/tmp/piyokey-issue68-preserved` | 원본 dirty 파일 35개와 보존본의 바이트 일치 확인. PR #70에 통합 완료; main 병합 대기 |
-| #65 / PR #66 한국어 UI 제거 | Verify (Draft) | `codex/65-remove-korean-ui` / `/private/tmp/piyokey-issue65-remove-korean-ui` | 한국어 UI 제거·기존 ko 설정 영어 전환을 PR #70의 ja/en/es 범위에 통합. 학습 콘텐츠 보존; main 병합 대기 |
-| #63 / PR #64 사용자 덱 `.typedeck` 확장자 | Blocked | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | PR #70 통합·회귀 완료; CI·검토 또는 사용자 예외 승인 후 병합 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
-| #10 → #46 → #17 / PR #18·#49·#50 iPad 스택 | Blocked (병합 승인) | 전용 iPad·stack worktree | 최신 main 충돌 해결·PR #70 통합·iOS 회귀 완료. 사용자 확인 실기기 증거는 유지; 원격 main 병합 승인 대기 |
-| #9 / PR #14 게임 음성 힌트 | Blocked (병합 승인) | `codex/9-game-audio-hints` / `/private/tmp/piyokey-issue9-hints` | 최신 main 충돌 해결·PR #70 통합·힌트 예산 UI 검증 완료; 원격 main 병합 대기 |
+
+## 최근 소스 통합
+
+아래 완료 상태는 이 문서가 포함된 PR #70의 원격 `main` 반영을 기준으로 한다. 2026-08-28 사용자가 이번 작업에 한해 로컬 검증 기반 예외 병합을 명시적으로 승인했다. GitHub Actions 활성화·CI 통과·별도 리뷰 승인을 새로 받은 것으로 기록하지 않는다.
+
+| Issue/PR | 소스 상태 | 검증·보존 범위 |
+|---|---|---|
+| #67 / PR #70 스페인어 UI·기존 작업 통합 | main 반영 | ja/en/es UI, 지역 언어 인식·전환·저장, iOS·Android 회귀 |
+| #68 / PR #69 스토어·Pro 작업 보존 | main 반영 | 원본 dirty 파일 35개와 보존본 바이트 일치; 스토어 업로드는 별도 gate |
+| #65 / PR #66 한국어 UI 제거 | main 반영 | 기존 ko 설정 영어 전환·학습 원본 보존 |
+| #63 / PR #64 `.typedeck` 확장자 | main 반영 | 공용·iOS·Android 문서 흐름 통합 |
+| #10·#46·#17 / PR #18·#49·#50 iPad·입력 스택 | main 반영 | 프로젝트 충돌 해결·회전·큰 글자·세션 입력 회귀; 이전 사용자 실기기 확인 보존 |
+| #9 / PR #14 게임 음성 힌트 | main 반영 | 공통 힌트 예산 UI 검증 |
+| #12 / PR #15 물리 키보드 | main 반영 | 이전 사용자 실기기 검증 확인·입력 회귀 |
 
 플랫폼별 동시 `In Progress`는 하나를 원칙으로 하며, 공용 충돌 파일은 한 작업만 소유한다.
 
-#65 단독 단계의 과거 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 당시 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en을 제공했다. 현재 #67 통합 APK와 iOS 번들은 ja/en/es를 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두고 #68에 별도 보존한 뒤 PR #70에 통합했다. 원격 main 병합·실기기 설치·스토어 배포는 하지 않았다.
+#65 단독 단계의 과거 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 당시 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en을 제공했다. 현재 #67 통합 APK와 iOS 번들은 ja/en/es를 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두고 #68에 별도 보존한 뒤 PR #70에 통합했다. PR #70으로 원격 main에 반영했으며 이번 작업에서 실기기 설치·스토어 배포는 하지 않았다.
 
 ## 열린 출시 gate
 
 - #7: Game Center 계약 전체 점검.
-- #12 / PR #15: Bluetooth·물리 키보드 iOS 실기기 검증은 2026-08-28 사용자 확인으로 완료. 소스 PR의 최신 main 충돌 해결·PR #70 통합·관련 입력 회귀는 완료. CI·검토 또는 사용자 예외 승인에 따른 원격 main 병합은 미완료.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
@@ -59,15 +66,15 @@
 ## 기존 작업 병합 점검 — 2026-08-28
 
 - #63은 스토어 미디어·지원 URL·별도 Pro 변경과 분리했다. 검증 대상 `d788a78659831188542a31208bcbe1af540129db`, 증빙 `release/evidence/d788a78659831188542a31208bcbe1af540129db.json`: Python 78개, SwiftPM 42개, iOS 문서 흐름 8개, Android 관련 단위 테스트·앱 Kotlin 컴파일, repository preflight·fixture 재생성 통과.
-- 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니며, 설정 변경이나 CI 우회 병합을 하지 않았다. 활성화·계정 상태 확인 후 최신 PR HEAD에서 검증한다.
-- 사용자가 대화에서 iPad·물리 키보드 실기기 검증 완료를 확인했다(2026-08-28). #10/#12/#46/#17의 해당 수동 검증은 사용자 확인 완료로 반영하며, 에이전트가 새로 수행한 테스트로 기록하지 않는다. #18 → #49 → #50 및 #15는 최신 main 충돌 해결·PR #70 통합·로컬 회귀를 마쳤으며, CI/리뷰 또는 사용자 예외 승인 뒤 병합한다. 이 확인을 Android #19, 리마인더 #58의 현지 20시 수신, 결제·스토어·권리 gate 완료로 확대하지 않는다. PR #14의 최신 main 충돌을 해결했고 기존 checkpoint의 오래된 StoreKit·운영 문서는 최신 main 기준을 유지했다.
+- 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니다. 사용자가 2026-08-28 이번 통합의 예외 병합을 승인했으며, 설정·보호 규칙은 변경하지 않았다. 이후 작업의 CI 요건은 그대로 유지한다.
+- 사용자가 대화에서 iPad·물리 키보드 실기기 검증 완료를 확인했다(2026-08-28). #10/#12/#46/#17의 해당 수동 검증은 사용자 확인 완료로 반영하며, 에이전트가 새로 수행한 테스트로 기록하지 않는다. #18 → #49 → #50 및 #15는 최신 main 충돌 해결·로컬 회귀를 마치고 사용자 예외 승인에 따라 PR #70으로 main에 반영했다. 이 확인을 Android #19, 리마인더 #58의 현지 20시 수신, 결제·스토어·권리 gate 완료로 확대하지 않는다. PR #14의 최신 main 충돌을 해결했고 기존 checkpoint의 오래된 StoreKit·운영 문서는 최신 main 기준을 유지했다.
 
 ## #67 통합 검증
 
 검증 소스: `0d273c341c65b073a8ae5d3ec8b74617e59a82ee`. 증빙: `release/evidence/0d273c341c65b073a8ae5d3ec8b74617e59a82ee.json`. 이후 커밋은 현황·증빙만 변경하며 이전 앱 소스의 테스트 재사용 범위도 증빙에 명시했다.
 
-- 기존 PR #14·#15·#18·#49·#50·#64·#66·#69의 원격 HEAD가 모두 PR #70 통합 HEAD의 ancestor임을 확인했다. 원격 `main`은 `7dc2d5562f09c82729fb618f1e2b9feac8a156e6` 그대로다.
+- 기존 PR #14·#15·#18·#49·#50·#64·#66·#69의 원격 HEAD가 모두 PR #70 통합 HEAD의 ancestor임을 확인했다. 기준 `main` `7dc2d5562f09c82729fb618f1e2b9feac8a156e6` 위에 merge commit으로 반영 보존한다. 최종 merge SHA는 PR #70 및 `git rev-parse origin/main`에서 확인한다.
 - Python 88개·repository preflight, SwiftPM 43개, Android 관련 단위 66개·Debug assemble/lint·앱/연습 instrumentation 소스 컴파일을 통과했다. Android 기기 instrumentation 실행은 하지 않았다.
 - iPhone 통합 앱 단위 358개와 관련 UI 6개를 통과했다. 마지막 앱 변경 `b5ebf09`에서 단위 358개·언어/세션 UI 2개를 재검증했다. 이후 변경은 UI 테스트의 iPad 스크롤 범위 판정뿐이며 iPhone·iPad 스페인어 전환/저장 재검증을 통과했다. iPad 회전·세션 보존·접근성 큰 글자 UI 3개도 통과했다.
 - iOS 번들·Android APK에 ja/en/es 리소스가 포함됨을 확인했다. `shared/`·Swift 공용 엔진·Android DeckKit은 #66 대비 변경이 없다. 스페인어 UI 학습 뜻·읽기·덱 편집은 기존 영어를 사용한다.
-- Actions `enabled=false`이며 CI/리뷰 규칙·보호 설정을 변경하지 않았다. PR #70은 Draft로 유지하며 이번 요청의 예외 병합 승인을 기다린다. 스토어/실기기/결제/권리 gate는 별도로 남아 있다.
+- Actions `enabled=false`이며 CI/리뷰 규칙·보호 설정을 변경하지 않았다. 사용자의 이번 요청에 대한 명시적 예외 승인으로 PR #70을 병합한다. 이 예외를 이후 PR이나 출시 gate에 확대하지 않는다. 스토어/실기기/결제/권리 gate는 별도로 남아 있다.
