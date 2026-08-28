@@ -3,7 +3,7 @@
     "eula" : "",
     "policies" : [
       {
-        "locale" : "ja_JP",
+        "locale" : "ja",
         "policyText" : "",
         "policyURL" : ""
       }
@@ -20,23 +20,23 @@
       "internalID" : "D3C4A1F1",
       "localizations" : [
         {
-          "description" : "デッキの作成・編集をずっと利用できます",
-          "displayName" : "マイデッキメーカー",
-          "locale" : "ja_JP"
+          "description" : "ユーザーデッキ無制限と作成・編集をずっと利用",
+          "displayName" : "ピヨキー pro",
+          "locale" : "ja"
         },
         {
-          "description" : "Create and edit decks with lifetime access.",
-          "displayName" : "My Deck Maker",
+          "description" : "Unlimited user decks, creation, and editing.",
+          "displayName" : "typee pro",
           "locale" : "en_US"
         },
         {
-          "description" : "덱 생성과 편집을 평생 이용할 수 있어요",
-          "displayName" : "내 덱 만들기",
-          "locale" : "ko_KR"
+          "description" : "사용자 덱 무제한 보관과 생성·편집을 평생 이용",
+          "displayName" : "피요키 프로",
+          "locale" : "ko"
         }
       ],
       "productID" : "app.piyokey.deckmaker.lifetime",
-      "referenceName" : "Deck Maker Lifetime",
+      "referenceName" : "typee pro Lifetime",
       "type" : "NonConsumable"
     }
   ],
@@ -46,7 +46,7 @@
     "_billingIssuesEnabled" : false,
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_locale" : "ja_JP",
+    "_locale" : "ja",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "JPN",
     "_storeKitErrors" : [
@@ -58,7 +58,7 @@
 
   ],
   "version" : {
-    "major" : 4,
+    "major" : 5,
     "minor" : 0
   }
 }

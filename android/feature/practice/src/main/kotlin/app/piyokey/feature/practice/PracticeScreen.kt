@@ -29,9 +29,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,21 +53,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.piyokey.core.session.PracticeFeedback
+import app.piyokey.core.session.ActiveDurationClock
 import app.piyokey.core.session.PracticeSessionEffect
 import app.piyokey.core.session.PracticeSessionEvent
 import app.piyokey.core.session.PracticeSessionReducer
 import app.piyokey.core.session.PracticeSessionState
+import app.piyokey.core.session.PracticeSessionCheckpoint
 import app.piyokey.core.session.TargetSyllableState
+import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
+import app.piyokey.core.platform.PiyokeySoundEngine
+import app.piyokey.core.platform.PronunciationPlayer
+import app.piyokey.core.platform.SoundCue
+import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.KeySoundStyle
+import app.piyokey.core.settings.PiyoGrowthStage
+import app.piyokey.core.settings.PiyoSessionAppearance
+import app.piyokey.core.settings.PracticePromptField
+import app.piyokey.core.settings.PracticePromptOrder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -70,22 +94,111 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+data class PracticePrompt(
+  val target: String,
+  val meaning: String? = null,
+  val reading: String? = null,
+  val audio: String? = null,
+  val isBundledFixedContent: Boolean = true,
+)
+
+data class PracticeDisplayOptions(
+  val showsTarget: Boolean = true,
+  val showsMeaning: Boolean = true,
+  val showsReading: Boolean = false,
+  val promptOrder: PracticePromptOrder = PracticePromptOrder.TARGET_MEANING_READING,
+  val showsJamo: Boolean = true,
+  val showsComposition: Boolean = true,
+  val showsMascot: Boolean = true,
+)
+
 /** Self-contained M2 entry point used by the Android app shell. */
 @Composable
 fun PracticeRoute(
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
+  targets: List<String>? = null,
+  prompts: List<PracticePrompt>? = null,
+  initialCheckpoint: PracticeSessionCheckpoint? = null,
+  inputMode: InputMode = InputMode.BUILTIN,
+  inputModeLocked: Boolean = false,
+  onInputModeChange: (InputMode) -> Unit = {},
+  onOpenIMEHelp: () -> Unit = {},
+  displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  soundEffectsEnabled: Boolean = true,
+  keySoundStyle: KeySoundStyle = KeySoundStyle.DEFAULT,
+  autoPronounce: Boolean = false,
+  onCheckpointChanged: (PracticeSessionCheckpoint) -> Unit = {},
+  onSessionCompleted: (PracticeSessionState, activeDurationMillis: Long) -> Unit = { _, _ -> },
 ) {
-  val targets = listOf(
+  val sampleTargets = listOf(
     stringResource(R.string.practice_sample_target_1),
     stringResource(R.string.practice_sample_target_2),
     stringResource(R.string.practice_sample_target_3),
   )
-  var state by remember(targets) { mutableStateOf(PracticeSessionReducer.initialState(targets)) }
-  var scheduledAdvance by remember { mutableStateOf<PracticeSessionEffect.ScheduleAdvance?>(null) }
+  val resolvedTargets = targets?.takeIf(List<String>::isNotEmpty) ?: sampleTargets
+  val resolvedPrompts = prompts
+    ?.takeIf { it.size == resolvedTargets.size && it.map(PracticePrompt::target) == resolvedTargets }
+    ?: resolvedTargets.map(::PracticePrompt)
+  var state by remember(resolvedTargets, initialCheckpoint) {
+    mutableStateOf(
+      initialCheckpoint?.let { PracticeSessionReducer.restoreState(resolvedTargets, it) }
+        ?: PracticeSessionReducer.initialState(resolvedTargets),
+    )
+  }
+  var scheduledAdvance by remember(state.targets) {
+    mutableStateOf(
+      state.pendingTransition?.let {
+        PracticeSessionEffect.ScheduleAdvance(it.token, it.destination, it.delayMillis)
+      },
+    )
+  }
+  var activeClock by remember(resolvedTargets, initialCheckpoint) {
+    mutableStateOf(
+      ActiveDurationClock(initialCheckpoint?.activeDurationMillis ?: 0L)
+        .start(android.os.SystemClock.elapsedRealtime()),
+    )
+  }
+  val lifecycleOwner = LocalLifecycleOwner.current
+  val context = LocalContext.current
+  val soundEngine = remember { PiyokeySoundEngine(context) }
+  val pronunciationPlayer = remember { PronunciationPlayer(context, soundEngine::setSuppressed) }
+
+  LaunchedEffect(soundEffectsEnabled) { soundEngine.setEnabled(soundEffectsEnabled) }
+
+  fun activeDuration(): Long = activeClock.duration(android.os.SystemClock.elapsedRealtime())
+
+  val latestCheckpointCallback = rememberUpdatedState(onCheckpointChanged)
+  DisposableEffect(lifecycleOwner, state) {
+    val observer = LifecycleEventObserver { _, event ->
+      when (event) {
+        Lifecycle.Event.ON_START -> activeClock = activeClock.start(android.os.SystemClock.elapsedRealtime())
+        Lifecycle.Event.ON_STOP -> {
+          activeClock = activeClock.pause(android.os.SystemClock.elapsedRealtime())
+          pronunciationPlayer.stop()
+          soundEngine.release()
+          latestCheckpointCallback.value(PracticeSessionReducer.checkpoint(state, activeClock.accumulatedMillis))
+        }
+        else -> Unit
+      }
+    }
+    lifecycleOwner.lifecycle.addObserver(observer)
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+  }
 
   val dispatch: (PracticeSessionEvent) -> Unit = { event ->
     val reduction = PracticeSessionReducer.reduce(state, event)
+    if (soundEffectsEnabled) {
+      when {
+        reduction.state.feedback is PracticeFeedback.Incorrect && reduction.state.feedbackRevision != state.feedbackRevision ->
+          soundEngine.play(SoundCue.MISTAKE, keySoundStyle)
+        reduction.state.feedback == PracticeFeedback.Complete && reduction.state.feedbackRevision != state.feedbackRevision ->
+          soundEngine.play(SoundCue.CORRECT, keySoundStyle)
+        event is PracticeSessionEvent.Key -> soundEngine.play(SoundCue.KEY, keySoundStyle)
+        event is PracticeSessionEvent.Backspace -> soundEngine.play(SoundCue.BACKSPACE, keySoundStyle)
+      }
+    }
     state = reduction.state
     val newSchedule = reduction.effects
       .filterIsInstance<PracticeSessionEffect.ScheduleAdvance>()
@@ -95,6 +208,7 @@ fun PracticeRoute(
       reduction.state.pendingTransition == null -> null
       else -> scheduledAdvance
     }
+    latestCheckpointCallback.value(PracticeSessionReducer.checkpoint(state, activeDuration()))
   }
   val latestDispatch = rememberUpdatedState(dispatch)
 
@@ -104,10 +218,40 @@ fun PracticeRoute(
     latestDispatch.value(PracticeSessionEvent.Advance(schedule.transitionToken))
   }
 
+  val latestCompletion = rememberUpdatedState(onSessionCompleted)
+  LaunchedEffect(state.isResultReady) {
+    if (state.isResultReady) latestCompletion.value(state, activeDuration())
+  }
+
+  LaunchedEffect(state.currentTargetIndex, autoPronounce) {
+    if (autoPronounce) {
+      val prompt = resolvedPrompts[state.currentTargetIndex]
+      pronunciationPlayer.play(prompt.audio, prompt.target, prompt.isBundledFixedContent)
+    }
+  }
+
+  DisposableEffect(Unit) {
+    onDispose {
+      pronunciationPlayer.close()
+      soundEngine.close()
+    }
+  }
+
   PracticeScreen(
     state = state,
     onEvent = dispatch,
     keyboardOptions = keyboardOptions,
+    prompts = resolvedPrompts,
+    inputMode = inputMode,
+    inputModeLocked = inputModeLocked,
+    onInputModeChange = onInputModeChange,
+    onOpenIMEHelp = onOpenIMEHelp,
+    displayOptions = displayOptions,
+    piyoAppearance = piyoAppearance,
+    onPronounce = {
+      val prompt = resolvedPrompts[state.currentTargetIndex]
+      pronunciationPlayer.play(prompt.audio, prompt.target, prompt.isBundledFixedContent)
+    },
     modifier = modifier,
   )
 }
@@ -118,6 +262,14 @@ fun PracticeScreen(
   onEvent: (PracticeSessionEvent) -> Unit,
   modifier: Modifier = Modifier,
   keyboardOptions: PracticeKeyboardOptions = PracticeKeyboardOptions(),
+  prompts: List<PracticePrompt> = state.targets.map(::PracticePrompt),
+  inputMode: InputMode = InputMode.BUILTIN,
+  inputModeLocked: Boolean = false,
+  onInputModeChange: (InputMode) -> Unit = {},
+  onOpenIMEHelp: () -> Unit = {},
+  displayOptions: PracticeDisplayOptions = PracticeDisplayOptions(),
+  piyoAppearance: PiyoSessionAppearance = PiyoSessionAppearance(PiyoGrowthStage.CHICK, null),
+  onPronounce: () -> Unit = {},
 ) {
   val shake = remember { Animatable(0f) }
   val errorFlash = remember { Animatable(0f) }
@@ -198,11 +350,16 @@ fun PracticeScreen(
   Box(
     modifier = modifier
       .fillMaxSize()
-      .background(PracticeColors.Background)
+      .testTag("practice-screen")
+      .background(MaterialTheme.colorScheme.background)
       .windowInsetsPadding(WindowInsets.safeDrawing),
   ) {
     Column(Modifier.fillMaxSize()) {
-      PracticeProgressHeader(state)
+      PracticeProgressHeader(state, inputMode, inputModeLocked, onInputModeChange)
+
+      if (inputMode == InputMode.OS_IME && !hasKoreanInputMethod(LocalContext.current)) {
+        IMEGuidanceBanner(onOpenIMEHelp)
+      }
 
       Column(
         modifier = Modifier
@@ -213,23 +370,37 @@ fun PracticeScreen(
       ) {
         TargetCard(
           state = state,
+          prompt = prompts.getOrElse(state.currentTargetIndex) { PracticePrompt(state.currentTarget) },
+          displayOptions = displayOptions,
           errorFlash = errorFlash.value,
           shakeOffset = shake.value,
+          onPronounce = onPronounce,
         )
-        CompositionCard(
-          state = state,
-          assemblyScale = compositionScale.value,
-          joinProgress = joinProgress.value,
-          completionProgress = completionProgress.value,
-        )
+        if (displayOptions.showsComposition || displayOptions.showsMascot) {
+          CompositionCard(
+            state = state,
+            assemblyScale = compositionScale.value,
+            joinProgress = joinProgress.value,
+            completionProgress = completionProgress.value,
+            appearance = piyoAppearance.takeIf { displayOptions.showsMascot },
+          )
+        }
       }
 
-      DubeolsikKeyboard(
-        nextExpectedJamo = state.nextExpected,
-        onJamo = { onEvent(PracticeSessionEvent.Key(it)) },
-        onBackspace = { onEvent(PracticeSessionEvent.Backspace) },
-        options = keyboardOptions,
-      )
+      if (inputMode == InputMode.BUILTIN) {
+        DubeolsikKeyboard(
+          nextExpectedJamo = state.nextExpected,
+          onJamo = { onEvent(PracticeSessionEvent.Key(it)) },
+          onBackspace = { onEvent(PracticeSessionEvent.Backspace) },
+          options = keyboardOptions,
+        )
+      } else {
+        OSIMEInput(
+          visibleText = state.enteredText,
+          onEvent = onEvent,
+          modifier = Modifier.fillMaxWidth().height(1.dp),
+        )
+      }
     }
 
     CompletionSparkles(
@@ -248,7 +419,12 @@ fun PracticeScreen(
 }
 
 @Composable
-private fun PracticeProgressHeader(state: PracticeSessionState) {
+private fun PracticeProgressHeader(
+  state: PracticeSessionState,
+  inputMode: InputMode,
+  inputModeLocked: Boolean,
+  onInputModeChange: (InputMode) -> Unit,
+) {
   val totalJamoCount = state.targetJamoCounts.sum().coerceAtLeast(1)
   val progress = state.acceptedJamoCount.toFloat() / totalJamoCount.toFloat()
   val progressLabel = stringResource(
@@ -257,6 +433,7 @@ private fun PracticeProgressHeader(state: PracticeSessionState) {
     state.targets.size,
   )
 
+  var menuOpen by remember { mutableStateOf(false) }
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -272,8 +449,8 @@ private fun PracticeProgressHeader(state: PracticeSessionState) {
         .weight(1f)
         .height(8.dp)
         .clip(RoundedCornerShape(99.dp)),
-      color = PracticeColors.Accent,
-      trackColor = PracticeColors.Track,
+      color = MaterialTheme.colorScheme.primary,
+      trackColor = MaterialTheme.colorScheme.outlineVariant,
       strokeCap = StrokeCap.Round,
       gapSize = 0.dp,
       drawStopIndicator = {},
@@ -285,18 +462,54 @@ private fun PracticeProgressHeader(state: PracticeSessionState) {
         state.currentTargetIndex + 1,
         state.targets.size,
       ),
-      color = PracticeColors.MutedInk,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       fontSize = 13.sp,
       fontWeight = FontWeight.Bold,
     )
+    Box {
+      TextButton(
+        onClick = { if (!inputModeLocked) menuOpen = true },
+        enabled = !inputModeLocked,
+        modifier = Modifier.testTag("practice-input-mode"),
+      ) {
+        Text(if (inputMode == InputMode.BUILTIN) stringResource(R.string.practice_input_builtin_short) else stringResource(R.string.practice_input_os_short))
+      }
+      DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.practice_input_builtin)) },
+          onClick = { menuOpen = false; onInputModeChange(InputMode.BUILTIN) },
+        )
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.practice_input_os)) },
+          onClick = { menuOpen = false; onInputModeChange(InputMode.OS_IME) },
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun IMEGuidanceBanner(onOpenHelp: () -> Unit) {
+  Surface(
+    modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag("practice-ime-guidance"),
+    color = MaterialTheme.colorScheme.primaryContainer,
+    shape = RoundedCornerShape(14.dp),
+  ) {
+    Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+      Text(stringResource(R.string.practice_ime_missing), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
+      TextButton(onClick = onOpenHelp) { Text(stringResource(R.string.practice_ime_open_settings)) }
+    }
   }
 }
 
 @Composable
 private fun TargetCard(
   state: PracticeSessionState,
+  prompt: PracticePrompt,
+  displayOptions: PracticeDisplayOptions,
   errorFlash: Float,
   shakeOffset: Float,
+  onPronounce: () -> Unit,
 ) {
   val shape = RoundedCornerShape(24.dp)
   val progressDescription = stringResource(
@@ -304,6 +517,7 @@ private fun TargetCard(
     state.completedJamoCount.coerceAtMost(state.targetJamoSequence.size),
     state.targetJamoSequence.size,
   )
+  val pronunciationDescription = stringResource(R.string.practice_play_pronunciation)
 
   Surface(
     modifier = Modifier
@@ -313,7 +527,7 @@ private fun TargetCard(
         contentDescription = state.currentTarget
         stateDescription = progressDescription
       },
-    color = PracticeColors.Card,
+    color = MaterialTheme.colorScheme.surface,
     shape = shape,
     shadowElevation = 7.dp,
   ) {
@@ -325,13 +539,39 @@ private fun TargetCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(13.dp),
       ) {
-        TargetSyllableTrack(state)
-        JamoProgressTrack(state)
+        displayOptions.promptOrder.fields.forEach { field ->
+          when (field) {
+            PracticePromptField.TARGET -> if (displayOptions.showsTarget) TargetSyllableTrack(state)
+            PracticePromptField.MEANING -> if (displayOptions.showsMeaning && !prompt.meaning.isNullOrBlank()) {
+              Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(99.dp)) {
+                Text(prompt.meaning, Modifier.padding(horizontal = 12.dp, vertical = 7.dp), fontWeight = FontWeight.SemiBold)
+              }
+            }
+            PracticePromptField.READING -> if (displayOptions.showsReading && !prompt.reading.isNullOrBlank()) {
+              Text(prompt.reading, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+            }
+          }
+        }
+        if (displayOptions.showsJamo) JamoProgressTrack(state)
+      }
+      TextButton(
+        onClick = onPronounce,
+        modifier = Modifier.align(Alignment.TopEnd).size(48.dp).semantics {
+          contentDescription = pronunciationDescription
+        },
+        contentPadding = PaddingValues(0.dp),
+      ) {
+        PiyokeyIcon(
+          kind = PiyokeyIconKind.SPEAKER,
+          contentDescription = null,
+          modifier = Modifier.size(22.dp),
+          tint = MaterialTheme.colorScheme.primary,
+        )
       }
       Box(
         Modifier
           .matchParentSize()
-          .background(PracticeColors.Error.copy(alpha = errorFlash), shape),
+          .background(MaterialTheme.colorScheme.error.copy(alpha = errorFlash), shape),
       )
     }
   }
@@ -368,10 +608,10 @@ private fun TargetSyllableTrack(state: PracticeSessionState) {
           modifier = Modifier
             .size(fittedSize)
             .clip(RoundedCornerShape(13.dp))
-            .background(if (completed) PracticeColors.SuccessSoft else PracticeColors.TargetChip)
+            .background(if (completed) PracticeColors.SuccessSoft else MaterialTheme.colorScheme.surfaceVariant)
             .then(
               if (current) {
-                Modifier.border(2.dp, PracticeColors.Accent, RoundedCornerShape(13.dp))
+                Modifier.border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(13.dp))
               } else {
                 Modifier
               },
@@ -391,14 +631,14 @@ private fun TargetSyllableTrack(state: PracticeSessionState) {
                 .fillMaxWidth(0.56f)
                 .height(4.dp)
                 .background(
-                  PracticeColors.MutedInk.copy(alpha = 0.35f),
+                  MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
                   RoundedCornerShape(99.dp),
                 ),
             )
           } else {
             Text(
               text = unit.character,
-              color = if (completed) PracticeColors.SuccessInk else PracticeColors.Ink,
+              color = if (completed) PracticeColors.SuccessInk else MaterialTheme.colorScheme.onSurface,
               fontSize = textSize,
               fontWeight = FontWeight.Bold,
               textAlign = TextAlign.Center,
@@ -415,25 +655,27 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
   val listState = rememberLazyListState()
   val currentIndex = state.completedJamoCount.coerceAtMost(state.targetJamoSequence.lastIndex)
 
-  LaunchedEffect(state.currentTargetIndex, currentIndex) {
-    if (state.targetJamoSequence.isEmpty()) return@LaunchedEffect
-    listState.scrollToItem(currentIndex)
-    val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == currentIndex }
-      ?: return@LaunchedEffect
-    val viewportCenter = (
-      listState.layoutInfo.viewportStartOffset + listState.layoutInfo.viewportEndOffset
-      ) / 2
-    val itemCenter = item.offset + item.size / 2
-    listState.animateScrollBy((itemCenter - viewportCenter).toFloat())
-  }
-
   BoxWithConstraints(Modifier.fillMaxWidth()) {
-    val contentWidth = 36.dp * state.targetJamoSequence.size +
-      6.dp * (state.targetJamoSequence.size - 1).coerceAtLeast(0)
-    val edgePadding = if (contentWidth > maxWidth) {
+    val contentWidth = JamoTrackMetrics.contentWidthDp(state.targetJamoSequence.size).dp
+    val requiresAutoTracking = contentWidth > maxWidth
+    val edgePadding = if (requiresAutoTracking) {
       (maxWidth / 2 - 18.dp).coerceAtLeast(20.dp)
     } else {
       20.dp
+    }
+
+    LaunchedEffect(state.currentTargetIndex, currentIndex, requiresAutoTracking) {
+      if (state.targetJamoSequence.isEmpty() || !requiresAutoTracking) {
+        return@LaunchedEffect
+      }
+      listState.scrollToItem(currentIndex)
+      val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == currentIndex }
+        ?: return@LaunchedEffect
+      val viewportCenter = (
+        listState.layoutInfo.viewportStartOffset + listState.layoutInfo.viewportEndOffset
+        ) / 2
+      val itemCenter = item.offset + item.size / 2
+      listState.animateScrollBy((itemCenter - viewportCenter).toFloat())
     }
 
     LazyRow(
@@ -450,15 +692,15 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
           modifier = Modifier
             .size(36.dp)
             .clip(shape)
-            .background(if (completed) PracticeColors.Success else PracticeColors.JamoChip)
+            .background(if (completed) PracticeColors.Success else MaterialTheme.colorScheme.surfaceVariant)
             .then(
-              if (current) Modifier.border(2.dp, PracticeColors.Accent, shape) else Modifier
+              if (current) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, shape) else Modifier
             ),
           contentAlignment = Alignment.Center,
         ) {
           Text(
             text = if (jamo == ' ') "␣" else jamo.toString(),
-            color = if (completed) Color.White else PracticeColors.Ink,
+            color = if (completed) Color.White else MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
           )
@@ -468,19 +710,35 @@ private fun JamoProgressTrack(state: PracticeSessionState) {
   }
 }
 
+internal object JamoTrackMetrics {
+  private const val ChipWidthDp = 36f
+  private const val ItemSpacingDp = 6f
+
+  fun contentWidthDp(itemCount: Int): Float {
+    require(itemCount >= 0)
+    return ChipWidthDp * itemCount + ItemSpacingDp * (itemCount - 1).coerceAtLeast(0)
+  }
+
+  fun requiresAutoTracking(
+    itemCount: Int,
+    availableWidthDp: Float,
+  ): Boolean = contentWidthDp(itemCount) > availableWidthDp
+}
+
 @Composable
 private fun CompositionCard(
   state: PracticeSessionState,
   assemblyScale: Float,
   joinProgress: Float,
   completionProgress: Float,
+  appearance: PiyoSessionAppearance?,
 ) {
   val shape = RoundedCornerShape(24.dp)
   val cardColor = when (state.feedback) {
-    PracticeFeedback.Idle -> PracticeColors.Card
-    PracticeFeedback.Correct -> PracticeColors.CorrectCard
-    is PracticeFeedback.Incorrect -> PracticeColors.Card
-    PracticeFeedback.Complete -> PracticeColors.CompleteCard
+    PracticeFeedback.Idle -> MaterialTheme.colorScheme.surface
+    PracticeFeedback.Correct -> MaterialTheme.colorScheme.secondaryContainer
+    is PracticeFeedback.Incorrect -> MaterialTheme.colorScheme.surface
+    PracticeFeedback.Complete -> MaterialTheme.colorScheme.primaryContainer
   }
   val compositionLabel = stringResource(R.string.practice_composition_label)
   val placeholder = stringResource(R.string.practice_composition_placeholder)
@@ -509,17 +767,25 @@ private fun CompositionCard(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center,
     ) {
+      appearance?.let {
+        PiyoAvatar(
+          appearance = it,
+          contentDescription = stringResource(R.string.practice_piyo_accessibility),
+          modifier = Modifier.size(62.dp),
+        )
+        Spacer(Modifier.width(10.dp))
+      }
       Box(
         modifier = Modifier
           .size(76.dp)
           .scale(assemblyScale)
-          .background(PracticeColors.PreviewCircle, CircleShape)
-          .border(2.dp, PracticeColors.AccentSoft, CircleShape),
+          .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+          .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
         contentAlignment = Alignment.Center,
       ) {
         Text(
           text = preview,
-          color = PracticeColors.Ink,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
           fontSize = 33.sp,
           fontWeight = FontWeight.Bold,
           textAlign = TextAlign.Center,
@@ -539,7 +805,7 @@ private fun CompositionCard(
                 scaleY = incomingScale
               }
               .clearAndSetSemantics {},
-            color = PracticeColors.Accent,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -557,13 +823,17 @@ private fun CompositionCard(
       ) {
         Text(
           text = compositionLabel,
-          color = PracticeColors.MutedInk,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           fontSize = 12.sp,
           fontWeight = FontWeight.Medium,
         )
         Text(
           text = entered,
-          color = if (state.enteredText.isEmpty()) PracticeColors.MutedInk else PracticeColors.Ink,
+          color = if (state.enteredText.isEmpty()) {
+            MaterialTheme.colorScheme.onSurfaceVariant
+          } else {
+            MaterialTheme.colorScheme.onSurface
+          },
           fontSize = 22.sp,
           fontWeight = FontWeight.Bold,
           maxLines = 2,
@@ -579,13 +849,14 @@ private fun CompletionSparkles(
   modifier: Modifier = Modifier,
 ) {
   if (progress <= 0f || progress >= 1f) return
+  val primary = MaterialTheme.colorScheme.primary
   Canvas(modifier = modifier) {
     val eased = FastOutSlowInEasing.transform(progress)
     val center = Offset(size.width / 2f, size.height * 0.43f)
     val radius = size.minDimension * (0.05f + eased * 0.20f)
     val alpha = (1f - progress).coerceIn(0f, 1f)
     val colors = listOf(
-      PracticeColors.Accent,
+      primary,
       PracticeColors.SparkleYellow,
       PracticeColors.Success,
       PracticeColors.SparklePink,
@@ -610,22 +881,9 @@ private fun CompletionSparkles(
 }
 
 private object PracticeColors {
-  val Background = Color(0xFFFFF8F1)
-  val Card = Color(0xFFFFFFFF)
-  val TargetChip = Color(0xFFF3F0F8)
-  val JamoChip = Color(0xFFF0EDF5)
-  val PreviewCircle = Color(0xFFF5F0FF)
-  val Track = Color(0xFFE9E3F0)
-  val Accent = Color(0xFF7557FF)
-  val AccentSoft = Color(0xFFB9A8FF)
-  val Ink = Color(0xFF252032)
-  val MutedInk = Color(0xFF716A7B)
   val Success = Color(0xFF35B879)
   val SuccessSoft = Color(0xFFDDF7E9)
   val SuccessInk = Color(0xFF176A45)
-  val Error = Color(0xFFFF5D6C)
-  val CorrectCard = Color(0xFFF2FFF8)
-  val CompleteCard = Color(0xFFEFFFF6)
   val SparkleYellow = Color(0xFFFFC83D)
   val SparklePink = Color(0xFFFF7FB2)
 }

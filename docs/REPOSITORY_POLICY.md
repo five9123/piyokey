@@ -3,9 +3,10 @@
 ## Source layout
 
 PIYOKEY uses one private source monorepo. The existing `ios/` tree remains in
-place, and future ports are added at the repository root as `android/` and
-`web/`. Cross-platform contracts live under `shared/`; platform UI, storage,
-audio, input, and purchase integrations stay in their platform trees.
+place, the active Kotlin/Compose port lives under `android/`, and a future web
+port will live under `web/`. Cross-platform contracts live under `shared/`;
+platform UI, storage, audio, input, and purchase integrations stay in their
+platform trees.
 
 The Swift, Kotlin, and TypeScript Hangul engines are independent pure-function
 implementations. They must consume the same schemas, fixtures, and
@@ -39,6 +40,31 @@ versioned release attachment. The source repository keeps a small text manifest
 with version, checksum, provenance, and retrieval location when an external
 artifact is release-critical. GitHub Actions artifacts are temporary CI output,
 not the durable release archive.
+
+## Local verification mode
+
+GitHub Actions is disabled at the repository level. The workflow definitions
+under `.github/workflows/` remain in source control for possible future reuse,
+but no pull request or push may rely on them running.
+
+Every executable change still requires an issue, an issue-owned branch, and a
+pull request. Before requesting verification, the primary agent must run the
+smallest relevant local test set described by `AGENTS.md` and record all of the
+following in the issue or pull request:
+
+- the exact commands that were run and their results;
+- the commit that the results cover;
+- tests or manual gates that were not run and why;
+- any device, store, account, signing, or external-service gate still open.
+
+Local results are evidence for the tested commit only. They do not replace
+required user approval, real-device checks, store review, service-console
+verification, or release signing. A pull request stays in `Verify` until those
+applicable gates are resolved, and it is merged manually after approval.
+
+Re-enabling GitHub Actions requires explicit user approval plus confirmation of
+the account billing and Actions spending-limit behavior. Paid overage must not
+be enabled implicitly.
 
 ## Large-file policy
 

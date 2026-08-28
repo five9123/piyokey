@@ -70,7 +70,7 @@
 "practice.setup.input_mode" = "入力モードの初期設定";
 "practice.setup.input_mode_detail" = "単語・文章の練習とゲームで使うキーボード";
 "practice.setup.start" = "練習を始める";
-"practice.setup.session_note" = "入力モードは練習中にも切り替えられます。入力したところまでの進み具合はそのまま残ります。";
+"practice.setup.session_note" = "入力モードは練習中にも切り替えられます。内蔵キーボードの配列は開始時に固定されます。";
 
 "feedback.ready" = "光っているキーから入力してみよう";
 "feedback.correct" = "その調子！";
@@ -81,7 +81,25 @@
 "keyboard.backspace" = "一文字戻す";
 "keyboard.space" = "スペース";
 "keyboard.accessibility_label" = "韓国語キーボード";
+"keyboard.layout.title" = "内蔵キーボードの配列";
+"keyboard.layout.detail" = "チャプター5以降・自由練習・デッキ練習で使います。セッション開始時に固定されます。";
+"keyboard.layout.dubeolsik" = "2ボル式（標準）";
+"keyboard.layout.korean_10key" = "韓国語10キー（天地人式）";
+"keyboard.layout.korean_10key_help" = "子音は同じグループキーを繰り返しタップします。同じグループが続くときは→で区切り、母音はㅣ・ㆍ・ㅡを光る順に組み合わせます。";
+"keyboard.10key.accessibility_label" = "韓国語10キー、天地人式";
+"keyboard.10key.vertical" = "縦線、ㅣ";
+"keyboard.10key.dot" = "点、天地人の点";
+"keyboard.10key.horizontal" = "横線、ㅡ";
+"keyboard.10key.giyeok" = "ㄱ、ㅋ、ㄲグループ";
+"keyboard.10key.nieun" = "ㄴ、ㄹグループ";
+"keyboard.10key.digeut" = "ㄷ、ㅌ、ㄸグループ";
+"keyboard.10key.bieup" = "ㅂ、ㅍ、ㅃグループ";
+"keyboard.10key.siot" = "ㅅ、ㅎ、ㅆグループ";
+"keyboard.10key.jieut" = "ㅈ、ㅊ、ㅉグループ";
+"keyboard.10key.ieung" = "ㅇ、ㅁグループ";
+"keyboard.10key.next" = "次の子音へ進む";
 "input_mode.builtin" = "内蔵キーボード";
+"input_mode.builtin_korean_10key" = "韓国語10キー";
 "input_mode.os_ime" = "OSキーボード";
 "os_ime.input.title" = "端末の韓国語キーボードで入力";
 "os_ime.input.live_badge" = "実戦モード";
@@ -230,6 +248,22 @@
 "settings.choseong_meaning_detail" = "問題ごとに日本語の意味を表示";
 "settings.app_information" = "アプリ情報";
 "settings.privacy_policy" = "プライバシーポリシー";
+"settings.privacy" = "プライバシー";
+"settings.anonymous_analytics" = "匿名の利用状況分析";
+"settings.anonymous_analytics_detail" = "よく使われる機能やセッションの完了状況を共有します。";
+"settings.crash_diagnostics" = "クラッシュ診断";
+"settings.crash_diagnostics_detail" = "クラッシュや動作停止の診断情報を共有します。";
+"settings.analytics_privacy_note" = "入力した文字、ユーザーデッキの内容、氏名やメールアドレスは送信しません。どちらも初期設定はオフです。";
+"settings.review_privacy_choices" = "データ共有の説明と選択を確認";
+"privacy_consent.navigation_title" = "プライバシーの選択";
+"privacy_consent.title" = "ピヨキーの改善に協力しますか？";
+"privacy_consent.introduction" = "共有する情報を項目ごとに選べます。どちらも、選択を保存するまではオフです。";
+"privacy_consent.optional_note" = "共有しなくても、レッスン・ゲーム・購入済み機能をすべて利用できます。設定からいつでも変更できます。";
+"privacy_consent.analytics_detail" = "PostHog Cloud EUへ、よく使われる機能、セッションの完了状況、アプリのバージョン、ランダムなアプリ識別子を送信します。広告や他社サービスをまたぐ追跡には使いません。";
+"privacy_consent.diagnostics_detail" = "Firebase Crashlyticsへ、クラッシュログ、発生時のアプリ状態、端末・OS情報、ランダムなインストール識別子を送信します。";
+"privacy_consent.excluded_data" = "入力した文字、回答、検索語、ユーザーデッキの名前・内容、氏名、メールアドレス、広告ID、録音、セッションリプレイは送信しません。";
+"privacy_consent.save" = "選択を保存";
+"privacy_consent.continue_without_sharing" = "共有せずに続ける";
 "settings.support" = "サポート";
 "content_feedback.settings.title" = "デッキの提案・内容の報告";
 "content_feedback.suggestion.title" = "ほしいデッキを提案する";
@@ -401,6 +435,7 @@
 "game.selection.deck_hint.dictation_unavailable" = "タイピングできる韓国語が必要です";
 "game.selection.best_score" = "ベスト %@点";
 "game.selection.best_score.builtin" = "内蔵ベスト %@点";
+"game.selection.best_score.korean_10key" = "10キーベスト %@点";
 "game.selection.best_score.os_ime" = "OSベスト %@点";
 "game.selection.best_score.choseong" = "初声ベスト %@点";
 "game.selection.best_score.acid_rain" = "単語の雨ベスト %@点";
@@ -781,6 +816,12 @@
 "home.primary.resume_detail" = "前回の続きから入力できます";
 "home.primary.deck_detail" = "最近練習したデッキをもう一度";
 "home.primary.daily_personalized" = "選んだ目的に合わせた5問";
+"home.quick.piyo_cup.title" = "週間ピヨカップ";
+"home.quick.piyo_cup.detail" = "60秒チャレンジをすぐ開始";
+"home.quick.random.title" = "ランダム5単語";
+"home.quick.random.detail" = "おすすめ単語でサクッと練習";
+"home.quick.random.session_title" = "ランダム5単語";
+"home.quick.random.retry" = "別の5問";
 "retention.rewards.navigation_title" = "スタンプとごほうび";
 "retention.rewards.current_streak" = "現在の連続記録";
 "retention.rewards.accessibility" = "3日、5日、7日のごほうび";
@@ -791,10 +832,10 @@
 "retention.rewards.7.title" = "7日：ヘッドホン";
 "retention.rewards.7.condition" = "今週7日すべてスタンプすると獲得";
 "retention.reminder.title" = "練習リマインダー";
-"retention.reminder.detail" = "好きな時間に、1日1回だけお知らせします。初期設定はOFFです。";
+"retention.reminder.detail" = "許可すると現地時刻20:00にお知らせします。時刻は変更できます。";
 "retention.reminder.hour" = "時";
 "retention.reminder.minute" = "分";
-"retention.reminder.jst" = "JST";
+"retention.reminder.local_time" = "現地時刻";
 "retention.reminder.denied" = "通知が許可されていません。iPhoneの設定から変更できます。";
 "retention.reminder.failed" = "リマインダーを設定できませんでした。もう一度お試しください。";
 "retention.reminder.notification_title" = "今日のハングル、3分だけ！";
@@ -836,8 +877,10 @@
 "onboarding.bulk.download" = "3つをまとめてダウンロード";
 "onboarding.bulk.complete" = "3つを追加しました";
 "onboarding.bulk.failed" = "一部を追加できませんでした。アプリ内からもう一度試せます。";
-"onboarding.reminder.title" = "毎日20:00にお知らせ";
-"onboarding.reminder.detail" = "初期設定はOFFです。時間はあとから変更できます。";
+"onboarding.reminder.title" = "退勤後の20:00に毎日お知らせ";
+"onboarding.reminder.detail" = "通知を許可するだけで、端末の現地時刻20:00に自動設定します。時刻はあとから変更できます。";
+"onboarding.reminder.allow_and_begin" = "通知を受け取ってミッション開始";
+"onboarding.reminder.not_now" = "通知なしで始める";
 "onboarding.finish" = "ピヨキーを始める";
 
 "app.name" = "ピヨキー";
@@ -908,10 +951,12 @@
 "closet.prop_game_center" = "チャンピオントロフィー";
 "closet.cond_game_center" = "Game Centerへスコアを送信";
 
-/* Deck Maker lifetime purchase */
-"deck_maker.paywall.navigation_title" = "マイデッキメーカー";
-"deck_maker.paywall.title" = "自分だけのデッキを作ろう";
-"deck_maker.paywall.subtitle" = "iPhoneで新しいデッキを作成し、読み込んだデッキも自由に編集できます。";
+/* ピヨキー pro lifetime purchase */
+"deck_maker.paywall.navigation_title" = "ピヨキー pro";
+"deck_maker.paywall.title" = "ユーザーデッキをもっと自由に";
+"deck_maker.paywall.subtitle" = "4つ目以降のユーザーデッキと、端末での作成・編集を一度の購入で利用できます。";
+"deck_maker.paywall.feature.unlimitedImports.title" = "ユーザーデッキを無制限に保存";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "無料の3つを超えて、.piyodeckを好きなだけ読み込めます。";
 "deck_maker.paywall.feature.create.title" = "新しいデッキを作成";
 "deck_maker.paywall.feature.create.detail" = "単語・意味・読み方を入力して、オリジナル教材を作れます。";
 "deck_maker.paywall.feature.edit.title" = "読み込んだデッキを編集";
@@ -920,9 +965,9 @@
 "deck_maker.paywall.feature.copyOfficial.detail" = "公式デッキの個人用コピーを作り、内容をアレンジできます。";
 "deck_maker.paywall.feature.lifetime.title" = "一度の購入でずっと使える";
 "deck_maker.paywall.feature.lifetime.detail" = "サブスクリプションではありません。期限なく作成・編集できます。";
-"deck_maker.paywall.free_import_note" = ".piyodeckの読み込み・練習・ゲームは、購入しなくても無料で使えます。";
+"deck_maker.paywall.free_import_note" = "ユーザーデッキ3つまでは無料。保存済みデッキの練習・ゲーム・書き出し・削除・同じIDの置き換えは、購入なしで使えます。";
 "deck_maker.paywall.purchase_format" = "%@で購入";
-"deck_maker.paywall.already_owned" = "購入済み・デッキメーカーを使う";
+"deck_maker.paywall.already_owned" = "購入済み・ピヨキー proを使う";
 "deck_maker.paywall.loading" = "価格を読み込み中…";
 "deck_maker.paywall.retry" = "価格をもう一度読み込む";
 "deck_maker.paywall.restore" = "購入を復元";
@@ -930,11 +975,11 @@
 "deck_maker.paywall.privacy" = "プライバシーポリシー";
 "deck_maker.alert.ok" = "OK";
 "deck_maker.purchase.pending.title" = "承認待ちです";
-"deck_maker.purchase.pending.message" = "購入が承認されると、デッキメーカーを使えるようになります。";
+"deck_maker.purchase.pending.message" = "購入が承認されると、ピヨキー proを使えるようになります。";
 "deck_maker.purchase.failed.title" = "購入を完了できませんでした";
 "deck_maker.purchase.failed.message" = "通信状況を確認して、もう一度お試しください。購入済みの場合は「購入を復元」をお試しください。";
 "deck_maker.restore.succeeded.title" = "購入を復元しました";
-"deck_maker.restore.succeeded.message" = "デッキメーカーを利用できます。";
+"deck_maker.restore.succeeded.message" = "ピヨキー proを利用できます。";
 "deck_maker.restore.empty.title" = "復元できる購入がありません";
 "deck_maker.restore.empty.message" = "購入時と同じApple Accountか確認してください。";
 "deck_maker.restore.failed.title" = "購入を復元できませんでした";
@@ -1010,7 +1055,8 @@
 "piyodeck.import.status.downgrade" = "現在より古いバージョンです。";
 "piyodeck.import.status.same_version" = "同じバージョン番号ですが内容が異なります。";
 "piyodeck.import.status.different_detail" = "自動では統合しません。現在のデッキを置き換えるか、別のコピーとして保存できます。";
-"piyodeck.import.action.import" = "無料で読み込む";
+"piyodeck.import.action.import" = "デッキを読み込む";
+"piyodeck.import.action.unlock_pro" = "ピヨキー proで4つ目を読み込む";
 "piyodeck.import.action.done" = "完了";
 "piyodeck.import.action.replace" = "読み込んだ内容に置き換える";
 "piyodeck.import.action.copy" = "別のコピーとして保存";
@@ -1057,8 +1103,8 @@
 "my_decks.delete.failure.message_format" = "「%@」は削除されていません。空き容量を確認して、もう一度お試しください。";
 "deck_maker.accessibility.status.unlocked" = "利用可能";
 "deck_maker.accessibility.status.locked" = "購入が必要";
-"deck_maker.accessibility.hint.available" = "デッキメーカーを開きます。";
-"deck_maker.accessibility.hint.locked" = "デッキメーカーの購入画面を開きます。";
+"deck_maker.accessibility.hint.available" = "ピヨキー proの機能を開きます。";
+"deck_maker.accessibility.hint.locked" = "ピヨキー proの購入画面を開きます。";
 "piyodeck.import.compare.title" = "現在のデッキと比較";
 "piyodeck.import.compare.current" = "現在";
 "piyodeck.import.compare.incoming" = "読み込むファイル";
@@ -1070,7 +1116,7 @@
 "piyodeck.import.action.export_current.hint" = "現在のデッキを.piyodeckファイルとして共有します。";
 "piyodeck.import.action.copy.locked_label" = "別のコピーとして保存、購入が必要";
 "piyodeck.import.action.copy.hint" = "新しいIDのユーザーデッキとして保存します。";
-"piyodeck.import.action.copy.locked_hint" = "マイデッキメーカーの購入画面を開きます。読み込みと置き換えは無料です。";
+"piyodeck.import.action.copy.locked_hint" = "ピヨキー proの購入画面を開きます。同じIDの置き換えは無料です。";
 "piyodeck.import.action.replace.hint" = "現在のデッキを読み込んだ内容で置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.downgrade_hint" = "古いバージョンで現在のデッキを置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";

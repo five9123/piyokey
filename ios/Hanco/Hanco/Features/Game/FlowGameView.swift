@@ -46,6 +46,8 @@ struct FlowGameView: View {
   @State private var retentionSession = RetentionSessionContext()
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var recordInputMode: SessionInputMode = .builtIn
+  @State private var builtInKeyboardLayout: BuiltInKeyboardLayout
+  @State private var korean10KeyInterpreter = Korean10KeyInterpreter()
   @State private var hasUsedBuiltInInput = false
   @State private var didResolveInputMode = false
   @State private var inputResetRevision = 0
@@ -56,6 +58,9 @@ struct FlowGameView: View {
   @State private var priorBestCombo = 0
   @State private var didCelebrateBestCombo = false
   @State private var enteredBackground = false
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
   #if DEBUG
     @StateObject private var frameRateMonitor = GameFrameRateMonitor()
   #endif
@@ -71,6 +76,14 @@ struct FlowGameView: View {
     self.gameKind = gameKind
     self.competition = competition
     self.mascotAppearance = MascotSessionAppearance()
+    let storedBuiltInLayout = BuiltInKeyboardLayout.resolved(
+      from: UserDefaults.standard.string(
+        forKey: KeyboardPreferenceKeys.builtInLayoutDefault
+      ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+    )
+    _builtInKeyboardLayout = State(
+      initialValue: competition == nil ? storedBuiltInLayout : .dubeolsik
+    )
     var sessionItems = GamePresetSessionRandomizer.shuffledItems(
       from: deck,
       gameKind: gameKind
@@ -205,6 +218,7 @@ struct FlowGameView: View {
       .onChange(of: viewModel.reviewResolutionRevision, perform: handleReviewRevision)
       .onChange(of: viewModel.phase, perform: handlePhaseChange)
       .onChange(of: inputMode, perform: handleInputModeChange)
+      .onChange(of: viewModel.cardRevision) { _ in korean10KeyInterpreter.reset() }
   }
 
   private var decoratedContent: some View {
@@ -283,6 +297,7 @@ struct FlowGameView: View {
 
   private func handleAppear() {
     resolveInitialInputModeIfNeeded()
+    captureAnalyticsStartIfNeeded()
     priorBestCombo =
       gameProgress.records
       .filter {
@@ -307,6 +322,7 @@ struct FlowGameView: View {
     lifeLossFeedbackTask = nil
     resultPresentationTask?.cancel()
     resultPresentationTask = nil
+    captureAnalyticsAbandonmentIfNeeded()
   }
 
   private func handleScenePhaseChange(_ phase: ScenePhase) {
@@ -389,9 +405,13 @@ struct FlowGameView: View {
     sessionReviewItems.removeAll(keepingCapacity: true)
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
-    recordInputMode = inputMode
+    recordInputMode = resolvedRecordInputMode
+    korean10KeyInterpreter.reset()
     previousAcceptedInputCount = 0
     didCelebrateBestCombo = false
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
     lifeLossFeedbackTask?.cancel()
     lifeLossFeedbackTask = nil
     resultPresentationTask?.cancel()
@@ -412,11 +432,13 @@ struct FlowGameView: View {
     } else {
       viewModel.restart()
     }
+    captureAnalyticsStartIfNeeded()
     beginCountdown()
   }
 
   private func handleInputModeChange(_ mode: SessionInputMode) {
     showsOSIMEUnavailable = false
+    korean10KeyInterpreter.reset()
     inputResetRevision += 1
     if mode == .osIME, !hasUsedBuiltInInput {
       recordInputMode = .osIME
@@ -441,25 +463,57 @@ struct FlowGameView: View {
           onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake
         )
       } else {
-        HangulKeyboardView(
-          nextExpectedKey: viewModel.nextExpectedKey,
-          options: HangulKeyboardOptions(
-            showsKeyGuide: showsKeyGuide,
-            showsRomanHints: showsRomanHints,
-            hapticsEnabled: hapticsEnabled
-          ),
-          onKeyFeedback: playKeySound,
-          onKey: { key in
-            markBuiltInInputUsed()
-            viewModel.input(key)
-          },
-          onBackspace: {
-            markBuiltInInputUsed()
-            viewModel.backspace()
-          }
-        )
+        if builtInKeyboardLayout == .korean10Key {
+          Korean10KeyKeyboardView(
+            nextExpectedKey: korean10KeyInterpreter.nextKey(for: viewModel.nextExpectedKey),
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: false,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: inputKorean10Key,
+            onBackspace: backspaceKorean10Key
+          )
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: viewModel.nextExpectedKey,
+            options: HangulKeyboardOptions(
+              showsKeyGuide: showsKeyGuide,
+              showsRomanHints: showsRomanHints,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: { key in
+              markBuiltInInputUsed()
+              viewModel.input(key)
+            },
+            onBackspace: {
+              markBuiltInInputUsed()
+              viewModel.backspace()
+            }
+          )
+        }
       }
     }
+  }
+
+  private func inputKorean10Key(_ key: Korean10KeyKey) {
+    markBuiltInInputUsed()
+    switch korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey) {
+    case .pending, .separatorAccepted:
+      break
+    case .committed(let jamo):
+      viewModel.input(jamo)
+    case .incorrect:
+      viewModel.input(key.displayText.first ?? "ㆍ")
+    }
+  }
+
+  private func backspaceKorean10Key() {
+    markBuiltInInputUsed()
+    guard korean10KeyInterpreter.backspace() == .forwardToHangulEngine else { return }
+    viewModel.backspace()
   }
 
   @ViewBuilder
@@ -958,6 +1012,13 @@ struct FlowGameView: View {
       )
       .id(viewModel.cardRevision)
 
+      if let pending = korean10KeyPendingDisplay {
+        Text(verbatim: pending)
+          .font(.caption.weight(.bold))
+          .foregroundStyle(AppPalette.secondary)
+          .accessibilityIdentifier("game.10key.pending")
+      }
+
       feedbackLabel
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, minHeight: 25, alignment: .center)
@@ -1141,6 +1202,84 @@ struct FlowGameView: View {
       companion.publish(.newBest)
     }
     retention.record(.game, session: retentionSession)
+    captureAnalyticsCompletionIfNeeded(result)
+  }
+
+  private var analyticsPresentation: GameResultPresentation {
+    competition == .weeklyPiyoCup
+      ? .piyoCup
+      : (gameKind == .acidRain ? .acidRain : .flow)
+  }
+
+  private var analyticsDeckSource: String {
+    if analyticsPresentation == .piyoCup || analyticsPresentation.presetLevel(for: deck) != nil {
+      return "bundled"
+    }
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: return "bundled"
+    case .remote: return "catalog"
+    case .imported: return "imported"
+    case .created: return "created"
+    case nil: return "unknown"
+    }
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: "game",
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "game",
+      sessionKind: "game",
+      inputMode: recordInputMode.rawValue,
+      gameMode: analyticsPresentation.analyticsValue
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded(_ result: FlowGameResult) {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: "game",
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(result.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(result.completedItemCount),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: "game",
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.result.activeDuration),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: analyticsPresentation.analyticsValue,
+        .difficulty: analyticsPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
   }
 
   private func finishFromResult() {
@@ -1151,7 +1290,16 @@ struct FlowGameView: View {
 
   private func markBuiltInInputUsed() {
     hasUsedBuiltInInput = true
-    recordInputMode = .builtIn
+    recordInputMode = builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var resolvedRecordInputMode: SessionInputMode {
+    inputMode == .osIME ? .osIME : builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var korean10KeyPendingDisplay: String? {
+    guard inputMode == .builtIn, builtInKeyboardLayout == .korean10Key else { return nil }
+    return korean10KeyInterpreter.pendingDisplay
   }
 
   private func resolveInitialInputModeIfNeeded() {
@@ -1169,7 +1317,7 @@ struct FlowGameView: View {
       recordInputMode = .osIME
     } else {
       inputMode = .builtIn
-      recordInputMode = .builtIn
+      recordInputMode = builtInKeyboardLayout.gameRecordInputMode
       if SessionInputMode(rawValue: inputModeDefault) == .osIME {
         showsOSIMEUnavailable = true
       }

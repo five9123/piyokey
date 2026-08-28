@@ -60,6 +60,6 @@ xcodebuild test \
 5. 테스트 결과와 미실행 항목을 PR에 기록합니다.
 
 자세한 내용은 [협업 가이드](CONTRIBUTING.md),
-[GitHub Projects 운영 가이드](docs/GITHUB_PROJECTS_GUIDE.md),
+[새 디바이스·AI agent 온보딩](docs/DEVICE_SETUP.md),
 [아키텍처](docs/ARCHITECTURE.md), [저장소 정책](docs/REPOSITORY_POLICY.md)을
 참조하세요.

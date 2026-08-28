@@ -4,6 +4,12 @@
 
 Closes #
 
+- 주 담당 사람/agent:
+- Branch/worktree:
+- 검증 대상 commit SHA:
+- 검증 증빙: `release/evidence/<SHA>.json`
+- 단독 소유가 필요한 충돌 위험 파일:
+
 ## 계약과 범위
 
 - 관련 PRD 절:
@@ -17,6 +23,7 @@ Closes #
 - [ ] 관련 UI test 또는 수동 시나리오
 - [ ] `python3 tools/release_preflight.py` (콘텐츠·릴리스 계약 영향 시)
 - [ ] 공용 계약을 소비하는 모든 구현의 test
+- [ ] clean commit에서 SHA 기반 검증 증빙을 생성했다.
 
 실행한 명령과 결과:
 
@@ -30,6 +37,13 @@ Closes #
 
 ```
 
+## Handoff
+
+- 상태: 진행 중 / review 준비 / blocked
+- 완료:
+- 다음 한 단계:
+- 외부 상태·blocker:
+
 ## 안전 점검
 
 - [ ] 사용자 노출 문자열을 localization resource에 추가했다.
@@ -37,3 +51,4 @@ Closes #
 - [ ] secret, signing asset, generated release artifact를 포함하지 않았다.
 - [ ] PRD 밖 결정을 `DECISIONS.md`에 기록했거나 해당 사항이 없다.
 - [ ] 스크린샷/영상이 필요한 UI 변경이면 전후 자료를 첨부했다.
+- [ ] 실기기·스토어 배포 작업이면 `workspace_doctor.py --strict --require-origin-main`을 통과했다.

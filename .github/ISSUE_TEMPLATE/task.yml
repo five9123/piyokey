@@ -1,65 +1,65 @@
-name: Task / QA / Release Gate
-description: 기능·버그 외의 실행성 작업, QA, 출시 gate를 기록합니다.
+name: Agent or device task
+description: 사람·AI agent·디바이스 하나가 맡을 독립 작업을 예약합니다.
 title: "[Task] "
-projects:
-  - five9123-maker/1
 body:
-  - type: dropdown
-    id: type
-    attributes:
-      label: 작업 유형
-      options:
-        - QA
-        - Release Gate
-        - Decision
-        - Maintenance
-        - Documentation
-    validations:
-      required: true
   - type: textarea
     id: outcome
     attributes:
-      label: 목표 결과
-      description: 완료되면 무엇이 확인되거나 달라지는지 적어 주세요.
+      label: 완료 결과
+      description: 사용자 또는 유지보수 관점의 완료 상태를 적어 주세요.
     validations:
       required: true
-  - type: input
-    id: source
-    attributes:
-      label: 요청 출처
-      description: Slack, 이메일, 대화, 선행 Issue 링크를 적어 주세요.
   - type: input
     id: prd
     attributes:
       label: 관련 PRD 절 또는 운영 계약
-      placeholder: "예: PRD §13 M7, docs/GITHUB_PROJECTS_GUIDE.md"
+      placeholder: "예: PRD §13 R1.1, docs/WORKFLOW.md"
+    validations:
+      required: true
   - type: textarea
     id: acceptance
     attributes:
-      label: 완료 조건
+      label: Acceptance criteria
       description: 검증 가능한 체크리스트로 적어 주세요.
     validations:
       required: true
-  - type: checkboxes
-    id: areas
+  - type: input
+    id: owner
     attributes:
-      label: 영향 범위
+      label: 주 담당 사람 또는 agent
+      description: 동시에 한 명만 주 담당자로 지정합니다.
+    validations:
+      required: true
+  - type: input
+    id: branch
+    attributes:
+      label: Branch
+      placeholder: "codex/123-short-slug"
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: 수정 경로와 단독 소유 파일
+      description: 예상 상위 경로와 충돌 위험 파일을 구분해 적어 주세요.
+    validations:
+      required: true
+  - type: checkboxes
+    id: workspace
+    attributes:
+      label: 독립 작업 공간
       options:
-        - label: iOS
-        - label: Android
-        - label: Shared contracts/content
-        - label: Tools/CI
-        - label: Release/Operations
-        - label: Documentation
+        - label: 다른 물리 디바이스의 독립 clone
+        - label: 같은 Mac의 독립 worktree
   - type: textarea
     id: verification
     attributes:
-      label: 검증 계획과 증빙
-      description: 자동 test, 수동 시나리오, 실기기·외부 계정 gate를 구분해 적어 주세요.
+      label: 검증 계획
+      description: 자동 test, 수동 시나리오, 실기기 gate를 구분합니다.
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
-      label: 선행 작업·결정·차단 조건
-      description: 관련 Issue, 사용자 승인, 외부 기기·계정, 충돌 가능 파일을 적어 주세요.
+      label: 선행 작업과 handoff
+      description: 선행 issue/PR, 다음 한 단계, 외부 blocker를 적어 주세요.

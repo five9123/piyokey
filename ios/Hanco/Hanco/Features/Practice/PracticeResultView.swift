@@ -23,6 +23,8 @@ struct PracticeResultView: View {
   let recommendations: [CatalogDeck]
   let catalogDecks: [CatalogDeck]
   let showsRetry: Bool
+  let retryTitle: LocalizedStringKey
+  let retrySystemImage: String
   let finishTitle: LocalizedStringKey
   let finishSystemImage: String
   let finishAccessibilityIdentifier: String
@@ -236,7 +238,9 @@ struct PracticeResultView: View {
             sessionTitle: AppLocalization.string("review.deck.title"),
             reviewSources: reviewItems.map {
               PracticeReviewSource(item: $0.item, sourceDeckId: $0.sourceDeckId)
-            }
+            },
+            analyticsSessionKind: "review",
+            analyticsDeckSource: "review"
           )
         } label: {
           Label("result.review.start", systemImage: "arrow.triangle.2.circlepath")
@@ -288,7 +292,7 @@ struct PracticeResultView: View {
       onRetry()
       dismiss()
     } label: {
-      Label("practice.result.retry", systemImage: "arrow.counterclockwise")
+      Label(retryTitle, systemImage: retrySystemImage)
         .font(.headline.weight(.bold))
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)

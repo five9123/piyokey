@@ -1496,6 +1496,8 @@ struct ChoseongTypingView: View {
   @State private var retentionSession = RetentionSessionContext()
   @State private var inputMode: SessionInputMode = .builtIn
   @State private var recordInputMode: SessionInputMode = .builtIn
+  @State private var builtInKeyboardLayout: BuiltInKeyboardLayout
+  @State private var korean10KeyInterpreter = Korean10KeyInterpreter()
   @State private var hasUsedBuiltInInput = false
   @State private var didResolveInputMode = false
   @State private var inputResetRevision = 0
@@ -1507,11 +1509,21 @@ struct ChoseongTypingView: View {
   @State private var countdownAction: RecallTypingCountdownAction?
   @State private var countdownTask: Task<Void, Never>?
   @State private var pendingRestartRounds: [ChoseongTypingRound]?
+  @State private var didCaptureAnalyticsStart = false
+  @State private var didCaptureAnalyticsCompletion = false
+  @State private var didCaptureAnalyticsAbandonment = false
 
   init(deck: Deck, mode: RecallTypingGameMode = .choseong) {
     self.deck = deck
     self.mode = mode
     self.mascotAppearance = MascotSessionAppearance()
+    _builtInKeyboardLayout = State(
+      initialValue: BuiltInKeyboardLayout.resolved(
+        from: UserDefaults.standard.string(
+          forKey: KeyboardPreferenceKeys.builtInLayoutDefault
+        ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+      )
+    )
     let seed = GamePresetSessionRandomizer.seed(for: deck, gameKind: mode.gameKind)
     let rounds: [ChoseongTypingRound]
     switch mode {
@@ -1574,6 +1586,7 @@ struct ChoseongTypingView: View {
     }
     .onAppear {
       resolveInitialInputModeIfNeeded()
+      captureAnalyticsStartIfNeeded()
       if mode.requiresCountdown {
         prepareCountdownSessionOnAppear()
       } else {
@@ -1592,6 +1605,7 @@ struct ChoseongTypingView: View {
       countdownTask = nil
       targetSpeechSynthesizer.stop()
       reviewDeck.flush()
+      captureAnalyticsAbandonmentIfNeeded()
     }
     .onChange(of: scenePhase) { phase in
       switch phase {
@@ -1629,8 +1643,12 @@ struct ChoseongTypingView: View {
     }
     .onChange(of: inputMode) { mode in
       showsOSIMEUnavailable = false
+      korean10KeyInterpreter.reset()
       inputResetRevision &+= 1
       if mode == .osIME, !hasUsedBuiltInInput { recordInputMode = .osIME }
+    }
+    .onChange(of: viewModel.roundRevision) { _ in
+      korean10KeyInterpreter.reset()
     }
     .onChange(of: showsResult) { isPresented in
       guard !isPresented, exitsAfterResultDismiss else { return }
@@ -1970,7 +1988,7 @@ struct ChoseongTypingView: View {
 
         VStack(spacing: 4) {
           SyllableAssemblyPreview(
-            text: viewModel.composingPreview,
+            text: compositionPreviewText,
             incomingJamo: viewModel.lastAcceptedKey,
             revision: viewModel.compositionRevision,
             shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin
@@ -2050,19 +2068,53 @@ struct ChoseongTypingView: View {
           onConfirmedMismatch: recordOSIMEMistake
         )
       } else {
-        HangulKeyboardView(
-          nextExpectedKey: nil,
-          options: HangulKeyboardOptions(
-            showsKeyGuide: false,
-            showsRomanHints: showsRomanHints,
-            hapticsEnabled: hapticsEnabled
-          ),
-          onKeyFeedback: playKeySound,
-          onKey: handleInput,
-          onBackspace: handleBackspace
-        )
+        if builtInKeyboardLayout == .korean10Key {
+          Korean10KeyKeyboardView(
+            nextExpectedKey: korean10KeyInterpreter.nextKey(for: viewModel.nextExpectedKey),
+            options: HangulKeyboardOptions(
+              showsKeyGuide: false,
+              showsRomanHints: false,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: inputKorean10Key,
+            onBackspace: backspaceKorean10Key
+          )
+        } else {
+          HangulKeyboardView(
+            nextExpectedKey: nil,
+            options: HangulKeyboardOptions(
+              showsKeyGuide: false,
+              showsRomanHints: showsRomanHints,
+              hapticsEnabled: hapticsEnabled
+            ),
+            onKeyFeedback: playKeySound,
+            onKey: handleInput,
+            onBackspace: handleBackspace
+          )
+        }
       }
     }
+  }
+
+  private func inputKorean10Key(_ key: Korean10KeyKey) {
+    markBuiltInInputUsed()
+    switch korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey) {
+    case .pending, .separatorAccepted:
+      break
+    case .committed(let jamo):
+      guard let outcome = viewModel.input(jamo) else { return }
+      handle(outcome)
+    case .incorrect:
+      guard let outcome = viewModel.input(key.displayText.first ?? "ㆍ") else { return }
+      handle(outcome)
+    }
+  }
+
+  private func backspaceKorean10Key() {
+    markBuiltInInputUsed()
+    guard korean10KeyInterpreter.backspace() == .forwardToHangulEngine else { return }
+    viewModel.backspace()
   }
 
   private var gameBackground: some View {
@@ -2210,6 +2262,7 @@ struct ChoseongTypingView: View {
     )
     if recordOutcome?.isNewBest == true { companion.publish(.newBest) }
     retention.record(.game, session: retentionSession)
+    captureAnalyticsCompletionIfNeeded(result)
   }
 
   private func retry() {
@@ -2219,7 +2272,11 @@ struct ChoseongTypingView: View {
     sessionReviewItems.removeAll(keepingCapacity: true)
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
-    recordInputMode = inputMode
+    recordInputMode = resolvedRecordInputMode
+    didCaptureAnalyticsStart = false
+    didCaptureAnalyticsCompletion = false
+    didCaptureAnalyticsAbandonment = false
+    korean10KeyInterpreter.reset()
     inputResetRevision &+= 1
     let nextRounds = randomizedPresetRounds()
     if mode.requiresCountdown {
@@ -2229,6 +2286,76 @@ struct ChoseongTypingView: View {
     } else {
       viewModel.restart(rounds: nextRounds)
     }
+    captureAnalyticsStartIfNeeded()
+  }
+
+  private var analyticsDeckSource: String {
+    if mode.resultPresentation.presetLevel(for: deck) != nil { return "bundled" }
+    switch deckLibrary.records[deck.deckId]?.source {
+    case .bundle: return "bundled"
+    case .remote: return "catalog"
+    case .imported: return "imported"
+    case .created: return "created"
+    case nil: return "unknown"
+    }
+  }
+
+  private func captureAnalyticsStartIfNeeded() {
+    guard !didCaptureAnalyticsStart else { return }
+    didCaptureAnalyticsStart = true
+    TelemetryService.shared.capture(
+      .sessionStarted,
+      properties: [
+        .sessionKind: "game",
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+    TelemetryService.shared.setCrashContext(
+      feature: "game",
+      sessionKind: "game",
+      inputMode: recordInputMode.rawValue,
+      gameMode: mode.resultPresentation.analyticsValue
+    )
+  }
+
+  private func captureAnalyticsCompletionIfNeeded(_ result: FlowGameResult) {
+    guard !didCaptureAnalyticsCompletion else { return }
+    didCaptureAnalyticsCompletion = true
+    TelemetryService.shared.capture(
+      .sessionCompleted,
+      properties: [
+        .sessionKind: "game",
+        .result: "completed",
+        .durationBucket: TelemetryService.shared.durationBucket(result.activeDuration),
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(result.completedItemCount),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
+  }
+
+  private func captureAnalyticsAbandonmentIfNeeded() {
+    guard didCaptureAnalyticsStart, !didCaptureAnalyticsCompletion,
+      !didCaptureAnalyticsAbandonment
+    else { return }
+    didCaptureAnalyticsAbandonment = true
+    TelemetryService.shared.capture(
+      .sessionAbandoned,
+      properties: [
+        .sessionKind: "game",
+        .reason: "user_closed",
+        .durationBucket: TelemetryService.shared.durationBucket(viewModel.result.activeDuration),
+        .deckSource: analyticsDeckSource,
+        .inputMode: recordInputMode.rawValue,
+        .gameMode: mode.resultPresentation.analyticsValue,
+        .difficulty: mode.resultPresentation.analyticsDifficulty(for: deck),
+      ]
+    )
   }
 
   private func randomizedPresetRounds() -> [ChoseongTypingRound]? {
@@ -2256,7 +2383,18 @@ struct ChoseongTypingView: View {
 
   private func markBuiltInInputUsed() {
     hasUsedBuiltInInput = true
-    recordInputMode = .builtIn
+    recordInputMode = builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var resolvedRecordInputMode: SessionInputMode {
+    inputMode == .osIME ? .osIME : builtInKeyboardLayout.gameRecordInputMode
+  }
+
+  private var compositionPreviewText: String {
+    guard inputMode == .builtIn, builtInKeyboardLayout == .korean10Key,
+      let pending = korean10KeyInterpreter.pendingDisplay
+    else { return viewModel.composingPreview }
+    return viewModel.composingPreview + pending
   }
 
   private func resolveInitialInputModeIfNeeded() {
@@ -2269,7 +2407,7 @@ struct ChoseongTypingView: View {
       recordInputMode = .osIME
     } else {
       inputMode = .builtIn
-      recordInputMode = .builtIn
+      recordInputMode = builtInKeyboardLayout.gameRecordInputMode
       if SessionInputMode(rawValue: inputModeDefault) == .osIME {
         showsOSIMEUnavailable = true
       }

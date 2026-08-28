@@ -38,7 +38,7 @@ other UI and metadata-only localizations are deferred until post-launch demand r
 
 The Privacy and Support pages offer Japanese, English, and Korean variants. The same links are available from the app's Settings screen.
 
-## Deck Maker in-app purchase — required for 1.1
+## typee pro in-app purchase — required for 1.1
 
 Create the product under the existing app record before uploading the final review
 screenshot. Product ID and product type cannot be changed after creation, so verify the
@@ -46,7 +46,7 @@ following values character for character:
 
 | Field | Value |
 |---|---|
-| Reference name | `Deck Maker Lifetime` |
+| Reference name | `typee pro Lifetime` |
 | Product ID | `app.piyokey.deckmaker.lifetime` |
 | Type | **Non-Consumable** |
 | Availability | **All Countries or Regions**, matching the app and including future storefronts |
@@ -57,9 +57,9 @@ Add at least these three App Store Connect localizations:
 
 | Locale | Display name | Description |
 |---|---|---|
-| Japanese | `マイデッキメーカー` | `デッキの作成・編集をずっと利用できます` |
-| English (U.S.) | `My Deck Maker` | `Create and edit decks with lifetime access.` |
-| Korean | `내 덱 만들기` | `덱 생성과 편집을 평생 이용할 수 있어요` |
+| Japanese | `ピヨキー pro` | `ユーザーデッキ無制限と作成・編集をずっと利用` |
+| English (U.S.) | `typee pro` | `Unlimited user decks, creation, and editing.` |
+| Korean | `피요키 프로` | `사용자 덱 무제한 보관과 생성·편집을 평생 이용` |
 
 Complete these App Store Connect gates before submission:
 
@@ -71,7 +71,7 @@ Complete these App Store Connect gates before submission:
 3. Add the product's price, storefront availability, and the appropriate tax category.
    Do not use the DEBUG preview price as production metadata, and do not guess a tax
    category without the account holder's tax review.
-4. Upload an App Review screenshot from the 1.1 build showing the Deck Maker paywall,
+4. Upload an App Review screenshot from the 1.1 build showing the typee pro paywall,
    its feature list, the localized StoreKit price, **Restore Purchases**, Terms, and
    Privacy links.
 5. Save every required localization, price, availability, tax field, review note, and
@@ -86,14 +86,15 @@ Complete these App Store Connect gates before submission:
    restore after reinstall, relaunch entitlement, refund/revocation, and a product-load
    failure. Revocation must remove create/edit access without deleting existing decks.
 
-The reviewer path is: complete onboarding → open **My Page** → tap **Create deck** or
+The reviewer path is: complete onboarding → open **My Page** → tap **Create deck**, import a fourth distinct user deck, or
 choose **Edit** / **Edit a copy** from a deck menu → paywall → purchase. **Restore
-Purchases** is on the same paywall. A purchase unlocks only in-app creation, editing,
-official-deck copy creation, and saving those changes.
+Purchases** is on the same paywall. A purchase unlocks unlimited installed user decks,
+in-app creation, editing, official-deck copy creation, and saving those changes.
 
-`.piyodeck` is a local document, not a paid content container. Import, validation,
-preview, replacement using the same deck ID, practice/game use, export, deletion, and
-re-import remain free. Documents move only through Files, iCloud Drive, AirDrop, or the
+`.piyodeck` is a local document, not a paid content container. Validation and preview,
+up to three installed user deck IDs, replacement using the same deck ID, practice/game
+use, export, and deletion remain free. A fourth distinct ID requires typee pro, and
+deleting a user deck restores a free slot. Documents move only through Files, iCloud Drive, AirDrop, or the
 iOS share sheet; the app has no account, upload service, public catalog publishing,
 social feed, remote write API, or purchase/license flag inside the file.
 
@@ -136,7 +137,21 @@ Apple references:
 
 ## App Privacy
 
-Choose **No, we do not collect data from this app** and **Tracking: No**. The app has no analytics or advertising SDK. Local learning state and `.piyodeck` documents are not transmitted. The optional Deck Maker purchase is processed by Apple through StoreKit, and the app has no account, receipt server, or payment-data backend. Optional Game Center data is processed by Apple, and a user-initiated support email is outside automatic app collection; these boundaries must be disclosed by the privacy policy.
+Choose **Yes, data is collected from this app** and **Tracking: No**. Collection is optional, off by default, and split between anonymous product analytics and crash diagnostics. Enter the following types exactly as represented by `release/app_store_metadata.json` and the bundled privacy manifest:
+
+| Data type | Purpose | Linked to user | Tracking |
+|---|---|---|---|
+| Product Interaction | Analytics | No | No |
+| Other Usage Data | Analytics | No | No |
+| Gameplay Content | Analytics | No | No |
+| Purchase History | Analytics | No | No |
+| Crash Data | App Functionality, Analytics | No | No |
+| Other Diagnostic Data | App Functionality, Analytics | No | No |
+| Device ID | App Functionality, Analytics | No | No |
+
+Do not declare typed/composing text, answers, searches, deck/item identifiers, user-deck names or contents, names, email addresses, advertising identifiers, recordings, session replay, or location. Product events go only to PostHog Cloud EU with IP geolocation disabled; native crash diagnostics go to Firebase Crashlytics. Firebase Analytics and advertising SDKs are not included.
+
+Before submitting, publish `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the Privacy URL and confirm the live page no longer says that the app has no analytics SDK or device identifiers. Verify that the first-launch choice notice and Settings withdrawal controls match the submitted build. Local learning state and `.piyodeck` documents remain on device. StoreKit purchase processing, optional Game Center processing, and user-initiated support mail are separate platform/user actions described by the privacy policy.
 
 ## Age rating
 
@@ -161,7 +176,7 @@ The app does not implement non-exempt encryption. `ITSAppUsesNonExemptEncryption
 
 ## Review information
 
-Use `release/APP_REVIEW_NOTES.md`. No demo account is required. Include the Deck Maker
+Use `release/APP_REVIEW_NOTES.md`. No demo account is required. Include the typee pro / ピヨキー pro
 non-consumable in the same review submission. The direct review phone number remains an
 account-only field and must be entered in international format.
 

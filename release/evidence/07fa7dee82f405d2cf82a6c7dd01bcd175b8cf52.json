@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "verified_commit": "07fa7dee82f405d2cf82a6c7dd01bcd175b8cf52",
+  "verified_tree": "309ff2db653767cde2d58f27ed7e4fe437223d88",
+  "branch": "codex/58-onboarding-local-reminder",
+  "scope": "Issue #58 onboarding local 20:00 reminder",
+  "result": "pass",
+  "recorded_at": "2026-08-27T14:43:54.875159+00:00",
+  "checks": [
+    {
+      "name": "iOS targeted unit and UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/RetentionStoreTests -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testOnboardingReachesFirstInputOnFourthTapAndRoutesToForcedHatchMissions",
+      "note": "RetentionStore 22, AppSettings 21, UI 1 passed"
+    },
+    {
+      "name": "Android unit lint compile APK",
+      "status": "pass",
+      "command": "cd android && env JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :core:platform:testDebugUnitTest :app:compileDebugAndroidTestKotlin :feature:onboarding:lintDebug :app:lintDebug :app:assembleDebug",
+      "note": "BUILD SUCCESSFUL; 463 tasks"
+    },
+    {
+      "name": "Android onboarding instrumented regression",
+      "status": "pass",
+      "command": "cd android && env JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=app.piyokey.piyokey.M6OnboardingInstrumentedTest",
+      "note": "3 tests passed on API 35 emulator; Galaxy unauthorized and skipped"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Tool regression",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "77 tests passed"
+    },
+    {
+      "name": "Workspace strict check",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B tools/workspace_doctor.py --scope repo --strict",
+      "note": "Repository clean; gh auth warning does not affect source validation"
+    },
+    {
+      "name": "Patch whitespace check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "iOS and Android physical devices: fresh onboarding, allow notifications, and confirm delivery at device-local 20:00 after timezone/DST-aware scheduling. Keep Issue #58 in Verify until observed.",
+    "Galaxy R3CX40BGWZH is currently ADB unauthorized; authorize USB debugging before Android physical-device verification."
+  ]
+}
