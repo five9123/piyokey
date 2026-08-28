@@ -48,15 +48,19 @@ Tree hash means SHA-256 of UTF-8 lines sorted by relative path: `<file SHA-256><
 
 ## Remaining submission gates
 
-- Free Apps Agreement is Active; Paid Apps Agreement is **New**, with a legal-entity update required. Account Holder must complete applicable agreement, tax, banking, and regulatory information.
+- Free Apps Agreement is Active; Paid Apps Agreement advanced from New to **Pending User Info** during the 2026-08-29 follow-up. Bank-account entry and Republic of Korea / U.S. tax information remain missing. The earlier legal-entity warning is no longer shown; its complete verification is not assumed. Account Holder must finish the applicable information.
 - IAP review screenshot / ready-to-submit / association with the 1.1 review, exact-build Sandbox purchase and restore scenarios remain open.
 - Full RC unit/UI regression and physical-device checks are not replaced by #73's scoped regression. Run `release/TESTFLIGHT_1_1_SMOKE.md` on this exact build.
 - Native-language review and final RC iPhone/iPad media remain open. Live Japanese description still lists retired Korean UI and must be corrected before review. Existing Japanese media is eight older screenshots and one preview.
 - Content-rights sign-off, analytics/privacy console and live-policy checks remain open. Regular source preflight and strict release preflight have different meanings.
-- Console currently has automatic release and no phased release selected. This observation is not a new release-mode approval; the explicit product-owner decision stays pending. Live copyright is `2026 Kiish`; do not overwrite it with the differing historical local value without confirmation.
+- The user explicitly requested review submission and immediate public release on 2026-08-29. Automatic release after Apple approval, with no phased release, is now confirmed and matches the console. This does not waive outstanding review gates. Live copyright is `2026 Kiish`; do not overwrite it with the differing historical local value without confirmation.
 
 PR #74 was merged with local verification and user authorization, including the user's explicit CI/separate-review exception. Actions and branch-protection settings were not changed. That exception does not waive these App Store gates.
 
 ## Repository checks for release records
 
-Regular `python3.12 tools/release_preflight.py` passes. Strict mode still fails with 39 findings after recording the verified archive; these include shared analytics gates for other platforms and the unresolved 1.1 manual gates above. No gate was cleared merely because the build uploaded.
+Regular `python3.12 tools/release_preflight.py` passes. Strict mode still fails with 38 findings after recording the verified archive and explicit release-mode decision; these include shared analytics gates for other platforms and the unresolved 1.1 manual gates above. No gate was cleared merely because the build uploaded or the user requested review.
+
+## Review-request follow-up — Issue #77
+
+`Add for Review` opened a confirmation listing pending shared-app-information changes (English variants, Korean, and Japanese). Because the required gates are still open, Continue was not pressed; the dialog was canceled. The app remains Prepare for Submission with build 7 linked. Final review submission and public release have not occurred. Account Holder was asked to finish bank and tax information.

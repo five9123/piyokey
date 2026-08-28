@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | PR #74 main `9af01ef`, `1.1 (7)` | 서명 archive·Distribution IPA 검증, TestFlight 업로드·Apple 처리 완료, Ready to Submit·1.1 버전에 build 7 연결 저장/재조회 완료; App Review 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
+| iOS 1.1 | PR #74 main `9af01ef`, `1.1 (7)` | 서명 archive·Distribution IPA 검증, TestFlight 업로드·Apple 처리 완료, Ready to Submit·1.1 버전에 build 7 연결 저장/재조회 완료; 승인 후 자동·전 사용자 즉시 출시 확정, App Review 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
@@ -21,7 +21,8 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #75 iOS 1.1 (7) 배포 | Verify | codex/75-ios11-release / /private/tmp/piyokey-issue75-release | TestFlight 업로드·처리 완료 → 계약·실기기·IAP·스토어 gate 완료 후 심사 제출 |
+| #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국/미국 세금 정보 완료 및 나머지 제출 gate 검증 |
+| #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## #73 5언어·온보딩 main 통합 완료
@@ -58,7 +59,7 @@
 - #7: Game Center 계약 전체 점검.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
-- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate. Free Apps Agreement Active / Paid Apps Agreement New 및 법적 주체 갱신 필요를 로그인된 콘솔에서 확인했다. Account Holder가 계약·세금·은행을 완료해야 한다. `release/TESTFLIGHT_1_1_SMOKE.md`는 정확한 1.1(7) 실기기 검증 전용이며 아직 미실행이다.
+- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate. Free Apps Agreement Active / Paid Apps Agreement Pending User Info로 갱신된 상태를 확인했다. Account Holder의 은행 계좌 및 한국 세금 양식·미국 Tax Questionnaire 입력이 남아 있다. 사용자는 승인 후 자동 출시·단계 배포 없이 전 사용자 즉시 공개를 확정했으며 콘솔 설정과 일치한다. 심사 확인 창은 Continue하지 않고 취소했으며 제출 완료가 아니다. `release/TESTFLIGHT_1_1_SMOKE.md`는 정확한 1.1(7) 실기기 검증 전용이며 아직 미실행이다.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
 - App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 main ja/en/es/de/fr에 일치하지 않으므로 ko 스토어는 영어 UI, es/de/fr 스토어는 각각 해당 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **2026-08-29 Chrome Apple 로그인 복구 확인**. 기존 일본어 8장·영상 1개가 남아 있으며 이번 실행에서는 스토어 미디어 삭제·업로드·저장·심사 제출을 하지 않았다. 최종 RC 일치와 필수 메타데이터·iPad 미디어를 확인한 뒤 미디어 반영을 진행한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
