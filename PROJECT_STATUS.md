@@ -73,7 +73,7 @@
 
 검증 소스: `0d273c341c65b073a8ae5d3ec8b74617e59a82ee`. 증빙: `release/evidence/0d273c341c65b073a8ae5d3ec8b74617e59a82ee.json`. 이후 커밋은 현황·증빙만 변경하며 이전 앱 소스의 테스트 재사용 범위도 증빙에 명시했다.
 
-- 기존 PR #14·#15·#18·#49·#50·#64·#66·#69의 원격 HEAD가 모두 PR #70 통합 HEAD의 ancestor임을 확인했다. 기준 `main` `7dc2d5562f09c82729fb618f1e2b9feac8a156e6` 위에 merge commit으로 반영 보존한다. 최종 merge SHA는 PR #70 및 `git rev-parse origin/main`에서 확인한다.
+- 기존 PR #14·#15·#18·#49·#50·#64·#66·#69의 원격 HEAD가 모두 PR #70 통합 HEAD의 ancestor임을 확인했다. 기준 `main` `7dc2d5562f09c82729fb618f1e2b9feac8a156e6` 위에 검증된 통합 tree를 squash merge로 반영한다. 저장소는 merge commit을 허용하지 않으므로 기존 커밋은 원래 브랜치에 보존하고 선행 PR은 #70으로 통합 완료 처리한다. 최종 merge SHA는 PR #70 및 `git rev-parse origin/main`에서 확인한다.
 - Python 88개·repository preflight, SwiftPM 43개, Android 관련 단위 66개·Debug assemble/lint·앱/연습 instrumentation 소스 컴파일을 통과했다. Android 기기 instrumentation 실행은 하지 않았다.
 - iPhone 통합 앱 단위 358개와 관련 UI 6개를 통과했다. 마지막 앱 변경 `b5ebf09`에서 단위 358개·언어/세션 UI 2개를 재검증했다. 이후 변경은 UI 테스트의 iPad 스크롤 범위 판정뿐이며 iPhone·iPad 스페인어 전환/저장 재검증을 통과했다. iPad 회전·세션 보존·접근성 큰 글자 UI 3개도 통과했다.
 - iOS 번들·Android APK에 ja/en/es 리소스가 포함됨을 확인했다. `shared/`·Swift 공용 엔진·Android DeckKit은 #66 대비 변경이 없다. 스페인어 UI 학습 뜻·읽기·덱 편집은 기존 영어를 사용한다.
