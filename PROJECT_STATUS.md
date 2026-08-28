@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #71 연습 탭 프리프랙티스 제거 | In Progress | `codex/71-remove-free-practice` / `/private/tmp/piyokey-issue71-free-practice` | 하단 진입 제거·기존 UI 테스트를 덱/설정 경로로 전환 후 검증 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## 최근 소스 통합

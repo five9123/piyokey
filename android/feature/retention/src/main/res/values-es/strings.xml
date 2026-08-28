@@ -58,7 +58,6 @@
   <string name="curriculum_item_count">%1$d preguntas · se supera con el 80%%</string>
   <string name="curriculum_locked">Lección bloqueada</string>
   <string name="curriculum_resume">Continúa donde lo dejaste</string>
-  <string name="curriculum_free_practice">Práctica libre con mis mazos</string>
   <string name="review_title">Mazo de repaso</string>
   <string name="review_count">%1$d palabras para repasar</string>
   <string name="review_empty">Las palabras con errores aparecerán aquí automáticamente.</string>

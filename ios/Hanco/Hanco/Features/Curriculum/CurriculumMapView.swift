@@ -407,9 +407,6 @@ struct CurriculumMapView: View {
           ForEach(visibleChapters) { chapter in
             chapterSection(chapter)
           }
-          if !isHatchOnboarding {
-            freePracticeCard
-          }
         }
         .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
         .frame(maxWidth: .infinity)
@@ -641,38 +638,6 @@ struct CurriculumMapView: View {
     )
     .accessibilityElement(children: .combine)
     .accessibilityIdentifier("onboarding.hatch.stage.\(stage.id)")
-  }
-
-  private var freePracticeCard: some View {
-    NavigationLink {
-      PracticeSetupView(
-        createsNavigationStack: false,
-        catalog: catalog
-      )
-    } label: {
-      HStack(spacing: 13) {
-        Image(systemName: "slider.horizontal.3")
-          .font(.title2.weight(.bold))
-          .foregroundStyle(AppPalette.accent)
-          .frame(width: 46, height: 46)
-          .background(AppPalette.accentSoft.opacity(0.58), in: RoundedRectangle(cornerRadius: 15))
-        VStack(alignment: .leading, spacing: 3) {
-          Text("curriculum.free_practice")
-            .font(.headline.weight(.bold))
-            .foregroundStyle(AppPalette.ink)
-          Text("curriculum.free_practice_detail")
-            .font(.caption)
-            .foregroundStyle(AppPalette.mutedInk)
-        }
-        Spacer()
-        Image(systemName: "chevron.right")
-          .foregroundStyle(AppPalette.mutedInk)
-      }
-      .padding(17)
-      .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-    }
-    .buttonStyle(.plain)
-    .accessibilityIdentifier("curriculum.free_practice")
   }
 
   private func schedulePendingGrowthCelebration() {

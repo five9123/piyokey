@@ -82,7 +82,7 @@
 "keyboard.space" = "スペース";
 "keyboard.accessibility_label" = "韓国語キーボード";
 "keyboard.layout.title" = "内蔵キーボードの配列";
-"keyboard.layout.detail" = "チャプター5以降・自由練習・デッキ練習で使います。セッション開始時に固定されます。";
+"keyboard.layout.detail" = "チャプター5以降・デッキ練習で使います。セッション開始時に固定されます。";
 "keyboard.layout.dubeolsik" = "2ボル式（標準）";
 "keyboard.layout.korean_10key" = "韓国語10キー（天地人式）";
 "keyboard.layout.korean_10key_help" = "子音は同じグループキーを繰り返しタップします。同じグループが続くときは→で区切り、母音はㅣ・ㆍ・ㅡを光る順に組み合わせます。";
@@ -283,8 +283,6 @@
 "curriculum.free_selection" = "自由に選べます";
 "curriculum.resume" = "続きから";
 "curriculum.locked" = "前のステージをクリアすると解放されます";
-"curriculum.free_practice" = "フリープラクティス";
-"curriculum.free_practice_detail" = "キーボード設定を変えて、3つのお題を練習";
 
 "curriculum.chapter_1.title" = "基本子音";
 "curriculum.chapter_2.title" = "基本母音";

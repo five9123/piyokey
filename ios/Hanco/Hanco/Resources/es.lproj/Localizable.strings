@@ -78,7 +78,7 @@
 "keyboard.space" = "Espacio";
 "keyboard.accessibility_label" = "Teclado coreano";
 "keyboard.layout.title" = "Distribución del teclado integrado";
-"keyboard.layout.detail" = "Se usa desde el capítulo 5 y en la práctica libre y con mazos. Se fija al iniciar la sesión.";
+"keyboard.layout.detail" = "Se usa desde el capítulo 5 y en la práctica con mazos. Se fija al iniciar la sesión.";
 "keyboard.layout.dubeolsik" = "Dos conjuntos (predeterminado)";
 "keyboard.layout.korean_10key" = "Coreano de 10 teclas";
 "keyboard.layout.korean_10key_help" = "Pulsa varias veces una tecla de consonantes, usa → entre consonantes consecutivas del mismo grupo o combina ㅣ, ㆍ y ㅡ en el orden resaltado.";
@@ -275,8 +275,6 @@
 "curriculum.free_selection" = "Elegir libremente";
 "curriculum.resume" = "Continuar";
 "curriculum.locked" = "Supera la etapa anterior para desbloquear";
-"curriculum.free_practice" = "Práctica libre";
-"curriculum.free_practice_detail" = "Ajusta el teclado y practica tres textos";
 "curriculum.chapter_1.title" = "Consonantes básicas";
 "curriculum.chapter_2.title" = "Vocales básicas";
 "curriculum.chapter_3.title" = "Formar sílabas";

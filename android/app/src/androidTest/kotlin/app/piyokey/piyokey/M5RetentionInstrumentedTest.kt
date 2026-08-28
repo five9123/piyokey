@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.File
 import java.io.FileOutputStream
@@ -56,13 +57,16 @@ class M5RetentionInstrumentedTest {
   }
 
   @Test
-  fun curriculumStartsWithSequentialCoreUnlockAndFreePracticeExit() {
+  fun curriculumStartsWithSequentialCoreUnlockWithoutFreePractice() {
     waitForShell()
     composeRule.onNodeWithTag("nav-practice").performClick()
     composeRule.onNodeWithTag("curriculum-map").assertIsDisplayed()
     composeRule.onNodeWithTag("curriculum-stage-chapter_1_basic_consonants").assertIsDisplayed()
     composeRule.onNodeWithTag("curriculum-stage-chapter_2_basic_vowels-locked").assertIsDisplayed()
     saveScreenshot("03-curriculum-map.png")
+    composeRule.onNodeWithTag("curriculum-stage-chapter_6_sentences").performScrollTo()
+    composeRule.onNodeWithTag("curriculum-free-practice").assertDoesNotExist()
+    composeRule.onNodeWithTag("curriculum-map").performScrollToIndex(0)
     composeRule.onNodeWithTag("curriculum-stage-chapter_1_basic_consonants").performClick()
     composeRule.onNodeWithTag("practice-screen").assertIsDisplayed()
   }
