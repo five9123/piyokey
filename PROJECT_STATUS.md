@@ -21,6 +21,8 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #67 스페인어 UI·기존 PR 통합 검증 | In Progress | `codex/67-spanish-ui` / `/private/tmp/piyokey-issue67-spanish` | 기존 7개 PR과 #69 보존 작업을 로컬 통합. ja/en/es UI·학습 원본 보존. 통합 회귀 진행, 원격 main 병합은 CI/리뷰 또는 사용자 예외 승인 대기 |
+| #68 / PR #69 미커밋 스토어·Pro 작업 보존 | Verify (Draft) | `codex/68-preserve-store-work` / `/private/tmp/piyokey-issue68-preserved` | 원본 dirty worktree는 보존. 통합 검증 후 #64 이후 병합 |
 | #65 / PR #66 한국어 UI 제거 | Verify (Draft) | `codex/65-remove-korean-ui` / `/private/tmp/piyokey-issue65-remove-korean-ui` | ja/en UI·기존 ko 설정 영어 전환·콘텐츠 보존 검증 완료. #64 병합 후 main 재대상화·CI·검토 |
 | #63 / PR #64 사용자 덱 `.typedeck` 확장자 | Blocked | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 로컬 회귀 통과·Draft PR 생성 완료; GitHub Actions 활성화 및 CI·검토 승인 후 병합 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
@@ -57,4 +59,4 @@
 
 - #63은 스토어 미디어·지원 URL·별도 Pro 변경과 분리했다. 검증 대상 `d788a78659831188542a31208bcbe1af540129db`, 증빙 `release/evidence/d788a78659831188542a31208bcbe1af540129db.json`: Python 78개, SwiftPM 42개, iOS 문서 흐름 8개, Android 관련 단위 테스트·앱 Kotlin 컴파일, repository preflight·fixture 재생성 통과.
 - 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니며, 설정 변경이나 CI 우회 병합을 하지 않았다. 활성화·계정 상태 확인 후 최신 PR HEAD에서 검증한다.
-- 사용자가 대화에서 iPad·물리 키보드 실기기 검증 완료를 확인했다(2026-08-28). #10/#12/#46/#17의 해당 수동 검증은 사용자 확인 완료로 반영하며, 에이전트가 새로 수행한 테스트로 기록하지 않는다. #18 → #49 → #50 및 #15는 main 통합·회귀·CI 조건을 확인한 뒤 병합한다. 이 확인을 Android #19, 리마인더 #58의 현지 20시 수신, 결제·스토어·권리 gate 완료로 확대하지 않는다. Later #14는 main과 충돌하며 기존 로컬 ahead 커밋과 worktree는 보존한다.
+- 사용자가 대화에서 iPad·물리 키보드 실기기 검증 완료를 확인했다(2026-08-28). #10/#12/#46/#17의 해당 수동 검증은 사용자 확인 완료로 반영하며, 에이전트가 새로 수행한 테스트로 기록하지 않는다. #18 → #49 → #50 및 #15는 main 통합·회귀·CI 조건을 확인한 뒤 병합한다. 이 확인을 Android #19, 리마인더 #58의 현지 20시 수신, 결제·스토어·권리 gate 완료로 확대하지 않는다. PR #14의 최신 main 충돌을 해결했고 기존 checkpoint의 오래된 StoreKit·운영 문서는 최신 main 기준을 유지했다.

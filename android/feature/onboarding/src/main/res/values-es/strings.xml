@@ -60,4 +60,8 @@
   <string name="main_tour_settings_title">Los ajustes siempre están aquí</string>
   <string name="main_tour_settings_detail">El botón de arriba a la derecha abre los mismos ajustes desde cualquier pestaña.</string>
   <string name="onboarding_piyo_accessibility">Piyo creciendo con las misiones de nacimiento</string>
+  <string name="onboarding_use_builtin_keyboard">Empezar con el teclado integrado</string>
+  <string name="onboarding_use_device_keyboard">Empezar con el teclado del dispositivo</string>
+  <string name="onboarding_ime_missing">Añade o activa un teclado coreano y vuelve aquí para escribir.</string>
+  <string name="onboarding_ime_open_settings">Abrir ajustes del teclado</string>
 </resources>

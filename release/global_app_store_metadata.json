@@ -155,7 +155,7 @@
       {
         "id": "unsupported_language_english_fallback",
         "status": "pending",
-        "requirement": "Verify clean installs under representative unsupported LTR and RTL device languages, including es, fr, zh-Hant, and ar, start in English with the typee brand and do not expose Japanese content fallback."
+        "requirement": "Verify clean installs under representative unsupported LTR and RTL device languages, including fr, zh-Hant, and ar, start in English with the typee brand and do not expose Japanese content fallback."
       },
       {
         "id": "english_content_coverage",
@@ -165,7 +165,7 @@
       {
         "id": "non_japanese_fallback",
         "status": "pending",
-        "requirement": "Verify that English, Korean, and unsupported languages never display Japanese meanings or katakana as fallback."
+        "requirement": "Verify that English, Spanish, Korean, and unsupported languages never display Japanese meanings or katakana as fallback."
       },
       {
         "id": "store_assets",

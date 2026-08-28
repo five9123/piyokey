@@ -13,7 +13,7 @@ final class HancoUITests: XCTestCase {
   private func storeText(_ ja: String, _ en: String, _ ko: String) -> String {
     switch storeCaptureLanguage {
     case "en": return en
-    case "ko": return ko
+    case "ko": return en
     default: return ja
     }
   }
