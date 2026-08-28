@@ -176,7 +176,7 @@ struct PracticeResultView: View {
       Text("practice.result.items")
         .font(.caption.weight(.bold))
         .foregroundStyle(AppPalette.mutedInk)
-      Text(verbatim: displayedItems.formatted())
+      Text(verbatim: displayedItems.formatted(.number.locale(AppLocalization.locale)))
         .font(.system(size: 44, weight: .black, design: .rounded))
         .foregroundStyle(AppPalette.accent)
         .monospacedDigit()
@@ -193,8 +193,7 @@ struct PracticeResultView: View {
     let starProgress = reveal.metricProgress(at: 2)
     return HStack(spacing: 0) {
       SessionResultMetric(
-        value: String(
-          format: AppLocalization.string("practice.result.accuracy_value"),
+        value: AppLocalization.format("practice.result.accuracy_value",
           accuracyPercent * accuracyProgress
         ),
         label: "practice.result.accuracy",
@@ -320,16 +319,14 @@ struct PracticeResultView: View {
       sessionTitle: sessionTitle,
       achievement: AppLocalization.string("result.share.practice_badge"),
       scoreLabel: AppLocalization.string("result.share.practice_score"),
-      scoreValue: String(
-        format: AppLocalization.string("result.share.items_value"),
+      scoreValue: AppLocalization.format("result.share.items_value",
         completedItemCount
       ),
       metrics: [
         SessionShareCardMetric(
           id: "accuracy",
           label: AppLocalization.string("practice.result.accuracy"),
-          value: String(
-            format: AppLocalization.string("practice.result.accuracy_value"),
+          value: AppLocalization.format("practice.result.accuracy_value",
             accuracyPercent
           ),
           systemImage: "scope"
@@ -337,8 +334,7 @@ struct PracticeResultView: View {
         SessionShareCardMetric(
           id: "stars",
           label: AppLocalization.string("practice.result.stars"),
-          value: String(
-            format: AppLocalization.string("result.share.stars_value"),
+          value: AppLocalization.format("result.share.stars_value",
             displayedStars
           ),
           systemImage: "star.fill"
@@ -346,15 +342,13 @@ struct PracticeResultView: View {
         SessionShareCardMetric(
           id: "streak",
           label: AppLocalization.string("result.share.streak"),
-          value: String(
-            format: AppLocalization.string("result.share.streak_value"),
+          value: AppLocalization.format("result.share.streak_value",
             currentStreak
           ),
           systemImage: "seal.fill"
         ),
       ],
-      caption: String(
-        format: AppLocalization.string("result.share.practice_caption"),
+      caption: AppLocalization.format("result.share.practice_caption",
         sessionTitle,
         completedItemCount
       ),

@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -144,8 +145,9 @@ fun RetentionHomeCard(
           }
         }
         Text(
-          stringResource(
-            R.string.retention_week_progress,
+          pluralStringResource(
+            R.plurals.retention_week_progress,
+            streak.current,
             week.count { it.state == StampState.COMPLETED },
             streak.current,
           ),
@@ -442,7 +444,7 @@ fun ReviewDeckSection(
   val active = reviewItems.filter(ReviewItem::isActive)
   Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
     Text(stringResource(R.string.review_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
-    Text(stringResource(R.string.review_count, active.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(pluralStringResource(R.plurals.review_count, active.size, active.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
     if (manualCandidates.isNotEmpty()) {
       OutlinedButton(onClick = { showManualAdd = true }, modifier = Modifier.testTag("review-manual-add")) {
         Text(stringResource(R.string.review_add_manually))

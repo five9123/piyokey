@@ -83,4 +83,13 @@
   <string name="wardrobe_bow">Nœud arc-en-ciel</string>
   <string name="wardrobe_topik_glasses">Lunettes TOPIK</string>
   <string name="wardrobe_trophy">Trophée du champion</string>
+
+<plurals name="review_count">
+  <item quantity="one">%1$d mot à réviser</item>
+  <item quantity="other">%1$d mots à réviser</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="one">Cette semaine %1$d/7 · série de %2$d jour</item>
+  <item quantity="other">Cette semaine %1$d/7 · série de %2$d jours</item>
+</plurals>
 </resources>

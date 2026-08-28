@@ -53,7 +53,7 @@
   <string name="settings_crash_diagnostics_detail">Diagnosedaten zu Abstürzen und Hängern teilen.</string>
   <string name="settings_analytics_privacy_note">Eingaben, Inhalte eigener Decks, Namen und E-Mail-Adressen werden nie gesendet. Beide Optionen sind standardmäßig aus.</string>
   <string name="settings_review_privacy_choices">Datenschutzauswahl prüfen</string>
-  <string name="privacy_consent_title">PIYOKEY verbessern helfen?</string>
+  <string name="privacy_consent_title">typee verbessern helfen?</string>
   <string name="privacy_consent_introduction">Wähle einzeln, welche Daten du teilen möchtest. Beide Optionen bleiben aus, bis du deine Auswahl speicherst.</string>
   <string name="privacy_consent_optional_note">Alle Lektionen, Spiele und gekauften Funktionen bleiben ohne Datenfreigabe nutzbar. Du kannst die Auswahl jederzeit ändern.</string>
   <string name="privacy_consent_analytics_detail">Genutzte Funktionen, Sitzungsabschlüsse, App-Version und eine zufällige App-Kennung an PostHog Cloud EU senden. Keine Nutzung für Werbung oder dienstübergreifendes Tracking anderer Unternehmen.</string>

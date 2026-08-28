@@ -824,8 +824,7 @@ struct DeckEditorView: View {
     .foregroundStyle(AppPalette.mutedInk)
     .accessibilityLabel(
       Text(
-        String(
-          format: AppLocalization.string("deck_editor.language.accessibility_format"),
+        AppLocalization.format("deck_editor.language.accessibility_format",
           AppLocalization.string(editingLanguageNameKey)
         )
       )
@@ -896,8 +895,7 @@ struct DeckEditorView: View {
     } label: {
       VStack(alignment: .leading, spacing: 3) {
         Text(
-          String(
-            format: AppLocalization.string("deck_editor.item.position_format"),
+          AppLocalization.format("deck_editor.item.position_format",
             position,
             draft.items.count
           )

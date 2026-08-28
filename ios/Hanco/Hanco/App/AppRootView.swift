@@ -189,6 +189,9 @@ struct AppRootView: View {
       showsSettings = true
     }
     .id(language)
+    .onChange(of: language) { _ in
+      dailyReminder.refreshLocalizedContent()
+    }
     .sheet(isPresented: $showsSettings) {
       SettingsView(showsCloseButton: true)
         .environmentObject(deckLibrary)
@@ -653,8 +656,7 @@ private struct AppTourOverlay: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
           Text(
-            verbatim: String(
-              format: AppLocalization.string("app_tour.progress_format"),
+            verbatim: AppLocalization.format("app_tour.progress_format",
               step.rawValue + 1,
               AppTourStep.allCases.count
             )

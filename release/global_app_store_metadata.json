@@ -74,7 +74,9 @@
       "ko": "typee",
       "en": "typee",
       "unsupported": "typee",
-      "es": "typee"
+      "es": "typee",
+      "de": "typee",
+      "fr": "typee"
     },
     "unsupported_locale_fallback": "en",
     "korean_language_device_brand": "typee",
@@ -165,7 +167,7 @@
       {
         "id": "localized_brand_regression",
         "status": "pending",
-        "requirement": "Verify ja=ピヨキー and ko, en, and unsupported=typee on clean install and app-language changes."
+        "requirement": "Verify ja=ピヨキー and en/es/de/fr, retired ko, and unsupported=typee on clean install and app-language changes."
       },
       {
         "id": "all_countries_availability",
@@ -175,22 +177,22 @@
       {
         "id": "unsupported_language_english_fallback",
         "status": "pending",
-        "requirement": "Verify clean installs under representative unsupported LTR and RTL device languages, including fr, zh-Hant, and ar, start in English with the typee brand and do not expose Japanese content fallback."
+        "requirement": "Verify unsupported LTR and RTL device languages, including zh-Hant and ar, start in English with typee; es/de/fr regional variants must use their supported UI, without Japanese content fallback."
       },
       {
         "id": "english_content_coverage",
         "status": "pending",
-        "requirement": "Validate English meanings and romanized readings for every globally visible official deck item."
+        "requirement": "Validate en/es/de/fr meanings and shared romanized readings for every globally visible official deck item; retain legacy ja/en/ko content."
       },
       {
         "id": "non_japanese_fallback",
         "status": "pending",
-        "requirement": "Verify that English, Spanish, Korean, and unsupported languages never display Japanese meanings or katakana as fallback."
+        "requirement": "Verify en/es/de/fr, retired Korean UI, and unsupported languages never display Japanese meanings or katakana as fallback."
       },
       {
         "id": "store_assets",
-        "status": "ten_locale_media_locally_generated_verified_pending_upload_and_web_copy",
-        "requirement": "Review the ten-locale media pack, verify final release-candidate match, save required metadata for seven new store locales, upload and re-read media; separately approve support and privacy pages."
+        "status": "recapture_required_for_expanded_ui_before_upload",
+        "requirement": "Recapture final RC ja/en/es/de/fr screens, map ko to English UI, review copy, save required metadata, upload and re-read media; separately approve support/privacy pages. Historical media are not evidence for this candidate."
       },
       {
         "id": "english_variant_materialization",

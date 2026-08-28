@@ -470,8 +470,7 @@ struct SpacingPassageListView: View {
   private func passageCard(_ passage: SpacingPassage) -> some View {
     HStack(spacing: 14) {
       Text(
-        String(
-          format: AppLocalization.string("spacing.selection.level"),
+        AppLocalization.format("spacing.selection.level",
           passage.level
         )
       )
@@ -488,8 +487,7 @@ struct SpacingPassageListView: View {
           .font(.system(.headline, design: .rounded, weight: .heavy))
           .foregroundStyle(AppPalette.ink)
         Text(
-          String(
-            format: AppLocalization.string("spacing.selection.metadata"),
+          AppLocalization.format("spacing.selection.metadata",
             passage.characterCount,
             passage.spaceCount
           )
@@ -667,8 +665,7 @@ struct SpacingGameView: View {
     VStack(spacing: 8) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("spacing.play.position"),
+          AppLocalization.format("spacing.play.position",
             viewModel.currentBoundary,
             viewModel.totalBoundaryCount
           )
@@ -676,8 +673,7 @@ struct SpacingGameView: View {
         .accessibilityIdentifier("spacing.cursor.position")
         Spacer()
         Text(
-          String(
-            format: AppLocalization.string("spacing.play.answered"),
+          AppLocalization.format("spacing.play.answered",
             viewModel.answeredBoundaryCount,
             viewModel.totalBoundaryCount
           )
@@ -766,8 +762,7 @@ struct SpacingGameView: View {
       feedbackStatus
       Spacer(minLength: 8)
       Text(
-        String(
-          format: AppLocalization.string("spacing.play.corrections"),
+        AppLocalization.format("spacing.play.corrections",
           viewModel.correctionCount
         )
       )
@@ -1272,8 +1267,7 @@ private struct SpacingGameResultView: View {
           }
           if result.firstAttemptMistakes.count > 8 {
             Text(
-              String(
-                format: AppLocalization.string("spacing.result.more_mistakes"),
+              AppLocalization.format("spacing.result.more_mistakes",
                 result.firstAttemptMistakes.count - 8
               )
             )

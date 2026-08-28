@@ -4,6 +4,19 @@ import XCTest
 @testable import Hanco
 
 final class AppSettingsTests: XCTestCase {
+  func testSelectedLanguageControlsPluralAndDecimalFormatting() {
+    for (language, singular, plural) in [
+      ("de", "1 Eintrag", "2 Einträge"),
+      ("fr", "1 élément", "2 éléments"),
+      ("es", "1 elemento", "2 elementos"),
+    ] {
+      defaults.set(language, forKey: SettingsPreferenceKeys.language)
+      XCTAssertEqual(AppLocalization.format("deck.items.format", 1), singular)
+      XCTAssertEqual(AppLocalization.format("deck.items.format", 2), plural)
+      XCTAssertEqual(AppLocalization.format("practice.result.accuracy_value", 98.5), "98,5%")
+    }
+  }
+
   private let defaults = UserDefaults.standard
   private var originalLanguage: Any?
 

@@ -6,6 +6,8 @@
 
 다음 언어를 추가할 때도 아래 A–H를 한 작업에서 갱신한다. 체크는 이번 es/de/fr 작업에서 확인한 범위만 뜻한다. UI 테스트 코드를 작성한 것과 실제 화면에서 통과한 것은 구분한다.
 
+후속 전체 검수의 수정 사항과 남은 개선은 [언어 검수 결과](LANGUAGE_REVIEW.md)를 참조한다.
+
 ## 이번 변경
 
 | 영역 | 로컬 반영 내용 |
@@ -64,6 +66,8 @@
 
 - [x] 문자열 키·빈 값·`%@`/`%d`/`%1$s` 타입·순서·배열 길이를 검사한다. 요일 배열은 값 중복과 무관하게 위치를 유지한다.
 - [x] Apple strings 파싱·중복 키와 Android AAPT2 리소스 컴파일을 검사한다.
+- [x] iOS 주요 수량 17개 키의 stringsdict와 선택 locale 서식, Android 항목/복습/주간 스트릭 plurals를 적용한다. 실제 Foundation 340개 수량 렌더링과 5개 언어 소수점 검사를 통과했다.
+- [ ] 두 수량이 있는 통계·공유 문구와 게임 힌트의 복수형을 확장한다. 이번 주요 수량 검증으로 전체 문법 검수를 대신하지 않는다.
 - [ ] 0/1/2/여러 개, 복수형·숫자·백분율·시간·날짜·실제 가격 표시를 사람이 확인한다.
 - [ ] 독일어 장문·프랑스어 아포스트로피/악센트·스페인어 부호, 작은 iPhone·iPad 회전/분할·좁은 Android·최대 글자 크기에서 잘림/겹침을 검사한다.
 - [ ] 언어별 첫 실행→첫 입력→연습→6개 게임→결과→덱 생성/복원 스모크와 세션 무중단을 확인한다.
@@ -86,7 +90,7 @@
 ## H. 검증·소유권·인계
 
 - [x] 원본 dirty 작업공간은 보존하고 별도 clone `outputs/local-language-expansion`, branch `codex/local-es-de-fr`에서 Codex 단독 작업을 수행한다.
-- [x] Python 92개, Swift 공용 코어 45개, Kotlin 공용/설정 코어 57개, 저장소 preflight를 통과한다. Swift/Kotlin은 설치된 컴파일러 + XCTest/JUnit 직접 실행이며 전체 앱 빌드가 아니다.
+- [x] Python 96개, Swift 공용 코어 45개, Kotlin 공용/설정·발견 코어 63개, 저장소 preflight를 통과한다. Swift/Kotlin은 설치된 컴파일러 + XCTest/JUnit 직접 실행이며 전체 앱 빌드가 아니다.
 - [x] 변경 iOS 소스 parse, strings 파싱, Android 8개 모듈 리소스 컴파일을 확인한다.
 - [ ] 정상 SwiftPM·Xcode 앱/설정/편집/UI 테스트·Android Gradle lint/assemble·관련 계측을 통과한다. 현재 SwiftPM은 sandbox 생성, Xcode는 cache/CoreSimulator 접근, Gradle은 로컬 socket 권한에서 차단됐다. 보호 설정을 해제하지 않았다.
 - [ ] 원격 작업 재개 시 실제 Issue를 생성하고 소유권 claim·workspace doctor·Issue/Project/PR를 갱신한다. 로컬 우선 사용자 요청으로 현재 보류했으며 가짜 Issue는 만들지 않았다. PR #70의 일회성 CI 예외는 새 작업에 적용하지 않는다.
@@ -111,7 +115,7 @@ python3 tools/release_preflight.py
 # 정상 실행 권한이 있는 개발 환경에서 다음 앱 gate를 수행한다.
 (cd ios/HangulEngine && swift test)
 xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
-(cd android && ./gradlew :core:deckkit:test :core:piyodeck:test :core:settings:testDebugUnitTest :app:lintDebug :app:assembleDebug)
+(cd android && ./gradlew :core:deckkit:test :core:piyodeck:test :core:settings:testDebugUnitTest :core:data:testDebugUnitTest :app:lintDebug :app:assembleDebug)
 ```
 
-로컬 코어 직접 실행·로그·원본 보존 감사는 `artifacts/language-expansion/README.md`를 참조한다. 체크되지 않은 항목은 출시 전 인계 목록이며 로컬 구현 완료와 혼동하지 않는다.
+로컬 코어 직접 실행·로그·원본 보존 감사는 `artifacts/language-review/README.md`와 이전 확장의 `artifacts/language-expansion/README.md`를 참조한다. 체크되지 않은 항목은 출시 전 인계 목록이며 로컬 구현 완료와 혼동하지 않는다.

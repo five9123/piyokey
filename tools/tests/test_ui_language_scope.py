@@ -79,6 +79,48 @@ class UILanguageScopeTests(unittest.TestCase):
         self.assertIn("ko", schema["$defs"]["deckLocalizations"]["properties"])
         self.assertIn("ko", schema["$defs"]["itemLocalizations"]["properties"])
 
+    def test_learning_item_labels_are_not_mascot_accessories(self):
+        for code, expected in {"es": "Elementos", "de": "Einträge", "fr": "Éléments"}.items():
+            values = release_preflight.parse_strings(RESOURCES / f"{code}.lproj/Localizable.strings")
+            self.assertEqual(values["deck.detail.items"], expected)
+            self.assertEqual(values["piyodeck.import.items"], expected)
+            self.assertNotEqual(values["deck.detail.items"], values["closet.prop_section"])
+
+    def test_plural_resources_preserve_printf_arguments_and_match_android(self):
+        reference = None
+        for code in sorted(UI_LOCALES):
+            with (RESOURCES / f"{code}.lproj/Localizable.stringsdict").open("rb") as stream:
+                plural = plistlib.load(stream)
+            if reference is None:
+                reference = set(plural)
+            self.assertEqual(set(plural), reference)
+            for key, entry in plural.items():
+                rule = entry["count"]
+                self.assertEqual(entry["NSStringLocalizedFormatKey"], "%#@count@")
+                for quantity in ("other",) if code == "ja" else ("one", "other"):
+                    self.assertEqual(re.findall(r"%[a-z@]", rule[quantity]), ["%d"], key)
+            for module, key, expected in (
+                ("discover", "deck_item_count", ["%1$d"]),
+                ("retention", "review_count", ["%1$d"]),
+                ("retention", "retention_week_progress", ["%1$d", "%2$d"]),
+            ):
+                folder = "values" if code == "en" else f"values-{code}"
+                root = ET.parse(ROOT / f"android/feature/{module}/src/main/res/{folder}/strings.xml").getroot()
+                quantity = root.find(f"plurals[@name='{key}']")
+                self.assertIsNotNone(quantity)
+                for item in quantity:
+                    self.assertEqual(re.findall(r"%\d+\$[a-z]", item.text), expected)
+        with (RESOURCES / "fr.lproj/Localizable.stringsdict").open("rb") as stream:
+            self.assertEqual(plistlib.load(stream)["deck.items.format"]["count"]["one"], "%d élément")
+
+    def test_active_visible_copy_uses_current_brand(self):
+        for code in UI_LOCALES:
+            values = release_preflight.parse_strings(RESOURCES / f"{code}.lproj/Localizable.strings")
+            self.assertNotIn("PIYOKEY", " ".join(values.values()))
+            folder = "values" if code == "en" else f"values-{code}"
+            for path in (ROOT / "android").glob(f"**/src/main/res/{folder}/strings.xml"):
+                self.assertNotIn("PIYOKEY", " ".join(ET.parse(path).getroot().itertext()), str(path))
+
     def test_android_filters_legacy_ui_without_deleting_learning_sources(self):
         config = ET.parse(ROOT / "android/app/src/main/res/xml/locales_config.xml")
         locales = {node.attrib["{http://schemas.android.com/apk/res/android}name"]

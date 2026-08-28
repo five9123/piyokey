@@ -237,8 +237,7 @@ struct SessionResultReviewSection: View {
 
       Spacer(minLength: 4)
       Text(
-        String(
-          format: AppLocalization.string("result.review.mistake_count_format"),
+        AppLocalization.format("result.review.mistake_count_format",
           reviewItem.mistakeCount
         )
       )

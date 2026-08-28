@@ -377,6 +377,11 @@ enum AppLocalization {
     )
   }
 
+  /// Uses the selected app locale for decimals and stringsdict plural rules.
+  static func format(_ key: String, _ arguments: CVarArg...) -> String {
+    String(format: string(key), locale: locale, arguments: arguments)
+  }
+
   static func localizedBundle(for language: AppLanguage) -> Bundle {
     guard let path = Bundle.main.path(forResource: language.rawValue, ofType: "lproj"),
       let bundle = Bundle(path: path)

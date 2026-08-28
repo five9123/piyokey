@@ -1,4 +1,4 @@
-/* Spanish UI; learning clues retain the existing English fallback. */
+/* Spanish UI and localized learning clues; Korean targets and shared romanization are preserved. */
 "practice.title" = "Práctica de escritura en hangul";
 "practice.sample_target_1" = "사랑해요";
 "practice.sample_target_2" = "안녕하세요";
@@ -249,7 +249,7 @@
 "settings.analytics_privacy_note" = "Nunca se envían el texto escrito, el contenido de mazos del usuario, nombres ni correos. Ambas opciones están desactivadas por defecto.";
 "settings.review_privacy_choices" = "Revisar opciones para compartir datos";
 "privacy_consent.navigation_title" = "Opciones de privacidad";
-"privacy_consent.title" = "¿Ayudas a mejorar PIYOKEY?";
+"privacy_consent.title" = "¿Ayudas a mejorar typee?";
 "privacy_consent.introduction" = "Elige qué tipos de información quieres compartir. Ambos permanecen desactivados hasta que guardes tus opciones.";
 "privacy_consent.optional_note" = "Puedes usar todas las lecciones, juegos y funciones compradas sin compartir datos. Cambia tus opciones en Ajustes cuando quieras.";
 "privacy_consent.analytics_detail" = "Envía a PostHog Cloud EU las funciones usadas, la finalización de sesiones, la versión de la app y un identificador aleatorio. No se usa para publicidad ni para seguirte entre servicios de otras empresas.";
@@ -686,7 +686,7 @@
 "deck.level.format" = "Nv.%d";
 "deck.detail.navigation_title" = "Detalles del mazo";
 "deck.detail.downloads" = "Descargas";
-"deck.detail.items" = "Objetos";
+"deck.detail.items" = "Elementos";
 "deck.detail.average_length" = "Longitud media";
 "deck.detail.preview" = "Vista previa antes de descargar";
 "deck.detail.preview_count" = "Mostrando %d elementos";
@@ -1008,7 +1008,7 @@
 "piyodeck.import.user_badge" = "Mazo de usuario";
 "piyodeck.import.type" = "Tipo";
 "piyodeck.import.level" = "Nivel";
-"piyodeck.import.items" = "Objetos";
+"piyodeck.import.items" = "Elementos";
 "piyodeck.import.version" = "Versión";
 "piyodeck.import.tags" = "Etiquetas";
 "piyodeck.import.preview" = "Primeros 3 elementos";

@@ -138,4 +138,9 @@
   <string name="user_deck_import_as_copy_locked">Als eigene Kopie importieren · typee pro</string>
   <string name="deck_editor_move_up">Eintrag nach oben</string>
   <string name="deck_editor_move_down">Eintrag nach unten</string>
+
+<plurals name="deck_item_count">
+  <item quantity="one">%1$d Eintrag</item>
+  <item quantity="other">%1$d Einträge</item>
+</plurals>
 </resources>

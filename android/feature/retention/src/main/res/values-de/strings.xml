@@ -83,4 +83,13 @@
   <string name="wardrobe_bow">Regenbogenschleife</string>
   <string name="wardrobe_topik_glasses">TOPIK-Brille</string>
   <string name="wardrobe_trophy">Meisterpokal</string>
+
+<plurals name="review_count">
+  <item quantity="one">%1$d Wort zum Wiederholen</item>
+  <item quantity="other">%1$d Wörter zum Wiederholen</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="one">Diese Woche %1$d/7 · %2$d-Tag-Serie</item>
+  <item quantity="other">Diese Woche %1$d/7 · %2$d-Tage-Serie</item>
+</plurals>
 </resources>

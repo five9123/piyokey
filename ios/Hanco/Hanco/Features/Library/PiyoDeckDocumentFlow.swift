@@ -727,8 +727,7 @@ struct PiyoDeckImportPreviewView: View {
     .accessibilityLabel(Text(key))
     .accessibilityValue(
       Text(
-        verbatim: String(
-          format: AppLocalization.string("piyodeck.import.compare.accessibility_value"),
+        verbatim: AppLocalization.format("piyodeck.import.compare.accessibility_value",
           current,
           incoming
         )

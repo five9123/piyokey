@@ -494,8 +494,7 @@ struct PhysicalKeyboardGuideView: View {
       let finger = AppLocalization.string(target.finger.localizationKey)
       VStack(spacing: 2) {
         Text(
-          String(
-            format: AppLocalization.string("physical_keyboard.next_key_format"),
+          AppLocalization.format("physical_keyboard.next_key_format",
             String(target.expected),
             target.key.map { String($0.latin) } ?? AppLocalization.string("physical_keyboard.space")
           )
@@ -505,14 +504,12 @@ struct PhysicalKeyboardGuideView: View {
 
         Text(
           target.requiresShift
-            ? String(
-              format: AppLocalization.string("physical_keyboard.shift_finger_format"),
+            ? AppLocalization.format("physical_keyboard.shift_finger_format",
               AppLocalization.string((target.shiftHand ?? .both).localizationKey),
               hand,
               finger
             )
-            : String(
-              format: AppLocalization.string("physical_keyboard.finger_format"),
+            : AppLocalization.format("physical_keyboard.finger_format",
               hand,
               finger
             )
@@ -577,8 +574,7 @@ struct PhysicalKeyboardGuideView: View {
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
       Text(
-        verbatim: String(
-          format: AppLocalization.string("physical_keyboard.key_accessibility_format"),
+        verbatim: AppLocalization.format("physical_keyboard.key_accessibility_format",
           String(key.baseJamo),
           String(key.latin),
           AppLocalization.string(key.hand.localizationKey),

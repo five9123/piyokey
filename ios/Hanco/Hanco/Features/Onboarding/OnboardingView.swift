@@ -68,8 +68,7 @@ struct OnboardingView: View {
     VStack(spacing: 8) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("onboarding.progress_format"),
+          AppLocalization.format("onboarding.progress_format",
             onboarding.snapshot.step.rawValue,
             OnboardingStep.allCases.count
           )

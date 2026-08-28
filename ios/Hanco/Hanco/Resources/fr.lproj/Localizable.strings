@@ -248,7 +248,7 @@
 "settings.analytics_privacy_note" = "Les textes saisis, contenus personnels, noms et adresses e-mail ne sont jamais envoyés. Les deux options sont désactivées par défaut.";
 "settings.review_privacy_choices" = "Revoir le partage de données";
 "privacy_consent.navigation_title" = "Choix de confidentialité";
-"privacy_consent.title" = "Aider à améliorer PIYOKEY ?";
+"privacy_consent.title" = "Aider à améliorer typee ?";
 "privacy_consent.introduction" = "Choisis les types de données à partager. Les deux options restent désactivées jusqu’à l’enregistrement de tes choix.";
 "privacy_consent.optional_note" = "Toutes les leçons, tous les jeux et achats restent utilisables sans partage. Tu peux modifier tes choix dans les réglages.";
 "privacy_consent.analytics_detail" = "Envoyer à PostHog Cloud EU les fonctions utilisées, les sessions terminées, la version et un identifiant aléatoire. Ces données ne servent ni à la publicité ni au suivi entre services d’autres entreprises.";
@@ -689,7 +689,7 @@
 "deck.level.format" = "Niv.%d";
 "deck.detail.navigation_title" = "Détails du paquet";
 "deck.detail.downloads" = "Téléchargements";
-"deck.detail.items" = "Accessoires";
+"deck.detail.items" = "Éléments";
 "deck.detail.average_length" = "Longueur moy.";
 "deck.detail.preview" = "Aperçu avant téléchargement";
 "deck.detail.preview_count" = "%d éléments affichés";
@@ -1034,7 +1034,7 @@
 "piyodeck.import.user_badge" = "Paquet personnel";
 "piyodeck.import.type" = "Type";
 "piyodeck.import.level" = "Niveau";
-"piyodeck.import.items" = "Accessoires";
+"piyodeck.import.items" = "Éléments";
 "piyodeck.import.version" = "Version";
 "piyodeck.import.tags" = "Tags";
 "piyodeck.import.preview" = "3 premiers éléments";

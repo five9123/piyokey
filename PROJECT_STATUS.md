@@ -21,19 +21,20 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| 로컬 요청: es/de/fr 확장 (Issue/PR 미등록) | Verify: 로컬 소스·코어 검증 완료 | Codex 단독, `codex/local-es-de-fr`; `outputs/local-language-expansion` 독립 clone | 전체 앱/화면·현지어 검수 후 실제 Issue/소유권·PR 등록; 원격 작업은 사용자 로컬 우선 요청으로 보류 |
+| 로컬 요청: es/de/fr 확장·언어 전체 검수 (Issue/PR 미등록) | Verify: 구조·문맥 검수와 수정, 로컬 코어 검증 완료 | Codex 단독, `codex/local-es-de-fr`; `outputs/local-language-expansion` 독립 clone | `docs/LANGUAGE_REVIEW.md`의 전체 앱/화면·현지어·알림 gate 확인 후 실제 Issue/소유권·PR 등록; 원격 작업은 사용자 로컬 우선 요청으로 보류 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## 로컬 es/de/fr 후보 검증
 
 - 기준: 로컬에 보존된 병합 main `47371de950dcb28530f69b91ec596f53e2818ab3`. 원격을 새로 fetch하거나 Issue/Project/PR를 변경하지 않았다. 원본 dirty `codex/63-typedeck` 파일은 그대로 보존했다.
 - 구현: ja/en/es/de/fr UI, 스페인어 기본 학습 뜻 37개 보완, es/de/fr 각 627개 공식 의미·덱 이름 41개·태그 42개·작성자, schema·validator·편집/조회·선택 저장·분석 enum·스토어 초안/촬영 설정.
-- 통과: Python 92개, Swift 공용 코어 45개, Kotlin 공용/설정 코어 57개, preflight, 수정 iOS source parse, Apple strings 파싱·중복 검사, Android 8개 모듈 AAPT2 리소스 compile. Swift/Kotlin은 실제 기존 XCTest/JUnit을 설치 컴파일러로 직접 실행했으며 전체 앱 빌드는 아니다. 새 `.typedeck`는 세 구현의 동일 바이트 golden 왕복 검증을 포함한다.
+- 검수 수정: 학습 항목/꾸미기 소품의 문맥 오역, de/fr 의미 5개, 기존 브랜드 잔존, Android 악센트 검색·미지원 locale 테스트, iOS 선택 locale 숫자 서식·활성 알림 문구 갱신, 양 플랫폼 주요 수량 복수형, 오래된 스토어 언어 gate를 정리했다. iOS stringsdict 17개 키와 Android 항목/복습/주간 스트릭 plurals를 추가했다.
+- 통과: Python 96개, Swift 공용 코어 45개, Kotlin 공용/설정·발견 코어 63개, preflight, 수정 iOS source parse, Apple strings 파싱·중복 검사, Android 8개 모듈 AAPT2 리소스 compile. 실제 Foundation plural 렌더링 340개·선택 언어 소수점 5개도 통과했다. Swift/Kotlin은 실제 기존 XCTest/JUnit을 설치 컴파일러로 직접 실행했으며 전체 앱 빌드는 아니다. 새 `.typedeck`는 세 구현의 동일 바이트 golden 왕복 검증을 포함한다.
 - 보존: 덱 snapshot 67개와 catalog 2개의 기존 의미/ID/순서/ja/en/ko 값이 동일하다(새 번역·버전·시각·경로/size 변경 제외). 기존 MP3·벡터·영어 번역 원본 585개 파일도 byte 일치. 공식 덱 버전은 증가하고 게임 preset v3의 경쟁 identity는 유지한다.
 - 미완료: SwiftPM sandbox 생성, Xcode cache/CoreSimulator 접근, Gradle 로컬 socket 권한 제한으로 정상 전체 앱 빌드·앱 단위/UI/계측은 검증하지 못했다. 보호 설정을 해제하지 않았다. 현지어 사람 검수·작은 화면/큰 글자·결제/공유·최종 RC 촬영·스토어 저장/업로드도 남아 있다.
 - 배포 호환: 구버전 앱은 es/de/fr locale 키를 거부하므로 새 카탈로그는 별도 namespace로 게시해야 한다. 기존 URL·실제 앱 배포 설정은 변경하지 않았다. 새 번역이 든 파일은 받는 앱 업데이트가 필요하다.
 - 소유권: 로컬 우선 요청에 따른 독립 clone 예외다. 실제 Issue 없이 claim metadata를 만들지 않았으며 strict workspace doctor의 소유권 gate와 CI/리뷰를 통과했다고 기록하지 않는다. PR #70의 일회성 CI 예외는 재사용하지 않는다.
-- 인계: `docs/LANGUAGE_EXPANSION_CHECKLIST.md`, `release/language_expansion_store_draft.json`, `artifacts/language-expansion/README.md`.
+- 인계: `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`, `release/language_expansion_store_draft.json`, `artifacts/language-review/README.md`. 복합 수량 문구·편집 언어 UX·지역별 포맷은 후속 개선이며 Android 백그라운드 알림 언어는 기기 확인 전이다.
 
 ## 최근 소스 통합
 

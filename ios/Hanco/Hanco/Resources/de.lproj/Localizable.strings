@@ -248,7 +248,7 @@
 "settings.analytics_privacy_note" = "Eingaben, Inhalte eigener Decks, Namen und E-Mail-Adressen werden nie gesendet. Beide Optionen sind standardmäßig aus.";
 "settings.review_privacy_choices" = "Datenschutzauswahl prüfen";
 "privacy_consent.navigation_title" = "Datenschutzauswahl";
-"privacy_consent.title" = "PIYOKEY verbessern helfen?";
+"privacy_consent.title" = "typee verbessern helfen?";
 "privacy_consent.introduction" = "Wähle einzeln, welche Daten du teilen möchtest. Beide Optionen bleiben aus, bis du deine Auswahl speicherst.";
 "privacy_consent.optional_note" = "Alle Lektionen, Spiele und gekauften Funktionen bleiben ohne Datenfreigabe nutzbar. Du kannst die Auswahl jederzeit ändern.";
 "privacy_consent.analytics_detail" = "Genutzte Funktionen, Sitzungsabschlüsse, App-Version und eine zufällige App-Kennung an PostHog Cloud EU senden. Keine Nutzung für Werbung oder dienstübergreifendes Tracking anderer Unternehmen.";
@@ -689,7 +689,7 @@
 "deck.level.format" = "St.%d";
 "deck.detail.navigation_title" = "Deckdetails";
 "deck.detail.downloads" = "Downloads";
-"deck.detail.items" = "Accessoires";
+"deck.detail.items" = "Einträge";
 "deck.detail.average_length" = "Ø Länge";
 "deck.detail.preview" = "Vorschau vor dem Download";
 "deck.detail.preview_count" = "%d Einträge angezeigt";
@@ -1034,7 +1034,7 @@
 "piyodeck.import.user_badge" = "Eigenes Deck";
 "piyodeck.import.type" = "Typ";
 "piyodeck.import.level" = "Niveau";
-"piyodeck.import.items" = "Accessoires";
+"piyodeck.import.items" = "Einträge";
 "piyodeck.import.version" = "Version";
 "piyodeck.import.tags" = "Tags";
 "piyodeck.import.preview" = "Erste 3 Einträge";

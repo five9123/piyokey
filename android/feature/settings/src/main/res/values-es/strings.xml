@@ -52,7 +52,7 @@
   <string name="settings_crash_diagnostics_detail">Compartir diagnósticos de cierres inesperados y bloqueos.</string>
   <string name="settings_analytics_privacy_note">Nunca se envían el texto escrito, el contenido de mazos del usuario, nombres ni correos. Ambas opciones están desactivadas por defecto.</string>
   <string name="settings_review_privacy_choices">Revisar opciones para compartir datos</string>
-  <string name="privacy_consent_title">¿Ayudas a mejorar PIYOKEY?</string>
+  <string name="privacy_consent_title">¿Ayudas a mejorar typee?</string>
   <string name="privacy_consent_introduction">Elige qué tipos de información quieres compartir. Ambos permanecen desactivados hasta que guardes tus opciones.</string>
   <string name="privacy_consent_optional_note">Puedes usar todas las lecciones, juegos y funciones compradas sin compartir datos. Cambia tus opciones en Ajustes cuando quieras.</string>
   <string name="privacy_consent_analytics_detail">Envía a PostHog Cloud EU las funciones usadas, la finalización de sesiones, la versión de la app y un identificador aleatorio. No se usa para publicidad ni para seguirte entre servicios de otras empresas.</string>

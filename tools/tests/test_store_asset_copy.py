@@ -46,6 +46,15 @@ class StoreAssetCopyTests(unittest.TestCase):
             self.assertEqual(content["ui_language"], locale[:2])
             self.assertTrue(all(content["support"].values()))
 
+    def test_release_gates_do_not_classify_french_as_unsupported(self):
+        root = Path(__file__).resolve().parents[2]
+        metadata = json.loads((root / "release/global_app_store_metadata.json").read_text())
+        for code in ("es", "de", "fr"):
+            self.assertEqual(metadata["brand_resolution"]["locales"][code], "typee")
+        gate = next(g for g in metadata["release_gates"]["common"] if g["id"] == "unsupported_language_english_fallback")
+        self.assertNotIn("including fr", gate["requirement"])
+        self.assertIn("supported UI", gate["requirement"])
+
 
 if __name__ == "__main__":
     unittest.main()

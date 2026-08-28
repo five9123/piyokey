@@ -1006,7 +1006,7 @@
 "deck_maker.product.unavailable.title" = "価格を取得できませんでした";
 "deck_maker.product.unavailable.message" = "しばらくしてから、価格をもう一度読み込んでください。";
 
-/* PIYOKEY deck documents and editor */
+/* ピヨキー deck documents and editor */
 "deck_editor.title.new" = "新しいデッキ";
 "deck_editor.title.edit" = "デッキを編集";
 "deck_editor.title.copy" = "自分用コピーを編集";
