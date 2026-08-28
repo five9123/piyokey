@@ -448,8 +448,8 @@ final class AppSettingsTests: XCTestCase {
 
   func testReleaseLinksUsePublicHTTPSPages() {
     XCTAssertEqual(
-      AppReleaseLinks.privacyPolicy.absoluteString, "https://hancoweb.vercel.app/privacy")
-    XCTAssertEqual(AppReleaseLinks.support.absoluteString, "https://hancoweb.vercel.app/support")
+      AppReleaseLinks.privacyPolicy.absoluteString, "https://typee.app/privacy")
+    XCTAssertEqual(AppReleaseLinks.support.absoluteString, "https://typee.app/support")
     XCTAssertEqual(AppReleaseLinks.privacyPolicy.scheme, "https")
     XCTAssertEqual(AppReleaseLinks.support.scheme, "https")
   }

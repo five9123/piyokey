@@ -947,8 +947,8 @@
 "closet.prop_game_center" = "チャンピオントロフィー";
 "closet.cond_game_center" = "Game Centerへスコアを送信";
 
-/* ピヨキー pro lifetime purchase */
-"deck_maker.paywall.navigation_title" = "ピヨキー pro";
+/* ピヨキー プロ lifetime purchase */
+"deck_maker.paywall.navigation_title" = "ピヨキー プロ";
 "deck_maker.paywall.title" = "ユーザーデッキをもっと自由に";
 "deck_maker.paywall.subtitle" = "4つ目以降のユーザーデッキと、端末での作成・編集を一度の購入で利用できます。";
 "deck_maker.paywall.feature.unlimitedImports.title" = "ユーザーデッキを無制限に保存";
@@ -963,7 +963,7 @@
 "deck_maker.paywall.feature.lifetime.detail" = "サブスクリプションではありません。期限なく作成・編集できます。";
 "deck_maker.paywall.free_import_note" = "ユーザーデッキ3つまでは無料。保存済みデッキの練習・ゲーム・書き出し・削除・同じIDの置き換えは、購入なしで使えます。";
 "deck_maker.paywall.purchase_format" = "%@で購入";
-"deck_maker.paywall.already_owned" = "購入済み・ピヨキー proを使う";
+"deck_maker.paywall.already_owned" = "購入済み・ピヨキー プロを使う";
 "deck_maker.paywall.loading" = "価格を読み込み中…";
 "deck_maker.paywall.retry" = "価格をもう一度読み込む";
 "deck_maker.paywall.restore" = "購入を復元";
@@ -971,11 +971,11 @@
 "deck_maker.paywall.privacy" = "プライバシーポリシー";
 "deck_maker.alert.ok" = "OK";
 "deck_maker.purchase.pending.title" = "承認待ちです";
-"deck_maker.purchase.pending.message" = "購入が承認されると、ピヨキー proを使えるようになります。";
+"deck_maker.purchase.pending.message" = "購入が承認されると、ピヨキー プロを使えるようになります。";
 "deck_maker.purchase.failed.title" = "購入を完了できませんでした";
 "deck_maker.purchase.failed.message" = "通信状況を確認して、もう一度お試しください。購入済みの場合は「購入を復元」をお試しください。";
 "deck_maker.restore.succeeded.title" = "購入を復元しました";
-"deck_maker.restore.succeeded.message" = "ピヨキー proを利用できます。";
+"deck_maker.restore.succeeded.message" = "ピヨキー プロを利用できます。";
 "deck_maker.restore.empty.title" = "復元できる購入がありません";
 "deck_maker.restore.empty.message" = "購入時と同じApple Accountか確認してください。";
 "deck_maker.restore.failed.title" = "購入を復元できませんでした";
@@ -1052,7 +1052,7 @@
 "piyodeck.import.status.same_version" = "同じバージョン番号ですが内容が異なります。";
 "piyodeck.import.status.different_detail" = "自動では統合しません。現在のデッキを置き換えるか、別のコピーとして保存できます。";
 "piyodeck.import.action.import" = "デッキを読み込む";
-"piyodeck.import.action.unlock_pro" = "ピヨキー proで4つ目を読み込む";
+"piyodeck.import.action.unlock_pro" = "ピヨキー プロで4つ目を読み込む";
 "piyodeck.import.action.done" = "完了";
 "piyodeck.import.action.replace" = "読み込んだ内容に置き換える";
 "piyodeck.import.action.copy" = "別のコピーとして保存";
@@ -1099,8 +1099,8 @@
 "my_decks.delete.failure.message_format" = "「%@」は削除されていません。空き容量を確認して、もう一度お試しください。";
 "deck_maker.accessibility.status.unlocked" = "利用可能";
 "deck_maker.accessibility.status.locked" = "購入が必要";
-"deck_maker.accessibility.hint.available" = "ピヨキー proの機能を開きます。";
-"deck_maker.accessibility.hint.locked" = "ピヨキー proの購入画面を開きます。";
+"deck_maker.accessibility.hint.available" = "ピヨキー プロの機能を開きます。";
+"deck_maker.accessibility.hint.locked" = "ピヨキー プロの購入画面を開きます。";
 "piyodeck.import.compare.title" = "現在のデッキと比較";
 "piyodeck.import.compare.current" = "現在";
 "piyodeck.import.compare.incoming" = "読み込むファイル";
@@ -1112,7 +1112,7 @@
 "piyodeck.import.action.export_current.hint" = "現在のデッキを.typedeckファイルとして共有します。";
 "piyodeck.import.action.copy.locked_label" = "別のコピーとして保存、購入が必要";
 "piyodeck.import.action.copy.hint" = "新しいIDのユーザーデッキとして保存します。";
-"piyodeck.import.action.copy.locked_hint" = "ピヨキー proの購入画面を開きます。同じIDの置き換えは無料です。";
+"piyodeck.import.action.copy.locked_hint" = "ピヨキー プロの購入画面を開きます。同じIDの置き換えは無料です。";
 "piyodeck.import.action.replace.hint" = "現在のデッキを読み込んだ内容で置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.downgrade_hint" = "古いバージョンで現在のデッキを置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";

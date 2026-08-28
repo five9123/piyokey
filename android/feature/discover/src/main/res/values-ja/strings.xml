@@ -59,7 +59,7 @@
   <string name="user_deck_new">新しいデッキ</string>
   <string name="action_close">閉じる</string>
   <string name="action_ok">OK</string>
-  <string name="deck_maker_product_name">ピヨキー pro</string>
+  <string name="deck_maker_product_name">ピヨキー プロ</string>
   <string name="deck_maker_paywall_title">ユーザーデッキをもっと自由に</string>
   <string name="deck_maker_paywall_subtitle">4つ目以降のユーザーデッキと、端末での作成・編集を一度の購入で利用できます。</string>
   <string name="deck_maker_feature_unlimited">ユーザーデッキを無制限に保存</string>
@@ -70,14 +70,14 @@
   <string name="deck_maker_free_note">ユーザーデッキ3つまでは無料。練習・ゲーム・書き出し・削除・同じIDの置き換えは購入なしで使えます。</string>
   <string name="deck_maker_buy">買い切りで購入</string>
   <string name="deck_maker_buy_price">買い切りで購入・%1$s</string>
-  <string name="deck_maker_access_ready">ピヨキー pro利用可能</string>
+  <string name="deck_maker_access_ready">ピヨキー プロ利用可能</string>
   <string name="deck_maker_restore">購入を復元</string>
-  <string name="deck_maker_notice_pending">購入は保留中です。Google Playの確認後にピヨキー proが有効になります。</string>
+  <string name="deck_maker_notice_pending">購入は保留中です。Google Playの確認後にピヨキー プロが有効になります。</string>
   <string name="deck_maker_notice_purchase_failed">購入を完了できませんでした。デッキと下書きはそのままです。</string>
-  <string name="deck_maker_notice_restore_succeeded">ピヨキー proの購入を復元しました。</string>
+  <string name="deck_maker_notice_restore_succeeded">ピヨキー プロの購入を復元しました。</string>
   <string name="deck_maker_notice_restore_empty">このGoogle Playアカウントに購入履歴が見つかりませんでした。</string>
   <string name="deck_maker_notice_restore_failed">購入を確認できませんでした。オンラインで再度お試しください。</string>
-  <string name="deck_maker_notice_product_unavailable">現在ピヨキー proを利用できません。Google Play接続後にお試しください。</string>
+  <string name="deck_maker_notice_product_unavailable">現在ピヨキー プロを利用できません。Google Play接続後にお試しください。</string>
   <string name="deck_editor_title">デッキ編集</string>
   <string name="deck_editor_language">編集中の言語：%1$s</string>
   <string name="deck_editor_name">デッキ名</string>
@@ -114,7 +114,7 @@
   <string name="user_deck_file">ファイル：%1$s</string>
   <string name="user_deck_version_items">バージョン %1$d・%2$d項目</string>
   <string name="user_deck_install">このデッキを読み込む</string>
-  <string name="user_deck_unlock_pro">ピヨキー proで4つ目を読み込む</string>
+  <string name="user_deck_unlock_pro">ピヨキー プロで4つ目を読み込む</string>
   <string name="user_deck_importing">読み込み中…</string>
   <string name="user_deck_already_imported">同じデッキはすでに読み込み済みです。ファイルは変更していません。</string>
   <string name="user_deck_conflict_update">このデッキの新しい別内容と現在版を比較できます。</string>
@@ -134,7 +134,7 @@
   <string name="discover_propose_deck">ほしいデッキを提案する</string>
   <string name="deck_report_content">このデッキの内容を報告</string>
   <string name="user_deck_import_as_copy">別のコピーとして読み込む</string>
-  <string name="user_deck_import_as_copy_locked">別のコピーとして読み込む・ピヨキー pro</string>
+  <string name="user_deck_import_as_copy_locked">別のコピーとして読み込む・ピヨキー プロ</string>
   <string name="deck_editor_move_up">項目を上へ移動</string>
   <string name="deck_editor_move_down">項目を下へ移動</string>
 </resources>

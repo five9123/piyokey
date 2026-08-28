@@ -1,10 +1,10 @@
 # PIYOKEY Privacy Policy — analytics update draft
 
-> Publication gate: this is the approved source copy for the next analytics-enabled build. It is not effective until it replaces the live content at `https://hancoweb.vercel.app/privacy`. Before publishing, confirm the processor names, production region, retention settings, and support contact. Keep Japanese first on the public page and provide an obvious language switch.
+> Publication gate: this is the approved source copy for the next analytics-enabled build. It is not effective until it replaces the live content at `https://typee.app/privacy`. Before publishing, confirm the processor names, production region, retention settings, and support contact. Keep Japanese first on the public page and provide an obvious language switch.
 
 Effective date: 2026-08-26  
 Operator: Jungmin Oh / PIYOKEY  
-Contact: https://hancoweb.vercel.app/support
+Contact: https://typee.app/support
 
 ## 日本語
 
@@ -46,7 +46,7 @@ PostHogの製品イベントは本番プロジェクトで12か月に設定し�
 
 #### 6. 変更とお問い合わせ
 
-収集項目、目的、委託先に重要な変更がある場合は、本ポリシーを更新し、必要に応じてアプリ内で改めて選択を求めます。お問い合わせは https://hancoweb.vercel.app/support からご連絡ください。
+収集項目、目的、委託先に重要な変更がある場合は、本ポリシーを更新し、必要に応じてアプリ内で改めて選択を求めます。お問い合わせは https://typee.app/support からご連絡ください。
 
 ## English
 
@@ -88,7 +88,7 @@ PIYOKEY does not provide child-directed advertising or behavioral tracking. User
 
 #### 6. Changes and contact
 
-If collection, purposes, or processors materially change, we will update this policy and request a new in-app choice where required. Contact us at https://hancoweb.vercel.app/support.
+If collection, purposes, or processors materially change, we will update this policy and request a new in-app choice where required. Contact us at https://typee.app/support.
 
 ## 한국어
 
@@ -130,4 +130,4 @@ PostHog 제품 이벤트는 운영 프로젝트에서 12개월 뒤 삭제되도�
 
 #### 6. 변경과 문의
 
-수집 항목, 목적 또는 처리업체에 중요한 변경이 생기면 이 방침을 갱신하고 필요한 경우 앱에서 다시 선택을 요청합니다. 문의는 https://hancoweb.vercel.app/support 에서 접수해 주세요.
+수집 항목, 목적 또는 처리업체에 중요한 변경이 생기면 이 방침을 갱신하고 필요한 경우 앱에서 다시 선택을 요청합니다. 문의는 https://typee.app/support 에서 접수해 주세요.

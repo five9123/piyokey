@@ -32,9 +32,9 @@ other UI and metadata-only localizations are deferred until post-launch demand r
 
 ## URLs
 
-- Marketing: https://hancoweb.vercel.app/
-- Privacy policy: https://hancoweb.vercel.app/privacy
-- Support: https://hancoweb.vercel.app/support
+- Marketing: https://typee.app/
+- Privacy policy: https://typee.app/privacy
+- Support: https://typee.app/support
 
 The Privacy and Support pages offer Japanese, English, and Korean variants. The same links are available from the app's Settings screen.
 
@@ -57,7 +57,7 @@ Add at least these three App Store Connect localizations:
 
 | Locale | Display name | Description |
 |---|---|---|
-| Japanese | `ピヨキー pro` | `ユーザーデッキ無制限と作成・編集をずっと利用` |
+| Japanese | `ピヨキー プロ` | `ユーザーデッキ無制限と作成・編集をずっと利用` |
 | English (U.S.) | `typee pro` | `Unlimited user decks, creation, and editing.` |
 | Korean | `피요키 프로` | `사용자 덱 무제한 보관과 생성·편집을 평생 이용` |
 
@@ -176,7 +176,7 @@ The app does not implement non-exempt encryption. `ITSAppUsesNonExemptEncryption
 
 ## Review information
 
-Use `release/APP_REVIEW_NOTES.md`. No demo account is required. Include the typee pro / ピヨキー pro
+Use `release/APP_REVIEW_NOTES.md`. No demo account is required. Include the typee pro / ピヨキー プロ
 non-consumable in the same review submission. The direct review phone number remains an
 account-only field and must be entered in international format.
 

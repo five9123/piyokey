@@ -1,0 +1,61 @@
+{
+  "status": "local_media_reviewed_upload_blocked_by_apple_login",
+  "verified_at": "2026-08-28T08:38:57.477145+09:00",
+  "revision": "Supported-language notices removed at user request; real UI and Pro purchase notices retained",
+  "capture_reused_without_app_changes": true,
+  "source_version": "1.1 (7)",
+  "source_head": "7dc2d5562f09c82729fb618f1e2b9feac8a156e6",
+  "source_has_uncommitted_changes": true,
+  "source_scope": "Latest local worktree simulator build; not a clean signed release candidate",
+  "capture_tests": {
+    "ja": "passed (172.749s)",
+    "en": "passed (168.379s)",
+    "ko": "passed (169.933s)"
+  },
+  "locales": ["ja", "en-US", "ko", "zh-Hans", "zh-Hant", "de-DE", "fr-FR", "es-ES", "pt-BR", "id"],
+  "screenshot_count": 100,
+  "screenshot_spec": "1320x2868 PNG RGB no alpha",
+  "preview_count": 10,
+  "preview_spec": "26.400s / 886x1920 / 30fps / H.264 / stereo AAC 48kHz / silent audio",
+  "decoded_frames_per_preview": 792,
+  "full_video_decode": "pass",
+  "png_and_checksum_audit": "pass",
+  "gallery_local_links": "pass",
+  "agent_visual_review": "All sixty preview captions and representative revised PNGs inspected. Compared all 100 PNGs with the prior package: 70 changed only in the support-note band, 30 unchanged; actual UI and marketing copy preserved.",
+  "changed_screenshots": 70,
+  "changes_confined_to_support_note_band": "pass",
+  "automated_tests": "17/17 tools.tests.test_store_asset_copy + tools.tests.test_release_preflight; repository release_preflight PASS; git diff --check PASS",
+  "manifest": "artifacts/store-localization/delivery/manifest.json",
+  "manifest_sha256": "71ded5cfee87a750fc80cb25f26dd72276511a266797fb60b3073fe342a952b9",
+  "gallery": "artifacts/store-localization/delivery/index.html",
+  "package": "artifacts/store-localization/typee-app-store-10-locales-20260828.zip",
+  "package_sha256": "65801a0099d0df52e1608b581755f31919a628f3ca8b2ccd5f008cee6cc880be",
+  "storage": "local_only_not_uploaded_to_durable_archive",
+  "app_store_connect_uploaded": false,
+  "latest_review": {
+    "reviewed_at": "2026-08-28T09:16:00+09:00",
+    "scope": "All 100 screenshots via ten contact sheets; all ten preview contact sheets and all sixty caption crops; fresh full decode of all ten final MP4 files; PNG and media checksum audit",
+    "result": "No blocking media layout, branding, caption or encoding defect found in the reviewed material",
+    "fresh_decode": "10/10 pass, 792 frames each, 7920 total",
+    "package_and_manifest_checksums_unchanged": true,
+    "actual_ui_observations": [
+      "English Home CTA is ellipsized as Today's challenge co... in the actual app. Preserved without image retouching; follow up during app UI polish and final RC matching.",
+      "Korean quiz meaning hints can use the English fallback; screenshots accurately preserve the app behavior.",
+      "Videos intentionally use a silent AAC track, matching the existing Japanese approach."
+    ],
+    "store_attempt": {
+      "target": "App Store Connect app 6794853985, iOS version 1.1 draft",
+      "visible_before_navigation": "Korean localization used the old Japanese preview and eight Japanese screenshots",
+      "blocker": "Navigating to Media Manager redirected Chrome to Apple sign-in; the connected in-app browser also showed Apple sign-in",
+      "uploaded_files": 0,
+      "deleted_files": 0,
+      "metadata_saved": false,
+      "review_submitted": false,
+      "next_action": "User signs in to App Store Connect, then resume locale creation/upload/save/reload verification"
+    }
+  },
+  "native_human_translation_review": "pending",
+  "final_release_candidate_match": "pending",
+  "new_locale_required_metadata": "pending",
+  "issue_project_update": "pending_cli_authentication_check"
+}

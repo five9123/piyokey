@@ -10,6 +10,14 @@ private struct ScreenshotSpec: Codable {
     let subtitle: String
 }
 
+private struct RenderBatch: Codable {
+    let sourceDirectory: String
+    let outputDirectory: String
+    let brand: String
+    let disclosure: String
+    let specs: [ScreenshotSpec]
+}
+
 private let specs: [ScreenshotSpec] = [
     .init(
         output: "01-keyboard-start-ja.png",
@@ -79,12 +87,24 @@ private func drawCenteredText(
     paragraph.lineBreakMode = .byWordWrapping
     paragraph.lineSpacing = lineSpacing
 
-    let attributes: [NSAttributedString.Key: Any] = [
-        .font: font,
+    var fittedFont = font
+    var attributes: [NSAttributedString.Key: Any] = [
+        .font: fittedFont,
         .foregroundColor: color,
         .paragraphStyle: paragraph,
         .kern: kern,
     ]
+
+    // Long translations must fit the same artwork, never silently clip.
+    while (text as NSString).boundingRect(
+        with: NSSize(width: rect.width, height: .greatestFiniteMagnitude),
+        options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes
+    ).height > rect.height {
+        let nextSize = fittedFont.pointSize - 1
+        precondition(nextSize >= font.pointSize * 0.65, "Text does not fit: \(text)")
+        fittedFont = NSFontManager.shared.convert(font, toSize: nextSize)
+        attributes[.font] = fittedFont
+    }
 
     (text as NSString).draw(
         with: rect,
@@ -104,7 +124,7 @@ private func drawPill(in rect: NSRect) {
     path.stroke()
 }
 
-private func drawBrandLockup(mark: NSImage) {
+private func drawBrandLockup(mark: NSImage, brand: String) {
     let pillRect = NSRect(x: 516, y: 94, width: 378, height: 84)
     drawPill(in: pillRect)
 
@@ -138,11 +158,11 @@ private func drawBrandLockup(mark: NSImage) {
     markPath.stroke()
 
     drawCenteredText(
-        "PIYOKEY",
+        brand,
         in: NSRect(x: 550, y: 116, width: 316, height: 45),
         font: .systemFont(ofSize: 31, weight: .bold),
         color: NSColor(calibratedRed: 0.96, green: 0.28, blue: 0.54, alpha: 1),
-        kern: 6
+        kern: brand == "typee" ? 3 : 1
     )
 }
 
@@ -151,7 +171,9 @@ private func render(
     sourceDirectory: URL,
     outputDirectory: URL,
     background: NSImage,
-    brandMark: NSImage
+    brandMark: NSImage,
+    brand: String,
+    disclosure: String
 ) throws {
     let sourceURL = sourceDirectory.appendingPathComponent(spec.source)
     guard let screenshot = NSImage(contentsOf: sourceURL) else {
@@ -190,7 +212,7 @@ private func render(
     // Use live-progress source captures with a coherent growth state and the
     // actual in-app chick visible. The lockup reinforces the brand without
     // replacing or fabricating the mascot shown in the captured UI.
-    drawBrandLockup(mark: brandMark)
+    drawBrandLockup(mark: brandMark, brand: brand)
 
     drawCenteredText(
         spec.title,
@@ -206,6 +228,15 @@ private func render(
         font: .systemFont(ofSize: 37, weight: .medium),
         color: NSColor(calibratedRed: 0.38, green: 0.35, blue: 0.48, alpha: 1)
     )
+
+    if !disclosure.isEmpty {
+        drawCenteredText(
+            disclosure,
+            in: NSRect(x: 90, y: 579, width: 1_140, height: 44),
+            font: .systemFont(ofSize: 27, weight: .medium),
+            color: NSColor(calibratedRed: 0.38, green: 0.35, blue: 0.48, alpha: 1)
+        )
+    }
 
     let shadowPath = NSBezierPath(roundedRect: screenRect, xRadius: 68, yRadius: 68)
     let shadow = NSShadow()
@@ -287,8 +318,10 @@ private func render(
 
 let fileManager = FileManager.default
 let repository = URL(fileURLWithPath: fileManager.currentDirectoryPath, isDirectory: true)
-let sourceDirectory = repository.appendingPathComponent("release/screenshots/ja", isDirectory: true)
-let outputDirectory = repository.appendingPathComponent("release/screenshots/ja-marketing", isDirectory: true)
+private let batch: RenderBatch? = CommandLine.arguments.count == 2
+    ? try JSONDecoder().decode(RenderBatch.self, from: Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]))) : nil
+let sourceDirectory = repository.appendingPathComponent(batch?.sourceDirectory ?? "release/screenshots/ja", isDirectory: true)
+let outputDirectory = repository.appendingPathComponent(batch?.outputDirectory ?? "release/screenshots/ja-marketing", isDirectory: true)
 let backgroundURL = repository.appendingPathComponent(
     "release/screenshots/marketing-assets/piyokey-marketing-background.png"
 )
@@ -305,19 +338,21 @@ guard let brandMark = NSImage(contentsOf: brandMarkURL) else {
     fatalError("Could not load PIYOKEY brand mark at \(brandMarkURL.path)")
 }
 
-for spec in specs {
+for spec in batch?.specs ?? specs {
     try render(
         spec: spec,
         sourceDirectory: sourceDirectory,
         outputDirectory: outputDirectory,
         background: background,
-        brandMark: brandMark
+        brandMark: brandMark,
+        brand: batch?.brand ?? "ピヨキー",
+        disclosure: batch?.disclosure ?? ""
     )
 }
 
 let encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-let manifest = try encoder.encode(specs)
+let manifest = try encoder.encode(batch?.specs ?? specs)
 try manifest.write(
     to: outputDirectory.appendingPathComponent("manifest.json"),
     options: .atomic

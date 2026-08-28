@@ -6,9 +6,9 @@
   "build_number": "6",
   "release_mode": "automatic_after_approval",
   "manual_hold": false,
-  "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
-  "support_url": "https://hancoweb.vercel.app/support",
-  "marketing_url": "https://hancoweb.vercel.app/",
+  "privacy_policy_url": "https://typee.app/privacy",
+  "support_url": "https://typee.app/support",
+  "marketing_url": "https://typee.app/",
   "copyright": "2026 Jungmin Oh",
   "app_store_connect_status": {
     "app_record_created": true,
@@ -162,22 +162,60 @@
     "build_number": "7",
     "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
     "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
+    "localized_media": {
+      "status": "local_pack_reviewed_upload_blocked_by_apple_login",
+      "evidence": "release/store-assets/verification-20260828.json",
+      "locales": ["ja", "en-US", "ko", "zh-Hans", "zh-Hant", "de-DE", "fr-FR", "es-ES", "pt-BR", "id"],
+      "screenshots": 100,
+      "previews": 10,
+      "latest_review_at": "2026-08-28T09:16:00+09:00",
+      "upload_blocker": "Apple authentication expired; Chrome and in-app browser both require sign-in. No assets deleted or uploaded.",
+      "new_locale_required_metadata_saved": false,
+      "final_release_candidate_match_verified": false,
+      "app_store_connect_uploaded": false
+    },
     "release_mode": "pending_separate_decision",
     "manual_hold": true,
-    "privacy_policy_url": "https://hancoweb.vercel.app/privacy",
-    "support_url": "https://hancoweb.vercel.app/support",
-    "marketing_url": "https://hancoweb.vercel.app/",
+    "privacy_policy_url": "https://typee.app/privacy",
+    "support_url": "https://typee.app/support",
+    "marketing_url": "https://typee.app/",
     "copyright": "2026 Jungmin Oh",
     "availability": {
       "selection": "ALL_COUNTRIES_OR_REGIONS",
       "include_future_storefronts": true,
-      "app_and_iap_match": false,
+      "app_and_iap_match": true,
       "country_waves_enabled": false,
       "current_app_available_countries_or_regions": 1,
+      "current_app_processing_to_available_countries_or_regions": 145,
+      "current_app_trader_status_not_provided_countries_or_regions": 29,
       "current_app_available_country_or_region": "Japan",
       "target_countries_or_regions": 175,
-      "regional_storefront_status_review_completed": false,
-      "regional_compliance_exceptions": []
+      "regional_storefront_status_review_completed": true,
+      "regional_compliance_exceptions": [
+        "EU: 29 countries or regions show Trader Status Not Provided"
+      ]
+    },
+    "app_store_localizations": {
+      "saved": true,
+      "current_primary_locale": "ja",
+      "planned_primary_locale": "en-US",
+      "primary_locale_switch_blocker": "Apple requires all mandatory English screenshots for every version before the primary language can change",
+      "locales": [
+        "ja",
+        "en-US",
+        "en-GB",
+        "en-AU",
+        "en-CA",
+        "ko"
+      ],
+      "names": {
+        "ja": "韓国語タイピング - ピヨキー",
+        "en-US": "Korean Typing - typee",
+        "en-GB": "Korean Typing - typee",
+        "en-AU": "Korean Typing Practice - typee",
+        "en-CA": "Korean Typing Practice - typee",
+        "ko": "한글 타자 연습 - typee"
+      }
     },
     "content_rights_confirmed": false,
     "app_review": {
@@ -208,11 +246,11 @@
       "paid_apps_agreement_active": false,
       "tax_and_banking_active": false,
       "small_business_program_status_checked": false,
-      "price_and_availability_configured": false,
-      "tax_category_confirmed": false,
-      "family_sharing_policy_confirmed": false,
+      "price_and_availability_configured": true,
+      "tax_category_confirmed": true,
+      "family_sharing_policy_confirmed": true,
       "review_screenshot_uploaded": false,
-      "review_notes_saved": false,
+      "review_notes_saved": true,
       "ready_to_submit": false,
       "added_for_review": false,
       "attached_to_version_1_1_submission": false

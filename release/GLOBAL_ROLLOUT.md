@@ -1,6 +1,6 @@
 # typee / ピヨキー 글로벌 출시 계획
 
-- 상태: 계획 초안 — App Store Connect에 아직 적용하지 않음
+- 상태: App Store Connect 글로벌 등록 준비 완료 — 출시·규제 gate 미완료
 - 작성일: 2026-08-14
 - 대상: 한국을 포함한 전 세계 App Store
 - 기준 앱: App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`
@@ -36,15 +36,16 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 기계 판독 가능한 초안은 `release/global_app_store_metadata.json`을 기준으로 한다.
 `release/app_store_metadata.json`의 일본어 primary와 `initial_availability: JPN`은 기존 일본 출시 카피·IAP 참조용 레거시 값이며, 1.1 글로벌 availability의 소스가 아니다.
 
-- 1.1에서 직접 운영할 App Store 로케일은 `en-US`(primary), `en-GB`, `en-AU`, `en-CA`, `ko`, `ja` 여섯 개다. 영어 변형 로케일은 앱 UI 언어를 늘리는 작업이 아니며 같은 영어 UI를 사용한다.
+- 기존 메타데이터 저장 로케일은 `en-US`(planned primary), `en-GB`, `en-AU`, `en-CA`, `ko`, `ja` 여섯 개다. 2026-08-28 요청에 따른 미디어 제작 대상은 일본·미국·한국·중국·대만·독일·프랑스·스페인·브라질·인도네시아의 10개 로케일이다. 영어 변형 로케일은 같은 영어 미디어를 사용할 수 있다.
 - `global_app_store_metadata.json`의 `copy_from`은 초안 중복을 줄이기 위한 표기일 뿐 App Store Connect 값이 아니다. 제출 전 en-GB·en-AU·en-CA의 필수 필드와 스크린샷을 실제 로케일에 저장하고 다시 읽어 확인한다.
 - 모든 App Store 표시명은 `현지화된 기능 설명 - 브랜드` 순서로 작성하고 브랜드만 앞에 단독 배치하지 않는다.
 - 일본어 로케일: 이름 `韓国語タイピング - ピヨキー`; 현재 일본어 설명과 스크린샷의 제품 약속을 유지한다.
 - 한국어 로케일: 이름 `한글 타자 연습 - typee`; 한국어 UI와 글로벌 콘텐츠 동작을 반영한 새 설명·스크린샷을 사용한다.
-- 모든 영어 로케일: 기준 이름은 `Korean Typing - typee`, 이름 충돌 시 대체 후보는 `Hangul Keyboard - typee`로 두고 영어 뜻·로마자 읽기를 명시한다.
+- 영어 로케일: en-US·en-GB는 `Korean Typing - typee`, 이름 충돌이 확인된 en-AU·en-CA는 저장 가능한 `Korean Typing Practice - typee`를 사용하고 영어 뜻·로마자 읽기를 명시한다.
 - 영어·한국어 설명은 일본어 뜻이나 가타카나가 제공된다고 주장하지 않는다.
+- 2026-08-28 en-US primary 변경은 Apple이 각 버전의 필수 영어 스크린샷을 먼저 요구해 저장되지 않았다. 영어 스크린샷을 등록하기 전까지 primary는 일본어로 유지한다.
 - 앱 이름 변경 전에 지원·마케팅·개인정보처리방침 페이지의 `typee`/`ピヨキー` 표기와 연락처를 함께 검수한다.
-- 프랑스어·스페인어·중국어 등 추가 metadata-only 로케일은 1.1에 넣지 않는다. 출시 후 국가별 제품 페이지 조회·다운로드·리뷰·지원 문의로 우선순위를 정하고, 추가 시 앱 인터페이스 지원 언어가 일본어·영어·한국어임을 현지어 상품 페이지에 명시한다.
+- 사용자 요청으로 `zh-Hans`·`zh-Hant`·`de-DE`·`fr-FR`·`es-ES`·`pt-BR`·`id`의 미디어 현지화를 허용한다. 원본은 실제 영어 UI이며 현지어 마케팅 설명을 얹는다. 사진·영상의 별도 지원 언어 안내는 사용자의 후속 요청으로 제거하고, 실제 UI와 Pro 구매 안내는 유지한다. 카피는 `release/store-assets/localizations.json`, 제작·검증 절차는 `release/store-assets/README.md`를 따른다. 새 로케일의 필수 메타데이터 저장과 스토어 업로드는 아직 별도 gate이며, 번역 이미지 생성만으로 해당 로케일 등록을 완료 처리하지 않는다.
 
 ## 4. Availability 계약
 
@@ -59,7 +60,7 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 - `es`·`fr`·`zh-Hant`·`ar` 등 미지원 기기 언어의 새 설치가 영어 UI와 `typee`로 안전하게 시작함
 - 공식 덱의 영어 뜻·로마자와 영어/한국어 덱 메타데이터 스키마·콘텐츠 검증 통과
 - 일본어가 아닌 앱 언어에서 일본어 뜻·가타카나 fallback이 발생하지 않음
-- App Store 이름이 ja=`韓国語タイピング - ピヨキー`, ko=`한글 타자 연습 - typee`, en=`Korean Typing - typee`이며 홈 화면·인앱 브랜드는 ja=`ピヨキー`, 그 밖의 언어=`typee`인지 확인
+- App Store 이름이 ja=`韓国語タイピング - ピヨキー`, ko=`한글 타자 연습 - typee`, en-US·en-GB=`Korean Typing - typee`, en-AU·en-CA=`Korean Typing Practice - typee`이며 홈 화면·인앱 브랜드는 ja=`ピヨキー`, 그 밖의 언어=`typee`인지 확인
 - 영어·한국어 App Store 설명, 키워드, 스크린샷, 지원·개인정보처리방침 페이지 검수
 - 기존 설치 데이터, 덱, 리뷰, Game Center 기록과 ID가 유지됨
 - 현재 심사 중 제출과 충돌하지 않는 새 앱 버전/빌드로 제출
@@ -96,6 +97,6 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 - [Manage availability for your app](https://developer.apple.com/help/app-store-connect/manage-your-apps-availability/manage-availability-for-your-app-on-the-app-store)
 - [Regional app information requirements](https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/)
 
-이 문서는 출시 실행 승인이 아니다. 실제 App Store Connect 변경 결과와 제출 ID는 변경 시점에 `release/app_store_submission.json` 또는 별도 후속 제출 기록에 사실대로 남긴다.
+2026-08-28 App Store Connect에서 앱과 IAP의 175개 국가 또는 지역 및 향후 신규 storefront 자동 포함을 저장했다. 당시 일본 1개 지역은 Available, 145개 지역은 Processing to Available, EU 29개 지역은 Trader Status Not Provided였다. ja·en-US·en-GB·en-AU·en-CA·ko 이름과 1.1 제품 페이지 메타데이터, ja·en-US·ko IAP 현지화를 저장했다. 빌드·최신 스크린샷·IAP 심사 스크린샷·Paid Apps Agreement·DSA 등 출시 gate는 별도로 남아 있다.
 
 Android는 별도 Google Play 출시 트랙에서 진행 중이다. 이 문서의 실행 범위에는 Play Console 변경이나 Android 배포 승인이 포함되지 않으며, Android listing 계약은 `release/google_play_metadata.json`과 `release/GOOGLE_PLAY_QA.md`에서 관리한다.

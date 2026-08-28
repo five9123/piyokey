@@ -8,8 +8,8 @@ PIYOKEY_VERSION_CODE=8
 PIYOKEY_VERSION_NAME=1.1.0
 
 PIYOKEY_CATALOG_URL=
-PIYOKEY_PRIVACY_URL=https://hancoweb.vercel.app/privacy
-PIYOKEY_SUPPORT_URL=https://hancoweb.vercel.app/support
+PIYOKEY_PRIVACY_URL=https://typee.app/privacy
+PIYOKEY_SUPPORT_URL=https://typee.app/support
 # Set true only after the PRD content-rights and fixed-pronunciation review is actually approved.
 PIYOKEY_CONTENT_RIGHTS_CONFIRMED=false
 

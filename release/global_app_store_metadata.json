@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "status": "draft_not_applied",
-  "generated_at": "2026-08-14T00:00:00+09:00",
+  "status": "app_store_connect_prepared_global_pending_release_gates",
+  "generated_at": "2026-08-28T00:00:00+09:00",
   "source_of_truth": "release/GLOBAL_ROLLOUT.md",
   "current_submission_record": {
     "path": "release/app_store_submission.json",
@@ -16,13 +16,18 @@
     "create_additional_apps": false,
     "rename_internal_project": false,
     "rename_game_center_identifiers": false,
+    "current_primary_locale": "ja",
     "planned_primary_locale": "en-US",
     "app_store_name_policy": {
       "format": "<localized function descriptor> - <brand>",
       "brand_position": "suffix",
       "separator": " - ",
       "canonical_en": "Korean Typing - typee",
-      "fallback_en": "Hangul Keyboard - typee"
+      "fallback_en": "Hangul Keyboard - typee",
+      "saved_locale_exceptions": {
+        "en-AU": "Korean Typing Practice - typee",
+        "en-CA": "Korean Typing Practice - typee"
+      }
     }
   },
   "version_1_1_in_app_purchase": {
@@ -34,7 +39,7 @@
     "first_iap_must_be_attached_to_app_version_review": true,
     "localizations": {
       "ja": {
-        "display_name": "ピヨキー pro",
+        "display_name": "ピヨキー プロ",
         "description": "ユーザーデッキ無制限と作成・編集をずっと利用"
       },
       "en-US": {
@@ -90,7 +95,9 @@
       "ja"
     ],
     "additional_app_languages": "deferred_until_post_launch_demand_review",
-    "additional_metadata_only_locales": "deferred_until_post_launch_territory_metrics_review",
+    "additional_metadata_only_locales": "ten_market_media_localization_authorized_2026_08_28_required_metadata_pending",
+    "app_store_media_locales": ["ja", "en-US", "ko", "zh-Hans", "zh-Hant", "de-DE", "fr-FR", "es-ES", "pt-BR", "id"],
+    "media_copy_source": "release/store-assets/localizations.json",
     "android_m7": "resumed_separate_google_play_release_track"
   },
   "content_localization": {
@@ -116,7 +123,11 @@
     "include_future_storefronts": true,
     "required_app_and_iap_match": true,
     "country_waves_enabled": false,
-    "current_app_store_connect_state_before_1_1": {
+    "current_app_store_connect_state": {
+      "selected_countries_or_regions": 175,
+      "available": 1,
+      "processing_to_available": 145,
+      "trader_status_not_provided": 29,
       "verified_available": [
         "JPN"
       ]
@@ -132,8 +143,8 @@
       },
       {
         "id": "all_countries_availability",
-        "status": "pending",
-        "requirement": "Set both the app and typee pro / ピヨキー pro IAP to All Countries or Regions, include future storefronts, and record any selected storefront that remains action-required or unavailable."
+        "status": "configured_processing_with_eu_exceptions",
+        "requirement": "Set both the app and typee pro / ピヨキー プロ IAP to All Countries or Regions, include future storefronts, and record any selected storefront that remains action-required or unavailable."
       },
       {
         "id": "unsupported_language_english_fallback",
@@ -152,23 +163,28 @@
       },
       {
         "id": "store_assets",
-        "status": "pending",
-        "requirement": "Approve localized metadata, screenshots, support pages, and privacy pages for Japanese, English, and Korean."
+        "status": "ten_locale_media_locally_generated_verified_pending_upload_and_web_copy",
+        "requirement": "Review the ten-locale media pack, verify final release-candidate match, save required metadata for seven new store locales, upload and re-read media; separately approve support and privacy pages."
       },
       {
         "id": "english_variant_materialization",
-        "status": "pending",
+        "status": "metadata_saved_media_pending_upload",
         "requirement": "Materialize and verify every required field and screenshot for en-GB, en-AU, and en-CA in App Store Connect; copy_from is draft shorthand only."
       },
       {
         "id": "typee_name_availability",
-        "status": "pending",
-        "requirement": "Confirm that Korean Typing - typee can be saved for every planned English localization; use Hangul Keyboard - typee only where the canonical name is unavailable."
+        "status": "saved_with_name_exceptions",
+        "requirement": "Use Korean Typing - typee for en-US and en-GB; App Store name conflicts require Korean Typing Practice - typee for en-AU and en-CA."
       },
       {
         "id": "deck_maker_iap_configuration",
-        "status": "pending",
+        "status": "partial_missing_review_screenshot_and_paid_agreement",
         "requirement": "Create non-consumable app.piyokey.deckmaker.lifetime with ja/en-US/ko metadata, approved price and availability, review screenshot, and attach it to the version 1.1 submission."
+      },
+      {
+        "id": "primary_locale_switch",
+        "status": "blocked_by_missing_english_screenshots",
+        "requirement": "Upload all required English screenshots for each version before changing the App Store primary language from Japanese to English (U.S.)."
       },
       {
         "id": "deck_maker_iap_sandbox",
@@ -248,11 +264,11 @@
       "copy_from": "en-US"
     },
     "en-AU": {
-      "name": "Korean Typing - typee",
+      "name": "Korean Typing Practice - typee",
       "copy_from": "en-US"
     },
     "en-CA": {
-      "name": "Korean Typing - typee",
+      "name": "Korean Typing Practice - typee",
       "copy_from": "en-US"
     },
     "ko": {

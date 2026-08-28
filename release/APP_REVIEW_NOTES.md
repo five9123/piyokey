@@ -9,7 +9,7 @@ PIYOKEY requires no account, login, subscription, or demo credentials. Reviewers
 Version 1.1 adds one optional non-consumable in-app purchase:
 
 - Product ID: `app.piyokey.deckmaker.lifetime`
-- Japanese: `ピヨキー pro`
+- Japanese: `ピヨキー プロ`
 - English: `typee pro`
 - Korean: `피요키 프로`
 
@@ -31,9 +31,9 @@ Personal decks are not public user-generated content: PIYOKEY has no upload serv
 
 After onboarding, the hatch missions, and the app tour, an idle Home screen presents one privacy-choice notice. Both anonymous usage analytics and crash diagnostics are off by default and can be enabled independently. Reviewers may tap **Continue without sharing** and retain access to every lesson, game, local deck feature, and purchased feature. The same choices and the privacy-policy link remain available in Settings. PIYOKEY sends no typed text, answers, searches, user-deck names or content, contact information, advertising ID, recordings, or session replay. Product events use PostHog Cloud EU with IP geolocation disabled; native crash diagnostics use Firebase Crashlytics only when separately enabled.
 
-Privacy policy: https://hancoweb.vercel.app/privacy
+Privacy policy: https://typee.app/privacy
 
-Support: https://hancoweb.vercel.app/support
+Support: https://typee.app/support
 
 ## Contact and submission fields
 

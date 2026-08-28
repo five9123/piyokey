@@ -3,8 +3,8 @@ import Foundation
 import SwiftUI
 
 enum AppReleaseLinks {
-  static let privacyPolicy = URL(string: "https://hancoweb.vercel.app/privacy")!
-  static let support = URL(string: "https://hancoweb.vercel.app/support")!
+  static let privacyPolicy = URL(string: "https://typee.app/privacy")!
+  static let support = URL(string: "https://typee.app/support")!
 }
 
 enum ContentFeedbackKind: String {

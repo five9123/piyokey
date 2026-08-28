@@ -18,7 +18,7 @@ private enum ComposeError: Error, CustomStringConvertible {
   var description: String {
     switch self {
     case .usage:
-      return "Usage: compose_app_preview.swift <scene-directory> <output.mp4>"
+      return "Usage: compose_app_preview.swift <scene-directory> <output.mp4> [clips.json]"
     case .missingVideoTrack(let path):
       return "Missing video track: \(path)"
     case .compositionTrack:
@@ -33,7 +33,7 @@ private enum ComposeError: Error, CustomStringConvertible {
   }
 }
 
-private struct ClipSpec {
+private struct ClipSpec: Codable {
   let filename: String
   let start: Double
   let duration: Double
@@ -100,7 +100,7 @@ private let clips: [ClipSpec] = [
     start: 0,
     duration: 3.00,
     caption: "ピヨキーで、最初の一文字から。",
-    detail: "広告なし・課金なし・登録なし",
+    detail: "広告なし・登録なし・プロは任意購入",
     captionAtBottom: true
   ),
 ]
@@ -131,7 +131,7 @@ private func orientedTransform(for track: AVAssetTrack) -> CGAffineTransform {
 
 private func makeCaptionLayer(for clip: PlacedClip) -> CALayer {
   let hasDetail = clip.spec.detail != nil
-  let panelHeight: CGFloat = hasDetail ? 164 : 106
+  let panelHeight: CGFloat = hasDetail ? 182 : 106
   let panelSize = CGSize(width: targetSize.width - 96, height: panelHeight)
   let image = NSImage(size: panelSize)
   image.lockFocus()
@@ -155,10 +155,17 @@ private func makeCaptionLayer(for clip: PlacedClip) -> CALayer {
 
   let titleParagraph = NSMutableParagraphStyle()
   titleParagraph.alignment = .center
+  var titleFontSize: CGFloat = hasDetail ? 39 : 42
+  while (clip.spec.caption as NSString).size(withAttributes: [
+    .font: NSFont.systemFont(ofSize: titleFontSize, weight: .bold)
+  ]).width > panelSize.width - 64 {
+    titleFontSize -= 1
+    precondition(titleFontSize >= 26, "Caption too long: \(clip.spec.caption)")
+  }
   let title = NSAttributedString(
     string: clip.spec.caption,
     attributes: [
-      .font: NSFont.systemFont(ofSize: hasDetail ? 39 : 42, weight: .bold),
+      .font: NSFont.systemFont(ofSize: titleFontSize, weight: .bold),
       .foregroundColor: NSColor.white,
       .paragraphStyle: titleParagraph,
     ]
@@ -166,7 +173,7 @@ private func makeCaptionLayer(for clip: PlacedClip) -> CALayer {
   title.draw(
     in: CGRect(
       x: 24,
-      y: hasDetail ? 82 : 25,
+      y: hasDetail ? 104 : 25,
       width: panelSize.width - 48,
       height: 56
     )
@@ -182,7 +189,7 @@ private func makeCaptionLayer(for clip: PlacedClip) -> CALayer {
         .foregroundColor: NSColor.white.withAlphaComponent(0.82),
         .paragraphStyle: detailParagraph,
       ]
-    ).draw(in: CGRect(x: 24, y: 40, width: panelSize.width - 48, height: 38))
+    ).draw(in: CGRect(x: 28, y: 28, width: panelSize.width - 56, height: 70))
   }
   image.unlockFocus()
 
@@ -386,7 +393,9 @@ private func writeVideo(
 
 do {
   let arguments = CommandLine.arguments
-  guard arguments.count == 3 else { throw ComposeError.usage }
+  guard arguments.count == 3 || arguments.count == 4 else { throw ComposeError.usage }
+  let selectedClips = arguments.count == 4
+    ? try JSONDecoder().decode([ClipSpec].self, from: Data(contentsOf: URL(fileURLWithPath: arguments[3]))) : clips
   let sceneDirectory = URL(fileURLWithPath: arguments[1], isDirectory: true)
   let outputURL = URL(fileURLWithPath: arguments[2])
   let composition = AVMutableComposition()
@@ -405,7 +414,7 @@ do {
 
   var placed: [PlacedClip] = []
   var cursor = CMTime.zero
-  for (index, spec) in clips.enumerated() {
+  for (index, spec) in selectedClips.enumerated() {
     let url = sceneDirectory.appendingPathComponent(spec.filename)
     let asset = AVURLAsset(url: url)
     guard let sourceTrack = asset.tracks(withMediaType: .video).first else {
