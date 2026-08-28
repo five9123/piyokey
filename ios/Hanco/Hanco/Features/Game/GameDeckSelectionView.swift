@@ -169,6 +169,7 @@ enum FlowGameCourse: String, Codable, Equatable {
 
 struct GameDeckSelectionView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var gameCenter: GameCenterService
 
   let onFindDecks: () -> Void
@@ -183,7 +184,7 @@ struct GameDeckSelectionView: View {
           LazyVGrid(
             columns: Array(
               repeating: GridItem(.flexible(), spacing: 14),
-              count: adaptiveMetrics.hubColumnCount
+              count: dynamicTypeSize.isAccessibilitySize ? 1 : (adaptiveMetrics.widthClass == .wide ? 3 : 2)
             ),
             alignment: .center,
             spacing: 14
@@ -245,7 +246,7 @@ struct GameDeckSelectionView: View {
       ZStack {
         RoundedRectangle(cornerRadius: 19, style: .continuous)
           .fill(Color.yellow.opacity(0.22))
-          .frame(width: 62, height: 62)
+          .frame(width: 62 * adaptiveMetrics.typographyScale, height: 62 * adaptiveMetrics.typographyScale)
         Image(systemName: "crown.fill")
           .font(.system(size: 28, weight: .black))
           .foregroundStyle(Color.orange)
@@ -324,7 +325,7 @@ struct GameDeckSelectionView: View {
       ZStack {
         RoundedRectangle(cornerRadius: 18, style: .continuous)
           .fill(tint.opacity(0.15))
-          .frame(width: 58, height: 58)
+          .frame(width: 58 * adaptiveMetrics.typographyScale, height: 58 * adaptiveMetrics.typographyScale)
         Image(systemName: systemImage)
           .font(.system(size: 27, weight: .bold))
           .foregroundStyle(tint)

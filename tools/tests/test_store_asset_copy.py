@@ -8,6 +8,17 @@ class StoreAssetCopyTests(unittest.TestCase):
     def setUpClass(cls):
         cls.data = json.loads((Path(__file__).resolve().parents[2] / "release/store-assets/localizations.json").read_text())
 
+    def test_ipad_capture_selection_rejects_missing_duplicate_and_failed_sources(self):
+        from tools.build_ipad_store_assets import select_attachment
+        good = {"suggestedHumanReadableName": "appstore-current-flow-en_0_capture.png",
+                "exportedFileName": "flow.png", "isAssociatedWithFailure": False}
+        self.assertEqual(select_attachment([good], "flow", "en"), "flow.png")
+        for entries in ([], [good, good], [dict(good, isAssociatedWithFailure=True)]):
+            with self.assertRaises(ValueError):
+                select_attachment(entries, "flow", "en")
+        with self.assertRaises(ValueError):
+            select_attachment([good], "flow", "ja")
+
     def test_ten_distinct_store_locales(self):
         self.assertEqual({x["locale"] for x in self.data["locales"]},
                          {"ja", "en-US", "ko", "zh-Hans", "zh-Hant", "de-DE", "fr-FR", "es-ES", "pt-BR", "id"})

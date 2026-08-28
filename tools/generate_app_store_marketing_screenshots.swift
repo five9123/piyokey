@@ -16,6 +16,7 @@ private struct RenderBatch: Codable {
     let brand: String
     let disclosure: String
     let specs: [ScreenshotSpec]
+    let deviceFamily: String?
 }
 
 private let specs: [ScreenshotSpec] = [
@@ -69,10 +70,17 @@ private let specs: [ScreenshotSpec] = [
     ),
 ]
 
-private let canvasWidth = 1_320
-private let canvasHeight = 2_868
+private let batch: RenderBatch? = CommandLine.arguments.count == 2
+    ? try JSONDecoder().decode(RenderBatch.self, from: Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]))) : nil
+private let isIPad = batch?.deviceFamily?.hasPrefix("ipad") == true
+private let isLandscape = batch?.deviceFamily == "ipad-landscape"
+private let canvasWidth = isIPad ? (isLandscape ? 2_752 : 2_064) : 1_320
+private let canvasHeight = isIPad ? (isLandscape ? 2_064 : 2_752) : 2_868
 private let canvasSize = NSSize(width: canvasWidth, height: canvasHeight)
-private let screenRect = NSRect(x: 150, y: 650, width: 1_020, height: 2_216)
+private let screenRect: NSRect = isIPad
+    ? (isLandscape ? NSRect(x: 310, y: 425, width: 2_132, height: 1_599)
+                    : NSRect(x: 212, y: 540, width: 1_640, height: 2_186.6667))
+    : NSRect(x: 150, y: 650, width: 1_020, height: 2_216)
 
 private func drawCenteredText(
     _ text: String,
@@ -125,6 +133,11 @@ private func drawPill(in rect: NSRect) {
 }
 
 private func drawBrandLockup(mark: NSImage, brand: String) {
+    NSGraphicsContext.saveGraphicsState()
+    defer { NSGraphicsContext.restoreGraphicsState() }
+    let placement = NSAffineTransform()
+    placement.translateX(by: CGFloat(canvasWidth - 1_320) / 2, yBy: isLandscape ? -40 : 0)
+    placement.concat()
     let pillRect = NSRect(x: 516, y: 94, width: 378, height: 84)
     drawPill(in: pillRect)
 
@@ -182,6 +195,12 @@ private func render(
         ])
     }
 
+    if isIPad {
+        let sourceRatio = screenshot.size.width / screenshot.size.height
+        let outputRatio = screenRect.width / screenRect.height
+        precondition(abs(sourceRatio - outputRatio) < 0.01, "Screenshot aspect ratio differs: \(sourceURL.path)")
+    }
+
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     guard let bitmapContext = CGContext(
         data: nil,
@@ -216,16 +235,20 @@ private func render(
 
     drawCenteredText(
         spec.title,
-        in: NSRect(x: 92, y: 212, width: 1_136, height: 222),
-        font: .systemFont(ofSize: 76, weight: .bold),
+        in: isIPad
+            ? NSRect(x: 100, y: isLandscape ? 160 : 205, width: CGFloat(canvasWidth - 200), height: isLandscape ? 165 : 210)
+            : NSRect(x: 92, y: 212, width: 1_136, height: 222),
+        font: .systemFont(ofSize: isIPad ? (isLandscape ? 64 : 86) : 76, weight: .bold),
         color: NSColor(calibratedRed: 0.13, green: 0.10, blue: 0.22, alpha: 1),
         lineSpacing: 9
     )
 
     drawCenteredText(
         spec.subtitle,
-        in: NSRect(x: 90, y: 493, width: 1_140, height: 58),
-        font: .systemFont(ofSize: 37, weight: .medium),
+        in: isIPad
+            ? NSRect(x: 100, y: isLandscape ? 338 : 427, width: CGFloat(canvasWidth - 200), height: 82)
+            : NSRect(x: 90, y: 493, width: 1_140, height: 58),
+        font: .systemFont(ofSize: isIPad ? 43 : 37, weight: .medium),
         color: NSColor(calibratedRed: 0.38, green: 0.35, blue: 0.48, alpha: 1)
     )
 
@@ -318,8 +341,6 @@ private func render(
 
 let fileManager = FileManager.default
 let repository = URL(fileURLWithPath: fileManager.currentDirectoryPath, isDirectory: true)
-private let batch: RenderBatch? = CommandLine.arguments.count == 2
-    ? try JSONDecoder().decode(RenderBatch.self, from: Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]))) : nil
 let sourceDirectory = repository.appendingPathComponent(batch?.sourceDirectory ?? "release/screenshots/ja", isDirectory: true)
 let outputDirectory = repository.appendingPathComponent(batch?.outputDirectory ?? "release/screenshots/ja-marketing", isDirectory: true)
 let backgroundURL = repository.appendingPathComponent(

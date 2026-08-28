@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #79 iPad 화면 밀도·스토어 이미지 | In Progress | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로·세로 개선 후 최종 회귀·5언어 실제 UI 촬영·10시장 이미지 검수 |
 | #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국/미국 세금 정보 완료 및 나머지 제출 gate 검증 |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
@@ -55,6 +56,8 @@
 #65 단독 단계의 과거 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 당시 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en을 제공했다. PR #67 당시 APK와 iOS 번들은 ja/en/es였으며, 현재 PR #74 main은 ja/en/es/de/fr를 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두고 #68에 별도 보존한 뒤 PR #70에 통합했다. PR #70으로 원격 main에 반영했으며 이번 작업에서 실기기 설치·스토어 배포는 하지 않았다.
 
 ## 열린 출시 gate
+
+- #79 iPad 후속 수정은 업로드된 1.1(7)에 포함되지 않는다. 병합 후 새 빌드 번호로 RC를 만들고 해당 빌드의 기기 QA·스토어 이미지 일치를 확인해야 한다.
 
 - #7: Game Center 계약 전체 점검.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.

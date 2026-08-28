@@ -815,7 +815,7 @@ MVP는 완전 무료·무광고. v1.1+에서 수익화를 넣더라도 다음을
 - 기존 App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`, Xcode project·scheme을 유지하고 같은 target을 iPhone+iPad Universal 앱으로 확장한다. 새 iPad target·앱 레코드·저장 스키마를 만들지 않는다.
 - 최소 iOS/iPadOS 16을 유지한다. iPhone은 기존 portrait만, iPad는 portrait·upside-down·landscape left/right를 지원하며 `UIRequiresFullScreen`으로 Split View·Stage Manager·resizable window를 차단하지 않는다.
 - 기존 5탭을 유지하고 iPad 전용 sidebar는 만들지 않는다. 레이아웃은 기기 이름이 아니라 실제 가용 폭을 기준으로 compact `<600pt`, medium `600..<900pt`, wide `>=900pt` 정책을 공통 metrics에서 계산한다.
-- compact는 iPhone 구성을 재사용하고, medium은 읽기 콘텐츠 최대 720pt·카드 2~3열, wide는 허브/카탈로그 최대 1120pt·카드 3~4열을 기준으로 한다. 세션 문제 lane은 최대 920pt, 내장 키보드는 최대 820pt로 하단 safe area 안에 고정한다.
+- compact는 iPhone 구성을 재사용하고, medium은 읽기 콘텐츠 최대 720pt·카드 2~3열, wide는 허브/카탈로그 최대 1120pt·카드 3~4열을 기준으로 한다. 세션 문제 lane은 가용 창 폭에서 좌우 여백을 제외한 폭을 활용하고, 내장 두벌식 키보드는 820pt 상한 없이 하단 safe area의 전체 폭을 사용한다. 10키는 3열의 과도한 확장을 막도록 최대 600pt로 중앙 정렬한다. 600pt 미만 창은 기존 iPhone 밀도를 유지하며, 그 이상에서는 의미 기반 글자 크기를 최소 xxLarge로, 고정 학습 글자는 1.2배로 조정하되 사용자 접근성 크기를 낮추지 않는다. 키 높이는 세로/가로/짧은 창에 맞춰 확대하고 연습 문제·조합 카드는 남은 높이를 배분해 가운데의 과도한 빈 공간을 줄인다. 홈의 넓은 가로 창은 2열, 마이페이지 세로는 1열, 게임 허브는 최대 3열(접근성 크기는 1열)로 구성한다.
 - 방향·창 크기 변경은 현재 탭·내비게이션·문제·입력·점수·콤보·목숨·타이머를 보존하고 문제 재추첨이나 타이머 재시작을 유발하지 않는다. 전체 화면 가로 스크롤은 금지하며 현재 자모 자동 추적용 내부 트랙만 예외다.
 - 연습·게임 중 설정·파일·결제·키보드 연결 안내 모달을 띄우지 않는다. pointer, Full Keyboard Access, VoiceOver, Dynamic Type, Reduce Motion을 full screen·Split View·Stage Manager에서 검증한다.
 - Bluetooth·USB·Magic Keyboard의 OS IME 판정 정확성은 GitHub Issue #12, 실제 두벌식 배열·다음 키·권장 손가락 학습 UX는 Issue #17이 소유한다. iPad 공식 지원의 통합 gate는 #10·#12·#17의 필수 검증을 모두 요구한다.

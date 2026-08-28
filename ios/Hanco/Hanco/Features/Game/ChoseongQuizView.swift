@@ -1891,7 +1891,7 @@ struct ChoseongTypingView: View {
       reactionRevision: viewModel.feedbackRevision,
       automaticProp: mascotAppearance.automaticProp,
       pose: .front,
-      size: 52,
+      size: 52 * adaptiveMetrics.learningScale,
       calm: true
     )
     .accessibilityIdentifier("\(mode.accessibilityNamespace).mascot")
@@ -1984,14 +1984,15 @@ struct ChoseongTypingView: View {
     VStack(spacing: 6) {
       HStack(spacing: 10) {
         gameMascot
-          .frame(width: 70, height: 106)
+          .frame(width: 70 * adaptiveMetrics.learningScale, height: 106 * adaptiveMetrics.learningScale)
 
         VStack(spacing: 4) {
           SyllableAssemblyPreview(
             text: compositionPreviewText,
             incomingJamo: viewModel.lastAcceptedKey,
             revision: viewModel.compositionRevision,
-            shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin
+            shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin,
+            displayScale: adaptiveMetrics.learningScale
           )
 
           HStack(spacing: 6) {

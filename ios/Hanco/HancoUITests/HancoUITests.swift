@@ -45,6 +45,7 @@ final class HancoUITests: XCTestCase {
   override func setUp() {
     super.setUp()
     continueAfterFailure = false
+    XCUIDevice.shared.orientation = .portrait
     let isAppPreviewCapture = name.contains("testAppPreview")
     let isAppStoreScreenshotCapture = name.contains("testAppStoreScreenshot")
     let isMarketingCapture = isAppPreviewCapture || isAppStoreScreenshotCapture
@@ -2316,6 +2317,19 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
     attachScreenshot(named: "appstore-current-tenkey-ja")
+
+    if max(app.frame.width, app.frame.height) >= 1_000 {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: false)
+      app.launchArguments += ["-keyboard.builtin_layout_default", "dubeolsik"]
+      app.launch()
+      startPractice()
+      XCUIDevice.shared.orientation = .landscapeLeft
+      XCTAssertTrue(app.buttons["keyboard.key.ㅂ"].waitForExistence(timeout: 5))
+      assertBuiltInKeyboardFillsIPadWidth()
+      attachScreenshot(named: "appstore-current-keyboard-landscape-ja")
+      XCUIDevice.shared.orientation = .portrait
+    }
   }
 
   func testAppPreviewJapaneseFlowShowsMascotAndCompletesFirstCard() {
@@ -2792,6 +2806,29 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
   }
 
+  func testIPadMainScreensPortraitAndLandscape() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("iPad layout review")
+    }
+    for orientation in [UIDeviceOrientation.portrait, .landscapeLeft] {
+      XCUIDevice.shared.orientation = orientation
+      let suffix = orientation == .portrait ? "portrait" : "landscape"
+      for (tab, identifier) in [("ホーム", "home.screen"), ("さがす", "discover.catalog"),
+                                ("練習", "curriculum.map.screen"), ("ゲーム", "game.selection.screen"),
+                                ("マイページ", "my_page.screen")] {
+        let button = app.buttons[tab].firstMatch
+        XCTAssertTrue(button.waitForExistence(timeout: 3))
+        button.tap()
+        XCTAssertTrue(element(identifier).waitForExistence(timeout: 5))
+        attachScreenshot(named: "ipad-\(identifier)-\(suffix)-ja")
+      }
+      openSettings()
+      XCTAssertTrue(app.buttons["settings.done"].isHittable)
+      attachScreenshot(named: "ipad-settings-\(suffix)-ja")
+      app.buttons["settings.done"].tap()
+    }
+  }
+
   func testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab() throws {
     guard max(app.frame.width, app.frame.height) >= 1_000 else {
       throw XCTSkip("This adaptive rotation gate runs on iPad-sized destinations")
@@ -2832,14 +2869,19 @@ final class HancoUITests: XCTestCase {
     waitForValue("1 / 9", on: progress, timeout: 5)
     XCTAssertEqual(target.label, "사랑해요")
     XCTAssertEqual(mistakes.value as? String, "0")
-    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+    assertBuiltInKeyboardFillsIPadWidth()
     attachScreenshot(named: "ipad-practice-landscape-active-ja")
 
     XCUIDevice.shared.orientation = .portrait
     XCTAssertTrue(target.waitForExistence(timeout: 5))
     waitForValue("1 / 9", on: progress, timeout: 5)
     XCTAssertEqual(target.label, "사랑해요")
-    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+    assertBuiltInKeyboardFillsIPadWidth()
+    let composition = element("practice.composition.card")
+    XCTAssertTrue(composition.exists)
+    XCTAssertLessThan(app.buttons["keyboard.key.ㅂ"].frame.minY - composition.frame.maxY, 100)
+    XCTAssertGreaterThan(element("practice.target.card").frame.height, 240)
+    attachScreenshot(named: "ipad-practice-portrait-active-ja")
   }
 
   func testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable() throws {
@@ -2867,7 +2909,7 @@ final class HancoUITests: XCTestCase {
     start.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
     XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].isHittable)
-    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+    assertBuiltInKeyboardFillsIPadWidth()
   }
 
   func testAppTourBackgroundTapAdvancesAndNextButtonDoesNotDoubleAdvance() {
@@ -3272,7 +3314,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
   }
 
-  private func assertBuiltInKeyboardIsCenteredWithinIPadCap(
+  private func assertBuiltInKeyboardFillsIPadWidth(
     file: StaticString = #filePath,
     line: UInt = #line
   ) {
@@ -3282,7 +3324,9 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(rightKey.exists, file: file, line: line)
     let keyboardMinX = leftKey.frame.minX
     let keyboardMaxX = rightKey.frame.maxX
-    XCTAssertLessThanOrEqual(keyboardMaxX - keyboardMinX, 820, file: file, line: line)
+    XCTAssertGreaterThan(keyboardMaxX - keyboardMinX, app.frame.width * 0.90, file: file, line: line)
+    XCTAssertLessThanOrEqual(keyboardMaxX, app.frame.maxX, file: file, line: line)
+    XCTAssertGreaterThanOrEqual(leftKey.frame.height, 60, file: file, line: line)
     XCTAssertEqual(
       (keyboardMinX + keyboardMaxX) / 2,
       app.frame.midX,
@@ -3544,7 +3588,26 @@ final class HancoUITests: XCTestCase {
   }
 
   private func attachScreenshot(named name: String) {
-    let attachment = XCTAttachment(screenshot: app.screenshot())
+    let screenshot = XCUIScreen.main.screenshot()
+    let attachment: XCTAttachment
+    // The simulator captures its native portrait framebuffer even after iPad rotation.
+    // Normalize those pixels without cropping any of the actual app UI.
+    if app.frame.width > app.frame.height, let pixels = screenshot.image.cgImage,
+       pixels.width < pixels.height {
+      let raw = UIImage(cgImage: pixels)
+      let size = CGSize(width: pixels.height, height: pixels.width)
+      let format = UIGraphicsImageRendererFormat()
+      format.scale = 1
+      format.opaque = true
+      let upright = UIGraphicsImageRenderer(size: size, format: format).image { context in
+        context.cgContext.translateBy(x: 0, y: size.height)
+        context.cgContext.rotate(by: -.pi / 2)
+        raw.draw(at: .zero)
+      }
+      attachment = XCTAttachment(image: upright)
+    } else {
+      attachment = XCTAttachment(screenshot: screenshot)
+    }
     attachment.name = self.name.contains("testAppStoreScreenshotGlobal")
       ? name.replacingOccurrences(of: "-ja", with: "-\(storeCaptureLanguage)") : name
     attachment.lifetime = .keepAlways
