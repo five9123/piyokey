@@ -153,7 +153,7 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_testflight_processing_complete",
+    "record_status": "version_1_1_testflight_complete_build_linked",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
@@ -305,7 +305,7 @@
       "local_distribution_signature_verified": true,
       "build_uploaded": true,
       "uploaded_build_processing_state": "complete_ready_to_submit",
-      "linked_to_version": false,
+      "linked_to_version": true,
       "final_review_submission_sent": false,
       "upload_succeeded_at": "2026-08-29T01:24:29+09:00",
       "archive_zip_sha256": "bbf814350c432795989bdf7cf9ded9d555936c4defc19e11faa7541cc694dd27",
@@ -313,7 +313,8 @@
       "testflight_groups_observed": [
         "PIYOKEY Internal QA",
         "Tester"
-      ]
+      ],
+      "link_saved_and_reloaded": true
     },
     "live_console_observation_20260829": {
       "version_status": "PREPARE_FOR_SUBMISSION",
@@ -325,7 +326,8 @@
       "copyright": "2026 Kiish",
       "japanese_description_still_lists_retired_korean_ui": true,
       "metadata_saved_this_run": false,
-      "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged."
+      "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged.",
+      "build_link_only_saved_this_run": true
     }
   }
 }

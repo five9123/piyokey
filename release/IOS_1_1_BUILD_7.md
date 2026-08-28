@@ -43,8 +43,8 @@ Tree hash means SHA-256 of UTF-8 lines sorted by relative path: `<file SHA-256><
 - Uploaded the same archive with `release/ExportOptionsUpload.plist`; no rebuild between local validation and upload.
 - Xcode reported `Upload succeeded` at **2026-08-29 01:24:29 JST** and `EXPORT SUCCEEDED`.
 - Logged-in App Store Connect showed **Version 1.1, Build (7): Complete** in Build Uploads and **Ready to Submit** in the version list.
-- Build ID: `c544f5af-c1c4-41c6-950f-3d9caa35d64e`. Existing `PIYOKEY Internal QA` and `Tester` groups are shown on build 7; no new tester/group was added by this run. Actual TestFlight installation and linking to the 1.1 distribution record are not yet confirmed.
-- No App Review submission, public release, metadata Save, media replacement, or legal agreement acceptance was performed.
+- Build ID: `c544f5af-c1c4-41c6-950f-3d9caa35d64e`. Existing `PIYOKEY Internal QA` and `Tester` groups are shown on build 7; no new tester/group was added by this run. Actual TestFlight installation is not yet verified. The user separately authorized linking build 7 to the 1.1 distribution record; it was saved and remained linked after a full page reload.
+- Only the build association was saved after explicit user confirmation. No other metadata changes, App Review submission, public release, media replacement, or legal agreement acceptance were performed. The version remains Prepare for Submission.
 
 ## Remaining submission gates
 

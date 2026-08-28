@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | PR #74 main `9af01ef`, `1.1 (7)` | 서명 archive·Distribution IPA 검증, TestFlight 업로드·Apple 처리 완료, Ready to Submit; App Review 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
+| iOS 1.1 | PR #74 main `9af01ef`, `1.1 (7)` | 서명 archive·Distribution IPA 검증, TestFlight 업로드·Apple 처리 완료, Ready to Submit·1.1 버전에 build 7 연결 저장/재조회 완료; App Review 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
