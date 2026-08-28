@@ -6,13 +6,14 @@
 
 아래 항목은 다음 업데이트 `1.1`의 제출 게이트다. 이후 `1.0.2 (6)` 체크와 제출 ID는 과거 제출 증적으로 보존하며, `1.1` 완료 근거로 재사용하지 않는다.
 
-- [ ] 미사용 build 번호로 `1.1` Distribution archive 생성·검증
+- [x] 미사용 build 번호로 `1.1 (7)` archive·Apple Distribution IPA 생성·서명 검증 (main `9af01ef`; `release/IOS_1_1_BUILD_7.md`)
 - [ ] Paid Applications 계약, 세금·은행 정보를 활성 상태로 확인
 - [ ] Apple Small Business Program 가입/미가입 상태와 예상 수수료를 Account Holder가 확인
 - [ ] 비소모성 `app.piyokey.deckmaker.lifetime` 생성 및 ja/en-US/ko 상품명·설명 입력
-- [ ] 1.1 앱 UI 언어를 ja/en/es로 제공하고 학습 콘텐츠를 그대로 보존하며 App Store 메타데이터를 en-US/en-GB/en-AU/en-CA/ko/ja로 준비
+- [x] 1.1 앱 UI ja/en/es/de/fr와 학습 콘텐츠를 포함한 최종 IPA 확인
+- [ ] 5개 UI 언어와 10개 시장 스토어 초안에 맞춰 App Store 필수 메타데이터·미디어 저장 및 재확인
 - [ ] en-GB/en-AU/en-CA의 `copy_from` 초안을 App Store Connect 필수 필드·스크린샷으로 실제 저장하고 재확인
-- [ ] 프랑스어·스페인어·중국어 등 추가 UI·metadata-only 현지화가 1.1 제출에 섞이지 않았는지 확인
+- [ ] 실제 앱 UI 언어와 스토어 설명용 현지화를 구분하고, ko/zh-Hans/zh-Hant/pt-BR/id 스토어가 지원하지 않는 앱 UI를 약속하지 않는지 확인
 - [ ] 앱과 typee pro IAP 모두 `All Countries or Regions` 및 향후 storefront 자동 포함으로 설정
 - [ ] EU DSA, 중국 본토, 베트남의 국가별 App Store 상태를 확인하고 action-required/판매 불가 예외를 제출 기록에 남김
 - [ ] availability와 별개로 승인 후 수동 출시 또는 자동 출시 중 하나를 확정하고 제출 기록과 App Store Connect 설정을 일치시킴
@@ -26,7 +27,7 @@
 - [ ] `python3 tools/release_preflight.py --strict` 성공
 - [ ] 공개 개인정보처리방침이 PostHog Cloud EU·Firebase Crashlytics·보존/삭제·철회 절차를 설명하고 앱 내/스토어 URL과 일치
 - [ ] App Privacy를 Data Collected=Yes, Tracking=No 및 7개 데이터 유형으로 갱신하고 `PrivacyInfo.xcprivacy`와 대조
-- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en/es로 확인
+- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en/es/de/fr로 확인
 - [ ] PostHog 수신 이벤트에서 `$geoip_disable=true`와 위치/IP 속성 미보관을 확인
 
 ## 0. 과거 릴리스 후보 — 1.0.2 (6)
@@ -42,18 +43,19 @@
 ## 1. 현재 자동 확인 가능한 P0
 
 - [x] AppIcon 1024×1024, alpha 없음
-- [ ] 스페인어 UI의 최종 RC·실기기·스토어 미디어·현지어 사람 검수
+- [ ] ja/en/es/de/fr UI의 최종 RC·실기기·스토어 미디어·현지어 사람 검수
 - [x] 기존 `ja/en` 앱 표시명: `ピヨキー / typee` (ko 기기·기존 UI 설정은 영어 fallback)
-- [x] 세 언어 `Localizable.strings` 키·서식 인자 일치
-- [x] iPhone 전용, iOS 16+, 세로 방향 설정
+- [x] 다섯 UI 언어 `Localizable.strings` 키·서식 인자 일치 (#73 증빙)
+- [x] 1.1 IPA의 iPhone·iPad Universal, iOS 16+ 설정 확인
+- [ ] iPad 최종 RC 스크린샷·레이아웃 및 실제 스토어 요구 사항 확인
 - [x] `PrivacyInfo.xcprivacy` 번들 포함
 - [x] Required Reason API: `UserDefaults / CA92.1`, `ActiveKeyboards / 54BD.1`
 - [ ] 선택형 분석·진단 수집 선언(Data Collected=Yes, Tracking=No)과 7개 데이터 유형을 다음 RC에 반영
 - [x] 비면제 자체 암호화 미사용 선언(Apple SDK의 HTTPS만 사용)
 - [x] 최종 Bundle ID `app.piyokey.Piyokey` 확정
 - [x] App Store Connect App ID `6794853985` 및 명시적 Bundle ID 등록
-- [x] 마케팅 버전·빌드 번호 `1.0.2 (6)` 확정
-- [x] Release archive 생성·검증, Cloud Managed Apple Distribution IPA 검증 및 빌드 `1.0.2 (6)` 업로드 통과
+- [x] 마케팅 버전·빌드 번호 `1.1 (7)` 확인
+- [x] Release archive·Apple Distribution IPA 로컬 서명 검증 (`release/IOS_1_1_BUILD_7.md`)
 
 자동 점검:
 
@@ -130,7 +132,7 @@ python3 tools/release_preflight.py --strict
 ## 4. 로컬라이제이션·콘텐츠 권리 P0
 
 - [ ] 일본어 전체 화면의 번역, 줄바꿈, 조사의 자연스러움 원어민 검수
-- [ ] 일본어·영어·스페인어 및 기존 한국어 UI 설정의 영어 전환에서 키 노출, 잘림, `%@/%d` 같은 포맷 문자열 노출 없음
+- [ ] 일본어·영어·스페인어·독일어·프랑스어 및 기존 한국어 UI 설정의 영어 전환에서 키 노출, 잘림, `%@/%d` 같은 포맷 문자열 노출 없음
 - [ ] `es-MX`·`fr-FR`·`zh-Hant`·`ar-SA` 기기 언어 새 설치가 영어 UI·영어 콘텐츠·`typee`로 시작하고 일본어 뜻·가타카나를 노출하지 않음
 - [ ] 덱의 모든 `ko` 입력·일본어 뜻·초성 힌트 교차 검수
 - [x] 출시 카탈로그에 실제 아티스트·그룹·곡·프로그램·캐릭터명과 실제 가사/대사 없음 확인
