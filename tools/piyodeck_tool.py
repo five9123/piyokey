@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pack, inspect, and validate PIYOKEY ``.piyodeck`` v1 documents.
+"""Pack, inspect, and validate PIYOKEY ``.typedeck`` v1 documents.
 
 The implementation intentionally uses only the Python standard library.  It
 does not delegate archive parsing to ``zipfile`` because PIYOKEY's document
@@ -835,7 +835,7 @@ def user_deck_issues(deck: dict[str, Any]) -> list[str]:
                     f"{path}.id: expected item_ followed by 32 lower-case hex characters"
                 )
         if item.get("audio", object()) is not None:
-            issues.append(f"{path}.audio: .piyodeck v1 requires null")
+            issues.append(f"{path}.audio: .typedeck v1 requires null")
     return issues
 
 
@@ -855,7 +855,7 @@ def _validate_manifest(manifest: Any) -> dict[str, Any]:
     deck_schema_version = manifest.get("deck_schema_version")
     if isinstance(format_version, int) and not isinstance(format_version, bool):
         if format_version != FORMAT_VERSION:
-            raise PiyoDeckToolError(f"unsupported .piyodeck format_version: {format_version}")
+            raise PiyoDeckToolError(f"unsupported .typedeck format_version: {format_version}")
     if isinstance(deck_schema_version, int) and not isinstance(deck_schema_version, bool):
         if deck_schema_version != DECK_SCHEMA_VERSION:
             raise PiyoDeckToolError(
@@ -908,13 +908,13 @@ def validate_package_data(data: bytes, deck_schema: dict[str, Any]) -> Validated
 
 
 def validate_package(path: Path, schema_path: Path) -> ValidatedPackage:
-    data = _read_bounded(path, MAX_PACKAGE_BYTES, ".piyodeck package")
+    data = _read_bounded(path, MAX_PACKAGE_BYTES, ".typedeck package")
     return validate_package_data(data, _load_schema(schema_path))
 
 
 def pack(deck_path: Path, output_path: Path) -> ValidatedPackage:
-    if output_path.suffix.lower() != ".piyodeck":
-        raise PiyoDeckToolError("output file must use the .piyodeck extension")
+    if output_path.suffix.lower() != ".typedeck":
+        raise PiyoDeckToolError("output file must use the .typedeck extension")
     deck_input = _read_bounded(deck_path, MAX_DECK_BYTES, "deck JSON")
     deck = decode_strict_json(deck_input, str(deck_path))
     if not isinstance(deck, dict):
@@ -994,19 +994,19 @@ def inspect_summary(path: Path, package: ValidatedPackage) -> dict[str, Any]:
 
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Pack, inspect, and validate PIYOKEY .piyodeck v1 documents."
+        description="Pack, inspect, and validate PIYOKEY .typedeck v1 documents."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    pack_parser = subparsers.add_parser("pack", help="create a deterministic .piyodeck")
+    pack_parser = subparsers.add_parser("pack", help="create a deterministic .typedeck")
     pack_parser.add_argument("--deck", required=True, type=Path, help="source deck.json")
-    pack_parser.add_argument("--output", required=True, type=Path, help="output .piyodeck")
+    pack_parser.add_argument("--output", required=True, type=Path, help="output .typedeck")
 
     inspect_parser = subparsers.add_parser("inspect", help="validate and summarize a package")
-    inspect_parser.add_argument("file", type=Path, help="input .piyodeck")
+    inspect_parser.add_argument("file", type=Path, help="input .typedeck")
 
     validate_parser = subparsers.add_parser("validate", help="strictly validate a package")
-    validate_parser.add_argument("file", type=Path, help="input .piyodeck")
+    validate_parser.add_argument("file", type=Path, help="input .typedeck")
     validate_parser.add_argument(
         "--deck-schema", required=True, type=Path, help="deck.schema.json path"
     )

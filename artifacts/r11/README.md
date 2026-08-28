@@ -5,7 +5,7 @@ The app runs in Japanese because Japanese is the product's primary launch locale
 
 ## Screens
 
-1. `screenshots/01-import-preview-ja.png` — free `.piyodeck` validation and preview
+1. `screenshots/01-import-preview-ja.png` — free `.typedeck` validation and preview
 2. `screenshots/02-my-decks-actions-ja.png` — free import and Deck Maker creation entry points
 3. `screenshots/03-new-deck-editor-ja.png` — paid mobile deck editor
 4. `screenshots/04-deck-maker-paywall-ja.png` — lifetime non-consumable purchase screen

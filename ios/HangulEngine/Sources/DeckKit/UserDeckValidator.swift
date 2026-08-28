@@ -138,7 +138,7 @@ public enum UserDeckValidator {
           .init(
             code: "user_deck_audio",
             path: "items[\(index)].audio",
-            message: ".piyodeck v1에서는 audio가 null이어야 합니다"
+            message: ".typedeck v1에서는 audio가 null이어야 합니다"
           )
         )
       }

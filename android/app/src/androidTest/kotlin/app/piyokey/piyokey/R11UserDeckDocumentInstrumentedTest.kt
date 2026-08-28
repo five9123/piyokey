@@ -46,9 +46,9 @@ class R11UserDeckDocumentInstrumentedTest {
     composeRule.onNodeWithTag("practice-screen").assertIsDisplayed()
 
     val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    val incomingFile = File(targetContext.cacheDir, "shared_results/r11-external.piyodeck").apply {
+    val incomingFile = File(targetContext.cacheDir, "shared_results/r11-external.typedeck").apply {
       parentFile?.mkdirs()
-      InstrumentationRegistry.getInstrumentation().context.assets.open("valid/basic.piyodeck").use { input ->
+      InstrumentationRegistry.getInstrumentation().context.assets.open("valid/basic.typedeck").use { input ->
         outputStream().use { output -> input.copyTo(output) }
       }
     }
@@ -87,9 +87,9 @@ class R11UserDeckDocumentInstrumentedTest {
   fun rejectedExternalDeckRemovesItsPrivateStagingCopy() {
     waitForShell()
     val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    val incomingFile = File(targetContext.cacheDir, "shared_results/r11-invalid.piyodeck").apply {
+    val incomingFile = File(targetContext.cacheDir, "shared_results/r11-invalid.typedeck").apply {
       parentFile?.mkdirs()
-      InstrumentationRegistry.getInstrumentation().context.assets.open("invalid/wrong-sha.piyodeck").use { input ->
+      InstrumentationRegistry.getInstrumentation().context.assets.open("invalid/wrong-sha.typedeck").use { input ->
         outputStream().use { output -> input.copyTo(output) }
       }
     }
@@ -113,7 +113,7 @@ class R11UserDeckDocumentInstrumentedTest {
     composeRule.onNodeWithTag("import-error").assertIsDisplayed()
     composeRule.waitUntil(timeoutMillis = 10_000) {
       File(targetContext.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME)
-        .listFiles().orEmpty().none { it.extension in setOf("piyodeck", "pending") }
+        .listFiles().orEmpty().none { it.extension in setOf("typedeck", "pending") }
     }
   }
 
@@ -139,8 +139,8 @@ class R11UserDeckDocumentInstrumentedTest {
     val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
     val schema = targetContext.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
     val originalBytes = InstrumentationRegistry.getInstrumentation().context.assets
-      .open("valid/basic.piyodeck").use { it.readBytes() }
-    val original = File(targetContext.cacheDir, "shared_results/original.piyodeck").apply {
+      .open("valid/basic.typedeck").use { it.readBytes() }
+    val original = File(targetContext.cacheDir, "shared_results/original.typedeck").apply {
       parentFile?.mkdirs()
       writeBytes(originalBytes)
     }
@@ -159,7 +159,7 @@ class R11UserDeckDocumentInstrumentedTest {
         if (index == 0) item.copy(meaningJa = item.meaningJa + "（別内容）") else item
       },
     )
-    val conflict = File(targetContext.cacheDir, "shared_results/conflict.piyodeck").apply {
+    val conflict = File(targetContext.cacheDir, "shared_results/conflict.typedeck").apply {
       writeBytes(PiyoDeckPackageWriter.write(changed, schema))
     }
     publish(conflict)

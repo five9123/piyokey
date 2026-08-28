@@ -22,7 +22,7 @@ Kotlin/Compose, 웹은 TypeScript 기반으로 각각 네이티브 구현합니�
 ## 공용 계약
 
 - `shared/test_vectors.json`: 한글 조합 상태 기계의 공용 입력·출력 벡터
-- `shared/schema/`: 덱, 카탈로그, `.piyodeck` 형식의 JSON Schema
+- `shared/schema/`: 덱, 카탈로그, `.typedeck` 형식의 JSON Schema
 - `shared/mock_catalog/`: 정적 카탈로그와 오프라인 발음 자산 fixture
 - `shared/piyodeck/`: 교환 형식 fixture와 호환성 자료
 - `tools/`: 공용 콘텐츠를 생성·검증하는 재현 가능한 도구

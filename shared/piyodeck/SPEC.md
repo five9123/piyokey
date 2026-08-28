@@ -1,8 +1,8 @@
-# PIYOKEY Deck Package (`.piyodeck`) v1
+# PIYOKEY Deck Package (`.typedeck`) v1
 
 Status: target specification for PIYOKEY 1.1.
 
-`.piyodeck` is a portable, offline document containing exactly one user-created
+`.typedeck` is a portable, offline document containing exactly one user-created
 PIYOKEY deck. Importing and playing a valid document does not convey or require
 any purchase entitlement. The document is data only: it cannot contain code,
 remote resources, account identifiers, or payment state.
@@ -11,7 +11,7 @@ remote resources, account identifiers, or payment state.
 
 | Property | v1 value |
 | --- | --- |
-| Extension | `.piyodeck` |
+| Extension | `.typedeck` |
 | MIME type | `application/vnd.piyokey.deck+zip` |
 | Apple UTType identifier | `app.piyokey.piyodeck` |
 | Container | ZIP, STORE method only |
@@ -144,9 +144,9 @@ The standard-library-only helper can create, inspect, and validate v1 packages
 from the repository root:
 
 ```sh
-python3 tools/piyodeck_tool.py pack --deck shared/piyodeck/fixtures/valid/basic-deck.json --output /tmp/basic.piyodeck
-python3 tools/piyodeck_tool.py inspect /tmp/basic.piyodeck
-python3 tools/piyodeck_tool.py validate /tmp/basic.piyodeck --deck-schema shared/schema/deck.schema.json
+python3 tools/piyodeck_tool.py pack --deck shared/piyodeck/fixtures/valid/basic-deck.json --output /tmp/basic.typedeck
+python3 tools/piyodeck_tool.py inspect /tmp/basic.typedeck
+python3 tools/piyodeck_tool.py validate /tmp/basic.typedeck --deck-schema shared/schema/deck.schema.json
 ```
 
 `pack` automatically validates the input against
@@ -155,11 +155,11 @@ writing a deterministic package. `inspect` and `validate` apply the same strict
 v1 container and content checks; `validate` accepts an explicit deck schema so
 CI and compatibility checks can pin the intended schema revision.
 
-`fixtures/valid/basic.piyodeck` is the canonical cross-platform binary golden.
+`fixtures/valid/basic.typedeck` is the canonical cross-platform binary golden.
 Python, Swift, and Kotlin writers must reproduce it byte-for-byte, and all three
 readers must accept it using the pinned shared deck schema.
 
-`fixtures/valid/pretty-basic.piyodeck` preserves valid pretty-printed entry
+`fixtures/valid/pretty-basic.typedeck` preserves valid pretty-printed entry
 bytes and must be accepted by all readers. `fixtures/cases.json` records the
 portable malicious corpus with exact size, SHA-256, and coarse error family.
 Python and Swift execute every listed binary directly; Kotlin directly executes

@@ -91,7 +91,7 @@ choose **Edit** / **Edit a copy** from a deck menu → paywall → purchase. **R
 Purchases** is on the same paywall. A purchase unlocks unlimited installed user decks,
 in-app creation, editing, official-deck copy creation, and saving those changes.
 
-`.piyodeck` is a local document, not a paid content container. Validation and preview,
+`.typedeck` is a local document, not a paid content container. Validation and preview,
 up to three installed user deck IDs, replacement using the same deck ID, practice/game
 use, export, and deletion remain free. A fourth distinct ID requires typee pro, and
 deleting a user deck restores a free slot. Documents move only through Files, iCloud Drive, AirDrop, or the
@@ -118,7 +118,7 @@ Before setting `deck_maker_local_storekit_check=true` in
    continues into the requested creator/editor action.
 5. Refund the test transaction from **Manage Transactions**. The transaction update
    removes creator/editor access without deleting existing decks.
-6. Reconfirm that ordinary `.piyodeck` import, preview, use, export, replacement, and
+6. Reconfirm that ordinary `.typedeck` import, preview, use, export, replacement, and
    deletion stay free in every state above.
 
 Repeat purchase, cancellation, pending, restore, and refund/revocation with an App
@@ -151,7 +151,7 @@ Choose **Yes, data is collected from this app** and **Tracking: No**. Collection
 
 Do not declare typed/composing text, answers, searches, deck/item identifiers, user-deck names or contents, names, email addresses, advertising identifiers, recordings, session replay, or location. Product events go only to PostHog Cloud EU with IP geolocation disabled; native crash diagnostics go to Firebase Crashlytics. Firebase Analytics and advertising SDKs are not included.
 
-Before submitting, publish `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the Privacy URL and confirm the live page no longer says that the app has no analytics SDK or device identifiers. Verify that the first-launch choice notice and Settings withdrawal controls match the submitted build. Local learning state and `.piyodeck` documents remain on device. StoreKit purchase processing, optional Game Center processing, and user-initiated support mail are separate platform/user actions described by the privacy policy.
+Before submitting, publish `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the Privacy URL and confirm the live page no longer says that the app has no analytics SDK or device identifiers. Verify that the first-launch choice notice and Settings withdrawal controls match the submitted build. Local learning state and `.typedeck` documents remain on device. StoreKit purchase processing, optional Game Center processing, and user-initiated support mail are separate platform/user actions described by the privacy policy.
 
 ## Age rating
 

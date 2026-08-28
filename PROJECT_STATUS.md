@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #63 사용자 덱 `.typedeck` 확장자 | Verify | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 검증 완료 변경 review·commit 후 PR |
 | #58 현지 20시 리마인더 | Verify | `codex/58-onboarding-local-reminder` / `/private/tmp/piyokey-issue-58` | 구현 PR 병합 후 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 | #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
 

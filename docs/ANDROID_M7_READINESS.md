@@ -31,7 +31,7 @@ Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 �
 | 공용 콘텐츠 | 공식 26덱 + 게임 프리셋 15덱, 총 1,812항목 |
 | 발음 | canonical gTTS MP3 581개, CAF 0개 |
 | UI 로케일 | `ja` / `en` / `ko`, 미지원 언어는 `en` fallback |
-| 사용자 문서 | `.piyodeck` v1, 로컬-only·무계정 |
+| 사용자 문서 | `.typedeck` v1, 로컬-only·무계정 |
 | Deck Maker | 가져오기·학습·내보내기 무료, 생성·편집만 일회성 상품 |
 | 공용 조합 벡터 | composition 15종 + backspace 10종 |
 
@@ -62,7 +62,7 @@ Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 �
 ## 구현 순서
 
 1. A0 완료: wrapper/version catalog, `:app`, 순수 `:core:hangul`, Android contract CI.
-2. M1 완료: Hangul coverage 95% 이상, DeckKit/schema/catalog, `.piyodeck` reader/writer
+2. M1 완료: Hangul coverage 95% 이상, DeckKit/schema/catalog, `.typedeck` reader/writer
    cross-platform golden과 malicious fixture.
 3. M2 기능 베이스 구현: 순수 session reducer, 내장 두벌식 키보드와 연습 화면.
    test-only 계측 하네스까지 준비했으며 실제 기기에서 warm-up 20·측정 100의
@@ -85,7 +85,7 @@ M6A 뒤에도 기기 수동 QA를 요구하지 않는 기능 묶음을 연속 �
 - 순수 core에는 Android/Compose import를 허용하지 않는다.
 - Room은 설치 메타데이터·진행·기록, private files는 payload·backup·draft·staging,
   Preferences DataStore는 작은 설정만 소유한다.
-- SAF/`ContentResolver`로 `.piyodeck`을 private staging에 제한 복사하며 저장소
+- SAF/`ContentResolver`로 `.typedeck`을 private staging에 제한 복사하며 저장소
   전체 권한을 요청하지 않는다.
 - 고정 목표는 동일한 581개 MP3를 사용하고, 동적 문구만 오프라인 한국어 기기
   TTS로 fallback한다.

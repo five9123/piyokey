@@ -25,7 +25,7 @@ Korean pronunciation uses bundled pre-generated audio and falls back to the devi
 
 The catalog is read-only static content. All launch content is also bundled, so lessons and games remain usable offline if the network catalog is unavailable.
 
-Version 1.1 also recognizes `.piyodeck` local document files. Validation and preview are always free, and users may keep up to three distinct user decks installed without purchase. Practicing/playing, exporting, deleting, and replacing the same deck ID remain free. A fourth distinct user deck requires typee pro; deleting one of the three restores a free slot. Purchase status is not written into the document. Files are opened from or exported to Files, iCloud Drive, AirDrop, or the iOS share sheet and are stored locally on device.
+Version 1.1 also recognizes `.typedeck` local document files. Validation and preview are always free, and users may keep up to three distinct user decks installed without purchase. Practicing/playing, exporting, deleting, and replacing the same deck ID remain free. A fourth distinct user deck requires typee pro; deleting one of the three restores a free slot. Purchase status is not written into the document. Files are opened from or exported to Files, iCloud Drive, AirDrop, or the iOS share sheet and are stored locally on device.
 
 Personal decks are not public user-generated content: PIYOKEY has no upload service, public user catalog, search/indexing, social feed, comments, messaging, moderation service, or remote write API. The only network catalog remains first-party, static, and read-only. There is no advertising or cross-company tracking.
 
@@ -56,8 +56,8 @@ Support: https://hancoweb.vercel.app/support
 1. Complete onboarding, open **My Page**, and find the **Import** and **Create deck** actions in the My Decks section.
 2. Tap **Create deck**. The typee pro paywall appears outside any lesson/game session.
 3. Purchase `app.piyokey.deckmaker.lifetime` with the App Review sandbox account. Confirm that the localized StoreKit price—not a hard-coded price—is shown.
-4. Create and save a small deck. Open its menu to edit it, export it as `.piyodeck`, practice it, and delete/re-import it.
+4. Create and save a small deck. Open its menu to edit it, export it as `.typedeck`, practice it, and delete/re-import it.
 5. To exercise restore, use **Restore Purchases** on the same paywall after reinstalling or on another test device signed into the same sandbox account. A successful restore closes the paywall and opens the requested creator/editor action.
-6. To confirm the free boundary, import three different valid `.piyodeck` deck IDs without purchase. Preview a fourth and confirm that typee pro appears only when **Import** is tapped. Confirm that replacing the same ID, practicing, exporting, and deleting remain free, and that deleting one of the three restores one free import slot.
+6. To confirm the free boundary, import three different valid `.typedeck` deck IDs without purchase. Preview a fourth and confirm that typee pro appears only when **Import** is tapped. Confirm that replacing the same ID, practicing, exporting, and deleting remain free, and that deleting one of the three restores one free import slot.
 
 If the purchase is refunded or revoked during testing, unlimited installs and create/edit access are removed after StoreKit's transaction update. Existing personal decks remain installed and usable; typee / ピヨキー does not delete purchased work or local documents when entitlement is lost.

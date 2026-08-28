@@ -1488,6 +1488,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
 - 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.
 
+## 2026-08-28 사용자 덱 외부 확장자 `.typedeck`
+
+- 관련: Issue #63, PRD F5.9, §8.4, iOS·Android 사용자 덱 문서 계약.
+- 결정: 사용자와 외부 도구가 주고받는 덱 파일 확장자는 `.piyodeck` 대신 `.typedeck`을 사용한다. 양 플랫폼의 문서 등록·열기·staging·내보내기 기본 파일명, 공용 fixture, CLI 확장자 검증, 사용자 노출 문구와 스토어 메타데이터를 함께 변경한다.
+- 결정: ZIP 내부 구조, `manifest.json`의 `format=piyokey.deck-package`, MIME `application/vnd.piyokey.deck+zip`, Apple UTType identifier `app.piyokey.piyodeck`, 코드의 `PiyoDeck` 타입·모듈·저장 디렉터리 이름은 포맷 및 저장 호환성을 위해 유지한다. 이 값들은 파일 확장자가 아니며 기존 설치 데이터 migration을 만들지 않는다.
+- 근거: 글로벌 사용자에게 노출되는 파일 이름을 `typee` 브랜드와 맞추면서도 파일 bytes와 내부 식별자를 바꾸지 않아 cross-platform reader/writer 호환성과 기존 기기 내 데이터를 보존한다.
+- 영향 범위: PRD·공용 package 명세/fixture/도구, iOS UTType 확장자·import/export, Android SAF import/export, ja/en/ko 문자열, App Store·Google Play 출시 문구와 관련 자동 회귀.
+
 ## 2026-08-27 프로젝트 운영 기준선과 검증 증빙
 
 - 관련: Issue #59, 저장소 운영·릴리스 검증 체계.

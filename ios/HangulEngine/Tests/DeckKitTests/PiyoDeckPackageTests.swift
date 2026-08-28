@@ -31,7 +31,7 @@ final class PiyoDeckPackageTests: XCTestCase {
       package,
       try PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: deckSchema)
     )
-    let crossPlatformGolden = try fixture("valid/basic.piyodeck", root: root)
+    let crossPlatformGolden = try fixture("valid/basic.typedeck", root: root)
     XCTAssertEqual(package, crossPlatformGolden)
 
     let entries = try PiyoDeckZIP.read(package)
@@ -81,7 +81,7 @@ final class PiyoDeckPackageTests: XCTestCase {
     XCTAssertEqual(importedGolden.deck, deck)
     XCTAssertEqual(importedGolden.deckData, generatedDeck)
 
-    let prettyGolden = try fixture("valid/pretty-basic.piyodeck", root: root)
+    let prettyGolden = try fixture("valid/pretty-basic.typedeck", root: root)
     let importedPretty = try PiyoDeckPackageReader.read(
       data: prettyGolden,
       deckSchemaData: deckSchema
@@ -106,7 +106,7 @@ final class PiyoDeckPackageTests: XCTestCase {
     let sourceDeck = try DeckKitJSON.decodeDeck(
       from: fixture("valid/basic-deck.json", root: root)
     )
-    let canonical = try fixture("valid/basic.piyodeck", root: root)
+    let canonical = try fixture("valid/basic.typedeck", root: root)
 
     for fixtureCase in cases {
       let identifier = try XCTUnwrap(fixtureCase["id"] as? String)

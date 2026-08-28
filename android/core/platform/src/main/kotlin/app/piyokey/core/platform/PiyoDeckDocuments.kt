@@ -31,7 +31,7 @@ class PiyoDeckDocumentGateway(context: Context) {
   suspend fun stage(uri: Uri, sourceContext: String): StagedPiyoDeckDocument =
     withContext(Dispatchers.IO) {
       pruneExpiredStaging()
-      val file = File(stagingDirectory, "${UUID.randomUUID()}.piyodeck")
+      val file = File(stagingDirectory, "${UUID.randomUUID()}.typedeck")
       try {
         val input = applicationContext.contentResolver.openInputStream(uri)
           ?: error("The selected document could not be opened.")
@@ -92,7 +92,7 @@ class PiyoDeckDocumentGateway(context: Context) {
     return queried?.takeIf(String::isNotBlank)
       ?.replace(Regex("[\\r\\n]"), " ")
       ?.take(120)
-      ?: "deck.piyodeck"
+      ?: "deck.typedeck"
   }
 
   private fun pruneExpiredStaging(now: Long = System.currentTimeMillis()) {
@@ -111,7 +111,7 @@ class PiyoDeckDocumentGateway(context: Context) {
 internal class PiyoDeckPendingStore(private val directory: File) {
   fun record(document: StagedPiyoDeckDocument) {
     require(document.file.parentFile?.canonicalFile == directory.canonicalFile)
-    require(document.file.extension == "piyodeck")
+    require(document.file.extension == "typedeck")
     val properties = Properties().apply {
       setProperty(DISPLAY_NAME_KEY, document.displayName.replace(Regex("[\\r\\n]"), " ").take(120))
       setProperty(SOURCE_CONTEXT_KEY, document.sourceContext.replace(Regex("[^a-zA-Z0-9_-]"), "").take(32))
@@ -132,7 +132,7 @@ internal class PiyoDeckPendingStore(private val directory: File) {
 
   fun recoverLatest(): StagedPiyoDeckDocument? {
     val packageFiles = directory.listFiles().orEmpty()
-      .filter { it.isFile && it.extension == "piyodeck" }
+      .filter { it.isFile && it.extension == "typedeck" }
     val candidates = packageFiles.mapNotNull { packageFile ->
       read(packageFile).also { if (it == null) discard(packageFile) }
     }

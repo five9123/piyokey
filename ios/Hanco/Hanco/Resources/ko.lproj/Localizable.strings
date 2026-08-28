@@ -952,7 +952,7 @@
 "deck_maker.paywall.title" = "사용자 덱을 더 자유롭게";
 "deck_maker.paywall.subtitle" = "4번째 사용자 덱부터 기기 내 생성·편집까지 한 번의 구매로 이용하세요.";
 "deck_maker.paywall.feature.unlimitedImports.title" = "사용자 덱 무제한 보관";
-"deck_maker.paywall.feature.unlimitedImports.detail" = "무료 3개를 넘어 원하는 만큼 .piyodeck 파일을 가져올 수 있어요.";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "무료 3개를 넘어 원하는 만큼 .typedeck 파일을 가져올 수 있어요.";
 "deck_maker.paywall.feature.create.title" = "새로운 덱 만들기";
 "deck_maker.paywall.feature.create.detail" = "한국어·뜻·읽는 법을 입력해 나만의 학습 자료를 만들어요.";
 "deck_maker.paywall.feature.edit.title" = "가져온 덱 편집하기";
@@ -1036,7 +1036,7 @@
 "piyodeck.create.action" = "새 덱";
 "piyodeck.action.edit" = "편집";
 "piyodeck.action.edit_copy" = "사본으로 편집";
-"piyodeck.action.export" = ".piyodeck 내보내기";
+"piyodeck.action.export" = ".typedeck 내보내기";
 "piyodeck.import.navigation_title" = "덱 가져오기";
 "piyodeck.import.user_badge" = "사용자 덱";
 "piyodeck.import.type" = "유형";
@@ -1061,11 +1061,11 @@
 "piyodeck.import.replace.confirm.message" = "같은 덱 ID와 항목 ID의 학습 기록은 유지돼요.";
 "piyodeck.import.replace.confirm.action" = "교체";
 "piyodeck.notice.packageTooLarge.title" = "파일이 너무 커요";
-"piyodeck.notice.packageTooLarge.message" = ".piyodeck 파일은 8MB 이하여야 해요.";
+"piyodeck.notice.packageTooLarge.message" = ".typedeck 파일은 8MB 이하여야 해요.";
 "piyodeck.notice.unsupportedVersion.title" = "더 새로운 덱 형식이에요";
 "piyodeck.notice.unsupportedVersion.message" = "App Store에서 typee를 업데이트한 뒤 다시 시도해 주세요.";
 "piyodeck.notice.invalidDocument.title" = "이 덱을 가져올 수 없어요";
-"piyodeck.notice.invalidDocument.message" = "파일이 손상되었거나 .piyodeck v1 규격에 맞지 않아요.";
+"piyodeck.notice.invalidDocument.message" = "파일이 손상되었거나 .typedeck v1 규격에 맞지 않아요.";
 "piyodeck.notice.cannotRead.title" = "파일을 열지 못했어요";
 "piyodeck.notice.cannotRead.message" = "Files에서 접근할 수 있는지 확인한 뒤 다시 시도해 주세요.";
 "piyodeck.notice.cannotSave.title" = "덱을 저장하지 못했어요";
@@ -1109,7 +1109,7 @@
 "piyodeck.import.compare.accessibility_value" = "현재본: %@. 가져온 파일: %@.";
 "piyodeck.import.status.accessibility_label" = "가져오기 상태";
 "piyodeck.import.action.export_current" = "현재 덱 내보내기";
-"piyodeck.import.action.export_current.hint" = "현재 덱을 .piyodeck 파일로 공유해요.";
+"piyodeck.import.action.export_current.hint" = "현재 덱을 .typedeck 파일로 공유해요.";
 "piyodeck.import.action.copy.locked_label" = "별도 사본으로 저장, 구매 필요";
 "piyodeck.import.action.copy.hint" = "새로운 ID의 사용자 덱으로 저장해요.";
 "piyodeck.import.action.copy.locked_hint" = "피요키 프로 구매 화면을 열어요. 동일 ID 교체는 무료예요.";

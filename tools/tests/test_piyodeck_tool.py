@@ -21,13 +21,25 @@ SPEC.loader.exec_module(piyodeck_tool)
 
 class PiyoDeckToolTests(unittest.TestCase):
     fixture = ROOT / "shared/piyodeck/fixtures/valid/basic-deck.json"
-    package_fixture = ROOT / "shared/piyodeck/fixtures/valid/basic.piyodeck"
+    package_fixture = ROOT / "shared/piyodeck/fixtures/valid/basic.typedeck"
     schema = ROOT / "shared/schema/deck.schema.json"
+
+    def test_pack_requires_typedeck_extension(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "legacy.piyodeck"
+
+            with self.assertRaisesRegex(
+                piyodeck_tool.PiyoDeckToolError,
+                r"must use the \.typedeck extension",
+            ):
+                piyodeck_tool.pack(self.fixture, output)
+
+            self.assertFalse(output.exists())
 
     def test_pack_is_deterministic_and_emits_store_entries_in_v1_order(self):
         with tempfile.TemporaryDirectory() as directory:
-            first = Path(directory) / "first.piyodeck"
-            second = Path(directory) / "second.piyodeck"
+            first = Path(directory) / "first.typedeck"
+            second = Path(directory) / "second.typedeck"
 
             package = piyodeck_tool.pack(self.fixture, first)
             piyodeck_tool.pack(self.fixture, second)
@@ -99,7 +111,7 @@ class PiyoDeckToolTests(unittest.TestCase):
             return "invalid_json"
         if "SHA-256 does not match" in message:
             return "sha256_mismatch"
-        if "unsupported .piyodeck format_version" in message or "unsupported deck_schema_version" in message:
+        if "unsupported .typedeck format_version" in message or "unsupported deck_schema_version" in message:
             return "unsupported_version"
         if "unsupported ZIP" in message:
             return "unsupported_archive_feature"
@@ -125,7 +137,7 @@ class PiyoDeckToolTests(unittest.TestCase):
 
     def test_inspect_and_validate_commands_report_package_metadata(self):
         with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "basic.piyodeck"
+            output = Path(directory) / "basic.typedeck"
             piyodeck_tool.pack(self.fixture, output)
 
             inspect_stdout = io.StringIO()
@@ -151,14 +163,14 @@ class PiyoDeckToolTests(unittest.TestCase):
         invalid_directory = ROOT / "shared/piyodeck/fixtures/invalid"
         for name in ("audio-deck.json", "official-deck.json", "unknown-field-deck.json"):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
-                output = Path(directory) / "invalid.piyodeck"
+                output = Path(directory) / "invalid.typedeck"
                 with self.assertRaises(piyodeck_tool.PiyoDeckToolError):
                     piyodeck_tool.pack(invalid_directory / name, output)
                 self.assertFalse(output.exists())
 
     def test_validate_rejects_crc_valid_package_with_wrong_deck_hash(self):
         with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "basic.piyodeck"
+            output = Path(directory) / "basic.typedeck"
             package = piyodeck_tool.pack(self.fixture, output)
             manifest = json.loads(json.dumps(package.manifest))
             manifest["deck"]["sha256"] = "0" * 64
@@ -178,7 +190,7 @@ class PiyoDeckToolTests(unittest.TestCase):
 
     def test_validate_rejects_non_store_zip_and_hidden_preamble(self):
         with tempfile.TemporaryDirectory() as directory:
-            valid_path = Path(directory) / "valid.piyodeck"
+            valid_path = Path(directory) / "valid.typedeck"
             package = piyodeck_tool.pack(self.fixture, valid_path)
 
             with self.assertRaises(piyodeck_tool.PiyoDeckToolError):
@@ -187,7 +199,7 @@ class PiyoDeckToolTests(unittest.TestCase):
                     piyodeck_tool._load_schema(self.schema),
                 )
 
-            compressed_path = Path(directory) / "compressed.piyodeck"
+            compressed_path = Path(directory) / "compressed.typedeck"
             with zipfile.ZipFile(
                 compressed_path, "w", compression=zipfile.ZIP_DEFLATED
             ) as archive:
@@ -210,7 +222,7 @@ class PiyoDeckToolTests(unittest.TestCase):
             with self.assertRaisesRegex(
                 piyodeck_tool.DuplicateJSONKeyError, "deck_id"
             ):
-                piyodeck_tool.pack(source, Path(directory) / "duplicate.piyodeck")
+                piyodeck_tool.pack(source, Path(directory) / "duplicate.typedeck")
 
     def test_pack_rejects_noncanonical_timestamp_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -222,7 +234,7 @@ class PiyoDeckToolTests(unittest.TestCase):
             with self.assertRaisesRegex(
                 piyodeck_tool.PiyoDeckToolError, "created_at"
             ):
-                piyodeck_tool.pack(source, Path(directory) / "offset-time.piyodeck")
+                piyodeck_tool.pack(source, Path(directory) / "offset-time.typedeck")
 
     def test_strict_json_rejects_unpaired_surrogate_escapes(self):
         invalid_values = (

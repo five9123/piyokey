@@ -24,7 +24,7 @@ data class ContentValidationException(
   val issues: List<ContentValidationIssue>,
 ) : IllegalArgumentException(issues.joinToString(separator = "\n"))
 
-/** Strict, dependency-light JSON codec shared by catalog and `.piyodeck` boundaries. */
+/** Strict, dependency-light JSON codec shared by catalog and `.typedeck` boundaries. */
 object DeckKitJson {
   private val parser = Json {
     isLenient = false

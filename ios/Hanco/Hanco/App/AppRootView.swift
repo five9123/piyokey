@@ -226,7 +226,7 @@ struct AppRootView: View {
     .task { await deckMakerPurchaseStore.prepare() }
     .task { await piyoDeckDocumentCoordinator.resumePendingIfNeeded() }
     .onOpenURL { url in
-      guard url.pathExtension.lowercased() == "piyodeck" else { return }
+      guard url.pathExtension.lowercased() == "typedeck" else { return }
       Task { await piyoDeckDocumentCoordinator.receive(url) }
     }
     .task(id: shouldStartAppTour) {

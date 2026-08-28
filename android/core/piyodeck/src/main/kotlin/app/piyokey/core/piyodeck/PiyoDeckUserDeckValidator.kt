@@ -66,7 +66,7 @@ internal object PiyoDeckUserDeckValidator {
         )
       }
       if (item.audio != null) {
-        issue("user_deck_audio", "$path.audio", ".piyodeck v1 requires null")
+        issue("user_deck_audio", "$path.audio", ".typedeck v1 requires null")
       }
     }
   }

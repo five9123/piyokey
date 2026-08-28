@@ -112,7 +112,7 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-					<string>piyodeck</string>
+					<string>typedeck</string>
 				</array>
 				<key>public.mime-type</key>
 				<string>application/vnd.piyokey.deck+zip</string>

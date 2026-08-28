@@ -29,7 +29,7 @@ class PiyoDeckPackageTest {
     val first = PiyoDeckPackageWriter.write(deck, deckSchemaSource)
     val second = writePackage(source)
     assertContentEquals(first, second)
-    val sharedGolden = fixture("valid/basic.piyodeck")
+    val sharedGolden = fixture("valid/basic.typedeck")
     assertContentEquals(sharedGolden, first)
     assertEquals(1_109, first.size)
     assertEquals(
@@ -63,7 +63,7 @@ class PiyoDeckPackageTest {
     assertEquals("user_00000000000000000000000000000001", imported.manifest.deck.deckId)
     assertEquals(2, imported.manifest.deck.itemCount)
     assertEquals(deck, readPackage(sharedGolden).deck)
-    val prettyGolden = fixture("valid/pretty-basic.piyodeck")
+    val prettyGolden = fixture("valid/pretty-basic.typedeck")
     val importedPretty = readPackage(prettyGolden)
     assertEquals(deck, importedPretty.deck)
     assertContentEquals(sharedGolden, PiyoDeckPackageWriter.write(importedPretty.deck, deckSchemaSource))
@@ -72,10 +72,10 @@ class PiyoDeckPackageTest {
   @Test
   fun sharedMaliciousBinaryGoldensFailClosed() {
     assertIs<PiyoDeckImportException.Sha256Mismatch>(
-      assertFailsWith { readPackage(fixture("invalid/wrong-sha.piyodeck")) },
+      assertFailsWith { readPackage(fixture("invalid/wrong-sha.typedeck")) },
     )
     val unicodeError = assertFailsWith<PiyoDeckImportException.InvalidJson> {
-      readPackage(fixture("invalid/unpaired-surrogate.piyodeck"))
+      readPackage(fixture("invalid/unpaired-surrogate.typedeck"))
     }
     assertEquals("deck.json", unicodeError.name)
     assertTrue(unicodeError.reason.contains("invalid Unicode scalar"))

@@ -952,7 +952,7 @@
 "deck_maker.paywall.title" = "ユーザーデッキをもっと自由に";
 "deck_maker.paywall.subtitle" = "4つ目以降のユーザーデッキと、端末での作成・編集を一度の購入で利用できます。";
 "deck_maker.paywall.feature.unlimitedImports.title" = "ユーザーデッキを無制限に保存";
-"deck_maker.paywall.feature.unlimitedImports.detail" = "無料の3つを超えて、.piyodeckを好きなだけ読み込めます。";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "無料の3つを超えて、.typedeckを好きなだけ読み込めます。";
 "deck_maker.paywall.feature.create.title" = "新しいデッキを作成";
 "deck_maker.paywall.feature.create.detail" = "単語・意味・読み方を入力して、オリジナル教材を作れます。";
 "deck_maker.paywall.feature.edit.title" = "読み込んだデッキを編集";
@@ -1036,7 +1036,7 @@
 "piyodeck.create.action" = "新しいデッキ";
 "piyodeck.action.edit" = "編集";
 "piyodeck.action.edit_copy" = "コピーして編集";
-"piyodeck.action.export" = ".piyodeckを書き出す";
+"piyodeck.action.export" = ".typedeckを書き出す";
 "piyodeck.import.navigation_title" = "デッキを読み込む";
 "piyodeck.import.user_badge" = "ユーザーデッキ";
 "piyodeck.import.type" = "種類";
@@ -1061,11 +1061,11 @@
 "piyodeck.import.replace.confirm.message" = "同じデッキIDと項目IDの学習記録は維持されます。";
 "piyodeck.import.replace.confirm.action" = "置き換える";
 "piyodeck.notice.packageTooLarge.title" = "ファイルが大きすぎます";
-"piyodeck.notice.packageTooLarge.message" = ".piyodeckは8MB以内である必要があります。";
+"piyodeck.notice.packageTooLarge.message" = ".typedeckは8MB以内である必要があります。";
 "piyodeck.notice.unsupportedVersion.title" = "新しい形式のデッキです";
 "piyodeck.notice.unsupportedVersion.message" = "App Storeでピヨキーを更新してから、もう一度お試しください。";
 "piyodeck.notice.invalidDocument.title" = "このデッキは読み込めません";
-"piyodeck.notice.invalidDocument.message" = "ファイルが壊れているか、.piyodeck v1の規格に一致しません。";
+"piyodeck.notice.invalidDocument.message" = "ファイルが壊れているか、.typedeck v1の規格に一致しません。";
 "piyodeck.notice.cannotRead.title" = "ファイルを開けませんでした";
 "piyodeck.notice.cannotRead.message" = "Filesでアクセスできるか確認して、もう一度お試しください。";
 "piyodeck.notice.cannotSave.title" = "デッキを保存できませんでした";
@@ -1109,7 +1109,7 @@
 "piyodeck.import.compare.accessibility_value" = "現在：%@。読み込むファイル：%@。";
 "piyodeck.import.status.accessibility_label" = "読み込み状況";
 "piyodeck.import.action.export_current" = "現在のデッキを書き出す";
-"piyodeck.import.action.export_current.hint" = "現在のデッキを.piyodeckファイルとして共有します。";
+"piyodeck.import.action.export_current.hint" = "現在のデッキを.typedeckファイルとして共有します。";
 "piyodeck.import.action.copy.locked_label" = "別のコピーとして保存、購入が必要";
 "piyodeck.import.action.copy.hint" = "新しいIDのユーザーデッキとして保存します。";
 "piyodeck.import.action.copy.locked_hint" = "ピヨキー proの購入画面を開きます。同じIDの置き換えは無料です。";

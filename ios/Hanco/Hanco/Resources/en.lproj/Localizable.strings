@@ -952,7 +952,7 @@
 "deck_maker.paywall.title" = "Do more with your own decks";
 "deck_maker.paywall.subtitle" = "Unlock your fourth user deck plus on-device creation and editing with one purchase.";
 "deck_maker.paywall.feature.unlimitedImports.title" = "Keep unlimited user decks";
-"deck_maker.paywall.feature.unlimitedImports.detail" = "Go beyond the three free decks and import as many .piyodeck files as you like.";
+"deck_maker.paywall.feature.unlimitedImports.detail" = "Go beyond the three free decks and import as many .typedeck files as you like.";
 "deck_maker.paywall.feature.create.title" = "Create new decks";
 "deck_maker.paywall.feature.create.detail" = "Build custom learning material with Korean, meanings, and readings.";
 "deck_maker.paywall.feature.edit.title" = "Edit imported decks";
@@ -1036,7 +1036,7 @@
 "piyodeck.create.action" = "New Deck";
 "piyodeck.action.edit" = "Edit";
 "piyodeck.action.edit_copy" = "Edit a Copy";
-"piyodeck.action.export" = "Export .piyodeck";
+"piyodeck.action.export" = "Export .typedeck";
 "piyodeck.import.navigation_title" = "Import Deck";
 "piyodeck.import.user_badge" = "User Deck";
 "piyodeck.import.type" = "Type";
@@ -1061,11 +1061,11 @@
 "piyodeck.import.replace.confirm.message" = "Learning history for the same deck and item IDs will be kept.";
 "piyodeck.import.replace.confirm.action" = "Replace";
 "piyodeck.notice.packageTooLarge.title" = "File Too Large";
-"piyodeck.notice.packageTooLarge.message" = "A .piyodeck file must be 8 MB or smaller.";
+"piyodeck.notice.packageTooLarge.message" = "A .typedeck file must be 8 MB or smaller.";
 "piyodeck.notice.unsupportedVersion.title" = "Newer Deck Format";
 "piyodeck.notice.unsupportedVersion.message" = "Update typee from the App Store, then try again.";
 "piyodeck.notice.invalidDocument.title" = "This Deck Can't Be Imported";
-"piyodeck.notice.invalidDocument.message" = "The file is damaged or does not follow the .piyodeck v1 specification.";
+"piyodeck.notice.invalidDocument.message" = "The file is damaged or does not follow the .typedeck v1 specification.";
 "piyodeck.notice.cannotRead.title" = "Couldn't Open File";
 "piyodeck.notice.cannotRead.message" = "Check that the file is available in Files, then try again.";
 "piyodeck.notice.cannotSave.title" = "Couldn't Save Deck";
@@ -1109,7 +1109,7 @@
 "piyodeck.import.compare.accessibility_value" = "Current: %@. Imported: %@.";
 "piyodeck.import.status.accessibility_label" = "Import status";
 "piyodeck.import.action.export_current" = "Export Current Deck";
-"piyodeck.import.action.export_current.hint" = "Shares the current deck as a .piyodeck file.";
+"piyodeck.import.action.export_current.hint" = "Shares the current deck as a .typedeck file.";
 "piyodeck.import.action.copy.locked_label" = "Save as Separate Copy, purchase required";
 "piyodeck.import.action.copy.hint" = "Saves a new user deck with a new ID.";
 "piyodeck.import.action.copy.locked_hint" = "Opens typee pro purchase. Replacing the same deck ID remains free.";

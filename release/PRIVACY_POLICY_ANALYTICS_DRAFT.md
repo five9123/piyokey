@@ -32,7 +32,7 @@ PIYOKEY（以下「本アプリ」）は、アカウント登録や広告なし�
 
 PostHogの製品イベントは本番プロジェクトで12か月に設定し、その後削除します。Firebase CrashlyticsのクラッシュレポートはFirebaseの現行保持期間（公開時点で90日）に従います。法令対応またはセキュリティ上必要な場合を除き、目的達成後に不要なデータを保持しません。
 
-学習履歴、設定、ユーザーデッキ、`.piyodeck`ファイルは原則として端末内に保存され、本アプリのサーバーへアップロードされません。アプリを削除すると端末上のローカルデータも削除されますが、iCloud Driveなど本アプリ外へ書き出したファイルは各サービスの設定に従います。
+学習履歴、設定、ユーザーデッキ、`.typedeck`ファイルは原則として端末内に保存され、本アプリのサーバーへアップロードされません。アプリを削除すると端末上のローカルデータも削除されますが、iCloud Driveなど本アプリ外へ書き出したファイルは各サービスの設定に従います。
 
 #### 4. 選択の変更・削除の申出
 
@@ -74,7 +74,7 @@ We do not sell this data or use it for advertising, profiling, or tracking acros
 
 PostHog product events are configured for deletion after 12 months. Firebase Crashlytics reports follow Firebase's current retention period (90 days at publication). We do not keep data longer than necessary except where required for legal or security purposes.
 
-Learning history, settings, user decks, and `.piyodeck` files normally stay on the device and are not uploaded to a PIYOKEY server. Deleting the app removes its local on-device data; files exported to iCloud Drive or another service remain subject to that service's settings.
+Learning history, settings, user decks, and `.typedeck` files normally stay on the device and are not uploaded to a PIYOKEY server. Deleting the app removes its local on-device data; files exported to iCloud Drive or another service remain subject to that service's settings.
 
 #### 4. Changing choices and deletion requests
 
@@ -116,7 +116,7 @@ PIYOKEY(피요키)는 계정이나 광고 없이 이용할 수 있는 한국어 
 
 PostHog 제품 이벤트는 운영 프로젝트에서 12개월 뒤 삭제되도록 설정합니다. Firebase Crashlytics 보고서는 Firebase의 현행 보관 기간(게시 시점 기준 90일)을 따릅니다. 법률 또는 보안을 위해 필요한 경우를 제외하고 목적 달성 후 불필요한 데이터를 보관하지 않습니다.
 
-학습 기록, 설정, 사용자 덱과 `.piyodeck` 파일은 원칙적으로 기기에 저장되며 피요키 서버로 업로드되지 않습니다. 앱을 삭제하면 앱의 기기 내 데이터도 삭제되지만, iCloud Drive 등 외부 서비스로 내보낸 파일은 해당 서비스 설정을 따릅니다.
+학습 기록, 설정, 사용자 덱과 `.typedeck` 파일은 원칙적으로 기기에 저장되며 피요키 서버로 업로드되지 않습니다. 앱을 삭제하면 앱의 기기 내 데이터도 삭제되지만, iCloud Drive 등 외부 서비스로 내보낸 파일은 해당 서비스 설정을 따릅니다.
 
 #### 4. 선택 변경과 삭제 요청
 

@@ -27,7 +27,7 @@ data class InstalledDeckEntity(
   val installedAtEpochMillis: Long,
   val updatedAtEpochMillis: Long,
   val lastPlayedAtEpochMillis: Long?,
-  /** Official source deck for a user-created copy; never embedded in .piyodeck. */
+  /** Official source deck for a user-created copy; never embedded in .typedeck. */
   val derivedFromDeckId: String? = null,
 )
 

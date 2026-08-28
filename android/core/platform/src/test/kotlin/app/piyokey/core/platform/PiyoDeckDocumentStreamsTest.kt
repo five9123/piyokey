@@ -31,20 +31,20 @@ class PiyoDeckDocumentStreamsTest {
     val directory = Files.createTempDirectory("piyokey-pending").toFile()
     try {
       val store = PiyoDeckPendingStore(directory)
-      val older = File(directory, "older.piyodeck").apply {
+      val older = File(directory, "older.typedeck").apply {
         writeText("older")
         setLastModified(1_000L)
       }
-      store.record(StagedPiyoDeckDocument(older, "older.piyodeck", "view"))
-      val newest = File(directory, "newest.piyodeck").apply {
+      store.record(StagedPiyoDeckDocument(older, "older.typedeck", "view"))
+      val newest = File(directory, "newest.typedeck").apply {
         writeText("newest")
         setLastModified(2_000L)
       }
-      store.record(StagedPiyoDeckDocument(newest, "새 덱.piyodeck", "send"))
+      store.record(StagedPiyoDeckDocument(newest, "새 덱.typedeck", "send"))
 
       val recovered = store.recoverLatest()
       assertEquals(newest.canonicalFile, recovered?.file?.canonicalFile)
-      assertEquals("새 덱.piyodeck", recovered?.displayName)
+      assertEquals("새 덱.typedeck", recovered?.displayName)
       assertEquals("send", recovered?.sourceContext)
       assertEquals(false, older.exists())
 

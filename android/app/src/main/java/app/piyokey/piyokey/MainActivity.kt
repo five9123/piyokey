@@ -735,7 +735,7 @@ private fun PiyokeyApp(
     val safeName = (deck.deck.localizedName(preferences.language.tag) ?: "piyokey-deck")
       .replace(Regex("[\\\\/:*?\"<>|]"), "-")
       .take(80)
-    createUserDeck.launch("$safeName.piyodeck")
+    createUserDeck.launch("$safeName.typedeck")
   }
 
   LaunchedEffect(incomingDocument?.token) {

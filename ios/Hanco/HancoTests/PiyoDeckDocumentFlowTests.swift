@@ -9,7 +9,7 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
     let package = try makePackage(version: 2, meaning: "更新")
     let candidate = PiyoDeckImportCandidate(
       package: package,
-      stagedURL: URL(fileURLWithPath: "/tmp/unused.piyodeck")
+      stagedURL: URL(fileURLWithPath: "/tmp/unused.typedeck")
     )
 
     XCTAssertEqual(candidate.collision(with: nil), .new)
@@ -46,7 +46,7 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
     let package = try makePackage(version: 2, meaning: "更新")
     let collision = PiyoDeckImportCandidate(
       package: package,
-      stagedURL: URL(fileURLWithPath: "/tmp/unused.piyodeck")
+      stagedURL: URL(fileURLWithPath: "/tmp/unused.typedeck")
     ).collision(with: makeRecord(version: 2, hash: String(repeating: "0", count: 64)))
 
     XCTAssertEqual(collision, .different(existingVersion: 2, incomingVersion: 2))
@@ -104,8 +104,8 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
       .appendingPathComponent(UUID().uuidString, isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    let firstURL = directory.appendingPathComponent("first.piyodeck")
-    let secondURL = directory.appendingPathComponent("second.piyodeck")
+    let firstURL = directory.appendingPathComponent("first.typedeck")
+    let secondURL = directory.appendingPathComponent("second.typedeck")
     try first.write(to: firstURL)
     try second.write(to: secondURL)
 
@@ -140,9 +140,9 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     try Data("not-a-package".utf8).write(
-      to: directory.appendingPathComponent("01-invalid.piyodeck")
+      to: directory.appendingPathComponent("01-invalid.typedeck")
     )
-    try valid.write(to: directory.appendingPathComponent("02-valid.piyodeck"))
+    try valid.write(to: directory.appendingPathComponent("02-valid.typedeck"))
 
     let coordinator = PiyoDeckDocumentCoordinator()
     await coordinator.resumePendingIfNeeded(pendingRootURL: directory)
@@ -171,8 +171,8 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
       .appendingPathComponent(UUID().uuidString, isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    let firstURL = directory.appendingPathComponent("first.piyodeck")
-    let secondURL = directory.appendingPathComponent("second.piyodeck")
+    let firstURL = directory.appendingPathComponent("first.typedeck")
+    let secondURL = directory.appendingPathComponent("second.typedeck")
     try PiyoDeckPackageWriter.write(deck: firstDeck, deckSchemaData: schema).write(to: firstURL)
     try PiyoDeckPackageWriter.write(deck: secondDeck, deckSchemaData: schema).write(to: secondURL)
 
@@ -239,7 +239,7 @@ final class PiyoDeckDocumentFlowTests: XCTestCase {
       schemaData: schema
     )
 
-    XCTAssertEqual(artifact.url.pathExtension, "piyodeck")
+    XCTAssertEqual(artifact.url.pathExtension, "typedeck")
     XCTAssertEqual(imported.deck, deck)
   }
 
