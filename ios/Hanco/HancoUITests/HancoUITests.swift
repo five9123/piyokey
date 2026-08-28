@@ -2732,6 +2732,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("home.primary.recommend_deck").exists)
     XCTAssertFalse(element("home.primary.resume_curriculum").exists)
     XCTAssertFalse(element("home.primary.resume_deck").exists)
+    attachScreenshot(named: "first-home-recommendation-after-hatch-ja")
 
     app.terminate()
     app = makeApplication(
@@ -2741,6 +2742,8 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
+    XCTAssertTrue(element("home.primary.recommend_deck").exists)
+    XCTAssertFalse(element("home.primary.resume_curriculum").exists)
   }
 
   func testAppTourLayoutAcrossRepresentativeScreenSize() {

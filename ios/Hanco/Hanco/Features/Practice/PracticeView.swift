@@ -907,7 +907,8 @@ struct PracticeView: View {
     korean10KeyInterpreter.reset()
     viewModel.reset()
     inputResetRevision += 1
-    persistCheckpoint()
+    // An explicit retry replaces the old checkpoint even before the first key.
+    if curriculumStageID != nil { onCheckpoint?(viewModel.checkpoint()) }
     captureAnalyticsStartIfNeeded()
   }
 
@@ -1050,7 +1051,9 @@ struct PracticeView: View {
   }
 
   private func persistCheckpoint() {
-    guard curriculumStageID != nil else { return }
+    // SwiftUI may tear down an unstarted destination after the result closes.
+    // It must not recreate an empty session after completion cleared it.
+    guard curriculumStageID != nil, viewModel.hasResumableProgress else { return }
     onCheckpoint?(viewModel.checkpoint())
   }
 
