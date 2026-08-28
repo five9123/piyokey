@@ -2603,10 +2603,14 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.buttons["practice.result.share"].exists)
     XCTAssertFalse(app.buttons["practice.result.review"].exists)
     XCTAssertFalse(app.buttons["result.done"].exists)
-    XCTAssertEqual(
-      element("practice.result.screen").descendants(matching: .any)["mascot.current"].value as? String,
-      "ひびが入ったたまご"
-    )
+    // The result cover can retain the practice screen in the accessibility tree.
+    // Neither mascot may advance before the growth celebration is confirmed.
+    let mascots = app.descendants(matching: .any)
+      .matching(identifier: "mascot.current").allElementsBoundByIndex
+    XCTAssertFalse(mascots.isEmpty)
+    for mascot in mascots {
+      XCTAssertEqual(mascot.value as? String, "ひびが入ったたまご")
+    }
     let nextMission = app.buttons["onboarding.hatch.result.continue"]
     XCTAssertTrue(nextMission.exists)
 
