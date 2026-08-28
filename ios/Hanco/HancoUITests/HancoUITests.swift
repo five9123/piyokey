@@ -2858,6 +2858,7 @@ final class HancoUITests: XCTestCase {
       XCUIDevice.shared.orientation = .landscapeLeft
       app = makeApplication(resetKeyboardPreferences: true, gameDuration: 60, flowStartIndex: 0)
       app.launch()
+      assertLandscapeOrientation()
       app.buttons["ゲーム"].firstMatch.tap()
       scrollAndTap(app.buttons["game.mode.\(mode)"])
       XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
@@ -2925,6 +2926,7 @@ final class HancoUITests: XCTestCase {
     waitForValue("1 / 9", on: progress, timeout: 3)
 
     XCUIDevice.shared.orientation = .landscapeLeft
+    assertLandscapeOrientation()
     XCTAssertTrue(target.waitForExistence(timeout: 5))
     waitForValue("1 / 9", on: progress, timeout: 5)
     XCTAssertEqual(target.label, "사랑해요")
@@ -3384,6 +3386,14 @@ final class HancoUITests: XCTestCase {
     let start = app.buttons["practice.start"]
     scrollAndTap(start)
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func assertLandscapeOrientation(file: StaticString = #filePath, line: UInt = #line) {
+    let landscape = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, object: nil
+    )
+    XCTAssertEqual(XCTWaiter.wait(for: [landscape], timeout: 5), .completed,
+                   "Device orientation must also rotate the actual app window", file: file, line: line)
   }
 
   private func assertBuiltInKeyboardFillsIPadWidth(
