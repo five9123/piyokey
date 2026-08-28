@@ -967,7 +967,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 
 ## 2026-07-26 App Store 1.0 제출 계약 확정
 - 결정: iOS 앱의 최종 Bundle ID를 `app.piyokey.Piyokey`, 마케팅 버전과 빌드 번호를 `1.0 (1)`, 실제 출시 계정의 Apple Developer Team을 `X44BQNTAH9`로 고정한다. App Store 기본 언어는 일본어, 1차 판매 지역은 일본, 기본 카테고리는 Education, 보조 카테고리는 Games/Word, 가격은 무료, 출시는 수동으로 둔다.
-- 결정: 공개 마케팅·개인정보처리방침·지원 주소를 각각 `https://hancoweb.vercel.app/`, `/privacy`, `/support`로 고정하고 개인정보처리방침과 지원 링크는 앱 설정 화면에서도 연다. 스토어 메타데이터는 ja/en-US/ko로 준비하되 1차 제출 스크린샷은 일본어 6.9형 1320×2868 실제 RC 화면 8장을 사용한다.
+- 결정: 공개 마케팅·개인정보처리방침·지원 주소를 각각 `https://typee.app/`, `https://typee.app/privacy`, `https://typee.app/support`로 고정하고 개인정보처리방침과 지원 링크는 앱 설정 화면에서도 연다. 스토어 메타데이터는 ja/en-US/ko로 준비하되 1차 제출 스크린샷은 일본어 6.9형 1320×2868 실제 RC 화면 8장을 사용한다.
 - 결정: 제출 가능 상태는 `release/app_store_submission.json`의 수동 게이트와 `tools/release_preflight.py --strict`가 모두 통과한 경우로 한정한다. gTTS·macOS 합성 음원은 별도 권리 기록과 운영자 승인이 없으면 콘텐츠 권리 게이트를 닫아 두며, App Store Distribution archive와 동일 빌드를 TestFlight 실기기 QA 뒤에 제출한다.
 - 근거: App Store의 앱 레코드·서명·심사 메타데이터·스크린샷·권리 답변과 실제 바이너리가 서로 다른 상태로 제출되는 것을 막고, 일본어 우선 출시 범위를 재현 가능한 단일 계약으로 관리하기 위함이다.
 - 관련 PRD 섹션: F1, F2a, F5, F6, F9~F12, §8, §11, §13 M6, §14
@@ -1264,6 +1264,35 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
 
+## 2026-08-25 iPhone+iPad Universal 앱과 적응형 화면 범위
+- 결정: 기존 App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`, Xcode project·scheme을 유지하고 iOS target을 iPhone+iPad Universal로 확장한다. iPhone은 기존 portrait만 유지하고 iPad는 iPadOS 16+ 네 방향, Split View 1/2·1/3, Stage Manager와 resizable window를 지원한다. `UIRequiresFullScreen` opt-out, 별도 iPad target·앱 레코드·sidebar는 만들지 않는다.
+- 결정: 적응형 화면은 기기 모델이 아니라 실제 가용 폭을 기준으로 공통 metrics에서 compact `<600pt`, medium `600..<900pt`, wide `>=900pt`를 계산한다. compact는 iPhone 구성을 재사용하고 읽기 콘텐츠 720pt, 허브/카탈로그 1120pt, 세션 문제 lane 920pt, 내장 키보드 820pt를 최대 폭 기준으로 둔다.
+- 결정: 방향·창 크기 변경은 현재 탭·문제·입력·점수·콤보·목숨·타이머를 보존하며 세션 중 새 설정·파일·결제·연결 안내 모달을 허용하지 않는다. iPad 공식 지원의 통합 출시는 Issue #10의 적응형 화면, Issue #12의 물리 키보드 OS IME 실기기 gate, Issue #17의 두벌식 배열·권장 운지 학습 UX를 함께 요구한다.
+- 근거: Slack·Threads 피드백의 핵심은 확대된 iPhone 화면이 아니라 iPad와 Bluetooth 키보드로 실제 두벌식 위치를 익히는 것이다. 같은 앱·상태 모델을 유지한 채 폭과 window contract만 분리해야 iPhone 회귀와 세션 무중단 원칙을 보존할 수 있다.
+- 관련 PRD 섹션: §2.3, F2, F2a, F4, F6, F10, §7, §12.2, §13
+- 영향 범위: iOS target device family·Info.plist 방향, 공통 adaptive layout, 홈·둘러보기·연습·게임·결과·마이페이지·설정, iPad 자동·수동 QA와 App Store 증빙
+
+## 2026-08-25 iOS 물리 키보드는 OS IME 입력 경로로 지원
+- 결정: Bluetooth·USB·Magic Keyboard는 새 raw key event 경로나 하드웨어별 자판 매핑을 만들지 않고, 기존 OS 키보드 모드의 `UITextField` committed/marked text와 `OSIMETextJudge`를 사용한다. 지원 기준은 iOS에서 한국어 두벌식 입력 소스를 선택한 iPhone 및 iPad의 iPhone 호환 실행이다.
+- 결정: Backspace·Space·Return·한/영 전환·키 반복은 OS 표준 편집 동작을 우선한다. 앱은 Backspace에 따른 target prefix 되감기, 목표 Space 수락, Return의 개행 방지·포커스 유지, 연결 해제·재연결 및 foreground 복귀 후 세션 진행·포커스 보존을 검증한다. 내장 키보드 모드에서 물리 키를 별도 수신하지 않는다.
+- 결정: iPad 적응형 레이아웃·정식 Universal 대상 기기 전환은 Issue #10 범위로 유지한다. Issue #12는 현재 iPhone 앱의 iPad 호환 실행과 iPhone에서 물리 입력이 정확히 판정되는지만 다룬다.
+- 근거: iOS IME는 물리 키보드에서도 자모 raw key보다 조합 중·확정 텍스트를 제공하므로 기존 diff 판정 경로를 재사용해야 소프트웨어 키보드와 판정이 갈라지지 않는다. 하드웨어별 raw mapping은 한/영 전환·도깨비 이월·사용자 배열을 중복 구현해 오판정 위험을 높인다.
+- 관련 PRD 섹션: F2a, F3, §6.3~6.4, §12
+- 영향 범위: iOS OS IME 입력 패널, HangulEngine/연습/UI 회귀, 실기기 QA 문서; iPad 레이아웃·Android 제외
+## 2026-08-24 iOS Game Center 대상 게임·리더보드 계약 확정
+- 결정: iOS Game Center 랭킹 대상은 흐름·산성비·초성 맞추기·단어 맞추기·받아쓰기의 5개 게임으로 확정한다. 각 게임은 초급·중급·고급을 분리한 클래식 리더보드 3개씩, 총 15개를 사용하며 `piyokey.v4.cup.weekly.flow` recurring 리더보드 1개를 별도로 유지한다. 띄어쓰기 게임은 Game Center 랭킹 대상에서 제외한다.
+- 결정: PRD F6f AC에 남아 있던 과거 수량인 클래식 6개·주간 1개를 현재 코드·Info.plist·App Store Connect 운영 문서와 동일한 클래식 15개·주간 1개로 정정한다. 콘텐츠나 채점 계약이 바뀌면 기존 보드를 재사용하지 않고 버전이 포함된 새 ID를 intended 상태부터 검증한다.
+- 근거: `GameCenterService`의 공식 덱 매핑, `Info.plist`의 intended/available 배열, `release/GAME_CENTER_SETUP.md`와 2026-08-20 Live 승격 기록이 모두 15+1 계약으로 일치한다. 관련 iOS 단위 테스트 19개와 저장소 출시 사전 검사가 통과했으며 사용자가 2026-08-24 이 계약을 명시적으로 승인했다.
+- 관련 PRD 섹션: F6, F6f, F12, §11.3, §12, §14
+- 영향 범위: PRD Game Center AC, GitHub Issue #7 계약 기준, 향후 App Store Connect·TestFlight 실기기 QA
+
+## 2026-08-25 초성·단어 맞추기 세션당 3문제 발음 힌트
+- 결정: 발음 힌트는 정답 회상에 도움이 되는 초성 맞추기와 단어 맞추기에만 무료로 제공한다. 한 세션에서 합계 3문제까지 사용할 수 있고 한 문제의 첫 사용만 1회를 차감하며, 같은 문제의 다시 듣기는 추가 차감하지 않는다. 재도전하면 3회와 문제별 사용 상태를 초기화한다.
+- 결정: 첫 발음 힌트 사용 즉시 현재 콤보를 리셋하고 해당 문제 완성 점수에서 30점을 감점하며 해당 항목을 복습 대상으로 수집한다. 감점된 최종 점수는 기존 로컬 기록과 Game Center 계약을 그대로 사용한다. 동일 초성 정답의 불공정성을 해소하는 필수 뜻 단서는 횟수·점수를 소비하지 않는다.
+- 결정: 받아쓰기의 자동 발음·다시 듣기는 문제 자체의 필수 단서이므로 무제한으로 유지한다. 한국어 정답이 이미 보이는 흐름·산성비와 음성 단서가 과제에 관여하지 않는 띄어쓰기에는 새 힌트를 추가하지 않는다. 힌트는 결제·광고·세션 모달과 연결하지 않고 기존 canonical 오프라인 gTTS MP3 → 최종 기기 TTS 폴백 및 `.playback` + `.mixWithOthers` 계약을 재사용한다.
+- 근거: 기존 직접 입력 상태 기계에 문제별 30점 힌트 감점과 초성 뜻 힌트가 이미 있어 세션 횟수·발음 재생·복습 연결만 추가하면 된다. 점수를 저장 단계에서 별도 분기하거나 새 리더보드·저장 schema를 만들지 않으면 오프라인 우선과 기존 최고 기록 계약을 유지하면서 도움을 받은 정도가 점수에 반영된다.
+- 관련 PRD 섹션: F6a, F6c, F6d, F7, F11, F12, §11.1
+- 영향 범위: `ChoseongTypingViewModel`, `RecallTypingGameView`, 발음·복습·점수 UI, ja/en/ko 로컬라이제이션, 직접 입력 게임 단위·UI 테스트
 ## 2026-08-25 Android 실기기 QA의 출시 후보 통합 gate 이관
 - 결정: 사용자의 명시적 요청에 따라 Android 개발 중 반복적으로 로컬 실기기를 요구하는 수동·정량 QA는 기능별 면제로 처리하지 않고 M3~M6 전체 구현과 자동 검증이 끝난 출시 후보 단계의 통합 실기기 QA로 이관한다. 각 마일스톤은 JVM·instrumented 자동 회귀, lint, debug/release build와 가능한 에뮬레이터 검증을 계속 통과해야 한다.
 - 결정: M2는 다양한 단어 16개·자모 101/101 실기기 기능 gate, 사용자 직접 입력 확인, 자동 representative-plan·2-pointer MotionEvent 회귀를 근거로 후속 구현을 허용한다. 물리 touch-down→frame-commit p95 50ms 이하와 50쌍 rollover 누락·중복 0은 삭제하거나 완화하지 않는다. 마지막 유효 정량 측정은 짧은 자모열 불필요 스크롤 제거 뒤 p50 38ms·p95 54ms·max 64ms였고, 키 가이드 애니메이션 재구성 범위 최적화는 자동 테스트·lint·빌드까지 통과했으나 이 결정에 따라 실기기 재측정은 출시 후보로 남긴다.
@@ -1272,6 +1301,21 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2~M7, §14
 - 영향 범위: Android 마일스톤 완료 판정, GitHub Project 상태, M2 성능 evidence, M3~M6 착수 조건, 출시 후보 실기기 QA 체크리스트
 
+## 2026-08-26 iOS OS IME 세션 설정의 포커스 격리
+- 결정: OS IME 입력 중 세션 설정을 열 때 숨겨진 `UITextField`의 first responder를 먼저 해제하고, 다음 메인 실행 주기에 앱 내부 설정 패널을 표시한다. 패널을 닫으면 다음 실행 주기에 입력 포커스를 복구하며, 현재 문제·승인 자모·오타·세션 시간은 초기화하거나 일시정지하지 않는다. SwiftUI `Menu` 기반 세션 설정은 iPadOS 26.6의 하드웨어 키보드 keyplane 전환과 함께 AttributeGraph 재진입 크래시를 일으키므로 사용하지 않는다.
+- 결정: 최신 Android M6 포팅은 OS IME `EditText` adapter를 사용하지만 연습 중 전역 설정 시트를 열지 않고 입력 방식 `DropdownMenu`만 노출하므로, SwiftUI context menu와 iPadOS keyplane이 재진입하는 동일 크래시 경로는 존재하지 않는다. Android는 IME 뷰 생명주기와 순수 `core:session` 상태를 분리해 현재 입력·타이머를 보존한다.
+- 근거: 실제 iPad의 두 SIGABRT 로그가 `UIKeyboardLayoutStar` keyplane 갱신 중 `_UIContextMenuView`와 SwiftUI `UpdateContextMenuInteraction`을 거쳐 `AG::Graph::value_set` precondition에 도달했다. 포커스 해제와 설정 표시를 같은 AttributeGraph 갱신에서 분리하면 키보드 전환의 재진입을 없애면서 사용자의 타이핑 진행을 유지할 수 있다.
+- 관련 PRD 섹션: F2a, F10, §11.1, §12.2, §13 M6·M7
+- 영향 범위: `OSIMEInputPanel`, `PracticeView`, 세션 설정 UI, iOS UI 회귀, Android F2a/F10 선행 계약
+
+## 2026-08-27 초기 온보딩의 기기 키보드 선택과 기초 레슨 허용
+- 결정: 두벌식 소개 화면의 기존 단일 체험 버튼을 `내장 키보드로 시작`과 `기기 키보드로 시작` 두 선택으로 교체한다. 선택 버튼이 바로 첫 `가` 입력 화면으로 이동하므로 목표 선택·다음·입력 방식 선택 뒤 네 번째 상호작용이 실제 입력이라는 F1 경계를 유지한다. 기기 키보드 선택은 `input_mode=os_ime`와 별도의 참조 배열 표시 설정으로 저장하고 챕터1~3 부화 미션과 챕터4에도 이어진다.
+- 결정: 물리 연결 여부는 추정하지 않는다. 기기 키보드 입력은 #12에서 검증한 `UITextField` committed/marked diff 판정을 그대로 사용하고, 앱은 QWERTY 문자 영역의 두벌식 자모·라틴 문자·다음 키·권장 손·손가락·반대 손 Shift만 안내한다. 실제 사용 손가락은 감지하거나 채점하지 않는다. 기존 사용자의 기본 입력과 참조 배열은 각각 내장·OFF로 유지한다.
+- 결정: 최신 Android M6 포팅에도 같은 `내장/기기` 초기 선택, 첫 `가`의 OS IME 판정, 두벌식 물리 배열 가이드, 챕터1~4 입력 방식 유지와 설정 저장을 적용한다. 챕터1~4에서는 입력 방식 변경 UI만 잠그고 온보딩·설정에서 확정한 OS IME는 강제로 내장 키보드로 되돌리지 않는다.
+- 근거: 실제 iPad와 Bluetooth 한국어 키보드에서 일반 연습 입력은 성공했지만 첫 온보딩과 부화 미션이 내장 키보드로 고정돼, 물리 배열을 배우려는 사용자가 가장 처음부터 원하는 입력 장치를 사용할 수 없었다. 입력 판정기를 새로 만들지 않고 이미 검증된 OS IME 경로를 확장하면 판정 일관성을 유지하면서 첫 경험의 강제를 제거할 수 있다.
+- 관련 PRD 섹션: F1, F2a, F4, F10, §7.2, §12.2, §13 M6·M7
+- 결정: Android 연습 화면은 전역 설정 시트를 세션 중 노출하지 않고 입력 방식 `DropdownMenu`만 제공하므로 iPadOS의 SwiftUI context-menu/키보드 keyplane 크래시 경로는 존재하지 않는다. Android에서는 IME `EditText`와 순수 reducer 상태를 유지한 채 입력 방식만 전환하며, 이 경로를 Compose 계측 회귀로 검증한다.
+- 영향 범위: iOS·Android 온보딩 입력 선택, `PhysicalKeyboardGuideView`/`PhysicalKeyboardGuide`, 챕터1~4 입력 허용, 키보드 설정 저장, ja/en/ko 로컬라이제이션, iPad·Android Bluetooth/USB 키보드 QA
 ## 2026-08-25 Android M7 M3 정적 카탈로그·원자 저장·발견 흐름 완료
 - 결정: Android M3는 `core:data`가 Room 설치 메타데이터·다운로드 이력·persistent journal을, 앱 전용 파일이 실제 catalog/deck payload를 소유하도록 고정한다. 쓰기는 `journal Room transaction → 같은 디렉터리 atomic move → metadata Room transaction` 순서이며, 현재 검증본과 직전 검증본·quarantine으로 시작 시 이전 또는 새 pair에 수렴한다. 손상된 최신 payload는 직전 검증본으로 복구하고 둘 다 유효하지 않을 때만 해당 설치를 격리하거나 번들 catalog로 fallback한다.
 - 결정: 앱은 번들 공식 26덱 또는 검증 cache를 즉시 표시하고 `PIYOKEY_CATALOG_URL`이 주입된 경우에만 동일 HTTPS content root에서 ETag와 If-Modified-Since 조건부 GET을 수행한다. 네트워크·HTTP·schema·의미 검증 실패는 현재 화면을 실패 상태로 바꾸지 않으며 계정·쓰기 API·download count mutation을 만들지 않는다.
@@ -1441,7 +1485,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련: PRD F5.9, §8.4, §11, 앱 1.1 iOS·Android 사용자 덱/결제 경계.
 - 결정: 미구매 사용자는 서로 다른 사용자 덱을 동시에 3개까지 설치한다. 네 번째 새 `deck_id`의 파일은 검증·미리보기까지 허용하고 설치 commit 직전에만 구매 설명을 열며, 구매·복원 성공 시 동일 staging 파일 설치를 재개한다. 공식·번들·복습 덱은 세지 않고, 삭제는 슬롯을 즉시 반환한다.
 - 결정: 누적 파일 열람 횟수는 기록하거나 제한하지 않는다. 동일 ID·동일 SHA no-op과 동일 ID 교체는 무료이며, 이미 3개를 넘겨 보유한 상태도 읽기·연습·게임·내보내기·삭제를 잠그거나 데이터를 삭제하지 않고 새 ID 추가만 제한한다. 한도 판단은 UI 표시뿐 아니라 설치 mutation 경계에서 다시 검증한다.
-- 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー pro`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다.
+- 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー プロ`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다. `Deck Maker`는 사용자·스토어·마케팅 명칭으로 사용하지 않고 내부 코드 식별자와 기존 Product ID에만 남긴다.
 - 근거: 사용자가 요청한 “3개 무료, 4개 이상 유료”를 기기 내 활성 보관 수로 정의하면 삭제로 무료 선택권을 되돌려 주면서도 반복 열람을 추적하는 불필요한 감시 상태를 만들지 않는다. 기존 상품 ID를 유지하면 이미 구매한 사용자의 entitlement와 StoreKit/Play Billing 복원 계약을 깨지 않는다.
 - 영향 범위: PRD·스토어 메타데이터, iOS `DeckLibrary`/문서 미리보기/paywall, Android `DeckRepository`/문서 미리보기/paywall, ja/en/ko 문자열, 무료 한도·교체·구매 재개 자동 회귀.
 
@@ -1488,6 +1532,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
 - 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.
 
+## 2026-08-28 사용자 덱 외부 확장자 `.typedeck`
+
+- 관련: Issue #63, PRD F5.9, §8.4, iOS·Android 사용자 덱 문서 계약.
+- 결정: 사용자와 외부 도구가 주고받는 덱 파일 확장자는 `.piyodeck` 대신 `.typedeck`을 사용한다. 양 플랫폼의 문서 등록·열기·staging·내보내기 기본 파일명, 공용 fixture, CLI 확장자 검증, 사용자 노출 문구와 스토어 메타데이터를 함께 변경한다.
+- 결정: ZIP 내부 구조, `manifest.json`의 `format=piyokey.deck-package`, MIME `application/vnd.piyokey.deck+zip`, Apple UTType identifier `app.piyokey.piyodeck`, 코드의 `PiyoDeck` 타입·모듈·저장 디렉터리 이름은 포맷 및 저장 호환성을 위해 유지한다. 이 값들은 파일 확장자가 아니며 기존 설치 데이터 migration을 만들지 않는다.
+- 근거: 글로벌 사용자에게 노출되는 파일 이름을 `typee` 브랜드와 맞추면서도 파일 bytes와 내부 식별자를 바꾸지 않아 cross-platform reader/writer 호환성과 기존 기기 내 데이터를 보존한다.
+- 영향 범위: PRD·공용 package 명세/fixture/도구, iOS UTType 확장자·import/export, Android SAF import/export, ja/en/ko 문자열, App Store·Google Play 출시 문구와 관련 자동 회귀.
+
 ## 2026-08-27 프로젝트 운영 기준선과 검증 증빙
 
 - 관련: Issue #59, 저장소 운영·릴리스 검증 체계.
@@ -1497,3 +1549,26 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 실기기 설치, archive, TestFlight·Play 배포는 `git fetch --prune origin` 후 제품 파일 tree가 `origin/main`과 같고 작업공간이 clean·소유권 일치일 때만 수행한다. 소스 완료와 기기·스토어·권리 gate는 계속 별도 상태로 관리한다.
 - 근거: 시간에 따라 변하는 상태와 영구 규칙을 분리하고, worktree 소유·검증 대상·배포 소스를 기계적으로 확인해야 비개발자 운영에서도 오래된 branch, 섞인 변경, 다른 SHA의 테스트 결과를 최신 기준선으로 오인하지 않는다.
 - 영향 범위: `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, workflow·device setup·PR template, workspace doctor, worktree ownership, commit-addressed local evidence.
+
+## 2026-08-28 iOS App Store 미디어 10개 로케일
+
+- 근거: 사용자가 기존 일본판 제작 방식으로 주요 10개 국가 언어의 사진·영상 최신화와 현지화를 요청했다. 이전의 추가 metadata-only 로케일 보류 정책에 대한 명시적 예외다.
+- 대상: 일본 `ja`, 미국 `en-US`, 한국 `ko`, 중국 `zh-Hans`, 대만 `zh-Hant`, 독일 `de-DE`, 프랑스 `fr-FR`, 스페인 `es-ES`, 브라질 `pt-BR`, 인도네시아 `id`. 선택은 언어권을 폭넓게 다루기 위한 작업 기준이며 실측 매출 순위라는 주장은 하지 않는다.
+- 방식: 기존 AppKit 스크린샷 디자인과 AVFoundation 실제 앱 녹화·자막 합성을 재사용한다. 최신 소스에서 ja/en/ko 화면을 다시 촬영한다. 추가 언어는 영어 UI와 현지어 설명을 조합한다. 처음 넣었던 지원 언어 안내는 사용자의 후속 요청으로 사진·영상에서 제거한다. 실제 영어 UI와 Pro 유료 기능 안내는 유지하고 앱 자체의 네 번째 UI 언어는 추가하지 않는다.
+- 내용: 언어당 10장(기존 핵심 8개 장면, 내장 10키, Pro 덱 편집)과 약 27초 프리뷰 1개. Pro 편집 화면에는 유료 기능임을 명시하고, 기존 영상의 ‘과금 없음’ 문구는 ‘Pro 선택 구매’로 교체한다. 지역별 가격을 이미지에 고정하지 않는다.
+- 검증·출시 경계: 최신 작업 소스의 simulator capture는 제작용이며 최종 release candidate 일치 검증을 대체하지 않는다. 로컬 생성·기술검증, 현지어 최종검수, App Store 업로드·저장 후 재조회, 새 로케일 필수 메타데이터, 최종 빌드·심사는 별도 상태로 기록한다. 구버전 공개판 자료는 덮어쓰지 않는다.
+## 2026-08-28 한국어 UI 제거와 학습 콘텐츠 보존
+
+- 관련: Issue #65, PRD F10·§11. 사용자는 한국어 UI 전체 제거와 연습 콘텐츠 무변경을 요청했다.
+- 결정: iOS·Android UI 언어와 OS 앱별 언어 목록은 일본어·영어만 제공한다. 기존 `ko`/`KOREAN` UI 설정은 영어로 해석하며, 신규 설치는 기기 선호 언어의 첫 ja/en 일치 또는 영어 기본값을 사용한다. 학습 진행·덱·구매 설정을 재설정하지 않는다.
+- 결정: iOS `ko.lproj`와 Android `values-ko`는 기존 학습 값 보존을 위해 원본 그대로 남기되 앱 리소스에서 제외한다. iOS 커리큘럼이 참조하던 한국어 학습 문자열 119개는 값 변경 없이 비지역화 `KoreanLearningContent.strings`로 분리한다. 이 테이블은 UI 번역으로 사용하지 않는다.
+- 결정: UI 언어 타입과 사용자 덱 콘텐츠 언어 타입을 분리해 기존 ko 뜻·읽기·메타데이터를 읽고 다시 저장할 수 있게 유지한다. `shared/` 콘텐츠·schema·fixture·manifest·MP3와 기존 ja/en/ko 번역 원본은 수정하지 않는다.
+- 결정: 한국어 App Store·Google Play 메타데이터 로케일과 외부 지원 문서는 앱 UI 언어와 별개로 유지한다. 한국어 UI 지원 주장은 제거하며 한국어 스토어용 앱 화면은 영어 UI로 캡처한다.
+- 근거: 한국어 학습 대상과 한국어 인터페이스를 분리해야 UI 제거가 정답·뜻·읽기·사용자 덱의 손실로 이어지지 않는다.
+
+## 2026-08-28 스페인어 UI 추가
+
+- 사용자 요청 / Issue #67: 한국어 UI 제거 이후 iOS·Android 앱 UI에 스페인어 `es`를 추가한다. `es-ES`, `es-MX`, `es-419` 등 지역 변형은 공통 UI를 사용한다.
+- 앱 언어는 ja/en/es 중 첫 기기 선호 언어를 선택하고 명시적으로 저장한 선택을 유지한다. 미지원 언어와 기존 ko 설정은 영어로 해석한다. 브랜드는 일본어만 ピヨキー, 나머지는 typee다.
+- 학습 한국어 원문, 덱·카탈로그·schema·음원과 기존 ja/en/ko 학습 데이터는 보존한다. 스페인어 UI에서 학습 뜻·로마자 읽기·덱 메타데이터·편집 언어는 영어를 사용한다. Android 편집 화면의 미지원 언어 일본어 fallback을 영어로 고쳐 저장 언어와 일치시킨다.
+- 검증: 번역 키·서식 인자 일치, 기기 언어 해석·설정 저장·레거시 전환·콘텐츠 보존, iOS UI 전환/재실행, Android 빌드/리소스 점검. 스토어 업로드·사람의 현지어 최종 검수는 별도다.

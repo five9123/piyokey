@@ -735,7 +735,7 @@ private fun PiyokeyApp(
     val safeName = (deck.deck.localizedName(preferences.language.tag) ?: "piyokey-deck")
       .replace(Regex("[\\\\/:*?\"<>|]"), "-")
       .take(80)
-    createUserDeck.launch("$safeName.piyodeck")
+    createUserDeck.launch("$safeName.typedeck")
   }
 
   LaunchedEffect(incomingDocument?.token) {
@@ -871,6 +871,11 @@ private fun PiyokeyApp(
     OnboardingRoute(
       preferences = preferences,
       onUpdate = onPreferencesChange,
+      onOpenIMEHelp = {
+        hostContext.startActivity(
+          Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      },
       onEnableReminder = {
         if (Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
             context,
@@ -1233,7 +1238,7 @@ private fun PiyokeyApp(
           items = items,
           sourceDeckId = "curriculum::${stage.id}",
           kind = PracticeKind.ONBOARDING,
-          inputMode = InputMode.BUILTIN,
+          inputMode = preferences.defaultInputMode,
           stageId = stage.id,
           sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
           checkpoint = currentLearning.activeSession?.takeIf { it.stageId == stage.id }?.checkpoint,
@@ -1809,7 +1814,7 @@ private fun PiyokeyApp(
           targets = practice.targets,
           prompts = prompts,
           initialCheckpoint = practice.checkpoint,
-          inputMode = if (inputLocked) InputMode.BUILTIN else practice.inputMode,
+          inputMode = practice.inputMode,
           inputModeLocked = inputLocked,
           onInputModeChange = { mode ->
             activePractice = practice.copy(inputMode = mode)
@@ -1822,6 +1827,7 @@ private fun PiyokeyApp(
             showsKeyGuide = preferences.keyGuideEnabled,
             showsRomanHints = preferences.romanHintsEnabled,
             hapticsEnabled = preferences.hapticsEnabled,
+            showsPhysicalKeyboardGuide = preferences.showsPhysicalKeyboardGuide,
           ),
           displayOptions = PracticeDisplayOptions(
             showsTarget = preferences.showsTarget,
@@ -2514,8 +2520,7 @@ private fun UserDeckDraft.isSameDeckMakerFlow(other: UserDeckDraft): Boolean {
 
 private fun AppLanguage.toUserDeckLanguage(): UserDeckLanguage = when (this) {
   AppLanguage.JAPANESE -> UserDeckLanguage.JAPANESE
-  AppLanguage.ENGLISH -> UserDeckLanguage.ENGLISH
-  AppLanguage.KOREAN -> UserDeckLanguage.KOREAN
+  AppLanguage.ENGLISH, AppLanguage.SPANISH -> UserDeckLanguage.ENGLISH
 }
 
 private fun DeckMakerBillingNotice.toDeckMakerUiNotice(): DeckMakerUiNotice = when (this) {

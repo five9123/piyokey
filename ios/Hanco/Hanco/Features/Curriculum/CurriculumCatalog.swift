@@ -19,12 +19,19 @@ struct CurriculumItem: Equatable, Identifiable {
           meaning: AppLocalization.string(meaningKey, language: .english),
           reading: AppLocalization.string(readingKey, language: .english)
         ),
-        AppLanguage.korean.rawValue: DeckItemLocalization(
-          meaning: AppLocalization.string(meaningKey, language: .korean),
-          reading: AppLocalization.string(readingKey, language: .korean)
+        "ko": DeckItemLocalization(
+          meaning: KoreanLearningContent.string(meaningKey),
+          reading: KoreanLearningContent.string(readingKey)
         ),
       ]
     )
+  }
+}
+
+/// Preserved learning values, not an app UI locale.
+enum KoreanLearningContent {
+  static func string(_ key: String) -> String {
+    Bundle.main.localizedString(forKey: key, value: nil, table: "KoreanLearningContent")
   }
 }
 

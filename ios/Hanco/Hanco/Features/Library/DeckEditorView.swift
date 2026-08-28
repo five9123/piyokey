@@ -4,6 +4,17 @@ import Security
 import SwiftUI
 import UIKit
 
+/// Content can retain Korean translations even though the UI supports ja/en/es.
+enum DeckContentLanguage: String {
+  case japanese = "ja"
+  case english = "en"
+  case korean = "ko"
+
+  static var current: DeckContentLanguage {
+    AppLanguage.current == .japanese ? .japanese : .english
+  }
+}
+
 struct UserDeckItemDraft: Identifiable, Equatable {
   let id: String
   var ko: String
@@ -25,19 +36,19 @@ struct UserDeckItemDraft: Identifiable, Equatable {
     self.localizations = localizations
   }
 
-  func reading(for language: AppLanguage) -> String {
+  func reading(for language: DeckContentLanguage) -> String {
     language == .japanese
       ? readingJa
       : localizations?[language.rawValue]?.reading ?? ""
   }
 
-  func meaning(for language: AppLanguage) -> String {
+  func meaning(for language: DeckContentLanguage) -> String {
     language == .japanese
       ? meaningJa
       : localizations?[language.rawValue]?.meaning ?? ""
   }
 
-  mutating func setReading(_ value: String, for language: AppLanguage) {
+  mutating func setReading(_ value: String, for language: DeckContentLanguage) {
     guard language != .japanese else {
       readingJa = value
       return
@@ -45,7 +56,7 @@ struct UserDeckItemDraft: Identifiable, Equatable {
     updateLocalization(language: language, reading: value)
   }
 
-  mutating func setMeaning(_ value: String, for language: AppLanguage) {
+  mutating func setMeaning(_ value: String, for language: DeckContentLanguage) {
     guard language != .japanese else {
       meaningJa = value
       return
@@ -54,7 +65,7 @@ struct UserDeckItemDraft: Identifiable, Equatable {
   }
 
   private mutating func updateLocalization(
-    language: AppLanguage,
+    language: DeckContentLanguage,
     reading: String? = nil,
     meaning: String? = nil
   ) {
@@ -201,25 +212,25 @@ struct UserDeckDraft: Equatable {
     return sourceDeckID
   }
 
-  func name(for language: AppLanguage) -> String {
+  func name(for language: DeckContentLanguage) -> String {
     language == .japanese
       ? name
       : metadataLocalizations?[language.rawValue]?.name ?? ""
   }
 
-  func authorNickname(for language: AppLanguage) -> String {
+  func authorNickname(for language: DeckContentLanguage) -> String {
     language == .japanese
       ? authorNickname
       : metadataLocalizations?[language.rawValue]?.authorNickname ?? ""
   }
 
-  func tags(for language: AppLanguage) -> [String] {
+  func tags(for language: DeckContentLanguage) -> [String] {
     language == .japanese
       ? tags
       : metadataLocalizations?[language.rawValue]?.tags ?? []
   }
 
-  mutating func setName(_ value: String, for language: AppLanguage) {
+  mutating func setName(_ value: String, for language: DeckContentLanguage) {
     guard language != .japanese else {
       name = value
       return
@@ -227,7 +238,7 @@ struct UserDeckDraft: Equatable {
     updateMetadataLocalization(language: language, name: value)
   }
 
-  mutating func setAuthorNickname(_ value: String, for language: AppLanguage) {
+  mutating func setAuthorNickname(_ value: String, for language: DeckContentLanguage) {
     guard language != .japanese else {
       authorNickname = value
       return
@@ -235,7 +246,7 @@ struct UserDeckDraft: Equatable {
     updateMetadataLocalization(language: language, authorNickname: value)
   }
 
-  mutating func setTags(_ value: [String], for language: AppLanguage) {
+  mutating func setTags(_ value: [String], for language: DeckContentLanguage) {
     guard language != .japanese else {
       tags = value
       return
@@ -342,7 +353,7 @@ struct UserDeckDraft: Equatable {
 
   func materializedDeck(
     at date: Date = Date(),
-    language: AppLanguage = .current
+    language: DeckContentLanguage = .current
   ) -> Deck {
     let displayName = name(for: language)
     let displayAuthorNickname = authorNickname(for: language)
@@ -385,7 +396,7 @@ struct UserDeckDraft: Equatable {
 
   func validationIssues(
     at date: Date = Date(),
-    language: AppLanguage = .current
+    language: DeckContentLanguage = .current
   ) -> [ContentValidationIssue] {
     let deck = materializedDeck(at: date, language: language)
     return UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
@@ -393,14 +404,14 @@ struct UserDeckDraft: Equatable {
 
   func validationSummary(
     at date: Date = Date(),
-    language: AppLanguage = .current
+    language: DeckContentLanguage = .current
   ) -> UserDeckValidationSummary {
     UserDeckValidationSummary(issues: validationIssues(at: date, language: language))
   }
 
   func validatedDeck(
     at date: Date = Date(),
-    language: AppLanguage = .current
+    language: DeckContentLanguage = .current
   ) throws -> Deck {
     let deck = materializedDeck(at: date, language: language)
     let issues = UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
@@ -423,7 +434,7 @@ struct UserDeckDraft: Equatable {
   }
 
   private mutating func updateMetadataLocalization(
-    language: AppLanguage,
+    language: DeckContentLanguage,
     name: String? = nil,
     authorNickname: String? = nil,
     tags: [String]? = nil
@@ -441,7 +452,7 @@ struct UserDeckDraft: Equatable {
 
   private func compatibleMetadataLocalizations(
     baseTags: [String],
-    currentLanguage: AppLanguage
+    currentLanguage: DeckContentLanguage
   ) -> [String: DeckMetadataLocalization]? {
     guard let metadataLocalizations else { return nil }
     let filtered = metadataLocalizations.filter { languageCode, localization in
@@ -555,6 +566,7 @@ struct DeckEditorView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.editMode) private var editMode
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @State private var draft: UserDeckDraft
   @State private var tagsText: String
   @State private var validationSummary = UserDeckValidationSummary(issues: [])
@@ -622,6 +634,7 @@ struct DeckEditorView: View {
           validationSection
           deleteSection
         }
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
         .accessibilityIdentifier("deck_editor.screen")
         .onChange(of: validationFocusRequest) { _ in
           focusFirstValidationIssue(using: proxy)
@@ -819,8 +832,7 @@ struct DeckEditorView: View {
   private var editingLanguageNameKey: String {
     switch AppLanguage.current {
     case .japanese: "settings.language.japanese"
-    case .english: "settings.language.english"
-    case .korean: "settings.language.korean"
+    case .english, .spanish: "settings.language.english"
     }
   }
 

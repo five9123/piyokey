@@ -45,6 +45,7 @@ class M6SettingsInstrumentedTest {
         fontScale = FontScale.LARGE,
         soundEffectsEnabled = false,
         defaultInputMode = InputMode.OS_IME,
+        showsPhysicalKeyboardGuide = true,
       )
     }
 
@@ -53,5 +54,6 @@ class M6SettingsInstrumentedTest {
     assertEquals(FontScale.LARGE, stored.fontScale)
     assertFalse(stored.soundEffectsEnabled)
     assertEquals(InputMode.OS_IME, stored.defaultInputMode)
+    assertEquals(true, stored.showsPhysicalKeyboardGuide)
   }
 }

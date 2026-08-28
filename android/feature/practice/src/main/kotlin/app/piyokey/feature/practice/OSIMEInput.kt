@@ -13,6 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.editableText
+import androidx.compose.ui.semantics.insertTextAtCursor
+import androidx.compose.ui.semantics.requestFocus
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setText
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.viewinterop.AndroidView
 import app.piyokey.core.session.PracticeSessionEvent
 
@@ -56,11 +62,13 @@ internal fun OSIMEInput(
   visibleText: String,
   onEvent: (PracticeSessionEvent.IMEText) -> Unit,
   modifier: Modifier = Modifier,
+  showSoftwareKeyboard: Boolean = true,
 ) = KoreanIMEInput(
   visibleText = visibleText,
   onText = { snapshot -> onEvent(PracticeSessionEvent.IMEText(snapshot.committedText, snapshot.composingText)) },
   modifier = modifier,
   testTag = "practice-os-ime-field",
+  showSoftwareKeyboard = showSoftwareKeyboard,
 )
 
 @Composable
@@ -69,11 +77,19 @@ fun KoreanIMEInput(
   onText: (IMETextSnapshot) -> Unit,
   modifier: Modifier = Modifier,
   testTag: String = "korean-os-ime-field",
+  showSoftwareKeyboard: Boolean = true,
 ) {
   val context = LocalContext.current
   val controller = remember { OSIMEEditController() }
   AndroidView(
-    modifier = modifier.testTag(testTag),
+    modifier = modifier
+      .testTag(testTag)
+      .semantics {
+        editableText = AnnotatedString(visibleText)
+        requestFocus { controller.requestFocus() }
+        insertTextAtCursor { value -> controller.insertText(value.text) }
+        setText { value -> controller.replaceText(value.text) }
+      },
     factory = {
       EditText(context).apply {
         setSingleLine(false)
@@ -99,7 +115,10 @@ fun KoreanIMEInput(
         post {
           requestFocus()
           setSelection(text.length)
-          context.getSystemService(InputMethodManager::class.java).showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+          if (showSoftwareKeyboard) {
+            context.getSystemService(InputMethodManager::class.java)
+              .showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+          }
         }
       }
     },
@@ -113,6 +132,24 @@ fun KoreanIMEInput(
 private class OSIMEEditController {
   var editText: EditText? = null
   var isSynchronizing = false
+
+  fun requestFocus(): Boolean = editText?.requestFocus() ?: false
+
+  fun insertText(value: String): Boolean {
+    val view = editText ?: return false
+    val cursor = view.selectionStart.coerceIn(0, view.text.length)
+    view.editableText.insert(cursor, value)
+    view.setSelection(cursor + value.length)
+    return true
+  }
+
+  fun replaceText(value: String): Boolean {
+    val view = editText ?: return false
+    view.requestFocus()
+    view.setText(value)
+    view.setSelection(view.text.length)
+    return true
+  }
 
   fun synchronize(view: EditText, expected: String) {
     if (BaseInputConnection.getComposingSpanStart(view.editableText) >= 0) return

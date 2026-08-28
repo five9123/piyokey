@@ -6,6 +6,7 @@ enum KeyboardPreferenceKeys {
   static let showsRomanHints = "keyboard.shows_roman_hints"
   static let hapticsEnabled = "keyboard.haptics_enabled"
   static let inputModeDefault = "keyboard.input_mode_default"
+  static let showsPhysicalKeyboardGuide = "keyboard.shows_physical_keyboard_guide"
   static let builtInLayoutDefault = "keyboard.builtin_layout_default"
 
   static let all = [
@@ -13,6 +14,7 @@ enum KeyboardPreferenceKeys {
     showsRomanHints,
     hapticsEnabled,
     inputModeDefault,
+    showsPhysicalKeyboardGuide,
     builtInLayoutDefault,
   ]
 }
@@ -280,6 +282,337 @@ enum HangulKeyboardGeometry {
       return CGFloat(index) / CGFloat(row.count - 1) * 2 - 1
     }
     return 0
+  }
+}
+
+enum PhysicalKeyboardHand: Equatable {
+  case left
+  case right
+  case both
+
+  var localizationKey: String {
+    switch self {
+    case .left: "physical_keyboard.hand.left"
+    case .right: "physical_keyboard.hand.right"
+    case .both: "physical_keyboard.hand.both"
+    }
+  }
+
+  var opposite: Self {
+    switch self {
+    case .left: .right
+    case .right: .left
+    case .both: .both
+    }
+  }
+}
+
+enum PhysicalKeyboardFinger: Equatable {
+  case little
+  case ring
+  case middle
+  case index
+  case thumb
+
+  var localizationKey: String {
+    switch self {
+    case .little: "physical_keyboard.finger.little"
+    case .ring: "physical_keyboard.finger.ring"
+    case .middle: "physical_keyboard.finger.middle"
+    case .index: "physical_keyboard.finger.index"
+    case .thumb: "physical_keyboard.finger.thumb"
+    }
+  }
+}
+
+struct PhysicalKeyboardKeySpec: Identifiable, Equatable {
+  let latin: Character
+  let baseJamo: Character
+  let shiftedJamo: Character?
+  let hand: PhysicalKeyboardHand
+  let finger: PhysicalKeyboardFinger
+  let isHomePosition: Bool
+
+  var id: Character { latin }
+}
+
+struct PhysicalKeyboardTarget: Equatable {
+  let key: PhysicalKeyboardKeySpec?
+  let expected: Character
+  let requiresShift: Bool
+  let shiftHand: PhysicalKeyboardHand?
+
+  var hand: PhysicalKeyboardHand { key?.hand ?? .both }
+  var finger: PhysicalKeyboardFinger { key?.finger ?? .thumb }
+}
+
+enum PhysicalDubeolsikLayout {
+  static let rows: [[PhysicalKeyboardKeySpec]] = [
+    [
+      key("Q", "ㅂ", shifted: "ㅃ", .left, .little),
+      key("W", "ㅈ", shifted: "ㅉ", .left, .ring),
+      key("E", "ㄷ", shifted: "ㄸ", .left, .middle),
+      key("R", "ㄱ", shifted: "ㄲ", .left, .index),
+      key("T", "ㅅ", shifted: "ㅆ", .left, .index),
+      key("Y", "ㅛ", .right, .index),
+      key("U", "ㅕ", .right, .index),
+      key("I", "ㅑ", .right, .middle),
+      key("O", "ㅐ", shifted: "ㅒ", .right, .ring),
+      key("P", "ㅔ", shifted: "ㅖ", .right, .little),
+    ],
+    [
+      key("A", "ㅁ", .left, .little),
+      key("S", "ㄴ", .left, .ring),
+      key("D", "ㅇ", .left, .middle),
+      key("F", "ㄹ", .left, .index, home: true),
+      key("G", "ㅎ", .left, .index),
+      key("H", "ㅗ", .right, .index),
+      key("J", "ㅓ", .right, .index, home: true),
+      key("K", "ㅏ", .right, .middle),
+      key("L", "ㅣ", .right, .ring),
+    ],
+    [
+      key("Z", "ㅋ", .left, .little),
+      key("X", "ㅌ", .left, .ring),
+      key("C", "ㅊ", .left, .middle),
+      key("V", "ㅍ", .left, .index),
+      key("B", "ㅠ", .left, .index),
+      key("N", "ㅜ", .right, .index),
+      key("M", "ㅡ", .right, .index),
+    ],
+  ]
+
+  static func target(for expected: Character?) -> PhysicalKeyboardTarget? {
+    guard let expected else { return nil }
+    if expected == " " {
+      return PhysicalKeyboardTarget(
+        key: nil,
+        expected: expected,
+        requiresShift: false,
+        shiftHand: nil
+      )
+    }
+    for key in rows.joined() {
+      if key.baseJamo == expected {
+        return PhysicalKeyboardTarget(
+          key: key,
+          expected: expected,
+          requiresShift: false,
+          shiftHand: nil
+        )
+      }
+      if key.shiftedJamo == expected {
+        return PhysicalKeyboardTarget(
+          key: key,
+          expected: expected,
+          requiresShift: true,
+          shiftHand: key.hand.opposite
+        )
+      }
+    }
+    return nil
+  }
+
+  private static func key(
+    _ latin: Character,
+    _ baseJamo: Character,
+    shifted: Character? = nil,
+    _ hand: PhysicalKeyboardHand,
+    _ finger: PhysicalKeyboardFinger,
+    home: Bool = false
+  ) -> PhysicalKeyboardKeySpec {
+    PhysicalKeyboardKeySpec(
+      latin: latin,
+      baseJamo: baseJamo,
+      shiftedJamo: shifted,
+      hand: hand,
+      finger: finger,
+      isHomePosition: home
+    )
+  }
+}
+
+struct PhysicalKeyboardGuideView: View {
+  let nextExpectedKey: Character?
+
+  private var target: PhysicalKeyboardTarget? {
+    PhysicalDubeolsikLayout.target(for: nextExpectedKey)
+  }
+
+  var body: some View {
+    VStack(spacing: 8) {
+      guideHeader
+
+      VStack(spacing: 6) {
+        physicalRow(PhysicalDubeolsikLayout.rows[0], leadingInset: 0, trailingInset: 0)
+        physicalRow(PhysicalDubeolsikLayout.rows[1], leadingInset: 14, trailingInset: 14)
+        HStack(spacing: 5) {
+          utilityKey(
+            title: "⇧",
+            identifier: "physical_keyboard.shift.left",
+            highlighted: target?.shiftHand == .left
+          )
+          physicalKeys(PhysicalDubeolsikLayout.rows[2])
+          utilityKey(
+            title: "⇧",
+            identifier: "physical_keyboard.shift.right",
+            highlighted: target?.shiftHand == .right
+          )
+        }
+
+        HStack(spacing: 7) {
+          utilityKey(
+            title: AppLocalization.string("physical_keyboard.space"),
+            identifier: "physical_keyboard.space",
+            highlighted: target?.expected == " ",
+            width: 210
+          )
+          utilityKey(
+            title: "⌫",
+            identifier: "physical_keyboard.backspace",
+            highlighted: false,
+            width: 58
+          )
+        }
+      }
+    }
+    .padding(.horizontal, 10)
+    .padding(.vertical, 9)
+    .background(AppPalette.card.opacity(0.96), in: RoundedRectangle(cornerRadius: 18))
+    .overlay {
+      RoundedRectangle(cornerRadius: 18)
+        .stroke(AppPalette.keyShadow.opacity(0.8), lineWidth: 1)
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("physical_keyboard.guide")
+  }
+
+  @ViewBuilder
+  private var guideHeader: some View {
+    if let target {
+      let hand = AppLocalization.string(target.hand.localizationKey)
+      let finger = AppLocalization.string(target.finger.localizationKey)
+      VStack(spacing: 2) {
+        Text(
+          String(
+            format: AppLocalization.string("physical_keyboard.next_key_format"),
+            String(target.expected),
+            target.key.map { String($0.latin) } ?? AppLocalization.string("physical_keyboard.space")
+          )
+        )
+        .font(.caption.weight(.bold))
+        .foregroundStyle(AppPalette.ink)
+
+        Text(
+          target.requiresShift
+            ? String(
+              format: AppLocalization.string("physical_keyboard.shift_finger_format"),
+              AppLocalization.string((target.shiftHand ?? .both).localizationKey),
+              hand,
+              finger
+            )
+            : String(
+              format: AppLocalization.string("physical_keyboard.finger_format"),
+              hand,
+              finger
+            )
+        )
+        .font(.caption2.weight(.semibold))
+        .foregroundStyle(AppPalette.secondary)
+      }
+      .accessibilityIdentifier("physical_keyboard.guide.instruction")
+    } else {
+      Text("physical_keyboard.ready")
+        .font(.caption.weight(.bold))
+        .foregroundStyle(AppPalette.mutedInk)
+    }
+  }
+
+  private func physicalRow(
+    _ keys: [PhysicalKeyboardKeySpec],
+    leadingInset: CGFloat,
+    trailingInset: CGFloat
+  ) -> some View {
+    HStack(spacing: 5) {
+      physicalKeys(keys)
+    }
+    .padding(.leading, leadingInset)
+    .padding(.trailing, trailingInset)
+  }
+
+  private func physicalKeys(_ keys: [PhysicalKeyboardKeySpec]) -> some View {
+    ForEach(keys) { key in
+      physicalKey(key)
+    }
+  }
+
+  private func physicalKey(_ key: PhysicalKeyboardKeySpec) -> some View {
+    let highlighted = target?.key?.latin == key.latin
+    let handColor = key.hand == .left ? AppPalette.secondary : AppPalette.accent
+    return VStack(spacing: 0) {
+      ZStack(alignment: .bottom) {
+        Text(verbatim: String(key.baseJamo))
+          .font(.system(size: 15, weight: .bold, design: .rounded))
+          .minimumScaleFactor(0.7)
+        if key.isHomePosition {
+          Capsule()
+            .fill(highlighted ? Color.white.opacity(0.85) : AppPalette.mutedInk.opacity(0.48))
+            .frame(width: 10, height: 2)
+            .padding(.bottom, 2)
+        }
+      }
+      Text(verbatim: String(key.latin))
+        .font(.system(size: 8, weight: .semibold, design: .rounded))
+    }
+    .foregroundStyle(highlighted ? Color.white : AppPalette.ink)
+    .frame(maxWidth: .infinity, minHeight: 36)
+    .background(
+      highlighted ? handColor : AppPalette.backgroundTop,
+      in: RoundedRectangle(cornerRadius: 8)
+    )
+    .overlay {
+      RoundedRectangle(cornerRadius: 8)
+        .stroke(highlighted ? handColor : AppPalette.keyShadow, lineWidth: highlighted ? 2 : 1)
+    }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        verbatim: String(
+          format: AppLocalization.string("physical_keyboard.key_accessibility_format"),
+          String(key.baseJamo),
+          String(key.latin),
+          AppLocalization.string(key.hand.localizationKey),
+          AppLocalization.string(key.finger.localizationKey)
+        )
+      )
+    )
+    .accessibilityAddTraits(highlighted ? .isSelected : [])
+    .accessibilityIdentifier("physical_keyboard.key.\(key.latin)")
+  }
+
+  private func utilityKey(
+    title: String,
+    identifier: String,
+    highlighted: Bool,
+    width: CGFloat = 46
+  ) -> some View {
+    Text(verbatim: title)
+      .font(.caption2.weight(.bold))
+      .foregroundStyle(highlighted ? Color.white : AppPalette.mutedInk)
+      .frame(maxWidth: width, minHeight: 34)
+      .background(
+        highlighted ? AppPalette.secondary : AppPalette.backgroundTop,
+        in: RoundedRectangle(cornerRadius: 8)
+      )
+      .overlay {
+        RoundedRectangle(cornerRadius: 8)
+          .stroke(
+            highlighted ? AppPalette.secondary : AppPalette.keyShadow,
+            lineWidth: highlighted ? 2 : 1
+          )
+      }
+      .accessibilityIdentifier(identifier)
+      .accessibilityAddTraits(highlighted ? .isSelected : [])
   }
 }
 

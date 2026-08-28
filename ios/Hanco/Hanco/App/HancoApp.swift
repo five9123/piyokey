@@ -60,6 +60,7 @@ struct HancoApp: App {
         seedUserDeckDraftFixture()
       }
     #endif
+    AppLanguage.migrateLegacyPreference()
     TelemetryService.shared.configure()
   }
 
@@ -182,7 +183,7 @@ struct HancoApp: App {
     try? fileManager.removeItem(at: rootURL)
     try? fileManager.createDirectory(at: rootURL, withIntermediateDirectories: true)
     try? package.write(
-      to: rootURL.appendingPathComponent("r11-capture.piyodeck"),
+      to: rootURL.appendingPathComponent("r11-capture.typedeck"),
       options: .atomic
     )
   }
@@ -223,7 +224,7 @@ struct HancoApp: App {
     let rootURL = piyoDeckPendingImportsRootURL()
     try? FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     try? package.write(
-      to: rootURL.appendingPathComponent("r11-downgrade.piyodeck"),
+      to: rootURL.appendingPathComponent("r11-downgrade.typedeck"),
       options: .atomic
     )
   }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ReviewDeckView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
 
   var body: some View {
@@ -36,6 +37,7 @@ struct ReviewDeckView: View {
         }
       }
       .padding(18)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
   }
 

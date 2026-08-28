@@ -132,7 +132,7 @@ enum PiyoDeckDocumentService {
       .appendingPathComponent("PiyokeyDeckExports", isDirectory: true)
       .appendingPathComponent(UUID().uuidString, isDirectory: true)
     try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
-    let fileURL = directoryURL.appendingPathComponent("\(safeFilename(deck.name)).piyodeck")
+    let fileURL = directoryURL.appendingPathComponent("\(safeFilename(deck.name)).typedeck")
     try data.write(to: fileURL, options: .atomic)
     return PiyoDeckExportArtifact(url: fileURL, directoryURL: directoryURL)
   }
@@ -145,7 +145,7 @@ enum PiyoDeckDocumentService {
       .appendingPathComponent("Hanco", isDirectory: true)
       .appendingPathComponent("PendingImports", isDirectory: true)
     try fileManager.createDirectory(at: rootURL, withIntermediateDirectories: true)
-    let stagedURL = rootURL.appendingPathComponent("\(UUID().uuidString).piyodeck")
+    let stagedURL = rootURL.appendingPathComponent("\(UUID().uuidString).typedeck")
     let partialURL = stagedURL.appendingPathExtension("partial")
 
     let didStartSecurityScope = sourceURL.startAccessingSecurityScopedResource()
@@ -272,7 +272,7 @@ final class PiyoDeckDocumentCoordinator: ObservableObject {
     for partialURL in contents where partialURL.pathExtension.lowercased() == "partial" {
       try? fileManager.removeItem(at: partialURL)
     }
-    let urls = contents.filter { $0.pathExtension.lowercased() == "piyodeck" }.sorted {
+    let urls = contents.filter { $0.pathExtension.lowercased() == "typedeck" }.sorted {
       $0.lastPathComponent < $1.lastPathComponent
     }
     queuedStagedURLs = urls
@@ -405,6 +405,7 @@ final class PiyoDeckDocumentCoordinator: ObservableObject {
 }
 
 struct PiyoDeckImportPreviewView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
   @EnvironmentObject private var purchaseStore: DeckMakerPurchaseStore
@@ -455,6 +456,7 @@ struct PiyoDeckImportPreviewView: View {
           if let comparison { comparisonCard(comparison) }
         }
         .padding(20)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
       }
       .background(AppPalette.backgroundTop.ignoresSafeArea())
       .accessibilityIdentifier("piyodeck.import.preview")

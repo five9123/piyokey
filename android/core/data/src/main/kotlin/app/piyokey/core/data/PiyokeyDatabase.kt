@@ -27,7 +27,7 @@ data class InstalledDeckEntity(
   val installedAtEpochMillis: Long,
   val updatedAtEpochMillis: Long,
   val lastPlayedAtEpochMillis: Long?,
-  /** Official source deck for a user-created copy; never embedded in .piyodeck. */
+  /** Official source deck for a user-created copy; never embedded in .typedeck. */
   val derivedFromDeckId: String? = null,
 )
 
@@ -402,10 +402,11 @@ abstract class PiyokeyDatabase : RoomDatabase() {
         .build().also { instance = it }
     }
 
-    /** Keeps repeated instrumented fresh-install scenarios isolated in the same process. */
-    fun closeSingletonForTesting() = synchronized(this) {
-      instance?.close()
-      instance = null
+    /** Clears repeated instrumented scenarios without invalidating in-flight Activity reads. */
+    fun clearSingletonForTesting(): Boolean = synchronized(this) {
+      val current = instance ?: return@synchronized false
+      current.clearAllTables()
+      true
     }
 
     val MIGRATION_1_2: Migration = object : Migration(1, 2) {

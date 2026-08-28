@@ -64,6 +64,7 @@ data class PracticeKeyboardOptions(
   val showsKeyGuide: Boolean = true,
   val showsRomanHints: Boolean = true,
   val hapticsEnabled: Boolean = true,
+  val showsPhysicalKeyboardGuide: Boolean = false,
 )
 
 /**

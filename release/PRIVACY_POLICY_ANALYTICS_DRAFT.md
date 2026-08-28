@@ -1,10 +1,10 @@
 # PIYOKEY Privacy Policy — analytics update draft
 
-> Publication gate: this is the approved source copy for the next analytics-enabled build. It is not effective until it replaces the live content at `https://hancoweb.vercel.app/privacy`. Before publishing, confirm the processor names, production region, retention settings, and support contact. Keep Japanese first on the public page and provide an obvious language switch.
+> Publication gate: this is the approved source copy for the next analytics-enabled build. It is not effective until it replaces the live content at `https://typee.app/privacy`. Before publishing, confirm the processor names, production region, retention settings, and support contact. Keep Japanese first on the public page and provide an obvious language switch.
 
 Effective date: 2026-08-26  
 Operator: Jungmin Oh / PIYOKEY  
-Contact: https://hancoweb.vercel.app/support
+Contact: https://typee.app/support
 
 ## 日本語
 
@@ -32,7 +32,7 @@ PIYOKEY（以下「本アプリ」）は、アカウント登録や広告なし�
 
 PostHogの製品イベントは本番プロジェクトで12か月に設定し、その後削除します。Firebase CrashlyticsのクラッシュレポートはFirebaseの現行保持期間（公開時点で90日）に従います。法令対応またはセキュリティ上必要な場合を除き、目的達成後に不要なデータを保持しません。
 
-学習履歴、設定、ユーザーデッキ、`.piyodeck`ファイルは原則として端末内に保存され、本アプリのサーバーへアップロードされません。アプリを削除すると端末上のローカルデータも削除されますが、iCloud Driveなど本アプリ外へ書き出したファイルは各サービスの設定に従います。
+学習履歴、設定、ユーザーデッキ、`.typedeck`ファイルは原則として端末内に保存され、本アプリのサーバーへアップロードされません。アプリを削除すると端末上のローカルデータも削除されますが、iCloud Driveなど本アプリ外へ書き出したファイルは各サービスの設定に従います。
 
 #### 4. 選択の変更・削除の申出
 
@@ -46,7 +46,7 @@ PostHogの製品イベントは本番プロジェクトで12か月に設定し�
 
 #### 6. 変更とお問い合わせ
 
-収集項目、目的、委託先に重要な変更がある場合は、本ポリシーを更新し、必要に応じてアプリ内で改めて選択を求めます。お問い合わせは https://hancoweb.vercel.app/support からご連絡ください。
+収集項目、目的、委託先に重要な変更がある場合は、本ポリシーを更新し、必要に応じてアプリ内で改めて選択を求めます。お問い合わせは https://typee.app/support からご連絡ください。
 
 ## English
 
@@ -74,7 +74,7 @@ We do not sell this data or use it for advertising, profiling, or tracking acros
 
 PostHog product events are configured for deletion after 12 months. Firebase Crashlytics reports follow Firebase's current retention period (90 days at publication). We do not keep data longer than necessary except where required for legal or security purposes.
 
-Learning history, settings, user decks, and `.piyodeck` files normally stay on the device and are not uploaded to a PIYOKEY server. Deleting the app removes its local on-device data; files exported to iCloud Drive or another service remain subject to that service's settings.
+Learning history, settings, user decks, and `.typedeck` files normally stay on the device and are not uploaded to a PIYOKEY server. Deleting the app removes its local on-device data; files exported to iCloud Drive or another service remain subject to that service's settings.
 
 #### 4. Changing choices and deletion requests
 
@@ -88,7 +88,7 @@ PIYOKEY does not provide child-directed advertising or behavioral tracking. User
 
 #### 6. Changes and contact
 
-If collection, purposes, or processors materially change, we will update this policy and request a new in-app choice where required. Contact us at https://hancoweb.vercel.app/support.
+If collection, purposes, or processors materially change, we will update this policy and request a new in-app choice where required. Contact us at https://typee.app/support.
 
 ## 한국어
 
@@ -116,7 +116,7 @@ PIYOKEY(피요키)는 계정이나 광고 없이 이용할 수 있는 한국어 
 
 PostHog 제품 이벤트는 운영 프로젝트에서 12개월 뒤 삭제되도록 설정합니다. Firebase Crashlytics 보고서는 Firebase의 현행 보관 기간(게시 시점 기준 90일)을 따릅니다. 법률 또는 보안을 위해 필요한 경우를 제외하고 목적 달성 후 불필요한 데이터를 보관하지 않습니다.
 
-학습 기록, 설정, 사용자 덱과 `.piyodeck` 파일은 원칙적으로 기기에 저장되며 피요키 서버로 업로드되지 않습니다. 앱을 삭제하면 앱의 기기 내 데이터도 삭제되지만, iCloud Drive 등 외부 서비스로 내보낸 파일은 해당 서비스 설정을 따릅니다.
+학습 기록, 설정, 사용자 덱과 `.typedeck` 파일은 원칙적으로 기기에 저장되며 피요키 서버로 업로드되지 않습니다. 앱을 삭제하면 앱의 기기 내 데이터도 삭제되지만, iCloud Drive 등 외부 서비스로 내보낸 파일은 해당 서비스 설정을 따릅니다.
 
 #### 4. 선택 변경과 삭제 요청
 
@@ -130,4 +130,4 @@ PostHog 제품 이벤트는 운영 프로젝트에서 12개월 뒤 삭제되도�
 
 #### 6. 변경과 문의
 
-수집 항목, 목적 또는 처리업체에 중요한 변경이 생기면 이 방침을 갱신하고 필요한 경우 앱에서 다시 선택을 요청합니다. 문의는 https://hancoweb.vercel.app/support 에서 접수해 주세요.
+수집 항목, 목적 또는 처리업체에 중요한 변경이 생기면 이 방침을 갱신하고 필요한 경우 앱에서 다시 선택을 요청합니다. 문의는 https://typee.app/support 에서 접수해 주세요.

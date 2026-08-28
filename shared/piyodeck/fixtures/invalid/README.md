@@ -1,4 +1,4 @@
-# Invalid `.piyodeck` fixture cases
+# Invalid `.typedeck` fixture cases
 
 Shared binary golden cases are enumerated with exact sizes, SHA-256 values, and
 coarse expected error families in `../cases.json`. They cover manifest digest,

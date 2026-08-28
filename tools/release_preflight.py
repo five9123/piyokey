@@ -60,7 +60,7 @@ REQUIRED_COLLECTED_DATA = {
 EXPECTED_DISPLAY_NAMES = {
     "ja": "ピヨキー",
     "en": "typee",
-    "ko": "typee",
+    "es": "typee",
 }
 
 DEFAULT_TYPING_SOUND_SHA256 = "0a2399f0434b35b58e25ae22f858e447f77d2c4429557312ac51deb8358a9427"
@@ -69,21 +69,31 @@ GAME_CENTER_AVAILABILITY_KEY = "PiyokeyGameCenterAvailableLeaderboardIDs"
 GAME_CENTER_INTENDED_KEY = "PiyokeyGameCenterIntendedLeaderboardIDs"
 DECK_MAKER_PRODUCT_ID = "app.piyokey.deckmaker.lifetime"
 DECK_MAKER_LOCALIZATIONS = {
-    "ja": ("ピヨキー pro", "ユーザーデッキ無制限と作成・編集をずっと利用"),
+    "ja": ("ピヨキー プロ", "ユーザーデッキ無制限と作成・編集をずっと利用"),
     "en-US": ("typee pro", "Unlimited user decks, creation, and editing."),
     "ko": ("피요키 프로", "사용자 덱 무제한 보관과 생성·편집을 평생 이용"),
 }
 STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
-VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "ko"})
+EXPECTED_IPHONE_ORIENTATIONS = ["UIInterfaceOrientationPortrait"]
+EXPECTED_IPAD_ORIENTATIONS = frozenset(
+    {
+        "UIInterfaceOrientationPortrait",
+        "UIInterfaceOrientationPortraitUpsideDown",
+        "UIInterfaceOrientationLandscapeLeft",
+        "UIInterfaceOrientationLandscapeRight",
+    }
+)
+
+VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "es"})
 GLOBAL_APP_STORE_LOCALES = frozenset({"en-US", "en-GB", "en-AU", "en-CA", "ko", "ja"})
 GLOBAL_APP_STORE_NAMES = {
     "ja": "韓国語タイピング - ピヨキー",
     "ko": "한글 타자 연습 - typee",
     "en-US": "Korean Typing - typee",
     "en-GB": "Korean Typing - typee",
-    "en-AU": "Korean Typing - typee",
-    "en-CA": "Korean Typing - typee",
+    "en-AU": "Korean Typing Practice - typee",
+    "en-CA": "Korean Typing Practice - typee",
 }
 ANDROID_M7_STATE = "resumed_separate_google_play_release_track"
 ALL_COUNTRIES_SELECTION = "ALL_COUNTRIES_OR_REGIONS"
@@ -258,8 +268,13 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
         scope = {}
     add(
         findings,
-        is_exact_string_list(scope.get("app_ui_and_content_locales"), VERSION_1_1_APP_LOCALES),
-        "Version 1.1 app UI/content locales must be exactly ja, en, and ko",
+        is_exact_string_list(scope.get("app_ui_locales"), VERSION_1_1_APP_LOCALES),
+        "Version 1.1 app UI locales must be exactly ja, en, and es",
+    )
+    add(
+        findings,
+        is_exact_string_list(scope.get("preserved_content_locales"), {"ja", "en", "ko"}),
+        "Preserved learning content locales must remain ja, en, and ko",
     )
     add(
         findings,
@@ -293,7 +308,7 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
     add(
         findings,
         availability.get("required_app_and_iap_match") is True,
-        "App and Deck Maker IAP availability must match",
+        "App and typee pro IAP availability must match",
     )
     add(
         findings,
@@ -445,21 +460,21 @@ def google_play_metadata_findings(path: Path, root: Path) -> list[Finding]:
     product = document.get("in_app_product", {})
     if not isinstance(product, dict):
         product = {}
-    add(findings, product.get("product_id") == DECK_MAKER_PRODUCT_ID, "Google Play Deck Maker product ID differs")
-    add(findings, product.get("product_type") == "ONE_TIME_PRODUCT", "Google Play Deck Maker must be a one-time product")
-    add(findings, product.get("purchase_option_id") == "lifetime", "Google Play Deck Maker purchase option ID differs")
+    add(findings, product.get("product_id") == DECK_MAKER_PRODUCT_ID, "Google Play typee pro product ID differs")
+    add(findings, product.get("product_type") == "ONE_TIME_PRODUCT", "Google Play typee pro must be a one-time product")
+    add(findings, product.get("purchase_option_id") == "lifetime", "Google Play typee pro purchase option ID differs")
     product_localizations = product.get("localizations", {})
     if not isinstance(product_localizations, dict):
         product_localizations = {}
     add(
         findings,
         set(product_localizations) == GOOGLE_PLAY_LOCALES,
-        "Google Play Deck Maker localizations must cover exactly en-US, ja, and ko",
+        "Google Play typee pro localizations must cover exactly en-US, ja, and ko",
     )
     for locale, expected in DECK_MAKER_LOCALIZATIONS.items():
         values = product_localizations.get(locale, {})
         actual = (values.get("name"), values.get("description")) if isinstance(values, dict) else (None, None)
-        add(findings, actual == expected, f"Google Play Deck Maker {locale} metadata differs: {actual!r}")
+        add(findings, actual == expected, f"Google Play typee pro {locale} metadata differs: {actual!r}")
 
     assets = document.get("assets", {})
     if not isinstance(assets, dict):
@@ -714,6 +729,41 @@ def game_center_contract_findings(info: dict[str, Any], source: str) -> list[Fin
     return findings
 
 
+def ios_universal_contract_findings(project: str, info: dict[str, Any]) -> list[Finding]:
+    findings: list[Finding] = []
+    raw_device_families = re.findall(r"TARGETED_DEVICE_FAMILY = ([^;]+);", project)
+    device_families = {
+        value.strip().strip('"').replace(" ", "") for value in raw_device_families
+    }
+    add(
+        findings,
+        bool(raw_device_families) and device_families == {"1,2"},
+        f"All iOS targets must support iPhone and iPad device families: {sorted(device_families)}",
+    )
+
+    iphone_orientations = info.get("UISupportedInterfaceOrientations")
+    add(
+        findings,
+        iphone_orientations == EXPECTED_IPHONE_ORIENTATIONS,
+        f"iPhone orientations must remain portrait-only: {iphone_orientations!r}",
+    )
+
+    ipad_orientations = info.get("UISupportedInterfaceOrientations~ipad")
+    add(
+        findings,
+        isinstance(ipad_orientations, list)
+        and len(ipad_orientations) == len(EXPECTED_IPAD_ORIENTATIONS)
+        and set(ipad_orientations) == EXPECTED_IPAD_ORIENTATIONS,
+        f"iPad must declare all four interface orientations: {ipad_orientations!r}",
+    )
+    add(
+        findings,
+        "UIRequiresFullScreen" not in info,
+        "UIRequiresFullScreen must remain absent for iPad multitasking and resizable windows",
+    )
+    return findings
+
+
 def repository_checks(root: Path) -> list[Finding]:
     findings: list[Finding] = []
     app = root / "ios/Hanco/Hanco"
@@ -861,8 +911,8 @@ def repository_checks(root: Path) -> list[Finding]:
 
     app_settings = app_settings_path.read_text(encoding="utf-8")
     for url in (
-        "https://hancoweb.vercel.app/privacy",
-        "https://hancoweb.vercel.app/support",
+        "https://typee.app/privacy",
+        "https://typee.app/support",
     ):
         add(findings, url in app_settings, f"Settings must expose release URL: {url}")
 
@@ -913,21 +963,21 @@ def repository_checks(root: Path) -> list[Finding]:
             add(findings, value.get("used_for_tracking") is False, f"Store privacy {name} must not track")
 
         iap = metadata.get("in_app_purchase", {})
-        add(findings, iap.get("product_id") == DECK_MAKER_PRODUCT_ID, "Deck Maker product ID differs")
-        add(findings, iap.get("type") == "NON_CONSUMABLE", "Deck Maker must be non-consumable")
+        add(findings, iap.get("product_id") == DECK_MAKER_PRODUCT_ID, "typee pro product ID differs")
+        add(findings, iap.get("type") == "NON_CONSUMABLE", "typee pro must be non-consumable")
         iap_localizations = iap.get("localizations", {})
         add(
             findings,
             set(iap_localizations) == set(DECK_MAKER_LOCALIZATIONS),
-            "Deck Maker localizations must be ja, en-US, and ko",
+            "typee pro localizations must be ja, en-US, and ko",
         )
         for locale, expected in DECK_MAKER_LOCALIZATIONS.items():
             values = iap_localizations.get(locale, {})
             actual = (values.get("display_name"), values.get("description"))
-            add(findings, actual == expected, f"Deck Maker {locale} metadata differs: {actual!r}")
+            add(findings, actual == expected, f"typee pro {locale} metadata differs: {actual!r}")
             if all(isinstance(value, str) for value in actual):
-                add(findings, 2 <= len(actual[0]) <= 30, f"Deck Maker {locale} display name length is invalid")
-                add(findings, len(actual[1]) <= 45, f"Deck Maker {locale} description exceeds 45 characters")
+                add(findings, 2 <= len(actual[0]) <= 30, f"typee pro {locale} display name length is invalid")
+                add(findings, len(actual[1]) <= 45, f"typee pro {locale} description exceeds 45 characters")
 
         stale_claims = ("no in-app purchases", "アプリ内課金なし", "앱 내 결제 없음")
         for locale, values in localizations.items():
@@ -952,7 +1002,7 @@ def repository_checks(root: Path) -> list[Finding]:
         "AppStore.sync()",
         "case .verified",
     ):
-        add(findings, contract in purchase_source, f"Deck Maker StoreKit contract is missing: {contract}")
+        add(findings, contract in purchase_source, f"typee pro StoreKit contract is missing: {contract}")
 
     try:
         config = json.loads(storekit_config_path.read_text(encoding="utf-8"))
@@ -1041,8 +1091,7 @@ def repository_checks(root: Path) -> list[Finding]:
             "App category must be Education",
         )
         add(findings, info.get("ITSAppUsesNonExemptEncryption") is False, "Export compliance plist declaration is missing")
-        orientations = info.get("UISupportedInterfaceOrientations", [])
-        add(findings, orientations == ["UIInterfaceOrientationPortrait"], "Only portrait orientation should be declared")
+        findings.extend(ios_universal_contract_findings(project, info))
         findings.extend(
             game_center_contract_findings(
                 info,
@@ -1291,12 +1340,12 @@ def strict_checks(root: Path) -> list[Finding]:
     add(findings, review.get("notes_prepared") is True, "App Review notes are not prepared")
 
     iap = submission.get("in_app_purchase", {})
-    add(findings, iap.get("product_id") == DECK_MAKER_PRODUCT_ID, "Submission Deck Maker product ID differs")
-    add(findings, iap.get("type") == "NON_CONSUMABLE", "Submission Deck Maker type differs")
+    add(findings, iap.get("product_id") == DECK_MAKER_PRODUCT_ID, "Submission typee pro product ID differs")
+    add(findings, iap.get("type") == "NON_CONSUMABLE", "Submission typee pro type differs")
     add(
         findings,
         set(iap.get("localizations", [])) == set(DECK_MAKER_LOCALIZATIONS),
-        "Submission Deck Maker localizations must be ja, en-US, and ko",
+        "Submission typee pro localizations must be ja, en-US, and ko",
     )
     for key in (
         "paid_apps_agreement_active",

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.dismiss) private var dismiss
   @EnvironmentObject private var reminder: DailyReminderLibrary
 
@@ -34,6 +35,8 @@ struct SettingsView: View {
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
     SessionInputMode.builtIn.rawValue
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
   @AppStorage(KeyboardPreferenceKeys.builtInLayoutDefault) private var builtInLayoutDefault =
     BuiltInKeyboardLayout.dubeolsik.rawValue
   @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
@@ -138,6 +141,7 @@ struct SettingsView: View {
         ]
       )
     }
+    .hancoUITestDynamicTypeOverride()
   }
 
   private func captureSetting(_ setting: String, value: String) {
@@ -162,6 +166,7 @@ struct SettingsView: View {
       }
       .padding(.horizontal, 18)
       .padding(.vertical, 16)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
     }
     .background(
       LinearGradient(
@@ -172,6 +177,11 @@ struct SettingsView: View {
       .ignoresSafeArea()
     )
     .accessibilityIdentifier("settings.screen")
+    .overlay(alignment: .topLeading) {
+      #if DEBUG
+        DynamicTypeDebugProbe()
+      #endif
+    }
     .navigationTitle(Text("settings.navigation_title"))
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
@@ -220,7 +230,7 @@ struct SettingsView: View {
       ) {
         Text("settings.language.japanese").tag(AppLanguage.japanese.rawValue)
         Text("settings.language.english").tag(AppLanguage.english.rawValue)
-        Text("settings.language.korean").tag(AppLanguage.korean.rawValue)
+        Text("settings.language.spanish").tag(AppLanguage.spanish.rawValue)
       }
     }
   }
@@ -318,6 +328,14 @@ struct SettingsView: View {
         )
       }
       .padding(.vertical, 7)
+      Divider().opacity(0.5)
+      settingToggle(
+        title: "physical_keyboard.show_guide",
+        detail: "physical_keyboard.show_guide_detail",
+        systemImage: "keyboard.badge.ellipsis",
+        isOn: $showsPhysicalKeyboardGuide,
+        identifier: "settings.physical_keyboard_guide"
+      )
     }
   }
 
@@ -925,3 +943,20 @@ struct PrivacyConsentView: View {
     .accessibilityIdentifier(identifier)
   }
 }
+
+#if DEBUG
+  private struct DynamicTypeDebugProbe: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+      Text(verbatim: " ")
+        .font(.system(size: 1))
+        .opacity(0.01)
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(
+          Text(verbatim: dynamicTypeSize.isAccessibilitySize ? "accessibility" : "standard")
+        )
+        .accessibilityIdentifier("debug.dynamic_type")
+    }
+  }
+#endif

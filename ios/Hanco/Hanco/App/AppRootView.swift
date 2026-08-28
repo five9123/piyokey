@@ -147,18 +147,22 @@ struct AppRootView: View {
   }
 
   var body: some View {
-    Group {
-      if onboarding.shouldPresent {
-        OnboardingView()
-      } else if shouldPresentHatchGate {
-        CurriculumMapView(
-          catalog: nil,
-          isHatchOnboarding: true,
-          onHatchCompleted: finishHatchOnboarding
-        )
-      } else {
-        mainTabs
+    GeometryReader { proxy in
+      let adaptiveMetrics = HancoAdaptiveMetrics(availableWidth: proxy.size.width)
+      Group {
+        if onboarding.shouldPresent {
+          OnboardingView()
+        } else if shouldPresentHatchGate {
+          CurriculumMapView(
+            catalog: nil,
+            isHatchOnboarding: true,
+            onHatchCompleted: finishHatchOnboarding
+          )
+        } else {
+          mainTabs
+        }
       }
+      .environment(\.hancoAdaptiveMetrics, adaptiveMetrics)
     }
     .environmentObject(deckLibrary)
     .environmentObject(deckMakerPurchaseStore)
@@ -226,7 +230,7 @@ struct AppRootView: View {
     .task { await deckMakerPurchaseStore.prepare() }
     .task { await piyoDeckDocumentCoordinator.resumePendingIfNeeded() }
     .onOpenURL { url in
-      guard url.pathExtension.lowercased() == "piyodeck" else { return }
+      guard url.pathExtension.lowercased() == "typedeck" else { return }
       Task { await piyoDeckDocumentCoordinator.receive(url) }
     }
     .task(id: shouldStartAppTour) {
@@ -286,6 +290,7 @@ struct AppRootView: View {
     .overlay(alignment: .topLeading) {
       debugAudioProbe
     }
+    .hancoUITestDynamicTypeOverride()
   }
 
   private func flushPendingProgress() {
@@ -503,6 +508,21 @@ struct AppRootView: View {
         }
       }
     }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func hancoUITestDynamicTypeOverride() -> some View {
+    #if DEBUG
+      if ProcessInfo.processInfo.environment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] == "1" {
+        dynamicTypeSize(.accessibility5)
+      } else {
+        self
+      }
+    #else
+      self
+    #endif
   }
 }
 

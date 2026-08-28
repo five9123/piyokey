@@ -40,6 +40,7 @@ dist/
 /artifacts/**
 !/artifacts/**/
 !/artifacts/**/README.md
+/artifacts/**/DerivedData/
 /release/app-preview/
 /release/screenshots/*.zip
 
@@ -49,6 +50,7 @@ dist/
 
 # Generated temporary output
 /outputs/
+__pycache__/
 
 # Secrets and signing assets
 .env

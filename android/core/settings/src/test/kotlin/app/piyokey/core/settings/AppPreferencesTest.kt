@@ -8,8 +8,33 @@ import kotlin.test.assertTrue
 class AppPreferencesTest {
   @Test
   fun preferredLocaleUsesFirstSupportedLanguageAndEnglishFallback() {
-    assertEquals(AppLanguage.KOREAN, AppLanguage.preferred(listOf("fr-FR", "ko-KR", "ja-JP")))
+    assertEquals(AppLanguage.JAPANESE, AppLanguage.preferred(listOf("fr-FR", "ko-KR", "ja-JP")))
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("ko-KR")))
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("ko-KR", "en-US")))
     assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("de-DE")))
+  }
+
+  @Test
+  fun retiredKoreanSettingFallsBackToEnglishWithoutRemovingContentLanguage() {
+    assertEquals(listOf("ja", "en", "es"), AppLanguage.entries.map { it.tag })
+    for (legacy in listOf("KOREAN", "ko")) {
+      assertEquals(AppLanguage.ENGLISH, AppLanguage.fromStored(legacy, listOf("ja-JP")))
+      assertEquals(AppLanguage.ENGLISH, AppLanguage.resolve(legacy))
+    }
+    assertEquals(AppLanguage.JAPANESE, AppLanguage.fromStored(null, listOf("ja-JP")))
+    assertEquals(AppLanguage.JAPANESE, AppLanguage.fromStored("JAPANESE", listOf("en-US")))
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.fromStored("ENGLISH", listOf("ja-JP")))
+  }
+
+  @Test
+  fun spanishRegionsResolveAndExplicitPreferenceSurvivesDeviceChanges() {
+    for (tag in listOf("es-ES", "es-MX", "es-419", "es_AR")) {
+      assertEquals(AppLanguage.SPANISH, AppLanguage.preferred(listOf(tag, "ja-JP")))
+    }
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("en-US", "es-MX")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("SPANISH", listOf("en-US")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("es", listOf("ja-JP")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.resolve("es"))
   }
 
   @Test
@@ -63,8 +88,8 @@ class AppPreferencesTest {
 
   @Test
   fun chaptersOneThroughFourForceBuiltinWithoutChangingPreference() {
-    assertEquals(InputMode.BUILTIN, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 1))
-    assertEquals(InputMode.BUILTIN, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 4))
+    assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 1))
+    assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 4))
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 5))
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, null))
   }

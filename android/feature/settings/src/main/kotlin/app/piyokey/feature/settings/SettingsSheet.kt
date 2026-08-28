@@ -131,6 +131,14 @@ fun SettingsSheet(
             label = { if (it == InputMode.BUILTIN) stringResource(R.string.settings_input_builtin) else stringResource(R.string.settings_input_os) },
             onSelect = { onPreferencesChange(preferences.copy(defaultInputMode = it)) },
           )
+          if (preferences.defaultInputMode == InputMode.OS_IME) {
+            ToggleRow(
+              stringResource(R.string.settings_physical_keyboard_guide),
+              preferences.showsPhysicalKeyboardGuide,
+            ) {
+              onPreferencesChange(preferences.copy(showsPhysicalKeyboardGuide = it))
+            }
+          }
         }
       }
       item {
@@ -450,9 +458,9 @@ private fun fontScaleLabel(value: FontScale): String = when (value) {
 
 @Composable
 private fun languageLabel(value: AppLanguage): String = when (value) {
-  AppLanguage.JAPANESE -> "日本語"
-  AppLanguage.ENGLISH -> "English"
-  AppLanguage.KOREAN -> "한국어"
+  AppLanguage.JAPANESE -> stringResource(R.string.settings_language_japanese)
+  AppLanguage.ENGLISH -> stringResource(R.string.settings_language_english)
+  AppLanguage.SPANISH -> stringResource(R.string.settings_language_spanish)
 }
 
 @Composable

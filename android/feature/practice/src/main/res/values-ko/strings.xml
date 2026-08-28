@@ -25,4 +25,17 @@
   <string name="practice_ime_open_settings">키보드 설정</string>
   <string name="practice_play_pronunciation">한국어 발음 재생</string>
   <string name="practice_piyo_accessibility">입력에 반응하는 피요</string>
+  <string name="physical_keyboard_hand_left">왼손</string>
+  <string name="physical_keyboard_hand_right">오른손</string>
+  <string name="physical_keyboard_hand_both">양손</string>
+  <string name="physical_keyboard_finger_little">새끼손가락</string>
+  <string name="physical_keyboard_finger_ring">약지</string>
+  <string name="physical_keyboard_finger_middle">가운뎃손가락</string>
+  <string name="physical_keyboard_finger_index">검지</string>
+  <string name="physical_keyboard_finger_thumb">엄지</string>
+  <string name="physical_keyboard_space">스페이스</string>
+  <string name="physical_keyboard_next_key">다음: %1$s (%2$s)</string>
+  <string name="physical_keyboard_finger">%1$s · %2$s</string>
+  <string name="physical_keyboard_shift_finger">%1$s Shift + %2$s · %3$s</string>
+  <string name="physical_keyboard_ready">기기의 한국어 두벌식 키보드로 입력해 보세요</string>
 </resources>

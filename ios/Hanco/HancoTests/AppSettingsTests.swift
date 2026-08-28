@@ -31,10 +31,16 @@ final class AppSettingsTests: XCTestCase {
 
   func testPreferredLanguageUsesSupportedDeviceLanguageAndEnglishFallback() {
     XCTAssertEqual(AppLanguage.preferred(from: ["ja-JP", "en-US"]), .japanese)
-    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "en-US"]), .korean)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "en-US"]), .english)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR"]), .english)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "ja-JP"]), .japanese)
     XCTAssertEqual(AppLanguage.preferred(from: ["en-GB"]), .english)
+    for region in ["es-ES", "es-MX", "es-419", "es_AR"] {
+      XCTAssertEqual(AppLanguage.preferred(from: [region, "ja-JP"]), .spanish)
+    }
+    XCTAssertEqual(AppLanguage.preferred(from: ["en-US", "es-MX"]), .english)
     XCTAssertEqual(
-      AppLanguage.preferred(from: ["es-MX", "fr-FR", "zh-Hant", "ar-SA"]),
+      AppLanguage.preferred(from: ["fr-FR", "zh-Hant", "ar-SA"]),
       .english
     )
   }
@@ -45,6 +51,65 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(permutations.count, 6)
     XCTAssertEqual(Set(permutations.map { $0.map(\.rawValue).joined(separator: ",") }).count, 6)
     XCTAssertTrue(permutations.allSatisfy { Set($0) == Set(PracticePromptField.allCases) })
+  }
+
+  func testKoreanUIPreferenceMigratesWithoutChangingOtherDefaults() throws {
+    let suiteName = "AppSettingsTests.languageMigration.\(UUID().uuidString)"
+    let isolated = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defer { isolated.removePersistentDomain(forName: suiteName) }
+    isolated.set("ko", forKey: SettingsPreferenceKeys.language)
+    isolated.set("dark", forKey: SettingsPreferenceKeys.theme)
+    isolated.set("사랑", forKey: "preserved.learning.target")
+    let before = try XCTUnwrap(isolated.persistentDomain(forName: suiteName))
+
+    AppLanguage.migrateLegacyPreference(in: isolated)
+
+    var expected = before
+    expected[SettingsPreferenceKeys.language] = "en"
+    XCTAssertEqual(isolated.persistentDomain(forName: suiteName)! as NSDictionary, expected as NSDictionary)
+    XCTAssertEqual(AppLanguage.resolved(from: "ko"), .english)
+    AppLanguage.migrateLegacyPreference(in: isolated)
+    XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), "en")
+    for language in ["ja", "en", "es"] {
+      isolated.set(language, forKey: SettingsPreferenceKeys.language)
+      AppLanguage.migrateLegacyPreference(in: isolated)
+      XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), language)
+    }
+  }
+
+  func testBundleDoesNotOfferKoreanUIButPreservesKoreanLearningContent() {
+    XCTAssertEqual(Set(AppLanguage.allCases.map(\.rawValue)), ["ja", "en", "es"])
+    XCTAssertFalse(Bundle.main.localizations.contains("ko"))
+    XCTAssertNil(Bundle.main.path(forResource: "ko", ofType: "lproj"))
+    XCTAssertEqual(KoreanLearningContent.string("curriculum.chapter_1_basic_consonants.item_1.reading"), "기역")
+    for item in CurriculumCatalog.chapters.flatMap(\.stages).flatMap(\.items) {
+      let preserved = item.deckItem.localizations?["ko"]
+      XCTAssertEqual(preserved?.meaning, KoreanLearningContent.string(item.meaningKey))
+      XCTAssertEqual(preserved?.reading, KoreanLearningContent.string(item.readingKey))
+      XCTAssertNotEqual(preserved?.meaning, item.meaningKey)
+      XCTAssertNotEqual(preserved?.reading, item.readingKey)
+    }
+  }
+
+  func testLegacyKoreanUIUsesExistingEnglishCluesWithoutChangingKoreanTarget() {
+    defaults.set("ko", forKey: SettingsPreferenceKeys.language)
+    XCTAssertEqual(AppLanguage.current, .english)
+    let item = CurriculumCatalog.chapters[4].stages[0].items[0].deckItem
+    XCTAssertEqual(item.ko, "사랑")
+    XCTAssertEqual(item.appMeaning, item.localizedMeaning(languageCode: "en"))
+    XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
+    XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Settings")
+  }
+
+  func testSpanishUIKeepsEnglishLearningContentAndEditorLanguage() {
+    defaults.set("es", forKey: SettingsPreferenceKeys.language)
+    XCTAssertEqual(AppLanguage.current, .spanish)
+    XCTAssertEqual(DeckContentLanguage.current, .english)
+    let item = CurriculumCatalog.chapters[4].stages[0].items[0].deckItem
+    XCTAssertEqual(item.ko, "사랑")
+    XCTAssertEqual(item.appMeaning, item.localizedMeaning(languageCode: "en"))
+    XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
+    XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Ajustes")
   }
 
   func testFontScaleHasThreeIncreasingLevels() {
@@ -119,7 +184,7 @@ final class AppSettingsTests: XCTestCase {
       }
 
       XCTAssertEqual(Set(messages).count, MascotDailyEncouragement.messageCount)
-      let quotes = language == .english ? ("“", "”") : ("「", "」")
+      let quotes = language == .spanish ? ("«", "»") : language == .english ? ("“", "”") : ("「", "」")
       XCTAssertTrue(messages.allSatisfy { $0.hasPrefix(quotes.0) && $0.hasSuffix(quotes.1) })
       XCTAssertTrue(messages.allSatisfy { $0.count <= 42 })
     }
@@ -129,7 +194,7 @@ final class AppSettingsTests: XCTestCase {
     let expectations: [(AppLanguage, String, String, String, String)] = [
       (.japanese, "設定", "ピヨキー", "ピヨちゃん", "ja_JP"),
       (.english, "Settings", "typee", "Piyo", "en_US"),
-      (.korean, "설정", "typee", "피요", "ko_KR"),
+      (.spanish, "Ajustes", "typee", "Piyo", "es_ES"),
     ]
 
     for (language, title, brand, mascotName, localeIdentifier) in expectations {
@@ -145,7 +210,7 @@ final class AppSettingsTests: XCTestCase {
     let expectedBrands: [(AppLanguage, String)] = [
       (.japanese, "ピヨキー"),
       (.english, "typee"),
-      (.korean, "typee"),
+      (.spanish, "typee"),
     ]
 
     for (language, brand) in expectedBrands {
@@ -448,10 +513,77 @@ final class AppSettingsTests: XCTestCase {
 
   func testReleaseLinksUsePublicHTTPSPages() {
     XCTAssertEqual(
-      AppReleaseLinks.privacyPolicy.absoluteString, "https://hancoweb.vercel.app/privacy")
-    XCTAssertEqual(AppReleaseLinks.support.absoluteString, "https://hancoweb.vercel.app/support")
+      AppReleaseLinks.privacyPolicy.absoluteString, "https://typee.app/privacy")
+    XCTAssertEqual(AppReleaseLinks.support.absoluteString, "https://typee.app/support")
     XCTAssertEqual(AppReleaseLinks.privacyPolicy.scheme, "https")
     XCTAssertEqual(AppReleaseLinks.support.scheme, "https")
+  }
+
+  func testAdaptiveMetricsUseActualAvailableWidthBoundaries() {
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 599).widthClass, .compact)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 600).widthClass, .medium)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 899).widthClass, .medium)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 900).widthClass, .wide)
+  }
+
+  func testAdaptiveMetricsGrowPaddingAndHubColumnsWithoutChangingContentCaps() {
+    let compact = HancoAdaptiveMetrics(availableWidth: 390)
+    let medium = HancoAdaptiveMetrics(availableWidth: 744)
+    let wide = HancoAdaptiveMetrics(availableWidth: 1_180)
+
+    XCTAssertEqual(
+      [compact.horizontalPadding, medium.horizontalPadding, wide.horizontalPadding],
+      [18, 24, 32]
+    )
+    XCTAssertEqual(
+      [compact.hubColumnCount, medium.hubColumnCount, wide.hubColumnCount],
+      [2, 3, 4]
+    )
+    XCTAssertFalse(compact.usesTwoColumnDashboard)
+    XCTAssertFalse(medium.usesTwoColumnDashboard)
+    XCTAssertTrue(wide.usesTwoColumnDashboard)
+    XCTAssertEqual(wide.formContentMaxWidth, 680)
+    XCTAssertEqual(wide.readableContentMaxWidth, 720)
+    XCTAssertEqual(wide.resultContentMaxWidth, 760)
+    XCTAssertEqual(wide.hubContentMaxWidth, 1_120)
+    XCTAssertEqual(wide.sessionLaneMaxWidth, 920)
+    XCTAssertEqual(wide.keyboardMaxWidth, 820)
+    XCTAssertLessThanOrEqual(wide.keyboardMaxWidth, wide.sessionLaneMaxWidth)
+    XCTAssertLessThanOrEqual(wide.formContentMaxWidth, wide.readableContentMaxWidth)
+  }
+
+  func testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions() throws {
+    let base = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㄱ"))
+    XCTAssertEqual(base.key?.latin, "R")
+    XCTAssertEqual(base.hand, .left)
+    XCTAssertEqual(base.finger, .index)
+    XCTAssertFalse(base.requiresShift)
+
+    let shifted = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㅒ"))
+    XCTAssertEqual(shifted.key?.latin, "O")
+    XCTAssertEqual(shifted.hand, .right)
+    XCTAssertEqual(shifted.finger, .ring)
+    XCTAssertTrue(shifted.requiresShift)
+    XCTAssertEqual(shifted.shiftHand, .left)
+
+    let space = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: " "))
+    XCTAssertNil(space.key)
+    XCTAssertEqual(space.hand, .both)
+    XCTAssertEqual(space.finger, .thumb)
+
+    let homeKeys = PhysicalDubeolsikLayout.rows.joined().filter(\.isHomePosition)
+    XCTAssertEqual(Set(homeKeys.map(\.latin)), Set(["F", "J"]))
+    XCTAssertEqual(Set(homeKeys.map(\.baseJamo)), Set(["ㄹ", "ㅓ"]))
+  }
+
+  func testPhysicalDubeolsikGuideCoversEveryBuiltInBaseAndShiftJamo() {
+    let base = Array("ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔㅁㄴㅇㄹㅎㅗㅓㅏㅣㅋㅌㅊㅍㅠㅜㅡ")
+    let shifted = Array("ㅃㅉㄸㄲㅆㅒㅖ")
+
+    for jamo in base + shifted {
+      XCTAssertNotNil(PhysicalDubeolsikLayout.target(for: jamo), "Missing mapping for \(jamo)")
+    }
+    XCTAssertNil(PhysicalDubeolsikLayout.target(for: "가"))
   }
 
   func testContentReportEmailIncludesOnlyRequiredContext() throws {
@@ -487,7 +619,7 @@ final class AppSettingsTests: XCTestCase {
   func testDeckSuggestionEmailDoesNotInventDeckContext() throws {
     let url = ContentFeedbackLinkBuilder.makeURL(
       context: .suggestion(source: .discover),
-      language: .korean,
+      language: .english,
       appVersion: "1.0.1",
       buildNumber: "4"
     )

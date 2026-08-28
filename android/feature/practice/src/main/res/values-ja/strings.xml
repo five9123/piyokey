@@ -25,4 +25,17 @@
   <string name="practice_ime_open_settings">キーボード設定</string>
   <string name="practice_play_pronunciation">韓国語の発音を再生</string>
   <string name="practice_piyo_accessibility">入力に反応するピヨ</string>
+  <string name="physical_keyboard_hand_left">左手</string>
+  <string name="physical_keyboard_hand_right">右手</string>
+  <string name="physical_keyboard_hand_both">両手</string>
+  <string name="physical_keyboard_finger_little">小指</string>
+  <string name="physical_keyboard_finger_ring">薬指</string>
+  <string name="physical_keyboard_finger_middle">中指</string>
+  <string name="physical_keyboard_finger_index">人差し指</string>
+  <string name="physical_keyboard_finger_thumb">親指</string>
+  <string name="physical_keyboard_space">スペース</string>
+  <string name="physical_keyboard_next_key">次は %1$s（%2$s）</string>
+  <string name="physical_keyboard_finger">%1$sの%2$s</string>
+  <string name="physical_keyboard_shift_finger">%1$sのShift ＋ %2$sの%3$s</string>
+  <string name="physical_keyboard_ready">端末の韓国語2ボル式キーボードで入力しましょう</string>
 </resources>

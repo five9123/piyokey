@@ -3,6 +3,27 @@ import XCTest
 final class HancoUITests: XCTestCase {
   private var app: XCUIApplication!
 
+  // Store captures use real localized UI. All other regression tests stay Japanese.
+  private var storeCaptureLanguage: String {
+    if name.contains("GlobalEN") { return "en" }
+    if name.contains("GlobalKO") { return "ko" }
+    return "ja"
+  }
+
+  private func storeText(_ ja: String, _ en: String, _ ko: String) -> String {
+    switch storeCaptureLanguage {
+    case "en": return en
+    case "ko": return en
+    default: return ja
+    }
+  }
+
+  private func storeScene(_ scene: String, hold: TimeInterval = 0) {
+    guard name.contains("testAppStoreScreenshotGlobal") else { return }
+    print("STORE_SCENE \(scene) \(Date().timeIntervalSince1970)")
+    if hold > 0 { Thread.sleep(forTimeInterval: hold) }
+  }
+
   override func setUp() {
     super.setUp()
     continueAfterFailure = false
@@ -17,12 +38,16 @@ final class HancoUITests: XCTestCase {
     )
     if name.contains("testR11") {
       app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] =
-        name.contains("ImportAndEditor") || name.contains("RestoredDraft") ? "1" : "0"
+        name.contains("ImportAndEditor") || name.contains("RestoredDraft")
+          || name.contains("ProEdits") ? "1" : "0"
     }
     if name.contains("testR11ImportAndEditor") {
       app.launchEnvironment["UITEST_SEED_PIYODECK_CAPTURE"] = "1"
     }
     if name.contains("testR11UserDeckDelete") {
+      app.launchEnvironment["UITEST_SEED_USER_DECK_DELETE"] = "1"
+    }
+    if name.contains("testR11ProEdits") {
       app.launchEnvironment["UITEST_SEED_USER_DECK_DELETE"] = "1"
     }
     if name.contains("testR11DowngradeImport") {
@@ -341,6 +366,65 @@ final class HancoUITests: XCTestCase {
 
     waitForNonexistence(confirmation, timeout: 5)
     waitForNonexistence(deckRow, timeout: 5)
+  }
+
+  func testR11ProEditsDeckSavesAndPersistsAfterRelaunch() {
+    let deckID = "user_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    let savedName = "Pro Saved Deck"
+    let savedMeaning = "Saved meaning"
+
+    app.tabBars.buttons["マイページ"].tap()
+    let actions = app.buttons["my_decks.actions.\(deckID)"]
+    scrollToHittable(actions)
+    actions.tap()
+    let edit = app.buttons["編集"]
+    XCTAssertTrue(edit.waitForExistence(timeout: 3), app.debugDescription)
+    edit.tap()
+
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    let nameField = element("deck_editor.name")
+    XCTAssertTrue(nameField.waitForExistence(timeout: 3))
+    nameField.tap()
+    let nextKeyboard = app.buttons["次のキーボード"]
+    if nextKeyboard.exists, (nextKeyboard.value as? String)?.contains("English") == true {
+      nextKeyboard.tap()
+    }
+    nameField.typeKey("a", modifierFlags: .command)
+    nameField.typeText(savedName)
+    XCTAssertEqual(nameField.value as? String, savedName)
+
+    let meaningField = app.textFields.matching(identifier: "deck_editor.item.0").element(boundBy: 2)
+    XCTAssertTrue(meaningField.waitForExistence(timeout: 3), app.debugDescription)
+    meaningField.tap()
+    meaningField.typeKey("a", modifierFlags: .command)
+    meaningField.typeText(savedMeaning)
+    XCTAssertEqual(meaningField.value as? String, savedMeaning)
+    app.buttons["deck_editor.save"].tap()
+
+    waitForNonexistence(element("deck_editor.screen"), timeout: 5)
+    XCTAssertTrue(app.staticTexts[savedName].waitForExistence(timeout: 5))
+
+    app.terminate()
+    app.launchEnvironment.removeValue(forKey: "UITEST_RESET_DECK_LIBRARY")
+    app.launchEnvironment.removeValue(forKey: "UITEST_SEED_USER_DECK_DELETE")
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["マイページ"].tap()
+    let reloadedActions = app.buttons["my_decks.actions.\(deckID)"]
+    scrollToHittable(reloadedActions)
+    XCTAssertTrue(app.staticTexts[savedName].waitForExistence(timeout: 5))
+    reloadedActions.tap()
+    XCTAssertTrue(app.buttons["編集"].waitForExistence(timeout: 3))
+    app.buttons["編集"].tap()
+
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(element("deck_editor.name").value as? String, savedName)
+    let reloadedMeaning = app.textFields
+      .matching(identifier: "deck_editor.item.0")
+      .element(boundBy: 2)
+    XCTAssertTrue(reloadedMeaning.waitForExistence(timeout: 3), app.debugDescription)
+    XCTAssertEqual(reloadedMeaning.value as? String, savedMeaning)
   }
 
   func testR11DowngradeImportShowsComparisonAndKeepCurrentIsSafePath() {
@@ -681,14 +765,15 @@ final class HancoUITests: XCTestCase {
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
 
-    let automaticSpeech = app.buttons["practice.session_settings.auto_speak"]
+    let automaticSpeech = element("practice.session_settings.auto_speak")
     XCTAssertTrue(automaticSpeech.waitForExistence(timeout: 3))
-    XCTAssertFalse(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "0")
     automaticSpeech.tap()
 
+    app.buttons["practice.session_settings.close"].tap()
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
-    XCTAssertTrue(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "1")
     automaticSpeech.tap()
   }
 
@@ -697,8 +782,9 @@ final class HancoUITests: XCTestCase {
 
     app.buttons["practice.session_settings"].tap()
     app.buttons["practice.session_settings.display"].tap()
-    app.buttons["practice.session_settings.order"].tap()
+    element("practice.session_settings.order").tap()
     app.buttons["日本語の意味 → お題を表示 → 日本語式の読み方"].tap()
+    app.buttons["practice.session_settings.close"].tap()
 
     let meaning = element("practice.meaning.value")
     let target = element("practice.target.value")
@@ -832,6 +918,62 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(restoredField.waitForExistence(timeout: 5))
     restoredField.typeText("해")
     waitForValue("사랑해", on: restoredField, timeout: 3)
+  }
+
+  func testOSIMEHardwareStyleDeleteAndReturnKeepAcceptedPrefixAligned() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사랑")
+    waitForValue("사랑", on: imeField, timeout: 3)
+
+    imeField.typeText(XCUIKeyboardKey.delete.rawValue)
+    waitForValue("사", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+
+    imeField.typeText("\n")
+    imeField.typeText("랑해")
+    waitForValue("사랑해", on: imeField, timeout: 3)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사랑해")
+  }
+
+
+  func testOSIMESessionSettingsPreservesProgressAndRestoresFocus() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사")
+    waitForValue("사", on: imeField, timeout: 3)
+
+    for _ in 0..<3 {
+      app.buttons["practice.session_settings"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+      app.buttons["practice.session_settings.close"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForNonExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+    }
+
+    imeField.typeText("랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
   }
 
   func testHomeRecommendationsOpenDeckDetail() {
@@ -1741,6 +1883,63 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(element("choseong.question.value").label, "1/10")
   }
 
+  func testChoseongAndWordMatchShareThreeQuestionPronunciationHintBudget() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, audioProbe: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["さがす"].tap()
+    let search = app.textFields["discover.search"]
+    XCTAssertTrue(search.waitForExistence(timeout: 5))
+    search.tap()
+    search.typeText("毎日の韓国語")
+    let deckCard = element("discover.deck.official_daily_words")
+    XCTAssertTrue(deckCard.waitForExistence(timeout: 3))
+    deckCard.tap()
+    app.buttons["deck.detail.download"].tap()
+    XCTAssertTrue(app.buttons["deck.detail.play"].waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.choseong"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    element("game.choseong.preset.beginner").tap()
+    XCTAssertTrue(element("choseong.play.screen").waitForExistence(timeout: 5))
+
+    let choseongHint = app.buttons["choseong.pronunciation_hint"]
+    XCTAssertTrue(choseongHint.waitForExistence(timeout: 3))
+    XCTAssertTrue(choseongHint.label.contains("残り3問"))
+    let pronunciationStarts = element("debug.pronunciation.start_count")
+    XCTAssertTrue(pronunciationStarts.waitForExistence(timeout: 3))
+    let initialStartCount = pronunciationStarts.label
+    choseongHint.tap()
+    waitForLabelContaining("残り2問", on: choseongHint, timeout: 3)
+    waitForLabelDifferentFrom(initialStartCount, on: pronunciationStarts, timeout: 3)
+    let firstHintStartCount = pronunciationStarts.label
+    choseongHint.tap()
+    waitForLabelContaining("残り2問", on: choseongHint, timeout: 3)
+    waitForLabelDifferentFrom(firstHintStartCount, on: pronunciationStarts, timeout: 3)
+
+    app.buttons["game.end"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    app.navigationBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.word_match"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    element("game.word_match.preset.beginner").tap()
+    XCTAssertTrue(element("word_match.play.screen").waitForExistence(timeout: 5))
+
+    let wordMatchHint = app.buttons["word_match.pronunciation_hint"]
+    let hintReady = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "isHittable == true"),
+      object: wordMatchHint
+    )
+    XCTAssertEqual(XCTWaiter.wait(for: [hintReady], timeout: 5), .completed)
+    XCTAssertTrue(wordMatchHint.label.contains("残り3問"))
+    wordMatchHint.tap()
+    waitForLabelContaining("残り2問", on: wordMatchHint, timeout: 3)
+    XCTAssertFalse(app.buttons["dictation.pronunciation_hint"].exists)
+  }
+
   func testDictationUsesAudioOnlyPromptAndCompletesTypedAnswer() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, deckItemLimit: 1)
@@ -1891,6 +2090,7 @@ final class HancoUITests: XCTestCase {
       ("학교", "ㅎㅏㄱㄱㅛ"),
       ("사진", "ㅅㅏㅈㅣㄴ"),
     ]
+    storeScene("practice")
     for target in dailyTargets.prefix(2) {
       waitForLabel(target.word, on: element("practice.target.value"), timeout: 3)
       typeBuiltInKeys(target.keys)
@@ -1907,21 +2107,23 @@ final class HancoUITests: XCTestCase {
       typeBuiltInKeys(target.keys)
     }
     XCTAssertTrue(element("practice.result.screen").waitForExistence(timeout: 5))
+    storeScene("result", hold: 4.5)
     let done = app.buttons["result.done"]
     XCTAssertTrue(done.waitForExistence(timeout: 3))
     done.tap()
 
     let myPiyoCard = element("home.my_piyo_card")
     XCTAssertTrue(myPiyoCard.waitForExistence(timeout: 5))
-    waitForValueContaining("4日連続, 4 / 7", on: myPiyoCard, timeout: 3)
+    waitForValueContaining(storeText("4日連続", "4-day streak", "4일 연속"), on: myPiyoCard, timeout: 3)
     attachScreenshot(named: "appstore-current-attendance-home-ja")
+    storeScene("home", hold: 4)
 
     myPiyoCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
-    XCTAssertTrue(app.navigationBars["MY ピヨ"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.navigationBars[storeText("MY ピヨ", "MY PIYO", "MY 피요")].waitForExistence(timeout: 5))
     XCTAssertTrue(element("my_piyo.detail.screen").exists)
     XCTAssertTrue(element("my_piyo.detail.stamps").exists)
     attachScreenshot(named: "appstore-current-rewards-ja")
-    app.navigationBars["MY ピヨ"].buttons.firstMatch.tap()
+    app.navigationBars[storeText("MY ピヨ", "MY PIYO", "MY 피요")].buttons.firstMatch.tap()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
     openPracticeTab()
@@ -1935,13 +2137,14 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("mascot.current").exists)
     waitForValue("2 / 3", on: element("practice.jamo_progress.value"), timeout: 3)
     attachScreenshot(named: "appstore-current-curriculum-mission-ja")
-    app.buttons["練習を終了する"].tap()
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
   }
 
   func testAppStoreScreenshotGamesShowCurrentProgressWithChick() {
-    app.tabBars.buttons["ゲーム"].tap()
+    app.tabBars.buttons[storeText("ゲーム", "Game", "게임")].tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
+    storeScene("game-hub", hold: 3.5)
 
     app.buttons["game.mode.flow"].tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
@@ -1950,6 +2153,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("game.mascot").exists)
     let flowWords = ["ㄴㅏ", "ㄴㅓ", "ㅂㅣ", "ㄱㅣㄹ", "ㄴㅜㄴ"]
     let flowScores = ["20", "40", "60", "90", "126"]
+    storeScene("flow")
     for (word, score) in zip(flowWords, flowScores) {
       typeBuiltInKeys(word)
       waitForLabel(score, on: element("game.score.value"), timeout: 3)
@@ -1968,6 +2172,7 @@ final class HancoUITests: XCTestCase {
       identifier: "acid_rain.falling_card"
     )
     XCTAssertTrue(fallingCards.element(boundBy: 1).waitForExistence(timeout: 5))
+    storeScene("acid-rain")
     let acidRainTarget = element("acid_rain.target.value").label
     let acidRainKeys = [
       "나": "ㄴㅏ",
@@ -2028,6 +2233,37 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(choseongNextKeys.isEmpty)
     typeBuiltInKeys(String(choseongNextKeys.prefix(1)))
     attachScreenshot(named: "appstore-current-choseong-ja")
+  }
+
+  func testAppStoreScreenshotGlobalJA() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalEN() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalKO() { captureGlobalStoreAssets() }
+
+  private func captureGlobalStoreAssets() {
+    testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick()
+    testAppStoreScreenshotGamesShowCurrentProgressWithChick()
+    returnToGameHub()
+
+    // The 1.1 editor is a paid feature; the marketing overlay discloses Pro.
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    app.tabBars.buttons[storeText("マイページ", "Profile", "마이페이지")].tap()
+    let createDeck = app.buttons["my_decks.create"]
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    attachScreenshot(named: "appstore-current-editor-ja")
+
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+    attachScreenshot(named: "appstore-current-tenkey-ja")
   }
 
   func testAppPreviewJapaneseFlowShowsMascotAndCompletesFirstCard() {
@@ -2178,7 +2414,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
     app.buttons["onboarding.next"].tap()  // Tap 3
 
-    XCTAssertTrue(element("onboarding.lesson.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
     XCTAssertEqual(element("onboarding.lesson.target.value").label, "가")
     app.buttons["keyboard.key.ㄱ"].tap()  // Tap 4: first actual input
     XCTAssertEqual(element("onboarding.lesson.entered.value").value as? String, "ㄱ")
@@ -2213,6 +2449,43 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("onboarding.goal.screen").exists)
+  }
+
+  func testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 1,
+      koreanKeyboardAvailable: true,
+      showsOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.goal.screen").waitForExistence(timeout: 5))
+    app.buttons["onboarding.goal.keyboard"].tap()  // Interaction 1
+    app.buttons["onboarding.next"].tap()  // Interaction 2
+    XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
+    app.buttons["onboarding.input_device.hardware"].tap()  // Interaction 3
+
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").waitForExistence(timeout: 3))
+    let firstInput = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(firstInput.waitForExistence(timeout: 3))
+    firstInput.typeText("가")  // Interaction 4: first real input
+
+    XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
+    let finish = app.buttons["onboarding.finish"]
+    scrollToHittable(finish)
+    finish.tap()
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+
+    let firstMission = app.buttons["ミッション1をはじめる"]
+    scrollToHittable(firstMission)
+    firstMission.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").exists)
+    XCTAssertFalse(element("keyboard.view").exists)
   }
 
   func testFirstHatchResultContinuesToSecondMissionWithoutRetry() {
@@ -2414,6 +2687,84 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
   }
 
+  func testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This adaptive rotation gate runs on iPad-sized destinations")
+    }
+
+    XCUIDevice.shared.orientation = .portrait
+    let homeScreen = element("home.screen")
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-portrait-ja")
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-landscape-ja")
+
+    XCUIDevice.shared.orientation = .portrait
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+  }
+
+  func testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This adaptive session gate runs on iPad-sized destinations")
+    }
+
+    XCUIDevice.shared.orientation = .portrait
+    startPractice()
+    let target = element("practice.target.value")
+    let progress = element("practice.jamo_progress.value")
+    let mistakes = element("practice.mistakes.value")
+    XCTAssertEqual(target.label, "사랑해요")
+    XCTAssertEqual(progress.value as? String, "0 / 9")
+    XCTAssertEqual(mistakes.value as? String, "0")
+
+    app.buttons["keyboard.key.ㅅ"].tap()
+    waitForValue("1 / 9", on: progress, timeout: 3)
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    XCTAssertTrue(target.waitForExistence(timeout: 5))
+    waitForValue("1 / 9", on: progress, timeout: 5)
+    XCTAssertEqual(target.label, "사랑해요")
+    XCTAssertEqual(mistakes.value as? String, "0")
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+    attachScreenshot(named: "ipad-practice-landscape-active-ja")
+
+    XCUIDevice.shared.orientation = .portrait
+    XCTAssertTrue(target.waitForExistence(timeout: 5))
+    waitForValue("1 / 9", on: progress, timeout: 5)
+    XCTAssertEqual(target.label, "사랑해요")
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+  }
+
+  func testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This accessibility layout gate runs on iPad-sized destinations")
+    }
+
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    waitForValue("accessibility", on: element("debug.dynamic_type"), timeout: 3)
+    XCTAssertTrue(element("settings.font_preview").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.buttons["settings.done"].isHittable)
+    attachScreenshot(named: "ipad-settings-accessibility-xxxl-ja")
+    app.buttons["settings.done"].tap()
+
+    openFreePracticeSetup()
+    let start = app.buttons["practice.start"]
+    scrollToHittable(start)
+    XCTAssertTrue(start.isHittable)
+    start.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].isHittable)
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+  }
+
   func testAppTourBackgroundTapAdvancesAndNextButtonDoesNotDoubleAdvance() {
     app.terminate()
     app = makeApplication(
@@ -2529,12 +2880,67 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(persistedSound.value as? String, "0")
     XCTAssertTrue(app.buttons["Soft"].isSelected)
 
-    let korean = app.buttons["한국어"]
-    scrollToHittable(korean, direction: .down)
-    korean.tap()
-    XCTAssertTrue(app.navigationBars["설정"].waitForExistence(timeout: 5))
-    XCTAssertFalse(app.tabBars.buttons["설정"].exists)
-    XCTAssertTrue(app.tabBars.buttons["홈"].exists)
+    let japanese = app.buttons["日本語"]
+    scrollToHittable(japanese, direction: .down)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+    japanese.tap()
+    XCTAssertTrue(app.navigationBars["設定"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.tabBars.buttons["ホーム"].exists)
+  }
+
+  func testSpanishDeviceLanguageSwitchAndPersistence() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments.replaceSubrange(0..<4, with: [
+      "-AppleLanguages", "(es-MX)", "-AppleLocale", "es_MX",
+    ])
+    app.launch()
+    XCTAssertTrue(app.buttons["Inicio"].firstMatch.waitForExistence(timeout: 8))
+    attachScreenshot(named: "spanish-home")
+    openSettings()
+    XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
+    let spanish = app.buttons["Español"]
+    scrollSettingsLanguageIntoView(spanish)
+    XCTAssertTrue(spanish.isSelected)
+    attachScreenshot(named: "spanish-settings")
+    app.buttons["English"].tap()
+    XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+    scrollSettingsLanguageIntoView(app.buttons["Español"])
+    app.buttons["Español"].tap()
+    XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
+    app.buttons["settings.done"].tap()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launch()
+    XCTAssertTrue(app.buttons["Inicio"].firstMatch.waitForExistence(timeout: 8))
+    app.buttons["Práctica"].firstMatch.tap()
+    XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+    openSettings()
+    scrollSettingsLanguageIntoView(app.buttons["Español"])
+    XCTAssertTrue(app.buttons["Español"].isSelected)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+  }
+
+  func testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments.replaceSubrange(0..<4, with: [
+      "-AppleLanguages", "(ko)", "-AppleLocale", "ko_KR",
+    ])
+    app.launchArguments += ["-settings.language", "ko"]
+    app.launch()
+    XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 5))
+    openSettings()
+    XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+    let english = app.buttons["English"]
+    scrollToHittable(english)
+    XCTAssertTrue(english.exists)
+    XCTAssertTrue(app.buttons["日本語"].exists)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+    app.buttons["settings.done"].tap()
+    app.tabBars.buttons["Practice"].tap()
+    XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(app.tabBars.buttons["연습"].exists)
   }
 
   func testPrivacyChoicesAreOptionalIndependentAndShownOncePerNoticeVersion() {
@@ -2638,7 +3044,12 @@ final class HancoUITests: XCTestCase {
     seedsFutureCurriculumSchema: Bool = false
   ) -> XCUIApplication {
     let application = XCUIApplication()
-    application.launchArguments += ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+    let captureLocale = ["ja": "ja_JP", "en": "en_US", "ko": "ko_KR"][storeCaptureLanguage]!
+    application.launchArguments += ["-AppleLanguages", "(\(storeCaptureLanguage))", "-AppleLocale", captureLocale]
+    if name.contains("testAppStoreScreenshotGlobal") {
+      application.launchArguments += ["-settings.language", storeCaptureLanguage]
+      application.launchArguments += ["-mascot.name", storeText("ピヨ", "Piyo", "피요")]
+    }
     if resetKeyboardPreferences {
       application.launchEnvironment["UITEST_RESET_KEYBOARD_PREFERENCES"] = "1"
       application.launchEnvironment["UITEST_RESET_DECK_LIBRARY"] = "1"
@@ -2715,25 +3126,48 @@ final class HancoUITests: XCTestCase {
   private func startPractice() {
     openFreePracticeSetup()
     let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    start.tap()
+    scrollAndTap(start)
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func assertBuiltInKeyboardIsCenteredWithinIPadCap(
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let leftKey = app.buttons["keyboard.key.ㅂ"]
+    let rightKey = app.buttons["keyboard.key.ㅔ"]
+    XCTAssertTrue(leftKey.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(rightKey.exists, file: file, line: line)
+    let keyboardMinX = leftKey.frame.minX
+    let keyboardMaxX = rightKey.frame.maxX
+    XCTAssertLessThanOrEqual(keyboardMaxX - keyboardMinX, 820, file: file, line: line)
+    XCTAssertEqual(
+      (keyboardMinX + keyboardMaxX) / 2,
+      app.frame.midX,
+      accuracy: 18,
+      file: file,
+      line: line
+    )
   }
 
   private func openFreePracticeSetup() {
     openPracticeTab()
-    let freePractice = element("curriculum.free_practice")
-    scrollToHittable(freePractice)
-    freePractice.tap()
+    scrollAndTap(element("curriculum.free_practice"))
     XCTAssertTrue(app.buttons["practice.start"].waitForExistence(timeout: 5))
   }
 
   private func openPracticeTab() {
     guard !element("curriculum.map.screen").exists else { return }
-    let practice = app.tabBars.buttons["練習"]
+    let practice = app.buttons[storeText("練習", "Practice", "연습")].firstMatch
     XCTAssertTrue(practice.waitForExistence(timeout: 3))
     practice.tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+  }
+
+  private func adaptiveWidthClass(for width: CGFloat) -> String {
+    if width < 600 { return "compact" }
+    if width < 900 { return "medium" }
+    return "wide"
   }
 
   private func openSettings() {
@@ -2769,7 +3203,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(end.waitForExistence(timeout: 3))
     end.tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
-    let gameBack = app.navigationBars.buttons["ゲーム"]
+    let gameBack = app.navigationBars.buttons[storeText("ゲーム", "Game", "게임")]
     XCTAssertTrue(gameBack.waitForExistence(timeout: 3))
     gameBack.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
@@ -2780,25 +3214,77 @@ final class HancoUITests: XCTestCase {
     case down
   }
 
+  private func scrollSettingsLanguageIntoView(_ target: XCUIElement) {
+    let surface = app.scrollViews["settings.screen"]
+    XCTAssertTrue(surface.waitForExistence(timeout: 3))
+    // iPad sheet children can report hittable even above the sheet. Keep the
+    // language segment inside the scroll viewport and below its navigation bar.
+    func visibleFrame() -> CGRect {
+      let frame = surface.frame.intersection(app.frame)
+      let navigationBottom = app.navigationBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.intersects(frame) }
+        .map { $0.frame.maxY }.max() ?? frame.minY
+      return CGRect(x: frame.minX, y: max(frame.minY, navigationBottom),
+                    width: frame.width, height: frame.maxY - max(frame.minY, navigationBottom))
+        .insetBy(dx: 8, dy: 12)
+    }
+    for _ in 0..<16 {
+      if target.exists && target.isHittable && visibleFrame().contains(target.frame) { return }
+      let movesDown = target.exists && target.frame.midY < visibleFrame().midY
+      let start = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55))
+      let end = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: movesDown ? 0.75 : 0.35))
+      start.press(forDuration: 0.05, thenDragTo: end)
+    }
+    XCTFail("Language picker is not inside the settings viewport: \(app.debugDescription)")
+  }
+
   private func scrollToHittable(
     _ target: XCUIElement,
     direction: ScrollDirection = .up,
     maximumSwipes: Int = 12
   ) {
     for _ in 0..<maximumSwipes where !target.exists {
-      switch direction {
-      case .up: app.swipeUp()
-      case .down: app.swipeDown()
-      }
+      scrollVisibleSurface(direction)
     }
     XCTAssertTrue(target.waitForExistence(timeout: 3), app.debugDescription)
     for _ in 0..<maximumSwipes where !isFullyVisible(target) {
-      switch direction {
-      case .up: app.swipeUp()
-      case .down: app.swipeDown()
-      }
+      scrollVisibleSurface(direction)
     }
     XCTAssertTrue(isFullyVisible(target), app.debugDescription)
+  }
+
+  private func scrollVisibleSurface(_ direction: ScrollDirection) {
+    let visibleScrollView = app.scrollViews.allElementsBoundByIndex.first {
+      $0.exists && $0.isHittable
+    }
+    let surface: XCUIElement
+    if let visibleScrollView {
+      surface = visibleScrollView
+    } else {
+      surface = app
+    }
+    switch direction {
+    case .up: surface.swipeUp()
+    case .down: surface.swipeDown()
+    }
+  }
+
+  private func scrollAndTap(
+    _ target: XCUIElement,
+    direction: ScrollDirection = .up,
+    maximumSwipes: Int = 12
+  ) {
+    XCTAssertTrue(target.waitForExistence(timeout: 3), app.debugDescription)
+    for _ in 0..<maximumSwipes where !target.isHittable {
+      scrollVisibleSurface(direction)
+    }
+    if target.isHittable {
+      target.tap()
+    } else {
+      let windowFrame = app.windows.element(boundBy: 0).frame.insetBy(dx: 8, dy: 8)
+      XCTAssertTrue(windowFrame.intersects(target.frame), app.debugDescription)
+      target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
   }
 
   private func isFullyVisible(_ target: XCUIElement) -> Bool {
@@ -2821,6 +3307,25 @@ final class HancoUITests: XCTestCase {
 
     let current = identifier.isEmpty ? element : self.element(identifier)
     XCTFail("Timed out waiting for \(identifier) label \(label); current label is \(current.label)")
+  }
+
+  private func waitForLabelContaining(
+    _ text: String,
+    on element: XCUIElement,
+    timeout: TimeInterval
+  ) {
+    let identifier = element.identifier
+    let deadline = Date().addingTimeInterval(timeout)
+    repeat {
+      let current = identifier.isEmpty ? element : self.element(identifier)
+      if current.exists, current.label.contains(text) { return }
+      RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+    } while Date() < deadline
+
+    let current = identifier.isEmpty ? element : self.element(identifier)
+    XCTFail(
+      "Timed out waiting for \(identifier) label containing \(text); current label is \(current.label)"
+    )
   }
 
   private func waitForNonexistence(_ element: XCUIElement, timeout: TimeInterval) {
@@ -2898,7 +3403,8 @@ final class HancoUITests: XCTestCase {
 
   private func attachScreenshot(named name: String) {
     let attachment = XCTAttachment(screenshot: app.screenshot())
-    attachment.name = name
+    attachment.name = self.name.contains("testAppStoreScreenshotGlobal")
+      ? name.replacingOccurrences(of: "-ja", with: "-\(storeCaptureLanguage)") : name
     attachment.lifetime = .keepAlways
     add(attachment)
   }

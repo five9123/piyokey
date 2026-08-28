@@ -214,6 +214,46 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(unsupported.acceptedSequence, Array("ㄱㅏ"))
   }
 
+  func testOSIMEPhysicalKeyboardSnapshotsPreserveSpaceBackspaceAndMarkedCommit() throws {
+    let composing = try OSIMETextJudge.evaluate(
+      target: "한국 사람",
+      committedText: "한국 ",
+      markedText: "사"
+    )
+    XCTAssertEqual(
+      composing,
+      OSIMETextEvaluation(
+        status: .matching(completed: false, isComposing: true),
+        acceptedSequence: Array("ㅎㅏㄴㄱㅜㄱ ㅅㅏ")
+      )
+    )
+
+    let committed = try OSIMETextJudge.evaluate(
+      target: "한국 사람",
+      committedText: "한국 사"
+    )
+    XCTAssertEqual(committed.acceptedSequence, composing.acceptedSequence)
+    XCTAssertEqual(committed.status, .matching(completed: false, isComposing: false))
+
+    let backspaced = try OSIMETextJudge.evaluate(
+      target: "한국 사람",
+      committedText: "한국 "
+    )
+    XCTAssertEqual(
+      backspaced,
+      OSIMETextEvaluation(
+        status: .matching(completed: false, isComposing: false),
+        acceptedSequence: Array("ㅎㅏㄴㄱㅜㄱ ")
+      )
+    )
+
+    let completed = try OSIMETextJudge.evaluate(
+      target: "한국 사람",
+      committedText: "한국 사람"
+    )
+    XCTAssertEqual(completed.status, .matching(completed: true, isComposing: false))
+  }
+
   private func loadVectors() throws -> SharedTestVectors {
     let url = try RepositoryFixtureLocator.file("shared/test_vectors.json", from: #filePath)
     return try JSONDecoder().decode(SharedTestVectors.self, from: Data(contentsOf: url))

@@ -3,7 +3,7 @@
   "cases": [
     {
       "id": "canonical-basic",
-      "path": "valid/basic.piyodeck",
+      "path": "valid/basic.typedeck",
       "valid": true,
       "expectation": "accepted_canonical",
       "size_bytes": 1109,
@@ -11,7 +11,7 @@
     },
     {
       "id": "pretty-basic",
-      "path": "valid/pretty-basic.piyodeck",
+      "path": "valid/pretty-basic.typedeck",
       "valid": true,
       "expectation": "accepted_noncanonical",
       "size_bytes": 1345,
@@ -19,7 +19,7 @@
     },
     {
       "id": "wrong-sha",
-      "path": "invalid/wrong-sha.piyodeck",
+      "path": "invalid/wrong-sha.typedeck",
       "valid": false,
       "expectation": "sha256_mismatch",
       "size_bytes": 1109,
@@ -27,7 +27,7 @@
     },
     {
       "id": "unpaired-surrogate",
-      "path": "invalid/unpaired-surrogate.piyodeck",
+      "path": "invalid/unpaired-surrogate.typedeck",
       "valid": false,
       "expectation": "invalid_json",
       "size_bytes": 1085,
@@ -35,7 +35,7 @@
     },
     {
       "id": "bom-deck",
-      "path": "invalid/bom-deck.piyodeck",
+      "path": "invalid/bom-deck.typedeck",
       "valid": false,
       "expectation": "invalid_json",
       "size_bytes": 1112,
@@ -43,7 +43,7 @@
     },
     {
       "id": "duplicate-key",
-      "path": "invalid/duplicate-key.piyodeck",
+      "path": "invalid/duplicate-key.typedeck",
       "valid": false,
       "expectation": "invalid_json",
       "size_bytes": 1121,
@@ -51,7 +51,7 @@
     },
     {
       "id": "future-version",
-      "path": "invalid/future-version.piyodeck",
+      "path": "invalid/future-version.typedeck",
       "valid": false,
       "expectation": "unsupported_version",
       "size_bytes": 1109,
@@ -59,7 +59,7 @@
     },
     {
       "id": "encrypted",
-      "path": "invalid/encrypted.piyodeck",
+      "path": "invalid/encrypted.typedeck",
       "valid": false,
       "expectation": "unsupported_archive_feature",
       "size_bytes": 1109,
@@ -67,7 +67,7 @@
     },
     {
       "id": "data-descriptor",
-      "path": "invalid/data-descriptor.piyodeck",
+      "path": "invalid/data-descriptor.typedeck",
       "valid": false,
       "expectation": "unsupported_archive_feature",
       "size_bytes": 1109,
@@ -75,7 +75,7 @@
     },
     {
       "id": "deflate-method",
-      "path": "invalid/deflate-method.piyodeck",
+      "path": "invalid/deflate-method.typedeck",
       "valid": false,
       "expectation": "unsupported_archive_feature",
       "size_bytes": 1109,
@@ -83,7 +83,7 @@
     },
     {
       "id": "zip64",
-      "path": "invalid/zip64.piyodeck",
+      "path": "invalid/zip64.typedeck",
       "valid": false,
       "expectation": "unsupported_archive_feature",
       "size_bytes": 1109,
@@ -91,7 +91,7 @@
     },
     {
       "id": "header-mismatch",
-      "path": "invalid/header-mismatch.piyodeck",
+      "path": "invalid/header-mismatch.typedeck",
       "valid": false,
       "expectation": "malformed_archive",
       "size_bytes": 1109,
@@ -99,7 +99,7 @@
     },
     {
       "id": "crc-mismatch",
-      "path": "invalid/crc-mismatch.piyodeck",
+      "path": "invalid/crc-mismatch.typedeck",
       "valid": false,
       "expectation": "crc_mismatch",
       "size_bytes": 1109,
@@ -107,7 +107,7 @@
     },
     {
       "id": "unsafe-path",
-      "path": "invalid/unsafe-path.piyodeck",
+      "path": "invalid/unsafe-path.typedeck",
       "valid": false,
       "expectation": "unsafe_entry_path",
       "size_bytes": 1109,
@@ -115,7 +115,7 @@
     },
     {
       "id": "hidden-preamble",
-      "path": "invalid/hidden-preamble.piyodeck",
+      "path": "invalid/hidden-preamble.typedeck",
       "valid": false,
       "expectation": "malformed_archive",
       "size_bytes": 1115,

@@ -395,10 +395,17 @@ fun PracticeScreen(
           options = keyboardOptions,
         )
       } else {
+        if (keyboardOptions.showsPhysicalKeyboardGuide) {
+          PhysicalKeyboardGuide(
+            nextExpectedJamo = state.nextExpected,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+          )
+        }
         OSIMEInput(
           visibleText = state.enteredText,
           onEvent = onEvent,
           modifier = Modifier.fillMaxWidth().height(1.dp),
+          showSoftwareKeyboard = !keyboardOptions.showsPhysicalKeyboardGuide,
         )
       }
     }

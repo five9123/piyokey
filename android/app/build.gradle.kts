@@ -23,9 +23,9 @@ val configuredVersionCode = releaseInput("PIYOKEY_VERSION_CODE").orElse("8").map
 val configuredVersionName = releaseInput("PIYOKEY_VERSION_NAME").orElse("1.1.0")
 val configuredCatalogUrl = releaseInput("PIYOKEY_CATALOG_URL").orElse("")
 val configuredPrivacyUrl = releaseInput("PIYOKEY_PRIVACY_URL")
-  .orElse("https://hancoweb.vercel.app/privacy")
+  .orElse("https://typee.app/privacy")
 val configuredSupportUrl = releaseInput("PIYOKEY_SUPPORT_URL")
-  .orElse("https://hancoweb.vercel.app/support")
+  .orElse("https://typee.app/support")
 val configuredPostHogToken = releaseInput("PIYOKEY_POSTHOG_PROJECT_TOKEN").orElse("")
 val configuredPostHogHost = releaseInput("PIYOKEY_POSTHOG_HOST")
   .orElse("https://eu.i.posthog.com")
@@ -60,6 +60,11 @@ val generatePiyokeyBrandResources by tasks.registering(Sync::class) {
 android {
   namespace = "app.piyokey.piyokey"
   compileSdk = 37
+
+  androidResources {
+    // Keep legacy learning strings in source, but ship only supported UI locales.
+    localeFilters += listOf("en", "ja", "es")
+  }
 
   defaultConfig {
     applicationId = configuredApplicationId.get()

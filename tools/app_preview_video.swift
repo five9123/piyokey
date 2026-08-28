@@ -2,6 +2,7 @@
 
 import AppKit
 import AVFoundation
+import AudioToolbox
 import CoreMedia
 import Foundation
 
@@ -30,6 +31,26 @@ private enum AppPreviewVideoError: Error, CustomStringConvertible {
 
 private func validateDecode(asset: AVAsset) throws {
   let info = try videoInfo(asset)
+  guard info.duration >= 15, info.duration <= 30.1,
+    info.size == targetSize, abs(info.track.nominalFrameRate - 30) < 0.01
+  else {
+    throw AppPreviewVideoError.validationFailed("Expected 15–30 seconds, 886×1920, 30 fps")
+  }
+  guard let format = info.track.formatDescriptions.first,
+    CMFormatDescriptionGetMediaSubType(format as! CMFormatDescription) == kCMVideoCodecType_H264
+  else { throw AppPreviewVideoError.validationFailed("Expected H.264 video") }
+  let audio = asset.tracks(withMediaType: .audio)
+  guard audio.count == 1, audio[0].isEnabled,
+    let audioFormat = audio[0].formatDescriptions.first,
+    let stream = CMAudioFormatDescriptionGetStreamBasicDescription(audioFormat as! CMAudioFormatDescription)?.pointee,
+    stream.mFormatID == kAudioFormatMPEG4AAC,
+    stream.mChannelsPerFrame == 2,
+    stream.mSampleRate == 48_000 || stream.mSampleRate == 44_100
+  else { throw AppPreviewVideoError.validationFailed("Expected enabled stereo AAC at 44.1/48 kHz") }
+  print("video_codec=h264")
+  print("audio_codec=aac")
+  print("audio_channels=\(stream.mChannelsPerFrame)")
+  print("audio_sample_rate=\(Int(stream.mSampleRate))")
   let reader = try AVAssetReader(asset: asset)
   let output = AVAssetReaderTrackOutput(
     track: info.track,

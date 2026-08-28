@@ -93,6 +93,7 @@ private struct DeckDeletionFailure: Identifiable {
 }
 
 struct MyPageView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.openRootSettings) private var openSettings
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
@@ -124,15 +125,15 @@ struct MyPageView: View {
   var body: some View {
     NavigationStack {
       ScrollView {
-        LazyVStack(spacing: 16) {
-          profileCard
-            .appTourTarget(.myPageProfile)
-          growthRecordCard
-          learningInsightsCard
-          settingsCard
-          deckLibrarySection
-        }
-        .padding(18)
+        pageContent
+          .frame(
+            maxWidth: adaptiveMetrics.usesTwoColumnDashboard
+              ? adaptiveMetrics.hubContentMaxWidth
+              : adaptiveMetrics.readableContentMaxWidth
+          )
+          .frame(maxWidth: .infinity)
+          .padding(.horizontal, adaptiveMetrics.horizontalPadding)
+          .padding(.vertical, 18)
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .onAppear { isPageVisible = true }
@@ -298,6 +299,39 @@ struct MyPageView: View {
       }
       .onChange(of: documentCoordinator.candidate?.id) { candidateID in
         if candidateID == nil { restoreDraftIfAvailable() }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var pageContent: some View {
+    if adaptiveMetrics.usesTwoColumnDashboard {
+      LazyVStack(spacing: 16) {
+        HStack(alignment: .top, spacing: 16) {
+          VStack(spacing: 16) {
+            profileCard
+              .appTourTarget(.myPageProfile)
+            growthRecordCard
+          }
+          .frame(maxWidth: .infinity, alignment: .top)
+
+          VStack(spacing: 16) {
+            settingsCard
+            learningInsightsCard
+          }
+          .frame(maxWidth: .infinity, alignment: .top)
+        }
+
+        deckLibrarySection
+      }
+    } else {
+      LazyVStack(spacing: 16) {
+        profileCard
+          .appTourTarget(.myPageProfile)
+        growthRecordCard
+        learningInsightsCard
+        settingsCard
+        deckLibrarySection
       }
     }
   }

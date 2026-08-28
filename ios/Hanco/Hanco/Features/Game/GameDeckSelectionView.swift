@@ -168,6 +168,7 @@ enum FlowGameCourse: String, Codable, Equatable {
 }
 
 struct GameDeckSelectionView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var gameCenter: GameCenterService
 
   let onFindDecks: () -> Void
@@ -180,10 +181,10 @@ struct GameDeckSelectionView: View {
           piyoCupCard
 
           LazyVGrid(
-            columns: [
-              GridItem(.flexible(), spacing: 14),
-              GridItem(.flexible(), spacing: 14),
-            ],
+            columns: Array(
+              repeating: GridItem(.flexible(), spacing: 14),
+              count: adaptiveMetrics.hubColumnCount
+            ),
             alignment: .center,
             spacing: 14
           ) {
@@ -207,7 +208,10 @@ struct GameDeckSelectionView: View {
             .accessibilityIdentifier("game.mode.spacing")
           }
         }
-        .padding(18)
+        .frame(maxWidth: adaptiveMetrics.hubContentMaxWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, adaptiveMetrics.horizontalPadding)
+        .padding(.vertical, 18)
         .accessibilityIdentifier("game.mode.grid")
       }
       .background(gameBackground)
@@ -368,6 +372,7 @@ struct GameDeckSelectionView: View {
 
 private struct GameDeckListView: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
 
@@ -393,6 +398,7 @@ private struct GameDeckListView: View {
         }
       }
       .padding(18)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .background(
       LinearGradient(

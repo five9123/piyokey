@@ -81,6 +81,33 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertIn("Game Center availability IDs must be unique", messages)
         self.assertTrue(any("piyokey.unknown.board" in message for message in messages))
 
+    def test_ios_universal_contract_is_repository_valid(self):
+        project = (ROOT / "ios/Hanco/Hanco.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+        info = release_preflight.load_plist(ROOT / "ios/Hanco/Hanco/Resources/Info.plist")
+        self.assertEqual(release_preflight.ios_universal_contract_findings(project, info), [])
+
+    def test_ios_universal_contract_rejects_device_orientation_and_window_drift(self):
+        project = "TARGETED_DEVICE_FAMILY = 1;"
+        info = {
+            "UISupportedInterfaceOrientations": [
+                "UIInterfaceOrientationPortrait",
+                "UIInterfaceOrientationLandscapeLeft",
+            ],
+            "UISupportedInterfaceOrientations~ipad": ["UIInterfaceOrientationPortrait"],
+            "UIRequiresFullScreen": True,
+        }
+        messages = {
+            finding.message
+            for finding in release_preflight.ios_universal_contract_findings(project, info)
+        }
+        self.assertTrue(any("iPhone and iPad device families" in message for message in messages))
+        self.assertTrue(any("iPhone orientations must remain portrait-only" in message for message in messages))
+        self.assertTrue(any("iPad must declare all four" in message for message in messages))
+        self.assertIn(
+            "UIRequiresFullScreen must remain absent for iPad multitasking and resizable windows",
+            messages,
+        )
+
     def test_store_metadata_respects_apple_field_limits(self):
         messages = {finding.message for finding in release_preflight.repository_checks(ROOT)}
         self.assertFalse(any("store field" in message for message in messages))
@@ -95,7 +122,8 @@ class ReleasePreflightTests(unittest.TestCase):
         source = json.loads((ROOT / "release/global_app_store_metadata.json").read_text(encoding="utf-8"))
         invalid = copy.deepcopy(source)
         invalid["app_record"]["planned_primary_locale"] = "ja"
-        invalid["version_1_1_localization_scope"]["app_ui_and_content_locales"] = ["ja", "en", "ko", "es"]
+        invalid["version_1_1_localization_scope"]["app_ui_locales"] = ["ja", "en", "ko"]
+        invalid["version_1_1_localization_scope"]["preserved_content_locales"] = ["ja", "en"]
         invalid["version_1_1_localization_scope"]["unsupported_app_language_fallback"] = "ja"
         invalid["version_1_1_localization_scope"]["app_store_metadata_locales"] = ["ja", "en-US", "ko"]
         invalid["version_1_1_localization_scope"]["android_m7"] = "active"
@@ -118,7 +146,8 @@ class ReleasePreflightTests(unittest.TestCase):
             }
 
         self.assertIn("Global planned primary locale must be en-US", messages)
-        self.assertIn("Version 1.1 app UI/content locales must be exactly ja, en, and ko", messages)
+        self.assertIn("Version 1.1 app UI locales must be exactly ja, en, and es", messages)
+        self.assertIn("Preserved learning content locales must remain ja, en, and ko", messages)
         self.assertIn("Unsupported app language fallback must be en", messages)
         self.assertIn(
             "Version 1.1 App Store metadata locales must be exactly en-US, en-GB, en-AU, en-CA, ko, and ja",
@@ -127,7 +156,7 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertIn("Android M7 must remain on its resumed, separate Google Play release track", messages)
         self.assertIn("Version 1.1 availability must select All Countries or Regions", messages)
         self.assertIn("Version 1.1 availability must include future storefronts", messages)
-        self.assertIn("App and Deck Maker IAP availability must match", messages)
+        self.assertIn("App and typee pro IAP availability must match", messages)
         self.assertIn("Country availability waves must remain disabled", messages)
         self.assertIn("Global availability requires a non-empty VN compliance gate list", messages)
         self.assertIn(

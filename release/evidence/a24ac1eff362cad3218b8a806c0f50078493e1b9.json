@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a24ac1eff362cad3218b8a806c0f50078493e1b9",
+  "verified_tree": "8e54493145b1cbf56c8618b29313015882d44f48",
+  "branch": "codex/65-remove-korean-ui",
+  "scope": "Issue #65 한국어 UI 제거, ja/en UI 및 기존 학습 콘텐츠 불변",
+  "result": "pass",
+  "recorded_at": "2026-08-28T01:46:12.478465+00:00",
+  "checks": [
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "clean a24ac1eff362cad3218b8a806c0f50078493e1b9, Issue #65 owner Codex"
+    },
+    {
+      "name": "python",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "82 tests passed, including exact Korean learning table preservation"
+    },
+    {
+      "name": "preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "ios",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/AppSettingsTests -only-testing:HancoTests/DeckEditorTests -only-testing:HancoTests/CurriculumProgressStoreTests -only-testing:HancoUITests/HancoUITests/testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice -parallel-testing-enabled NO -quiet",
+      "note": "56 tests passed on clean commit; reused app built from identical product source. xcresult Test-Hanco-2026.08.28_10-44-48-+0900. Earlier same-source build/test including F10 language persistence also passed all 57 tests."
+    },
+    {
+      "name": "android",
+      "status": "pass",
+      "command": "cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :core:settings:test :core:piyodeck:test :app:assembleDebug :app:lintDebug --quiet",
+      "note": "33 tests passed during implementation; clean-commit rerun reused matching Gradle task inputs/results. Debug APK and lint passed."
+    },
+    {
+      "name": "android-apk-locales",
+      "status": "pass",
+      "command": "/Users/jungminoh/Library/Android/sdk/build-tools/36.0.0/aapt2 dump configurations android/app/build/outputs/apk/debug/app-debug.apk",
+      "note": "Inspected output: only default English and ja language resources; no ko locale."
+    },
+    {
+      "name": "content-unchanged",
+      "status": "pass",
+      "command": "git diff --exit-code 1a9b2f29edeb8521326e1811f8c6cebb0741570a -- shared ios/Hanco/Hanco/Resources/ja.lproj ios/Hanco/Hanco/Resources/en.lproj ios/Hanco/Hanco/Resources/ko.lproj ':(glob)android/**/res/values*/strings.xml' ios/HangulEngine android/core/deckkit android/core/piyodeck android/core/retention",
+      "note": "No diff. CurriculumCatalog changes only its Korean value accessor; original targets/stages/items unchanged."
+    }
+  ],
+  "manual_gates": [
+    "PR #66 is stacked on #64; GitHub Actions is disabled. Remote CI/review and stack merge are not replaced by local checks.",
+    "No physical-device installation, archive, store changes, or deployment performed for #65. Previously confirmed iPad/keyboard QA remains a separate prior-work result."
+  ]
+}

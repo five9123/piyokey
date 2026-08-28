@@ -388,9 +388,9 @@ private fun UserDeckValidationField.itemIndexOrNull(): Int? = when (this) {
 
 @Composable
 private fun currentUserDeckLanguage(): UserDeckLanguage = when (LocalConfiguration.current.locales[0].language) {
-  "en" -> UserDeckLanguage.ENGLISH
+  "ja" -> UserDeckLanguage.JAPANESE
   "ko" -> UserDeckLanguage.KOREAN
-  else -> UserDeckLanguage.JAPANESE
+  else -> UserDeckLanguage.ENGLISH
 }
 
 private fun DeckMakerUiNotice.messageResource(): Int = when (this) {

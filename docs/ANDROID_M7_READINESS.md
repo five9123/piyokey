@@ -5,7 +5,7 @@
 ## 결론
 
 M7의 문서상 HOLD는 사용자의 명시적 요청으로 해제했다. Android는 현재 로컬
-iOS 1.1 build 7과 PRD v5.8, `shared/` 계약을 포팅 기준으로 사용한다. A0 골격과
+iOS 1.1 build 7과 PRD v6.3, `shared/` 계약을 포팅 기준으로 사용한다. A0 골격과
 M1 공용 코어부터 M5 커리큘럼·리텐션까지 중앙 저장소 `main`에 반영했다. M6A는
 온보딩·설정·OS IME 기반을 구현했고 M6B는 나머지 다섯 게임과 번들 콘텐츠 계약을
 완성했다. M6C는 오프라인 발음·효과음, 결과 공유, 성장 피요·옷장,
@@ -25,13 +25,13 @@ Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 �
 
 | 항목 | 현재 기준 |
 |---|---|
-| 제품 문서 | PRD v5.8, DECISIONS 2026-08-23까지 |
+| 제품 문서 | PRD v6.3, DECISIONS 2026-08-27까지 |
 | 공개 iOS | App Store 1.0.2, 2026-08-18 출시 확인 |
 | iOS 구현 기준 | 1.1 build 7, SwiftUI, iOS 16+ |
 | 공용 콘텐츠 | 공식 26덱 + 게임 프리셋 15덱, 총 1,812항목 |
 | 발음 | canonical gTTS MP3 581개, CAF 0개 |
 | UI 로케일 | `ja` / `en` / `ko`, 미지원 언어는 `en` fallback |
-| 사용자 문서 | `.piyodeck` v1, 로컬-only·무계정 |
+| 사용자 문서 | `.typedeck` v1, 로컬-only·무계정 |
 | Deck Maker | 가져오기·학습·내보내기 무료, 생성·편집만 일회성 상품 |
 | 공용 조합 벡터 | composition 15종 + backspace 10종 |
 
@@ -44,13 +44,14 @@ Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 �
 | Python/콘텐츠 계약 | 완료 | 도구 tests 49개와 release preflight 통과 |
 | Android 버전 계약 | 완료 | AGP 9.3.1, Gradle 9.5.0, Kotlin/Compose compiler 2.3.21, Compose BOM 2026.08.00 |
 | Android SDK | 완료 | `ANDROID_HOME`을 지정한 첫 Gradle 빌드가 기존 수락된 license를 확인하고 API 37.0을 자동 설치함. 별도 license 수락 명령은 실행하지 않음 |
-| Java | 부분 완료 | 로컬 JDK 21 존재, source/target 17 고정. CI/Android Studio 기준 JDK 17 설치 필요 |
+| Java | 완료 | Homebrew OpenJDK 17로 Gradle·계측·R8 Release 빌드 실행, source/target 17 고정 |
 | Android Studio | 미설치 | CLI와 wrapper, 기존 API 35 AVD로 M2 구현·화면 검증 가능. 장기 개발 환경에는 안정 채널 설치 필요 |
 | Android 골격 | 완료 | `:app`, 순수 core 4개, `:feature:practice`, Gradle 9.5 wrapper와 version catalog |
 | Android M1 검증 | 완료 | Kotlin 35 tests, Hangul line 99.68%·branch 95.78%, lintDebug·assembleDebug 통과 |
 | Android M2 기능 베이스 | 자동 완료·실기기 gate 이관 | session/keyboard 자동 회귀와 API 35 MotionEvent/frame-commit 통과. 정량 물리 gate는 출시 후보 QA에 유지 |
 | Android M3~M5 | 완료 | 정적 카탈로그·원자 복구·발견, 흐름 게임·공통 결과, 커리큘럼·복습·스트릭·데일리·리마인더 |
-| Android M6A | 구현·자동 검증 완료 | F1 온보딩, F2a 연습 OS IME, F10 설정, ja/en/ko, API 35 앱 회귀, lint, Debug/Release APK |
+| Android M6A | 구현·자동 검증 완료 | F1 온보딩 내장/기기 선택·첫 `가`·챕터1~4 유지·물리 두벌식 가이드, F2a 연습 OS IME, F10 설정, ja/en/ko, API 35 온보딩 3/3·설정 2/2, lint, Debug/Release APK |
+| 초기 기기 키보드 parity | 자동 완료·실기기 gate 유지 | iOS와 동일한 입력 선택·QWERTY 가이드·설정 영속화를 구현. Galaxy의 실제 IME/키보드 수동 입력은 통합 QA에서 검증 |
 | Android M6B | 구현·자동 검증 완료 | F6~F6e 여섯 게임, 15×100 프리셋, 받아쓰기 MP3, 띄어쓰기 6글, 게임 OS IME, API 35 회귀 |
 | Android M6C | 구현·자동 검증 완료 | F8~F12 오디오·공유 PNG·성장 피요/옷장·adaptive icon·접근성, API 35 회귀와 Release APK |
 | 교차 플랫폼 package | 완료 | canonical 1,109 bytes writer 일치, pretty golden reader 수용, SHA·Unicode malicious golden 거부 |
@@ -59,10 +60,18 @@ Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 �
 | Google Play listing 소스 | 자동 완료 | en-US·ja·ko 문구, 512 아이콘, 1024×500 무알파 피처 그래픽과 preflight 계약 |
 | Google Play Console | 미착수 | 앱 ID 소유권·서명·Play Games·Billing·정책 설문·스크린샷은 별도 외부 gate |
 
+## 2026-08-27 최종 소스 패키징 재검증
+
+- `:app:bundleRelease`와 lint vital/R8/resource shrink가 통과해 12 MiB unsigned AAB를 생성했다.
+- AAB SHA-256은 `3449e655937f137679e6889b2462622432622f18186bb2680d161e68b3d6f72c`이며 `jarsigner`로 unsigned 검증용 산출물임을 확인했다. 업로드하지 않는다.
+- `:app:verifyReleaseManifestContract`는 통과했다.
+- `:app:bundleDistributionRelease`는 application ID 확인, 공개 catalog URL, 콘텐츠 권리 승인, Play Games project·20개 resource ID, upload keystore 입력이 없어 AAB 생성 전에 fail-closed 됐다. 비밀값은 출력되지 않았다.
+- Galaxy 물리 입력 gate는 시작 뒤 USB가 분리되어 report 수집 전에 중단됐다. 소스 실패가 아니라 미완료 실기기 gate로 유지한다.
+
 ## 구현 순서
 
 1. A0 완료: wrapper/version catalog, `:app`, 순수 `:core:hangul`, Android contract CI.
-2. M1 완료: Hangul coverage 95% 이상, DeckKit/schema/catalog, `.piyodeck` reader/writer
+2. M1 완료: Hangul coverage 95% 이상, DeckKit/schema/catalog, `.typedeck` reader/writer
    cross-platform golden과 malicious fixture.
 3. M2 기능 베이스 구현: 순수 session reducer, 내장 두벌식 키보드와 연습 화면.
    test-only 계측 하네스까지 준비했으며 실제 기기에서 warm-up 20·측정 100의
@@ -85,7 +94,7 @@ M6A 뒤에도 기기 수동 QA를 요구하지 않는 기능 묶음을 연속 �
 - 순수 core에는 Android/Compose import를 허용하지 않는다.
 - Room은 설치 메타데이터·진행·기록, private files는 payload·backup·draft·staging,
   Preferences DataStore는 작은 설정만 소유한다.
-- SAF/`ContentResolver`로 `.piyodeck`을 private staging에 제한 복사하며 저장소
+- SAF/`ContentResolver`로 `.typedeck`을 private staging에 제한 복사하며 저장소
   전체 권한을 요청하지 않는다.
 - 고정 목표는 동일한 581개 MP3를 사용하고, 동적 문구만 오프라인 한국어 기기
   TTS로 fallback한다.

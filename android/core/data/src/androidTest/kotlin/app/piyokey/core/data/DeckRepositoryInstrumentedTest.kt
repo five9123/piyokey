@@ -51,15 +51,15 @@ class DeckRepositoryInstrumentedTest {
 
   @Test
   fun importedDeckLifecycleIsIdempotentReplaceableExportableAndHistorySafe() = runTest {
-    val initialFile = stageFixture("valid/basic.piyodeck")
-    val preview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    val initialFile = stageFixture("valid/basic.typedeck")
+    val preview = repository.previewImportedDeck(initialFile, "basic.typedeck")
     assertEquals(ImportedDeckConflict.NEW, preview.conflict)
     val first = repository.commitImportedDeck(initialFile, preview.contentSha256, false, true)
     assertTrue(first is ImportedDeckCommitResult.Installed)
 
     repository.markPlayed(preview.deck.deckId)
     val beforeIdentical = requireNotNull(database.dao().installedDeck(preview.deck.deckId))
-    val identical = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    val identical = repository.previewImportedDeck(initialFile, "basic.typedeck")
     assertEquals(ImportedDeckConflict.IDENTICAL, identical.conflict)
     assertTrue(repository.commitImportedDeck(initialFile, identical.contentSha256, false, true) is ImportedDeckCommitResult.AlreadyInstalled)
     assertEquals(beforeIdentical, database.dao().installedDeck(preview.deck.deckId))
@@ -71,7 +71,7 @@ class DeckRepositoryInstrumentedTest {
       schema,
     )
     val replacementFile = stageBytes(replacementData)
-    val replacement = repository.previewImportedDeck(replacementFile, "replacement.piyodeck")
+    val replacement = repository.previewImportedDeck(replacementFile, "replacement.typedeck")
     assertEquals(ImportedDeckConflict.NEWER_VERSION, replacement.conflict)
     try {
       repository.commitImportedDeck(replacementFile, replacement.contentSha256, false, true)
@@ -96,8 +96,8 @@ class DeckRepositoryInstrumentedTest {
 
   @Test
   fun conflictingImportCanBecomeIndependentCopyWithoutTouchingOriginalOrDraft() = runTest {
-    val initialFile = stageFixture("valid/basic.piyodeck")
-    val initialPreview = repository.previewImportedDeck(initialFile, "basic.piyodeck")
+    val initialFile = stageFixture("valid/basic.typedeck")
+    val initialPreview = repository.previewImportedDeck(initialFile, "basic.typedeck")
     repository.commitImportedDeck(initialFile, initialPreview.contentSha256, false, true)
     repository.markPlayed(initialPreview.deck.deckId)
     val originalBefore = requireNotNull(database.dao().installedDeck(initialPreview.deck.deckId))
@@ -111,7 +111,7 @@ class DeckRepositoryInstrumentedTest {
       if (index == 0) item.copy(meaningJa = item.meaningJa + "（別内容）") else item
     }
     val conflictFile = stageBytes(PiyoDeckPackageWriter.write(parsed.deck.copy(items = incomingItems), schema))
-    val conflict = repository.previewImportedDeck(conflictFile, "conflict.piyodeck")
+    val conflict = repository.previewImportedDeck(conflictFile, "conflict.typedeck")
     assertEquals(ImportedDeckConflict.SAME_VERSION_DIFFERENT_CONTENT, conflict.conflict)
 
     val separate = repository.commitImportedDeckAsSeparateCopy(
@@ -132,13 +132,13 @@ class DeckRepositoryInstrumentedTest {
 
   @Test
   fun maliciousImportNeverMutatesInstalledDecks() = runTest {
-    val valid = stageFixture("valid/basic.piyodeck")
-    val preview = repository.previewImportedDeck(valid, "basic.piyodeck")
+    val valid = stageFixture("valid/basic.typedeck")
+    val preview = repository.previewImportedDeck(valid, "basic.typedeck")
     repository.commitImportedDeck(valid, preview.contentSha256, false, true)
     val before = database.dao().installedDecks()
-    val invalid = stageFixture("invalid/wrong-sha.piyodeck")
+    val invalid = stageFixture("invalid/wrong-sha.typedeck")
     try {
-      repository.previewImportedDeck(invalid, "wrong-sha.piyodeck")
+      repository.previewImportedDeck(invalid, "wrong-sha.typedeck")
       throw AssertionError("malicious import was accepted")
     } catch (_: PiyoDeckImportException.Sha256Mismatch) {
       // Expected.
@@ -217,7 +217,7 @@ class DeckRepositoryInstrumentedTest {
   fun freeUserDeckLimitBlocksOnlyFourthNewDeckAndAllowsReplacement() = runTest {
     val schema = context.assets.open("deck.schema.json").bufferedReader().use { it.readText() }
     val base = PiyoDeckPackageReader.read(
-      context.assets.open("valid/basic.piyodeck").use { it.readBytes() },
+      context.assets.open("valid/basic.typedeck").use { it.readBytes() },
       schema,
     ).deck
     val installedFiles = (1..3).map { index ->
@@ -281,7 +281,7 @@ class DeckRepositoryInstrumentedTest {
 
   private fun stageBytes(bytes: ByteArray): File {
     val directory = File(context.cacheDir, PIYODECK_STAGING_DIRECTORY_NAME).apply { mkdirs() }
-    return File(directory, "${System.nanoTime()}.piyodeck").apply { writeBytes(bytes) }
+    return File(directory, "${System.nanoTime()}.typedeck").apply { writeBytes(bytes) }
   }
 
   @Test

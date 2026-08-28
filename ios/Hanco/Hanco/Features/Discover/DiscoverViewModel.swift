@@ -115,7 +115,7 @@ final class DiscoverViewModel: ObservableObject {
   }
 
   var filteredDecks: [CatalogDeck] {
-    guard let catalog else { return [] }
+    guard catalog != nil else { return [] }
     let filtered = availableDecks.filter { deck in
       matchesQuery(deck) && selectedTags.isSubset(of: Set(deck.tags))
         && (selectedType == nil || deck.type == selectedType)
