@@ -20,7 +20,7 @@ submission history. Do not edit the historical App Store version record when pre
 | Primary category | Education |
 | Secondary category | Games / Word |
 | Price | Free download with one optional non-consumable in-app purchase |
-| Release | Pending separate decision: choose manual or automatic after approval before submission; availability does not determine release timing |
+| Release | Automatic after Apple approval, no phased release; user confirmed immediate release on 2026-08-29. Availability does not bypass review or compliance requirements. |
 | Availability | **All Countries or Regions**, including future App Store storefronts |
 | Made for Kids | No |
 | Copyright | 2026 Jungmin Oh |

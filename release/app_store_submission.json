@@ -185,8 +185,8 @@
       "final_release_candidate_match_verified": false,
       "app_store_connect_uploaded": false
     },
-    "release_mode": "pending_separate_decision",
-    "manual_hold": true,
+    "release_mode": "automatic_after_approval",
+    "manual_hold": false,
     "privacy_policy_url": "https://typee.app/privacy",
     "support_url": "https://typee.app/support",
     "marketing_url": "https://typee.app/",
@@ -247,8 +247,8 @@
       "include_future_storefronts": true,
       "family_sharing_enabled": false,
       "tax_category_current": "MATCH_PARENT_APP",
-      "paid_apps_agreement_status": "NEW",
-      "legal_entity_update_required": true,
+      "paid_apps_agreement_status": "PENDING_USER_INFO",
+      "legal_entity_update_required": null,
       "localizations": [
         "ja",
         "en-US",
@@ -264,7 +264,8 @@
       "review_notes_saved": true,
       "ready_to_submit": false,
       "added_for_review": false,
-      "attached_to_version_1_1_submission": false
+      "attached_to_version_1_1_submission": false,
+      "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
     },
     "qa_gates": {
       "release_archive_validated": true,
@@ -328,6 +329,28 @@
       "metadata_saved_this_run": false,
       "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged.",
       "build_link_only_saved_this_run": true
+    },
+    "review_submission_blocked": true,
+    "release_decision": {
+      "confirmed_on": "2026-08-29",
+      "source": "User explicitly requested review submission and immediate release",
+      "automatic_after_approval": true,
+      "phased_release_enabled": false,
+      "release_to_all_users_immediately": true,
+      "console_selection_verified": true,
+      "does_not_waive_submission_gates": true
+    },
+    "submission_followup": {
+      "issue": 77,
+      "version_status": "PREPARE_FOR_SUBMISSION",
+      "paid_apps_agreement_status": "PENDING_USER_INFO",
+      "bank_account_entry_missing": true,
+      "republic_of_korea_tax_form": "MISSING_TAX_INFO",
+      "us_tax_questionnaire": "MISSING_TAX_INFO",
+      "shared_app_information_confirmation_opened": true,
+      "confirmation_canceled_without_continue": true,
+      "final_review_submission_sent": false,
+      "public_release_completed": false
     }
   }
 }

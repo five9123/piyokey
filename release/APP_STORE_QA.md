@@ -16,7 +16,7 @@
 - [ ] 실제 앱 UI 언어와 스토어 설명용 현지화를 구분하고, ko/zh-Hans/zh-Hant/pt-BR/id 스토어가 지원하지 않는 앱 UI를 약속하지 않는지 확인
 - [ ] 앱과 typee pro IAP 모두 `All Countries or Regions` 및 향후 storefront 자동 포함으로 설정
 - [ ] EU DSA, 중국 본토, 베트남의 국가별 App Store 상태를 확인하고 action-required/판매 불가 예외를 제출 기록에 남김
-- [ ] availability와 별개로 승인 후 수동 출시 또는 자동 출시 중 하나를 확정하고 제출 기록과 App Store Connect 설정을 일치시킴
+- [x] 2026-08-29 사용자 요청으로 승인 후 자동 출시·phased release 없이 전체 사용자 즉시 배포 확정, 콘솔의 두 선택과 일치 확인 (#77)
 - [ ] 출시 가격·스토어프런트·세금 카테고리·Family Sharing 정책 확정
 - [ ] 1.1 결제창의 가격·복원·약관·개인정보 링크가 보이는 IAP 심사용 스크린샷 업로드
 - [ ] IAP 리뷰 노트 입력 후 상품 상태 **Ready to Submit** 확인
