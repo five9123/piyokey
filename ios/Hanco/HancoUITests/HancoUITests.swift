@@ -823,8 +823,8 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(sound)
     XCTAssertEqual(sound.value as? String, "1")
 
-    XCTAssertTrue(app.buttons["標準"].isSelected)
-    let soft = app.buttons["ソフト"]
+    XCTAssertTrue(element("settings.sound_preset").buttons["標準"].isSelected)
+    let soft = element("settings.sound_preset").buttons["ソフト"]
     XCTAssertTrue(soft.waitForExistence(timeout: 2))
     soft.tap()
     XCTAssertTrue(soft.isSelected)
@@ -842,7 +842,7 @@ final class HancoUITests: XCTestCase {
     let persistedSound = app.switches["settings.sound"]
     scrollToHittable(persistedSound)
     XCTAssertEqual(persistedSound.value as? String, "0")
-    XCTAssertTrue(app.buttons["ソフト"].isSelected)
+    XCTAssertTrue(element("settings.sound_preset").buttons["ソフト"].isSelected)
     XCTAssertFalse(element("settings.sound_preset").isEnabled)
   }
 
