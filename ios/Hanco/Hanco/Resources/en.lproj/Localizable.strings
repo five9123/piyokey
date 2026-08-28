@@ -1141,3 +1141,18 @@
 "piyodeck.import.action.replace.same_version_hint" = "Replaces the current deck with different content using the same version number. Opens a confirmation.";
 
 "settings.language.spanish" = "Español";
+
+// Onboarding level and first home recommendation
+"onboarding.level.title" = "What can you type in Korean?";
+"onboarding.level.subtitle" = "Choose what feels comfortable today. We will use it with your interests to suggest your first deck.";
+"onboarding.level.beginner.title" = "I am just starting";
+"onboarding.level.beginner.detail" = "I want to learn the keyboard and Korean letters.";
+"onboarding.level.jamo.title" = "I know the letters";
+"onboarding.level.jamo.detail" = "I can read consonants and vowels and want to try easy words.";
+"onboarding.level.words.title" = "I can type simple words";
+"onboarding.level.words.detail" = "I want to build speed and try useful expressions.";
+"onboarding.level.sentences.title" = "I can type sentences";
+"onboarding.level.sentences.detail" = "I want to practice longer phrases with confidence.";
+"onboarding.back" = "Back";
+"home.primary.recommend_eyebrow" = "A deck to start with";
+"home.primary.recommend_detail" = "Picked for your level and interests";

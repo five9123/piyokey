@@ -80,6 +80,7 @@ fun RetentionHomeCard(
   onWeeklyCup: () -> Unit,
   onQuickPractice: () -> Unit,
   modifier: Modifier = Modifier,
+  primaryAction: (@Composable () -> Unit)? = null,
 ) {
   val week = RetentionPolicy.week(today, completedDays)
   val streak = RetentionPolicy.streak(completedDays, today)
@@ -153,7 +154,7 @@ fun RetentionHomeCard(
         )
       }
     }
-    Button(
+    if (primaryAction != null) primaryAction() else Button(
       onClick = onDailyChallenge,
       modifier = Modifier.fillMaxWidth().testTag("retention-daily-challenge"),
     ) { Text(stringResource(R.string.retention_daily_cta)) }
@@ -191,6 +192,27 @@ fun RetentionHomeCard(
           modifier = Modifier.weight(1f).testTag("home-quick-random"),
         )
       }
+    }
+  }
+}
+
+@Composable
+fun HomeLearningCard(
+  title: String,
+  isRecommendation: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Card(
+    onClick = onClick,
+    modifier = modifier.fillMaxWidth(),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+    shape = RoundedCornerShape(24.dp),
+  ) {
+    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+      Text(stringResource(if (isRecommendation) R.string.home_primary_recommend_eyebrow else R.string.home_primary_resume_eyebrow), style = MaterialTheme.typography.labelLarge)
+      Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
+      Text(stringResource(if (isRecommendation) R.string.home_primary_recommend_detail else R.string.home_primary_resume_detail), style = MaterialTheme.typography.bodyMedium)
     }
   }
 }
@@ -554,7 +576,7 @@ private fun chapterTitle(chapter: Int): String = stringResource(
 )
 
 @Composable
-private fun stageTitle(id: String): String = stringResource(
+fun stageTitle(id: String): String = stringResource(
   when (id) {
     "chapter_1_basic_consonants" -> R.string.curriculum_stage_consonants
     "chapter_2_basic_vowels" -> R.string.curriculum_stage_vowels

@@ -1105,3 +1105,18 @@
 "onboarding.keyboard.try_device" = "Empezar con el teclado del dispositivo";
 "game.pronunciation_hint.used_announcement_format" = "Pista de audio usada. Quedan %d. Combo reiniciado y 30 puntos descontados.";
 "physical_keyboard.finger.index" = "índice";
+
+// Onboarding level and first home recommendation
+"onboarding.level.title" = "¿Qué puedes escribir en coreano?";
+"onboarding.level.subtitle" = "Elige lo que te resulte cómodo hoy. Usaremos tu nivel y tus intereses para recomendarte tu primer mazo.";
+"onboarding.level.beginner.title" = "Estoy empezando";
+"onboarding.level.beginner.detail" = "Quiero aprender el teclado y las letras coreanas.";
+"onboarding.level.jamo.title" = "Conozco las letras";
+"onboarding.level.jamo.detail" = "Puedo leer consonantes y vocales y quiero probar palabras fáciles.";
+"onboarding.level.words.title" = "Puedo escribir palabras sencillas";
+"onboarding.level.words.detail" = "Quiero ganar velocidad y practicar expresiones útiles.";
+"onboarding.level.sentences.title" = "Puedo escribir frases";
+"onboarding.level.sentences.detail" = "Quiero practicar frases más largas con confianza.";
+"onboarding.back" = "Volver";
+"home.primary.recommend_eyebrow" = "Un mazo para empezar";
+"home.primary.recommend_detail" = "Elegido según tu nivel e intereses";

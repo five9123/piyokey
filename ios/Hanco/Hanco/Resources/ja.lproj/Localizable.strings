@@ -1141,3 +1141,18 @@
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";
 
 "settings.language.spanish" = "Español";
+
+// Onboarding level and first home recommendation
+"onboarding.level.title" = "韓国語はどのくらい入力できますか？";
+"onboarding.level.subtitle" = "今の自分に近いものを選んでください。目的とレベルに合う最初のデッキをおすすめします。";
+"onboarding.level.beginner.title" = "これからはじめる";
+"onboarding.level.beginner.detail" = "キーボードの位置とハングルから覚えたい";
+"onboarding.level.jamo.title" = "子音・母音がわかる";
+"onboarding.level.jamo.detail" = "文字は読めるので、やさしい単語を入力したい";
+"onboarding.level.words.title" = "簡単な単語を入力できる";
+"onboarding.level.words.detail" = "速さを伸ばして、役立つ表現にも挑戦したい";
+"onboarding.level.sentences.title" = "文も入力できる";
+"onboarding.level.sentences.detail" = "長めのフレーズをスムーズに入力したい";
+"onboarding.back" = "戻る";
+"home.primary.recommend_eyebrow" = "最初におすすめのデッキ";
+"home.primary.recommend_detail" = "あなたのレベルと目的に合わせて選びました";

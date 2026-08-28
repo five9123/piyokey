@@ -19,8 +19,16 @@ class HomeQuickActionsInstrumentedTest {
 
   @get:Rule
   val rules: RuleChain = RuleChain
-    .outerRule(TestAppStateRule(skipOnboarding = true, forceOSIME = true))
+    .outerRule(TestAppStateRule(skipOnboarding = true, forceOSIME = true, resetStorage = true))
     .around(composeRule)
+
+  @Test
+  fun firstHomeShowsAStarterDeckInsteadOfResume() {
+    waitForShell()
+    composeRule.onNodeWithTag("home-primary-recommend-deck").performScrollTo().assertIsDisplayed().performClick()
+    composeRule.onNodeWithTag("deck-detail-download").assertIsDisplayed()
+    composeRule.onAllNodesWithTag("home-primary-resume-deck").assertCountEquals(0)
+  }
 
   @Test
   fun weeklyCupForcesBuiltinKeyboardWhenDefaultIsOsIme() {

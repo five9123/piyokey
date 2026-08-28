@@ -48,7 +48,18 @@ enum class OnboardingGoal(val preferredTags: Set<String>) {
   TRENDS(setOf("今どき", "SNS", "日常")),
 }
 
-enum class OnboardingIntroStep { GOAL, KEYBOARD, FIRST_INPUT, COMPLETE }
+enum class OnboardingLevel {
+  BEGINNER, JAMO, WORDS, SENTENCES;
+
+  fun recommendationRank(level: Int, tags: List<String>, isSentence: Boolean): Int = when (this) {
+    BEGINNER -> kotlin.math.abs(level - 1) * 10 + if ("入門" in tags) 0 else 1
+    JAMO -> kotlin.math.abs(level - 1) * 10 + if ("入門" !in tags && !isSentence) 0 else 1
+    WORDS -> kotlin.math.abs(level - 2) * 10
+    SENTENCES -> maxOf(0, level - 3) * 10 + if (isSentence && level >= 2) 0 else 1
+  }
+}
+
+enum class OnboardingIntroStep { GOAL, LEVEL, KEYBOARD, FIRST_INPUT, COMPLETE }
 enum class PiyoGrowthStage { EGG, CRACKED_EGG, HATCHING, CHICK }
 enum class PiyoAccessory {
   AUTO,
@@ -90,6 +101,8 @@ data class AppPreferences(
   val crashDiagnosticsEnabled: Boolean = false,
   val privacyNoticeVersion: Int = 0,
   val onboardingGoal: OnboardingGoal? = null,
+  val onboardingLevel: OnboardingLevel? = null,
+  val homeLearningStarted: Boolean = false,
   val onboardingIntroStep: OnboardingIntroStep = OnboardingIntroStep.GOAL,
   val onboardingIntroSkipped: Boolean = false,
   val firstInputCompleted: Boolean = false,

@@ -1027,6 +1027,22 @@ private fun PiyokeyApp(
     scope.launch { repository.markPlayed(installed.metadata.deckId) }
   }
 
+  fun resumeCurriculum(stage: app.piyokey.core.retention.CurriculumStage) {
+    val items = stage.items.map(CurriculumItem::toDeckItem)
+    activePractice = ActivePractice(
+      installed = null,
+      catalogEntry = null,
+      targets = items.map(DeckItem::ko),
+      items = items,
+      sourceDeckId = "curriculum::${stage.id}",
+      kind = PracticeKind.CURRICULUM,
+      inputMode = OnboardingPolicy.resolvedInputMode(preferences.defaultInputMode, stage.chapterNumber),
+      stageId = stage.id,
+      sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
+      checkpoint = currentLearning.activeSession?.takeIf { it.stageId == stage.id }?.checkpoint,
+    )
+  }
+
   fun persistPracticeCompletion(completion: PendingPracticeCompletion) {
     scope.launch {
       val practice = completion.practice
@@ -1944,6 +1960,28 @@ private fun PiyokeyApp(
     }
   }
 
+  val resumeStage = currentLearning.activeSession?.stageId?.let(CurriculumCatalog::stage)
+  val recentDeck = current.installed.filter { it.metadata.lastPlayedAtEpochMillis != null }
+    .maxByOrNull { requireNotNull(it.metadata.lastPlayedAtEpochMillis) }
+  val hasAdvancedHistory = currentLearning.progress.keys.any { (CurriculumCatalog.stage(it)?.chapterNumber ?: 0) > 3 }
+  val hasHomeHistory = resumeStage != null || recentDeck != null || hasAdvancedHistory ||
+    currentLearning.activitiesByDay.values.any { activities ->
+      activities.any { it != app.piyokey.core.retention.RetentionActivity.CURRICULUM }
+    }
+  LaunchedEffect(hasHomeHistory) {
+    if (hasHomeHistory && !preferences.homeLearningStarted) {
+      onPreferencesChange(preferences.copy(homeLearningStarted = true))
+    }
+  }
+  val starterDeck = if (!preferences.homeLearningStarted && !hasHomeHistory) {
+    DiscoveryEngine.starterRecommendations(
+      current.catalog,
+      preferences.onboardingGoal?.preferredTags.orEmpty(),
+      preferences.onboardingLevel,
+      limit = 1,
+    ).firstOrNull()
+  } else null
+
   Scaffold(
     bottomBar = {
       NavigationBar {
@@ -2019,6 +2057,30 @@ private fun PiyokeyApp(
               },
               onWeeklyCup = ::startWeeklyCup,
               onQuickPractice = ::startQuickPractice,
+              primaryAction = if (resumeStage == null && recentDeck == null && starterDeck == null) null else {
+                {
+                  when {
+                    resumeStage != null -> app.piyokey.feature.retention.HomeLearningCard(
+                      title = app.piyokey.feature.retention.stageTitle(resumeStage.id),
+                      isRecommendation = false,
+                      onClick = { resumeCurriculum(resumeStage) },
+                      modifier = Modifier.testTag("home-primary-resume-curriculum"),
+                    )
+                    recentDeck != null -> app.piyokey.feature.retention.HomeLearningCard(
+                      title = recentDeck.deck.localizedName(preferences.language.tag).orEmpty(),
+                      isRecommendation = false,
+                      onClick = { play(recentDeck) },
+                      modifier = Modifier.testTag("home-primary-resume-deck"),
+                    )
+                    starterDeck != null -> app.piyokey.feature.retention.HomeLearningCard(
+                      title = starterDeck.localizedName(preferences.language.tag).orEmpty(),
+                      isRecommendation = true,
+                      onClick = { openDetail(starterDeck) },
+                      modifier = Modifier.testTag("home-primary-recommend-deck"),
+                    )
+                  }
+                }
+              },
             )
           },
         )

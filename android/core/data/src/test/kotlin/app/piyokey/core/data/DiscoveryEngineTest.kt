@@ -2,6 +2,8 @@ package app.piyokey.core.data
 
 import app.piyokey.core.deckkit.DeckKitJson
 import app.piyokey.core.deckkit.DeckType
+import app.piyokey.core.settings.OnboardingGoal
+import app.piyokey.core.settings.OnboardingLevel
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,6 +17,27 @@ class DiscoveryEngineTest {
     File(root, "shared/mock_catalog/catalog.json").readText(),
     File(root, "shared/schema/catalog.schema.json").readText(),
   )
+
+  @Test
+  fun starterRecommendationsRespectLevelBeforeInterestsAndUseSafeFallback() {
+    for (goal in OnboardingGoal.entries) {
+      for (level in OnboardingLevel.entries) {
+        val result = DiscoveryEngine.starterRecommendations(catalog, goal.preferredTags, level)
+        assertEquals(3, result.size)
+        assertTrue(result.all { it.official })
+        val minimumRank = catalog.decks.filter { it.official }.minOf {
+          level.recommendationRank(it.level, it.tags, it.type == DeckType.SENTENCE)
+        }
+        val first = result.first()
+        assertEquals(minimumRank, level.recommendationRank(first.level, first.tags, first.type == DeckType.SENTENCE))
+      }
+    }
+    val travel = DiscoveryEngine.starterRecommendations(catalog, OnboardingGoal.TRAVEL.preferredTags, OnboardingLevel.SENTENCES)
+    assertTrue(travel.all { it.type == DeckType.SENTENCE && it.tags.any { tag -> tag in OnboardingGoal.TRAVEL.preferredTags } })
+    assertEquals("official_topik_one", DiscoveryEngine.starterRecommendations(catalog, OnboardingGoal.TOPIK.preferredTags, OnboardingLevel.WORDS).first().deckId)
+    assertTrue(DiscoveryEngine.starterRecommendations(catalog, emptySet(), null).all { it.level == 1 && "入門" in it.tags })
+    assertTrue(DiscoveryEngine.starterRecommendations(catalog, emptySet(), null, limit = 0).isEmpty())
+  }
 
   @Test
   fun searchUsesLocalizedNameTagsAndAuthorWithEnglishFallback() {

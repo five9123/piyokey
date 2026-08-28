@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-28 JST
+마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 최근 통합 기준선: 기존 작업 8개와 스페인어 UI를 포함한 PR #70
@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #73 온보딩 레벨·첫 홈 추천 | In Progress | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 양 플랫폼 저장·추천·UI 회귀 검증 후 Draft PR |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## 최근 소스 통합

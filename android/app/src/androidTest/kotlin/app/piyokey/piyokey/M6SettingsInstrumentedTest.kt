@@ -10,6 +10,8 @@ import app.piyokey.core.settings.AppPreferencesStore
 import app.piyokey.core.settings.AppTheme
 import app.piyokey.core.settings.FontScale
 import app.piyokey.core.settings.InputMode
+import app.piyokey.core.settings.OnboardingLevel
+import app.piyokey.core.settings.OnboardingIntroStep
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -46,6 +48,9 @@ class M6SettingsInstrumentedTest {
         soundEffectsEnabled = false,
         defaultInputMode = InputMode.OS_IME,
         showsPhysicalKeyboardGuide = true,
+        onboardingLevel = OnboardingLevel.WORDS,
+        onboardingIntroStep = OnboardingIntroStep.LEVEL,
+        homeLearningStarted = true,
       )
     }
 
@@ -55,5 +60,13 @@ class M6SettingsInstrumentedTest {
     assertFalse(stored.soundEffectsEnabled)
     assertEquals(InputMode.OS_IME, stored.defaultInputMode)
     assertEquals(true, stored.showsPhysicalKeyboardGuide)
+    assertEquals(OnboardingLevel.WORDS, stored.onboardingLevel)
+    assertEquals(OnboardingIntroStep.LEVEL, stored.onboardingIntroStep)
+    assertEquals(true, stored.homeLearningStarted)
+    store.resetOnboarding()
+    val reset = store.values.first()
+    assertEquals(null, reset.onboardingLevel)
+    assertEquals(OnboardingIntroStep.GOAL, reset.onboardingIntroStep)
+    assertFalse(reset.homeLearningStarted)
   }
 }

@@ -52,6 +52,9 @@ import app.piyokey.core.design.PiyoAvatar
 import app.piyokey.core.settings.PiyoGrowthStage
 import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.core.settings.OnboardingGoal
+import app.piyokey.core.settings.OnboardingLevel
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import app.piyokey.core.settings.OnboardingIntroStep
 import app.piyokey.core.settings.InputMode
 import app.piyokey.feature.practice.DubeolsikKeyboard
@@ -81,7 +84,7 @@ fun OnboardingRoute(
     preferences.onboardingIntroStep == OnboardingIntroStep.GOAL -> GoalScreen(
       selected = preferences.onboardingGoal,
       onSelect = { onUpdate(preferences.copy(onboardingGoal = it)) },
-      onNext = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.KEYBOARD)) },
+      onNext = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.LEVEL)) },
       onSkip = {
         onUpdate(
           preferences.copy(
@@ -91,6 +94,21 @@ fun OnboardingRoute(
             hatchHandoffCompleted = true,
           ),
         )
+      },
+      modifier = modifier,
+    )
+    preferences.onboardingIntroStep == OnboardingIntroStep.LEVEL -> LevelScreen(
+      selected = preferences.onboardingLevel,
+      onSelect = { onUpdate(preferences.copy(onboardingLevel = it)) },
+      onNext = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.KEYBOARD)) },
+      onBack = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.GOAL)) },
+      onSkip = {
+        onUpdate(preferences.copy(
+          onboardingIntroSkipped = true,
+          onboardingIntroStep = OnboardingIntroStep.COMPLETE,
+          firstInputCompleted = true,
+          hatchHandoffCompleted = true,
+        ))
       },
       modifier = modifier,
     )
@@ -156,7 +174,7 @@ private fun OnboardingFrame(
       verticalAlignment = Alignment.CenterVertically,
     ) {
       LinearProgressIndicator(
-        progress = { step / 3f },
+        progress = { step / 4f },
         modifier = Modifier.weight(1f).height(8.dp),
         color = Accent,
         trackColor = Color(0xFFFFE4EC),
@@ -221,6 +239,54 @@ private fun GoalScreen(
 }
 
 @Composable
+private fun LevelScreen(
+  selected: OnboardingLevel?,
+  onSelect: (OnboardingLevel) -> Unit,
+  onNext: () -> Unit,
+  onBack: () -> Unit,
+  onSkip: () -> Unit,
+  modifier: Modifier,
+) {
+  OnboardingFrame(2, true, onSkip, modifier) {
+    LazyColumn(
+      modifier = Modifier.fillMaxSize().testTag("onboarding-level"),
+      contentPadding = PaddingValues(20.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+      item {
+        Text(stringResource(R.string.onboarding_level_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
+        Text(stringResource(R.string.onboarding_level_subtitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
+      }
+      items(OnboardingLevel.entries) { level ->
+        val active = selected == level
+        Card(
+          onClick = { onSelect(level) },
+          modifier = Modifier.fillMaxWidth()
+            .testTag("onboarding-level-${level.name.lowercase()}")
+            .semantics { this.selected = active }
+            .then(if (active) Modifier.border(3.dp, Accent, RoundedCornerShape(20.dp)) else Modifier),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+          shape = RoundedCornerShape(20.dp),
+        ) {
+          Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(stringResource(level.titleResource()), fontWeight = FontWeight.Black)
+            Text(stringResource(level.detailResource()), style = MaterialTheme.typography.bodyMedium)
+          }
+        }
+      }
+      item {
+        Button(onClick = onNext, enabled = selected != null, modifier = Modifier.fillMaxWidth().testTag("onboarding-next")) {
+          Text(stringResource(R.string.onboarding_next))
+        }
+        TextButton(onClick = onBack, modifier = Modifier.fillMaxWidth().testTag("onboarding-back")) {
+          Text(stringResource(R.string.onboarding_back))
+        }
+      }
+    }
+  }
+}
+
+@Composable
 private fun TrustCard() {
   Card(
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -240,7 +306,7 @@ private fun KeyboardIntroScreen(
   onSkip: () -> Unit,
   modifier: Modifier,
 ) {
-  OnboardingFrame(2, true, onSkip, modifier) {
+  OnboardingFrame(3, true, onSkip, modifier) {
     Column(
       Modifier
         .fillMaxSize()
@@ -303,7 +369,7 @@ private fun FirstInputScreen(
   var didComplete by remember { mutableStateOf(false) }
   val expected = listOf('ㄱ', 'ㅏ')
   val context = LocalContext.current
-  OnboardingFrame(3, false, {}, modifier) {
+  OnboardingFrame(4, false, {}, modifier) {
     Column(
       Modifier.fillMaxSize().testTag("onboarding-first-input"),
       verticalArrangement = Arrangement.SpaceBetween,
@@ -523,6 +589,20 @@ private fun PiyoMark(stage: PiyoGrowthStage) {
     contentDescription = stringResource(R.string.onboarding_piyo_accessibility),
     modifier = Modifier.size(92.dp),
   )
+}
+
+private fun OnboardingLevel.titleResource(): Int = when (this) {
+  OnboardingLevel.BEGINNER -> R.string.onboarding_level_beginner_title
+  OnboardingLevel.JAMO -> R.string.onboarding_level_jamo_title
+  OnboardingLevel.WORDS -> R.string.onboarding_level_words_title
+  OnboardingLevel.SENTENCES -> R.string.onboarding_level_sentences_title
+}
+
+private fun OnboardingLevel.detailResource(): Int = when (this) {
+  OnboardingLevel.BEGINNER -> R.string.onboarding_level_beginner_detail
+  OnboardingLevel.JAMO -> R.string.onboarding_level_jamo_detail
+  OnboardingLevel.WORDS -> R.string.onboarding_level_words_detail
+  OnboardingLevel.SENTENCES -> R.string.onboarding_level_sentences_detail
 }
 
 private fun OnboardingGoal.titleResource(): Int = when (this) {

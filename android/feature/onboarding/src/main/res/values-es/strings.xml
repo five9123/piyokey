@@ -64,4 +64,16 @@
   <string name="onboarding_use_device_keyboard">Empezar con el teclado del dispositivo</string>
   <string name="onboarding_ime_missing">Añade o activa un teclado coreano y vuelve aquí para escribir.</string>
   <string name="onboarding_ime_open_settings">Abrir ajustes del teclado</string>
+
+    <string name="onboarding_level_title">¿Qué puedes escribir en coreano?</string>
+    <string name="onboarding_level_subtitle">Elige lo que te resulte cómodo hoy. Usaremos tu nivel y tus intereses para recomendarte tu primer mazo.</string>
+    <string name="onboarding_level_beginner_title">Estoy empezando</string>
+    <string name="onboarding_level_beginner_detail">Quiero aprender el teclado y las letras coreanas.</string>
+    <string name="onboarding_level_jamo_title">Conozco las letras</string>
+    <string name="onboarding_level_jamo_detail">Puedo leer consonantes y vocales y quiero probar palabras fáciles.</string>
+    <string name="onboarding_level_words_title">Puedo escribir palabras sencillas</string>
+    <string name="onboarding_level_words_detail">Quiero ganar velocidad y practicar expresiones útiles.</string>
+    <string name="onboarding_level_sentences_title">Puedo escribir frases</string>
+    <string name="onboarding_level_sentences_detail">Quiero practicar frases más largas con confianza.</string>
+    <string name="onboarding_back">Volver</string>
 </resources>

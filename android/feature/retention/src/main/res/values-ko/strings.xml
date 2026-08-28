@@ -13,4 +13,9 @@
   <string name="wardrobe_title">피요 옷장</string><string name="wardrobe_preview">피요 최종 모습 미리보기</string>
   <string name="wardrobe_auto">자동 · 성장 기본 모습</string><string name="wardrobe_none">소품 없음</string>
   <string name="wardrobe_ribbon">연속 리본</string><string name="wardrobe_beret">별 베레모</string><string name="wardrobe_bow">무지개 리본</string><string name="wardrobe_topik_glasses">TOPIK 안경</string><string name="wardrobe_trophy">챔피언 트로피</string>
+
+    <string name="home_primary_recommend_eyebrow">이 덱으로 시작해요</string>
+    <string name="home_primary_recommend_detail">레벨과 관심사에 맞춰 골랐어요</string>
+    <string name="home_primary_resume_eyebrow">이어하기</string>
+    <string name="home_primary_resume_detail">이전 연습을 이어가요</string>
 </resources>

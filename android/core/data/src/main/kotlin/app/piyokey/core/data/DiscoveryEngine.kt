@@ -3,6 +3,7 @@ package app.piyokey.core.data
 import app.piyokey.core.deckkit.Catalog
 import app.piyokey.core.deckkit.CatalogDeck
 import app.piyokey.core.deckkit.DeckType
+import app.piyokey.core.settings.OnboardingLevel
 import java.text.Normalizer
 import java.util.Locale
 
@@ -24,6 +25,24 @@ data class DeckFilters(
 )
 
 object DiscoveryEngine {
+  fun starterRecommendations(
+    catalog: Catalog,
+    preferredTags: Set<String>,
+    level: OnboardingLevel?,
+    limit: Int = 3,
+  ): List<CatalogDeck> = catalog.decks.asSequence()
+    .filter(CatalogDeck::official)
+    .sortedWith(
+      compareBy<CatalogDeck> {
+        (level ?: OnboardingLevel.BEGINNER).recommendationRank(it.level, it.tags, it.type == DeckType.SENTENCE)
+      }.thenByDescending { deck -> deck.tags.count { it in preferredTags } }
+        .thenByDescending(CatalogDeck::featured)
+        .thenByDescending(CatalogDeck::downloadsTotal)
+        .thenBy(CatalogDeck::deckId),
+    )
+    .take(limit.coerceAtLeast(0))
+    .toList()
+
   fun filterAndSort(
     catalog: Catalog,
     filters: DeckFilters,
