@@ -3129,7 +3129,9 @@ final class HancoUITests: XCTestCase {
     let profile = app.buttons[storeText("マイページ", "Profile", "마이페이지")].firstMatch
     XCTAssertTrue(profile.waitForExistence(timeout: 3))
     profile.tap()
-    scrollAndTap(element("my_decks.deck.user_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"))
+    let deck = element("my_decks.deck.user_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+    scrollToHittable(deck)
+    deck.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
   }
 
