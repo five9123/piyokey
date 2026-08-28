@@ -2900,11 +2900,12 @@ final class HancoUITests: XCTestCase {
     openSettings()
     XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
     let spanish = app.buttons["Español"]
-    scrollToHittable(spanish)
+    scrollSettingsLanguageIntoView(spanish)
     XCTAssertTrue(spanish.isSelected)
     attachScreenshot(named: "spanish-settings")
     app.buttons["English"].tap()
     XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+    scrollSettingsLanguageIntoView(app.buttons["Español"])
     app.buttons["Español"].tap()
     XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
     app.buttons["settings.done"].tap()
@@ -2915,7 +2916,7 @@ final class HancoUITests: XCTestCase {
     app.buttons["Práctica"].firstMatch.tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
     openSettings()
-    scrollToHittable(app.buttons["Español"])
+    scrollSettingsLanguageIntoView(app.buttons["Español"])
     XCTAssertTrue(app.buttons["Español"].isSelected)
     XCTAssertFalse(app.buttons["한국어"].exists)
   }
@@ -3211,6 +3212,30 @@ final class HancoUITests: XCTestCase {
   private enum ScrollDirection {
     case up
     case down
+  }
+
+  private func scrollSettingsLanguageIntoView(_ target: XCUIElement) {
+    let surface = app.scrollViews["settings.screen"]
+    XCTAssertTrue(surface.waitForExistence(timeout: 3))
+    // iPad sheet children can report hittable even above the sheet. Keep the
+    // language segment inside the scroll viewport and below its navigation bar.
+    func visibleFrame() -> CGRect {
+      let frame = surface.frame.intersection(app.frame)
+      let navigationBottom = app.navigationBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.intersects(frame) }
+        .map { $0.frame.maxY }.max() ?? frame.minY
+      return CGRect(x: frame.minX, y: max(frame.minY, navigationBottom),
+                    width: frame.width, height: frame.maxY - max(frame.minY, navigationBottom))
+        .insetBy(dx: 8, dy: 12)
+    }
+    for _ in 0..<16 {
+      if target.exists && target.isHittable && visibleFrame().contains(target.frame) { return }
+      let movesDown = target.exists && target.frame.midY < visibleFrame().midY
+      let start = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55))
+      let end = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: movesDown ? 0.75 : 0.35))
+      start.press(forDuration: 0.05, thenDragTo: end)
+    }
+    XCTFail("Language picker is not inside the settings viewport: \(app.debugDescription)")
   }
 
   private func scrollToHittable(
