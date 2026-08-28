@@ -111,6 +111,7 @@ final class PracticeSessionViewModel: ObservableObject {
   var isComplete: Bool { judgeState.isComplete }
   var canAdvance: Bool { isComplete && currentTargetIndex + 1 < targets.count }
   var isLessonComplete: Bool { isComplete && currentTargetIndex == targets.count - 1 }
+  var hasResumableProgress: Bool { hasStartedTiming && !isLessonComplete }
   var enteredText: String { composition.text }
   var composingPreview: String { composition.composingText }
   var targetSyllableProgress: [TargetSyllableProgress] {

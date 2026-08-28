@@ -38,7 +38,7 @@ export const REQUIRED_PROPERTIES: Readonly<Record<AnalyticsEvent, ReadonlySet<An
 
 export const ENUM_VALUES: Readonly<Partial<Record<AnalyticsProperty, ReadonlySet<string>>>> = {
   platform: new Set(["ios", "ipados", "android", "web"]),
-  locale: new Set(["ja", "en", "ko", "other"]),
+  locale: new Set(["ja", "en", "ko", "es", "de", "fr", "other"]),
   entry_point: new Set(["cold_start", "foreground", "deep_link", "notification", "unknown"]),
   feature: new Set(["home", "discover", "practice", "game", "my_page", "settings", "deck_maker", "web_landing", "web_support"]),
   onboarding_step: new Set(["goal", "keyboard", "first_input", "hatch_1", "hatch_2", "hatch_3", "app_tour"]),
@@ -56,7 +56,7 @@ export const ENUM_VALUES: Readonly<Partial<Record<AnalyticsProperty, ReadonlySet
   action: new Set(["created", "edited", "copied", "imported", "exported", "deleted", "shared", "saved_image"]),
   purchase_state: new Set(["viewed", "started", "pending", "completed", "cancelled", "failed", "restored"]),
   setting: new Set(["language", "theme", "input_mode", "practice_display", "sound", "analytics_consent", "diagnostics_consent"]),
-  value_bucket: new Set(["enabled", "disabled", "ja", "en", "ko", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"]),
+  value_bucket: new Set(["enabled", "disabled", "ja", "en", "ko", "es", "de", "fr", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"]),
 };
 
 export function accepts(event: AnalyticsEvent, properties: Record<string, unknown>): boolean {

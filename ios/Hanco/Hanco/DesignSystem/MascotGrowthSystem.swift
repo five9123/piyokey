@@ -523,7 +523,7 @@ struct MascotClosetView: View {
           ).filter { retention.isStamped($0) }.count
           growthAxisRow(
             labelKey: "growth.axis.activity",
-            value: String(format: AppLocalization.string("growth.axis.days"), activeDays),
+            value: AppLocalization.format("growth.axis.days", activeDays),
             progress: Double(activeDays) / 7,
             tint: AppPalette.success
           )

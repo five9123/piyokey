@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-28 JST
+마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 최근 통합 기준선: 기존 작업 8개와 스페인어 UI를 포함한 PR #70
@@ -21,7 +21,19 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 코드·증빙 push 및 PR/Issue/Project 갱신 완료 → CI·리뷰 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+
+## #73 5언어·온보딩 통합 후보
+
+- 사용자가 코드·검증 기록의 GitHub 전송과 PR·Issue·Project 갱신을 명시적으로 승인해 기존 #74 브랜치에 push하고 원격 기록을 갱신했다. Project는 Verify, PR은 Draft로 유지한다. main 병합·CI 우회·배포는 승인 범위에 포함하지 않는다.
+- 사용자 진행 승인으로 `dcc32bf` 로컬 5언어 후보를 #73/PR #74에 통합했다. 원본 언어/리텐션 clone은 보존했다. 새 온보딩은 관심사 뒤 4단계·2열 예시 카드이며 돌아가기 버튼이 없다. 첫 홈은 추천, 실제 학습 뒤 이어하기다.
+- ja/en/es/de/fr 모두 iOS 1,124개 키·Android 517개 리소스 누락 0개, 공식 es/de/fr 뜻 627개·덱 이름 41개·태그 42개를 포함한다. 공용 schema/reader/writer·카탈로그 호환 계약을 함께 반영했다.
+- 검증 소스 `00fb528782bcceb84875778161fca0f4660fb3c8`, 증빙 `release/evidence/00fb528782bcceb84875778161fca0f4660fb3c8.json`. Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 366개·관련 UI 5개 통과. 마지막 변경은 배경·결과 마스코트의 성장 전 상태를 함께 검사하도록 테스트만 조정했으며, 동일 앱 소스 `a585771`의 단위·첫 홈 3개·Android 결과 재사용 범위를 증빙에 기록했다.
+- 부화 성장 실패는 시뮬레이터의 촬영용 성장 값이 앱 컨테이너 밖에 남아 새 설치 테스트에 유입된 문제였다. DEBUG 초기값과 결과 화면/투어 이후 테스트 범위를 명확히 했다. 별도로 화면 종료 시 미시작 세션이 빈 체크포인트를 다시 저장하던 문제를 수정해 부화→첫 홈→재실행에서 추천을 유지한다. 명시적 재도전의 초기화 저장은 유지한다.
+- Android 공유 에뮬레이터 재실행은 테스트 중 앱 삭제로 중단됐다. 기존 에뮬레이터/다른 작업을 중단하지 않고 Issue #73 전용 API35 에뮬레이터에서 UI 14개를 모두 재검증했다.
+- GitHub Actions/리뷰와 원어민·전체 화면/실기기·새 카탈로그 namespace·최종 RC 촬영·스토어 gate는 별도다. 과거 로컬 환경의 앱 빌드/기기 접근 실패 기록은 역사적 증빙이며 현재 통합 검증과 구분한다.
+- 상세: `docs/LANGUAGE_COVERAGE.md`, `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`.
 
 ## 최근 소스 통합
 
@@ -48,10 +60,12 @@
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
-- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 ja/en/es RC와 일치하지 않으므로 ko 스토어는 영어 UI, es-ES 스토어는 스페인어 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
+- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 main ja/en/es와 로컬 ja/en/es/de/fr 후보에 일치하지 않으므로 ko 스토어는 영어 UI, es/de/fr 스토어는 각각 해당 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
+
+`outputs/local-language-expansion`의 `codex/local-es-de-fr` (`dcc32bf`)를 사용자 진행 승인에 따라 #73 작업 후보에 통합했다. 원본 언어 clone과 후속 `outputs/local-retention-improvements`, 기본 dirty 작업공간은 수정하지 않았다. 로컬 후보의 과거 독립 작업 예외는 해당 시점 기록이며 현재 통합 작업은 Issue #73 소유권·PR #74로 관리한다.
 
 2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 

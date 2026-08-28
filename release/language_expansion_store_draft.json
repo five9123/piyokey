@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status": "local_draft_requires_native_review_and_final_build_captures",
+  "uploaded": false,
+  "supported_ui_languages": ["ja", "en", "es", "de", "fr"],
+  "preserved_content_languages": ["ja", "en", "ko"],
+  "catalog_delivery": {
+    "status": "not_published",
+    "new_namespace_required": true,
+    "suggested_namespace": "catalog/v2/",
+    "legacy_catalog_source_commit": "47371de950dcb28530f69b91ec596f53e2818ab3",
+    "warning": "Do not overwrite an existing catalog URL. Previous apps reject es/de/fr localization keys. Publish and verify a separate complete namespace, then configure only the new app to use it. New apps still import legacy decks; old apps may reject newly localized .typedeck files.",
+    "game_preset_versions": "Keep v3: Korean targets, item IDs, scoring, and ranked deck identity are unchanged. Localized preset files belong only to the new bundle/namespace."
+  },
+  "locales": {
+    "es-ES": {
+      "ui_language": "es",
+      "name": "Teclado coreano - typee",
+      "subtitle": "Aprende a escribir en hangul",
+      "keywords": "coreano,hangul,teclado,mecanografía,aprender,TOPIK,vocabulario,práctica",
+      "play_short_description": "Aprende a escribir en coreano con lecciones, juegos y tu compañero Piyo.",
+      "description": "¿Ya reconoces el hangul? Ahora aprende a escribirlo.\n\ntypee te ayuda a practicar el teclado coreano Dubeolsik con Piyo, tu pequeño compañero. Avanza desde consonantes y vocales hasta sílabas, consonantes finales, palabras y frases. Sigue la tecla resaltada y cada jamo que escribes.\n\nEmpieza con el teclado integrado sin configurar otro teclado. Cuando quieras, practica con el teclado coreano de tu dispositivo. Los mazos oficiales incluyen palabras cotidianas, viajes, TOPIK y expresiones originales inspiradas en el K-pop y los K-dramas. Consulta sus significados en español y escucha la pronunciación coreana sin conexión.\n\nPractica velocidad, precisión, memoria, escucha y espacios con seis juegos. Repasa tus errores y mantén el hábito con retos diarios, rachas y el crecimiento de Piyo.\n\nConserva hasta tres mazos personales gratis. La compra única y opcional de typee pro permite guardar mazos personales sin límite y crearlos o editarlos en el dispositivo. No es una suscripción. Las lecciones, los juegos, la exportación y la sustitución del mismo mazo siguen disponibles sin comprar.\n\nSin anuncios ni registro. Los registros de aprendizaje y los ajustes permanecen en el dispositivo. El contenido incluido funciona sin conexión. Interfaz y contenido oficial en japonés, inglés, español, alemán y francés. Los mazos personales solo muestran las traducciones que incluyan.",
+      "release_notes": "Ahora puedes usar typee en alemán y francés. También añadimos significados en español a las lecciones y los mazos oficiales, junto con mejoras en la selección de idioma y la edición de mazos.",
+      "pro_name": "typee pro",
+      "pro_description": "Crea, edita y guarda mazos sin límite",
+      "support": {
+        "change_language": "Abre Ajustes → Idioma y elige Español, Deutsch o Français. Tu elección se conserva al reiniciar y no cambia tu progreso.",
+        "keyboard": "Puedes empezar con el teclado integrado. Para usar el teclado del dispositivo, añade coreano en los ajustes del sistema y selecciónalo al escribir.",
+        "content_fallback": "Los mazos oficiales incluyen significados en español. Los mazos importados muestran la traducción disponible o, si falta, el inglés. Tus textos no se traducen ni se sobrescriben automáticamente.",
+        "purchase": "Puedes guardar tres mazos personales gratis. typee pro es una compra única para añadir más y crear o editar mazos. Restaura la compra con la misma cuenta de la tienda; las compras no se transfieren entre tiendas.",
+        "sharing": "Si otra persona no puede abrir un archivo .typedeck con nuevas traducciones, debe actualizar typee. Conserva una copia del archivo original."
+      }
+    },
+    "de-DE": {
+      "ui_language": "de",
+      "name": "Koreanisch tippen - typee",
+      "subtitle": "Hangul lernen und üben",
+      "keywords": "Koreanisch,Hangul,Tastatur,Tippen,Lernen,TOPIK,Wortschatz,Üben",
+      "play_short_description": "Lerne Koreanisch tippen mit Lektionen, Spielen und deinem Begleiter Piyo.",
+      "description": "Du erkennst Hangul? Lerne jetzt, es selbst zu tippen.\n\ntypee hilft dir mit der koreanischen Dubeolsik-Tastatur. Dein kleiner Begleiter Piyo wächst mit dir. Lerne Konsonanten, Vokale, Silben, Endkonsonanten, Wörter und Sätze. Folge der markierten Taste und jedem eingegebenen Jamo.\n\nStarte mit der integrierten Tastatur ohne zusätzliche Einrichtung. Später kannst du mit der koreanischen Systemtastatur üben. Offizielle Decks bieten Alltagswörter, Reisethemen, TOPIK und eigene, von K-Pop und K-Dramen inspirierte Ausdrücke. Lies die deutschen Bedeutungen und höre die koreanische Aussprache offline.\n\nSechs Spiele trainieren Tempo, Genauigkeit, Erinnerung, Hören und Leerzeichen. Wiederhole deine Fehler und bleib mit täglichen Aufgaben, Serien und Piyos Wachstum dabei.\n\nBis zu drei eigene Decks bleiben kostenlos. Mit dem optionalen einmaligen Kauf von typee pro kannst du unbegrenzt eigene Decks behalten und auf dem Gerät erstellen oder bearbeiten. Kein Abo. Lektionen, Spiele, Export und das Ersetzen desselben Decks bleiben ohne Kauf möglich.\n\nKeine Werbung und kein Konto. Lernfortschritt und Einstellungen bleiben auf deinem Gerät. Enthaltene Inhalte funktionieren offline. Oberfläche und offizielle Inhalte sind auf Japanisch, Englisch, Spanisch, Deutsch und Französisch verfügbar. Eigene Decks zeigen nur die enthaltenen Übersetzungen.",
+      "release_notes": "typee ist jetzt auch auf Deutsch und Französisch verfügbar. Spanische Bedeutungen ergänzen die Lektionen und offiziellen Decks. Auch Sprachauswahl und Deckbearbeitung wurden erweitert.",
+      "pro_name": "typee pro",
+      "pro_description": "Unbegrenzte Decks erstellen und bearbeiten",
+      "support": {
+        "change_language": "Öffne Einstellungen → Sprache und wähle Español, Deutsch oder Français. Deine Auswahl bleibt nach einem Neustart erhalten und ändert deinen Fortschritt nicht.",
+        "keyboard": "Du kannst mit der integrierten Tastatur beginnen. Für die Gerätetastatur füge Koreanisch in den Systemeinstellungen hinzu und wähle es beim Tippen aus.",
+        "content_fallback": "Offizielle Decks enthalten deutsche Bedeutungen. Importierte Decks zeigen vorhandene Übersetzungen oder ersatzweise Englisch. Deine Texte werden nicht automatisch übersetzt oder überschrieben.",
+        "purchase": "Drei eigene Decks sind kostenlos. typee pro ist ein einmaliger Kauf für weitere Decks sowie Erstellen und Bearbeiten. Stelle den Kauf mit demselben Store-Konto wieder her; Käufe werden nicht zwischen Stores übertragen.",
+        "sharing": "Wenn jemand eine .typedeck-Datei mit neuen Übersetzungen nicht öffnen kann, sollte typee aktualisiert werden. Bewahre eine Kopie der Originaldatei auf."
+      }
+    },
+    "fr-FR": {
+      "ui_language": "fr",
+      "name": "Clavier coréen - typee",
+      "subtitle": "Apprends à taper en hangeul",
+      "keywords": "coréen,hangeul,hangul,clavier,saisie,apprendre,TOPIK,vocabulaire,exercice",
+      "play_short_description": "Apprends à taper en coréen avec des leçons, des jeux et ton compagnon Piyo.",
+      "description": "Tu reconnais le hangeul ? Apprends maintenant à le saisir.\n\ntypee t’aide à pratiquer le clavier coréen Dubeolsik avec Piyo, ton petit compagnon qui grandit. Passe des consonnes et voyelles aux syllabes, consonnes finales, mots et phrases. Suis la touche en surbrillance et chaque jamo saisi.\n\nCommence avec le clavier intégré sans configuration supplémentaire. Quand tu le souhaites, utilise le clavier coréen de ton appareil. Les paquets officiels couvrent le quotidien, les voyages, le TOPIK et des expressions originales inspirées de la K-pop et des K-dramas. Lis les sens en français et écoute la prononciation coréenne hors ligne.\n\nSix jeux entraînent la vitesse, la précision, la mémoire, l’écoute et les espaces. Révise tes erreurs et garde le rythme avec les défis quotidiens, les séries et la croissance de Piyo.\n\nConserve jusqu’à trois paquets personnels gratuitement. L’achat unique et facultatif de typee pro permet d’en garder sans limite, d’en créer et de les modifier sur l’appareil. Ce n’est pas un abonnement. Les leçons, jeux, exports et remplacements du même paquet restent accessibles sans achat.\n\nSans publicité ni inscription. Les progrès et réglages restent sur ton appareil. Le contenu inclus fonctionne hors ligne. Interface et contenu officiel disponibles en japonais, anglais, espagnol, allemand et français. Les paquets personnels affichent uniquement les traductions qu’ils contiennent.",
+      "release_notes": "typee est maintenant disponible en allemand et en français. Les leçons et paquets officiels proposent aussi des sens en espagnol. Le choix de langue et l’édition des paquets ont été améliorés.",
+      "pro_name": "typee pro",
+      "pro_description": "Crée et modifie des paquets sans limite",
+      "support": {
+        "change_language": "Ouvre Réglages → Langue et choisis Español, Deutsch ou Français. Ton choix est conservé au redémarrage et ne modifie pas tes progrès.",
+        "keyboard": "Tu peux commencer avec le clavier intégré. Pour utiliser celui de l’appareil, ajoute le coréen dans les réglages système et sélectionne-le pendant la saisie.",
+        "content_fallback": "Les paquets officiels incluent des sens en français. Les paquets importés affichent la traduction disponible ou, à défaut, l’anglais. Tes textes ne sont jamais traduits ni remplacés automatiquement.",
+        "purchase": "Trois paquets personnels sont gratuits. typee pro est un achat unique pour en ajouter, en créer et les modifier. Restaure l’achat avec le même compte de boutique ; les achats ne sont pas transférés entre boutiques.",
+        "sharing": "Si une personne ne peut pas ouvrir un fichier .typedeck avec de nouvelles traductions, elle doit mettre typee à jour. Conserve une copie du fichier original."
+      }
+    }
+  }
+}

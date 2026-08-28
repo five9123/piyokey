@@ -2,6 +2,8 @@ package app.piyokey.core.data
 
 import app.piyokey.core.deckkit.DeckKitJson
 import app.piyokey.core.deckkit.DeckType
+import app.piyokey.core.settings.OnboardingGoal
+import app.piyokey.core.settings.OnboardingLevel
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,17 +19,57 @@ class DiscoveryEngineTest {
   )
 
   @Test
+  fun starterRecommendationsRespectLevelBeforeInterestsAndUseSafeFallback() {
+    for (goal in OnboardingGoal.entries) {
+      for (level in OnboardingLevel.entries) {
+        val result = DiscoveryEngine.starterRecommendations(catalog, goal.preferredTags, level)
+        assertEquals(3, result.size)
+        assertTrue(result.all { it.official })
+        val minimumRank = catalog.decks.filter { it.official }.minOf {
+          level.recommendationRank(it.level, it.tags, it.type == DeckType.SENTENCE)
+        }
+        val first = result.first()
+        assertEquals(minimumRank, level.recommendationRank(first.level, first.tags, first.type == DeckType.SENTENCE))
+      }
+    }
+    val travel = DiscoveryEngine.starterRecommendations(catalog, OnboardingGoal.TRAVEL.preferredTags, OnboardingLevel.SENTENCES)
+    assertTrue(travel.all { it.type == DeckType.SENTENCE && it.tags.any { tag -> tag in OnboardingGoal.TRAVEL.preferredTags } })
+    assertEquals("official_topik_one", DiscoveryEngine.starterRecommendations(catalog, OnboardingGoal.TOPIK.preferredTags, OnboardingLevel.WORDS).first().deckId)
+    assertTrue(DiscoveryEngine.starterRecommendations(catalog, emptySet(), null).all { it.level == 1 && "入門" in it.tags })
+    assertTrue(DiscoveryEngine.starterRecommendations(catalog, emptySet(), null, limit = 0).isEmpty())
+  }
+
+  @Test
   fun searchUsesLocalizedNameTagsAndAuthorWithEnglishFallback() {
     val english = DiscoveryEngine.filterAndSort(
       catalog,
       DeckFilters(query = "travel"),
-      "fr",
+      "ar",
     )
     assertTrue(english.any { it.deckId == "official_travel_phrases" })
-    assertFalse(english.any { it.localizedName("fr").orEmpty().contains("韓国旅行") })
+    assertFalse(english.any { it.localizedName("ar").orEmpty().contains("韓国旅行") })
 
     val korean = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = "여행"), "ko")
     assertTrue(korean.any { it.deckId == "official_travel_phrases" })
+  }
+
+  @Test
+  fun supportedLanguageSearchFoldsLatinAccentsAndPreservesCanonicalTags() {
+    for ((language, query) in listOf("fr" to "cafe", "es" to "cafe", "de" to "cafe")) {
+      val results = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = query), language)
+      assertTrue(results.any { it.deckId == "official_fun_food_cafe" }, language)
+    }
+    val french = DiscoveryEngine.filterAndSort(catalog, DeckFilters(query = "voyage"), "fr-CA")
+    assertTrue(french.any { it.deckId == "official_travel_phrases" })
+    assertEquals("韓国旅行", DiscoveryEngine.canonicalTag(catalog, "韓国旅行", "fr"))
+    assertEquals("会話", DiscoveryEngine.canonicalTag(catalog, "conversacion", "es"))
+    val voicedTag = catalog.copy(tags = listOf(catalog.tags.first().copy(tag = "が", localizations = null)))
+    assertEquals(null, DiscoveryEngine.canonicalTag(voicedTag, "か", "ja"))
+    assertEquals("が", DiscoveryEngine.canonicalTag(voicedTag, "か\u3099", "ja"))
+    for ((tag, query) in listOf("Straße" to "strasse", "cœur" to "coeur", "æ" to "ae", "한" to "\u1112\u1161\u11ab")) {
+      val taggedCatalog = catalog.copy(tags = listOf(catalog.tags.first().copy(tag = tag, localizations = null)))
+      assertEquals(tag, DiscoveryEngine.canonicalTag(taggedCatalog, query, "de"))
+    }
   }
 
   @Test

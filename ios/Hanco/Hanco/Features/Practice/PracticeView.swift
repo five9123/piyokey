@@ -770,8 +770,7 @@ struct PracticeView: View {
     guard viewModel.consecutiveMistakes >= 3,
       case .incorrect(let expected) = viewModel.feedback
     else { return nil }
-    return String(
-      format: AppLocalization.string("mascot.speech.missed_jamo"),
+    return AppLocalization.format("mascot.speech.missed_jamo",
       String(expected)
     )
   }
@@ -808,7 +807,7 @@ struct PracticeView: View {
   #if DEBUG
     private var latencyValueText: String {
       guard let p95Milliseconds = latencyMonitor.p95Milliseconds else { return "—" }
-      return String(format: AppLocalization.string("debug.input_latency.value"), p95Milliseconds)
+      return AppLocalization.format("debug.input_latency.value", p95Milliseconds)
     }
 
     private var latencyAccessibilityValue: String {
@@ -908,7 +907,8 @@ struct PracticeView: View {
     korean10KeyInterpreter.reset()
     viewModel.reset()
     inputResetRevision += 1
-    persistCheckpoint()
+    // An explicit retry replaces the old checkpoint even before the first key.
+    if curriculumStageID != nil { onCheckpoint?(viewModel.checkpoint()) }
     captureAnalyticsStartIfNeeded()
   }
 
@@ -1051,7 +1051,9 @@ struct PracticeView: View {
   }
 
   private func persistCheckpoint() {
-    guard curriculumStageID != nil else { return }
+    // SwiftUI may tear down an unstarted destination after the result closes.
+    // It must not recreate an empty session after completion cleared it.
+    guard curriculumStageID != nil, viewModel.hasResumableProgress else { return }
     onCheckpoint?(viewModel.checkpoint())
   }
 
@@ -1416,8 +1418,7 @@ private struct TargetSyllableProgressView: View {
   }
 
   private var accessibilityProgress: String {
-    String(
-      format: AppLocalization.string("practice.syllable_progress_value"),
+    AppLocalization.format("practice.syllable_progress_value",
       completedCount,
       totalCount
     )

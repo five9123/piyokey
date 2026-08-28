@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_batchim",
+  "version": 5,
+  "name": "パッチム入門",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 2,
+  "tags": [
+    "入門",
+    "パッチム",
+    "公式"
+  ],
+  "created_at": "2026-01-26T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "강",
+      "reading_ja": "カン",
+      "meaning_ja": "終声 ㅇ",
+      "audio": "audio/ko_d90ed2084b71f17cebe5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅇ",
+          "reading": "gang"
+        },
+        "es": {
+          "meaning": "consonante final ㅇ",
+          "reading": "gang"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅇ",
+          "reading": "gang"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅇ",
+          "reading": "gang"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "꽃",
+      "reading_ja": "コッ",
+      "meaning_ja": "濃音と終声",
+      "audio": "audio/ko_1543c99e8fd9f44ded8e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "tense consonant and final consonant",
+          "reading": "kkot"
+        },
+        "es": {
+          "meaning": "consonante tensa y final",
+          "reading": "kkot"
+        },
+        "de": {
+          "meaning": "Gespannter Konsonant und Endkonsonant",
+          "reading": "kkot"
+        },
+        "fr": {
+          "meaning": "consonne tendue et consonne finale",
+          "reading": "kkot"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "집",
+      "reading_ja": "チプ",
+      "meaning_ja": "終声 ㅂ",
+      "audio": "audio/ko_99cf116bb12cf1061e0b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅂ",
+          "reading": "jip"
+        },
+        "es": {
+          "meaning": "consonante final ㅂ",
+          "reading": "jip"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅂ",
+          "reading": "jip"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅂ",
+          "reading": "jip"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "책",
+      "reading_ja": "チェク",
+      "meaning_ja": "終声 ㄱ",
+      "audio": "audio/ko_ba928dd573a2db9e7579.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㄱ",
+          "reading": "chaek"
+        },
+        "es": {
+          "meaning": "consonante final ㄱ",
+          "reading": "chaek"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㄱ",
+          "reading": "chaek"
+        },
+        "fr": {
+          "meaning": "consonne finale ㄱ",
+          "reading": "chaek"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "문",
+      "reading_ja": "ムン",
+      "meaning_ja": "終声 ㄴ",
+      "audio": "audio/ko_e2c7d5c49b61f5326c13.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㄴ",
+          "reading": "mun"
+        },
+        "es": {
+          "meaning": "consonante final ㄴ",
+          "reading": "mun"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㄴ",
+          "reading": "mun"
+        },
+        "fr": {
+          "meaning": "consonne finale ㄴ",
+          "reading": "mun"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "간",
+      "reading_ja": "カン",
+      "meaning_ja": "終声 ㄴ",
+      "audio": "audio/ko_74ca8db3a8d704900080.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㄴ",
+          "reading": "gan"
+        },
+        "es": {
+          "meaning": "consonante final ㄴ",
+          "reading": "gan"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㄴ",
+          "reading": "gan"
+        },
+        "fr": {
+          "meaning": "consonne finale ㄴ",
+          "reading": "gan"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "달",
+      "reading_ja": "タル",
+      "meaning_ja": "終声 ㄹ",
+      "audio": "audio/ko_2f941e6eb2150679c43f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㄹ",
+          "reading": "dal"
+        },
+        "es": {
+          "meaning": "consonante final ㄹ",
+          "reading": "dal"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㄹ",
+          "reading": "dal"
+        },
+        "fr": {
+          "meaning": "consonne finale ㄹ",
+          "reading": "dal"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "밤",
+      "reading_ja": "パム",
+      "meaning_ja": "終声 ㅁ",
+      "audio": "audio/ko_da9e530428ce1c2deaf3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅁ",
+          "reading": "bam"
+        },
+        "es": {
+          "meaning": "consonante final ㅁ",
+          "reading": "bam"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅁ",
+          "reading": "bam"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅁ",
+          "reading": "bam"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "밥",
+      "reading_ja": "パプ",
+      "meaning_ja": "終声 ㅂ",
+      "audio": "audio/ko_828fa1e7e354b408527f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅂ",
+          "reading": "bap"
+        },
+        "es": {
+          "meaning": "consonante final ㅂ",
+          "reading": "bap"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅂ",
+          "reading": "bap"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅂ",
+          "reading": "bap"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "옷",
+      "reading_ja": "オッ",
+      "meaning_ja": "終声 ㅅ",
+      "audio": "audio/ko_4bddf9b9203384c7b240.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅅ",
+          "reading": "ot"
+        },
+        "es": {
+          "meaning": "consonante final ㅅ",
+          "reading": "ot"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅅ",
+          "reading": "ot"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅅ",
+          "reading": "ot"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "강",
+      "reading_ja": "カン",
+      "meaning_ja": "終声 ㅇ",
+      "audio": "audio/ko_d90ed2084b71f17cebe5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "final consonant ㅇ",
+          "reading": "gang"
+        },
+        "es": {
+          "meaning": "consonante final ㅇ",
+          "reading": "gang"
+        },
+        "de": {
+          "meaning": "Endkonsonant ㅇ",
+          "reading": "gang"
+        },
+        "fr": {
+          "meaning": "consonne finale ㅇ",
+          "reading": "gang"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "꽃",
+      "reading_ja": "コッ",
+      "meaning_ja": "濃音と終声",
+      "audio": "audio/ko_1543c99e8fd9f44ded8e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "tense consonant and final consonant",
+          "reading": "kkot"
+        },
+        "es": {
+          "meaning": "consonante tensa y final",
+          "reading": "kkot"
+        },
+        "de": {
+          "meaning": "Gespannter Konsonant und Endkonsonant",
+          "reading": "kkot"
+        },
+        "fr": {
+          "meaning": "consonne tendue et consonne finale",
+          "reading": "kkot"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Batchim Basics",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Beginner Basics",
+        "Batchim",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "받침 첫걸음",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "입문",
+        "받침",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Introducción al batchim",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Iniciación",
+        "Batchim",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Batchim-Grundlagen",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Einstieg",
+        "Batchim",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Bases du batchim",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Initiation",
+        "Batchim",
+        "Officiel"
+      ]
+    }
+  }
+}

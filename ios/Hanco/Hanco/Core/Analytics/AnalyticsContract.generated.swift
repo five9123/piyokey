@@ -79,7 +79,7 @@ enum AnalyticsContract {
 
   static let enumValues: [AnalyticsProperty: Set<String>] = [
     .platform: ["ios", "ipados", "android", "web"],
-    .locale: ["ja", "en", "ko", "other"],
+    .locale: ["ja", "en", "ko", "es", "de", "fr", "other"],
     .entryPoint: ["cold_start", "foreground", "deep_link", "notification", "unknown"],
     .feature: ["home", "discover", "practice", "game", "my_page", "settings", "deck_maker", "web_landing", "web_support"],
     .onboardingStep: ["goal", "keyboard", "first_input", "hatch_1", "hatch_2", "hatch_3", "app_tour"],
@@ -97,7 +97,7 @@ enum AnalyticsContract {
     .action: ["created", "edited", "copied", "imported", "exported", "deleted", "shared", "saved_image"],
     .purchaseState: ["viewed", "started", "pending", "completed", "cancelled", "failed", "restored"],
     .setting: ["language", "theme", "input_mode", "practice_display", "sound", "analytics_consent", "diagnostics_consent"],
-    .valueBucket: ["enabled", "disabled", "ja", "en", "ko", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"],
+    .valueBucket: ["enabled", "disabled", "ja", "en", "ko", "es", "de", "fr", "light", "dark", "builtin", "os_ime", "learning", "focus", "other"],
   ]
 
   static func accepts(event: AnalyticsEvent, properties: [AnalyticsProperty: Any]) -> Bool {

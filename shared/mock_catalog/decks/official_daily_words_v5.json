@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_daily_words",
+  "version": 5,
+  "name": "毎日の韓国語",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 1,
+  "tags": [
+    "日常",
+    "公式",
+    "単語"
+  ],
+  "created_at": "2026-01-31T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "회사",
+      "reading_ja": "フェサ",
+      "meaning_ja": "会社",
+      "audio": "audio/ko_a109dcd7f6f11c2e1703.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "company",
+          "reading": "hoesa"
+        },
+        "es": {
+          "meaning": "empresa",
+          "reading": "hoesa"
+        },
+        "de": {
+          "meaning": "Unternehmen",
+          "reading": "hoesa"
+        },
+        "fr": {
+          "meaning": "entreprise",
+          "reading": "hoesa"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "학교",
+      "reading_ja": "ハッキョ",
+      "meaning_ja": "学校",
+      "audio": "audio/ko_f7b9c878ccca829ab6ab.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "school",
+          "reading": "hakgyo"
+        },
+        "es": {
+          "meaning": "escuela",
+          "reading": "hakgyo"
+        },
+        "de": {
+          "meaning": "Schule",
+          "reading": "hakgyo"
+        },
+        "fr": {
+          "meaning": "école",
+          "reading": "hakgyo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "날씨",
+      "reading_ja": "ナルシ",
+      "meaning_ja": "天気",
+      "audio": "audio/ko_fe655cf1d979cf3db76c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "weather",
+          "reading": "nalssi"
+        },
+        "es": {
+          "meaning": "tiempo atmosférico",
+          "reading": "nalssi"
+        },
+        "de": {
+          "meaning": "Wetter",
+          "reading": "nalssi"
+        },
+        "fr": {
+          "meaning": "météo",
+          "reading": "nalssi"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "주말",
+      "reading_ja": "チュマル",
+      "meaning_ja": "週末",
+      "audio": "audio/ko_dc80d0fe247835379f4f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "weekend",
+          "reading": "jumal"
+        },
+        "es": {
+          "meaning": "fin de semana",
+          "reading": "jumal"
+        },
+        "de": {
+          "meaning": "Wochenende",
+          "reading": "jumal"
+        },
+        "fr": {
+          "meaning": "week-end",
+          "reading": "jumal"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "가족",
+      "reading_ja": "カジョク",
+      "meaning_ja": "家族",
+      "audio": "audio/ko_7659575fd72a872b8d05.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "family",
+          "reading": "gajok"
+        },
+        "es": {
+          "meaning": "familia",
+          "reading": "gajok"
+        },
+        "de": {
+          "meaning": "Familie",
+          "reading": "gajok"
+        },
+        "fr": {
+          "meaning": "famille",
+          "reading": "gajok"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "시간",
+      "reading_ja": "シガン",
+      "meaning_ja": "時間",
+      "audio": "audio/ko_4692cef5ac69eb37bd53.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "time",
+          "reading": "sigan"
+        },
+        "es": {
+          "meaning": "tiempo",
+          "reading": "sigan"
+        },
+        "de": {
+          "meaning": "Zeit",
+          "reading": "sigan"
+        },
+        "fr": {
+          "meaning": "temps",
+          "reading": "sigan"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "마음",
+      "reading_ja": "マウム",
+      "meaning_ja": "心",
+      "audio": "audio/ko_aa9cbf25b5381e2c30cd.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "heart",
+          "reading": "maeum"
+        },
+        "es": {
+          "meaning": "corazón",
+          "reading": "maeum"
+        },
+        "de": {
+          "meaning": "Herz",
+          "reading": "maeum"
+        },
+        "fr": {
+          "meaning": "cœur",
+          "reading": "maeum"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "휴일",
+      "reading_ja": "ヒュイル",
+      "meaning_ja": "休日",
+      "audio": "audio/ko_98c4721ccd1350f17224.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "day off",
+          "reading": "hyuil"
+        },
+        "es": {
+          "meaning": "día libre",
+          "reading": "hyuil"
+        },
+        "de": {
+          "meaning": "Freier Tag",
+          "reading": "hyuil"
+        },
+        "fr": {
+          "meaning": "jour de repos",
+          "reading": "hyuil"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "산책",
+      "reading_ja": "サンチェク",
+      "meaning_ja": "散歩",
+      "audio": "audio/ko_b745d43721954853192d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "walk",
+          "reading": "sanchaek"
+        },
+        "es": {
+          "meaning": "paseo",
+          "reading": "sanchaek"
+        },
+        "de": {
+          "meaning": "Spaziergang",
+          "reading": "sanchaek"
+        },
+        "fr": {
+          "meaning": "promenade",
+          "reading": "sanchaek"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "공부",
+      "reading_ja": "コンブ",
+      "meaning_ja": "勉強",
+      "audio": "audio/ko_c9b4aed6d54a88472fe8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "study",
+          "reading": "gongbu"
+        },
+        "es": {
+          "meaning": "estudio",
+          "reading": "gongbu"
+        },
+        "de": {
+          "meaning": "Lernen",
+          "reading": "gongbu"
+        },
+        "fr": {
+          "meaning": "étude",
+          "reading": "gongbu"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "아침",
+      "reading_ja": "アチム",
+      "meaning_ja": "朝",
+      "audio": "audio/ko_2fdd736548d881c6da93.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "morning",
+          "reading": "achim"
+        },
+        "es": {
+          "meaning": "mañana",
+          "reading": "achim"
+        },
+        "de": {
+          "meaning": "Morgen",
+          "reading": "achim"
+        },
+        "fr": {
+          "meaning": "matin",
+          "reading": "achim"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "점심",
+      "reading_ja": "チョムシム",
+      "meaning_ja": "昼食",
+      "audio": "audio/ko_12cf30d1ce4feda7a77d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "lunch",
+          "reading": "jeomsim"
+        },
+        "es": {
+          "meaning": "almuerzo",
+          "reading": "jeomsim"
+        },
+        "de": {
+          "meaning": "Mittagessen",
+          "reading": "jeomsim"
+        },
+        "fr": {
+          "meaning": "déjeuner",
+          "reading": "jeomsim"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Everyday Korean Words",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Everyday",
+        "Official",
+        "Words"
+      ]
+    },
+    "ko": {
+      "name": "매일 쓰는 한국어 단어",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "일상",
+        "공식",
+        "단어"
+      ]
+    },
+    "es": {
+      "name": "Palabras coreanas cotidianas",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Vida cotidiana",
+        "Oficial",
+        "Palabras"
+      ]
+    },
+    "de": {
+      "name": "Koreanische Alltagswörter",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Alltag",
+        "Offiziell",
+        "Wörter"
+      ]
+    },
+    "fr": {
+      "name": "Mots coréens du quotidien",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Quotidien",
+        "Officiel",
+        "Mots"
+      ]
+    }
+  }
+}

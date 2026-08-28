@@ -22,7 +22,7 @@ struct HomeView: View {
             let today = JSTDay(date: RetentionClock.now())
             VStack(spacing: 14) {
               RetentionHomeView(today: today)
-              HomePrimaryActionView(today: today)
+              HomePrimaryActionView(today: today, catalog: catalog)
               HomeQuickActionsView(catalog: catalog)
             }
           }
@@ -229,12 +229,14 @@ private struct PersistenceRecoveryBanner: View {
 }
 
 private struct HomePrimaryActionView: View {
+  @AppStorage(OnboardingStore.homeLearningStartedKey) private var hasStartedLearning = false
   @EnvironmentObject private var progress: CurriculumProgressLibrary
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var retention: RetentionLibrary
   @EnvironmentObject private var onboarding: OnboardingLibrary
 
   let today: JSTDay
+  let catalog: Catalog?
 
   @ViewBuilder
   var body: some View {
@@ -267,9 +269,24 @@ private struct HomePrimaryActionView: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("home.primary.resume_deck")
+      } else if let deck = starterRecommendation, let catalog {
+        NavigationLink {
+          DeckDetailView(deck: deck, catalogDecks: catalog.decks)
+        } label: {
+          primaryCard(
+            eyebrow: "home.primary.recommend_eyebrow",
+            title: deck.appName,
+            detail: "home.primary.recommend_detail",
+            systemImage: "sparkles",
+            completed: false
+          )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("home.primary.recommend_deck")
       } else {
         NavigationLink {
           DailyChallengePracticeDestination(challenge: dailyChallenge)
+            .onAppear { hasStartedLearning = true }
         } label: {
           primaryCard(
             eyebrow: "retention.daily.eyebrow",
@@ -284,6 +301,10 @@ private struct HomePrimaryActionView: View {
       }
     }
     .appTourTarget(.homePrimary)
+    .onAppear { rememberLearningHistory() }
+    .onChange(of: resumableStage?.id) { _ in rememberLearningHistory() }
+    .onChange(of: recentPlayedDeck?.deckId) { _ in rememberLearningHistory() }
+    .onChange(of: hasPriorHomeActivity) { _ in rememberLearningHistory() }
   }
 
   private func primaryCard(
@@ -342,7 +363,7 @@ private struct HomePrimaryActionView: View {
         titleView
           .font(.title3.weight(.heavy))
           .foregroundStyle(.white)
-          .lineLimit(1)
+          .fixedSize(horizontal: false, vertical: true)
         Text(detail)
           .font(.caption)
           .foregroundStyle(Color.white.opacity(0.86))
@@ -369,6 +390,26 @@ private struct HomePrimaryActionView: View {
   private var recentPlayedDeck: Deck? {
     deckLibrary.installed.first { deck in
       deckLibrary.records[deck.deckId]?.lastPlayedAt != nil
+    }
+  }
+
+  private var starterRecommendation: CatalogDeck? {
+    // Hatch missions are onboarding, not a previous home learning session.
+    guard !hasStartedLearning, !hasPriorHomeActivity else { return nil }
+    return DeckRecommendationEngine.starterRecommendations(
+      catalog: catalog, preferredTags: onboarding.preferredTags,
+      level: onboarding.selectedLevel, limit: 1
+    ).first
+  }
+
+  private var hasPriorHomeActivity: Bool {
+    progress.completedStageIDs.contains { (CurriculumCatalog.stage(id: $0)?.chapterNumber ?? 0) > 3 }
+      || retention.records.values.contains { $0.activities.contains { $0 != .curriculum } }
+  }
+
+  private func rememberLearningHistory() {
+    if resumableStage != nil || recentPlayedDeck != nil || hasPriorHomeActivity {
+      hasStartedLearning = true
     }
   }
 
@@ -491,8 +532,7 @@ struct CurriculumMapView: View {
             .foregroundStyle(AppPalette.secondary)
           Spacer()
           Text(
-            String(
-              format: AppLocalization.string("onboarding.hatch.progress_format"),
+            AppLocalization.format("onboarding.hatch.progress_format",
               completedHatchMissionCount,
               HatchOnboardingPolicy.requiredChapterCount
             )
@@ -517,8 +557,7 @@ struct CurriculumMapView: View {
           )
         } label: {
           Label(
-            String(
-              format: AppLocalization.string("onboarding.hatch.continue_format"),
+            AppLocalization.format("onboarding.hatch.continue_format",
               nextStage.chapterNumber
             ),
             systemImage: "arrow.right.circle.fill"
@@ -551,8 +590,7 @@ struct CurriculumMapView: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("curriculum.chapter_number_format"),
+          AppLocalization.format("curriculum.chapter_number_format",
             chapter.number
           )
         )

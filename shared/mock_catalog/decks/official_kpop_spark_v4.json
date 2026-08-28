@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_kpop_spark",
+  "version": 4,
+  "name": "オリジナルK-POP：ときめき",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 1,
+  "tags": [
+    "K-POP",
+    "歌詞風",
+    "公式"
+  ],
+  "created_at": "2026-03-02T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "첫눈",
+      "reading_ja": "チョンヌン",
+      "meaning_ja": "初雪",
+      "audio": "audio/ko_1b4ef4c2829c13187492.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "first snow",
+          "reading": "cheotnun"
+        },
+        "es": {
+          "meaning": "primera nieve",
+          "reading": "cheotnun"
+        },
+        "de": {
+          "meaning": "Erster Schnee",
+          "reading": "cheotnun"
+        },
+        "fr": {
+          "meaning": "première neige",
+          "reading": "cheotnun"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "떨림",
+      "reading_ja": "トルリム",
+      "meaning_ja": "ときめき",
+      "audio": "audio/ko_3d85860dd7f5c81af6f6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "flutter",
+          "reading": "tteolrim"
+        },
+        "es": {
+          "meaning": "emoción del corazón",
+          "reading": "tteolrim"
+        },
+        "de": {
+          "meaning": "Herzklopfen",
+          "reading": "tteolrim"
+        },
+        "fr": {
+          "meaning": "palpitations",
+          "reading": "tteolrim"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "심장 박동",
+      "reading_ja": "シムジャン パクトン",
+      "meaning_ja": "胸の鼓動",
+      "audio": "audio/ko_07ce2b689f0a8c9f87ad.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "heartbeat",
+          "reading": "simjang bakdong"
+        },
+        "es": {
+          "meaning": "latido del corazón",
+          "reading": "simjang bakdong"
+        },
+        "de": {
+          "meaning": "Herzschlag",
+          "reading": "simjang bakdong"
+        },
+        "fr": {
+          "meaning": "battement de cœur",
+          "reading": "simjang bakdong"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "눈부신 너",
+      "reading_ja": "ヌンブシン ノ",
+      "meaning_ja": "まぶしい君",
+      "audio": "audio/ko_0e902587433c3ecff934.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You shine so bright",
+          "reading": "nunbusin neo"
+        },
+        "es": {
+          "meaning": "Brillas tanto",
+          "reading": "nunbusin neo"
+        },
+        "de": {
+          "meaning": "Du strahlst so hell",
+          "reading": "nunbusin neo"
+        },
+        "fr": {
+          "meaning": "Tu brilles tellement",
+          "reading": "nunbusin neo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "우리의 리듬",
+      "reading_ja": "ウリエ リドゥム",
+      "meaning_ja": "私たちのリズム",
+      "audio": "audio/ko_b4daab8dfd8a17a1865a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Our rhythm",
+          "reading": "uriui rideum"
+        },
+        "es": {
+          "meaning": "nuestro ritmo",
+          "reading": "uriui rideum"
+        },
+        "de": {
+          "meaning": "Unser Rhythmus",
+          "reading": "uriui rideum"
+        },
+        "fr": {
+          "meaning": "notre rythme",
+          "reading": "uriui rideum"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "두 손을 높이",
+      "reading_ja": "トゥ ソヌル ノピ",
+      "meaning_ja": "両手を高く",
+      "audio": "audio/ko_22b1010974ec619bd601.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Put both hands up high",
+          "reading": "du soneul nopi"
+        },
+        "es": {
+          "meaning": "Levanta ambas manos",
+          "reading": "du soneul nopi"
+        },
+        "de": {
+          "meaning": "Heb beide Hände hoch",
+          "reading": "du soneul nopi"
+        },
+        "fr": {
+          "meaning": "Lève les deux mains bien haut",
+          "reading": "du soneul nopi"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "빛을 따라가",
+      "reading_ja": "ピチュル タラガ",
+      "meaning_ja": "光を追いかけて",
+      "audio": "audio/ko_61be508943a60a712d19.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Follow the light",
+          "reading": "biteul ttaraga"
+        },
+        "es": {
+          "meaning": "Sigue la luz",
+          "reading": "biteul ttaraga"
+        },
+        "de": {
+          "meaning": "Folge dem Licht",
+          "reading": "biteul ttaraga"
+        },
+        "fr": {
+          "meaning": "Suis la lumière",
+          "reading": "biteul ttaraga"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "오늘을 크게 노래해",
+      "reading_ja": "オヌルル クゲ ノレヘ",
+      "meaning_ja": "今日を高らかに歌おう",
+      "audio": "audio/ko_ddb14e723fd619e846d0.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Sing today out loud",
+          "reading": "oneuleul keuge noraehae"
+        },
+        "es": {
+          "meaning": "Canta a todo pulmón hoy",
+          "reading": "oneuleul keuge noraehae"
+        },
+        "de": {
+          "meaning": "Sing heute laut",
+          "reading": "oneuleul keuge noraehae"
+        },
+        "fr": {
+          "meaning": "Chante à pleine voix aujourd’hui",
+          "reading": "oneuleul keuge noraehae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "함께 춤을 춰",
+      "reading_ja": "ハムケ チュムル チョ",
+      "meaning_ja": "一緒に踊ろう",
+      "audio": "audio/ko_3ca1451312ce2006b7dc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's dance together",
+          "reading": "hamkke chumeul chwo"
+        },
+        "es": {
+          "meaning": "Bailemos juntos",
+          "reading": "hamkke chumeul chwo"
+        },
+        "de": {
+          "meaning": "Tanzen wir zusammen",
+          "reading": "hamkke chumeul chwo"
+        },
+        "fr": {
+          "meaning": "Dansons ensemble",
+          "reading": "hamkke chumeul chwo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "내 맘에 번진 빛",
+      "reading_ja": "ネ マメ ポンジン ピッ",
+      "meaning_ja": "心に広がった光",
+      "audio": "audio/ko_93038b89a3abb7da80e5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The light that spread through my heart",
+          "reading": "nae mame beonjin bit"
+        },
+        "es": {
+          "meaning": "la luz que llenó mi corazón",
+          "reading": "nae mame beonjin bit"
+        },
+        "de": {
+          "meaning": "Das Licht in meinem Herzen",
+          "reading": "nae mame beonjin bit"
+        },
+        "fr": {
+          "meaning": "la lumière qui a envahi mon cœur",
+          "reading": "nae mame beonjin bit"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "빛나는 우리 무대",
+      "reading_ja": "ピンナヌン ウリ ムデ",
+      "meaning_ja": "輝く私たちのステージ",
+      "audio": "audio/ko_889bd3a3e290e34a053c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Our shining stage",
+          "reading": "bitnaneun uri mudae"
+        },
+        "es": {
+          "meaning": "nuestro escenario brillante",
+          "reading": "bitnaneun uri mudae"
+        },
+        "de": {
+          "meaning": "Unsere strahlende Bühne",
+          "reading": "bitnaneun uri mudae"
+        },
+        "fr": {
+          "meaning": "notre scène étincelante",
+          "reading": "bitnaneun uri mudae"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "새벽을 깨워",
+      "reading_ja": "セビョグル ケウォ",
+      "meaning_ja": "夜明けを目覚めさせて",
+      "audio": "audio/ko_300c1a824e16c66a659a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Awaken the dawn",
+          "reading": "saebyeokeul kkaewo"
+        },
+        "es": {
+          "meaning": "Despierta el amanecer",
+          "reading": "saebyeokeul kkaewo"
+        },
+        "de": {
+          "meaning": "Wecke die Morgendämmerung",
+          "reading": "saebyeokeul kkaewo"
+        },
+        "fr": {
+          "meaning": "Éveille l’aube",
+          "reading": "saebyeokeul kkaewo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Original K-Pop: First Spark",
+      "author_nickname": "typee Official",
+      "tags": [
+        "K-Pop",
+        "Lyric-Inspired",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "오리지널 K-POP: 설렘",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "K-POP",
+        "가사풍",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "K-pop original: la primera chispa",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "K-pop",
+        "Estilo de letras",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Original-K-Pop: Der erste Funke",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "K-Pop",
+        "Von Songtexten inspiriert",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "K-pop original : première étincelle",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "K-pop",
+        "Inspiré des paroles",
+        "Officiel"
+      ]
+    }
+  }
+}

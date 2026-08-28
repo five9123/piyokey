@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">typee</string>
+  <string name="nav_home">Accueil</string>
+  <string name="nav_discover">Découvrir</string>
+  <string name="nav_practice">S’entraîner</string>
+  <string name="nav_games">Jeux</string>
+  <string name="nav_profile">Profil</string>
+  <string name="loading_content">Chargement du contenu hors ligne vérifié…</string>
+  <string name="practice_choose_deck">Choisir un paquet téléchargé</string>
+  <string name="practice_sample">Essayer un exemple</string>
+  <string name="games_coming_next">Les modes de jeu sont en préparation.</string>
+  <string name="close_session">Fermer</string>
+  <string name="retry_load">Réessayer</string>
+  <string name="dismiss_error">Fermer</string>
+  <string name="retry_save">Réessayer l’enregistrement</string>
+  <string name="back_to_curriculum">Retour au programme</string>
+  <string name="practice_result_share_title">Entraînement à la saisie du coréen</string>
+  <string name="practice_result_share_level">Session d’entraînement</string>
+</resources>

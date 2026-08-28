@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="reminder_channel_name">Tägliches Üben</string>
+  <string name="reminder_notification_title">Deine 3-Minuten-Übung mit typee</string>
+  <string name="reminder_notification_body">Verlängere heute deine Koreanisch-Tippserie.</string>
+  <string name="feedback_proposal_subject">[typee] Deckvorschlag</string>
+  <string name="feedback_report_subject">[typee] Deckinhalt melden</string>
+  <string name="feedback_combined_subject">[typee] Inhaltsfeedback</string>
+  <string name="feedback_proposal_body">Thema:\nZielniveau:\nGewünschte Wörter:\nGrund für den Vorschlag:\n\nKeine Passwörter, Adressen, Original-Songtexte oder Seriendialoge eingeben. Einsendungen werden manuell geprüft und nicht automatisch veröffentlicht.</string>
+  <string name="feedback_report_body">Betroffener Ausdruck:\nArt (Tippfehler / Bedeutung / Lesung / Audio / Rechte):\nDetails:\n\nKeine Passwörter, Adressen, Original-Songtexte oder Seriendialoge eingeben. Meldungen werden manuell geprüft und nicht automatisch veröffentlicht.</string>
+  <string name="feedback_combined_body">Feedbackart (Deckvorschlag / Inhaltsmeldung):\nThema oder Ausdruck:\nZielniveau oder Problemart:\nDetails:\n\nKeine Passwörter, Adressen, Original-Songtexte oder Seriendialoge eingeben. Einsendungen werden manuell geprüft und nicht automatisch veröffentlicht.</string>
+  <string name="feedback_metadata_heading">--- Automatisch ergänzte App-Informationen ---</string>
+  <string name="feedback_metadata_type">Typ</string>
+  <string name="feedback_metadata_source">Ausgangsbildschirm</string>
+  <string name="feedback_metadata_app">App-Version/Build</string>
+  <string name="feedback_metadata_language">Sprache</string>
+  <string name="feedback_metadata_deck">Deck-ID/Version</string>
+</resources>

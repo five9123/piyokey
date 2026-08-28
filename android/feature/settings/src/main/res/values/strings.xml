@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="settings_title">Settings</string>
   <string name="settings_sound">Sound &amp; feedback</string>
@@ -52,7 +53,7 @@
   <string name="settings_crash_diagnostics_detail">Share diagnostics for crashes and app hangs.</string>
   <string name="settings_analytics_privacy_note">Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.</string>
   <string name="settings_review_privacy_choices">Review data-sharing choices</string>
-  <string name="privacy_consent_title">Help improve PIYOKEY?</string>
+  <string name="privacy_consent_title">Help improve typee?</string>
   <string name="privacy_consent_introduction">Choose each type of information you want to share. Both stay off until you save your choices.</string>
   <string name="privacy_consent_optional_note">You can use every lesson, game, and purchased feature without sharing. Change your choices anytime in Settings.</string>
   <string name="privacy_consent_analytics_detail">Send PostHog Cloud EU the features used, session completion, app version, and a random app identifier. This is not used for ads or tracking across other companies’ services.</string>
@@ -70,4 +71,6 @@
   <string name="settings_language_japanese">日本語</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_spanish">Español</string>
+  <string name="settings_language_german">Deutsch</string>
+  <string name="settings_language_french">Français</string>
 </resources>

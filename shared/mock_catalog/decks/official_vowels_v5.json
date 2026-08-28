@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_vowels",
+  "version": 5,
+  "name": "基本母音を覚えよう",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 1,
+  "tags": [
+    "入門",
+    "母音",
+    "公式"
+  ],
+  "created_at": "2026-01-16T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "ㅕ",
+      "reading_ja": "ヨ",
+      "meaning_ja": "基本母音 ㅕ",
+      "audio": "audio/ko_3308f5d7348fe7292b6a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅕ",
+          "reading": "yeo"
+        },
+        "es": {
+          "meaning": "vocal básica ㅕ",
+          "reading": "yeo"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅕ",
+          "reading": "yeo"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅕ",
+          "reading": "yeo"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "ㅏ",
+      "reading_ja": "ア",
+      "meaning_ja": "基本母音 ㅏ",
+      "audio": "audio/ko_6d18873491b4e9833987.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅏ",
+          "reading": "a"
+        },
+        "es": {
+          "meaning": "vocal básica ㅏ",
+          "reading": "a"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅏ",
+          "reading": "a"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅏ",
+          "reading": "a"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "ㅓ",
+      "reading_ja": "オ",
+      "meaning_ja": "基本母音 ㅓ",
+      "audio": "audio/ko_2ccf6b79fbefce85e808.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅓ",
+          "reading": "eo"
+        },
+        "es": {
+          "meaning": "vocal básica ㅓ",
+          "reading": "eo"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅓ",
+          "reading": "eo"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅓ",
+          "reading": "eo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "ㅗ",
+      "reading_ja": "オ",
+      "meaning_ja": "基本母音 ㅗ",
+      "audio": "audio/ko_17bf126e7928e8c68edc.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅗ",
+          "reading": "o"
+        },
+        "es": {
+          "meaning": "vocal básica ㅗ",
+          "reading": "o"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅗ",
+          "reading": "o"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅗ",
+          "reading": "o"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "ㅜ",
+      "reading_ja": "ウ",
+      "meaning_ja": "基本母音 ㅜ",
+      "audio": "audio/ko_7f1f9cb3c18c14a6ed1e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅜ",
+          "reading": "u"
+        },
+        "es": {
+          "meaning": "vocal básica ㅜ",
+          "reading": "u"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅜ",
+          "reading": "u"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅜ",
+          "reading": "u"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "ㅡ",
+      "reading_ja": "ウ",
+      "meaning_ja": "基本母音 ㅡ",
+      "audio": "audio/ko_f979c3257c3296db8992.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅡ",
+          "reading": "eu"
+        },
+        "es": {
+          "meaning": "vocal básica ㅡ",
+          "reading": "eu"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅡ",
+          "reading": "eu"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅡ",
+          "reading": "eu"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "ㅣ",
+      "reading_ja": "イ",
+      "meaning_ja": "基本母音 ㅣ",
+      "audio": "audio/ko_4312a968c08884005c1b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅣ",
+          "reading": "i"
+        },
+        "es": {
+          "meaning": "vocal básica ㅣ",
+          "reading": "i"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅣ",
+          "reading": "i"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅣ",
+          "reading": "i"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "ㅐ",
+      "reading_ja": "エ",
+      "meaning_ja": "基本母音 ㅐ",
+      "audio": "audio/ko_3f02c2de190b16da9552.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅐ",
+          "reading": "ae"
+        },
+        "es": {
+          "meaning": "vocal básica ㅐ",
+          "reading": "ae"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅐ",
+          "reading": "ae"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅐ",
+          "reading": "ae"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "ㅔ",
+      "reading_ja": "エ",
+      "meaning_ja": "基本母音 ㅔ",
+      "audio": "audio/ko_6d476d0c3a308d5ff0ad.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅔ",
+          "reading": "e"
+        },
+        "es": {
+          "meaning": "vocal básica ㅔ",
+          "reading": "e"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅔ",
+          "reading": "e"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅔ",
+          "reading": "e"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "ㅑ",
+      "reading_ja": "ヤ",
+      "meaning_ja": "基本母音 ㅑ",
+      "audio": "audio/ko_aee193c3ff18086c335a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅑ",
+          "reading": "ya"
+        },
+        "es": {
+          "meaning": "vocal básica ㅑ",
+          "reading": "ya"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅑ",
+          "reading": "ya"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅑ",
+          "reading": "ya"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "ㅕ",
+      "reading_ja": "ヨ",
+      "meaning_ja": "基本母音 ㅕ",
+      "audio": "audio/ko_3308f5d7348fe7292b6a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅕ",
+          "reading": "yeo"
+        },
+        "es": {
+          "meaning": "vocal básica ㅕ",
+          "reading": "yeo"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅕ",
+          "reading": "yeo"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅕ",
+          "reading": "yeo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "ㅏ",
+      "reading_ja": "ア",
+      "meaning_ja": "基本母音 ㅏ",
+      "audio": "audio/ko_6d18873491b4e9833987.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "basic vowel ㅏ",
+          "reading": "a"
+        },
+        "es": {
+          "meaning": "vocal básica ㅏ",
+          "reading": "a"
+        },
+        "de": {
+          "meaning": "Grundvokal ㅏ",
+          "reading": "a"
+        },
+        "fr": {
+          "meaning": "voyelle de base ㅏ",
+          "reading": "a"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Basic Korean Vowels",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Beginner Basics",
+        "Vowels",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "기본 모음 익히기",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "입문",
+        "모음",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Vocales coreanas básicas",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Iniciación",
+        "Vocales",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Koreanische Grundvokale",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Einstieg",
+        "Vokale",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Voyelles coréennes de base",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Initiation",
+        "Voyelles",
+        "Officiel"
+      ]
+    }
+  }
+}

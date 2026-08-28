@@ -20,7 +20,7 @@ struct DeckCardView: View {
           }
           if let rank, rank <= 3 {
             Label(
-              String(format: AppLocalization.string("deck.rank.format"), rank),
+              AppLocalization.format("deck.rank.format", rank),
               systemImage: rank == 1 ? "crown.fill" : "medal.fill"
             )
             .font(.caption2.weight(.bold))
@@ -77,7 +77,7 @@ struct DeckCardView: View {
   }
 
   private var itemCountText: String {
-    String(format: AppLocalization.string("deck.items.format"), deck.itemCount)
+    AppLocalization.format("deck.items.format", deck.itemCount)
   }
 
   private var downloadText: String {
@@ -88,7 +88,7 @@ struct DeckCardView: View {
 
   private var levelText: String {
     let type = AppLocalization.string(deck.type == .word ? "deck.type.word" : "deck.type.sentence")
-    let level = String(format: AppLocalization.string("deck.level.format"), deck.level)
+    let level = AppLocalization.format("deck.level.format", deck.level)
     return "\(type) · \(level)"
   }
 

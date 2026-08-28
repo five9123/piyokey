@@ -302,6 +302,8 @@ enum AppLanguage: String, CaseIterable, Identifiable {
   case japanese = "ja"
   case english = "en"
   case spanish = "es"
+  case german = "de"
+  case french = "fr"
 
   var id: String { rawValue }
 
@@ -310,6 +312,18 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     case .japanese: Locale(identifier: "ja_JP")
     case .english: Locale(identifier: "en_US")
     case .spanish: Locale(identifier: "es_ES")
+    case .german: Locale(identifier: "de_DE")
+    case .french: Locale(identifier: "fr_FR")
+    }
+  }
+
+  var nameKey: String {
+    switch self {
+    case .japanese: "settings.language.japanese"
+    case .english: "settings.language.english"
+    case .spanish: "settings.language.spanish"
+    case .german: "settings.language.german"
+    case .french: "settings.language.french"
     }
   }
 
@@ -361,6 +375,11 @@ enum AppLocalization {
       value: nil,
       table: nil
     )
+  }
+
+  /// Uses the selected app locale for decimals and stringsdict plural rules.
+  static func format(_ key: String, _ arguments: CVarArg...) -> String {
+    String(format: string(key), locale: locale, arguments: arguments)
   }
 
   static func localizedBundle(for language: AppLanguage) -> Bundle {

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "1377a8feca4a68031dbea674905e17831b335d55",
+  "verified_tree": "e8448c63f44a5bdc6652f3b692fe7bfb8af24988",
+  "branch": "codex/73-onboarding-level",
+  "scope": "Issue #73 four-level onboarding and first-home recommendations; main-based ja/en/es candidate with unresolved hatch regression and local five-language integration gate",
+  "result": "fail",
+  "recorded_at": "2026-08-28T15:20:40.866616+00:00",
+  "checks": [
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean 1377a8f; Issue73 owner verified"
+    },
+    {
+      "name": "preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "preflight-tests",
+      "status": "pass",
+      "command": "python3.12 -m unittest tools.tests.test_release_preflight",
+      "note": "16 passed"
+    },
+    {
+      "name": "android-unit-lint",
+      "status": "pass",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :app:lintDebug :core:settings:testDebugUnitTest :core:data:testDebugUnitTest",
+      "note": "Final resource-copy recheck passed; /private/tmp/piyokey73-resource-recheck.log"
+    },
+    {
+      "name": "android-ui",
+      "status": "pass",
+      "command": "./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=app.piyokey.piyokey.M6OnboardingInstrumentedTest,app.piyokey.piyokey.M6SettingsInstrumentedTest,app.piyokey.piyokey.HomeQuickActionsInstrumentedTest :core:settings:testDebugUnitTest :core:data:testDebugUnitTest :app:lintDebug",
+      "note": "8 passed on 4eca130 with unchanged runtime/test source; subsequent changes only home-tour strings and docs. /private/tmp/piyokey73-android-final.log"
+    },
+    {
+      "name": "ios-core-and-primary-ui",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.5\" -derivedDataPath /private/tmp/piyokey73-derived \"-only-testing:HancoTests/OnboardingStoreTests\" \"-only-testing:HancoTests/RecommendationEngineTests\" \"-only-testing:HancoUITests/HancoUITests/testOnboardingSelectsLevelBeforeFirstInputAndRoutesToForcedHatchMissions\" \"-only-testing:HancoUITests/HancoUITests/testLevelScreenSupportsEnglishAndSpanishAndRestoresSelection\" \"-only-testing:HancoUITests/HancoUITests/testFirstHomeRecommendsUntilDeckPracticeStartsAndThenResumesAfterRelaunch\" \"-only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs\" \"-only-testing:HancoUITests/HancoUITests/testDailyChallengeCompletesTodaysStampAndReminderDefaultsOff\" -parallel-testing-enabled NO",
+      "note": "16 unit and 4 targeted UI passed within the 4eca130 final suite; suite overall failed separately on hatch test. Runtime/test source unchanged; only home-tour copy and docs changed afterward. /private/tmp/piyokey73-ios-final.log"
+    },
+    {
+      "name": "ios-hatch-to-home",
+      "status": "fail",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,id=00608B21-6BB5-4F22-BDD2-9A4F67DA4C59\" -derivedDataPath /private/tmp/piyokey73-derived -parallel-testing-enabled NO \"-only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs\"",
+      "note": "Reproduced on final source: expected first mascot growth celebration absent, next mission shown; baseline cause not established. /private/tmp/piyokey73-hatch-recheck.log"
+    },
+    {
+      "name": "local-five-language-audit",
+      "status": "pass",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3.12 -m unittest discover -s tools/tests; PYTHONDONTWRITEBYTECODE=1 python3.12 tools/release_preflight.py",
+      "note": "Separate untouched clone outputs/local-language-expansion at dcc32bf3d6bcfad088a251dd09e8fc6419967d30; 96 passed and preflight pass. Not evidence of five languages integrated into this commit."
+    }
+  ],
+  "manual_gates": [
+    "Investigate iOS hatch-to-home celebration regression before marking PR ready; do not treat it as a confirmed baseline issue.",
+    "Integrate local codex/local-es-de-fr deliberately; translate new de/fr onboarding and home strings and verify all five locales. No local-only language branch was pushed or merged.",
+    "GitHub Actions disabled; CI/review required, no exception approval for this PR.",
+    "No real-device, store, native-speaker, or deployment approval implied."
+  ]
+}

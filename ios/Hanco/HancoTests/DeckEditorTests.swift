@@ -5,6 +5,29 @@ import XCTest
 @testable import Hanco
 
 final class DeckEditorTests: XCTestCase {
+  func testExpandedEditingLanguagesPreserveOriginalKoreanAndJapaneseFields() throws {
+    let original = makeUserDeck(version: 4)
+    for (language, meaning) in [(DeckContentLanguage.spanish, "Hola"), (.german, "Hallo"), (.french, "Bonjour")] {
+      var draft = UserDeckDraft(editing: original)
+      draft.setName("Test", for: language)
+      draft.setAuthorNickname("Piyo", for: language)
+      draft.setTags(original.tags, for: language)
+      for index in draft.items.indices {
+        draft.items[index].setMeaning(meaning, for: language)
+        draft.items[index].setReading("annyeong", for: language)
+      }
+      let saved = try draft.validatedDeck(at: Date(timeIntervalSince1970: 500), language: language)
+      XCTAssertEqual(saved.deckId, original.deckId)
+      for (item, source) in zip(saved.items, original.items) {
+        XCTAssertEqual(item.id, source.id)
+        XCTAssertEqual(item.ko, source.ko)
+        XCTAssertEqual(item.meaningJa, source.meaningJa)
+        XCTAssertEqual(item.readingJa, source.readingJa)
+        XCTAssertEqual(item.localizations?[language.rawValue]?.meaning, meaning)
+      }
+    }
+  }
+
   private let firstHex = "00000000000000000000000000000001"
   private let secondHex = "00000000000000000000000000000002"
   private let thirdHex = "00000000000000000000000000000003"

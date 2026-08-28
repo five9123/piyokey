@@ -1,342 +1,594 @@
 {
   "author_nicknames": {
     "en": "typee Official",
-    "ko": "피요키 공식"
+    "ko": "피요키 공식",
+    "es": "typee Oficial",
+    "de": "typee Offiziell",
+    "fr": "typee Officiel"
   },
   "deck_names": {
     "official_keyboard_start": {
       "en": "First Steps with Dubeolsik",
-      "ko": "두벌식 첫걸음"
+      "ko": "두벌식 첫걸음",
+      "es": "Primeros pasos con Dubeolsik",
+      "de": "Erste Schritte mit Dubeolsik",
+      "fr": "Premiers pas avec Dubeolsik"
     },
     "official_consonants": {
       "en": "Basic Korean Consonants",
-      "ko": "기본 자음 익히기"
+      "ko": "기본 자음 익히기",
+      "es": "Consonantes coreanas básicas",
+      "de": "Koreanische Grundkonsonanten",
+      "fr": "Consonnes coréennes de base"
     },
     "official_vowels": {
       "en": "Basic Korean Vowels",
-      "ko": "기본 모음 익히기"
+      "ko": "기본 모음 익히기",
+      "es": "Vocales coreanas básicas",
+      "de": "Koreanische Grundvokale",
+      "fr": "Voyelles coréennes de base"
     },
     "official_syllable_building": {
       "en": "Build Korean Syllables",
-      "ko": "자음과 모음으로 음절 만들기"
+      "ko": "자음과 모음으로 음절 만들기",
+      "es": "Forma sílabas coreanas",
+      "de": "Koreanische Silben bilden",
+      "fr": "Former des syllabes coréennes"
     },
     "official_batchim": {
       "en": "Batchim Basics",
-      "ko": "받침 첫걸음"
+      "ko": "받침 첫걸음",
+      "es": "Introducción al batchim",
+      "de": "Batchim-Grundlagen",
+      "fr": "Bases du batchim"
     },
     "official_daily_words": {
       "en": "Everyday Korean Words",
-      "ko": "매일 쓰는 한국어 단어"
+      "ko": "매일 쓰는 한국어 단어",
+      "es": "Palabras coreanas cotidianas",
+      "de": "Koreanische Alltagswörter",
+      "fr": "Mots coréens du quotidien"
     },
     "official_verbs_adjectives": {
       "en": "Essential Verbs & Adjectives",
-      "ko": "기본 동사·형용사"
+      "ko": "기본 동사·형용사",
+      "es": "Verbos y adjetivos esenciales",
+      "de": "Wichtige Verben & Adjektive",
+      "fr": "Verbes et adjectifs essentiels"
     },
     "official_daily_phrases": {
       "en": "Everyday Short Phrases",
-      "ko": "매일 쓰는 짧은 표현"
+      "ko": "매일 쓰는 짧은 표현",
+      "es": "Frases cortas cotidianas",
+      "de": "Kurze Alltagsausdrücke",
+      "fr": "Expressions courtes du quotidien"
     },
     "official_travel_phrases": {
       "en": "Essential Korean Travel Phrases",
-      "ko": "한국 여행 필수 표현"
+      "ko": "한국 여행 필수 표현",
+      "es": "Frases esenciales para viajar a Corea",
+      "de": "Wichtige Ausdrücke für Korea-Reisen",
+      "fr": "Expressions essentielles pour voyager en Corée"
     },
     "official_topik_one": {
       "en": "TOPIK I Essential Words",
-      "ko": "TOPIK I 기본 단어"
+      "ko": "TOPIK I 기본 단어",
+      "es": "Vocabulario esencial del TOPIK I",
+      "de": "Grundwortschatz für TOPIK I",
+      "fr": "Vocabulaire essentiel du TOPIK I"
     },
     "official_trending_korean": {
       "en": "Korean Slang & Trends",
-      "ko": "요즘 한국어"
+      "ko": "요즘 한국어",
+      "es": "Jerga y tendencias coreanas",
+      "de": "Koreanischer Slang & Trends",
+      "fr": "Argot et tendances en coréen"
     },
     "official_kpop_spark": {
       "en": "Original K-Pop: First Spark",
-      "ko": "오리지널 K-POP: 설렘"
+      "ko": "오리지널 K-POP: 설렘",
+      "es": "K-pop original: la primera chispa",
+      "de": "Original-K-Pop: Der erste Funke",
+      "fr": "K-pop original : première étincelle"
     },
     "official_kpop_dream": {
       "en": "Original K-Pop: Dreams & Cheers",
-      "ko": "오리지널 K-POP: 꿈과 응원"
+      "ko": "오리지널 K-POP: 꿈과 응원",
+      "es": "K-pop original: sueños y ánimo",
+      "de": "Original-K-Pop: Träume & Ermutigung",
+      "fr": "K-pop original : rêves et encouragements"
     },
     "official_kpop_night": {
       "en": "Original K-Pop: Night & Stars",
-      "ko": "오리지널 K-POP: 밤과 별"
+      "ko": "오리지널 K-POP: 밤과 별",
+      "es": "K-pop original: noche y estrellas",
+      "de": "Original-K-Pop: Nacht & Sterne",
+      "fr": "K-pop original : nuit et étoiles"
     },
     "official_drama_romance": {
       "en": "K-Drama Dialogue: Hint of Romance",
-      "ko": "K-드라마 대화: 사랑의 예감"
+      "ko": "K-드라마 대화: 사랑의 예감",
+      "es": "Diálogos de K-drama: un toque de romance",
+      "de": "K-Drama-Dialoge: Ein Hauch Romantik",
+      "fr": "Dialogues de K-drama : un soupçon de romance"
     },
     "official_drama_mystery": {
       "en": "K-Drama Dialogue: Secrets & Twists",
-      "ko": "K-드라마 대화: 비밀과 반전"
+      "ko": "K-드라마 대화: 비밀과 반전",
+      "es": "Diálogos de K-drama: secretos y giros",
+      "de": "K-Drama-Dialoge: Geheimnisse & Wendungen",
+      "fr": "Dialogues de K-drama : secrets et rebondissements"
     },
     "official_drama_daily": {
       "en": "K-Drama Dialogue: Everyday Warmth",
-      "ko": "K-드라마 대화: 일상의 온기"
+      "ko": "K-드라마 대화: 일상의 온기",
+      "es": "Diálogos de K-drama: calidez cotidiana",
+      "de": "K-Drama-Dialoge: Wärme im Alltag",
+      "fr": "Dialogues de K-drama : chaleur du quotidien"
     },
     "official_fun_travel_moments": {
       "en": "Travel One-Liners",
-      "ko": "여행지에서 쓰는 한마디"
+      "ko": "여행지에서 쓰는 한마디",
+      "es": "Frases para viajar",
+      "de": "Kurze Reisesprüche",
+      "fr": "Petites phrases de voyage"
     },
     "official_fun_food_cafe": {
       "en": "Cafe & Food One-Liners",
-      "ko": "카페·맛집 한마디"
+      "ko": "카페·맛집 한마디",
+      "es": "Frases de cafetería y restaurante",
+      "de": "Kurze Sprüche für Café & Essen",
+      "fr": "Petites phrases au café et au restaurant"
     },
     "official_fun_couple_conflict": {
       "en": "When You're Upset with Your Boyfriend",
-      "ko": "남자친구에게 서운할 때"
+      "ko": "남자친구에게 서운할 때",
+      "es": "Cuando te molestas con tu novio",
+      "de": "Wenn du sauer auf deinen Freund bist",
+      "fr": "Quand tu en veux à ton copain"
     },
     "official_fun_couple_makeup": {
       "en": "Making Up After a Fight",
-      "ko": "화해하고 싶을 때"
+      "ko": "화해하고 싶을 때",
+      "es": "Reconciliarse tras una discusión",
+      "de": "Versöhnung nach einem Streit",
+      "fr": "Se réconcilier après une dispute"
     },
     "official_fun_first_date": {
       "en": "First-Date Phrases",
-      "ko": "첫 데이트 한마디"
+      "ko": "첫 데이트 한마디",
+      "es": "Frases para la primera cita",
+      "de": "Sprüche fürs erste Date",
+      "fr": "Phrases pour un premier rendez-vous"
     },
     "official_fun_flirty_chat": {
       "en": "Flirty Chat",
-      "ko": "은근한 플러팅 채팅"
+      "ko": "은근한 플러팅 채팅",
+      "es": "Chat para coquetear",
+      "de": "Flirten im Chat",
+      "fr": "Flirter par messages"
     },
     "official_fun_friend_reactions": {
       "en": "Korean Reactions with Friends",
-      "ko": "친구와 쓰는 한국어 리액션"
+      "ko": "친구와 쓰는 한국어 리액션",
+      "es": "Reacciones coreanas entre amigos",
+      "de": "Koreanische Reaktionen unter Freunden",
+      "fr": "Réactions coréennes entre amis"
     },
     "official_fun_weekend_party": {
       "en": "Weekend & Night-Out Vibes",
-      "ko": "주말·술자리 텐션"
+      "ko": "주말·술자리 텐션",
+      "es": "Ambiente de fin de semana y fiesta",
+      "de": "Wochenend- & Partystimmung",
+      "fr": "Ambiance de week-end et de soirée"
     },
     "official_fun_idol_live_comments": {
       "en": "Comments for Your Idol's Livestream",
-      "ko": "최애 라이브 방송 댓글"
+      "ko": "최애 라이브 방송 댓글",
+      "es": "Comentarios para el directo de tu ídolo",
+      "de": "Kommentare für den Livestream deines Idols",
+      "fr": "Commentaires pour le direct de ton idole"
     },
     "flow_topik_beginner": {
       "en": "Flow: Beginner Mix",
-      "ko": "플로우·초급 종합 난이도"
+      "ko": "플로우·초급 종합 난이도",
+      "es": "Flow: principiante",
+      "de": "Flow: Anfänger",
+      "fr": "Flow: débutant"
     },
     "flow_topik_intermediate": {
       "en": "Flow: Intermediate Mix",
-      "ko": "플로우·중급 종합 난이도"
+      "ko": "플로우·중급 종합 난이도",
+      "es": "Flow: intermedio",
+      "de": "Flow: Mittelstufe",
+      "fr": "Flow: intermédiaire"
     },
     "flow_topik_advanced": {
       "en": "Flow: Advanced Mix",
-      "ko": "플로우·고급 종합 난이도"
+      "ko": "플로우·고급 종합 난이도",
+      "es": "Flow: avanzado",
+      "de": "Flow: Fortgeschritten",
+      "fr": "Flow: avancé"
     },
     "acid_rain_topik_beginner": {
       "en": "Word Rain: Beginner Mix",
-      "ko": "단어의 비·초급 종합 난이도"
+      "ko": "단어의 비·초급 종합 난이도",
+      "es": "Lluvia de palabras: principiante",
+      "de": "Wortregen: Anfänger",
+      "fr": "Pluie de mots: débutant"
     },
     "acid_rain_topik_intermediate": {
       "en": "Word Rain: Intermediate Mix",
-      "ko": "단어의 비·중급 종합 난이도"
+      "ko": "단어의 비·중급 종합 난이도",
+      "es": "Lluvia de palabras: intermedio",
+      "de": "Wortregen: Mittelstufe",
+      "fr": "Pluie de mots: intermédiaire"
     },
     "acid_rain_topik_advanced": {
       "en": "Word Rain: Advanced Mix",
-      "ko": "단어의 비·고급 종합 난이도"
+      "ko": "단어의 비·고급 종합 난이도",
+      "es": "Lluvia de palabras: avanzado",
+      "de": "Wortregen: Fortgeschritten",
+      "fr": "Pluie de mots: avancé"
     },
     "word_match_topik_beginner": {
       "en": "Word Quiz: Beginner Mix",
-      "ko": "단어 퀴즈·초급 종합 난이도"
+      "ko": "단어 퀴즈·초급 종합 난이도",
+      "es": "Quiz de palabras: principiante",
+      "de": "Wortquiz: Anfänger",
+      "fr": "Quiz de mots: débutant"
     },
     "word_match_topik_intermediate": {
       "en": "Word Quiz: Intermediate Mix",
-      "ko": "단어 퀴즈·중급 종합 난이도"
+      "ko": "단어 퀴즈·중급 종합 난이도",
+      "es": "Quiz de palabras: intermedio",
+      "de": "Wortquiz: Mittelstufe",
+      "fr": "Quiz de mots: intermédiaire"
     },
     "word_match_topik_advanced": {
       "en": "Word Quiz: Advanced Mix",
-      "ko": "단어 퀴즈·고급 종합 난이도"
+      "ko": "단어 퀴즈·고급 종합 난이도",
+      "es": "Quiz de palabras: avanzado",
+      "de": "Wortquiz: Fortgeschritten",
+      "fr": "Quiz de mots: avancé"
     },
     "choseong_topik_beginner": {
       "en": "Initial Sound Quiz: Beginner Mix",
-      "ko": "초성 퀴즈·초급 종합 난이도"
+      "ko": "초성 퀴즈·초급 종합 난이도",
+      "es": "Quiz de iniciales: principiante",
+      "de": "Anlautquiz: Anfänger",
+      "fr": "Quiz des initiales: débutant"
     },
     "choseong_topik_intermediate": {
       "en": "Initial Sound Quiz: Intermediate Mix",
-      "ko": "초성 퀴즈·중급 종합 난이도"
+      "ko": "초성 퀴즈·중급 종합 난이도",
+      "es": "Quiz de iniciales: intermedio",
+      "de": "Anlautquiz: Mittelstufe",
+      "fr": "Quiz des initiales: intermédiaire"
     },
     "choseong_topik_advanced": {
       "en": "Initial Sound Quiz: Advanced Mix",
-      "ko": "초성 퀴즈·고급 종합 난이도"
+      "ko": "초성 퀴즈·고급 종합 난이도",
+      "es": "Quiz de iniciales: avanzado",
+      "de": "Anlautquiz: Fortgeschritten",
+      "fr": "Quiz des initiales: avancé"
     },
     "dictation_topik_beginner": {
       "en": "Dictation: Beginner Mix",
-      "ko": "받아쓰기·초급 종합 난이도"
+      "ko": "받아쓰기·초급 종합 난이도",
+      "es": "Dictado: principiante",
+      "de": "Diktat: Anfänger",
+      "fr": "Dictée: débutant"
     },
     "dictation_topik_intermediate": {
       "en": "Dictation: Intermediate Mix",
-      "ko": "받아쓰기·중급 종합 난이도"
+      "ko": "받아쓰기·중급 종합 난이도",
+      "es": "Dictado: intermedio",
+      "de": "Diktat: Mittelstufe",
+      "fr": "Dictée: intermédiaire"
     },
     "dictation_topik_advanced": {
       "en": "Dictation: Advanced Mix",
-      "ko": "받아쓰기·고급 종합 난이도"
+      "ko": "받아쓰기·고급 종합 난이도",
+      "es": "Dictado: avanzado",
+      "de": "Diktat: Fortgeschritten",
+      "fr": "Dictée: avancé"
     }
   },
   "tags": {
     "K-POP": {
       "en": "K-Pop",
-      "ko": "K-POP"
+      "ko": "K-POP",
+      "es": "K-pop",
+      "de": "K-Pop",
+      "fr": "K-pop"
     },
     "Kドラマ": {
       "en": "K-Drama",
-      "ko": "K-드라마"
+      "ko": "K-드라마",
+      "es": "K-drama",
+      "de": "K-Drama",
+      "fr": "K-drama"
     },
     "SNS": {
       "en": "Social Media",
-      "ko": "SNS"
+      "ko": "SNS",
+      "es": "Redes sociales",
+      "de": "Soziale Medien",
+      "fr": "Réseaux sociaux"
     },
     "TOPIK": {
       "en": "TOPIK",
-      "ko": "TOPIK"
+      "ko": "TOPIK",
+      "es": "TOPIK",
+      "de": "TOPIK",
+      "fr": "TOPIK"
     },
     "ひと言": {
       "en": "Quick Phrases",
-      "ko": "한마디"
+      "ko": "한마디",
+      "es": "Frases rápidas",
+      "de": "Kurze Ausdrücke",
+      "fr": "Expressions courtes"
     },
     "カップル": {
       "en": "Couples",
-      "ko": "커플"
+      "ko": "커플",
+      "es": "Parejas",
+      "de": "Paare",
+      "fr": "Couples"
     },
     "キーボード": {
       "en": "Keyboard",
-      "ko": "키보드"
+      "ko": "키보드",
+      "es": "Teclado",
+      "de": "Tastatur",
+      "fr": "Clavier"
     },
     "グルメ": {
       "en": "Food & Dining",
-      "ko": "맛집"
+      "ko": "맛집",
+      "es": "Comida y restaurantes",
+      "de": "Essen & Restaurants",
+      "fr": "Cuisine et restaurants"
     },
     "ゲーム": {
       "en": "Games",
-      "ko": "게임"
+      "ko": "게임",
+      "es": "Juegos",
+      "de": "Spiele",
+      "fr": "Jeux"
     },
     "タイピング": {
       "en": "Typing",
-      "ko": "타이핑"
+      "ko": "타이핑",
+      "es": "Mecanografía",
+      "de": "Tippen",
+      "fr": "Saisie"
     },
     "チャット": {
       "en": "Chat",
-      "ko": "채팅"
+      "ko": "채팅",
+      "es": "Chat",
+      "de": "Chat",
+      "fr": "Discussion"
     },
     "デート": {
       "en": "Dating",
-      "ko": "데이트"
+      "ko": "데이트",
+      "es": "Citas",
+      "de": "Dating",
+      "fr": "Rendez-vous"
     },
     "パッチム": {
       "en": "Batchim",
-      "ko": "받침"
+      "ko": "받침",
+      "es": "Batchim",
+      "de": "Batchim",
+      "fr": "Batchim"
     },
     "フロー": {
       "en": "Flow",
-      "ko": "플로우"
+      "ko": "플로우",
+      "es": "Flow",
+      "de": "Flow",
+      "fr": "Flow"
     },
     "ミステリー": {
       "en": "Mystery",
-      "ko": "미스터리"
+      "ko": "미스터리",
+      "es": "Misterio",
+      "de": "Mystery",
+      "fr": "Mystère"
     },
     "ライブ": {
       "en": "Livestream",
-      "ko": "라이브"
+      "ko": "라이브",
+      "es": "Directo",
+      "de": "Livestream",
+      "fr": "Direct"
     },
     "リアクション": {
       "en": "Reactions",
-      "ko": "리액션"
+      "ko": "리액션",
+      "es": "Reacciones",
+      "de": "Reaktionen",
+      "fr": "Réactions"
     },
     "上級": {
       "en": "Advanced",
-      "ko": "고급"
+      "ko": "고급",
+      "es": "Avanzado",
+      "de": "Fortgeschritten",
+      "fr": "Avancé"
     },
     "中級": {
       "en": "Intermediate",
-      "ko": "중급"
+      "ko": "중급",
+      "es": "Intermedio",
+      "de": "Mittelstufe",
+      "fr": "Intermédiaire"
     },
     "今どき": {
       "en": "Trending",
-      "ko": "요즘"
+      "ko": "요즘",
+      "es": "Tendencias",
+      "de": "Im Trend",
+      "fr": "Tendances"
     },
     "会話": {
       "en": "Conversation",
-      "ko": "회화"
+      "ko": "회화",
+      "es": "Conversación",
+      "de": "Gespräch",
+      "fr": "Conversation"
     },
     "入門": {
       "en": "Beginner Basics",
-      "ko": "입문"
+      "ko": "입문",
+      "es": "Iniciación",
+      "de": "Einstieg",
+      "fr": "Initiation"
     },
     "公式": {
       "en": "Official",
-      "ko": "공식"
+      "ko": "공식",
+      "es": "Oficial",
+      "de": "Offiziell",
+      "fr": "Officiel"
     },
     "初声": {
       "en": "Initial Consonants",
-      "ko": "초성"
+      "ko": "초성",
+      "es": "Consonantes iniciales",
+      "de": "Anlaute",
+      "fr": "Consonnes initiales"
     },
     "初級": {
       "en": "Beginner",
-      "ko": "초급"
+      "ko": "초급",
+      "es": "Principiante",
+      "de": "Anfänger",
+      "fr": "Débutant"
     },
     "動詞": {
       "en": "Verbs",
-      "ko": "동사"
+      "ko": "동사",
+      "es": "Verbos",
+      "de": "Verben",
+      "fr": "Verbes"
     },
     "単語": {
       "en": "Words",
-      "ko": "단어"
+      "ko": "단어",
+      "es": "Palabras",
+      "de": "Wörter",
+      "fr": "Mots"
     },
     "単語の雨": {
       "en": "Word Rain",
-      "ko": "단어의 비"
+      "ko": "단어의 비",
+      "es": "Lluvia de palabras",
+      "de": "Wortregen",
+      "fr": "Pluie de mots"
     },
     "単語クイズ": {
       "en": "Word Quiz",
-      "ko": "단어 퀴즈"
+      "ko": "단어 퀴즈",
+      "es": "Quiz de palabras",
+      "de": "Wortquiz",
+      "fr": "Quiz de mots"
     },
     "友だち": {
       "en": "Friends",
-      "ko": "친구"
+      "ko": "친구",
+      "es": "Amigos",
+      "de": "Freunde",
+      "fr": "Amis"
     },
     "基礎単語": {
       "en": "Essential Vocabulary",
-      "ko": "기본 어휘"
+      "ko": "기본 어휘",
+      "es": "Vocabulario esencial",
+      "de": "Grundwortschatz",
+      "fr": "Vocabulaire essentiel"
     },
     "子音": {
       "en": "Consonants",
-      "ko": "자음"
+      "ko": "자음",
+      "es": "Consonantes",
+      "de": "Konsonanten",
+      "fr": "Consonnes"
     },
     "恋愛": {
       "en": "Romance",
-      "ko": "연애"
+      "ko": "연애",
+      "es": "Romance",
+      "de": "Romantik",
+      "fr": "Romance"
     },
     "推し活": {
       "en": "Fandom",
-      "ko": "팬 활동"
+      "ko": "팬 활동",
+      "es": "Fans",
+      "de": "Fandom",
+      "fr": "Communauté de fans"
     },
     "日常": {
       "en": "Everyday",
-      "ko": "일상"
+      "ko": "일상",
+      "es": "Vida cotidiana",
+      "de": "Alltag",
+      "fr": "Quotidien"
     },
     "書き取り": {
       "en": "Dictation",
-      "ko": "받아쓰기"
+      "ko": "받아쓰기",
+      "es": "Dictado",
+      "de": "Diktat",
+      "fr": "Dictée"
     },
     "検定": {
       "en": "Test Prep",
-      "ko": "시험 대비"
+      "ko": "시험 대비",
+      "es": "Preparación de exámenes",
+      "de": "Prüfungsvorbereitung",
+      "fr": "Préparation aux examens"
     },
     "歌詞風": {
       "en": "Lyric-Inspired",
-      "ko": "가사풍"
+      "ko": "가사풍",
+      "es": "Estilo de letras",
+      "de": "Von Songtexten inspiriert",
+      "fr": "Inspiré des paroles"
     },
     "母音": {
       "en": "Vowels",
-      "ko": "모음"
+      "ko": "모음",
+      "es": "Vocales",
+      "de": "Vokale",
+      "fr": "Voyelles"
     },
     "組み立て": {
       "en": "Syllable Building",
-      "ko": "음절 조합"
+      "ko": "음절 조합",
+      "es": "Formación de sílabas",
+      "de": "Silbenbildung",
+      "fr": "Formation des syllabes"
     },
     "週末": {
       "en": "Weekend",
-      "ko": "주말"
+      "ko": "주말",
+      "es": "Fin de semana",
+      "de": "Wochenende",
+      "fr": "Week-end"
     },
     "韓国旅行": {
       "en": "Korea Travel",
-      "ko": "한국 여행"
+      "ko": "한국 여행",
+      "es": "Viajes a Corea",
+      "de": "Korea-Reisen",
+      "fr": "Voyage en Corée"
     }
   }
 }

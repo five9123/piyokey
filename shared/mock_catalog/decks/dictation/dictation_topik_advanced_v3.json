@@ -18,7 +18,7 @@
     "公式"
   ],
   "created_at": "2026-07-25T00:00:00Z",
-  "updated_at": "2026-08-11T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
   "items": [
     {
       "id": "i_001",
@@ -29,6 +29,18 @@
       "localizations": {
         "en": {
           "meaning": "regulation",
+          "reading": "gyuje"
+        },
+        "es": {
+          "meaning": "regulación",
+          "reading": "gyuje"
+        },
+        "de": {
+          "meaning": "Regulierung",
+          "reading": "gyuje"
+        },
+        "fr": {
+          "meaning": "réglementation",
           "reading": "gyuje"
         }
       }
@@ -43,6 +55,18 @@
         "en": {
           "meaning": "system",
           "reading": "jedo"
+        },
+        "es": {
+          "meaning": "sistema",
+          "reading": "jedo"
+        },
+        "de": {
+          "meaning": "System",
+          "reading": "jedo"
+        },
+        "fr": {
+          "meaning": "système",
+          "reading": "jedo"
         }
       }
     },
@@ -55,6 +79,18 @@
       "localizations": {
         "en": {
           "meaning": "hypothesis",
+          "reading": "gaseol"
+        },
+        "es": {
+          "meaning": "hipótesis",
+          "reading": "gaseol"
+        },
+        "de": {
+          "meaning": "Hypothese",
+          "reading": "gaseol"
+        },
+        "fr": {
+          "meaning": "hypothèse",
           "reading": "gaseol"
         }
       }
@@ -69,6 +105,18 @@
         "en": {
           "meaning": "reform",
           "reading": "gaehyeok"
+        },
+        "es": {
+          "meaning": "reforma",
+          "reading": "gaehyeok"
+        },
+        "de": {
+          "meaning": "Reform",
+          "reading": "gaehyeok"
+        },
+        "fr": {
+          "meaning": "réforme",
+          "reading": "gaehyeok"
         }
       }
     },
@@ -81,6 +129,18 @@
       "localizations": {
         "en": {
           "meaning": "employment",
+          "reading": "goyong"
+        },
+        "es": {
+          "meaning": "empleo",
+          "reading": "goyong"
+        },
+        "de": {
+          "meaning": "Beschäftigung",
+          "reading": "goyong"
+        },
+        "fr": {
+          "meaning": "emploi",
           "reading": "goyong"
         }
       }
@@ -95,6 +155,18 @@
         "en": {
           "meaning": "basis",
           "reading": "geungeo"
+        },
+        "es": {
+          "meaning": "fundamento",
+          "reading": "geungeo"
+        },
+        "de": {
+          "meaning": "Grundlage",
+          "reading": "geungeo"
+        },
+        "fr": {
+          "meaning": "fondement",
+          "reading": "geungeo"
         }
       }
     },
@@ -107,6 +179,18 @@
       "localizations": {
         "en": {
           "meaning": "prices",
+          "reading": "mulga"
+        },
+        "es": {
+          "meaning": "precios",
+          "reading": "mulga"
+        },
+        "de": {
+          "meaning": "Preise",
+          "reading": "mulga"
+        },
+        "fr": {
+          "meaning": "prix",
           "reading": "mulga"
         }
       }
@@ -121,6 +205,18 @@
         "en": {
           "meaning": "welfare",
           "reading": "bokji"
+        },
+        "es": {
+          "meaning": "bienestar social",
+          "reading": "bokji"
+        },
+        "de": {
+          "meaning": "Sozialfürsorge",
+          "reading": "bokji"
+        },
+        "fr": {
+          "meaning": "protection sociale",
+          "reading": "bokji"
         }
       }
     },
@@ -133,6 +229,18 @@
       "localizations": {
         "en": {
           "meaning": "psychology",
+          "reading": "simri"
+        },
+        "es": {
+          "meaning": "psicología",
+          "reading": "simri"
+        },
+        "de": {
+          "meaning": "Psychologie",
+          "reading": "simri"
+        },
+        "fr": {
+          "meaning": "psychologie",
           "reading": "simri"
         }
       }
@@ -147,6 +255,18 @@
         "en": {
           "meaning": "public opinion",
           "reading": "yeoron"
+        },
+        "es": {
+          "meaning": "opinión pública",
+          "reading": "yeoron"
+        },
+        "de": {
+          "meaning": "Öffentliche Meinung",
+          "reading": "yeoron"
+        },
+        "fr": {
+          "meaning": "opinion publique",
+          "reading": "yeoron"
         }
       }
     },
@@ -159,6 +279,18 @@
       "localizations": {
         "en": {
           "meaning": "ethics",
+          "reading": "yunri"
+        },
+        "es": {
+          "meaning": "ética",
+          "reading": "yunri"
+        },
+        "de": {
+          "meaning": "Ethik",
+          "reading": "yunri"
+        },
+        "fr": {
+          "meaning": "éthique",
           "reading": "yunri"
         }
       }
@@ -173,6 +305,18 @@
         "en": {
           "meaning": "public finance",
           "reading": "jaejeong"
+        },
+        "es": {
+          "meaning": "finanzas públicas",
+          "reading": "jaejeong"
+        },
+        "de": {
+          "meaning": "Öffentliche Finanzen",
+          "reading": "jaejeong"
+        },
+        "fr": {
+          "meaning": "finances publiques",
+          "reading": "jaejeong"
         }
       }
     },
@@ -184,6 +328,18 @@
       "audio": "audio/ko_ce5da34183dc53ab86fe.mp3",
       "localizations": {
         "en": {
+          "meaning": "conclusion",
+          "reading": "gyeolron"
+        },
+        "es": {
+          "meaning": "conclusión",
+          "reading": "gyeolron"
+        },
+        "de": {
+          "meaning": "Schlussfolgerung",
+          "reading": "gyeolron"
+        },
+        "fr": {
           "meaning": "conclusion",
           "reading": "gyeolron"
         }
@@ -199,6 +355,18 @@
         "en": {
           "meaning": "citizens",
           "reading": "gukmin"
+        },
+        "es": {
+          "meaning": "ciudadanos",
+          "reading": "gukmin"
+        },
+        "de": {
+          "meaning": "Staatsbürger",
+          "reading": "gukmin"
+        },
+        "fr": {
+          "meaning": "citoyens",
+          "reading": "gukmin"
         }
       }
     },
@@ -210,6 +378,18 @@
       "audio": "audio/ko_dd6e00b8fcc706a614f1.mp3",
       "localizations": {
         "en": {
+          "meaning": "finance",
+          "reading": "geumyung"
+        },
+        "es": {
+          "meaning": "finanzas",
+          "reading": "geumyung"
+        },
+        "de": {
+          "meaning": "Finanzwesen",
+          "reading": "geumyung"
+        },
+        "fr": {
           "meaning": "finance",
           "reading": "geumyung"
         }
@@ -225,6 +405,18 @@
         "en": {
           "meaning": "law",
           "reading": "beopryul"
+        },
+        "es": {
+          "meaning": "ley",
+          "reading": "beopryul"
+        },
+        "de": {
+          "meaning": "Gesetz",
+          "reading": "beopryul"
+        },
+        "fr": {
+          "meaning": "loi",
+          "reading": "beopryul"
         }
       }
     },
@@ -237,6 +429,18 @@
       "localizations": {
         "en": {
           "meaning": "industry",
+          "reading": "saneop"
+        },
+        "es": {
+          "meaning": "industria",
+          "reading": "saneop"
+        },
+        "de": {
+          "meaning": "Industrie",
+          "reading": "saneop"
+        },
+        "fr": {
+          "meaning": "industrie",
           "reading": "saneop"
         }
       }
@@ -251,6 +455,18 @@
         "en": {
           "meaning": "impact",
           "reading": "yeonghyang"
+        },
+        "es": {
+          "meaning": "influencia",
+          "reading": "yeonghyang"
+        },
+        "de": {
+          "meaning": "Einfluss",
+          "reading": "yeonghyang"
+        },
+        "fr": {
+          "meaning": "influence",
+          "reading": "yeonghyang"
         }
       }
     },
@@ -263,6 +479,18 @@
       "localizations": {
         "en": {
           "meaning": "key issue",
+          "reading": "jaengjeom"
+        },
+        "es": {
+          "meaning": "punto de debate",
+          "reading": "jaengjeom"
+        },
+        "de": {
+          "meaning": "Streitpunkt",
+          "reading": "jaengjeom"
+        },
+        "fr": {
+          "meaning": "point de débat",
           "reading": "jaengjeom"
         }
       }
@@ -277,6 +505,18 @@
         "en": {
           "meaning": "outlook",
           "reading": "jeonmang"
+        },
+        "es": {
+          "meaning": "perspectiva",
+          "reading": "jeonmang"
+        },
+        "de": {
+          "meaning": "Ausblick",
+          "reading": "jeonmang"
+        },
+        "fr": {
+          "meaning": "perspective",
+          "reading": "jeonmang"
         }
       }
     },
@@ -290,6 +530,18 @@
         "en": {
           "meaning": "policy",
           "reading": "jeongchaek"
+        },
+        "es": {
+          "meaning": "política",
+          "reading": "jeongchaek"
+        },
+        "de": {
+          "meaning": "Politik",
+          "reading": "jeongchaek"
+        },
+        "fr": {
+          "meaning": "politique",
+          "reading": "jeongchaek"
         }
       }
     },
@@ -301,6 +553,18 @@
       "audio": "audio/ko_a4f24ba76b27ac585486.mp3",
       "localizations": {
         "en": {
+          "meaning": "administration",
+          "reading": "haengjeong"
+        },
+        "es": {
+          "meaning": "administración",
+          "reading": "haengjeong"
+        },
+        "de": {
+          "meaning": "Verwaltung",
+          "reading": "haengjeong"
+        },
+        "fr": {
           "meaning": "administration",
           "reading": "haengjeong"
         }
@@ -316,6 +580,18 @@
         "en": {
           "meaning": "innovation",
           "reading": "hyeoksin"
+        },
+        "es": {
+          "meaning": "innovación",
+          "reading": "hyeoksin"
+        },
+        "de": {
+          "meaning": "Innovation",
+          "reading": "hyeoksin"
+        },
+        "fr": {
+          "meaning": "innovation",
+          "reading": "hyeoksin"
         }
       }
     },
@@ -328,6 +604,18 @@
       "localizations": {
         "en": {
           "meaning": "phenomenon",
+          "reading": "hyeonsang"
+        },
+        "es": {
+          "meaning": "fenómeno",
+          "reading": "hyeonsang"
+        },
+        "de": {
+          "meaning": "Phänomen",
+          "reading": "hyeonsang"
+        },
+        "fr": {
+          "meaning": "phénomène",
           "reading": "hyeonsang"
         }
       }
@@ -342,6 +630,18 @@
         "en": {
           "meaning": "cooperation",
           "reading": "hyeopryeok"
+        },
+        "es": {
+          "meaning": "cooperación",
+          "reading": "hyeopryeok"
+        },
+        "de": {
+          "meaning": "Zusammenarbeit",
+          "reading": "hyeopryeok"
+        },
+        "fr": {
+          "meaning": "coopération",
+          "reading": "hyeopryeok"
         }
       }
     },
@@ -354,6 +654,18 @@
       "localizations": {
         "en": {
           "meaning": "perspective",
+          "reading": "gwanjeom"
+        },
+        "es": {
+          "meaning": "punto de vista",
+          "reading": "gwanjeom"
+        },
+        "de": {
+          "meaning": "Sichtweise",
+          "reading": "gwanjeom"
+        },
+        "fr": {
+          "meaning": "point de vue",
           "reading": "gwanjeom"
         }
       }
@@ -368,6 +680,18 @@
         "en": {
           "meaning": "human rights",
           "reading": "ingwon"
+        },
+        "es": {
+          "meaning": "derechos humanos",
+          "reading": "ingwon"
+        },
+        "de": {
+          "meaning": "Menschenrechte",
+          "reading": "ingwon"
+        },
+        "fr": {
+          "meaning": "droits humains",
+          "reading": "ingwon"
         }
       }
     },
@@ -380,6 +704,18 @@
       "localizations": {
         "en": {
           "meaning": "values",
+          "reading": "gachigwan"
+        },
+        "es": {
+          "meaning": "valores",
+          "reading": "gachigwan"
+        },
+        "de": {
+          "meaning": "Wertvorstellungen",
+          "reading": "gachigwan"
+        },
+        "fr": {
+          "meaning": "valeurs",
           "reading": "gachigwan"
         }
       }
@@ -394,6 +730,18 @@
         "en": {
           "meaning": "population aging",
           "reading": "goryeonghwa"
+        },
+        "es": {
+          "meaning": "envejecimiento de la población",
+          "reading": "goryeonghwa"
+        },
+        "de": {
+          "meaning": "Bevölkerungsalterung",
+          "reading": "goryeonghwa"
+        },
+        "fr": {
+          "meaning": "vieillissement de la population",
+          "reading": "goryeonghwa"
         }
       }
     },
@@ -406,6 +754,18 @@
       "localizations": {
         "en": {
           "meaning": "internationalization",
+          "reading": "gukjehwa"
+        },
+        "es": {
+          "meaning": "internacionalización",
+          "reading": "gukjehwa"
+        },
+        "de": {
+          "meaning": "Internationalisierung",
+          "reading": "gukjehwa"
+        },
+        "fr": {
+          "meaning": "internationalisation",
           "reading": "gukjehwa"
         }
       }
@@ -420,6 +780,18 @@
         "en": {
           "meaning": "digitalization",
           "reading": "jeongbohwa"
+        },
+        "es": {
+          "meaning": "digitalización",
+          "reading": "jeongbohwa"
+        },
+        "de": {
+          "meaning": "Digitalisierung",
+          "reading": "jeongbohwa"
+        },
+        "fr": {
+          "meaning": "numérisation",
+          "reading": "jeongbohwa"
         }
       }
     },
@@ -432,6 +804,18 @@
       "localizations": {
         "en": {
           "meaning": "worth",
+          "reading": "gapeochi"
+        },
+        "es": {
+          "meaning": "valor",
+          "reading": "gapeochi"
+        },
+        "de": {
+          "meaning": "Wert",
+          "reading": "gapeochi"
+        },
+        "fr": {
+          "meaning": "valeur",
           "reading": "gapeochi"
         }
       }
@@ -446,6 +830,18 @@
         "en": {
           "meaning": "improvement plan",
           "reading": "gaeseonchaek"
+        },
+        "es": {
+          "meaning": "plan de mejora",
+          "reading": "gaeseonchaek"
+        },
+        "de": {
+          "meaning": "Verbesserungsplan",
+          "reading": "gaeseonchaek"
+        },
+        "fr": {
+          "meaning": "plan d’amélioration",
+          "reading": "gaeseonchaek"
         }
       }
     },
@@ -458,6 +854,18 @@
       "localizations": {
         "en": {
           "meaning": "diversity",
+          "reading": "dayangseong"
+        },
+        "es": {
+          "meaning": "diversidad",
+          "reading": "dayangseong"
+        },
+        "de": {
+          "meaning": "Vielfalt",
+          "reading": "dayangseong"
+        },
+        "fr": {
+          "meaning": "diversité",
           "reading": "dayangseong"
         }
       }
@@ -472,6 +880,18 @@
         "en": {
           "meaning": "low birth rate",
           "reading": "jeochulsan"
+        },
+        "es": {
+          "meaning": "baja natalidad",
+          "reading": "jeochulsan"
+        },
+        "de": {
+          "meaning": "Niedrige Geburtenrate",
+          "reading": "jeochulsan"
+        },
+        "fr": {
+          "meaning": "faible natalité",
+          "reading": "jeochulsan"
         }
       }
     },
@@ -484,6 +904,18 @@
       "localizations": {
         "en": {
           "meaning": "identity",
+          "reading": "jeongcheseong"
+        },
+        "es": {
+          "meaning": "identidad",
+          "reading": "jeongcheseong"
+        },
+        "de": {
+          "meaning": "Identität",
+          "reading": "jeongcheseong"
+        },
+        "fr": {
+          "meaning": "identité",
           "reading": "jeongcheseong"
         }
       }
@@ -498,6 +930,18 @@
         "en": {
           "meaning": "validity",
           "reading": "tadangseong"
+        },
+        "es": {
+          "meaning": "validez",
+          "reading": "tadangseong"
+        },
+        "de": {
+          "meaning": "Stichhaltigkeit",
+          "reading": "tadangseong"
+        },
+        "fr": {
+          "meaning": "validité",
+          "reading": "tadangseong"
         }
       }
     },
@@ -510,6 +954,18 @@
       "localizations": {
         "en": {
           "meaning": "efficiency",
+          "reading": "hyoyulseong"
+        },
+        "es": {
+          "meaning": "eficiencia",
+          "reading": "hyoyulseong"
+        },
+        "de": {
+          "meaning": "Effizienz",
+          "reading": "hyoyulseong"
+        },
+        "fr": {
+          "meaning": "efficacité",
           "reading": "hyoyulseong"
         }
       }
@@ -524,6 +980,18 @@
         "en": {
           "meaning": "welfare system",
           "reading": "bokjijedo"
+        },
+        "es": {
+          "meaning": "sistema de bienestar social",
+          "reading": "bokjijedo"
+        },
+        "de": {
+          "meaning": "Sozialsystem",
+          "reading": "bokjijedo"
+        },
+        "fr": {
+          "meaning": "système de protection sociale",
+          "reading": "bokjijedo"
         }
       }
     },
@@ -536,6 +1004,18 @@
       "localizations": {
         "en": {
           "meaning": "information security",
+          "reading": "jeongboboho"
+        },
+        "es": {
+          "meaning": "seguridad de la información",
+          "reading": "jeongboboho"
+        },
+        "de": {
+          "meaning": "Informationssicherheit",
+          "reading": "jeongboboho"
+        },
+        "fr": {
+          "meaning": "sécurité de l’information",
           "reading": "jeongboboho"
         }
       }
@@ -550,6 +1030,18 @@
         "en": {
           "meaning": "polarization",
           "reading": "yanggeukhwa"
+        },
+        "es": {
+          "meaning": "polarización",
+          "reading": "yanggeukhwa"
+        },
+        "de": {
+          "meaning": "Polarisierung",
+          "reading": "yanggeukhwa"
+        },
+        "fr": {
+          "meaning": "polarisation",
+          "reading": "yanggeukhwa"
         }
       }
     },
@@ -562,6 +1054,18 @@
       "localizations": {
         "en": {
           "meaning": "competitiveness",
+          "reading": "gyeongjaengryeok"
+        },
+        "es": {
+          "meaning": "competitividad",
+          "reading": "gyeongjaengryeok"
+        },
+        "de": {
+          "meaning": "Wettbewerbsfähigkeit",
+          "reading": "gyeongjaengryeok"
+        },
+        "fr": {
+          "meaning": "compétitivité",
           "reading": "gyeongjaengryeok"
         }
       }
@@ -576,6 +1080,18 @@
         "en": {
           "meaning": "supply chain",
           "reading": "gonggeupmang"
+        },
+        "es": {
+          "meaning": "cadena de suministro",
+          "reading": "gonggeupmang"
+        },
+        "de": {
+          "meaning": "Lieferkette",
+          "reading": "gonggeupmang"
+        },
+        "fr": {
+          "meaning": "chaîne d’approvisionnement",
+          "reading": "gonggeupmang"
         }
       }
     },
@@ -588,6 +1104,18 @@
       "localizations": {
         "en": {
           "meaning": "inequality",
+          "reading": "bulpyeongdeung"
+        },
+        "es": {
+          "meaning": "desigualdad",
+          "reading": "bulpyeongdeung"
+        },
+        "de": {
+          "meaning": "Ungleichheit",
+          "reading": "bulpyeongdeung"
+        },
+        "fr": {
+          "meaning": "inégalité",
           "reading": "bulpyeongdeung"
         }
       }
@@ -602,6 +1130,18 @@
         "en": {
           "meaning": "productivity",
           "reading": "saengsanseong"
+        },
+        "es": {
+          "meaning": "productividad",
+          "reading": "saengsanseong"
+        },
+        "de": {
+          "meaning": "Produktivität",
+          "reading": "saengsanseong"
+        },
+        "fr": {
+          "meaning": "productivité",
+          "reading": "saengsanseong"
         }
       }
     },
@@ -613,6 +1153,18 @@
       "audio": "audio/ko_a6eefa431b91fd0818ca.mp3",
       "localizations": {
         "en": {
+          "meaning": "expertise",
+          "reading": "jeonmunseong"
+        },
+        "es": {
+          "meaning": "conocimientos especializados",
+          "reading": "jeonmunseong"
+        },
+        "de": {
+          "meaning": "Fachkompetenz",
+          "reading": "jeonmunseong"
+        },
+        "fr": {
           "meaning": "expertise",
           "reading": "jeonmunseong"
         }
@@ -628,6 +1180,18 @@
         "en": {
           "meaning": "climate change",
           "reading": "gihubyeonhwa"
+        },
+        "es": {
+          "meaning": "cambio climático",
+          "reading": "gihubyeonhwa"
+        },
+        "de": {
+          "meaning": "Klimawandel",
+          "reading": "gihubyeonhwa"
+        },
+        "fr": {
+          "meaning": "changement climatique",
+          "reading": "gihubyeonhwa"
         }
       }
     },
@@ -639,6 +1203,18 @@
       "audio": "audio/ko_3002fee3c5565982de2c.mp3",
       "localizations": {
         "en": {
+          "meaning": "communication",
+          "reading": "uisasotong"
+        },
+        "es": {
+          "meaning": "comunicación",
+          "reading": "uisasotong"
+        },
+        "de": {
+          "meaning": "Kommunikation",
+          "reading": "uisasotong"
+        },
+        "fr": {
           "meaning": "communication",
           "reading": "uisasotong"
         }
@@ -654,6 +1230,18 @@
         "en": {
           "meaning": "value conflict",
           "reading": "gachichungdol"
+        },
+        "es": {
+          "meaning": "conflicto de valores",
+          "reading": "gachichungdol"
+        },
+        "de": {
+          "meaning": "Wertekonflikt",
+          "reading": "gachichungdol"
+        },
+        "fr": {
+          "meaning": "conflit de valeurs",
+          "reading": "gachichungdol"
         }
       }
     },
@@ -666,6 +1254,18 @@
       "localizations": {
         "en": {
           "meaning": "value judgment",
+          "reading": "gachipandan"
+        },
+        "es": {
+          "meaning": "juicio de valor",
+          "reading": "gachipandan"
+        },
+        "de": {
+          "meaning": "Werturteil",
+          "reading": "gachipandan"
+        },
+        "fr": {
+          "meaning": "jugement de valeur",
           "reading": "gachipandan"
         }
       }
@@ -680,6 +1280,18 @@
         "en": {
           "meaning": "personal information",
           "reading": "gaeinjeongbo"
+        },
+        "es": {
+          "meaning": "información personal",
+          "reading": "gaeinjeongbo"
+        },
+        "de": {
+          "meaning": "Personenbezogene Daten",
+          "reading": "gaeinjeongbo"
+        },
+        "fr": {
+          "meaning": "données personnelles",
+          "reading": "gaeinjeongbo"
         }
       }
     },
@@ -692,6 +1304,18 @@
       "localizations": {
         "en": {
           "meaning": "education gap",
+          "reading": "gyoyukgyeokcha"
+        },
+        "es": {
+          "meaning": "brecha educativa",
+          "reading": "gyoyukgyeokcha"
+        },
+        "de": {
+          "meaning": "Bildungskluft",
+          "reading": "gyoyukgyeokcha"
+        },
+        "fr": {
+          "meaning": "inégalités d’éducation",
           "reading": "gyoyukgyeokcha"
         }
       }
@@ -706,6 +1330,18 @@
         "en": {
           "meaning": "labor market",
           "reading": "nodongsijang"
+        },
+        "es": {
+          "meaning": "mercado laboral",
+          "reading": "nodongsijang"
+        },
+        "de": {
+          "meaning": "Arbeitsmarkt",
+          "reading": "nodongsijang"
+        },
+        "fr": {
+          "meaning": "marché du travail",
+          "reading": "nodongsijang"
         }
       }
     },
@@ -718,6 +1354,18 @@
       "localizations": {
         "en": {
           "meaning": "generational conflict",
+          "reading": "sedaegaldeung"
+        },
+        "es": {
+          "meaning": "conflicto generacional",
+          "reading": "sedaegaldeung"
+        },
+        "de": {
+          "meaning": "Generationenkonflikt",
+          "reading": "sedaegaldeung"
+        },
+        "fr": {
+          "meaning": "conflit de générations",
           "reading": "sedaegaldeung"
         }
       }
@@ -732,6 +1380,18 @@
         "en": {
           "meaning": "population decline",
           "reading": "ingugamso"
+        },
+        "es": {
+          "meaning": "disminución de la población",
+          "reading": "ingugamso"
+        },
+        "de": {
+          "meaning": "Bevölkerungsrückgang",
+          "reading": "ingugamso"
+        },
+        "fr": {
+          "meaning": "déclin démographique",
+          "reading": "ingugamso"
         }
       }
     },
@@ -744,6 +1404,18 @@
       "localizations": {
         "en": {
           "meaning": "remote work",
+          "reading": "jaetaekgeunmu"
+        },
+        "es": {
+          "meaning": "teletrabajo",
+          "reading": "jaetaekgeunmu"
+        },
+        "de": {
+          "meaning": "Arbeit im Homeoffice",
+          "reading": "jaetaekgeunmu"
+        },
+        "fr": {
+          "meaning": "télétravail",
           "reading": "jaetaekgeunmu"
         }
       }
@@ -758,6 +1430,18 @@
         "en": {
           "meaning": "information gap",
           "reading": "jeongbogyeokcha"
+        },
+        "es": {
+          "meaning": "brecha de información",
+          "reading": "jeongbogyeokcha"
+        },
+        "de": {
+          "meaning": "Informationsgefälle",
+          "reading": "jeongbogyeokcha"
+        },
+        "fr": {
+          "meaning": "fracture informationnelle",
+          "reading": "jeongbogyeokcha"
         }
       }
     },
@@ -770,6 +1454,18 @@
       "localizations": {
         "en": {
           "meaning": "deregulation",
+          "reading": "gyujewanhwa"
+        },
+        "es": {
+          "meaning": "desregulación",
+          "reading": "gyujewanhwa"
+        },
+        "de": {
+          "meaning": "Deregulierung",
+          "reading": "gyujewanhwa"
+        },
+        "fr": {
+          "meaning": "déréglementation",
           "reading": "gyujewanhwa"
         }
       }
@@ -784,6 +1480,18 @@
         "en": {
           "meaning": "social conflict",
           "reading": "sahoegaldeung"
+        },
+        "es": {
+          "meaning": "conflicto social",
+          "reading": "sahoegaldeung"
+        },
+        "de": {
+          "meaning": "Sozialer Konflikt",
+          "reading": "sahoegaldeung"
+        },
+        "fr": {
+          "meaning": "conflit social",
+          "reading": "sahoegaldeung"
         }
       }
     },
@@ -796,6 +1504,18 @@
       "localizations": {
         "en": {
           "meaning": "social integration",
+          "reading": "sahoetonghap"
+        },
+        "es": {
+          "meaning": "integración social",
+          "reading": "sahoetonghap"
+        },
+        "de": {
+          "meaning": "Soziale Integration",
+          "reading": "sahoetonghap"
+        },
+        "fr": {
+          "meaning": "intégration sociale",
           "reading": "sahoetonghap"
         }
       }
@@ -810,6 +1530,18 @@
         "en": {
           "meaning": "opinion coordination",
           "reading": "uigyeonjojeong"
+        },
+        "es": {
+          "meaning": "conciliación de opiniones",
+          "reading": "uigyeonjojeong"
+        },
+        "de": {
+          "meaning": "Abstimmung von Meinungen",
+          "reading": "uigyeonjojeong"
+        },
+        "fr": {
+          "meaning": "conciliation des opinions",
+          "reading": "uigyeonjojeong"
         }
       }
     },
@@ -822,6 +1554,18 @@
       "localizations": {
         "en": {
           "meaning": "decision-making",
+          "reading": "uisagyeoljeong"
+        },
+        "es": {
+          "meaning": "toma de decisiones",
+          "reading": "uisagyeoljeong"
+        },
+        "de": {
+          "meaning": "Entscheidungsfindung",
+          "reading": "uisagyeoljeong"
+        },
+        "fr": {
+          "meaning": "prise de décision",
           "reading": "uisagyeoljeong"
         }
       }
@@ -836,6 +1580,18 @@
         "en": {
           "meaning": "environmental protection",
           "reading": "hwangyeongboho"
+        },
+        "es": {
+          "meaning": "protección ambiental",
+          "reading": "hwangyeongboho"
+        },
+        "de": {
+          "meaning": "Umweltschutz",
+          "reading": "hwangyeongboho"
+        },
+        "fr": {
+          "meaning": "protection de l’environnement",
+          "reading": "hwangyeongboho"
         }
       }
     },
@@ -848,6 +1604,18 @@
       "localizations": {
         "en": {
           "meaning": "economic growth",
+          "reading": "gyeongjeseongjang"
+        },
+        "es": {
+          "meaning": "crecimiento económico",
+          "reading": "gyeongjeseongjang"
+        },
+        "de": {
+          "meaning": "Wirtschaftswachstum",
+          "reading": "gyeongjeseongjang"
+        },
+        "fr": {
+          "meaning": "croissance économique",
           "reading": "gyeongjeseongjang"
         }
       }
@@ -862,6 +1630,18 @@
         "en": {
           "meaning": "economic policy",
           "reading": "gyeongjejeongchaek"
+        },
+        "es": {
+          "meaning": "política económica",
+          "reading": "gyeongjejeongchaek"
+        },
+        "de": {
+          "meaning": "Wirtschaftspolitik",
+          "reading": "gyeongjejeongchaek"
+        },
+        "fr": {
+          "meaning": "politique économique",
+          "reading": "gyeongjejeongchaek"
         }
       }
     },
@@ -874,6 +1654,18 @@
       "localizations": {
         "en": {
           "meaning": "public welfare",
+          "reading": "gonggongbokji"
+        },
+        "es": {
+          "meaning": "bienestar público",
+          "reading": "gonggongbokji"
+        },
+        "de": {
+          "meaning": "Öffentliche Wohlfahrt",
+          "reading": "gonggongbokji"
+        },
+        "fr": {
+          "meaning": "protection sociale publique",
           "reading": "gonggongbokji"
         }
       }
@@ -888,6 +1680,18 @@
         "en": {
           "meaning": "international cooperation",
           "reading": "gukjehyeopryeok"
+        },
+        "es": {
+          "meaning": "cooperación internacional",
+          "reading": "gukjehyeopryeok"
+        },
+        "de": {
+          "meaning": "Internationale Zusammenarbeit",
+          "reading": "gukjehyeopryeok"
+        },
+        "fr": {
+          "meaning": "coopération internationale",
+          "reading": "gukjehyeopryeok"
         }
       }
     },
@@ -901,6 +1705,18 @@
         "en": {
           "meaning": "technological innovation",
           "reading": "gisulhyeoksin"
+        },
+        "es": {
+          "meaning": "innovación tecnológica",
+          "reading": "gisulhyeoksin"
+        },
+        "de": {
+          "meaning": "Technologische Innovation",
+          "reading": "gisulhyeoksin"
+        },
+        "fr": {
+          "meaning": "innovation technologique",
+          "reading": "gisulhyeoksin"
         }
       }
     },
@@ -912,6 +1728,18 @@
       "audio": "audio/ko_d833c28f2e337cce945c.mp3",
       "localizations": {
         "en": {
+          "meaning": "interaction",
+          "reading": "sanghojakyong"
+        },
+        "es": {
+          "meaning": "interacción",
+          "reading": "sanghojakyong"
+        },
+        "de": {
+          "meaning": "Interaktion",
+          "reading": "sanghojakyong"
+        },
+        "fr": {
           "meaning": "interaction",
           "reading": "sanghojakyong"
         }
@@ -927,6 +1755,18 @@
         "en": {
           "meaning": "artificial intelligence",
           "reading": "ingongjineung"
+        },
+        "es": {
+          "meaning": "inteligencia artificial",
+          "reading": "ingongjineung"
+        },
+        "de": {
+          "meaning": "Künstliche Intelligenz",
+          "reading": "ingongjineung"
+        },
+        "fr": {
+          "meaning": "intelligence artificielle",
+          "reading": "ingongjineung"
         }
       }
     },
@@ -939,6 +1779,18 @@
       "localizations": {
         "en": {
           "meaning": "specialized knowledge",
+          "reading": "jeonmunjisik"
+        },
+        "es": {
+          "meaning": "conocimientos especializados",
+          "reading": "jeonmunjisik"
+        },
+        "de": {
+          "meaning": "Fachwissen",
+          "reading": "jeonmunjisik"
+        },
+        "fr": {
+          "meaning": "connaissances spécialisées",
           "reading": "jeonmunjisik"
         }
       }
@@ -953,6 +1805,18 @@
         "en": {
           "meaning": "policy evaluation",
           "reading": "jeongchaekpyeongga"
+        },
+        "es": {
+          "meaning": "evaluación de políticas",
+          "reading": "jeongchaekpyeongga"
+        },
+        "de": {
+          "meaning": "Politikevaluierung",
+          "reading": "jeongchaekpyeongga"
+        },
+        "fr": {
+          "meaning": "évaluation des politiques",
+          "reading": "jeongchaekpyeongga"
         }
       }
     },
@@ -965,6 +1829,18 @@
       "localizations": {
         "en": {
           "meaning": "carbon neutrality",
+          "reading": "tansojungrip"
+        },
+        "es": {
+          "meaning": "neutralidad de carbono",
+          "reading": "tansojungrip"
+        },
+        "de": {
+          "meaning": "Klimaneutralität",
+          "reading": "tansojungrip"
+        },
+        "fr": {
+          "meaning": "neutralité carbone",
           "reading": "tansojungrip"
         }
       }
@@ -979,6 +1855,18 @@
         "en": {
           "meaning": "data analysis",
           "reading": "deiteobunseok"
+        },
+        "es": {
+          "meaning": "análisis de datos",
+          "reading": "deiteobunseok"
+        },
+        "de": {
+          "meaning": "Datenanalyse",
+          "reading": "deiteobunseok"
+        },
+        "fr": {
+          "meaning": "analyse de données",
+          "reading": "deiteobunseok"
         }
       }
     },
@@ -991,6 +1879,18 @@
       "localizations": {
         "en": {
           "meaning": "causal relationship",
+          "reading": "ingwagwangye"
+        },
+        "es": {
+          "meaning": "relación causal",
+          "reading": "ingwagwangye"
+        },
+        "de": {
+          "meaning": "Kausalzusammenhang",
+          "reading": "ingwagwangye"
+        },
+        "fr": {
+          "meaning": "relation de causalité",
           "reading": "ingwagwangye"
         }
       }
@@ -1005,6 +1905,18 @@
         "en": {
           "meaning": "protection of human rights",
           "reading": "ingwonbojang"
+        },
+        "es": {
+          "meaning": "protección de los derechos humanos",
+          "reading": "ingwonbojang"
+        },
+        "de": {
+          "meaning": "Schutz der Menschenrechte",
+          "reading": "ingwonbojang"
+        },
+        "fr": {
+          "meaning": "protection des droits humains",
+          "reading": "ingwonbojang"
         }
       }
     },
@@ -1017,6 +1929,18 @@
       "localizations": {
         "en": {
           "meaning": "human rights violation",
+          "reading": "ingwonchimhae"
+        },
+        "es": {
+          "meaning": "violación de derechos humanos",
+          "reading": "ingwonchimhae"
+        },
+        "de": {
+          "meaning": "Menschenrechtsverletzung",
+          "reading": "ingwonchimhae"
+        },
+        "fr": {
+          "meaning": "violation des droits humains",
           "reading": "ingwonchimhae"
         }
       }
@@ -1031,6 +1955,18 @@
         "en": {
           "meaning": "sense of responsibility",
           "reading": "chaekimuisik"
+        },
+        "es": {
+          "meaning": "sentido de la responsabilidad",
+          "reading": "chaekimuisik"
+        },
+        "de": {
+          "meaning": "Verantwortungsbewusstsein",
+          "reading": "chaekimuisik"
+        },
+        "fr": {
+          "meaning": "sens des responsabilités",
+          "reading": "chaekimuisik"
         }
       }
     },
@@ -1043,6 +1979,18 @@
       "localizations": {
         "en": {
           "meaning": "environmental pollution",
+          "reading": "hwangyeongoyeom"
+        },
+        "es": {
+          "meaning": "contaminación ambiental",
+          "reading": "hwangyeongoyeom"
+        },
+        "de": {
+          "meaning": "Umweltverschmutzung",
+          "reading": "hwangyeongoyeom"
+        },
+        "fr": {
+          "meaning": "pollution de l’environnement",
           "reading": "hwangyeongoyeom"
         }
       }
@@ -1057,6 +2005,18 @@
         "en": {
           "meaning": "public safety",
           "reading": "gonggonganjeon"
+        },
+        "es": {
+          "meaning": "seguridad pública",
+          "reading": "gonggonganjeon"
+        },
+        "de": {
+          "meaning": "Öffentliche Sicherheit",
+          "reading": "gonggonganjeon"
+        },
+        "fr": {
+          "meaning": "sécurité publique",
+          "reading": "gonggonganjeon"
         }
       }
     },
@@ -1069,6 +2029,18 @@
       "localizations": {
         "en": {
           "meaning": "policy decision-making",
+          "reading": "jeongchaekgyeoljeong"
+        },
+        "es": {
+          "meaning": "toma de decisiones políticas",
+          "reading": "jeongchaekgyeoljeong"
+        },
+        "de": {
+          "meaning": "Politische Entscheidungsfindung",
+          "reading": "jeongchaekgyeoljeong"
+        },
+        "fr": {
+          "meaning": "prise de décision politique",
           "reading": "jeongchaekgyeoljeong"
         }
       }
@@ -1083,6 +2055,18 @@
         "en": {
           "meaning": "responsible management",
           "reading": "chaekimgyeongyeong"
+        },
+        "es": {
+          "meaning": "gestión responsable",
+          "reading": "chaekimgyeongyeong"
+        },
+        "de": {
+          "meaning": "Verantwortungsvolle Unternehmensführung",
+          "reading": "chaekimgyeongyeong"
+        },
+        "fr": {
+          "meaning": "gestion responsable",
+          "reading": "chaekimgyeongyeong"
         }
       }
     },
@@ -1095,6 +2079,18 @@
       "localizations": {
         "en": {
           "meaning": "energy transition",
+          "reading": "eneojijeonhwan"
+        },
+        "es": {
+          "meaning": "transición energética",
+          "reading": "eneojijeonhwan"
+        },
+        "de": {
+          "meaning": "Energiewende",
+          "reading": "eneojijeonhwan"
+        },
+        "fr": {
+          "meaning": "transition énergétique",
           "reading": "eneojijeonhwan"
         }
       }
@@ -1109,6 +2105,18 @@
         "en": {
           "meaning": "problem-solving ability",
           "reading": "munjehaegyeolryeok"
+        },
+        "es": {
+          "meaning": "capacidad para resolver problemas",
+          "reading": "munjehaegyeolryeok"
+        },
+        "de": {
+          "meaning": "Problemlösungsfähigkeit",
+          "reading": "munjehaegyeolryeok"
+        },
+        "fr": {
+          "meaning": "capacité à résoudre des problèmes",
+          "reading": "munjehaegyeolryeok"
         }
       }
     },
@@ -1121,6 +2129,18 @@
       "localizations": {
         "en": {
           "meaning": "generational imbalance",
+          "reading": "sedaebulgyunhyeong"
+        },
+        "es": {
+          "meaning": "desequilibrio generacional",
+          "reading": "sedaebulgyunhyeong"
+        },
+        "de": {
+          "meaning": "Generationenungleichgewicht",
+          "reading": "sedaebulgyunhyeong"
+        },
+        "fr": {
+          "meaning": "déséquilibre générationnel",
           "reading": "sedaebulgyunhyeong"
         }
       }
@@ -1135,6 +2155,18 @@
         "en": {
           "meaning": "sustainability",
           "reading": "jisokganeungseong"
+        },
+        "es": {
+          "meaning": "sostenibilidad",
+          "reading": "jisokganeungseong"
+        },
+        "de": {
+          "meaning": "Nachhaltigkeit",
+          "reading": "jisokganeungseong"
+        },
+        "fr": {
+          "meaning": "durabilité",
+          "reading": "jisokganeungseong"
         }
       }
     },
@@ -1147,6 +2179,18 @@
       "localizations": {
         "en": {
           "meaning": "personal data protection",
+          "reading": "gaeinjeongboboho"
+        },
+        "es": {
+          "meaning": "protección de datos personales",
+          "reading": "gaeinjeongboboho"
+        },
+        "de": {
+          "meaning": "Datenschutz",
+          "reading": "gaeinjeongboboho"
+        },
+        "fr": {
+          "meaning": "protection des données personnelles",
           "reading": "gaeinjeongboboho"
         }
       }
@@ -1161,6 +2205,18 @@
         "en": {
           "meaning": "environmental policy",
           "reading": "hwangyeongjeongchaek"
+        },
+        "es": {
+          "meaning": "política ambiental",
+          "reading": "hwangyeongjeongchaek"
+        },
+        "de": {
+          "meaning": "Umweltpolitik",
+          "reading": "hwangyeongjeongchaek"
+        },
+        "fr": {
+          "meaning": "politique environnementale",
+          "reading": "hwangyeongjeongchaek"
         }
       }
     },
@@ -1173,6 +2229,18 @@
       "localizations": {
         "en": {
           "meaning": "social consensus",
+          "reading": "sahoejeokhapui"
+        },
+        "es": {
+          "meaning": "consenso social",
+          "reading": "sahoejeokhapui"
+        },
+        "de": {
+          "meaning": "Gesellschaftlicher Konsens",
+          "reading": "sahoejeokhapui"
+        },
+        "fr": {
+          "meaning": "consensus social",
           "reading": "sahoejeokhapui"
         }
       }
@@ -1187,6 +2255,18 @@
         "en": {
           "meaning": "cultural diversity",
           "reading": "munhwadayangseong"
+        },
+        "es": {
+          "meaning": "diversidad cultural",
+          "reading": "munhwadayangseong"
+        },
+        "de": {
+          "meaning": "Kulturelle Vielfalt",
+          "reading": "munhwadayangseong"
+        },
+        "fr": {
+          "meaning": "diversité culturelle",
+          "reading": "munhwadayangseong"
         }
       }
     },
@@ -1199,6 +2279,18 @@
       "localizations": {
         "en": {
           "meaning": "cultural identity",
+          "reading": "munhwajeongcheseong"
+        },
+        "es": {
+          "meaning": "identidad cultural",
+          "reading": "munhwajeongcheseong"
+        },
+        "de": {
+          "meaning": "Kulturelle Identität",
+          "reading": "munhwajeongcheseong"
+        },
+        "fr": {
+          "meaning": "identité culturelle",
           "reading": "munhwajeongcheseong"
         }
       }
@@ -1213,6 +2305,18 @@
         "en": {
           "meaning": "social safety net",
           "reading": "sahoeanjeonmang"
+        },
+        "es": {
+          "meaning": "red de protección social",
+          "reading": "sahoeanjeonmang"
+        },
+        "de": {
+          "meaning": "Soziales Sicherheitsnetz",
+          "reading": "sahoeanjeonmang"
+        },
+        "fr": {
+          "meaning": "filet de protection sociale",
+          "reading": "sahoeanjeonmang"
         }
       }
     },
@@ -1225,6 +2329,18 @@
       "localizations": {
         "en": {
           "meaning": "social responsibility",
+          "reading": "sahoejeokchaekim"
+        },
+        "es": {
+          "meaning": "responsabilidad social",
+          "reading": "sahoejeokchaekim"
+        },
+        "de": {
+          "meaning": "Soziale Verantwortung",
+          "reading": "sahoejeokchaekim"
+        },
+        "fr": {
+          "meaning": "responsabilité sociale",
           "reading": "sahoejeokchaekim"
         }
       }
@@ -1239,6 +2355,18 @@
         "en": {
           "meaning": "interdependence",
           "reading": "sanghouijonseong"
+        },
+        "es": {
+          "meaning": "interdependencia",
+          "reading": "sanghouijonseong"
+        },
+        "de": {
+          "meaning": "Gegenseitige Abhängigkeit",
+          "reading": "sanghouijonseong"
+        },
+        "fr": {
+          "meaning": "interdépendance",
+          "reading": "sanghouijonseong"
         }
       }
     },
@@ -1251,6 +2379,18 @@
       "localizations": {
         "en": {
           "meaning": "international competitiveness",
+          "reading": "gukjegyeongjaengryeok"
+        },
+        "es": {
+          "meaning": "competitividad internacional",
+          "reading": "gukjegyeongjaengryeok"
+        },
+        "de": {
+          "meaning": "Internationale Wettbewerbsfähigkeit",
+          "reading": "gukjegyeongjaengryeok"
+        },
+        "fr": {
+          "meaning": "compétitivité internationale",
           "reading": "gukjegyeongjaengryeok"
         }
       }
@@ -1265,6 +2405,18 @@
         "en": {
           "meaning": "labor productivity",
           "reading": "nodongsaengsanseong"
+        },
+        "es": {
+          "meaning": "productividad laboral",
+          "reading": "nodongsaengsanseong"
+        },
+        "de": {
+          "meaning": "Arbeitsproduktivität",
+          "reading": "nodongsaengsanseong"
+        },
+        "fr": {
+          "meaning": "productivité du travail",
+          "reading": "nodongsaengsanseong"
         }
       }
     },
@@ -1277,6 +2429,18 @@
       "localizations": {
         "en": {
           "meaning": "income inequality",
+          "reading": "sodeukbulpyeongdeung"
+        },
+        "es": {
+          "meaning": "desigualdad de ingresos",
+          "reading": "sodeukbulpyeongdeung"
+        },
+        "de": {
+          "meaning": "Einkommensungleichheit",
+          "reading": "sodeukbulpyeongdeung"
+        },
+        "fr": {
+          "meaning": "inégalité des revenus",
           "reading": "sodeukbulpyeongdeung"
         }
       }
@@ -1291,6 +2455,18 @@
         "en": {
           "meaning": "fiscal soundness",
           "reading": "jaejeonggeonjeonseong"
+        },
+        "es": {
+          "meaning": "solidez fiscal",
+          "reading": "jaejeonggeonjeonseong"
+        },
+        "de": {
+          "meaning": "Solide Staatsfinanzen",
+          "reading": "jaejeonggeonjeonseong"
+        },
+        "fr": {
+          "meaning": "solidité budgétaire",
+          "reading": "jaejeonggeonjeonseong"
         }
       }
     },
@@ -1304,6 +2480,18 @@
         "en": {
           "meaning": "sustainable growth",
           "reading": "jisokjeokseongjang"
+        },
+        "es": {
+          "meaning": "crecimiento sostenido",
+          "reading": "jisokjeokseongjang"
+        },
+        "de": {
+          "meaning": "Anhaltendes Wachstum",
+          "reading": "jisokjeokseongjang"
+        },
+        "fr": {
+          "meaning": "croissance soutenue",
+          "reading": "jisokjeokseongjang"
         }
       }
     },
@@ -1316,6 +2504,18 @@
       "localizations": {
         "en": {
           "meaning": "regional imbalance",
+          "reading": "jiyeokbulgyunhyeong"
+        },
+        "es": {
+          "meaning": "desequilibrio regional",
+          "reading": "jiyeokbulgyunhyeong"
+        },
+        "de": {
+          "meaning": "Regionales Ungleichgewicht",
+          "reading": "jiyeokbulgyunhyeong"
+        },
+        "fr": {
+          "meaning": "déséquilibre régional",
           "reading": "jiyeokbulgyunhyeong"
         }
       }
@@ -1344,6 +2544,42 @@
         "받아쓰기",
         "게임",
         "공식"
+      ]
+    },
+    "es": {
+      "name": "Dictado: avanzado",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "TOPIK",
+        "Mecanografía",
+        "Avanzado",
+        "Dictado",
+        "Juegos",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Diktat: Fortgeschritten",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "TOPIK",
+        "Tippen",
+        "Fortgeschritten",
+        "Diktat",
+        "Spiele",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Dictée: avancé",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "TOPIK",
+        "Saisie",
+        "Avancé",
+        "Dictée",
+        "Jeux",
+        "Officiel"
       ]
     }
   }

@@ -19,6 +19,7 @@ xcuserdata/
 
 # Android / Gradle
 .gradle/
+.kotlin/
 local.properties
 *.apk
 *.aab

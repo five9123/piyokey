@@ -1,0 +1,374 @@
+{
+  "deck_id": "official_fun_couple_makeup",
+  "version": 3,
+  "name": "仲直りしたい時",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "恋愛",
+    "カップル",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-04-16T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "우리 다시 얘기하자",
+      "reading_ja": "ウリ タシ イェギハジャ",
+      "meaning_ja": "もう一度ちゃんと話そう",
+      "audio": "audio/ko_dca9721a7bfe91bef76f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's talk again",
+          "reading": "uri dasi yaegihaja"
+        },
+        "es": {
+          "meaning": "Hablemos de nuevo",
+          "reading": "uri dasi yaegihaja"
+        },
+        "de": {
+          "meaning": "Reden wir noch einmal",
+          "reading": "uri dasi yaegihaja"
+        },
+        "fr": {
+          "meaning": "Reparlons-en",
+          "reading": "uri dasi yaegihaja"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "안아 줘도 돼",
+      "reading_ja": "アナ ジョド トェ",
+      "meaning_ja": "抱きしめてくれていいよ",
+      "audio": "audio/ko_5c8b9efecc89ac184002.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You can hug me",
+          "reading": "ana jwodo dwae"
+        },
+        "es": {
+          "meaning": "Puedes abrazarme",
+          "reading": "ana jwodo dwae"
+        },
+        "de": {
+          "meaning": "Du darfst mich umarmen",
+          "reading": "ana jwodo dwae"
+        },
+        "fr": {
+          "meaning": "Tu peux me prendre dans tes bras",
+          "reading": "ana jwodo dwae"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "화해하고 싶어",
+      "reading_ja": "ファヘハゴ シポ",
+      "meaning_ja": "仲直りしたい",
+      "audio": "audio/ko_72506a12a8962315294b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I want to make up",
+          "reading": "hwahaehago sipeo"
+        },
+        "es": {
+          "meaning": "Quiero que nos reconciliemos",
+          "reading": "hwahaehago sipeo"
+        },
+        "de": {
+          "meaning": "Ich möchte mich versöhnen",
+          "reading": "hwahaehago sipeo"
+        },
+        "fr": {
+          "meaning": "Je veux qu’on se réconcilie",
+          "reading": "hwahaehago sipeo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "다음엔 더 잘할게",
+      "reading_ja": "タウメン ト チャラルケ",
+      "meaning_ja": "次はもっと気をつけるね",
+      "audio": "audio/ko_bd17981749313c151fc2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll do better next time",
+          "reading": "daeumen deo jalhalge"
+        },
+        "es": {
+          "meaning": "La próxima vez lo haré mejor",
+          "reading": "daeumen deo jalhalge"
+        },
+        "de": {
+          "meaning": "Nächstes Mal mache ich es besser",
+          "reading": "daeumen deo jalhalge"
+        },
+        "fr": {
+          "meaning": "Je ferai mieux la prochaine fois",
+          "reading": "daeumen deo jalhalge"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "네가 많이 소중해",
+      "reading_ja": "ネガ マニ ソジュンヘ",
+      "meaning_ja": "あなたがとても大切",
+      "audio": "audio/ko_e35e13921e51573e2a5b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You mean so much to me",
+          "reading": "nega mani sojunghae"
+        },
+        "es": {
+          "meaning": "Eres muy importante para mí",
+          "reading": "nega mani sojunghae"
+        },
+        "de": {
+          "meaning": "Du bedeutest mir sehr viel",
+          "reading": "nega mani sojunghae"
+        },
+        "fr": {
+          "meaning": "Tu comptes beaucoup pour moi",
+          "reading": "nega mani sojunghae"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "상처 줘서 미안해",
+      "reading_ja": "サンチョ ジョソ ミアネ",
+      "meaning_ja": "傷つけてごめん",
+      "audio": "audio/ko_be762a09a1ed4425cc14.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm sorry I hurt you",
+          "reading": "sangcheo jwoseo mianhae"
+        },
+        "es": {
+          "meaning": "Siento haberte hecho daño",
+          "reading": "sangcheo jwoseo mianhae"
+        },
+        "de": {
+          "meaning": "Es tut mir leid, dass ich dich verletzt habe",
+          "reading": "sangcheo jwoseo mianhae"
+        },
+        "fr": {
+          "meaning": "Pardon de t’avoir fait du mal",
+          "reading": "sangcheo jwoseo mianhae"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "끝내고 싶지 않아",
+      "reading_ja": "クンネゴ シプチ アナ",
+      "meaning_ja": "終わりにしたくない",
+      "audio": "audio/ko_3f0e8f2fc54da53544d5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I don't want this to end",
+          "reading": "kkeutnaego sipji ana"
+        },
+        "es": {
+          "meaning": "No quiero que esto termine",
+          "reading": "kkeutnaego sipji ana"
+        },
+        "de": {
+          "meaning": "Ich will nicht, dass es endet",
+          "reading": "kkeutnaego sipji ana"
+        },
+        "fr": {
+          "meaning": "Je ne veux pas que ça se termine",
+          "reading": "kkeutnaego sipji ana"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "천천히 풀어 보자",
+      "reading_ja": "チョンチョニ プロ ボジャ",
+      "meaning_ja": "ゆっくり仲直りしよう",
+      "audio": "audio/ko_f0afaa017dde1010b67a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's work things out slowly",
+          "reading": "cheoncheonhi puleo boja"
+        },
+        "es": {
+          "meaning": "Resolvamos esto con calma",
+          "reading": "cheoncheonhi puleo boja"
+        },
+        "de": {
+          "meaning": "Klären wir das in Ruhe",
+          "reading": "cheoncheonhi puleo boja"
+        },
+        "fr": {
+          "meaning": "Réglons ça tranquillement",
+          "reading": "cheoncheonhi puleo boja"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "우리 편하게 말하자",
+      "reading_ja": "ウリ ピョナゲ マラジャ",
+      "meaning_ja": "気楽に話そう",
+      "audio": "audio/ko_fd6d9ab0ee93cfc2414a.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's speak casually",
+          "reading": "uri pyeonhage malhaja"
+        },
+        "es": {
+          "meaning": "Hablemos con confianza",
+          "reading": "uri pyeonhage malhaja"
+        },
+        "de": {
+          "meaning": "Reden wir ungezwungen",
+          "reading": "uri pyeonhage malhaja"
+        },
+        "fr": {
+          "meaning": "Parlons sans formalités",
+          "reading": "uri pyeonhage malhaja"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "내가 미안해",
+      "reading_ja": "ネガ ミアネ",
+      "meaning_ja": "私が悪かった、ごめん",
+      "audio": "audio/ko_4d63aa778e22f16ebeb2.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'm sorry, it was my fault",
+          "reading": "naega mianhae"
+        },
+        "es": {
+          "meaning": "Lo siento, fue culpa mía",
+          "reading": "naega mianhae"
+        },
+        "de": {
+          "meaning": "Tut mir leid, es war meine Schuld",
+          "reading": "naega mianhae"
+        },
+        "fr": {
+          "meaning": "Pardon, c’était ma faute",
+          "reading": "naega mianhae"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "아까는 심했어",
+      "reading_ja": "アッカヌン シメッソ",
+      "meaning_ja": "さっきは言い過ぎた",
+      "audio": "audio/ko_d5d1b25e46b90a51045b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I went too far earlier",
+          "reading": "akkaneun simhaeteo"
+        },
+        "es": {
+          "meaning": "Antes me pasé",
+          "reading": "akkaneun simhaeteo"
+        },
+        "de": {
+          "meaning": "Vorhin bin ich zu weit gegangen",
+          "reading": "akkaneun simhaeteo"
+        },
+        "fr": {
+          "meaning": "J’ai été trop loin tout à l’heure",
+          "reading": "akkaneun simhaeteo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "네 마음 이해해",
+      "reading_ja": "ネ マウム イヘヘ",
+      "meaning_ja": "あなたの気持ちは分かる",
+      "audio": "audio/ko_d940470848c10258cbde.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I understand how you feel",
+          "reading": "ne maeum ihaehae"
+        },
+        "es": {
+          "meaning": "Entiendo cómo te sientes",
+          "reading": "ne maeum ihaehae"
+        },
+        "de": {
+          "meaning": "Ich verstehe, wie du dich fühlst",
+          "reading": "ne maeum ihaehae"
+        },
+        "fr": {
+          "meaning": "Je comprends ce que tu ressens",
+          "reading": "ne maeum ihaehae"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Making Up After a Fight",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Romance",
+        "Couples",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "화해하고 싶을 때",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "연애",
+        "커플",
+        "회화",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Reconciliarse tras una discusión",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Romance",
+        "Parejas",
+        "Conversación",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Versöhnung nach einem Streit",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Romantik",
+        "Paare",
+        "Gespräch",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Se réconcilier après une dispute",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Romance",
+        "Couples",
+        "Conversation",
+        "Officiel"
+      ]
+    }
+  }
+}

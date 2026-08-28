@@ -20,14 +20,15 @@ DEFAULT_OUTPUT = ROOT / "shared" / "mock_catalog"
 DEFAULT_OVERRIDE_ROOT = ROOT / "shared" / "deck_overrides" / "main"
 CONTENT_LOCALIZATION_ROOT = ROOT / "shared" / "content_localizations"
 DEFAULT_SEED = 20260717
-GENERATED_AT = "2026-08-11T00:00:00Z"
-UPDATE_GENERATED_AT = "2026-08-11T12:00:00Z"
+GENERATED_AT = "2026-08-28T00:00:00Z"
+UPDATE_GENERATED_AT = "2026-08-28T12:00:00Z"
 UPDATE_DECK_ID = "official_daily_words"
 BASE_DECK_VERSION = 3
-BASE_CATALOG_VERSION = 10
+BASE_CATALOG_VERSION = 11
 GAME_PRESET_DECK_VERSION = 3
-CONTENT_LOCALIZATION_VERSION_BUMP = 1
-CONTENT_LOCALIZATION_UPDATED_AT = "2026-08-11T00:00:00Z"
+CONTENT_LOCALIZATION_VERSION_BUMP = 2
+CONTENT_LOCALIZATION_UPDATED_AT = "2026-08-28T00:00:00Z"
+ADDITIONAL_CONTENT_LANGUAGES = ("es", "de", "fr")
 GAME_PRESET_ITEM_COUNT = 100
 MAX_TARGET_CHARACTERS = 10
 DECK_VERSION_OVERRIDES = {
@@ -103,6 +104,7 @@ def romanize_korean(value: str) -> str:
 
 _ENGLISH_MEANINGS: dict[tuple[str, str], str] | None = None
 _DECK_METADATA_LOCALIZATIONS: dict | None = None
+_ADDITIONAL_MEANINGS: dict[str, dict[tuple[str, str], str]] | None = None
 
 
 def load_content_localizations() -> tuple[dict[tuple[str, str], str], dict]:
@@ -140,7 +142,7 @@ def load_content_localizations() -> tuple[dict[tuple[str, str], str], dict]:
 
     metadata_path = CONTENT_LOCALIZATION_ROOT / "deck_metadata.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    for language_code in ("en", "ko"):
+    for language_code in ("en", "ko", *ADDITIONAL_CONTENT_LANGUAGES):
         nickname = metadata.get("author_nicknames", {}).get(language_code)
         if not isinstance(nickname, str) or not nickname.strip():
             raise RuntimeError(f"missing {language_code} official author nickname")
@@ -150,18 +152,48 @@ def load_content_localizations() -> tuple[dict[tuple[str, str], str], dict]:
     return meanings, metadata
 
 
+def load_additional_meanings() -> dict[str, dict[tuple[str, str], str]]:
+    global _ADDITIONAL_MEANINGS
+    if _ADDITIONAL_MEANINGS is not None:
+        return _ADDITIONAL_MEANINGS
+    expected = set(load_content_localizations()[0])
+    result = {}
+    for language in ADDITIONAL_CONTENT_LANGUAGES:
+        meanings = {}
+        for path in sorted((CONTENT_LOCALIZATION_ROOT / language).glob("items_*.json")):
+            for entry in json.loads(path.read_text(encoding="utf-8")).get("entries", []):
+                key = (entry.get("ko"), entry.get("meaning_ja"))
+                value = entry.get(f"meaning_{language}")
+                if not all(isinstance(text, str) and text.strip() for text in (*key, value)):
+                    raise RuntimeError(f"invalid {language} content localization in {path}")
+                if key in meanings:
+                    raise RuntimeError(f"duplicate {language} content localization: {key!r}")
+                meanings[key] = value.strip()
+        if set(meanings) != expected:
+            raise RuntimeError(f"{language} content localization coverage differs")
+        result[language] = meanings
+    _ADDITIONAL_MEANINGS = result
+    return result
+
+
 def localized_item_fields(korean: str, meaning_ja: str) -> dict:
     meanings, _metadata = load_content_localizations()
     try:
         meaning_en = meanings[(korean, meaning_ja)]
     except KeyError as error:
         raise RuntimeError(f"missing English meaning for {(korean, meaning_ja)!r}") from error
-    return {
+    result = {
         "en": {
             "meaning": meaning_en,
             "reading": romanize_korean(korean),
         }
     }
+    for language, translations in load_additional_meanings().items():
+        result[language] = {
+            "meaning": translations[(korean, meaning_ja)],
+            "reading": result["en"]["reading"],
+        }
+    return result
 
 
 def localized_deck_metadata(deck_id: str, tags: list[str]) -> dict:
@@ -172,7 +204,7 @@ def localized_deck_metadata(deck_id: str, tags: list[str]) -> dict:
     author_nicknames = metadata["author_nicknames"]
     tag_translations = metadata.get("tags", {})
     result = {}
-    for language_code in ("en", "ko"):
+    for language_code in ("en", "ko", *ADDITIONAL_CONTENT_LANGUAGES):
         name = names.get(language_code)
         localized_tags = [tag_translations.get(tag, {}).get(language_code) for tag in tags]
         if not isinstance(name, str) or not name.strip() or not all(

@@ -18,6 +18,33 @@ class UserDeckDraftTest {
   private val nextHex = { (++sequence).toString(16).padStart(32, '0') }
 
   @Test
+  fun expandedEditingLanguagesPreserveExistingKoreanAndJapaneseFields() {
+    val source = sampleDeck(official = false, deckId = "user_00000000000000000000000000000001")
+    for ((language, meaning) in mapOf(
+      UserDeckLanguage.SPANISH to "Hola",
+      UserDeckLanguage.GERMAN to "Hallo",
+      UserDeckLanguage.FRENCH to "Bonjour",
+    )) {
+      val draft = UserDeckDraft.editing(source)
+        .withName("Test", language)
+        .withAuthorNickname("Piyo", language)
+        .withTags(source.tags, language)
+        .let { current -> current.copy(items = current.items.map {
+          it.withReading("annyeong", language).withMeaning(meaning, language)
+        }) }
+      val saved = draft.validatedDeck(now.plusSeconds(10), language)
+      assertEquals(source.deckId, saved.deckId)
+      saved.items.zip(source.items).forEach { (item, original) ->
+        assertEquals(original.id, item.id)
+        assertEquals(original.ko, item.ko)
+        assertEquals(original.meaningJa, item.meaningJa)
+        assertEquals(original.readingJa, item.readingJa)
+        assertEquals(meaning, item.localizations?.get(language.code)?.meaning)
+      }
+    }
+  }
+
+  @Test
   fun newDraftCreatesStableUserIdentifiersAndOneEditableItem() {
     val draft = UserDeckDraft.new(now, nextHex)
 

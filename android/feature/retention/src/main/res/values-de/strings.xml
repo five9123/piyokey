@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="retention_my_piyo">MEIN Piyo</string>
+  <string name="retention_stamp_completed">abgeschlossen</string>
+  <string name="retention_stamp_missed">verpasst</string>
+  <string name="retention_stamp_today">heute, nicht abgeschlossen</string>
+  <string name="retention_stamp_upcoming">demnächst</string>
+  <string name="retention_week_progress">Diese Woche %1$d/7 · %2$d-Tage-Serie</string>
+  <string name="retention_daily_cta">Tägliche 3-Minuten-Challenge</string>
+  <string name="home_quick_piyo_cup_title">Wöchentlicher Piyo-Cup</string>
+  <string name="home_quick_piyo_cup_detail">Starte eine 60-Sekunden-Runde</string>
+  <string name="home_quick_random_title">5 zufällige Wörter</string>
+  <string name="home_quick_random_detail">Eine kurze Mischung für dich</string>
+  <string name="home_quick_random_retry">5 neue Wörter üben</string>
+  <string name="retention_current_streak">Aktuell</string>
+  <string name="retention_longest_streak">Längste Serie</string>
+  <string name="retention_total_stamps">Stempel</string>
+  <string name="retention_rewards">7-Tage-Belohnungen</string>
+  <string name="retention_reward_unlocked">%1$d Tage ✓</string>
+  <string name="retention_reward_locked">%1$d Tage</string>
+  <string-array name="retention_encouragements">
+    <item>Lass uns heute zusammen starten, piep!</item>
+    <item>Drei Minuten reichen zum Wachsen.</item>
+    <item>Deine Finger merken sich jeden Versuch!</item>
+    <item>Halte deine Serie heute am Laufen!</item>
+    <item>Ein Wort nach dem anderen ist perfekt.</item>
+    <item>Heute toll gemacht, piep!</item>
+    <item>Dein heutiger Stempel sieht toll aus!</item>
+    <item>Deine Serie glänzt!</item>
+    <item>Willkommen zurück, du hast mir gefehlt!</item>
+    <item>Neu anfangen ist immer ein Gewinn.</item>
+  </string-array>
+  <string-array name="retention_weekdays">
+    <item>Mo</item>
+    <item>Di</item>
+    <item>Mi</item>
+    <item>Do</item>
+    <item>Fr</item>
+    <item>Sa</item>
+    <item>So</item>
+  </string-array>
+  <string name="curriculum_title">Schritt für Schritt lernen</string>
+  <string name="curriculum_subtitle">Meistere Tastatur, Silben, Wörter und Sätze.</string>
+  <string name="curriculum_chapter">Kapitel %1$d · %2$s</string>
+  <string name="curriculum_chapter_1">Grundkonsonanten</string>
+  <string name="curriculum_chapter_2">Grundvokale</string>
+  <string name="curriculum_chapter_3">Silben bilden</string>
+  <string name="curriculum_chapter_4">Batchim</string>
+  <string name="curriculum_chapter_5">Wörter</string>
+  <string name="curriculum_chapter_6">Sätze</string>
+  <string name="curriculum_stage_consonants">Konsonantentasten finden</string>
+  <string name="curriculum_stage_vowels">Vokaltasten finden</string>
+  <string name="curriculum_stage_syllables">Silben zusammensetzen</string>
+  <string name="curriculum_stage_batchim">Endkonsonanten tippen</string>
+  <string name="curriculum_stage_words">Alltagswörter</string>
+  <string name="curriculum_stage_spacing">Ein Leerzeichen üben</string>
+  <string name="curriculum_stage_sentences">Begrüßungen und Alltagssätze</string>
+  <string name="curriculum_item_count">%1$d Fragen · ab 80%% geschafft</string>
+  <string name="curriculum_locked">Gesperrte Lektion</string>
+  <string name="curriculum_resume">Weitermachen, wo du aufgehört hast</string>
+  <string name="curriculum_free_practice">Frei mit meinen Decks üben</string>
+  <string name="review_title">Wiederholungsdeck</string>
+  <string name="review_count">%1$d Wörter zum Wiederholen</string>
+  <string name="review_empty">Wörter mit Tippfehlern erscheinen hier automatisch.</string>
+  <string name="review_start">Wiederholung starten</string>
+  <string name="review_progress">Perfekt %1$d/%2$d</string>
+  <string name="review_remove">Entfernen</string>
+  <string name="review_add_manually">Wort hinzufügen</string>
+  <string name="review_choose_word">Aus meinen Decks wählen</string>
+  <string name="reminder_title">Tägliche Erinnerung</string>
+  <string name="reminder_default_off">Erlaube Mitteilungen für eine tägliche Erinnerung um 20 Uhr Ortszeit. Du kannst die Zeit ändern.</string>
+  <string name="reminder_time">Ortszeit %1$02d:%2$02d</string>
+  <string name="reminder_choose_time">Erinnerungszeit wählen</string>
+  <string name="action_save">Speichern</string>
+  <string name="action_cancel">Abbrechen</string>
+  <string name="retention_piyo_accessibility">Mein Piyo</string>
+  <string name="wardrobe_title">Piyos Kleiderschrank</string>
+  <string name="wardrobe_preview">Vorschau von Piyos endgültigem Aussehen</string>
+  <string name="wardrobe_auto">Automatisch · Wachstumslook</string>
+  <string name="wardrobe_none">Kein Accessoire</string>
+  <string name="wardrobe_ribbon">Serienschleife</string>
+  <string name="wardrobe_beret">Sternbarett</string>
+  <string name="wardrobe_bow">Regenbogenschleife</string>
+  <string name="wardrobe_topik_glasses">TOPIK-Brille</string>
+  <string name="wardrobe_trophy">Meisterpokal</string>
+
+<plurals name="review_count">
+  <item quantity="one">%1$d Wort zum Wiederholen</item>
+  <item quantity="other">%1$d Wörter zum Wiederholen</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="one">Diese Woche %1$d/7 · %2$d-Tag-Serie</item>
+  <item quantity="other">Diese Woche %1$d/7 · %2$d-Tage-Serie</item>
+</plurals>
+    <string name="home_primary_recommend_eyebrow">Dein erstes Deck</string>
+    <string name="home_primary_recommend_detail">Passend zu deinem Niveau und deinen Interessen</string>
+    <string name="home_primary_resume_eyebrow">Mach weiter</string>
+    <string name="home_primary_resume_detail">Setze deine Übung fort</string>
+</resources>

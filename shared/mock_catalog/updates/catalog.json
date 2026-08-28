@@ -1,10 +1,10 @@
 {
-  "catalog_version": 11,
-  "generated_at": "2026-08-11T12:00:00Z",
+  "catalog_version": 12,
+  "generated_at": "2026-08-28T12:00:00Z",
   "decks": [
     {
       "deck_id": "official_keyboard_start",
-      "version": 4,
+      "version": 5,
       "name": "はじめての2ボル式",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -34,10 +34,37 @@
             "키보드",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Primeros pasos con Dubeolsik",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Iniciación",
+            "Teclado",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Erste Schritte mit Dubeolsik",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Einstieg",
+            "Tastatur",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Premiers pas avec Dubeolsik",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Initiation",
+            "Clavier",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4209,
+      "size_bytes": 7916,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-06T00:00:00Z",
@@ -48,6 +75,15 @@
           "localizations": {
             "en": {
               "meaning": "ㄹ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄹ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄹ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄹ + ㅏ"
             }
           }
         },
@@ -56,6 +92,15 @@
           "meaning_ja": "ㅁ + ㅏ",
           "localizations": {
             "en": {
+              "meaning": "ㅁ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㅁ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㅁ + ㅏ"
+            },
+            "fr": {
               "meaning": "ㅁ + ㅏ"
             }
           }
@@ -66,6 +111,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅂ + ㅗ"
+            },
+            "es": {
+              "meaning": "ㅂ + ㅗ"
+            },
+            "de": {
+              "meaning": "ㅂ + ㅗ"
+            },
+            "fr": {
+              "meaning": "ㅂ + ㅗ"
             }
           }
         },
@@ -74,6 +128,15 @@
           "meaning_ja": "ㅅ + ㅗ",
           "localizations": {
             "en": {
+              "meaning": "ㅅ + ㅗ"
+            },
+            "es": {
+              "meaning": "ㅅ + ㅗ"
+            },
+            "de": {
+              "meaning": "ㅅ + ㅗ"
+            },
+            "fr": {
               "meaning": "ㅅ + ㅗ"
             }
           }
@@ -84,6 +147,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅇ + ㅜ"
+            },
+            "es": {
+              "meaning": "ㅇ + ㅜ"
+            },
+            "de": {
+              "meaning": "ㅇ + ㅜ"
+            },
+            "fr": {
+              "meaning": "ㅇ + ㅜ"
             }
           }
         },
@@ -92,6 +164,15 @@
           "meaning_ja": "ㅈ + ㅣ",
           "localizations": {
             "en": {
+              "meaning": "ㅈ + ㅣ"
+            },
+            "es": {
+              "meaning": "ㅈ + ㅣ"
+            },
+            "de": {
+              "meaning": "ㅈ + ㅣ"
+            },
+            "fr": {
               "meaning": "ㅈ + ㅣ"
             }
           }
@@ -102,6 +183,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅎ + ㅐ"
+            },
+            "es": {
+              "meaning": "ㅎ + ㅐ"
+            },
+            "de": {
+              "meaning": "ㅎ + ㅐ"
+            },
+            "fr": {
+              "meaning": "ㅎ + ㅐ"
             }
           }
         },
@@ -110,6 +200,15 @@
           "meaning_ja": "ㄱ + ㅏ",
           "localizations": {
             "en": {
+              "meaning": "ㄱ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄱ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄱ + ㅏ"
+            },
+            "fr": {
               "meaning": "ㄱ + ㅏ"
             }
           }
@@ -120,6 +219,15 @@
           "localizations": {
             "en": {
               "meaning": "ㄴ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄴ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄴ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄴ + ㅏ"
             }
           }
         },
@@ -129,15 +237,24 @@
           "localizations": {
             "en": {
               "meaning": "ㄷ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄷ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄷ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄷ + ㅏ"
             }
           }
         }
       ],
-      "file_url": "decks/official_keyboard_start_v4.json"
+      "file_url": "decks/official_keyboard_start_v5.json"
     },
     {
       "deck_id": "official_consonants",
-      "version": 4,
+      "version": 5,
       "name": "基本子音を覚えよう",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -167,10 +284,37 @@
             "자음",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Consonantes coreanas básicas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Iniciación",
+            "Consonantes",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Koreanische Grundkonsonanten",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Einstieg",
+            "Konsonanten",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Consonnes coréennes de base",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Initiation",
+            "Consonnes",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4467,
+      "size_bytes": 8551,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-11T00:00:00Z",
@@ -181,6 +325,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅅ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅅ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅅ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅅ"
             }
           }
         },
@@ -190,6 +343,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅇ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅇ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅇ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅇ"
             }
           }
         },
@@ -199,6 +361,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅈ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅈ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅈ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅈ"
             }
           }
         },
@@ -208,6 +379,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅎ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅎ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅎ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅎ"
             }
           }
         },
@@ -217,6 +397,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㄱ"
+            },
+            "es": {
+              "meaning": "consonante básica ㄱ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㄱ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㄱ"
             }
           }
         },
@@ -226,6 +415,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㄴ"
+            },
+            "es": {
+              "meaning": "consonante básica ㄴ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㄴ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㄴ"
             }
           }
         },
@@ -235,6 +433,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㄷ"
+            },
+            "es": {
+              "meaning": "consonante básica ㄷ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㄷ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㄷ"
             }
           }
         },
@@ -244,6 +451,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㄹ"
+            },
+            "es": {
+              "meaning": "consonante básica ㄹ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㄹ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㄹ"
             }
           }
         },
@@ -253,6 +469,15 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅁ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅁ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅁ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅁ"
             }
           }
         },
@@ -262,15 +487,24 @@
           "localizations": {
             "en": {
               "meaning": "basic consonant ㅂ"
+            },
+            "es": {
+              "meaning": "consonante básica ㅂ"
+            },
+            "de": {
+              "meaning": "Grundkonsonant ㅂ"
+            },
+            "fr": {
+              "meaning": "consonne de base ㅂ"
             }
           }
         }
       ],
-      "file_url": "decks/official_consonants_v4.json"
+      "file_url": "decks/official_consonants_v5.json"
     },
     {
       "deck_id": "official_vowels",
-      "version": 4,
+      "version": 5,
       "name": "基本母音を覚えよう",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -300,10 +534,37 @@
             "모음",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Vocales coreanas básicas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Iniciación",
+            "Vocales",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Koreanische Grundvokale",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Einstieg",
+            "Vokale",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Voyelles coréennes de base",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Initiation",
+            "Voyelles",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4338,
+      "size_bytes": 8300,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-16T00:00:00Z",
@@ -314,6 +575,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅕ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅕ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅕ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅕ"
             }
           }
         },
@@ -323,6 +593,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅏ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅏ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅏ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅏ"
             }
           }
         },
@@ -332,6 +611,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅓ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅓ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅓ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅓ"
             }
           }
         },
@@ -341,6 +629,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅗ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅗ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅗ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅗ"
             }
           }
         },
@@ -350,6 +647,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅜ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅜ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅜ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅜ"
             }
           }
         },
@@ -359,6 +665,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅡ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅡ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅡ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅡ"
             }
           }
         },
@@ -368,6 +683,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅣ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅣ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅣ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅣ"
             }
           }
         },
@@ -377,6 +701,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅐ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅐ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅐ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅐ"
             }
           }
         },
@@ -386,6 +719,15 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅔ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅔ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅔ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅔ"
             }
           }
         },
@@ -395,15 +737,24 @@
           "localizations": {
             "en": {
               "meaning": "basic vowel ㅑ"
+            },
+            "es": {
+              "meaning": "vocal básica ㅑ"
+            },
+            "de": {
+              "meaning": "Grundvokal ㅑ"
+            },
+            "fr": {
+              "meaning": "voyelle de base ㅑ"
             }
           }
         }
       ],
-      "file_url": "decks/official_vowels_v4.json"
+      "file_url": "decks/official_vowels_v5.json"
     },
     {
       "deck_id": "official_syllable_building",
-      "version": 4,
+      "version": 5,
       "name": "子音＋母音で組み立てる",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -433,10 +784,37 @@
             "음절 조합",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Forma sílabas coreanas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Iniciación",
+            "Formación de sílabas",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Koreanische Silben bilden",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Einstieg",
+            "Silbenbildung",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Former des syllabes coréennes",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Initiation",
+            "Formation des syllabes",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4246,
+      "size_bytes": 7983,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-21T00:00:00Z",
@@ -447,6 +825,15 @@
           "localizations": {
             "en": {
               "meaning": "ㄷ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄷ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄷ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄷ + ㅏ"
             }
           }
         },
@@ -455,6 +842,15 @@
           "meaning_ja": "ㄹ + ㅏ",
           "localizations": {
             "en": {
+              "meaning": "ㄹ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄹ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄹ + ㅏ"
+            },
+            "fr": {
               "meaning": "ㄹ + ㅏ"
             }
           }
@@ -465,6 +861,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅁ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㅁ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㅁ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㅁ + ㅏ"
             }
           }
         },
@@ -473,6 +878,15 @@
           "meaning_ja": "ㅂ + ㅗ",
           "localizations": {
             "en": {
+              "meaning": "ㅂ + ㅗ"
+            },
+            "es": {
+              "meaning": "ㅂ + ㅗ"
+            },
+            "de": {
+              "meaning": "ㅂ + ㅗ"
+            },
+            "fr": {
               "meaning": "ㅂ + ㅗ"
             }
           }
@@ -483,6 +897,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅅ + ㅗ"
+            },
+            "es": {
+              "meaning": "ㅅ + ㅗ"
+            },
+            "de": {
+              "meaning": "ㅅ + ㅗ"
+            },
+            "fr": {
+              "meaning": "ㅅ + ㅗ"
             }
           }
         },
@@ -491,6 +914,15 @@
           "meaning_ja": "ㅇ + ㅜ",
           "localizations": {
             "en": {
+              "meaning": "ㅇ + ㅜ"
+            },
+            "es": {
+              "meaning": "ㅇ + ㅜ"
+            },
+            "de": {
+              "meaning": "ㅇ + ㅜ"
+            },
+            "fr": {
               "meaning": "ㅇ + ㅜ"
             }
           }
@@ -501,6 +933,15 @@
           "localizations": {
             "en": {
               "meaning": "ㅈ + ㅣ"
+            },
+            "es": {
+              "meaning": "ㅈ + ㅣ"
+            },
+            "de": {
+              "meaning": "ㅈ + ㅣ"
+            },
+            "fr": {
+              "meaning": "ㅈ + ㅣ"
             }
           }
         },
@@ -509,6 +950,15 @@
           "meaning_ja": "ㅎ + ㅐ",
           "localizations": {
             "en": {
+              "meaning": "ㅎ + ㅐ"
+            },
+            "es": {
+              "meaning": "ㅎ + ㅐ"
+            },
+            "de": {
+              "meaning": "ㅎ + ㅐ"
+            },
+            "fr": {
               "meaning": "ㅎ + ㅐ"
             }
           }
@@ -519,6 +969,15 @@
           "localizations": {
             "en": {
               "meaning": "ㄱ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄱ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄱ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄱ + ㅏ"
             }
           }
         },
@@ -528,15 +987,24 @@
           "localizations": {
             "en": {
               "meaning": "ㄴ + ㅏ"
+            },
+            "es": {
+              "meaning": "ㄴ + ㅏ"
+            },
+            "de": {
+              "meaning": "ㄴ + ㅏ"
+            },
+            "fr": {
+              "meaning": "ㄴ + ㅏ"
             }
           }
         }
       ],
-      "file_url": "decks/official_syllable_building_v4.json"
+      "file_url": "decks/official_syllable_building_v5.json"
     },
     {
       "deck_id": "official_batchim",
-      "version": 4,
+      "version": 5,
       "name": "パッチム入門",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -566,10 +1034,37 @@
             "받침",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Introducción al batchim",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Iniciación",
+            "Batchim",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Batchim-Grundlagen",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Einstieg",
+            "Batchim",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Bases du batchim",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Initiation",
+            "Batchim",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4403,
+      "size_bytes": 8551,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-26T00:00:00Z",
@@ -580,6 +1075,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㅇ"
+            },
+            "es": {
+              "meaning": "consonante final ㅇ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㅇ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㅇ"
             }
           }
         },
@@ -589,6 +1093,15 @@
           "localizations": {
             "en": {
               "meaning": "tense consonant and final consonant"
+            },
+            "es": {
+              "meaning": "consonante tensa y final"
+            },
+            "de": {
+              "meaning": "Gespannter Konsonant und Endkonsonant"
+            },
+            "fr": {
+              "meaning": "consonne tendue et consonne finale"
             }
           }
         },
@@ -598,6 +1111,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㅂ"
+            },
+            "es": {
+              "meaning": "consonante final ㅂ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㅂ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㅂ"
             }
           }
         },
@@ -607,6 +1129,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㄱ"
+            },
+            "es": {
+              "meaning": "consonante final ㄱ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㄱ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㄱ"
             }
           }
         },
@@ -616,6 +1147,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㄴ"
+            },
+            "es": {
+              "meaning": "consonante final ㄴ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㄴ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㄴ"
             }
           }
         },
@@ -625,6 +1165,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㄴ"
+            },
+            "es": {
+              "meaning": "consonante final ㄴ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㄴ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㄴ"
             }
           }
         },
@@ -634,6 +1183,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㄹ"
+            },
+            "es": {
+              "meaning": "consonante final ㄹ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㄹ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㄹ"
             }
           }
         },
@@ -643,6 +1201,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㅁ"
+            },
+            "es": {
+              "meaning": "consonante final ㅁ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㅁ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㅁ"
             }
           }
         },
@@ -652,6 +1219,15 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㅂ"
+            },
+            "es": {
+              "meaning": "consonante final ㅂ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㅂ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㅂ"
             }
           }
         },
@@ -661,15 +1237,24 @@
           "localizations": {
             "en": {
               "meaning": "final consonant ㅅ"
+            },
+            "es": {
+              "meaning": "consonante final ㅅ"
+            },
+            "de": {
+              "meaning": "Endkonsonant ㅅ"
+            },
+            "fr": {
+              "meaning": "consonne finale ㅅ"
             }
           }
         }
       ],
-      "file_url": "decks/official_batchim_v4.json"
+      "file_url": "decks/official_batchim_v5.json"
     },
     {
       "deck_id": "official_daily_words",
-      "version": 5,
+      "version": 6,
       "name": "毎日の韓国語",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -699,10 +1284,37 @@
             "공식",
             "단어"
           ]
+        },
+        "es": {
+          "name": "Palabras coreanas cotidianas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Vida cotidiana",
+            "Oficial",
+            "Palabras"
+          ]
+        },
+        "de": {
+          "name": "Koreanische Alltagswörter",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Alltag",
+            "Offiziell",
+            "Wörter"
+          ]
+        },
+        "fr": {
+          "name": "Mots coréens du quotidien",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Quotidien",
+            "Officiel",
+            "Mots"
+          ]
         }
       },
       "item_count": 13,
-      "size_bytes": 4574,
+      "size_bytes": 8641,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-01-31T00:00:00Z",
@@ -713,6 +1325,15 @@
           "localizations": {
             "en": {
               "meaning": "company"
+            },
+            "es": {
+              "meaning": "empresa"
+            },
+            "de": {
+              "meaning": "Unternehmen"
+            },
+            "fr": {
+              "meaning": "entreprise"
             }
           }
         },
@@ -722,6 +1343,15 @@
           "localizations": {
             "en": {
               "meaning": "school"
+            },
+            "es": {
+              "meaning": "escuela"
+            },
+            "de": {
+              "meaning": "Schule"
+            },
+            "fr": {
+              "meaning": "école"
             }
           }
         },
@@ -731,6 +1361,15 @@
           "localizations": {
             "en": {
               "meaning": "weather"
+            },
+            "es": {
+              "meaning": "tiempo atmosférico"
+            },
+            "de": {
+              "meaning": "Wetter"
+            },
+            "fr": {
+              "meaning": "météo"
             }
           }
         },
@@ -740,6 +1379,15 @@
           "localizations": {
             "en": {
               "meaning": "weekend"
+            },
+            "es": {
+              "meaning": "fin de semana"
+            },
+            "de": {
+              "meaning": "Wochenende"
+            },
+            "fr": {
+              "meaning": "week-end"
             }
           }
         },
@@ -749,6 +1397,15 @@
           "localizations": {
             "en": {
               "meaning": "family"
+            },
+            "es": {
+              "meaning": "familia"
+            },
+            "de": {
+              "meaning": "Familie"
+            },
+            "fr": {
+              "meaning": "famille"
             }
           }
         },
@@ -758,6 +1415,15 @@
           "localizations": {
             "en": {
               "meaning": "time"
+            },
+            "es": {
+              "meaning": "tiempo"
+            },
+            "de": {
+              "meaning": "Zeit"
+            },
+            "fr": {
+              "meaning": "temps"
             }
           }
         },
@@ -767,6 +1433,15 @@
           "localizations": {
             "en": {
               "meaning": "heart"
+            },
+            "es": {
+              "meaning": "corazón"
+            },
+            "de": {
+              "meaning": "Herz"
+            },
+            "fr": {
+              "meaning": "cœur"
             }
           }
         },
@@ -776,6 +1451,15 @@
           "localizations": {
             "en": {
               "meaning": "day off"
+            },
+            "es": {
+              "meaning": "día libre"
+            },
+            "de": {
+              "meaning": "Freier Tag"
+            },
+            "fr": {
+              "meaning": "jour de repos"
             }
           }
         },
@@ -785,6 +1469,15 @@
           "localizations": {
             "en": {
               "meaning": "walk"
+            },
+            "es": {
+              "meaning": "paseo"
+            },
+            "de": {
+              "meaning": "Spaziergang"
+            },
+            "fr": {
+              "meaning": "promenade"
             }
           }
         },
@@ -794,15 +1487,24 @@
           "localizations": {
             "en": {
               "meaning": "study"
+            },
+            "es": {
+              "meaning": "estudio"
+            },
+            "de": {
+              "meaning": "Lernen"
+            },
+            "fr": {
+              "meaning": "étude"
             }
           }
         }
       ],
-      "file_url": "decks/official_daily_words_v5.json"
+      "file_url": "decks/official_daily_words_v6.json"
     },
     {
       "deck_id": "official_verbs_adjectives",
-      "version": 4,
+      "version": 5,
       "name": "基本の動詞・形容詞",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -832,10 +1534,37 @@
             "동사",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Verbos y adjetivos esenciales",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Vocabulario esencial",
+            "Verbos",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Wichtige Verben & Adjektive",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Grundwortschatz",
+            "Verben",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Verbes et adjectifs essentiels",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Vocabulaire essentiel",
+            "Verbes",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4389,
+      "size_bytes": 8241,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-02-05T00:00:00Z",
@@ -846,6 +1575,15 @@
           "localizations": {
             "en": {
               "meaning": "to be pretty"
+            },
+            "es": {
+              "meaning": "ser bonito"
+            },
+            "de": {
+              "meaning": "Hübsch sein"
+            },
+            "fr": {
+              "meaning": "être joli"
             }
           }
         },
@@ -855,6 +1593,15 @@
           "localizations": {
             "en": {
               "meaning": "to be fun"
+            },
+            "es": {
+              "meaning": "ser divertido"
+            },
+            "de": {
+              "meaning": "Spaß machen"
+            },
+            "fr": {
+              "meaning": "être amusant"
             }
           }
         },
@@ -864,6 +1611,15 @@
           "localizations": {
             "en": {
               "meaning": "to be okay"
+            },
+            "es": {
+              "meaning": "estar bien"
+            },
+            "de": {
+              "meaning": "In Ordnung sein"
+            },
+            "fr": {
+              "meaning": "aller bien"
             }
           }
         },
@@ -873,6 +1629,15 @@
           "localizations": {
             "en": {
               "meaning": "to go"
+            },
+            "es": {
+              "meaning": "ir"
+            },
+            "de": {
+              "meaning": "Gehen"
+            },
+            "fr": {
+              "meaning": "aller"
             }
           }
         },
@@ -882,6 +1647,15 @@
           "localizations": {
             "en": {
               "meaning": "to come"
+            },
+            "es": {
+              "meaning": "venir"
+            },
+            "de": {
+              "meaning": "Kommen"
+            },
+            "fr": {
+              "meaning": "venir"
             }
           }
         },
@@ -891,6 +1665,15 @@
           "localizations": {
             "en": {
               "meaning": "to eat"
+            },
+            "es": {
+              "meaning": "comer"
+            },
+            "de": {
+              "meaning": "Essen"
+            },
+            "fr": {
+              "meaning": "manger"
             }
           }
         },
@@ -900,6 +1683,15 @@
           "localizations": {
             "en": {
               "meaning": "to see"
+            },
+            "es": {
+              "meaning": "ver"
+            },
+            "de": {
+              "meaning": "Sehen"
+            },
+            "fr": {
+              "meaning": "voir"
             }
           }
         },
@@ -909,6 +1701,15 @@
           "localizations": {
             "en": {
               "meaning": "to do"
+            },
+            "es": {
+              "meaning": "hacer"
+            },
+            "de": {
+              "meaning": "Tun"
+            },
+            "fr": {
+              "meaning": "faire"
             }
           }
         },
@@ -918,6 +1719,15 @@
           "localizations": {
             "en": {
               "meaning": "to be good"
+            },
+            "es": {
+              "meaning": "ser bueno"
+            },
+            "de": {
+              "meaning": "Gut sein"
+            },
+            "fr": {
+              "meaning": "être bon"
             }
           }
         },
@@ -927,15 +1737,24 @@
           "localizations": {
             "en": {
               "meaning": "to be big"
+            },
+            "es": {
+              "meaning": "ser grande"
+            },
+            "de": {
+              "meaning": "Groß sein"
+            },
+            "fr": {
+              "meaning": "être grand"
             }
           }
         }
       ],
-      "file_url": "decks/official_verbs_adjectives_v4.json"
+      "file_url": "decks/official_verbs_adjectives_v5.json"
     },
     {
       "deck_id": "official_daily_phrases",
-      "version": 5,
+      "version": 6,
       "name": "毎日使う短いフレーズ",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -965,10 +1784,37 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Frases cortas cotidianas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Vida cotidiana",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Kurze Alltagsausdrücke",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Alltag",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Expressions courtes du quotidien",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Quotidien",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5351,
+      "size_bytes": 10151,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-02-10T00:00:00Z",
@@ -979,6 +1825,15 @@
           "localizations": {
             "en": {
               "meaning": "Please keep smiling"
+            },
+            "es": {
+              "meaning": "Sonríe con alegría"
+            },
+            "de": {
+              "meaning": "Lächle glücklich"
+            },
+            "fr": {
+              "meaning": "Souris de bonheur"
             }
           }
         },
@@ -988,6 +1843,15 @@
           "localizations": {
             "en": {
               "meaning": "How was your day?"
+            },
+            "es": {
+              "meaning": "¿Qué tal tu día?"
+            },
+            "de": {
+              "meaning": "Wie war dein Tag?"
+            },
+            "fr": {
+              "meaning": "Comment s’est passée ta journée ?"
             }
           }
         },
@@ -997,6 +1861,15 @@
           "localizations": {
             "en": {
               "meaning": "Thank you for helping me"
+            },
+            "es": {
+              "meaning": "Gracias por ayudarme"
+            },
+            "de": {
+              "meaning": "Danke für deine Hilfe"
+            },
+            "fr": {
+              "meaning": "Merci de m’avoir aidé"
             }
           }
         },
@@ -1006,6 +1879,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's talk again next time"
+            },
+            "es": {
+              "meaning": "Hablemos otra vez la próxima vez"
+            },
+            "de": {
+              "meaning": "Reden wir beim nächsten Mal weiter"
+            },
+            "fr": {
+              "meaning": "Reparlons-en la prochaine fois"
             }
           }
         },
@@ -1015,6 +1897,15 @@
           "localizations": {
             "en": {
               "meaning": "Good morning"
+            },
+            "es": {
+              "meaning": "Buenos días"
+            },
+            "de": {
+              "meaning": "Guten Morgen"
+            },
+            "fr": {
+              "meaning": "Bonjour"
             }
           }
         },
@@ -1024,6 +1915,15 @@
           "localizations": {
             "en": {
               "meaning": "The weather is nice today"
+            },
+            "es": {
+              "meaning": "Hoy hace buen tiempo"
+            },
+            "de": {
+              "meaning": "Heute ist schönes Wetter"
+            },
+            "fr": {
+              "meaning": "Il fait beau aujourd’hui"
             }
           }
         },
@@ -1033,6 +1933,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's have lunch together"
+            },
+            "es": {
+              "meaning": "Almorcemos juntos"
+            },
+            "de": {
+              "meaning": "Essen wir zusammen zu Mittag"
+            },
+            "fr": {
+              "meaning": "Déjeunons ensemble"
             }
           }
         },
@@ -1042,6 +1951,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm a little tired"
+            },
+            "es": {
+              "meaning": "Tengo un poco de cansancio"
+            },
+            "de": {
+              "meaning": "Ich bin etwas müde"
+            },
+            "fr": {
+              "meaning": "Je ressens un peu de fatigue"
             }
           }
         },
@@ -1051,6 +1969,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm going home now"
+            },
+            "es": {
+              "meaning": "Ahora voy a casa"
+            },
+            "de": {
+              "meaning": "Ich gehe jetzt nach Hause"
+            },
+            "fr": {
+              "meaning": "Je rentre chez moi maintenant"
             }
           }
         },
@@ -1060,15 +1987,24 @@
           "localizations": {
             "en": {
               "meaning": "See you again tomorrow"
+            },
+            "es": {
+              "meaning": "Nos vemos mañana"
+            },
+            "de": {
+              "meaning": "Bis morgen"
+            },
+            "fr": {
+              "meaning": "À demain"
             }
           }
         }
       ],
-      "file_url": "decks/official_daily_phrases_v5.json"
+      "file_url": "decks/official_daily_phrases_v6.json"
     },
     {
       "deck_id": "official_travel_phrases",
-      "version": 4,
+      "version": 5,
       "name": "韓国旅行ですぐ使える表現",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1098,10 +2034,37 @@
             "공식",
             "회화"
           ]
+        },
+        "es": {
+          "name": "Frases esenciales para viajar a Corea",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Viajes a Corea",
+            "Oficial",
+            "Conversación"
+          ]
+        },
+        "de": {
+          "name": "Wichtige Ausdrücke für Korea-Reisen",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Korea-Reisen",
+            "Offiziell",
+            "Gespräch"
+          ]
+        },
+        "fr": {
+          "name": "Expressions essentielles pour voyager en Corée",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Voyage en Corée",
+            "Officiel",
+            "Conversation"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5348,
+      "size_bytes": 10254,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-02-15T00:00:00Z",
@@ -1112,6 +2075,15 @@
           "localizations": {
             "en": {
               "meaning": "What do you recommend?"
+            },
+            "es": {
+              "meaning": "¿Qué me recomienda?"
+            },
+            "de": {
+              "meaning": "Was empfehlen Sie?"
+            },
+            "fr": {
+              "meaning": "Que recommandez-vous ?"
             }
           }
         },
@@ -1121,6 +2093,15 @@
           "localizations": {
             "en": {
               "meaning": "Where is the subway station?"
+            },
+            "es": {
+              "meaning": "¿Dónde está la estación de metro?"
+            },
+            "de": {
+              "meaning": "Wo ist die U-Bahn-Station?"
+            },
+            "fr": {
+              "meaning": "Où est la station de métro ?"
             }
           }
         },
@@ -1130,6 +2111,15 @@
           "localizations": {
             "en": {
               "meaning": "How much is this?"
+            },
+            "es": {
+              "meaning": "¿Cuánto cuesta esto?"
+            },
+            "de": {
+              "meaning": "Wie viel kostet das?"
+            },
+            "fr": {
+              "meaning": "Combien ça coûte ?"
             }
           }
         },
@@ -1139,6 +2129,15 @@
           "localizations": {
             "en": {
               "meaning": "Please take a photo"
+            },
+            "es": {
+              "meaning": "Hazme una foto, por favor"
+            },
+            "de": {
+              "meaning": "Mach bitte ein Foto"
+            },
+            "fr": {
+              "meaning": "Prends une photo, s’il te plaît"
             }
           }
         },
@@ -1148,6 +2147,15 @@
           "localizations": {
             "en": {
               "meaning": "Where is the restroom?"
+            },
+            "es": {
+              "meaning": "¿Dónde está el baño?"
+            },
+            "de": {
+              "meaning": "Wo ist die Toilette?"
+            },
+            "fr": {
+              "meaning": "Où sont les toilettes ?"
             }
           }
         },
@@ -1157,6 +2165,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll pay by card"
+            },
+            "es": {
+              "meaning": "Pagaré con tarjeta"
+            },
+            "de": {
+              "meaning": "Ich zahle mit Karte"
+            },
+            "fr": {
+              "meaning": "Je paierai par carte"
             }
           }
         },
@@ -1166,6 +2183,15 @@
           "localizations": {
             "en": {
               "meaning": "I have a reservation"
+            },
+            "es": {
+              "meaning": "Tengo una reserva"
+            },
+            "de": {
+              "meaning": "Ich habe reserviert"
+            },
+            "fr": {
+              "meaning": "J’ai une réservation"
             }
           }
         },
@@ -1175,6 +2201,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm lost"
+            },
+            "es": {
+              "meaning": "Me he perdido"
+            },
+            "de": {
+              "meaning": "Ich habe mich verlaufen"
+            },
+            "fr": {
+              "meaning": "Je me suis perdu"
             }
           }
         },
@@ -1184,6 +2219,15 @@
           "localizations": {
             "en": {
               "meaning": "One, please"
+            },
+            "es": {
+              "meaning": "Uno, por favor"
+            },
+            "de": {
+              "meaning": "Eins, bitte"
+            },
+            "fr": {
+              "meaning": "Un exemplaire, s’il vous plaît"
             }
           }
         },
@@ -1193,15 +2237,24 @@
           "localizations": {
             "en": {
               "meaning": "Spicy food is fine"
+            },
+            "es": {
+              "meaning": "La comida picante está bien"
+            },
+            "de": {
+              "meaning": "Scharfes Essen ist okay"
+            },
+            "fr": {
+              "meaning": "Les plats épicés me conviennent"
             }
           }
         }
       ],
-      "file_url": "decks/official_travel_phrases_v4.json"
+      "file_url": "decks/official_travel_phrases_v5.json"
     },
     {
       "deck_id": "official_topik_one",
-      "version": 4,
+      "version": 5,
       "name": "TOPIK I 基本単語",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1231,10 +2284,37 @@
             "공식",
             "시험 대비"
           ]
+        },
+        "es": {
+          "name": "Vocabulario esencial del TOPIK I",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "TOPIK",
+            "Oficial",
+            "Preparación de exámenes"
+          ]
+        },
+        "de": {
+          "name": "Grundwortschatz für TOPIK I",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "TOPIK",
+            "Offiziell",
+            "Prüfungsvorbereitung"
+          ]
+        },
+        "fr": {
+          "name": "Vocabulaire essentiel du TOPIK I",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "TOPIK",
+            "Officiel",
+            "Préparation aux examens"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4353,
+      "size_bytes": 8276,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-02-20T00:00:00Z",
@@ -1245,6 +2325,15 @@
           "localizations": {
             "en": {
               "meaning": "education"
+            },
+            "es": {
+              "meaning": "educación"
+            },
+            "de": {
+              "meaning": "Bildung"
+            },
+            "fr": {
+              "meaning": "éducation"
             }
           }
         },
@@ -1254,6 +2343,15 @@
           "localizations": {
             "en": {
               "meaning": "environment"
+            },
+            "es": {
+              "meaning": "medio ambiente"
+            },
+            "de": {
+              "meaning": "Umwelt"
+            },
+            "fr": {
+              "meaning": "environnement"
             }
           }
         },
@@ -1263,6 +2361,15 @@
           "localizations": {
             "en": {
               "meaning": "health"
+            },
+            "es": {
+              "meaning": "salud"
+            },
+            "de": {
+              "meaning": "Gesundheit"
+            },
+            "fr": {
+              "meaning": "santé"
             }
           }
         },
@@ -1272,6 +2379,15 @@
           "localizations": {
             "en": {
               "meaning": "transportation"
+            },
+            "es": {
+              "meaning": "transporte"
+            },
+            "de": {
+              "meaning": "Verkehr"
+            },
+            "fr": {
+              "meaning": "transport"
             }
           }
         },
@@ -1281,6 +2397,15 @@
           "localizations": {
             "en": {
               "meaning": "daily life"
+            },
+            "es": {
+              "meaning": "vida cotidiana"
+            },
+            "de": {
+              "meaning": "Alltag"
+            },
+            "fr": {
+              "meaning": "vie quotidienne"
             }
           }
         },
@@ -1290,6 +2415,15 @@
           "localizations": {
             "en": {
               "meaning": "society"
+            },
+            "es": {
+              "meaning": "sociedad"
+            },
+            "de": {
+              "meaning": "Gesellschaft"
+            },
+            "fr": {
+              "meaning": "société"
             }
           }
         },
@@ -1298,6 +2432,15 @@
           "meaning_ja": "計画",
           "localizations": {
             "en": {
+              "meaning": "plan"
+            },
+            "es": {
+              "meaning": "plan"
+            },
+            "de": {
+              "meaning": "Plan"
+            },
+            "fr": {
               "meaning": "plan"
             }
           }
@@ -1308,6 +2451,15 @@
           "localizations": {
             "en": {
               "meaning": "experience"
+            },
+            "es": {
+              "meaning": "experiencia"
+            },
+            "de": {
+              "meaning": "Erfahrung"
+            },
+            "fr": {
+              "meaning": "expérience"
             }
           }
         },
@@ -1317,6 +2469,15 @@
           "localizations": {
             "en": {
               "meaning": "relationship"
+            },
+            "es": {
+              "meaning": "relación"
+            },
+            "de": {
+              "meaning": "Beziehung"
+            },
+            "fr": {
+              "meaning": "relation"
             }
           }
         },
@@ -1326,15 +2487,24 @@
           "localizations": {
             "en": {
               "meaning": "method"
+            },
+            "es": {
+              "meaning": "método"
+            },
+            "de": {
+              "meaning": "Methode"
+            },
+            "fr": {
+              "meaning": "méthode"
             }
           }
         }
       ],
-      "file_url": "decks/official_topik_one_v4.json"
+      "file_url": "decks/official_topik_one_v5.json"
     },
     {
       "deck_id": "official_trending_korean",
-      "version": 4,
+      "version": 5,
       "name": "今どき韓国語",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1364,10 +2534,37 @@
             "SNS",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Jerga y tendencias coreanas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Tendencias",
+            "Redes sociales",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Koreanischer Slang & Trends",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Im Trend",
+            "Soziale Medien",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Argot et tendances en coréen",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Tendances",
+            "Réseaux sociaux",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4703,
+      "size_bytes": 9059,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-02-25T00:00:00Z",
@@ -1378,6 +2575,15 @@
           "localizations": {
             "en": {
               "meaning": "legendary"
+            },
+            "es": {
+              "meaning": "legendario"
+            },
+            "de": {
+              "meaning": "Legendär"
+            },
+            "fr": {
+              "meaning": "légendaire"
             }
           }
         },
@@ -1387,6 +2593,15 @@
           "localizations": {
             "en": {
               "meaning": "It's the real deal"
+            },
+            "es": {
+              "meaning": "Es auténtico"
+            },
+            "de": {
+              "meaning": "Das ist echt"
+            },
+            "fr": {
+              "meaning": "C’est authentique"
             }
           }
         },
@@ -1396,6 +2611,15 @@
           "localizations": {
             "en": {
               "meaning": "You're on fire"
+            },
+            "es": {
+              "meaning": "Estás que te sales"
+            },
+            "de": {
+              "meaning": "Du bist in Höchstform"
+            },
+            "fr": {
+              "meaning": "Tu es au sommet de ta forme"
             }
           }
         },
@@ -1405,6 +2629,15 @@
           "localizations": {
             "en": {
               "meaning": "buying the dip"
+            },
+            "es": {
+              "meaning": "comprar tras una caída del precio"
+            },
+            "de": {
+              "meaning": "Kauf bei Kursrückgang"
+            },
+            "fr": {
+              "meaning": "achat après une baisse des cours"
             }
           }
         },
@@ -1414,6 +2647,15 @@
           "localizations": {
             "en": {
               "meaning": "Who do you think you are?"
+            },
+            "es": {
+              "meaning": "¿Quién te crees que eres?"
+            },
+            "de": {
+              "meaning": "Für wen hältst du dich?"
+            },
+            "fr": {
+              "meaning": "Tu te prends pour qui ?"
             }
           }
         },
@@ -1423,6 +2665,15 @@
           "localizations": {
             "en": {
               "meaning": "Woo-hoo!"
+            },
+            "es": {
+              "meaning": "¡Yuju!"
+            },
+            "de": {
+              "meaning": "Juhu!"
+            },
+            "fr": {
+              "meaning": "Youhou !"
             }
           }
         },
@@ -1432,6 +2683,15 @@
           "localizations": {
             "en": {
               "meaning": "I love it"
+            },
+            "es": {
+              "meaning": "Me encanta"
+            },
+            "de": {
+              "meaning": "Ich finde es toll"
+            },
+            "fr": {
+              "meaning": "J’adore"
             }
           }
         },
@@ -1441,6 +2701,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's go check it out"
+            },
+            "es": {
+              "meaning": "Vamos a verlo"
+            },
+            "de": {
+              "meaning": "Schauen wir es uns an"
+            },
+            "fr": {
+              "meaning": "Allons voir ça"
             }
           }
         },
@@ -1450,6 +2719,15 @@
           "localizations": {
             "en": {
               "meaning": "Agreed"
+            },
+            "es": {
+              "meaning": "De acuerdo"
+            },
+            "de": {
+              "meaning": "Stimmt"
+            },
+            "fr": {
+              "meaning": "D’accord"
             }
           }
         },
@@ -1459,15 +2737,24 @@
           "localizations": {
             "en": {
               "meaning": "Exactly my taste"
+            },
+            "es": {
+              "meaning": "Justo mi estilo"
+            },
+            "de": {
+              "meaning": "Genau mein Geschmack"
+            },
+            "fr": {
+              "meaning": "Exactement mon style"
             }
           }
         }
       ],
-      "file_url": "decks/official_trending_korean_v4.json"
+      "file_url": "decks/official_trending_korean_v5.json"
     },
     {
       "deck_id": "official_kpop_spark",
-      "version": 3,
+      "version": 4,
       "name": "オリジナルK-POP：ときめき",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1497,10 +2784,37 @@
             "가사풍",
             "공식"
           ]
+        },
+        "es": {
+          "name": "K-pop original: la primera chispa",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-pop",
+            "Estilo de letras",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Original-K-Pop: Der erste Funke",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Pop",
+            "Von Songtexten inspiriert",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "K-pop original : première étincelle",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-pop",
+            "Inspiré des paroles",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 4991,
+      "size_bytes": 9580,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-02T00:00:00Z",
@@ -1511,6 +2825,15 @@
           "localizations": {
             "en": {
               "meaning": "first snow"
+            },
+            "es": {
+              "meaning": "primera nieve"
+            },
+            "de": {
+              "meaning": "Erster Schnee"
+            },
+            "fr": {
+              "meaning": "première neige"
             }
           }
         },
@@ -1520,6 +2843,15 @@
           "localizations": {
             "en": {
               "meaning": "flutter"
+            },
+            "es": {
+              "meaning": "emoción del corazón"
+            },
+            "de": {
+              "meaning": "Herzklopfen"
+            },
+            "fr": {
+              "meaning": "palpitations"
             }
           }
         },
@@ -1529,6 +2861,15 @@
           "localizations": {
             "en": {
               "meaning": "heartbeat"
+            },
+            "es": {
+              "meaning": "latido del corazón"
+            },
+            "de": {
+              "meaning": "Herzschlag"
+            },
+            "fr": {
+              "meaning": "battement de cœur"
             }
           }
         },
@@ -1538,6 +2879,15 @@
           "localizations": {
             "en": {
               "meaning": "You shine so bright"
+            },
+            "es": {
+              "meaning": "Brillas tanto"
+            },
+            "de": {
+              "meaning": "Du strahlst so hell"
+            },
+            "fr": {
+              "meaning": "Tu brilles tellement"
             }
           }
         },
@@ -1547,6 +2897,15 @@
           "localizations": {
             "en": {
               "meaning": "Our rhythm"
+            },
+            "es": {
+              "meaning": "nuestro ritmo"
+            },
+            "de": {
+              "meaning": "Unser Rhythmus"
+            },
+            "fr": {
+              "meaning": "notre rythme"
             }
           }
         },
@@ -1556,6 +2915,15 @@
           "localizations": {
             "en": {
               "meaning": "Put both hands up high"
+            },
+            "es": {
+              "meaning": "Levanta ambas manos"
+            },
+            "de": {
+              "meaning": "Heb beide Hände hoch"
+            },
+            "fr": {
+              "meaning": "Lève les deux mains bien haut"
             }
           }
         },
@@ -1565,6 +2933,15 @@
           "localizations": {
             "en": {
               "meaning": "Follow the light"
+            },
+            "es": {
+              "meaning": "Sigue la luz"
+            },
+            "de": {
+              "meaning": "Folge dem Licht"
+            },
+            "fr": {
+              "meaning": "Suis la lumière"
             }
           }
         },
@@ -1574,6 +2951,15 @@
           "localizations": {
             "en": {
               "meaning": "Sing today out loud"
+            },
+            "es": {
+              "meaning": "Canta a todo pulmón hoy"
+            },
+            "de": {
+              "meaning": "Sing heute laut"
+            },
+            "fr": {
+              "meaning": "Chante à pleine voix aujourd’hui"
             }
           }
         },
@@ -1583,6 +2969,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's dance together"
+            },
+            "es": {
+              "meaning": "Bailemos juntos"
+            },
+            "de": {
+              "meaning": "Tanzen wir zusammen"
+            },
+            "fr": {
+              "meaning": "Dansons ensemble"
             }
           }
         },
@@ -1592,15 +2987,24 @@
           "localizations": {
             "en": {
               "meaning": "The light that spread through my heart"
+            },
+            "es": {
+              "meaning": "la luz que llenó mi corazón"
+            },
+            "de": {
+              "meaning": "Das Licht in meinem Herzen"
+            },
+            "fr": {
+              "meaning": "la lumière qui a envahi mon cœur"
             }
           }
         }
       ],
-      "file_url": "decks/official_kpop_spark_v3.json"
+      "file_url": "decks/official_kpop_spark_v4.json"
     },
     {
       "deck_id": "official_kpop_dream",
-      "version": 3,
+      "version": 4,
       "name": "オリジナルK-POP：夢とエール",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1630,10 +3034,37 @@
             "가사풍",
             "공식"
           ]
+        },
+        "es": {
+          "name": "K-pop original: sueños y ánimo",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-pop",
+            "Estilo de letras",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Original-K-Pop: Träume & Ermutigung",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Pop",
+            "Von Songtexten inspiriert",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "K-pop original : rêves et encouragements",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-pop",
+            "Inspiré des paroles",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5011,
+      "size_bytes": 9603,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-07T00:00:00Z",
@@ -1644,6 +3075,15 @@
           "localizations": {
             "en": {
               "meaning": "endless road"
+            },
+            "es": {
+              "meaning": "camino sin fin"
+            },
+            "de": {
+              "meaning": "Endloser Weg"
+            },
+            "fr": {
+              "meaning": "chemin sans fin"
             }
           }
         },
@@ -1653,6 +3093,15 @@
           "localizations": {
             "en": {
               "meaning": "Don't be afraid"
+            },
+            "es": {
+              "meaning": "No tengas miedo"
+            },
+            "de": {
+              "meaning": "Hab keine Angst"
+            },
+            "fr": {
+              "meaning": "N’aie pas peur"
             }
           }
         },
@@ -1662,6 +3111,15 @@
           "localizations": {
             "en": {
               "meaning": "Take my hand"
+            },
+            "es": {
+              "meaning": "Toma mi mano"
+            },
+            "de": {
+              "meaning": "Nimm meine Hand"
+            },
+            "fr": {
+              "meaning": "Prends ma main"
             }
           }
         },
@@ -1671,6 +3129,15 @@
           "localizations": {
             "en": {
               "meaning": "Shout louder"
+            },
+            "es": {
+              "meaning": "Grita más fuerte"
+            },
+            "de": {
+              "meaning": "Ruf lauter"
+            },
+            "fr": {
+              "meaning": "Crie plus fort"
             }
           }
         },
@@ -1680,6 +3147,15 @@
           "localizations": {
             "en": {
               "meaning": "Run toward your dream"
+            },
+            "es": {
+              "meaning": "Corre hacia tu sueño"
+            },
+            "de": {
+              "meaning": "Lauf deinem Traum entgegen"
+            },
+            "fr": {
+              "meaning": "Cours vers ton rêve"
             }
           }
         },
@@ -1689,6 +3165,15 @@
           "localizations": {
             "en": {
               "meaning": "It's okay if you fall"
+            },
+            "es": {
+              "meaning": "No pasa nada si te caes"
+            },
+            "de": {
+              "meaning": "Es ist okay, wenn du hinfällst"
+            },
+            "fr": {
+              "meaning": "Ce n’est pas grave si tu tombes"
             }
           }
         },
@@ -1698,6 +3183,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's create the answer together"
+            },
+            "es": {
+              "meaning": "Creemos la respuesta juntos"
+            },
+            "de": {
+              "meaning": "Finden wir gemeinsam die Antwort"
+            },
+            "fr": {
+              "meaning": "Créons la réponse ensemble"
             }
           }
         },
@@ -1707,6 +3201,15 @@
           "localizations": {
             "en": {
               "meaning": "Keep shining till the end"
+            },
+            "es": {
+              "meaning": "Sigue brillando hasta el final"
+            },
+            "de": {
+              "meaning": "Strahle bis zum Schluss"
+            },
+            "fr": {
+              "meaning": "Continue de briller jusqu’au bout"
             }
           }
         },
@@ -1716,6 +3219,15 @@
           "localizations": {
             "en": {
               "meaning": "We'll be closer tomorrow"
+            },
+            "es": {
+              "meaning": "Mañana estaremos más cerca"
+            },
+            "de": {
+              "meaning": "Morgen sind wir uns näher"
+            },
+            "fr": {
+              "meaning": "Demain, nous serons plus proches"
             }
           }
         },
@@ -1725,15 +3237,24 @@
           "localizations": {
             "en": {
               "meaning": "dreamlike haze"
+            },
+            "es": {
+              "meaning": "ensoñación"
+            },
+            "de": {
+              "meaning": "Traumzustand"
+            },
+            "fr": {
+              "meaning": "rêverie"
             }
           }
         }
       ],
-      "file_url": "decks/official_kpop_dream_v3.json"
+      "file_url": "decks/official_kpop_dream_v4.json"
     },
     {
       "deck_id": "official_kpop_night",
-      "version": 3,
+      "version": 4,
       "name": "オリジナルK-POP：夜と星",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1763,10 +3284,37 @@
             "가사풍",
             "공식"
           ]
+        },
+        "es": {
+          "name": "K-pop original: noche y estrellas",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-pop",
+            "Estilo de letras",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Original-K-Pop: Nacht & Sterne",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Pop",
+            "Von Songtexten inspiriert",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "K-pop original : nuit et étoiles",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-pop",
+            "Inspiré des paroles",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5053,
+      "size_bytes": 9725,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-12T00:00:00Z",
@@ -1777,6 +3325,15 @@
           "localizations": {
             "en": {
               "meaning": "Walk while counting the stars"
+            },
+            "es": {
+              "meaning": "Camina contando las estrellas"
+            },
+            "de": {
+              "meaning": "Geh und zähle die Sterne"
+            },
+            "fr": {
+              "meaning": "Marche en comptant les étoiles"
             }
           }
         },
@@ -1786,6 +3343,15 @@
           "localizations": {
             "en": {
               "meaning": "I follow your voice"
+            },
+            "es": {
+              "meaning": "Sigo tu voz"
+            },
+            "de": {
+              "meaning": "Ich folge deiner Stimme"
+            },
+            "fr": {
+              "meaning": "Je suis ta voix"
             }
           }
         },
@@ -1795,6 +3361,15 @@
           "localizations": {
             "en": {
               "meaning": "Our own Milky Way"
+            },
+            "es": {
+              "meaning": "nuestra propia Vía Láctea"
+            },
+            "de": {
+              "meaning": "Unsere eigene Milchstraße"
+            },
+            "fr": {
+              "meaning": "notre Voie lactée à nous"
             }
           }
         },
@@ -1804,6 +3379,15 @@
           "localizations": {
             "en": {
               "meaning": "Until the moon sets"
+            },
+            "es": {
+              "meaning": "hasta que se ponga la luna"
+            },
+            "de": {
+              "meaning": "Bis der Mond untergeht"
+            },
+            "fr": {
+              "meaning": "jusqu’au coucher de la lune"
             }
           }
         },
@@ -1813,6 +3397,15 @@
           "localizations": {
             "en": {
               "meaning": "Remember this night"
+            },
+            "es": {
+              "meaning": "Recuerda esta noche"
+            },
+            "de": {
+              "meaning": "Denk an diese Nacht"
+            },
+            "fr": {
+              "meaning": "Souviens-toi de cette nuit"
             }
           }
         },
@@ -1822,6 +3415,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's meet again in our dreams"
+            },
+            "es": {
+              "meaning": "Volvamos a encontrarnos en sueños"
+            },
+            "de": {
+              "meaning": "Treffen wir uns wieder im Traum"
+            },
+            "fr": {
+              "meaning": "Retrouvons-nous dans nos rêves"
             }
           }
         },
@@ -1831,6 +3433,15 @@
           "localizations": {
             "en": {
               "meaning": "starlight"
+            },
+            "es": {
+              "meaning": "luz de las estrellas"
+            },
+            "de": {
+              "meaning": "Sternenlicht"
+            },
+            "fr": {
+              "meaning": "lumière des étoiles"
             }
           }
         },
@@ -1840,6 +3451,15 @@
           "localizations": {
             "en": {
               "meaning": "moonlight"
+            },
+            "es": {
+              "meaning": "luz de luna"
+            },
+            "de": {
+              "meaning": "Mondlicht"
+            },
+            "fr": {
+              "meaning": "clair de lune"
             }
           }
         },
@@ -1849,6 +3469,15 @@
           "localizations": {
             "en": {
               "meaning": "Blue night"
+            },
+            "es": {
+              "meaning": "noche azul"
+            },
+            "de": {
+              "meaning": "Blaue Nacht"
+            },
+            "fr": {
+              "meaning": "nuit bleue"
             }
           }
         },
@@ -1858,15 +3487,24 @@
           "localizations": {
             "en": {
               "meaning": "dawn air"
+            },
+            "es": {
+              "meaning": "aire del amanecer"
+            },
+            "de": {
+              "meaning": "Morgenluft"
+            },
+            "fr": {
+              "meaning": "air de l’aube"
             }
           }
         }
       ],
-      "file_url": "decks/official_kpop_night_v3.json"
+      "file_url": "decks/official_kpop_night_v4.json"
     },
     {
       "deck_id": "official_drama_romance",
-      "version": 3,
+      "version": 4,
       "name": "Kドラマ会話：恋の予感",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -1899,10 +3537,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Diálogos de K-drama: un toque de romance",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-drama",
+            "Romance",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "K-Drama-Dialoge: Ein Hauch Romantik",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Drama",
+            "Romantik",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Dialogues de K-drama : un soupçon de romance",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-drama",
+            "Romance",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5218,
+      "size_bytes": 10000,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-17T00:00:00Z",
@@ -1913,6 +3581,15 @@
           "localizations": {
             "en": {
               "meaning": "Can you hear my heart?"
+            },
+            "es": {
+              "meaning": "¿Puedes oír mi corazón?"
+            },
+            "de": {
+              "meaning": "Kannst du mein Herz hören?"
+            },
+            "fr": {
+              "meaning": "Entends-tu mon cœur ?"
             }
           }
         },
@@ -1922,6 +3599,15 @@
           "localizations": {
             "en": {
               "meaning": "Come closer slowly"
+            },
+            "es": {
+              "meaning": "Acércate despacio"
+            },
+            "de": {
+              "meaning": "Komm langsam näher"
+            },
+            "fr": {
+              "meaning": "Approche-toi doucement"
             }
           }
         },
@@ -1931,6 +3617,15 @@
           "localizations": {
             "en": {
               "meaning": "I won't let go this time"
+            },
+            "es": {
+              "meaning": "Esta vez no lo dejaré escapar"
+            },
+            "de": {
+              "meaning": "Diesmal lasse ich nicht los"
+            },
+            "fr": {
+              "meaning": "Cette fois, je ne laisserai pas passer ça"
             }
           }
         },
@@ -1940,6 +3635,15 @@
           "localizations": {
             "en": {
               "meaning": "destined connection"
+            },
+            "es": {
+              "meaning": "lazo del destino"
+            },
+            "de": {
+              "meaning": "Schicksalhafte Verbindung"
+            },
+            "fr": {
+              "meaning": "lien du destin"
             }
           }
         },
@@ -1949,6 +3653,15 @@
           "localizations": {
             "en": {
               "meaning": "first love"
+            },
+            "es": {
+              "meaning": "primer amor"
+            },
+            "de": {
+              "meaning": "Erste Liebe"
+            },
+            "fr": {
+              "meaning": "premier amour"
             }
           }
         },
@@ -1958,6 +3671,15 @@
           "localizations": {
             "en": {
               "meaning": "Just a moment, please"
+            },
+            "es": {
+              "meaning": "Un momento, por favor"
+            },
+            "de": {
+              "meaning": "Einen Moment, bitte"
+            },
+            "fr": {
+              "meaning": "Un instant, s’il vous plaît"
             }
           }
         },
@@ -1967,6 +3689,15 @@
           "localizations": {
             "en": {
               "meaning": "I missed you"
+            },
+            "es": {
+              "meaning": "Te extrañé"
+            },
+            "de": {
+              "meaning": "Du hast mir gefehlt"
+            },
+            "fr": {
+              "meaning": "Tu m’as manqué"
             }
           }
         },
@@ -1976,6 +3707,15 @@
           "localizations": {
             "en": {
               "meaning": "Stay by my side"
+            },
+            "es": {
+              "meaning": "Quédate a mi lado"
+            },
+            "de": {
+              "meaning": "Bleib an meiner Seite"
+            },
+            "fr": {
+              "meaning": "Reste à mes côtés"
             }
           }
         },
@@ -1985,6 +3725,15 @@
           "localizations": {
             "en": {
               "meaning": "Why did you come so late?"
+            },
+            "es": {
+              "meaning": "¿Por qué llegaste tan tarde?"
+            },
+            "de": {
+              "meaning": "Warum bist du erst jetzt gekommen?"
+            },
+            "fr": {
+              "meaning": "Pourquoi es-tu arrivé si tard ?"
             }
           }
         },
@@ -1994,15 +3743,24 @@
           "localizations": {
             "en": {
               "meaning": "Don't go today"
+            },
+            "es": {
+              "meaning": "No te vayas hoy"
+            },
+            "de": {
+              "meaning": "Geh heute nicht"
+            },
+            "fr": {
+              "meaning": "Ne pars pas aujourd’hui"
             }
           }
         }
       ],
-      "file_url": "decks/official_drama_romance_v3.json"
+      "file_url": "decks/official_drama_romance_v4.json"
     },
     {
       "deck_id": "official_drama_mystery",
-      "version": 3,
+      "version": 4,
       "name": "Kドラマ会話：秘密と逆転",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2035,10 +3793,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Diálogos de K-drama: secretos y giros",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-drama",
+            "Misterio",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "K-Drama-Dialoge: Geheimnisse & Wendungen",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Drama",
+            "Mystery",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Dialogues de K-drama : secrets et rebondissements",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-drama",
+            "Mystère",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5194,
+      "size_bytes": 9952,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-22T00:00:00Z",
@@ -2049,6 +3837,15 @@
           "localizations": {
             "en": {
               "meaning": "secret"
+            },
+            "es": {
+              "meaning": "secreto"
+            },
+            "de": {
+              "meaning": "Geheimnis"
+            },
+            "fr": {
+              "meaning": "secret"
             }
           }
         },
@@ -2058,6 +3855,15 @@
           "localizations": {
             "en": {
               "meaning": "clue"
+            },
+            "es": {
+              "meaning": "pista"
+            },
+            "de": {
+              "meaning": "Hinweis"
+            },
+            "fr": {
+              "meaning": "indice"
             }
           }
         },
@@ -2067,6 +3873,15 @@
           "localizations": {
             "en": {
               "meaning": "Who are you?"
+            },
+            "es": {
+              "meaning": "¿Quién eres?"
+            },
+            "de": {
+              "meaning": "Wer bist du?"
+            },
+            "fr": {
+              "meaning": "Qui es-tu ?"
             }
           }
         },
@@ -2076,6 +3891,15 @@
           "localizations": {
             "en": {
               "meaning": "Please open the door"
+            },
+            "es": {
+              "meaning": "Abre la puerta, por favor"
+            },
+            "de": {
+              "meaning": "Öffne bitte die Tür"
+            },
+            "fr": {
+              "meaning": "Ouvre la porte, s’il te plaît"
             }
           }
         },
@@ -2085,6 +3909,15 @@
           "localizations": {
             "en": {
               "meaning": "Tell me the truth"
+            },
+            "es": {
+              "meaning": "Dime la verdad"
+            },
+            "de": {
+              "meaning": "Sag mir die Wahrheit"
+            },
+            "fr": {
+              "meaning": "Dis-moi la vérité"
             }
           }
         },
@@ -2094,6 +3927,15 @@
           "localizations": {
             "en": {
               "meaning": "It's not over yet"
+            },
+            "es": {
+              "meaning": "Aún no ha terminado"
+            },
+            "de": {
+              "meaning": "Es ist noch nicht vorbei"
+            },
+            "fr": {
+              "meaning": "Ce n’est pas encore fini"
             }
           }
         },
@@ -2103,6 +3945,15 @@
           "localizations": {
             "en": {
               "meaning": "I remember everything"
+            },
+            "es": {
+              "meaning": "Lo recuerdo todo"
+            },
+            "de": {
+              "meaning": "Ich erinnere mich an alles"
+            },
+            "fr": {
+              "meaning": "Je me souviens de tout"
             }
           }
         },
@@ -2112,6 +3963,15 @@
           "localizations": {
             "en": {
               "meaning": "The real culprit is someone else"
+            },
+            "es": {
+              "meaning": "El verdadero culpable es otra persona"
+            },
+            "de": {
+              "meaning": "Der wahre Täter ist jemand anderes"
+            },
+            "fr": {
+              "meaning": "Le vrai coupable est quelqu’un d’autre"
             }
           }
         },
@@ -2121,6 +3981,15 @@
           "localizations": {
             "en": {
               "meaning": "Tell me the truth now"
+            },
+            "es": {
+              "meaning": "Ahora dime la verdad"
+            },
+            "de": {
+              "meaning": "Sag jetzt die Wahrheit"
+            },
+            "fr": {
+              "meaning": "Dis-moi la vérité maintenant"
             }
           }
         },
@@ -2130,15 +3999,24 @@
           "localizations": {
             "en": {
               "meaning": "Are you on our side?"
+            },
+            "es": {
+              "meaning": "¿Estás de nuestro lado?"
+            },
+            "de": {
+              "meaning": "Bist du auf unserer Seite?"
+            },
+            "fr": {
+              "meaning": "Tu es de notre côté ?"
             }
           }
         }
       ],
-      "file_url": "decks/official_drama_mystery_v3.json"
+      "file_url": "decks/official_drama_mystery_v4.json"
     },
     {
       "deck_id": "official_drama_daily",
-      "version": 3,
+      "version": 4,
       "name": "Kドラマ会話：毎日のぬくもり",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2171,10 +4049,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Diálogos de K-drama: calidez cotidiana",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-drama",
+            "Vida cotidiana",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "K-Drama-Dialoge: Wärme im Alltag",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Drama",
+            "Alltag",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Dialogues de K-drama : chaleur du quotidien",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-drama",
+            "Quotidien",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5339,
+      "size_bytes": 10268,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-03-27T00:00:00Z",
@@ -2185,6 +4093,15 @@
           "localizations": {
             "en": {
               "meaning": "Have you eaten?"
+            },
+            "es": {
+              "meaning": "¿Has comido?"
+            },
+            "de": {
+              "meaning": "Hast du schon gegessen?"
+            },
+            "fr": {
+              "meaning": "Tu as mangé ?"
             }
           }
         },
@@ -2194,6 +4111,15 @@
           "localizations": {
             "en": {
               "meaning": "Want to grab a coffee?"
+            },
+            "es": {
+              "meaning": "¿Tomamos un café?"
+            },
+            "de": {
+              "meaning": "Lust auf einen Kaffee?"
+            },
+            "fr": {
+              "meaning": "On prend un café ?"
             }
           }
         },
@@ -2203,6 +4129,15 @@
           "localizations": {
             "en": {
               "meaning": "I was really busy today"
+            },
+            "es": {
+              "meaning": "Hoy tuve mucho que hacer"
+            },
+            "de": {
+              "meaning": "Ich hatte heute viel zu tun"
+            },
+            "fr": {
+              "meaning": "J’avais beaucoup à faire aujourd’hui"
             }
           }
         },
@@ -2212,6 +4147,15 @@
           "localizations": {
             "en": {
               "meaning": "Go home and get some good rest"
+            },
+            "es": {
+              "meaning": "Ve a casa y descansa bien"
+            },
+            "de": {
+              "meaning": "Geh nach Hause und ruh dich aus"
+            },
+            "fr": {
+              "meaning": "Rentre chez toi et repose-toi bien"
             }
           }
         },
@@ -2221,6 +4165,15 @@
           "localizations": {
             "en": {
               "meaning": "Dinner's on me"
+            },
+            "es": {
+              "meaning": "Yo invito a cenar"
+            },
+            "de": {
+              "meaning": "Das Abendessen geht auf mich"
+            },
+            "fr": {
+              "meaning": "Je t’invite à dîner"
             }
           }
         },
@@ -2230,6 +4183,15 @@
           "localizations": {
             "en": {
               "meaning": "Shall we take a walk this weekend?"
+            },
+            "es": {
+              "meaning": "¿Damos un paseo este fin de semana?"
+            },
+            "de": {
+              "meaning": "Gehen wir am Wochenende spazieren?"
+            },
+            "fr": {
+              "meaning": "On se promène ce week-end ?"
             }
           }
         },
@@ -2239,6 +4201,15 @@
           "localizations": {
             "en": {
               "meaning": "Let me know if you're going to be late"
+            },
+            "es": {
+              "meaning": "Avísame si vas a llegar tarde"
+            },
+            "de": {
+              "meaning": "Sag Bescheid, wenn du später kommst"
+            },
+            "fr": {
+              "meaning": "Préviens-moi si tu vas être en retard"
             }
           }
         },
@@ -2248,6 +4219,15 @@
           "localizations": {
             "en": {
               "meaning": "Tell me if you're having a hard time"
+            },
+            "es": {
+              "meaning": "Dime si lo estás pasando mal"
+            },
+            "de": {
+              "meaning": "Sag mir, wenn es dir schwerfällt"
+            },
+            "fr": {
+              "meaning": "Dis-moi si tu traverses un moment difficile"
             }
           }
         },
@@ -2257,6 +4237,15 @@
           "localizations": {
             "en": {
               "meaning": "Wake me up in the morning"
+            },
+            "es": {
+              "meaning": "Despiértame por la mañana"
+            },
+            "de": {
+              "meaning": "Weck mich am Morgen"
+            },
+            "fr": {
+              "meaning": "Réveille-moi le matin"
             }
           }
         },
@@ -2266,15 +4255,24 @@
           "localizations": {
             "en": {
               "meaning": "leaving work"
+            },
+            "es": {
+              "meaning": "salir del trabajo"
+            },
+            "de": {
+              "meaning": "Feierabend"
+            },
+            "fr": {
+              "meaning": "sortie du travail"
             }
           }
         }
       ],
-      "file_url": "decks/official_drama_daily_v3.json"
+      "file_url": "decks/official_drama_daily_v4.json"
     },
     {
       "deck_id": "official_fun_travel_moments",
-      "version": 2,
+      "version": 3,
       "name": "旅先で使えるひと言",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2307,10 +4305,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Frases para viajar",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Viajes a Corea",
+            "Frases rápidas",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Kurze Reisesprüche",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Korea-Reisen",
+            "Kurze Ausdrücke",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Petites phrases de voyage",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Voyage en Corée",
+            "Expressions courtes",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5535,
+      "size_bytes": 10742,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-01T00:00:00Z",
@@ -2321,6 +4349,15 @@
           "localizations": {
             "en": {
               "meaning": "Please let me off here"
+            },
+            "es": {
+              "meaning": "Déjeme aquí, por favor"
+            },
+            "de": {
+              "meaning": "Lassen Sie mich bitte hier aussteigen"
+            },
+            "fr": {
+              "meaning": "Déposez-moi ici, s’il vous plaît"
             }
           }
         },
@@ -2330,6 +4367,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's travel together"
+            },
+            "es": {
+              "meaning": "Viajemos juntos"
+            },
+            "de": {
+              "meaning": "Reisen wir zusammen"
+            },
+            "fr": {
+              "meaning": "Voyageons ensemble"
             }
           }
         },
@@ -2339,6 +4385,15 @@
           "localizations": {
             "en": {
               "meaning": "What is the next station?"
+            },
+            "es": {
+              "meaning": "¿Cuál es la próxima estación?"
+            },
+            "de": {
+              "meaning": "Was ist die nächste Station?"
+            },
+            "fr": {
+              "meaning": "Quelle est la prochaine station ?"
             }
           }
         },
@@ -2348,6 +4403,15 @@
           "localizations": {
             "en": {
               "meaning": "Please store my luggage"
+            },
+            "es": {
+              "meaning": "Guárdeme el equipaje, por favor"
+            },
+            "de": {
+              "meaning": "Bewahren Sie bitte mein Gepäck auf"
+            },
+            "fr": {
+              "meaning": "Gardez mes bagages, s’il vous plaît"
             }
           }
         },
@@ -2357,6 +4421,15 @@
           "localizations": {
             "en": {
               "meaning": "Would you like to go see the sunset?"
+            },
+            "es": {
+              "meaning": "¿Te gustaría ir a ver el atardecer?"
+            },
+            "de": {
+              "meaning": "Möchtest du den Sonnenuntergang ansehen?"
+            },
+            "fr": {
+              "meaning": "Tu voudrais aller voir le coucher de soleil ?"
             }
           }
         },
@@ -2366,6 +4439,15 @@
           "localizations": {
             "en": {
               "meaning": "Is there a good restaurant nearby?"
+            },
+            "es": {
+              "meaning": "¿Hay algún buen restaurante cerca?"
+            },
+            "de": {
+              "meaning": "Gibt es hier ein gutes Restaurant?"
+            },
+            "fr": {
+              "meaning": "Y a-t-il un bon restaurant près d’ici ?"
             }
           }
         },
@@ -2375,6 +4457,15 @@
           "localizations": {
             "en": {
               "meaning": "Please take a photo"
+            },
+            "es": {
+              "meaning": "Hazme una foto, por favor"
+            },
+            "de": {
+              "meaning": "Mach bitte ein Foto"
+            },
+            "fr": {
+              "meaning": "Prends une photo, s’il te plaît"
             }
           }
         },
@@ -2384,6 +4475,15 @@
           "localizations": {
             "en": {
               "meaning": "It's really beautiful here"
+            },
+            "es": {
+              "meaning": "Aquí es muy bonito"
+            },
+            "de": {
+              "meaning": "Hier ist es wirklich schön"
+            },
+            "fr": {
+              "meaning": "C’est vraiment beau ici"
             }
           }
         },
@@ -2393,6 +4493,15 @@
           "localizations": {
             "en": {
               "meaning": "Are we lost?"
+            },
+            "es": {
+              "meaning": "¿Nos hemos perdido?"
+            },
+            "de": {
+              "meaning": "Haben wir uns verlaufen?"
+            },
+            "fr": {
+              "meaning": "On s’est perdus ?"
             }
           }
         },
@@ -2402,15 +4511,24 @@
           "localizations": {
             "en": {
               "meaning": "What time is the last train?"
+            },
+            "es": {
+              "meaning": "¿A qué hora sale el último tren?"
+            },
+            "de": {
+              "meaning": "Wann fährt der letzte Zug?"
+            },
+            "fr": {
+              "meaning": "À quelle heure est le dernier train ?"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_travel_moments_v2.json"
+      "file_url": "decks/official_fun_travel_moments_v3.json"
     },
     {
       "deck_id": "official_fun_food_cafe",
-      "version": 2,
+      "version": 3,
       "name": "カフェ・グルメのひと言",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2443,10 +4561,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Frases de cafetería y restaurante",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Viajes a Corea",
+            "Comida y restaurantes",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Kurze Sprüche für Café & Essen",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Korea-Reisen",
+            "Essen & Restaurants",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Petites phrases au café et au restaurant",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Voyage en Corée",
+            "Cuisine et restaurants",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5438,
+      "size_bytes": 10540,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-06T00:00:00Z",
@@ -2457,6 +4605,15 @@
           "localizations": {
             "en": {
               "meaning": "I can't resist dessert"
+            },
+            "es": {
+              "meaning": "No puedo resistirme al postre"
+            },
+            "de": {
+              "meaning": "Ich kann Nachtisch nicht widerstehen"
+            },
+            "fr": {
+              "meaning": "Je ne peux pas résister au dessert"
             }
           }
         },
@@ -2466,6 +4623,15 @@
           "localizations": {
             "en": {
               "meaning": "I want to come here again"
+            },
+            "es": {
+              "meaning": "Quiero volver aquí"
+            },
+            "de": {
+              "meaning": "Ich möchte wieder hierherkommen"
+            },
+            "fr": {
+              "meaning": "Je veux revenir ici"
             }
           }
         },
@@ -2475,6 +4641,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll try the spicy version"
+            },
+            "es": {
+              "meaning": "Voy a probar la versión picante"
+            },
+            "de": {
+              "meaning": "Ich probiere die scharfe Variante"
+            },
+            "fr": {
+              "meaning": "Je vais essayer la version épicée"
             }
           }
         },
@@ -2484,6 +4659,15 @@
           "localizations": {
             "en": {
               "meaning": "Iced, please"
+            },
+            "es": {
+              "meaning": "Con hielo, por favor"
+            },
+            "de": {
+              "meaning": "Mit Eis, bitte"
+            },
+            "fr": {
+              "meaning": "Avec des glaçons, s’il vous plaît"
             }
           }
         },
@@ -2493,6 +4677,15 @@
           "localizations": {
             "en": {
               "meaning": "Please make it less spicy"
+            },
+            "es": {
+              "meaning": "Menos picante, por favor"
+            },
+            "de": {
+              "meaning": "Bitte weniger scharf"
+            },
+            "fr": {
+              "meaning": "Moins épicé, s’il vous plaît"
             }
           }
         },
@@ -2502,6 +4695,15 @@
           "localizations": {
             "en": {
               "meaning": "This is really delicious"
+            },
+            "es": {
+              "meaning": "Esto está riquísimo"
+            },
+            "de": {
+              "meaning": "Das ist wirklich lecker"
+            },
+            "fr": {
+              "meaning": "C’est vraiment délicieux"
             }
           }
         },
@@ -2511,6 +4713,15 @@
           "localizations": {
             "en": {
               "meaning": "Just one bite, please"
+            },
+            "es": {
+              "meaning": "Solo un bocado, por favor"
+            },
+            "de": {
+              "meaning": "Nur einen Bissen, bitte"
+            },
+            "fr": {
+              "meaning": "Juste une bouchée, s’il te plaît"
             }
           }
         },
@@ -2520,6 +4731,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's take a photo first"
+            },
+            "es": {
+              "meaning": "Hagamos una foto primero"
+            },
+            "de": {
+              "meaning": "Machen wir erst ein Foto"
+            },
+            "fr": {
+              "meaning": "Prenons d’abord une photo"
             }
           }
         },
@@ -2529,6 +4749,15 @@
           "localizations": {
             "en": {
               "meaning": "This cafe has a great vibe"
+            },
+            "es": {
+              "meaning": "Esta cafetería tiene muy buen ambiente"
+            },
+            "de": {
+              "meaning": "Dieses Café hat eine tolle Atmosphäre"
+            },
+            "fr": {
+              "meaning": "Ce café a une super ambiance"
             }
           }
         },
@@ -2538,15 +4767,24 @@
           "localizations": {
             "en": {
               "meaning": "What do you recommend?"
+            },
+            "es": {
+              "meaning": "¿Qué me recomienda?"
+            },
+            "de": {
+              "meaning": "Was empfehlen Sie?"
+            },
+            "fr": {
+              "meaning": "Que recommandez-vous ?"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_food_cafe_v2.json"
+      "file_url": "decks/official_fun_food_cafe_v3.json"
     },
     {
       "deck_id": "official_fun_couple_conflict",
-      "version": 2,
+      "version": 3,
       "name": "彼氏にモヤッとした時",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2579,10 +4817,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Cuando te molestas con tu novio",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Romance",
+            "Parejas",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Wenn du sauer auf deinen Freund bist",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Romantik",
+            "Paare",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Quand tu en veux à ton copain",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Romance",
+            "Couples",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5502,
+      "size_bytes": 10604,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-11T00:00:00Z",
@@ -2593,6 +4861,15 @@
           "localizations": {
             "en": {
               "meaning": "Why didn't you get in touch?"
+            },
+            "es": {
+              "meaning": "¿Por qué no me contactaste?"
+            },
+            "de": {
+              "meaning": "Warum hast du dich nicht gemeldet?"
+            },
+            "fr": {
+              "meaning": "Pourquoi tu ne m’as pas contacté ?"
             }
           }
         },
@@ -2602,6 +4879,15 @@
           "localizations": {
             "en": {
               "meaning": "Please listen to me"
+            },
+            "es": {
+              "meaning": "Escúchame, por favor"
+            },
+            "de": {
+              "meaning": "Hör mir bitte zu"
+            },
+            "fr": {
+              "meaning": "Écoute-moi, s’il te plaît"
             }
           }
         },
@@ -2611,6 +4897,15 @@
           "localizations": {
             "en": {
               "meaning": "That was a little hurtful"
+            },
+            "es": {
+              "meaning": "Eso me dolió un poco"
+            },
+            "de": {
+              "meaning": "Das hat mich etwas verletzt"
+            },
+            "fr": {
+              "meaning": "Ça m’a un peu blessé"
             }
           }
         },
@@ -2620,6 +4915,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm angry right now"
+            },
+            "es": {
+              "meaning": "Ahora estoy enfadado"
+            },
+            "de": {
+              "meaning": "Ich bin gerade wütend"
+            },
+            "fr": {
+              "meaning": "Je suis en colère en ce moment"
             }
           }
         },
@@ -2629,6 +4933,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm the only one trying"
+            },
+            "es": {
+              "meaning": "Solo yo me estoy esforzando"
+            },
+            "de": {
+              "meaning": "Nur ich gebe mir Mühe"
+            },
+            "fr": {
+              "meaning": "Il n’y a que moi qui fais des efforts"
             }
           }
         },
@@ -2638,6 +4951,15 @@
           "localizations": {
             "en": {
               "meaning": "Why aren't you on my side?"
+            },
+            "es": {
+              "meaning": "¿Por qué no estás de mi lado?"
+            },
+            "de": {
+              "meaning": "Warum bist du nicht auf meiner Seite?"
+            },
+            "fr": {
+              "meaning": "Pourquoi tu n’es pas de mon côté ?"
             }
           }
         },
@@ -2647,6 +4969,15 @@
           "localizations": {
             "en": {
               "meaning": "That's not what you promised"
+            },
+            "es": {
+              "meaning": "Eso no es lo que prometiste"
+            },
+            "de": {
+              "meaning": "Das hast du anders versprochen"
+            },
+            "fr": {
+              "meaning": "Ce n’est pas ce que tu avais promis"
             }
           }
         },
@@ -2656,6 +4987,15 @@
           "localizations": {
             "en": {
               "meaning": "My feelings matter too"
+            },
+            "es": {
+              "meaning": "Mis sentimientos también importan"
+            },
+            "de": {
+              "meaning": "Meine Gefühle zählen auch"
+            },
+            "fr": {
+              "meaning": "Mes sentiments comptent aussi"
             }
           }
         },
@@ -2665,6 +5005,15 @@
           "localizations": {
             "en": {
               "meaning": "Don't just brush it off"
+            },
+            "es": {
+              "meaning": "No lo pases por alto"
+            },
+            "de": {
+              "meaning": "Tu das nicht einfach ab"
+            },
+            "fr": {
+              "meaning": "Ne fais pas comme si de rien n’était"
             }
           }
         },
@@ -2674,15 +5023,24 @@
           "localizations": {
             "en": {
               "meaning": "Tell me honestly"
+            },
+            "es": {
+              "meaning": "Dímelo con sinceridad"
+            },
+            "de": {
+              "meaning": "Sag es mir ehrlich"
+            },
+            "fr": {
+              "meaning": "Dis-le-moi franchement"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_couple_conflict_v2.json"
+      "file_url": "decks/official_fun_couple_conflict_v3.json"
     },
     {
       "deck_id": "official_fun_couple_makeup",
-      "version": 2,
+      "version": 3,
       "name": "仲直りしたい時",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2715,10 +5073,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Reconciliarse tras una discusión",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Romance",
+            "Parejas",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Versöhnung nach einem Streit",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Romantik",
+            "Paare",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Se réconcilier après une dispute",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Romance",
+            "Couples",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5342,
+      "size_bytes": 10360,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-16T00:00:00Z",
@@ -2729,6 +5117,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's talk again"
+            },
+            "es": {
+              "meaning": "Hablemos de nuevo"
+            },
+            "de": {
+              "meaning": "Reden wir noch einmal"
+            },
+            "fr": {
+              "meaning": "Reparlons-en"
             }
           }
         },
@@ -2738,6 +5135,15 @@
           "localizations": {
             "en": {
               "meaning": "You can hug me"
+            },
+            "es": {
+              "meaning": "Puedes abrazarme"
+            },
+            "de": {
+              "meaning": "Du darfst mich umarmen"
+            },
+            "fr": {
+              "meaning": "Tu peux me prendre dans tes bras"
             }
           }
         },
@@ -2747,6 +5153,15 @@
           "localizations": {
             "en": {
               "meaning": "I want to make up"
+            },
+            "es": {
+              "meaning": "Quiero que nos reconciliemos"
+            },
+            "de": {
+              "meaning": "Ich möchte mich versöhnen"
+            },
+            "fr": {
+              "meaning": "Je veux qu’on se réconcilie"
             }
           }
         },
@@ -2756,6 +5171,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll do better next time"
+            },
+            "es": {
+              "meaning": "La próxima vez lo haré mejor"
+            },
+            "de": {
+              "meaning": "Nächstes Mal mache ich es besser"
+            },
+            "fr": {
+              "meaning": "Je ferai mieux la prochaine fois"
             }
           }
         },
@@ -2765,6 +5189,15 @@
           "localizations": {
             "en": {
               "meaning": "You mean so much to me"
+            },
+            "es": {
+              "meaning": "Eres muy importante para mí"
+            },
+            "de": {
+              "meaning": "Du bedeutest mir sehr viel"
+            },
+            "fr": {
+              "meaning": "Tu comptes beaucoup pour moi"
             }
           }
         },
@@ -2774,6 +5207,15 @@
           "localizations": {
             "en": {
               "meaning": "I'm sorry I hurt you"
+            },
+            "es": {
+              "meaning": "Siento haberte hecho daño"
+            },
+            "de": {
+              "meaning": "Es tut mir leid, dass ich dich verletzt habe"
+            },
+            "fr": {
+              "meaning": "Pardon de t’avoir fait du mal"
             }
           }
         },
@@ -2783,6 +5225,15 @@
           "localizations": {
             "en": {
               "meaning": "I don't want this to end"
+            },
+            "es": {
+              "meaning": "No quiero que esto termine"
+            },
+            "de": {
+              "meaning": "Ich will nicht, dass es endet"
+            },
+            "fr": {
+              "meaning": "Je ne veux pas que ça se termine"
             }
           }
         },
@@ -2792,6 +5243,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's work things out slowly"
+            },
+            "es": {
+              "meaning": "Resolvamos esto con calma"
+            },
+            "de": {
+              "meaning": "Klären wir das in Ruhe"
+            },
+            "fr": {
+              "meaning": "Réglons ça tranquillement"
             }
           }
         },
@@ -2801,6 +5261,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's speak casually"
+            },
+            "es": {
+              "meaning": "Hablemos con confianza"
+            },
+            "de": {
+              "meaning": "Reden wir ungezwungen"
+            },
+            "fr": {
+              "meaning": "Parlons sans formalités"
             }
           }
         },
@@ -2810,15 +5279,24 @@
           "localizations": {
             "en": {
               "meaning": "I'm sorry, it was my fault"
+            },
+            "es": {
+              "meaning": "Lo siento, fue culpa mía"
+            },
+            "de": {
+              "meaning": "Tut mir leid, es war meine Schuld"
+            },
+            "fr": {
+              "meaning": "Pardon, c’était ma faute"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_couple_makeup_v2.json"
+      "file_url": "decks/official_fun_couple_makeup_v3.json"
     },
     {
       "deck_id": "official_fun_first_date",
-      "version": 2,
+      "version": 3,
       "name": "初デートのひと言",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2851,10 +5329,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Frases para la primera cita",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Romance",
+            "Citas",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Sprüche fürs erste Date",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Romantik",
+            "Dating",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Phrases pour un premier rendez-vous",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Romance",
+            "Rendez-vous",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5515,
+      "size_bytes": 10682,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-21T00:00:00Z",
@@ -2865,6 +5373,15 @@
           "localizations": {
             "en": {
               "meaning": "Would you like to meet again?"
+            },
+            "es": {
+              "meaning": "¿Te gustaría que nos viéramos otra vez?"
+            },
+            "de": {
+              "meaning": "Möchtest du mich wiedersehen?"
+            },
+            "fr": {
+              "meaning": "Tu voudrais qu’on se revoie ?"
             }
           }
         },
@@ -2874,6 +5391,15 @@
           "localizations": {
             "en": {
               "meaning": "The vibe is nice today"
+            },
+            "es": {
+              "meaning": "Hoy hay buen ambiente"
+            },
+            "de": {
+              "meaning": "Heute ist die Stimmung schön"
+            },
+            "fr": {
+              "meaning": "L’ambiance est agréable aujourd’hui"
             }
           }
         },
@@ -2883,6 +5409,15 @@
           "localizations": {
             "en": {
               "meaning": "We really click"
+            },
+            "es": {
+              "meaning": "Conectamos muy bien"
+            },
+            "de": {
+              "meaning": "Wir verstehen uns richtig gut"
+            },
+            "fr": {
+              "meaning": "Le courant passe bien entre nous"
             }
           }
         },
@@ -2892,6 +5427,15 @@
           "localizations": {
             "en": {
               "meaning": "We have similar tastes"
+            },
+            "es": {
+              "meaning": "Tenemos gustos parecidos"
+            },
+            "de": {
+              "meaning": "Wir haben einen ähnlichen Geschmack"
+            },
+            "fr": {
+              "meaning": "Nous avons des goûts similaires"
             }
           }
         },
@@ -2901,6 +5445,15 @@
           "localizations": {
             "en": {
               "meaning": "I feel at ease with you"
+            },
+            "es": {
+              "meaning": "Me siento a gusto contigo"
+            },
+            "de": {
+              "meaning": "Ich fühle mich bei dir wohl"
+            },
+            "fr": {
+              "meaning": "Je me sens à l’aise avec toi"
             }
           }
         },
@@ -2910,6 +5463,15 @@
           "localizations": {
             "en": {
               "meaning": "Would you like to go on a date?"
+            },
+            "es": {
+              "meaning": "¿Te gustaría tener una cita conmigo?"
+            },
+            "de": {
+              "meaning": "Möchtest du mit mir ausgehen?"
+            },
+            "fr": {
+              "meaning": "Tu voudrais sortir avec moi ?"
             }
           }
         },
@@ -2919,6 +5481,15 @@
           "localizations": {
             "en": {
               "meaning": "Do you come here often?"
+            },
+            "es": {
+              "meaning": "¿Vienes a menudo por aquí?"
+            },
+            "de": {
+              "meaning": "Kommst du oft hierher?"
+            },
+            "fr": {
+              "meaning": "Tu viens souvent ici ?"
             }
           }
         },
@@ -2928,6 +5499,15 @@
           "localizations": {
             "en": {
               "meaning": "You have a beautiful smile"
+            },
+            "es": {
+              "meaning": "Tienes una sonrisa bonita"
+            },
+            "de": {
+              "meaning": "Du hast ein schönes Lächeln"
+            },
+            "fr": {
+              "meaning": "Tu as un beau sourire"
             }
           }
         },
@@ -2937,6 +5517,15 @@
           "localizations": {
             "en": {
               "meaning": "I want to know more"
+            },
+            "es": {
+              "meaning": "Quiero saber más"
+            },
+            "de": {
+              "meaning": "Ich möchte mehr wissen"
+            },
+            "fr": {
+              "meaning": "Je veux en savoir plus"
             }
           }
         },
@@ -2946,15 +5535,24 @@
           "localizations": {
             "en": {
               "meaning": "Would you like to have coffee?"
+            },
+            "es": {
+              "meaning": "¿Te gustaría tomar un café conmigo?"
+            },
+            "de": {
+              "meaning": "Möchtest du mit mir Kaffee trinken?"
+            },
+            "fr": {
+              "meaning": "Tu voudrais prendre un café avec moi ?"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_first_date_v2.json"
+      "file_url": "decks/official_fun_first_date_v3.json"
     },
     {
       "deck_id": "official_fun_flirty_chat",
-      "version": 2,
+      "version": 3,
       "name": "チャットでじわっとフラート",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -2987,10 +5585,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Chat para coquetear",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Romance",
+            "Chat",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Flirten im Chat",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Romantik",
+            "Chat",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Flirter par messages",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Romance",
+            "Discussion",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5418,
+      "size_bytes": 10417,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-04-26T00:00:00Z",
@@ -3001,6 +5629,15 @@
           "localizations": {
             "en": {
               "meaning": "Have a good night"
+            },
+            "es": {
+              "meaning": "Que pases buena noche"
+            },
+            "de": {
+              "meaning": "Hab eine gute Nacht"
+            },
+            "fr": {
+              "meaning": "Passe une bonne nuit"
             }
           }
         },
@@ -3010,6 +5647,15 @@
           "localizations": {
             "en": {
               "meaning": "Come visit me in my dreams"
+            },
+            "es": {
+              "meaning": "Ven a visitarme en sueños"
+            },
+            "de": {
+              "meaning": "Besuch mich in meinen Träumen"
+            },
+            "fr": {
+              "meaning": "Viens me voir dans mes rêves"
             }
           }
         },
@@ -3019,6 +5665,15 @@
           "localizations": {
             "en": {
               "meaning": "I keep thinking of you"
+            },
+            "es": {
+              "meaning": "No dejo de pensar en ti"
+            },
+            "de": {
+              "meaning": "Ich muss ständig an dich denken"
+            },
+            "fr": {
+              "meaning": "Je n’arrête pas de penser à toi"
             }
           }
         },
@@ -3028,6 +5683,15 @@
           "localizations": {
             "en": {
               "meaning": "I thought of you today"
+            },
+            "es": {
+              "meaning": "Hoy pensé en ti"
+            },
+            "de": {
+              "meaning": "Ich habe heute an dich gedacht"
+            },
+            "fr": {
+              "meaning": "J’ai pensé à toi aujourd’hui"
             }
           }
         },
@@ -3037,6 +5701,15 @@
           "localizations": {
             "en": {
               "meaning": "I was waiting for your reply"
+            },
+            "es": {
+              "meaning": "Estaba esperando tu respuesta"
+            },
+            "de": {
+              "meaning": "Ich habe auf deine Antwort gewartet"
+            },
+            "fr": {
+              "meaning": "J’attendais ta réponse"
             }
           }
         },
@@ -3046,6 +5719,15 @@
           "localizations": {
             "en": {
               "meaning": "I want to hear your voice"
+            },
+            "es": {
+              "meaning": "Quiero oír tu voz"
+            },
+            "de": {
+              "meaning": "Ich möchte deine Stimme hören"
+            },
+            "fr": {
+              "meaning": "Je veux entendre ta voix"
             }
           }
         },
@@ -3055,6 +5737,15 @@
           "localizations": {
             "en": {
               "meaning": "Please send me a photo"
+            },
+            "es": {
+              "meaning": "Envíame una foto, por favor"
+            },
+            "de": {
+              "meaning": "Schick mir bitte ein Foto"
+            },
+            "fr": {
+              "meaning": "Envoie-moi une photo, s’il te plaît"
             }
           }
         },
@@ -3064,6 +5755,15 @@
           "localizations": {
             "en": {
               "meaning": "I miss you so much"
+            },
+            "es": {
+              "meaning": "Te extraño mucho"
+            },
+            "de": {
+              "meaning": "Ich vermisse dich sehr"
+            },
+            "fr": {
+              "meaning": "Tu me manques beaucoup"
             }
           }
         },
@@ -3073,6 +5773,15 @@
           "localizations": {
             "en": {
               "meaning": "You look beautiful today too"
+            },
+            "es": {
+              "meaning": "Hoy también te ves genial"
+            },
+            "de": {
+              "meaning": "Du siehst auch heute schön aus"
+            },
+            "fr": {
+              "meaning": "Tu es magnifique aujourd’hui aussi"
             }
           }
         },
@@ -3082,15 +5791,24 @@
           "localizations": {
             "en": {
               "meaning": "I came because I missed you"
+            },
+            "es": {
+              "meaning": "Vine porque te extrañaba"
+            },
+            "de": {
+              "meaning": "Ich bin gekommen, weil du mir gefehlt hast"
+            },
+            "fr": {
+              "meaning": "Je suis venu parce que tu me manquais"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_flirty_chat_v2.json"
+      "file_url": "decks/official_fun_flirty_chat_v3.json"
     },
     {
       "deck_id": "official_fun_friend_reactions",
-      "version": 2,
+      "version": 3,
       "name": "友だちとの韓国語リアクション",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -3123,10 +5841,40 @@
             "요즘",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Reacciones coreanas entre amigos",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Amigos",
+            "Reacciones",
+            "Tendencias",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Koreanische Reaktionen unter Freunden",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Freunde",
+            "Reaktionen",
+            "Im Trend",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Réactions coréennes entre amis",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Amis",
+            "Réactions",
+            "Tendances",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5251,
+      "size_bytes": 10070,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-05-01T00:00:00Z",
@@ -3137,6 +5885,15 @@
           "localizations": {
             "en": {
               "meaning": "Wow, really?"
+            },
+            "es": {
+              "meaning": "¡Vaya! ¿En serio?"
+            },
+            "de": {
+              "meaning": "Wow, wirklich?"
+            },
+            "fr": {
+              "meaning": "Waouh, vraiment ?"
             }
           }
         },
@@ -3146,6 +5903,15 @@
           "localizations": {
             "en": {
               "meaning": "That's hilarious"
+            },
+            "es": {
+              "meaning": "Qué risa"
+            },
+            "de": {
+              "meaning": "Das ist zum Totlachen"
+            },
+            "fr": {
+              "meaning": "C’est hilarant"
             }
           }
         },
@@ -3155,6 +5921,15 @@
           "localizations": {
             "en": {
               "meaning": "No way"
+            },
+            "es": {
+              "meaning": "No puede ser"
+            },
+            "de": {
+              "meaning": "Das gibt’s doch nicht"
+            },
+            "fr": {
+              "meaning": "C’est pas possible"
             }
           }
         },
@@ -3164,6 +5939,15 @@
           "localizations": {
             "en": {
               "meaning": "This is legendary"
+            },
+            "es": {
+              "meaning": "Esto es legendario"
+            },
+            "de": {
+              "meaning": "Das ist legendär"
+            },
+            "fr": {
+              "meaning": "C’est légendaire"
             }
           }
         },
@@ -3173,6 +5957,15 @@
           "localizations": {
             "en": {
               "meaning": "Totally my type"
+            },
+            "es": {
+              "meaning": "Totalmente mi estilo"
+            },
+            "de": {
+              "meaning": "Ganz mein Geschmack"
+            },
+            "fr": {
+              "meaning": "Tout à fait mon style"
             }
           }
         },
@@ -3182,6 +5975,15 @@
           "localizations": {
             "en": {
               "meaning": "I just got goosebumps"
+            },
+            "es": {
+              "meaning": "Se me acaba de poner la piel de gallina"
+            },
+            "de": {
+              "meaning": "Ich habe gerade Gänsehaut bekommen"
+            },
+            "fr": {
+              "meaning": "Je viens d’avoir la chair de poule"
             }
           }
         },
@@ -3191,6 +5993,15 @@
           "localizations": {
             "en": {
               "meaning": "You're on fire today"
+            },
+            "es": {
+              "meaning": "Hoy estás que te sales"
+            },
+            "de": {
+              "meaning": "Du bist heute in Höchstform"
+            },
+            "fr": {
+              "meaning": "Tu es au sommet de ta forme aujourd’hui"
             }
           }
         },
@@ -3200,6 +6011,15 @@
           "localizations": {
             "en": {
               "meaning": "You pulled this off?"
+            },
+            "es": {
+              "meaning": "¿Has conseguido hacerlo?"
+            },
+            "de": {
+              "meaning": "Du hast das geschafft?"
+            },
+            "fr": {
+              "meaning": "Tu as réussi ça ?"
             }
           }
         },
@@ -3209,6 +6029,15 @@
           "localizations": {
             "en": {
               "meaning": "Was I the only one who didn't know?"
+            },
+            "es": {
+              "meaning": "¿Solo yo no lo sabía?"
+            },
+            "de": {
+              "meaning": "Wusste nur ich das nicht?"
+            },
+            "fr": {
+              "meaning": "Il n’y a que moi qui ne savais pas ?"
             }
           }
         },
@@ -3218,15 +6047,24 @@
           "localizations": {
             "en": {
               "meaning": "Say that again"
+            },
+            "es": {
+              "meaning": "Dilo otra vez"
+            },
+            "de": {
+              "meaning": "Sag das noch einmal"
+            },
+            "fr": {
+              "meaning": "Redis-le"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_friend_reactions_v2.json"
+      "file_url": "decks/official_fun_friend_reactions_v3.json"
     },
     {
       "deck_id": "official_fun_weekend_party",
-      "version": 2,
+      "version": 3,
       "name": "週末・飲み会テンション",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -3259,10 +6097,40 @@
             "회화",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Ambiente de fin de semana y fiesta",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "Amigos",
+            "Fin de semana",
+            "Conversación",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Wochenend- & Partystimmung",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "Freunde",
+            "Wochenende",
+            "Gespräch",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Ambiance de week-end et de soirée",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "Amis",
+            "Week-end",
+            "Conversation",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5337,
+      "size_bytes": 10261,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-05-06T00:00:00Z",
@@ -3273,6 +6141,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's take a photo together"
+            },
+            "es": {
+              "meaning": "Hagámonos una foto juntos"
+            },
+            "de": {
+              "meaning": "Machen wir zusammen ein Foto"
+            },
+            "fr": {
+              "meaning": "Prenons une photo ensemble"
             }
           }
         },
@@ -3282,6 +6159,15 @@
           "localizations": {
             "en": {
               "meaning": "I don't want to go home"
+            },
+            "es": {
+              "meaning": "No quiero irme a casa"
+            },
+            "de": {
+              "meaning": "Ich will nicht nach Hause"
+            },
+            "fr": {
+              "meaning": "Je ne veux pas rentrer"
             }
           }
         },
@@ -3291,6 +6177,15 @@
           "localizations": {
             "en": {
               "meaning": "This is my song"
+            },
+            "es": {
+              "meaning": "Esta es mi canción"
+            },
+            "de": {
+              "meaning": "Das ist mein Lied"
+            },
+            "fr": {
+              "meaning": "C’est ma chanson"
             }
           }
         },
@@ -3300,6 +6195,15 @@
           "localizations": {
             "en": {
               "meaning": "Cheers, everyone!"
+            },
+            "es": {
+              "meaning": "¡Salud a todos!"
+            },
+            "de": {
+              "meaning": "Prost, zusammen!"
+            },
+            "fr": {
+              "meaning": "À la vôtre !"
             }
           }
         },
@@ -3309,6 +6213,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll sleep in tomorrow"
+            },
+            "es": {
+              "meaning": "Mañana voy a dormir hasta tarde"
+            },
+            "de": {
+              "meaning": "Morgen schlafe ich aus"
+            },
+            "fr": {
+              "meaning": "Demain, je ferai la grasse matinée"
             }
           }
         },
@@ -3318,6 +6231,15 @@
           "localizations": {
             "en": {
               "meaning": "Let's take a taxi together"
+            },
+            "es": {
+              "meaning": "Tomemos un taxi juntos"
+            },
+            "de": {
+              "meaning": "Nehmen wir zusammen ein Taxi"
+            },
+            "fr": {
+              "meaning": "Prenons un taxi ensemble"
             }
           }
         },
@@ -3327,6 +6249,15 @@
           "localizations": {
             "en": {
               "meaning": "Is it over already?"
+            },
+            "es": {
+              "meaning": "¿Ya se terminó?"
+            },
+            "de": {
+              "meaning": "Ist es schon vorbei?"
+            },
+            "fr": {
+              "meaning": "C’est déjà fini ?"
             }
           }
         },
@@ -3336,6 +6267,15 @@
           "localizations": {
             "en": {
               "meaning": "The weekend starts now"
+            },
+            "es": {
+              "meaning": "El fin de semana empieza ahora"
+            },
+            "de": {
+              "meaning": "Das Wochenende beginnt jetzt"
+            },
+            "fr": {
+              "meaning": "Le week-end commence maintenant"
             }
           }
         },
@@ -3345,6 +6285,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll remember today"
+            },
+            "es": {
+              "meaning": "Recordaré este día"
+            },
+            "de": {
+              "meaning": "Ich werde mich an heute erinnern"
+            },
+            "fr": {
+              "meaning": "Je me souviendrai d’aujourd’hui"
             }
           }
         },
@@ -3354,15 +6303,24 @@
           "localizations": {
             "en": {
               "meaning": "It's on me today"
+            },
+            "es": {
+              "meaning": "Hoy invito yo"
+            },
+            "de": {
+              "meaning": "Heute geht’s auf mich"
+            },
+            "fr": {
+              "meaning": "Aujourd’hui, c’est moi qui invite"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_weekend_party_v2.json"
+      "file_url": "decks/official_fun_weekend_party_v3.json"
     },
     {
       "deck_id": "official_fun_idol_live_comments",
-      "version": 2,
+      "version": 3,
       "name": "推しのライブ配信コメント",
       "author_nickname": "ピヨキー 公式",
       "official": true,
@@ -3395,10 +6353,40 @@
             "라이브",
             "공식"
           ]
+        },
+        "es": {
+          "name": "Comentarios para el directo de tu ídolo",
+          "author_nickname": "typee Oficial",
+          "tags": [
+            "K-pop",
+            "Fans",
+            "Directo",
+            "Oficial"
+          ]
+        },
+        "de": {
+          "name": "Kommentare für den Livestream deines Idols",
+          "author_nickname": "typee Offiziell",
+          "tags": [
+            "K-Pop",
+            "Fandom",
+            "Livestream",
+            "Offiziell"
+          ]
+        },
+        "fr": {
+          "name": "Commentaires pour le direct de ton idole",
+          "author_nickname": "typee Officiel",
+          "tags": [
+            "K-pop",
+            "Communauté de fans",
+            "Direct",
+            "Officiel"
+          ]
         }
       },
       "item_count": 12,
-      "size_bytes": 5606,
+      "size_bytes": 10830,
       "downloads_total": 0,
       "downloads_7d": 0,
       "created_at": "2026-05-11T00:00:00Z",
@@ -3409,6 +6397,15 @@
           "localizations": {
             "en": {
               "meaning": "Take good care of yourself"
+            },
+            "es": {
+              "meaning": "Cuídate mucho"
+            },
+            "de": {
+              "meaning": "Pass gut auf dich auf"
+            },
+            "fr": {
+              "meaning": "Prends bien soin de toi"
             }
           }
         },
@@ -3418,6 +6415,15 @@
           "localizations": {
             "en": {
               "meaning": "Please make a heart"
+            },
+            "es": {
+              "meaning": "Haz un corazón, por favor"
+            },
+            "de": {
+              "meaning": "Mach bitte ein Herz"
+            },
+            "fr": {
+              "meaning": "Fais un cœur, s’il te plaît"
             }
           }
         },
@@ -3427,6 +6433,15 @@
           "localizations": {
             "en": {
               "meaning": "I love seeing you smile"
+            },
+            "es": {
+              "meaning": "Me encanta verte sonreír"
+            },
+            "de": {
+              "meaning": "Ich sehe dich gern lächeln"
+            },
+            "fr": {
+              "meaning": "J’adore te voir sourire"
             }
           }
         },
@@ -3436,6 +6451,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll support you forever"
+            },
+            "es": {
+              "meaning": "Te apoyaré siempre"
+            },
+            "de": {
+              "meaning": "Ich werde dich immer unterstützen"
+            },
+            "fr": {
+              "meaning": "Je te soutiendrai toujours"
             }
           }
         },
@@ -3445,6 +6469,15 @@
           "localizations": {
             "en": {
               "meaning": "I get butterflies even through the screen"
+            },
+            "es": {
+              "meaning": "Siento mariposas incluso a través de la pantalla"
+            },
+            "de": {
+              "meaning": "Selbst durch den Bildschirm habe ich Schmetterlinge im Bauch"
+            },
+            "fr": {
+              "meaning": "J’ai des papillons même à travers l’écran"
             }
           }
         },
@@ -3454,6 +6487,15 @@
           "localizations": {
             "en": {
               "meaning": "I'll be back for the next stream"
+            },
+            "es": {
+              "meaning": "Volveré en la próxima transmisión"
+            },
+            "de": {
+              "meaning": "Beim nächsten Stream bin ich wieder da"
+            },
+            "fr": {
+              "meaning": "Je reviendrai au prochain direct"
             }
           }
         },
@@ -3463,6 +6505,15 @@
           "localizations": {
             "en": {
               "meaning": "You're legendary today too"
+            },
+            "es": {
+              "meaning": "Hoy también estás de leyenda"
+            },
+            "de": {
+              "meaning": "Du bist auch heute legendär"
+            },
+            "fr": {
+              "meaning": "Tu es encore légendaire aujourd’hui"
             }
           }
         },
@@ -3472,6 +6523,15 @@
           "localizations": {
             "en": {
               "meaning": "I really love your voice"
+            },
+            "es": {
+              "meaning": "Me encanta tu voz"
+            },
+            "de": {
+              "meaning": "Ich liebe deine Stimme"
+            },
+            "fr": {
+              "meaning": "J’adore ta voix"
             }
           }
         },
@@ -3481,6 +6541,15 @@
           "localizations": {
             "en": {
               "meaning": "Thanks for coming"
+            },
+            "es": {
+              "meaning": "Gracias por venir"
+            },
+            "de": {
+              "meaning": "Danke fürs Kommen"
+            },
+            "fr": {
+              "meaning": "Merci d’être venu"
             }
           }
         },
@@ -3490,11 +6559,20 @@
           "localizations": {
             "en": {
               "meaning": "Today's outfit is amazing"
+            },
+            "es": {
+              "meaning": "El conjunto de hoy es increíble"
+            },
+            "de": {
+              "meaning": "Dein heutiges Outfit ist toll"
+            },
+            "fr": {
+              "meaning": "Ta tenue d’aujourd’hui est superbe"
             }
           }
         }
       ],
-      "file_url": "decks/official_fun_idol_live_comments_v2.json"
+      "file_url": "decks/official_fun_idol_live_comments_v3.json"
     }
   ],
   "tags": [
@@ -3504,7 +6582,10 @@
       "category": "topic",
       "localizations": {
         "en": "Official",
-        "ko": "공식"
+        "ko": "공식",
+        "es": "Oficial",
+        "de": "Offiziell",
+        "fr": "Officiel"
       }
     },
     {
@@ -3513,7 +6594,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Conversation",
-        "ko": "회화"
+        "ko": "회화",
+        "es": "Conversación",
+        "de": "Gespräch",
+        "fr": "Conversation"
       }
     },
     {
@@ -3522,7 +6606,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Beginner Basics",
-        "ko": "입문"
+        "ko": "입문",
+        "es": "Iniciación",
+        "de": "Einstieg",
+        "fr": "Initiation"
       }
     },
     {
@@ -3531,7 +6618,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Romance",
-        "ko": "연애"
+        "ko": "연애",
+        "es": "Romance",
+        "de": "Romantik",
+        "fr": "Romance"
       }
     },
     {
@@ -3540,7 +6630,10 @@
       "category": "purpose",
       "localizations": {
         "en": "K-Pop",
-        "ko": "K-POP"
+        "ko": "K-POP",
+        "es": "K-pop",
+        "de": "K-Pop",
+        "fr": "K-pop"
       }
     },
     {
@@ -3549,7 +6642,10 @@
       "category": "purpose",
       "localizations": {
         "en": "K-Drama",
-        "ko": "K-드라마"
+        "ko": "K-드라마",
+        "es": "K-drama",
+        "de": "K-Drama",
+        "fr": "K-drama"
       }
     },
     {
@@ -3558,7 +6654,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Everyday",
-        "ko": "일상"
+        "ko": "일상",
+        "es": "Vida cotidiana",
+        "de": "Alltag",
+        "fr": "Quotidien"
       }
     },
     {
@@ -3567,7 +6666,10 @@
       "category": "topic",
       "localizations": {
         "en": "Lyric-Inspired",
-        "ko": "가사풍"
+        "ko": "가사풍",
+        "es": "Estilo de letras",
+        "de": "Von Songtexten inspiriert",
+        "fr": "Inspiré des paroles"
       }
     },
     {
@@ -3576,7 +6678,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Korea Travel",
-        "ko": "한국 여행"
+        "ko": "한국 여행",
+        "es": "Viajes a Corea",
+        "de": "Korea-Reisen",
+        "fr": "Voyage en Corée"
       }
     },
     {
@@ -3585,7 +6690,10 @@
       "category": "topic",
       "localizations": {
         "en": "Couples",
-        "ko": "커플"
+        "ko": "커플",
+        "es": "Parejas",
+        "de": "Paare",
+        "fr": "Couples"
       }
     },
     {
@@ -3594,7 +6702,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Trending",
-        "ko": "요즘"
+        "ko": "요즘",
+        "es": "Tendencias",
+        "de": "Im Trend",
+        "fr": "Tendances"
       }
     },
     {
@@ -3603,7 +6714,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Friends",
-        "ko": "친구"
+        "ko": "친구",
+        "es": "Amigos",
+        "de": "Freunde",
+        "fr": "Amis"
       }
     },
     {
@@ -3612,7 +6726,10 @@
       "category": "topic",
       "localizations": {
         "en": "Social Media",
-        "ko": "SNS"
+        "ko": "SNS",
+        "es": "Redes sociales",
+        "de": "Soziale Medien",
+        "fr": "Réseaux sociaux"
       }
     },
     {
@@ -3621,7 +6738,10 @@
       "category": "purpose",
       "localizations": {
         "en": "TOPIK",
-        "ko": "TOPIK"
+        "ko": "TOPIK",
+        "es": "TOPIK",
+        "de": "TOPIK",
+        "fr": "TOPIK"
       }
     },
     {
@@ -3630,7 +6750,10 @@
       "category": "topic",
       "localizations": {
         "en": "Quick Phrases",
-        "ko": "한마디"
+        "ko": "한마디",
+        "es": "Frases rápidas",
+        "de": "Kurze Ausdrücke",
+        "fr": "Expressions courtes"
       }
     },
     {
@@ -3639,7 +6762,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Keyboard",
-        "ko": "키보드"
+        "ko": "키보드",
+        "es": "Teclado",
+        "de": "Tastatur",
+        "fr": "Clavier"
       }
     },
     {
@@ -3648,7 +6774,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Food & Dining",
-        "ko": "맛집"
+        "ko": "맛집",
+        "es": "Comida y restaurantes",
+        "de": "Essen & Restaurants",
+        "fr": "Cuisine et restaurants"
       }
     },
     {
@@ -3657,7 +6786,10 @@
       "category": "topic",
       "localizations": {
         "en": "Chat",
-        "ko": "채팅"
+        "ko": "채팅",
+        "es": "Chat",
+        "de": "Chat",
+        "fr": "Discussion"
       }
     },
     {
@@ -3666,7 +6798,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Dating",
-        "ko": "데이트"
+        "ko": "데이트",
+        "es": "Citas",
+        "de": "Dating",
+        "fr": "Rendez-vous"
       }
     },
     {
@@ -3675,7 +6810,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Batchim",
-        "ko": "받침"
+        "ko": "받침",
+        "es": "Batchim",
+        "de": "Batchim",
+        "fr": "Batchim"
       }
     },
     {
@@ -3684,7 +6822,10 @@
       "category": "topic",
       "localizations": {
         "en": "Mystery",
-        "ko": "미스터리"
+        "ko": "미스터리",
+        "es": "Misterio",
+        "de": "Mystery",
+        "fr": "Mystère"
       }
     },
     {
@@ -3693,7 +6834,10 @@
       "category": "topic",
       "localizations": {
         "en": "Livestream",
-        "ko": "라이브"
+        "ko": "라이브",
+        "es": "Directo",
+        "de": "Livestream",
+        "fr": "Direct"
       }
     },
     {
@@ -3702,7 +6846,10 @@
       "category": "topic",
       "localizations": {
         "en": "Reactions",
-        "ko": "리액션"
+        "ko": "리액션",
+        "es": "Reacciones",
+        "de": "Reaktionen",
+        "fr": "Réactions"
       }
     },
     {
@@ -3711,7 +6858,10 @@
       "category": "topic",
       "localizations": {
         "en": "Verbs",
-        "ko": "동사"
+        "ko": "동사",
+        "es": "Verbos",
+        "de": "Verben",
+        "fr": "Verbes"
       }
     },
     {
@@ -3720,7 +6870,10 @@
       "category": "topic",
       "localizations": {
         "en": "Words",
-        "ko": "단어"
+        "ko": "단어",
+        "es": "Palabras",
+        "de": "Wörter",
+        "fr": "Mots"
       }
     },
     {
@@ -3729,7 +6882,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Essential Vocabulary",
-        "ko": "기본 어휘"
+        "ko": "기본 어휘",
+        "es": "Vocabulario esencial",
+        "de": "Grundwortschatz",
+        "fr": "Vocabulaire essentiel"
       }
     },
     {
@@ -3738,7 +6894,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Consonants",
-        "ko": "자음"
+        "ko": "자음",
+        "es": "Consonantes",
+        "de": "Konsonanten",
+        "fr": "Consonnes"
       }
     },
     {
@@ -3747,7 +6906,10 @@
       "category": "topic",
       "localizations": {
         "en": "Fandom",
-        "ko": "팬 활동"
+        "ko": "팬 활동",
+        "es": "Fans",
+        "de": "Fandom",
+        "fr": "Communauté de fans"
       }
     },
     {
@@ -3756,7 +6918,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Test Prep",
-        "ko": "시험 대비"
+        "ko": "시험 대비",
+        "es": "Preparación de exámenes",
+        "de": "Prüfungsvorbereitung",
+        "fr": "Préparation aux examens"
       }
     },
     {
@@ -3765,7 +6930,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Vowels",
-        "ko": "모음"
+        "ko": "모음",
+        "es": "Vocales",
+        "de": "Vokale",
+        "fr": "Voyelles"
       }
     },
     {
@@ -3774,7 +6942,10 @@
       "category": "topic",
       "localizations": {
         "en": "Syllable Building",
-        "ko": "음절 조합"
+        "ko": "음절 조합",
+        "es": "Formación de sílabas",
+        "de": "Silbenbildung",
+        "fr": "Formation des syllabes"
       }
     },
     {
@@ -3783,7 +6954,10 @@
       "category": "purpose",
       "localizations": {
         "en": "Weekend",
-        "ko": "주말"
+        "ko": "주말",
+        "es": "Fin de semana",
+        "de": "Wochenende",
+        "fr": "Week-end"
       }
     }
   ]

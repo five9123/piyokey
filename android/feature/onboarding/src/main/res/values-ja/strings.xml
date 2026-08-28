@@ -51,7 +51,7 @@
   <string name="main_tour_tap">画面をタップして次へ。</string>
   <string name="main_tour_skip">ツアーをスキップ</string>
   <string name="main_tour_home_title">今日の学習はここから</string>
-  <string name="main_tour_home_detail">MYピヨカードの下からデイリーをすぐ始められます。</string>
+  <string name="main_tour_home_detail">レベルと目的に合うデッキから始めましょう。練習したあとは、このボタンから続きを始められます。</string>
   <string name="main_tour_discover_title">デッキをさがす</string>
   <string name="main_tour_discover_detail">オフライン対応の検証済みコンテンツを検索できます。</string>
   <string name="main_tour_practice_title">カリキュラムを進める</string>
@@ -63,4 +63,19 @@
   <string name="main_tour_settings_title">設定はいつもここ</string>
   <string name="main_tour_settings_detail">右上のボタンから、どのタブでも同じ設定を開けます。</string>
   <string name="onboarding_piyo_accessibility">ふ化ミッションで成長するピヨ</string>
+
+    <string name="onboarding_level_title">韓国語はどのくらい入力できますか？</string>
+    <string name="onboarding_level_subtitle">今の自分に近いものを選んでください。目的とレベルに合う最初のデッキをおすすめします。</string>
+    <string name="onboarding_level_beginner_title">これからはじめる</string>
+    <string name="onboarding_level_beginner_detail">キーボードの位置とハングルから覚えたい</string>
+    <string name="onboarding_level_jamo_title">子音・母音がわかる</string>
+    <string name="onboarding_level_jamo_detail">文字は読めるので、やさしい単語を入力したい</string>
+    <string name="onboarding_level_words_title">簡単な単語を入力できる</string>
+    <string name="onboarding_level_words_detail">速さを伸ばして、役立つ表現にも挑戦したい</string>
+    <string name="onboarding_level_sentences_title">文も入力できる</string>
+    <string name="onboarding_level_sentences_detail">長めのフレーズをスムーズに入力したい</string>
+    <string name="onboarding_level_beginner_example">ㄱ · ㅏ</string>
+    <string name="onboarding_level_jamo_example">가 · 나</string>
+    <string name="onboarding_level_words_example">학교</string>
+    <string name="onboarding_level_sentences_example">같이 걷고 싶어요</string>
 </resources>

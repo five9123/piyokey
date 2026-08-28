@@ -73,7 +73,7 @@ object TelemetryRuntime {
     val context = appContext ?: return
     if (BuildConfig.DEBUG || !postHogConfigured || !analyticsEnabled) return
     val locale = context.resources.configuration.locales[0]?.language
-      ?.takeIf { it in setOf("ja", "en", "ko") } ?: "other"
+      ?.takeIf { it in setOf("ja", "en", "ko", "es", "de", "fr") } ?: "other"
     val properties = mutableMapOf<AnalyticsProperty, Any>(
       AnalyticsProperty.SCHEMA_VERSION to AnalyticsContract.SCHEMA_VERSION,
       AnalyticsProperty.PLATFORM to "android",

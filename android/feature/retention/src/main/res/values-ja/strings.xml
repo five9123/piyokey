@@ -13,4 +13,16 @@
   <string name="wardrobe_title">ピヨのクローゼット</string><string name="wardrobe_preview">ピヨの最終コーデのプレビュー</string>
   <string name="wardrobe_auto">自動・成長の基本スタイル</string><string name="wardrobe_none">アクセサリーなし</string>
   <string name="wardrobe_ribbon">連続リボン</string><string name="wardrobe_beret">星のベレー帽</string><string name="wardrobe_bow">レインボーリボン</string><string name="wardrobe_topik_glasses">TOPIKメガネ</string><string name="wardrobe_trophy">チャンピオントロフィー</string>
+
+    <string name="home_primary_recommend_eyebrow">最初におすすめのデッキ</string>
+    <string name="home_primary_recommend_detail">あなたのレベルと目的に合わせて選びました</string>
+    <string name="home_primary_resume_eyebrow">つづきから</string>
+    <string name="home_primary_resume_detail">前の練習をつづけましょう</string>
+
+<plurals name="review_count">
+  <item quantity="other">復習する単語 %1$d件</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="other">今週 %1$d/7・%2$d日連続</item>
+</plurals>
 </resources>

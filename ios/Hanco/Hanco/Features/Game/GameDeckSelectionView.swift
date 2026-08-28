@@ -515,8 +515,7 @@ private struct GameDeckListView: View {
         inputMode: .builtIn
       ) {
         Text(
-          String(
-            format: AppLocalization.string("game.selection.best_score.builtin"),
+          AppLocalization.format("game.selection.best_score.builtin",
             progress.bestScore.formatted()
           )
         )
@@ -529,8 +528,7 @@ private struct GameDeckListView: View {
         inputMode: .builtInKorean10Key
       ) {
         Text(
-          String(
-            format: AppLocalization.string("game.selection.best_score.korean_10key"),
+          AppLocalization.format("game.selection.best_score.korean_10key",
             progress.bestScore.formatted()
           )
         )
@@ -740,7 +738,7 @@ private struct GameDeckListView: View {
           .lineLimit(2)
         HStack(spacing: 7) {
           Text(gameKind == .flow ? course.localizedName : gameKind.titleKey)
-          Text(String(format: AppLocalization.string("deck.items.format"), deck.items.count))
+          Text(AppLocalization.format("deck.items.format", deck.items.count))
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(AppPalette.secondary)
@@ -761,10 +759,9 @@ private struct GameDeckListView: View {
           inputMode: .builtIn
         ) {
           Text(
-            String(
-              format: AppLocalization.string(
+            AppLocalization.format(
                 bestScoreKey
-              ),
+              ,
               progress.bestScore.formatted()
             )
           )
@@ -778,8 +775,7 @@ private struct GameDeckListView: View {
           inputMode: .builtInKorean10Key
         ) {
           Text(
-            String(
-              format: AppLocalization.string("game.selection.best_score.korean_10key"),
+            AppLocalization.format("game.selection.best_score.korean_10key",
               progress.bestScore.formatted()
             )
           )
@@ -793,8 +789,7 @@ private struct GameDeckListView: View {
           inputMode: .osIME
         ) {
           Text(
-            String(
-              format: AppLocalization.string("game.selection.best_score.os_ime"),
+            AppLocalization.format("game.selection.best_score.os_ime",
               progress.bestScore.formatted()
             )
           )

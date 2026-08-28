@@ -93,54 +93,48 @@ enum GameResultPresentation: Equatable {
   func shareAchievement(rank: String) -> String {
     switch self {
     case .flow:
-      String(format: AppLocalization.string("result.share.game_badge"), rank)
+      AppLocalization.format("result.share.game_badge", rank)
     case .piyoCup:
-      String(format: AppLocalization.string("piyo_cup.share.badge"), rank)
+      AppLocalization.format("piyo_cup.share.badge", rank)
     case .acidRain:
-      String(format: AppLocalization.string("acid_rain.share.badge"), rank)
+      AppLocalization.format("acid_rain.share.badge", rank)
     case .choseong:
-      String(format: AppLocalization.string("choseong.share.badge"), rank)
+      AppLocalization.format("choseong.share.badge", rank)
     case .wordMatch:
-      String(format: AppLocalization.string("word_match.share.badge"), rank)
+      AppLocalization.format("word_match.share.badge", rank)
     case .dictation:
-      String(format: AppLocalization.string("dictation.share.badge"), rank)
+      AppLocalization.format("dictation.share.badge", rank)
     }
   }
 
   func shareCaption(deckName: String, score: Int) -> String {
     switch self {
     case .flow:
-      String(
-        format: AppLocalization.string("result.share.game_caption"),
+      AppLocalization.format("result.share.game_caption",
         deckName,
         score
       )
     case .piyoCup:
-      String(
-        format: AppLocalization.string("piyo_cup.share.caption"),
+      AppLocalization.format("piyo_cup.share.caption",
         score
       )
     case .acidRain:
-      String(
-        format: AppLocalization.string("acid_rain.share.caption"),
+      AppLocalization.format("acid_rain.share.caption",
         deckName,
         score
       )
     case .choseong:
-      String(
-        format: AppLocalization.string("choseong.share.caption"),
+      AppLocalization.format("choseong.share.caption",
         deckName,
         score
       )
     case .wordMatch:
-      String(
-        format: AppLocalization.string("word_match.share.caption"),
+      AppLocalization.format("word_match.share.caption",
         deckName,
         score
       )
     case .dictation:
-      String(
-        format: AppLocalization.string("dictation.share.caption"),
+      AppLocalization.format("dictation.share.caption",
         deckName,
         score
       )
@@ -306,8 +300,7 @@ struct FlowGameResultView: View {
             .accessibilityIdentifier("game.result.new_record")
           if let previousBestScore = recordOutcome.previousBestScore {
             Text(
-              String(
-                format: AppLocalization.string("game.result.previous_best"),
+              AppLocalization.format("game.result.previous_best",
                 previousBestScore.formatted()
               )
             )
@@ -317,8 +310,7 @@ struct FlowGameResultView: View {
           }
         } else {
           Text(
-            String(
-              format: AppLocalization.string("game.result.best_score"),
+            AppLocalization.format("game.result.best_score",
               recordOutcome.deckProgress.bestScore.formatted()
             )
           )
@@ -339,8 +331,7 @@ struct FlowGameResultView: View {
     let speedProgress = reveal.metricProgress(at: 2)
     return HStack(spacing: 0) {
       SessionResultMetric(
-        value: String(
-          format: AppLocalization.string("practice.result.accuracy_value"),
+        value: AppLocalization.format("practice.result.accuracy_value",
           result.accuracyPercent * accuracyProgress
         ),
         label: "practice.result.accuracy",
@@ -441,8 +432,7 @@ struct FlowGameResultView: View {
 
   private func gameCenterButtonTitle(for record: GameRecord) -> String {
     if let rank = gameCenter.rank(for: record) {
-      return String(
-        format: AppLocalization.string("game_center.result_rank_format"),
+      return AppLocalization.format("game_center.result_rank_format",
         rank
       )
     }
@@ -505,8 +495,7 @@ struct FlowGameResultView: View {
         SessionShareCardMetric(
           id: "accuracy",
           label: AppLocalization.string("practice.result.accuracy"),
-          value: String(
-            format: AppLocalization.string("practice.result.accuracy_value"),
+          value: AppLocalization.format("practice.result.accuracy_value",
             result.accuracyPercent
           ),
           systemImage: "scope"
@@ -520,8 +509,7 @@ struct FlowGameResultView: View {
         SessionShareCardMetric(
           id: "streak",
           label: AppLocalization.string("result.share.streak"),
-          value: String(
-            format: AppLocalization.string("result.share.streak_value"),
+          value: AppLocalization.format("result.share.streak_value",
             currentStreak
           ),
           systemImage: "seal.fill"

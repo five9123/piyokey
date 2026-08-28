@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "typee";
+"CFBundleName" = "typee";
+"CFBundleTypeName" = "Paquet typee";
+"UTTypeDescription" = "Paquet typee";
+"NSPhotoLibraryAddUsageDescription" = "typee utilise l’accès à Photos pour enregistrer l’image de ton résultat de jeu.";

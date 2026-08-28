@@ -146,7 +146,7 @@ class ReleasePreflightTests(unittest.TestCase):
             }
 
         self.assertIn("Global planned primary locale must be en-US", messages)
-        self.assertIn("Version 1.1 app UI locales must be exactly ja, en, and es", messages)
+        self.assertIn("Version 1.1 app UI locales must be exactly ja, en, es, de, and fr", messages)
         self.assertIn("Preserved learning content locales must remain ja, en, and ko", messages)
         self.assertIn("Unsupported app language fallback must be en", messages)
         self.assertIn(

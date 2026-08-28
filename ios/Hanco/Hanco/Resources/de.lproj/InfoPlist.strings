@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "typee";
+"CFBundleName" = "typee";
+"CFBundleTypeName" = "typee-Deck";
+"UTTypeDescription" = "typee-Deck";
+"NSPhotoLibraryAddUsageDescription" = "typee benötigt Zugriff auf Fotos, um dein Spielergebnis als Bild zu speichern.";

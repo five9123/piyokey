@@ -97,7 +97,7 @@ class DeckValidationTests(unittest.TestCase):
 
     def test_rejects_malformed_localization_envelopes(self) -> None:
         deck = add_localizations(sample_deck())
-        deck["localizations"]["fr"] = {
+        deck["localizations"]["xx"] = {
             "name": "Exemple",
             "author_nickname": "typee",
             "tags": ["Quotidien"],

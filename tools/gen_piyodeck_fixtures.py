@@ -115,6 +115,8 @@ def _zip_records(package: bytes) -> dict[str, dict[str, int]]:
 
 
 def main() -> int:
+    # Separate golden: existing security cases continue to describe basic-deck.
+    piyodeck_tool.pack(VALID / "localized-deck.json", VALID / "localized.typedeck")
     source_deck_data = (VALID / "basic-deck.json").read_bytes()
     deck = piyodeck_tool.decode_strict_json(source_deck_data, "basic-deck.json")
     assert isinstance(deck, dict)

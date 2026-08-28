@@ -258,8 +258,7 @@ struct MyPageView: View {
         Alert(
           title: Text("my_decks.delete.failure.title"),
           message: Text(
-            String(
-              format: AppLocalization.string("my_decks.delete.failure.message_format"),
+            AppLocalization.format("my_decks.delete.failure.message_format",
               failure.deckName
             )
           ),
@@ -405,13 +404,13 @@ struct MyPageView: View {
         )
         growthMetric(
           title: "my_page.growth.typed",
-          value: companion.typedJamoCount.formatted(),
+          value: companion.typedJamoCount.formatted(.number.locale(AppLocalization.locale)),
           systemImage: "keyboard.fill",
           tint: AppPalette.secondary
         )
         growthMetric(
           title: "my_page.growth.streak",
-          value: currentStreak.current.formatted(),
+          value: currentStreak.current.formatted(.number.locale(AppLocalization.locale)),
           systemImage: "flame.fill",
           tint: .orange
         )
@@ -482,8 +481,7 @@ struct MyPageView: View {
       ) {
         insightMetric(
           title: "my_page.insights.active_days",
-          value: String(
-            format: AppLocalization.string("my_page.insights.days_format"),
+          value: AppLocalization.format("my_page.insights.days_format",
             insights.activeDays,
             insightPeriod.rawValue
           ),
@@ -493,9 +491,8 @@ struct MyPageView: View {
         )
         insightMetric(
           title: "my_page.insights.sessions",
-          value: insights.sessionCount.formatted(),
-          detail: String(
-            format: AppLocalization.string("my_page.insights.items_format"),
+          value: insights.sessionCount.formatted(.number.locale(AppLocalization.locale)),
+          detail: AppLocalization.format("my_page.insights.items_format",
             insights.completedItemCount
           ),
           systemImage: "checkmark.circle.fill",
@@ -559,8 +556,7 @@ struct MyPageView: View {
             .accessibilityLabel(Text(verbatim: activity.day.rawValue))
             .accessibilityValue(
               Text(
-                verbatim: String(
-                  format: AppLocalization.string("my_page.insights.day_activity_format"),
+                verbatim: AppLocalization.format("my_page.insights.day_activity_format",
                   activity.sessionCount,
                   Int(activity.activeDuration.rounded())
                 )
@@ -619,8 +615,7 @@ struct MyPageView: View {
             }
             .frame(height: 16)
             Text(
-              String(
-                format: AppLocalization.string("my_page.insights.mistake_format"),
+              AppLocalization.format("my_page.insights.mistake_format",
                 item.mistakeCount
               )
             )
@@ -695,7 +690,7 @@ struct MyPageView: View {
     tint: Color
   ) -> some View {
     VStack(spacing: 4) {
-      Text(verbatim: value.formatted())
+      Text(verbatim: value.formatted(.number.locale(AppLocalization.locale)))
         .font(.headline.monospacedDigit().weight(.black))
         .foregroundStyle(tint)
       Text(title)
@@ -732,30 +727,27 @@ struct MyPageView: View {
 
   private func percentageText(_ value: Double?) -> String {
     guard let value else { return "—" }
-    return String(format: AppLocalization.string("my_page.insights.percent_format"), value)
+    return AppLocalization.format("my_page.insights.percent_format", value)
   }
 
   private func speedText(_ value: Double?) -> String {
     guard let value else { return "—" }
-    return String(
-      format: AppLocalization.string("my_page.insights.speed_format"),
+    return AppLocalization.format("my_page.insights.speed_format",
       Int(value.rounded())
     )
   }
 
   private func durationText(_ duration: TimeInterval) -> String {
     guard duration >= 60 else { return AppLocalization.string("my_page.insights.less_than_minute") }
-    return String(
-      format: AppLocalization.string("my_page.insights.minutes_format"),
+    return AppLocalization.format("my_page.insights.minutes_format",
       Int((duration / 60).rounded())
     )
   }
 
   private func changeText(_ change: Double?, fractionDigits: Int) -> String? {
     guard let change else { return nil }
-    let number = String(format: "%+.*f", fractionDigits, change)
-    return String(
-      format: AppLocalization.string("my_page.insights.change_format"),
+    let number = String(format: "%+.*f", locale: AppLocalization.locale, fractionDigits, change)
+    return AppLocalization.format("my_page.insights.change_format",
       number
     )
   }
@@ -777,8 +769,7 @@ struct MyPageView: View {
           .foregroundStyle(AppPalette.ink)
         Spacer()
         Text(
-          String(
-            format: AppLocalization.string("my_page.decks.count_format"),
+          AppLocalization.format("my_page.decks.count_format",
             deckLibrary.installed.count
           )
         )
@@ -1121,8 +1112,7 @@ struct MyPageView: View {
           .lineLimit(1)
         HStack {
           Text(
-            String(
-              format: AppLocalization.string("review.deck.count_format"),
+            AppLocalization.format("review.deck.count_format",
               reviewDeck.activeItems.count
             )
           )
@@ -1179,7 +1169,7 @@ struct MyPageView: View {
           .foregroundStyle(AppPalette.mutedInk)
 
         HStack {
-          Text(String(format: AppLocalization.string("deck.items.format"), deck.items.count))
+          Text(AppLocalization.format("deck.items.format", deck.items.count))
           Text("my_decks.play_hint")
           Image(systemName: "chevron.right")
         }
@@ -1634,8 +1624,7 @@ private struct DeckDeletionConfirmationView: View {
 
           VStack(spacing: 10) {
             Text(
-              String(
-                format: AppLocalization.string("my_decks.delete.confirm.title_format"),
+              AppLocalization.format("my_decks.delete.confirm.title_format",
                 presentation.deck.appName
               )
             )

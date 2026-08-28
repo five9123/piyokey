@@ -57,8 +57,7 @@ struct ReviewDeckView: View {
           .font(.caption)
           .foregroundStyle(AppPalette.mutedInk)
         Text(
-          String(
-            format: AppLocalization.string("review.deck.count_format"),
+          AppLocalization.format("review.deck.count_format",
             reviewDeck.activeItems.count
           )
         )
@@ -115,12 +114,11 @@ struct ReviewDeckView: View {
         }
         HStack(spacing: 12) {
           Label(
-            String(format: AppLocalization.string("review.deck.miss_count_format"), item.missCount),
+            AppLocalization.format("review.deck.miss_count_format", item.missCount),
             systemImage: "exclamationmark.circle.fill"
           )
           Label(
-            String(
-              format: AppLocalization.string("review.deck.perfect_count_format"),
+            AppLocalization.format("review.deck.perfect_count_format",
               item.consecutivePerfect
             ),
             systemImage: "checkmark.seal.fill"

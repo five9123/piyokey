@@ -1,0 +1,374 @@
+{
+  "deck_id": "official_fun_weekend_party",
+  "version": 3,
+  "name": "週末・飲み会テンション",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "友だち",
+    "週末",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-05-06T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "우리 사진 찍자",
+      "reading_ja": "ウリ サジン チクチャ",
+      "meaning_ja": "みんなで写真を撮ろう",
+      "audio": "audio/ko_5241918b074147b4f931.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's take a photo together",
+          "reading": "uri sajin jjikja"
+        },
+        "es": {
+          "meaning": "Hagámonos una foto juntos",
+          "reading": "uri sajin jjikja"
+        },
+        "de": {
+          "meaning": "Machen wir zusammen ein Foto",
+          "reading": "uri sajin jjikja"
+        },
+        "fr": {
+          "meaning": "Prenons une photo ensemble",
+          "reading": "uri sajin jjikja"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "집에 가기 싫다",
+      "reading_ja": "チベ カギ シルタ",
+      "meaning_ja": "家に帰りたくない",
+      "audio": "audio/ko_980ccd1d13d523389c27.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I don't want to go home",
+          "reading": "jipe gagi silda"
+        },
+        "es": {
+          "meaning": "No quiero irme a casa",
+          "reading": "jipe gagi silda"
+        },
+        "de": {
+          "meaning": "Ich will nicht nach Hause",
+          "reading": "jipe gagi silda"
+        },
+        "fr": {
+          "meaning": "Je ne veux pas rentrer",
+          "reading": "jipe gagi silda"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "이 노래 내 거야",
+      "reading_ja": "イ ノレ ネ コヤ",
+      "meaning_ja": "この歌は私の十八番",
+      "audio": "audio/ko_f8b3b37facfc4ed58c96.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "This is my song",
+          "reading": "i norae nae geoya"
+        },
+        "es": {
+          "meaning": "Esta es mi canción",
+          "reading": "i norae nae geoya"
+        },
+        "de": {
+          "meaning": "Das ist mein Lied",
+          "reading": "i norae nae geoya"
+        },
+        "fr": {
+          "meaning": "C’est ma chanson",
+          "reading": "i norae nae geoya"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "다 같이 건배",
+      "reading_ja": "タ カチ コンベ",
+      "meaning_ja": "みんなで乾杯",
+      "audio": "audio/ko_37d96947765a2286d2ca.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Cheers, everyone!",
+          "reading": "da gati geonbae"
+        },
+        "es": {
+          "meaning": "¡Salud a todos!",
+          "reading": "da gati geonbae"
+        },
+        "de": {
+          "meaning": "Prost, zusammen!",
+          "reading": "da gati geonbae"
+        },
+        "fr": {
+          "meaning": "À la vôtre !",
+          "reading": "da gati geonbae"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "내일은 늦잠 잘래",
+      "reading_ja": "ネイルン ヌッチャム チャルレ",
+      "meaning_ja": "明日は朝寝坊する",
+      "audio": "audio/ko_cc0953342231200b6669.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll sleep in tomorrow",
+          "reading": "naeileun neutjam jalrae"
+        },
+        "es": {
+          "meaning": "Mañana voy a dormir hasta tarde",
+          "reading": "naeileun neutjam jalrae"
+        },
+        "de": {
+          "meaning": "Morgen schlafe ich aus",
+          "reading": "naeileun neutjam jalrae"
+        },
+        "fr": {
+          "meaning": "Demain, je ferai la grasse matinée",
+          "reading": "naeileun neutjam jalrae"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "택시 같이 타자",
+      "reading_ja": "テクシ カチ タジャ",
+      "meaning_ja": "一緒にタクシーに乗ろう",
+      "audio": "audio/ko_149f00f095c45ce57a81.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's take a taxi together",
+          "reading": "taeksi gati taja"
+        },
+        "es": {
+          "meaning": "Tomemos un taxi juntos",
+          "reading": "taeksi gati taja"
+        },
+        "de": {
+          "meaning": "Nehmen wir zusammen ein Taxi",
+          "reading": "taeksi gati taja"
+        },
+        "fr": {
+          "meaning": "Prenons un taxi ensemble",
+          "reading": "taeksi gati taja"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "벌써 끝난 거야",
+      "reading_ja": "ポルソ クンナン ゴヤ",
+      "meaning_ja": "もう終わりなの？",
+      "audio": "audio/ko_f0336d859acfad71d483.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Is it over already?",
+          "reading": "beolsseo kkeutnan geoya"
+        },
+        "es": {
+          "meaning": "¿Ya se terminó?",
+          "reading": "beolsseo kkeutnan geoya"
+        },
+        "de": {
+          "meaning": "Ist es schon vorbei?",
+          "reading": "beolsseo kkeutnan geoya"
+        },
+        "fr": {
+          "meaning": "C’est déjà fini ?",
+          "reading": "beolsseo kkeutnan geoya"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "주말은 지금부터야",
+      "reading_ja": "チュマルン チグムブトヤ",
+      "meaning_ja": "週末は今からだよ",
+      "audio": "audio/ko_0ffb2f6373751ded091f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The weekend starts now",
+          "reading": "jumaleun jigeumbuteoya"
+        },
+        "es": {
+          "meaning": "El fin de semana empieza ahora",
+          "reading": "jumaleun jigeumbuteoya"
+        },
+        "de": {
+          "meaning": "Das Wochenende beginnt jetzt",
+          "reading": "jumaleun jigeumbuteoya"
+        },
+        "fr": {
+          "meaning": "Le week-end commence maintenant",
+          "reading": "jumaleun jigeumbuteoya"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "오늘 기억할게",
+      "reading_ja": "オヌル キオカルケ",
+      "meaning_ja": "今日のこと覚えておくね",
+      "audio": "audio/ko_6edc8d6d5e8d470c4dfb.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll remember today",
+          "reading": "oneul gieokhalge"
+        },
+        "es": {
+          "meaning": "Recordaré este día",
+          "reading": "oneul gieokhalge"
+        },
+        "de": {
+          "meaning": "Ich werde mich an heute erinnern",
+          "reading": "oneul gieokhalge"
+        },
+        "fr": {
+          "meaning": "Je me souviendrai d’aujourd’hui",
+          "reading": "oneul gieokhalge"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "오늘은 내가 쏜다",
+      "reading_ja": "オヌルン ネガ ソンダ",
+      "meaning_ja": "今日は私のおごり",
+      "audio": "audio/ko_29c4d20cf1007c51c813.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "It's on me today",
+          "reading": "oneuleun naega ssonda"
+        },
+        "es": {
+          "meaning": "Hoy invito yo",
+          "reading": "oneuleun naega ssonda"
+        },
+        "de": {
+          "meaning": "Heute geht’s auf mich",
+          "reading": "oneuleun naega ssonda"
+        },
+        "fr": {
+          "meaning": "Aujourd’hui, c’est moi qui invite",
+          "reading": "oneuleun naega ssonda"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "한 잔만 더 하자",
+      "reading_ja": "ハン チャンマン ト ハジャ",
+      "meaning_ja": "もう一杯だけ飲もう",
+      "audio": "audio/ko_a1ab2316e64c56404332.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's have just one more drink",
+          "reading": "han janman deo haja"
+        },
+        "es": {
+          "meaning": "Tomemos solo una copa más",
+          "reading": "han janman deo haja"
+        },
+        "de": {
+          "meaning": "Trinken wir nur noch ein Glas",
+          "reading": "han janman deo haja"
+        },
+        "fr": {
+          "meaning": "Prenons juste un dernier verre",
+          "reading": "han janman deo haja"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "분위기 너무 좋다",
+      "reading_ja": "プニギ ノム チョタ",
+      "meaning_ja": "雰囲気がすごくいい",
+      "audio": "audio/ko_142abf735f64a0192122.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The vibe is so good",
+          "reading": "bunwigi neomu johda"
+        },
+        "es": {
+          "meaning": "El ambiente es genial",
+          "reading": "bunwigi neomu johda"
+        },
+        "de": {
+          "meaning": "Die Stimmung ist so gut",
+          "reading": "bunwigi neomu johda"
+        },
+        "fr": {
+          "meaning": "L’ambiance est super",
+          "reading": "bunwigi neomu johda"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Weekend & Night-Out Vibes",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Friends",
+        "Weekend",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "주말·술자리 텐션",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "친구",
+        "주말",
+        "회화",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Ambiente de fin de semana y fiesta",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Amigos",
+        "Fin de semana",
+        "Conversación",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Wochenend- & Partystimmung",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Freunde",
+        "Wochenende",
+        "Gespräch",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Ambiance de week-end et de soirée",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Amis",
+        "Week-end",
+        "Conversation",
+        "Officiel"
+      ]
+    }
+  }
+}

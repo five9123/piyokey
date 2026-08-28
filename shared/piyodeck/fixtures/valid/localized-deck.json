@@ -1,0 +1,114 @@
+{
+  "author": {
+    "id": "creator_11111111111111111111111111111111",
+    "nickname": "テスト作成者"
+  },
+  "created_at": "2026-08-14T00:00:00Z",
+  "deck_id": "user_00000000000000000000000000000001",
+  "items": [
+    {
+      "audio": null,
+      "id": "item_00000000000000000000000000000001",
+      "ko": "학교",
+      "meaning_ja": "学校",
+      "reading_ja": "ハッキョ",
+      "localizations": {
+        "en": {
+          "meaning": "School",
+          "reading": "hakgyo"
+        },
+        "ko": {
+          "meaning": "학교",
+          "reading": "hakgyo"
+        },
+        "es": {
+          "meaning": "Escuela",
+          "reading": "hakgyo"
+        },
+        "de": {
+          "meaning": "Schule",
+          "reading": "hakgyo"
+        },
+        "fr": {
+          "meaning": "École",
+          "reading": "hakgyo"
+        }
+      }
+    },
+    {
+      "audio": null,
+      "id": "item_00000000000000000000000000000002",
+      "ko": "친구",
+      "meaning_ja": "友達",
+      "reading_ja": "チング",
+      "localizations": {
+        "en": {
+          "meaning": "Friend",
+          "reading": "chingu"
+        },
+        "ko": {
+          "meaning": "친구",
+          "reading": "chingu"
+        },
+        "es": {
+          "meaning": "Amigo",
+          "reading": "chingu"
+        },
+        "de": {
+          "meaning": "Freund",
+          "reading": "chingu"
+        },
+        "fr": {
+          "meaning": "Ami",
+          "reading": "chingu"
+        }
+      }
+    }
+  ],
+  "level": 1,
+  "name": "はじめてのマイデッキ",
+  "official": false,
+  "tags": [
+    "基本"
+  ],
+  "type": "word",
+  "updated_at": "2026-08-14T00:00:00Z",
+  "version": 1,
+  "localizations": {
+    "en": {
+      "name": "My deck",
+      "author_nickname": "Test",
+      "tags": [
+        "Basics"
+      ]
+    },
+    "ko": {
+      "name": "나의 덱",
+      "author_nickname": "Test",
+      "tags": [
+        "기초"
+      ]
+    },
+    "es": {
+      "name": "Mi mazo",
+      "author_nickname": "Test",
+      "tags": [
+        "Fundamentos"
+      ]
+    },
+    "de": {
+      "name": "Mein Deck",
+      "author_nickname": "Test",
+      "tags": [
+        "Grundlagen"
+      ]
+    },
+    "fr": {
+      "name": "Mon paquet",
+      "author_nickname": "Test",
+      "tags": [
+        "Bases"
+      ]
+    }
+  }
+}

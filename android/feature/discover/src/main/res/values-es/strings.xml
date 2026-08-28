@@ -128,9 +128,9 @@
   <string name="user_deck_export_current">Exportar primero el mazo actual</string>
   <string name="user_deck_replace_confirm_title">¿Reemplazar el mazo actual?</string>
   <string name="user_deck_replace_confirm_body">El archivo importado reemplazará al mazo actual. Se conservarán el historial de juego y el progreso de repaso de los elementos coincidentes.</string>
-  <string name="user_deck_error_invalid">Este archivo no es un mazo de usuario válido de PIYOKEY. Tus mazos existentes no han cambiado.</string>
+  <string name="user_deck_error_invalid">Este archivo no es un mazo de usuario válido de typee. Tus mazos existentes no han cambiado.</string>
   <string name="user_deck_error_too_large">Este mazo supera el límite de seguridad de 8 MiB. Tus mazos existentes no han cambiado.</string>
-  <string name="user_deck_error_update">Este mazo usa un formato más reciente de PIYOKEY. Actualiza la app antes de importarlo.</string>
+  <string name="user_deck_error_update">Este mazo usa un formato más reciente de typee. Actualiza la app antes de importarlo.</string>
   <string name="user_deck_error_read">No se ha podido leer el archivo seleccionado. Tus mazos existentes no han cambiado.</string>
   <string name="discover_propose_deck">Proponer un mazo</string>
   <string name="deck_report_content">Informar sobre el contenido de este mazo</string>
@@ -138,4 +138,9 @@
   <string name="user_deck_import_as_copy_locked">Importar como copia aparte · typee pro</string>
   <string name="deck_editor_move_up">Subir elemento</string>
   <string name="deck_editor_move_down">Bajar elemento</string>
+
+<plurals name="deck_item_count">
+  <item quantity="one">%1$d elemento</item>
+  <item quantity="other">%1$d elementos</item>
+</plurals>
 </resources>
