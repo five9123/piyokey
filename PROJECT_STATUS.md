@@ -21,8 +21,8 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #79 / PR #80 iPad 화면 밀도·스토어 이미지 | In Progress | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 사용자 피드백 반영 중: 가로에서도 문제→피요·입력→키보드 순서를 유지하고 크기/여백 재조정. 모든 iPad 기본 스크린샷을 가로 10장씩으로 재촬영·제작한 뒤 PR 리뷰/CI·새 RC gate 확인 |
-| #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국/미국 세금 정보 완료 및 나머지 제출 gate 검증 |
+| #79 / PR #80 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로에서도 문제→피요·입력→키보드 순서 유지, 크기/여백 수정·mini/Pro 선택 회귀 통과. 10시장 가로 100장+ZIP 10개 검수 완료. 업로드는 Chrome `Not allowed`로 차단; PR 리뷰/CI·새 RC·스토어 등록 필요 |
+| #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국 세금 정보 완료 및 나머지 제출 gate 검증 (미국 Foreign Status/W-8BEN Active 확인) |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
@@ -62,9 +62,9 @@
 - #7: Game Center 계약 전체 점검.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
-- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate. Free Apps Agreement Active / Paid Apps Agreement Pending User Info로 갱신된 상태를 확인했다. Account Holder의 은행 계좌 및 한국 세금 양식·미국 Tax Questionnaire 입력이 남아 있다. 사용자는 승인 후 자동 출시·단계 배포 없이 전 사용자 즉시 공개를 확정했으며 콘솔 설정과 일치한다. 심사 확인 창은 Continue하지 않고 취소했으며 제출 완료가 아니다. `release/TESTFLIGHT_1_1_SMOKE.md`는 정확한 1.1(7) 실기기 검증 전용이며 아직 미실행이다.
+- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate. Free Apps Agreement Active / Paid Apps Agreement Pending User Info로 갱신된 상태를 확인했다. Account Holder의 은행 계좌 및 한국 세금 양식 입력이 남아 있다. 2026-08-29 미국 Foreign Status·W-8BEN Active를 확인했다. 사용자는 승인 후 자동 출시·단계 배포 없이 전 사용자 즉시 공개를 확정했으며 콘솔 설정과 일치한다. 심사 확인 창은 Continue하지 않고 취소했으며 제출 완료가 아니다. `release/TESTFLIGHT_1_1_SMOKE.md`는 정확한 1.1(7) 실기기 검증 전용이며 아직 미실행이다.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
-- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 main ja/en/es/de/fr에 일치하지 않으므로 ko 스토어는 영어 UI, es/de/fr 스토어는 각각 해당 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **2026-08-29 Chrome Apple 로그인 복구 확인**. 기존 일본어 8장·영상 1개가 남아 있으며 이번 실행에서는 스토어 미디어 삭제·업로드·저장·심사 제출을 하지 않았다. 최종 RC 일치와 필수 메타데이터·iPad 미디어를 확인한 뒤 미디어 반영을 진행한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
+- App Store 미디어: iPhone 기존 10시장 100 PNG·10 MP4 결과는 보존하며 최종 RC 일치 재확인 전이다 (`release/store-assets/verification-20260828.json`). #79 iPad는 최종 앱 f674b57과 동일한 촬영 소스로 **모든 기본 이미지 가로 2752×2064, 10시장 100장, 대체본 0장**을 제작했다. 5 UI 언어 촬영·160개 SHA-256·ZIP 10개·전체 contact sheet 검수 완료. 전달: `/Users/jungminoh/Documents/hanco/outputs/ipad-1.1-landscape-store-20260829/index.html`. Chrome 로그인은 유지되지만 영어(미국) iPad 파일 업로드가 `-32000 Not allowed`로 실패했고 슬롯 재조회 `0 of 10`이다. 이번 작업에서 업로드/저장/심사 제출 완료 없음; 기존 iPhone 미디어·공개 메타데이터는 변경하지 않았다. 현재 일본어·영어 4지역·한국어만 등록돼 있으며 7시장 신규 로케일 메타데이터, 오래된 지원 언어 안내 수정 확인, 현지어 사람 검수·최종 RC 일치·업로드 권한/저장 후 재조회가 남아 있다. 상세 `release/IPAD_1_1_QA.md`, 증빙 `release/evidence/1c7dc566e0ebd3302f7a35a2a563735ebc21a6dc.json`.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
