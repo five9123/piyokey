@@ -97,7 +97,7 @@ class DeckMakerBillingTest {
 
     override suspend fun queryProduct(productId: String): DeckMakerProduct? {
       if (failure) error("offline")
-      return DeckMakerProduct(productId, "My Deck Maker", "¥1,500")
+      return DeckMakerProduct(productId, "typee pro", "¥1,500")
     }
 
     override suspend fun queryPurchases(): List<DeckMakerPurchase> {

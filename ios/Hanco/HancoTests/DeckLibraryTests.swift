@@ -788,6 +788,92 @@ final class DeckLibraryTests: XCTestCase {
     XCTAssertEqual(library.installedUserDeckCount, 4)
   }
 
+  func testPiyokeyProAllowsManyDistinctUserDecksAndReloadsThem() async throws {
+    let library = DeckLibrary(source: FailingDeckSource(), store: store)
+    let deckCount = 20
+
+    for index in 1...deckCount {
+      let deck = makeUserDeck(
+        id: String(format: "user_%032x", index),
+        version: 1,
+        meaning: "Pro\(index)",
+        updatedAt: Date(timeIntervalSince1970: TimeInterval(200 + index))
+      )
+      let data = try DeckKitJSON.makeEncoder().encode(deck)
+      _ = try await library.installUserDeck(
+        data: data,
+        source: .created,
+        contentSHA256: sha256Hex(data),
+        packageFormatVersion: 1,
+        isLocallyModified: true,
+        hasPiyokeyProAccess: true
+      )
+    }
+
+    XCTAssertEqual(library.installedUserDeckCount, deckCount)
+    XCTAssertTrue(library.canInstallNewUserDeck(hasPiyokeyProAccess: true))
+
+    let reloaded = DeckLibrary(source: FailingDeckSource(), store: store)
+    XCTAssertEqual(reloaded.installedUserDeckCount, deckCount)
+    for index in 1...deckCount {
+      let deckID = String(format: "user_%032x", index)
+      XCTAssertEqual(reloaded.installedDeck(deckID)?.items[0].meaningJa, "Pro\(index)")
+    }
+  }
+
+  func testPiyokeyProEditedDeckPersistsContentAndIdentityAfterReload() async throws {
+    let library = DeckLibrary(source: FailingDeckSource(), store: store)
+    let original = makeUserDeck(
+      version: 1,
+      meaning: "編集前",
+      updatedAt: Date(timeIntervalSince1970: 200)
+    )
+    let originalData = try DeckKitJSON.makeEncoder().encode(original)
+    _ = try await library.installUserDeck(
+      data: originalData,
+      source: .created,
+      contentSHA256: sha256Hex(originalData),
+      packageFormatVersion: 1,
+      isLocallyModified: true,
+      hasPiyokeyProAccess: true
+    )
+
+    var draft = UserDeckDraft(editing: original)
+    draft.name = "保存済みProデッキ"
+    draft.items[0].meaningJa = "編集後"
+    draft.addItem(uuidHexGenerator: { "22222222222222222222222222222222" })
+    draft.items[1].ko = "학교"
+    draft.items[1].readingJa = "ハッキョ"
+    draft.items[1].meaningJa = "学校"
+    let edited = try draft.validatedDeck(
+      at: Date(timeIntervalSince1970: 300),
+      language: .japanese
+    )
+    let editedData = try DeckKitJSON.makeEncoder().encode(edited)
+
+    _ = try await library.installUserDeck(
+      data: editedData,
+      source: .created,
+      contentSHA256: sha256Hex(editedData),
+      packageFormatVersion: 1,
+      isLocallyModified: true,
+      hasPiyokeyProAccess: true,
+      expectedCurrentVersion: original.version
+    )
+
+    let reloaded = DeckLibrary(source: FailingDeckSource(), store: store)
+    let persisted = try XCTUnwrap(reloaded.installedDeck(original.deckId))
+    XCTAssertEqual(persisted.deckId, original.deckId)
+    XCTAssertEqual(persisted.version, 2)
+    XCTAssertEqual(persisted.name, "保存済みProデッキ")
+    XCTAssertEqual(persisted.items.map(\.id), [
+      original.items[0].id,
+      "item_22222222222222222222222222222222",
+    ])
+    XCTAssertEqual(persisted.items.map(\.meaningJa), ["編集後", "学校"])
+    XCTAssertTrue(reloaded.records[original.deckId]?.isLocallyModified == true)
+  }
+
   private func catalogEntry(id: String) throws -> CatalogDeck {
     let catalog = try BundleCatalogRepository().loadCatalog()
     return try XCTUnwrap(catalog.decks.first { $0.deckId == id })

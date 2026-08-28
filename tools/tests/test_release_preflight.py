@@ -156,7 +156,7 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertIn("Android M7 must remain on its resumed, separate Google Play release track", messages)
         self.assertIn("Version 1.1 availability must select All Countries or Regions", messages)
         self.assertIn("Version 1.1 availability must include future storefronts", messages)
-        self.assertIn("App and Deck Maker IAP availability must match", messages)
+        self.assertIn("App and typee pro IAP availability must match", messages)
         self.assertIn("Country availability waves must remain disabled", messages)
         self.assertIn("Global availability requires a non-empty VN compliance gate list", messages)
         self.assertIn(

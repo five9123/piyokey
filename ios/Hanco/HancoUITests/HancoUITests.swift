@@ -3,6 +3,27 @@ import XCTest
 final class HancoUITests: XCTestCase {
   private var app: XCUIApplication!
 
+  // Store captures use real localized UI. All other regression tests stay Japanese.
+  private var storeCaptureLanguage: String {
+    if name.contains("GlobalEN") { return "en" }
+    if name.contains("GlobalKO") { return "ko" }
+    return "ja"
+  }
+
+  private func storeText(_ ja: String, _ en: String, _ ko: String) -> String {
+    switch storeCaptureLanguage {
+    case "en": return en
+    case "ko": return ko
+    default: return ja
+    }
+  }
+
+  private func storeScene(_ scene: String, hold: TimeInterval = 0) {
+    guard name.contains("testAppStoreScreenshotGlobal") else { return }
+    print("STORE_SCENE \(scene) \(Date().timeIntervalSince1970)")
+    if hold > 0 { Thread.sleep(forTimeInterval: hold) }
+  }
+
   override func setUp() {
     super.setUp()
     continueAfterFailure = false
@@ -17,12 +38,16 @@ final class HancoUITests: XCTestCase {
     )
     if name.contains("testR11") {
       app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] =
-        name.contains("ImportAndEditor") || name.contains("RestoredDraft") ? "1" : "0"
+        name.contains("ImportAndEditor") || name.contains("RestoredDraft")
+          || name.contains("ProEdits") ? "1" : "0"
     }
     if name.contains("testR11ImportAndEditor") {
       app.launchEnvironment["UITEST_SEED_PIYODECK_CAPTURE"] = "1"
     }
     if name.contains("testR11UserDeckDelete") {
+      app.launchEnvironment["UITEST_SEED_USER_DECK_DELETE"] = "1"
+    }
+    if name.contains("testR11ProEdits") {
       app.launchEnvironment["UITEST_SEED_USER_DECK_DELETE"] = "1"
     }
     if name.contains("testR11DowngradeImport") {
@@ -341,6 +366,65 @@ final class HancoUITests: XCTestCase {
 
     waitForNonexistence(confirmation, timeout: 5)
     waitForNonexistence(deckRow, timeout: 5)
+  }
+
+  func testR11ProEditsDeckSavesAndPersistsAfterRelaunch() {
+    let deckID = "user_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    let savedName = "Pro Saved Deck"
+    let savedMeaning = "Saved meaning"
+
+    app.tabBars.buttons["マイページ"].tap()
+    let actions = app.buttons["my_decks.actions.\(deckID)"]
+    scrollToHittable(actions)
+    actions.tap()
+    let edit = app.buttons["編集"]
+    XCTAssertTrue(edit.waitForExistence(timeout: 3), app.debugDescription)
+    edit.tap()
+
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    let nameField = element("deck_editor.name")
+    XCTAssertTrue(nameField.waitForExistence(timeout: 3))
+    nameField.tap()
+    let nextKeyboard = app.buttons["次のキーボード"]
+    if nextKeyboard.exists, (nextKeyboard.value as? String)?.contains("English") == true {
+      nextKeyboard.tap()
+    }
+    nameField.typeKey("a", modifierFlags: .command)
+    nameField.typeText(savedName)
+    XCTAssertEqual(nameField.value as? String, savedName)
+
+    let meaningField = app.textFields.matching(identifier: "deck_editor.item.0").element(boundBy: 2)
+    XCTAssertTrue(meaningField.waitForExistence(timeout: 3), app.debugDescription)
+    meaningField.tap()
+    meaningField.typeKey("a", modifierFlags: .command)
+    meaningField.typeText(savedMeaning)
+    XCTAssertEqual(meaningField.value as? String, savedMeaning)
+    app.buttons["deck_editor.save"].tap()
+
+    waitForNonexistence(element("deck_editor.screen"), timeout: 5)
+    XCTAssertTrue(app.staticTexts[savedName].waitForExistence(timeout: 5))
+
+    app.terminate()
+    app.launchEnvironment.removeValue(forKey: "UITEST_RESET_DECK_LIBRARY")
+    app.launchEnvironment.removeValue(forKey: "UITEST_SEED_USER_DECK_DELETE")
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    app.tabBars.buttons["マイページ"].tap()
+    let reloadedActions = app.buttons["my_decks.actions.\(deckID)"]
+    scrollToHittable(reloadedActions)
+    XCTAssertTrue(app.staticTexts[savedName].waitForExistence(timeout: 5))
+    reloadedActions.tap()
+    XCTAssertTrue(app.buttons["編集"].waitForExistence(timeout: 3))
+    app.buttons["編集"].tap()
+
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(element("deck_editor.name").value as? String, savedName)
+    let reloadedMeaning = app.textFields
+      .matching(identifier: "deck_editor.item.0")
+      .element(boundBy: 2)
+    XCTAssertTrue(reloadedMeaning.waitForExistence(timeout: 3), app.debugDescription)
+    XCTAssertEqual(reloadedMeaning.value as? String, savedMeaning)
   }
 
   func testR11DowngradeImportShowsComparisonAndKeepCurrentIsSafePath() {
@@ -2006,6 +2090,7 @@ final class HancoUITests: XCTestCase {
       ("학교", "ㅎㅏㄱㄱㅛ"),
       ("사진", "ㅅㅏㅈㅣㄴ"),
     ]
+    storeScene("practice")
     for target in dailyTargets.prefix(2) {
       waitForLabel(target.word, on: element("practice.target.value"), timeout: 3)
       typeBuiltInKeys(target.keys)
@@ -2022,21 +2107,23 @@ final class HancoUITests: XCTestCase {
       typeBuiltInKeys(target.keys)
     }
     XCTAssertTrue(element("practice.result.screen").waitForExistence(timeout: 5))
+    storeScene("result", hold: 4.5)
     let done = app.buttons["result.done"]
     XCTAssertTrue(done.waitForExistence(timeout: 3))
     done.tap()
 
     let myPiyoCard = element("home.my_piyo_card")
     XCTAssertTrue(myPiyoCard.waitForExistence(timeout: 5))
-    waitForValueContaining("4日連続, 4 / 7", on: myPiyoCard, timeout: 3)
+    waitForValueContaining(storeText("4日連続", "4-day streak", "4일 연속"), on: myPiyoCard, timeout: 3)
     attachScreenshot(named: "appstore-current-attendance-home-ja")
+    storeScene("home", hold: 4)
 
     myPiyoCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
-    XCTAssertTrue(app.navigationBars["MY ピヨ"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.navigationBars[storeText("MY ピヨ", "MY PIYO", "MY 피요")].waitForExistence(timeout: 5))
     XCTAssertTrue(element("my_piyo.detail.screen").exists)
     XCTAssertTrue(element("my_piyo.detail.stamps").exists)
     attachScreenshot(named: "appstore-current-rewards-ja")
-    app.navigationBars["MY ピヨ"].buttons.firstMatch.tap()
+    app.navigationBars[storeText("MY ピヨ", "MY PIYO", "MY 피요")].buttons.firstMatch.tap()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
     openPracticeTab()
@@ -2050,13 +2137,14 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("mascot.current").exists)
     waitForValue("2 / 3", on: element("practice.jamo_progress.value"), timeout: 3)
     attachScreenshot(named: "appstore-current-curriculum-mission-ja")
-    app.buttons["練習を終了する"].tap()
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
   }
 
   func testAppStoreScreenshotGamesShowCurrentProgressWithChick() {
-    app.tabBars.buttons["ゲーム"].tap()
+    app.tabBars.buttons[storeText("ゲーム", "Game", "게임")].tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
+    storeScene("game-hub", hold: 3.5)
 
     app.buttons["game.mode.flow"].tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
@@ -2065,6 +2153,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("game.mascot").exists)
     let flowWords = ["ㄴㅏ", "ㄴㅓ", "ㅂㅣ", "ㄱㅣㄹ", "ㄴㅜㄴ"]
     let flowScores = ["20", "40", "60", "90", "126"]
+    storeScene("flow")
     for (word, score) in zip(flowWords, flowScores) {
       typeBuiltInKeys(word)
       waitForLabel(score, on: element("game.score.value"), timeout: 3)
@@ -2083,6 +2172,7 @@ final class HancoUITests: XCTestCase {
       identifier: "acid_rain.falling_card"
     )
     XCTAssertTrue(fallingCards.element(boundBy: 1).waitForExistence(timeout: 5))
+    storeScene("acid-rain")
     let acidRainTarget = element("acid_rain.target.value").label
     let acidRainKeys = [
       "나": "ㄴㅏ",
@@ -2143,6 +2233,37 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(choseongNextKeys.isEmpty)
     typeBuiltInKeys(String(choseongNextKeys.prefix(1)))
     attachScreenshot(named: "appstore-current-choseong-ja")
+  }
+
+  func testAppStoreScreenshotGlobalJA() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalEN() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalKO() { captureGlobalStoreAssets() }
+
+  private func captureGlobalStoreAssets() {
+    testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick()
+    testAppStoreScreenshotGamesShowCurrentProgressWithChick()
+    returnToGameHub()
+
+    // The 1.1 editor is a paid feature; the marketing overlay discloses Pro.
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    app.tabBars.buttons[storeText("マイページ", "Profile", "마이페이지")].tap()
+    let createDeck = app.buttons["my_decks.create"]
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    attachScreenshot(named: "appstore-current-editor-ja")
+
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+    attachScreenshot(named: "appstore-current-tenkey-ja")
   }
 
   func testAppPreviewJapaneseFlowShowsMascotAndCompletesFirstCard() {
@@ -2920,7 +3041,12 @@ final class HancoUITests: XCTestCase {
     seedsFutureCurriculumSchema: Bool = false
   ) -> XCUIApplication {
     let application = XCUIApplication()
-    application.launchArguments += ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+    let captureLocale = ["ja": "ja_JP", "en": "en_US", "ko": "ko_KR"][storeCaptureLanguage]!
+    application.launchArguments += ["-AppleLanguages", "(\(storeCaptureLanguage))", "-AppleLocale", captureLocale]
+    if name.contains("testAppStoreScreenshotGlobal") {
+      application.launchArguments += ["-settings.language", storeCaptureLanguage]
+      application.launchArguments += ["-mascot.name", storeText("ピヨ", "Piyo", "피요")]
+    }
     if resetKeyboardPreferences {
       application.launchEnvironment["UITEST_RESET_KEYBOARD_PREFERENCES"] = "1"
       application.launchEnvironment["UITEST_RESET_DECK_LIBRARY"] = "1"
@@ -3029,7 +3155,7 @@ final class HancoUITests: XCTestCase {
 
   private func openPracticeTab() {
     guard !element("curriculum.map.screen").exists else { return }
-    let practice = app.buttons["練習"].firstMatch
+    let practice = app.buttons[storeText("練習", "Practice", "연습")].firstMatch
     XCTAssertTrue(practice.waitForExistence(timeout: 3))
     practice.tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
@@ -3074,7 +3200,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(end.waitForExistence(timeout: 3))
     end.tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
-    let gameBack = app.navigationBars.buttons["ゲーム"]
+    let gameBack = app.navigationBars.buttons[storeText("ゲーム", "Game", "게임")]
     XCTAssertTrue(gameBack.waitForExistence(timeout: 3))
     gameBack.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
@@ -3250,7 +3376,8 @@ final class HancoUITests: XCTestCase {
 
   private func attachScreenshot(named name: String) {
     let attachment = XCTAttachment(screenshot: app.screenshot())
-    attachment.name = name
+    attachment.name = self.name.contains("testAppStoreScreenshotGlobal")
+      ? name.replacingOccurrences(of: "-ja", with: "-\(storeCaptureLanguage)") : name
     attachment.lifetime = .keepAlways
     add(attachment)
   }

@@ -113,6 +113,6 @@ class ContentFeedbackController(
 
   companion object {
     const val CONTACT_ADDRESS: String = "contact@typee.app"
-    const val DEFAULT_SUPPORT_URL: String = "https://hancoweb.vercel.app/support"
+    const val DEFAULT_SUPPORT_URL: String = "https://typee.app/support"
   }
 }

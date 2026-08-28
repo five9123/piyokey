@@ -14,19 +14,19 @@
   },
   "contact": {
     "email": "contact@typee.app",
-    "website": "https://hancoweb.vercel.app/support",
-    "privacy_policy": "https://hancoweb.vercel.app/privacy"
+    "website": "https://typee.app/support",
+    "privacy_policy": "https://typee.app/privacy"
   },
   "localizations": {
     "en-US": {
       "title": "Korean Typing - typee",
       "short_description": "Learn Hangul typing with guided lessons, offline decks, and six practice games",
-      "full_description": "Build Korean typing skills from the first consonant and vowel to complete words and phrases. typee combines guided Hangul lessons, an on-screen Korean keyboard, downloadable learning decks, review, daily practice, and six typing games in one focused app.\n\nLearn step by step\n• Follow a six-chapter curriculum with clear progress and review.\n• See how Korean letters combine while you type.\n• Practice with the built-in two-set keyboard or your device’s Korean keyboard.\n\nKeep practice useful and private\n• Use official decks offline after download.\n• Import, practice, export, and delete local .typedeck files without an account.\n• Create and edit personal decks with the optional one-time My Deck Maker purchase.\n\nStay motivated\n• Play Flow, Acid Rain, Initial Sound, Word Match, Dictation, and Spacing modes.\n• Collect missed words for review and build a daily streak.\n• Grow and dress your Piyo as your learning record develops.\n\nThe app has no ads during lessons or games. Fixed Korean pronunciation is included for offline playback, and personal deck content stays on your device."
+      "full_description": "Build Korean typing skills from the first consonant and vowel to complete words and phrases. typee combines guided Hangul lessons, an on-screen Korean keyboard, downloadable learning decks, review, daily practice, and six typing games in one focused app.\n\nLearn step by step\n• Follow a six-chapter curriculum with clear progress and review.\n• See how Korean letters combine while you type.\n• Practice with the built-in two-set keyboard or your device’s Korean keyboard.\n\nKeep practice useful and private\n• Use official decks offline after download.\n• Import, practice, export, and delete local .typedeck files without an account.\n• Create and edit personal decks with the optional one-time typee pro purchase.\n\nStay motivated\n• Play Flow, Acid Rain, Initial Sound, Word Match, Dictation, and Spacing modes.\n• Collect missed words for review and build a daily streak.\n• Grow and dress your Piyo as your learning record develops.\n\nThe app has no ads during lessons or games. Fixed Korean pronunciation is included for offline playback, and personal deck content stays on your device."
     },
     "ja": {
       "title": "韓国語タイピング - ピヨキー",
       "short_description": "ハングルの組み立てから6つのゲームまで、オフラインで学べる韓国語タイピング練習",
-      "full_description": "子音と母音の組み立てから、単語・フレーズの入力まで。ピヨキーは、段階式レッスン、韓国語キーボード、学習デッキ、復習、デイリー練習、6つのタイピングゲームをひとつにまとめた韓国語タイピング学習アプリです。\n\n順番に身につける\n• 6章のカリキュラムで、進捗を確認しながら練習できます。\n• 入力中のハングル組み立てと次のキーを画面で確認できます。\n• 内蔵の2ボル式キーボードと端末の韓国語キーボードを選べます。\n\n自分に合う内容をオフラインで\n• 公式デッキはダウンロード後にオフラインで使えます。\n• アカウントなしでローカルの.typedeckを読み込み、練習、書き出し、削除できます。\n• 任意の買い切り「マイデッキメーカー」で自分用デッキの作成・編集もできます。\n\n続けたくなる練習\n• フロー、酸性雨、初声、単語、聞き取り、分かち書きの6モードを収録。\n• 間違えた単語を復習に集め、毎日の記録を育てられます。\n• 学習記録に合わせてピヨが成長し、衣装を選べます。\n\nレッスン中・ゲーム中に広告は表示しません。固定の韓国語発音はオフライン再生用に同梱し、個人デッキの内容は端末内に保存します。"
+      "full_description": "子音と母音の組み立てから、単語・フレーズの入力まで。ピヨキーは、段階式レッスン、韓国語キーボード、学習デッキ、復習、デイリー練習、6つのタイピングゲームをひとつにまとめた韓国語タイピング学習アプリです。\n\n順番に身につける\n• 6章のカリキュラムで、進捗を確認しながら練習できます。\n• 入力中のハングル組み立てと次のキーを画面で確認できます。\n• 内蔵の2ボル式キーボードと端末の韓国語キーボードを選べます。\n\n自分に合う内容をオフラインで\n• 公式デッキはダウンロード後にオフラインで使えます。\n• アカウントなしでローカルの.typedeckを読み込み、練習、書き出し、削除できます。\n• 任意の買い切り「ピヨキー プロ」で自分用デッキの作成・編集もできます。\n\n続けたくなる練習\n• フロー、酸性雨、初声、単語、聞き取り、分かち書きの6モードを収録。\n• 間違えた単語を復習に集め、毎日の記録を育てられます。\n• 学習記録に合わせてピヨが成長し、衣装を選べます。\n\nレッスン中・ゲーム中に広告は表示しません。固定の韓国語発音はオフライン再生用に同梱し、個人デッキの内容は端末内に保存します。"
     },
     "ko": {
       "title": "한글 타자 연습 - typee",
@@ -36,7 +36,7 @@
   },
   "release_notes": {
     "en-US": "New in 1.1\n• Import and use local .typedeck files for free\n• Keep up to three personal decks free, with optional typee pro for unlimited decks and editing\n• Start the Weekly Piyo Cup or a fresh five-word practice directly from Home\n• Refined accessibility, offline audio, sharing, and game polish",
-    "ja": "1.1の新機能\n• ローカルの.typedeckを無料で読み込み・練習\n• ユーザーデッキ3個まで無料、無制限保存と編集は任意のピヨキー proで解放\n• ホームから週間ピヨカップとランダム5単語をすぐ開始\n• アクセシビリティ、オフライン音声、共有、ゲーム表示を改善",
+    "ja": "1.1の新機能\n• ローカルの.typedeckを無料で読み込み・練習\n• ユーザーデッキ3個まで無料、無制限保存と編集は任意のピヨキー プロで解放\n• ホームから週間ピヨカップとランダム5単語をすぐ開始\n• アクセシビリティ、オフライン音声、共有、ゲーム表示を改善",
     "ko": "1.1 업데이트\n• 로컬 .typedeck 파일을 무료로 가져오고 연습\n• 사용자 덱 3개까지 무료, 무제한 보관과 편집은 선택형 피요키 프로로 해제\n• 홈에서 주간 피요컵과 새로운 랜덤 단어 5개를 바로 시작\n• 접근성, 오프라인 음성, 공유, 게임 화면 개선"
   },
   "in_app_product": {
@@ -49,7 +49,7 @@
         "description": "Unlimited user decks, creation, and editing."
       },
       "ja": {
-        "name": "ピヨキー pro",
+        "name": "ピヨキー プロ",
         "description": "ユーザーデッキ無制限と作成・編集をずっと利用"
       },
       "ko": {
