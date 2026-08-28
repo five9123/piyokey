@@ -1463,6 +1463,7 @@ private enum RecallTypingCountdownAction: Equatable {
 }
 
 struct ChoseongTypingView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.hancoFontScale) private var fontScale
@@ -1551,9 +1552,15 @@ struct ChoseongTypingView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      VStack(spacing: 12) {
+      let landscapeCards = adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall
+        && !dynamicTypeSize.isAccessibilitySize
+      let cardLayout = landscapeCards
+        ? AnyLayout(HStackLayout(spacing: 20))
+        : AnyLayout(VStackLayout(spacing: 12))
+      cardLayout {
         quizCard
         typingCard
+          .frame(width: landscapeCards ? max(280, (adaptiveMetrics.availableWidth - 76) * 0.34) : nil)
       }
       .frame(maxHeight: .infinity)
       .padding(.horizontal, 14)
