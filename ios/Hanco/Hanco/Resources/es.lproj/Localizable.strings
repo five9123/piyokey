@@ -149,7 +149,7 @@
 "app_tour.finish" = "Volver al inicio";
 "app_tour.progress_format" = "%d / %d";
 "app_tour.homePrimary.title" = "Empieza hoy con tres minutos";
-"app_tour.homePrimary.detail" = "Usa el botón grande de Inicio para hacer cinco preguntas personalizadas o continuar donde lo dejaste.";
+"app_tour.homePrimary.detail" = "Empieza con un mazo elegido según tu nivel e intereses. Después de practicar, usa este botón para continuar.";
 "app_tour.discoverSearch.title" = "Encuentra el coreano que te interesa";
 "app_tour.discoverSearch.detail" = "Busca mazos por nombre, etiqueta o autor en Descubrir y descarga lo que quieras practicar.";
 "app_tour.practiceCurriculum.title" = "Aprende las bases en orden";

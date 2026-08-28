@@ -51,7 +51,7 @@
   <string name="main_tour_tap">Tap the screen to continue.</string>
   <string name="main_tour_skip">Skip tour</string>
   <string name="main_tour_home_title">Today starts here</string>
-  <string name="main_tour_home_detail">Use the daily action after your MY Piyo card.</string>
+  <string name="main_tour_home_detail">Start with a deck picked for your level and interests. After you practice, use this button to jump back in.</string>
   <string name="main_tour_discover_title">Find a deck</string>
   <string name="main_tour_discover_detail">Search verified offline-ready content in Discover.</string>
   <string name="main_tour_practice_title">Follow the curriculum</string>

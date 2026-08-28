@@ -51,7 +51,7 @@
   <string name="main_tour_tap">화면을 탭해 계속하세요.</string>
   <string name="main_tour_skip">둘러보기 건너뛰기</string>
   <string name="main_tour_home_title">오늘 학습은 여기서</string>
-  <string name="main_tour_home_detail">MY 피요 카드 아래에서 데일리를 바로 시작해요.</string>
+  <string name="main_tour_home_detail">레벨과 관심사에 맞는 덱으로 시작해요. 연습한 뒤에는 이 버튼에서 이어갈 수 있어요.</string>
   <string name="main_tour_discover_title">덱 둘러보기</string>
   <string name="main_tour_discover_detail">오프라인 준비가 된 검증 콘텐츠를 검색해요.</string>
   <string name="main_tour_practice_title">커리큘럼 연습</string>

@@ -153,7 +153,7 @@
 "app_tour.finish" = "Back to Home";
 "app_tour.progress_format" = "%d / %d";
 "app_tour.homePrimary.title" = "Start with three minutes today";
-"app_tour.homePrimary.detail" = "Use the large Home button to jump into five personalized questions or resume where you left off.";
+"app_tour.homePrimary.detail" = "Start with a deck picked for your level and interests. After you practice, use this button to jump back in.";
 "app_tour.discoverSearch.title" = "Find Korean you care about";
 "app_tour.discoverSearch.detail" = "Search decks by name, tag, or creator in Discover, then download anything you want to practice.";
 "app_tour.practiceCurriculum.title" = "Build the basics in order";

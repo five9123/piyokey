@@ -48,7 +48,7 @@
   <string name="main_tour_tap">Toca la pantalla para continuar.</string>
   <string name="main_tour_skip">Omitir recorrido</string>
   <string name="main_tour_home_title">Hoy empieza aquí</string>
-  <string name="main_tour_home_detail">Usa la acción diaria después de la tarjeta MI Piyo.</string>
+  <string name="main_tour_home_detail">Empieza con un mazo elegido según tu nivel e intereses. Después de practicar, usa este botón para continuar.</string>
   <string name="main_tour_discover_title">Buscar un mazo</string>
   <string name="main_tour_discover_detail">Busca contenido verificado y disponible sin conexión en Descubrir.</string>
   <string name="main_tour_practice_title">Sigue las lecciones</string>

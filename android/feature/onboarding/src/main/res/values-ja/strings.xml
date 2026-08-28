@@ -51,7 +51,7 @@
   <string name="main_tour_tap">画面をタップして次へ。</string>
   <string name="main_tour_skip">ツアーをスキップ</string>
   <string name="main_tour_home_title">今日の学習はここから</string>
-  <string name="main_tour_home_detail">MYピヨカードの下からデイリーをすぐ始められます。</string>
+  <string name="main_tour_home_detail">レベルと目的に合うデッキから始めましょう。練習したあとは、このボタンから続きを始められます。</string>
   <string name="main_tour_discover_title">デッキをさがす</string>
   <string name="main_tour_discover_detail">オフライン対応の検証済みコンテンツを検索できます。</string>
   <string name="main_tour_practice_title">カリキュラムを進める</string>

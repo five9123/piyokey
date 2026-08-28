@@ -21,7 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #73 온보딩 레벨·첫 홈 추천 | In Progress | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 양 플랫폼 저장·추천·UI 회귀 검증 후 Draft PR |
+| #73 / Draft PR #74 온보딩 레벨·첫 홈 추천 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 핵심 저장·추천/전환 회귀 통과. 추가 iOS 부화→홈 UI 1건 실패 조사, 로컬 5언어 후보와 통합 및 CI/리뷰 gate |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## 최근 소스 통합
@@ -53,6 +53,8 @@
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
+
+`outputs/local-language-expansion`은 별도 clone의 `codex/local-es-de-fr` (`dcc32bf`)이며 ja/en/es/de/fr UI와 공식 es/de/fr 콘텐츠를 제공하는 로컬 후보다. #73에서 96개 Python 회귀와 preflight를 다시 통과했으나 main/PR #74에 통합하지 않았다. 신규 온보딩·추천 de/fr 문구 통합과 5언어 앱/기기·원어민·스토어 gate가 남아 있다. 상세는 `docs/LANGUAGE_COVERAGE.md`를 참조한다. 원본 clone과 후속 로컬 리텐션 작업은 수정하지 않았다.
 
 2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 

@@ -153,7 +153,7 @@
 "app_tour.finish" = "ホームへ";
 "app_tour.progress_format" = "%d / %d";
 "app_tour.homePrimary.title" = "まずは今日の3分から";
-"app_tour.homePrimary.detail" = "ホームの大きなボタンから、目的に合った5問や前回の続きへすぐ進めます。";
+"app_tour.homePrimary.detail" = "レベルと目的に合うデッキから始めましょう。練習したあとは、このボタンから続きを始められます。";
 "app_tour.discoverSearch.title" = "好きな韓国語を見つけよう";
 "app_tour.discoverSearch.detail" = "「さがす」ではデッキ名・タグ・作者を検索して、気になる教材をダウンロードできます。";
 "app_tour.practiceCurriculum.title" = "基礎を順番に伸ばそう";
