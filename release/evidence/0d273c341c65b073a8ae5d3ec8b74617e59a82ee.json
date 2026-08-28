@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "verified_commit": "0d273c341c65b073a8ae5d3ec8b74617e59a82ee",
+  "verified_tree": "c51e134d958288eb945f5218b1b65ff26938abad",
+  "branch": "codex/67-spanish-ui",
+  "scope": "Issue #67: Spanish ja/en/es UI and eight-PR integration; local verification only",
+  "result": "pass",
+  "recorded_at": "2026-08-28T07:07:15.923530+00:00",
+  "checks": [
+    {
+      "name": "Python repository tests",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests",
+      "note": "88 passed at 0d273c3; /tmp/piyokey-67-final-python.log"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": "Passed at 0d273c3; /tmp/piyokey-67-final-preflight.log"
+    },
+    {
+      "name": "Workspace ownership",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": "Passed with clean owned Issue #67 branch; no remote main merge"
+    },
+    {
+      "name": "SwiftPM",
+      "status": "pass",
+      "command": "swift test --package-path ios/HangulEngine",
+      "note": "43 passed; /tmp/piyokey-67-final-swiftpm.log; latest rerun at docs-only 7493222"
+    },
+    {
+      "name": "Android focused regression",
+      "status": "pass",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :core:settings:testDebugUnitTest :core:platform:testDebugUnitTest :core:retention:test :core:piyodeck:test :app:lintDebug :app:assembleDebug :app:compileDebugAndroidTestKotlin :feature:practice:compileDebugAndroidTestKotlin",
+      "note": "From android/. 66 tests (11 settings,19 platform,13 retention,23 piyodeck), lint/build and instrumentation source compilation pass. Latest rerun cached at docs-only 7493222; no connected-device tests. /tmp/piyokey-67-final-android.log"
+    },
+    {
+      "name": "Integrated iPhone baseline",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -derivedDataPath /private/tmp/piyokey-67-derived -parallel-testing-enabled NO \"-only-testing:HancoTests\" \"-only-testing:HancoUITests/HancoUITests/testSpanishDeviceLanguageSwitchAndPersistence\" \"-only-testing:HancoUITests/HancoUITests/testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice\" \"-only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus\" \"-only-testing:HancoUITests/HancoUITests/testOSIMEHardwareStyleDeleteAndReturnKeepAcceptedPrefixAligned\" \"-only-testing:HancoUITests/HancoUITests/testChoseongAndWordMatchShareThreeQuestionPronunciationHintBudget\" \"-only-testing:HancoUITests/HancoUITests/testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission\"",
+      "note": "358 app unit + 6 UI passed at 2452db8; historical integration baseline. /tmp/piyokey-67-integrated-ios.log"
+    },
+    {
+      "name": "Final iPhone app regression",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -derivedDataPath /private/tmp/piyokey-67-derived -parallel-testing-enabled NO \"-only-testing:HancoTests\" \"-only-testing:HancoUITests/HancoUITests/testSpanishDeviceLanguageSwitchAndPersistence\" \"-only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus\"",
+      "note": "358 app unit + 2 UI passed at b5ebf09, the last app source edit. Diff to 0d273c3 changes only UI test viewport handling. /tmp/piyokey-67-final-ios.log"
+    },
+    {
+      "name": "Spanish iPhone and iPad UI",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5\" -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -derivedDataPath /private/tmp/piyokey-67-derived -parallel-testing-enabled NO \"-only-testing:HancoUITests/HancoUITests/testSpanishDeviceLanguageSwitchAndPersistence\"",
+      "note": "Both devices passed at 0d273c3. es-MX auto-selection, English/Spanish switching, saved override after restart. Initial iPad failures came from tab-bar-only query then a hittable off-sheet button; final test checks viewport and preserves all assertions. Screenshots visually inspected; artifacts/spanish-ui/"
+    },
+    {
+      "name": "Final iPad adaptive regression",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5\" -derivedDataPath /private/tmp/piyokey-67-derived -parallel-testing-enabled NO \"-only-testing:HancoUITests/HancoUITests/testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable\" \"-only-testing:HancoUITests/HancoUITests/testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab\" \"-only-testing:HancoUITests/HancoUITests/testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard\"",
+      "note": "3 passed on 0d273c3 app/test source (PROJECT_STATUS updated while running): large Dynamic Type, rotation/selected tab, rotation/input preservation. /tmp/piyokey-67-ipad-regression.log"
+    },
+    {
+      "name": "Learning source preservation",
+      "status": "pass",
+      "command": "git diff --name-only origin/codex/65-remove-korean-ui -- shared ios/HangulEngine/Sources android/core/deckkit",
+      "note": "No changes in these paths. Spanish learning metadata and editor use English fallback; Korean source/audio retained."
+    },
+    {
+      "name": "Integration ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor <origin/branch> HEAD",
+      "note": "All eight PR heads #14/#15/#18/#49/#50/#64/#66/#69 included; original dirty 35 files separately compared byte-for-byte to preservation worktree."
+    }
+  ],
+  "manual_gates": [
+    "GitHub Actions enabled=false; required CI/review or explicit user exception remains pending. No protection/configuration changes or remote main merge.",
+    "Store uploads and distribution are not completed. Refresh ko/es store captures for ja/en/es RC, human localization review and existing financial/rights/store gates remain.",
+    "Simulator/debug verification does not replace Android #19 signed-AAB device QA or reminder #58 actual 20:00 delivery. Earlier user-confirmed iPad/hardware device checks are not agent-run tests."
+  ]
+}
