@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-27 JST
+마지막 갱신: 2026-08-28 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 최근 운영 기준선: 프로젝트 재정비 PR #60·#61 병합
@@ -21,8 +21,8 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #63 사용자 덱 `.typedeck` 확장자 | Verify | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 검증 완료 변경 review·commit 후 PR |
-| #58 현지 20시 리마인더 | Verify | `codex/58-onboarding-local-reminder` / `/private/tmp/piyokey-issue-58` | 구현 PR 병합 후 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+| #63 / PR #64 사용자 덱 `.typedeck` 확장자 | Blocked | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 로컬 회귀 통과·Draft PR 생성 완료; GitHub Actions 활성화 및 CI·검토 승인 후 병합 |
+| #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 | #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
 
 플랫폼별 동시 `In Progress`는 하나를 원칙으로 하며, 공용 충돌 파일은 한 작업만 소유한다.
@@ -47,3 +47,9 @@
 3. 병합된 PR의 Issue가 닫혔는지 확인한다.
 4. 검증 증빙의 commit SHA가 PR HEAD와 일치하는지 확인한다.
 5. 기기·스토어 gate는 실제 증거가 있을 때만 완료로 바꾼다.
+
+## 기존 작업 병합 점검 — 2026-08-28
+
+- #63은 스토어 미디어·지원 URL·별도 Pro 변경과 분리했다. 검증 대상 `d788a78659831188542a31208bcbe1af540129db`, 증빙 `release/evidence/d788a78659831188542a31208bcbe1af540129db.json`: Python 78개, SwiftPM 42개, iOS 문서 흐름 8개, Android 관련 단위 테스트·앱 Kotlin 컴파일, repository preflight·fixture 재생성 통과.
+- 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니며, 설정 변경이나 CI 우회 병합을 하지 않았다. 활성화·계정 상태 확인 후 최신 PR HEAD에서 검증한다.
+- #18 → #49 → #50은 Draft·미완료 iPad/물리 키보드 gate를 유지한다. #15도 실제 물리 키보드 QA가 남아 있고, Later #14는 main과 충돌한다. 기존 로컬 ahead 커밋과 worktree는 변경하거나 삭제하지 않았다.
