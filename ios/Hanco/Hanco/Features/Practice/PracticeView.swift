@@ -171,25 +171,19 @@ struct PracticeView: View {
     VStack(spacing: 0) {
       GeometryReader { viewport in
         ScrollView {
-          let sideBySide = adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall
-            && !dynamicTypeSize.isAccessibilitySize
-          let layout = sideBySide
-            ? AnyLayout(HStackLayout(spacing: 20))
-            : AnyLayout(VStackLayout(spacing: adaptiveMetrics.isExpanded ? 20 : 12))
-          layout {
+          VStack(spacing: sessionCardSpacing) {
             targetCard(minHeight: adaptiveMetrics.isExpanded
-              ? (sideBySide ? max(0, viewport.size.height - 40) : viewport.size.height * 0.50) : 0)
+              ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.55 : 0)
             if practiceShowsMascot || practiceShowsComposition {
               compositionCard(minHeight: adaptiveMetrics.isExpanded
-                ? (sideBySide ? max(0, viewport.size.height - 40) : viewport.size.height * 0.36) : 0)
-                .frame(width: sideBySide ? max(280, (viewport.size.width - 68) * 0.34) : nil)
+                ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.45 : 0)
             } else if inputMode == .osIME, allowsOSKeyboard {
               osIMEInputPanel(showsFocusRecovery: true)
                 .padding(.horizontal, 14)
             }
           }
           .padding(.horizontal, adaptiveMetrics.isExpanded ? 24 : 14)
-          .padding(.vertical, adaptiveMetrics.isExpanded ? 20 : 10)
+          .padding(.vertical, sessionVerticalPadding)
           .frame(minHeight: viewport.size.height, alignment: adaptiveMetrics.isExpanded ? .center : .top)
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
@@ -511,7 +505,7 @@ struct PracticeView: View {
     HStack(spacing: 8) {
       ProgressView(value: overallSessionProgress, total: 1)
         .tint(AppPalette.accent)
-        .frame(width: 128)
+        .frame(width: adaptiveMetrics.isExpanded ? 180 : 128)
 
       Text(verbatim: "\(viewModel.currentTargetIndex + 1) / \(viewModel.targets.count)")
         .font(.caption.monospacedDigit().weight(.bold))
@@ -525,27 +519,40 @@ struct PracticeView: View {
     .accessibilityIdentifier("practice.overall_progress")
   }
 
+  private var usesLandscapeCards: Bool {
+    adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall && !dynamicTypeSize.isAccessibilitySize
+  }
+
+  private var sessionCardSpacing: CGFloat { usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 20 : 12) }
+  private var sessionVerticalPadding: CGFloat { usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 20 : 10) }
+
+  private var speakTargetButton: some View {
+    Button(action: speakCurrentTarget) {
+      Label("practice.speak_target", systemImage: "speaker.wave.2.fill")
+        .font(.subheadline.weight(.bold))
+        .foregroundStyle(AppPalette.secondary)
+        .padding(.horizontal, adaptiveMetrics.isExpanded ? 16 : 11)
+        .padding(.vertical, adaptiveMetrics.isExpanded ? 10 : 7)
+        .frame(minHeight: adaptiveMetrics.isExpanded ? 44 : nil)
+        .background(AppPalette.accentSoft.opacity(0.48), in: Capsule())
+    }
+    .buttonStyle(.plain)
+    .accessibilityValue(Text(verbatim: viewModel.target))
+    .accessibilityIdentifier("practice.speak_target")
+  }
+
   private func targetCard(minHeight: CGFloat) -> some View {
-    VStack(alignment: .leading, spacing: 9) {
-      HStack {
-        Spacer()
-        Button {
-          speakCurrentTarget()
-        } label: {
-          Label("practice.speak_target", systemImage: "speaker.wave.2.fill")
-            .font(.subheadline.weight(.bold))
-            .foregroundStyle(AppPalette.secondary)
-            .padding(.horizontal, 11)
-            .padding(.vertical, 7)
-            .background(AppPalette.accentSoft.opacity(0.48), in: Capsule())
+    VStack(alignment: .leading, spacing: usesLandscapeCards ? 6 : 9) {
+      if !usesLandscapeCards {
+        HStack {
+          Spacer()
+          speakTargetButton
         }
-        .buttonStyle(.plain)
-        .accessibilityValue(Text(verbatim: viewModel.target))
-        .accessibilityIdentifier("practice.speak_target")
       }
 
       ForEach(resolvedPromptOrder.fields) { field in
         promptField(field)
+          .padding(.horizontal, usesLandscapeCards ? 120 : 0)
       }
 
       if practiceShowsJamo {
@@ -571,8 +578,11 @@ struct PracticeView: View {
         }
       }
     }
-    .padding(adaptiveMetrics.isExpanded ? 24 : 14)
+    .padding(usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 24 : 14))
     .frame(maxWidth: .infinity, minHeight: minHeight)
+    .overlay(alignment: .topTrailing) {
+      if usesLandscapeCards { speakTargetButton.padding(10) }
+    }
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     .accessibilityElement(children: .contain)
     .accessibilityIdentifier("practice.target.card")
@@ -623,7 +633,7 @@ struct PracticeView: View {
 
   private func meaningPromptText(_ value: String) -> some View {
     Text(verbatim: value)
-      .font(.system(size: max(14, 17 * fontScale), weight: .regular, design: .rounded))
+      .font(.system(size: max(14, 17 * fontScale * (usesLandscapeCards ? adaptiveMetrics.learningScale : 1)), weight: .regular, design: .rounded))
       .foregroundStyle(AppPalette.mutedInk)
       .multilineTextAlignment(.center)
       .padding(.horizontal, 14)
@@ -696,7 +706,7 @@ struct PracticeView: View {
     }
     .frame(maxWidth: .infinity)
     .padding(.horizontal, 14)
-    .padding(.vertical, 10)
+    .padding(.vertical, usesLandscapeCards ? 4 : 10)
     .frame(minHeight: minHeight)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     .accessibilityElement(children: .contain)

@@ -39,12 +39,17 @@ struct HancoAdaptiveMetrics: Equatable {
   var isExpanded: Bool { widthClass != .compact }
   var isTall: Bool { isExpanded && availableHeight > availableWidth }
   var typographyScale: CGFloat { isExpanded ? 1.2 : 1 }
-  var learningScale: CGFloat { isExpanded ? (isTall ? 1.5 : 1.25) : 1 }
+  var learningScale: CGFloat {
+    guard isExpanded else { return 1 }
+    if isTall { return 1.5 }
+    // Grow within the available height while keeping question → typing → keys stacked.
+    return min(1.6, max(1.1, 1.1 + (availableHeight - 700) / 450))
+  }
   var keyboardScale: CGFloat {
     guard isExpanded else { return 1 }
     // Leave room for the question in short landscape / Stage Manager windows.
     if availableHeight < 600 { return 1.15 }
-    return isTall ? 1.6 : 1.35
+    return isTall ? 1.6 : min(1.5, max(1.3, 1.3 + (availableHeight - 700) / 1_000))
   }
   var sessionLaneMaxWidth: CGFloat { isExpanded ? max(920, availableWidth - 48) : 920 }
   var keyboardMaxWidth: CGFloat { max(availableWidth, 320) }

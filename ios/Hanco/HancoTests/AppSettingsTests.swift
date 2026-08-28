@@ -601,7 +601,10 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(split.typographyScale, 1)
     XCTAssertEqual(split.learningScale, 1)
     XCTAssertEqual(split.keyboardMaxWidth, 507)
-    XCTAssertGreaterThan(portrait.learningScale, landscape.learningScale)
+    XCTAssertGreaterThan(landscape.learningScale, portrait.learningScale)
+    let mini = HancoAdaptiveMetrics(availableWidth: 1_133, availableHeight: 700)
+    XCTAssertGreaterThan(mini.learningScale, 1)
+    XCTAssertLessThan(mini.learningScale, landscape.learningScale)
   }
 
   func testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions() throws {

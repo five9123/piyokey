@@ -2293,6 +2293,8 @@ final class HancoUITests: XCTestCase {
   func testAppStoreScreenshotGlobalFR() { captureGlobalStoreAssets() }
 
   private func captureGlobalStoreAssets() {
+    let isIPadCapture = max(app.frame.width, app.frame.height) >= 1_000
+    if isIPadCapture { XCUIDevice.shared.orientation = .landscapeLeft }
     testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick()
     testAppStoreScreenshotGamesShowCurrentProgressWithChick()
     returnToGameHub()
@@ -2318,18 +2320,7 @@ final class HancoUITests: XCTestCase {
     startPractice()
     attachScreenshot(named: "appstore-current-tenkey-ja")
 
-    if max(app.frame.width, app.frame.height) >= 1_000 {
-      app.terminate()
-      app = makeApplication(resetKeyboardPreferences: false)
-      app.launchArguments += ["-keyboard.builtin_layout_default", "dubeolsik"]
-      app.launch()
-      startPractice()
-      XCUIDevice.shared.orientation = .landscapeLeft
-      XCTAssertTrue(app.buttons["keyboard.key.ㅂ"].waitForExistence(timeout: 5))
-      assertBuiltInKeyboardFillsIPadWidth()
-      attachScreenshot(named: "appstore-current-keyboard-landscape-ja")
-      XCUIDevice.shared.orientation = .portrait
-    }
+    if isIPadCapture { XCUIDevice.shared.orientation = .portrait }
   }
 
   func testAppPreviewJapaneseFlowShowsMascotAndCompletesFirstCard() {
@@ -2865,6 +2856,9 @@ final class HancoUITests: XCTestCase {
         XCTAssertTrue(element(prompt).exists)
         XCTAssertGreaterThanOrEqual(element(prompt).frame.minY, app.frame.minY)
         XCTAssertLessThan(element(prompt).frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY)
+        let typing = element("\(mode).typing.value")
+        XCTAssertGreaterThan(typing.frame.minY, element(prompt).frame.maxY)
+        XCTAssertEqual(typing.frame.midX, app.frame.midX, accuracy: 80)
         let feedback = element("\(mode).typing.feedback")
         XCTAssertTrue(feedback.exists)
         XCTAssertLessThanOrEqual(feedback.frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY)
@@ -2925,10 +2919,14 @@ final class HancoUITests: XCTestCase {
     assertBuiltInKeyboardFillsIPadWidth()
     let landscapeComposition = element("practice.composition.card")
     XCTAssertTrue(landscapeComposition.exists)
+    XCTAssertGreaterThanOrEqual(landscapeComposition.frame.minY,
+                               element("practice.target.card").frame.maxY)
+    XCTAssertEqual(landscapeComposition.frame.midX, app.frame.midX, accuracy: 2)
     XCTAssertLessThanOrEqual(landscapeComposition.frame.maxY,
                             app.buttons["keyboard.key.ㅂ"].frame.minY)
     XCTAssertLessThanOrEqual(element("practice.target.card").frame.maxY,
                             app.buttons["keyboard.key.ㅂ"].frame.minY)
+    XCTAssertLessThan(app.buttons["keyboard.key.ㅂ"].frame.minY - landscapeComposition.frame.maxY, 40)
     attachScreenshot(named: "ipad-practice-landscape-active-ja")
 
     XCUIDevice.shared.orientation = .portrait
@@ -3647,6 +3645,9 @@ final class HancoUITests: XCTestCase {
   }
 
   private func attachScreenshot(named name: String) {
+    if self.name.contains("testAppStoreScreenshotGlobal"), max(app.frame.width, app.frame.height) >= 1_000 {
+      XCTAssertGreaterThan(app.frame.width, app.frame.height, "Every iPad store scene must be landscape")
+    }
     let screenshot = XCUIScreen.main.screenshot()
     let attachment: XCTAttachment
     // The simulator captures its native portrait framebuffer even after iPad rotation.

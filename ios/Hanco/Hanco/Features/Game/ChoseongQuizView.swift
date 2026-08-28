@@ -1552,20 +1552,32 @@ struct ChoseongTypingView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      let landscapeCards = adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall
-        && !dynamicTypeSize.isAccessibilitySize
-      let cardLayout = landscapeCards
-        ? AnyLayout(HStackLayout(spacing: 20))
-        : AnyLayout(VStackLayout(spacing: 12))
-      cardLayout {
-        quizCard
-        typingCard
-          .frame(width: landscapeCards ? max(280, (adaptiveMetrics.availableWidth - 76) * 0.34) : nil)
+      if adaptiveMetrics.isExpanded {
+        GeometryReader { viewport in
+          ScrollView {
+            VStack(spacing: usesLandscapeCards ? 8 : 12) {
+              quizCard
+                .frame(minHeight: expandsSessionCards ? max(0, viewport.size.height - 28) * 0.55 : 0)
+              typingCard
+                .frame(minHeight: expandsSessionCards ? max(0, viewport.size.height - 28) * 0.45 : 0)
+            }
+            .frame(minHeight: max(0, viewport.size.height - 20))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
+          }
+          .scrollDismissesKeyboard(.never)
+        }
+      } else {
+        VStack(spacing: 12) {
+          quizCard
+          typingCard
+        }
+        .frame(maxHeight: .infinity)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
       }
-      .frame(maxHeight: .infinity)
-      .padding(.horizontal, 14)
-      .padding(.vertical, 10)
-      .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
 
       inputArea
         .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
@@ -1758,8 +1770,22 @@ struct ChoseongTypingView: View {
     }
   }
 
+  private var usesLandscapeCards: Bool {
+    adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall && !dynamicTypeSize.isAccessibilitySize
+  }
+
+  private var quizCardPadding: CGFloat { usesLandscapeCards ? 8 : 20 }
+
+  private var expandsSessionCards: Bool {
+    adaptiveMetrics.isTall || adaptiveMetrics.availableHeight >= 800
+  }
+
+  private var quizLearningScale: CGFloat {
+    usesLandscapeCards && expandsSessionCards ? adaptiveMetrics.learningScale : 1
+  }
+
   private var choseongQuizCard: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: usesLandscapeCards ? 6 : 10) {
       Text("choseong.initials.title")
         .font(.caption.weight(.bold))
         .foregroundStyle(AppPalette.secondary)
@@ -1770,16 +1796,19 @@ struct ChoseongTypingView: View {
         ChoseongInitialProgressTrack(
           initials: viewModel.currentRound.initials,
           units: viewModel.initialProgressUnits,
-          fontScale: fontScale
+          fontScale: fontScale * quizLearningScale
         )
         .transition(.opacity)
       }
       hint
-      pronunciationHintButton
+      if !usesLandscapeCards { pronunciationHintButton }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(.horizontal, 22)
-    .padding(.vertical, 20)
+    .padding(.vertical, quizCardPadding)
+    .overlay(alignment: .topTrailing) {
+      if usesLandscapeCards { pronunciationHintButton.padding(8) }
+    }
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
     .overlay {
       RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -1819,9 +1848,9 @@ struct ChoseongTypingView: View {
         ZStack {
           Circle()
             .fill(AppPalette.accentSoft.opacity(0.7))
-            .frame(width: 72, height: 72)
+            .frame(width: 72 * quizLearningScale, height: 72 * quizLearningScale)
           Image(systemName: "speaker.wave.3.fill")
-            .font(.system(size: 29, weight: .bold))
+            .font(.system(size: 29 * quizLearningScale, weight: .bold))
             .foregroundStyle(AppPalette.accent)
         }
       }
@@ -1835,7 +1864,7 @@ struct ChoseongTypingView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(.horizontal, 22)
-    .padding(.vertical, 20)
+    .padding(.vertical, quizCardPadding)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
     .overlay {
       RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -1844,30 +1873,32 @@ struct ChoseongTypingView: View {
   }
 
   private var wordMatchQuizCard: some View {
-    VStack(spacing: 12) {
+    VStack(spacing: usesLandscapeCards ? 6 : 12) {
       Text("word_match.prompt.title")
         .font(.caption.weight(.bold))
         .foregroundStyle(AppPalette.secondary)
 
       VStack(spacing: 9) {
-        Image(systemName: "character.book.closed.fill")
-          .font(.system(size: 24, weight: .bold))
-          .foregroundStyle(Color.orange)
+        if !usesLandscapeCards {
+          Image(systemName: "character.book.closed.fill")
+            .font(.system(size: 24, weight: .bold))
+            .foregroundStyle(Color.orange)
+        }
         Text(
           verbatim: JapaneseMeaningDisplayText.format(
             viewModel.currentRound.answer.appMeaning ?? ""
           )
         )
-        .font(.system(size: max(22, 30 * fontScale), weight: .black, design: .rounded))
+        .font(.system(size: max(22, 30 * fontScale * quizLearningScale), weight: .black, design: .rounded))
         .foregroundStyle(AppPalette.ink)
         .multilineTextAlignment(.center)
         .lineLimit(3)
         .minimumScaleFactor(0.7)
         .accessibilityIdentifier("word_match.prompt.value")
       }
-      .frame(maxWidth: .infinity, minHeight: 112 * fontScale)
+      .frame(maxWidth: .infinity, minHeight: (usesLandscapeCards ? 44 : 112) * fontScale)
       .padding(.horizontal, 18)
-      .padding(.vertical, 14)
+      .padding(.vertical, usesLandscapeCards ? 4 : 14)
       .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 18))
       .overlay {
         RoundedRectangle(cornerRadius: 18)
@@ -1879,11 +1910,14 @@ struct ChoseongTypingView: View {
         .foregroundStyle(AppPalette.mutedInk)
         .multilineTextAlignment(.center)
 
-      pronunciationHintButton
+      if !usesLandscapeCards { pronunciationHintButton }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(.horizontal, 22)
-    .padding(.vertical, 20)
+    .padding(.vertical, quizCardPadding)
+    .overlay(alignment: .topTrailing) {
+      if usesLandscapeCards { pronunciationHintButton.padding(8) }
+    }
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
     .overlay {
       RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -1913,6 +1947,7 @@ struct ChoseongTypingView: View {
         )
         .padding(.horizontal, 13)
         .padding(.vertical, 8)
+        .frame(minHeight: adaptiveMetrics.isExpanded ? 44 : nil)
         .background(AppPalette.accentSoft.opacity(0.46), in: Capsule())
     }
     .buttonStyle(.plain)
@@ -1956,7 +1991,7 @@ struct ChoseongTypingView: View {
         .minimumScaleFactor(0.8)
       }
       .padding(.horizontal, 16)
-      .padding(.vertical, 10)
+      .padding(.vertical, usesLandscapeCards ? 4 : 10)
       .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 14))
       .overlay {
         RoundedRectangle(cornerRadius: 14)
@@ -2029,8 +2064,8 @@ struct ChoseongTypingView: View {
         .accessibilityIdentifier("\(mode.accessibilityNamespace).typing.feedback")
     }
     .padding(.horizontal, 14)
-    .padding(.top, 8)
-    .padding(.bottom, 9)
+    .padding(.top, usesLandscapeCards ? 2 : 8)
+    .padding(.bottom, usesLandscapeCards ? 2 : 9)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     .overlay {
       Text(verbatim: " ")
