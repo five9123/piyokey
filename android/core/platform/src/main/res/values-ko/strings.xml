@@ -1,0 +1,8 @@
+<resources>
+  <string name="reminder_channel_name">매일 연습</string><string name="reminder_notification_title">피요키 3분 연습 시간이에요</string><string name="reminder_notification_body">오늘도 한국어 타이핑 연속 기록을 이어가요.</string>
+  <string name="feedback_proposal_subject">[피요키] 원하는 덱 제안</string><string name="feedback_report_subject">[피요키] 덱 내용 신고</string><string name="feedback_combined_subject">[피요키] 콘텐츠 의견</string>
+  <string name="feedback_proposal_body">주제:\n대상 수준:\n포함되길 바라는 단어:\n원하는 이유:\n\n비밀번호·주소·실제 노래 가사나 드라마 대사는 입력하지 마세요. 제출 내용은 수동 검토하며 자동 공개하지 않아요.</string>
+  <string name="feedback_report_body">신고할 표현:\n유형(오타 / 뜻 / 읽기 / 음성 / 권리):\n상세 내용:\n\n비밀번호·주소·실제 노래 가사나 드라마 대사는 입력하지 마세요. 신고 내용은 수동 검토하며 자동 공개하지 않아요.</string>
+  <string name="feedback_combined_body">의견 유형(덱 제안 / 내용 신고):\n주제 또는 표현:\n대상 수준 또는 문제 유형:\n상세 내용:\n\n비밀번호·주소·실제 노래 가사나 드라마 대사는 입력하지 마세요. 제출 내용은 수동 검토하며 자동 공개하지 않아요.</string>
+  <string name="feedback_metadata_heading">--- 앱에서 자동 추가한 정보 ---</string><string name="feedback_metadata_type">유형</string><string name="feedback_metadata_source">화면</string><string name="feedback_metadata_app">앱 버전/빌드</string><string name="feedback_metadata_language">언어</string><string name="feedback_metadata_deck">덱 ID/버전</string>
+</resources>

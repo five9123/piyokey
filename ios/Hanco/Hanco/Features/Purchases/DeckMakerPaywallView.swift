@@ -8,6 +8,7 @@ enum DeckMakerLegalLinks {
 }
 
 private enum DeckMakerPaywallFeature: String, CaseIterable {
+  case unlimitedImports
   case create
   case edit
   case copyOfficial
@@ -15,6 +16,7 @@ private enum DeckMakerPaywallFeature: String, CaseIterable {
 
   var systemImage: String {
     switch self {
+    case .unlimitedImports: "rectangle.stack.badge.plus"
     case .create: "rectangle.stack.badge.plus"
     case .edit: "pencil.and.list.clipboard"
     case .copyOfficial: "doc.on.doc.fill"
@@ -47,6 +49,7 @@ struct DeckMakerPaywallView: View {
   @ScaledMetric(relativeTo: .caption) private var legalSize: CGFloat = 12
   @ScaledMetric(relativeTo: .body) private var featureIconSize: CGFloat = 18
   @ScaledMetric(relativeTo: .body) private var featureIconFrame: CGFloat = 36
+  @State private var didCaptureView = false
 
   private let onAccessGranted: () -> Void
 
@@ -85,6 +88,14 @@ struct DeckMakerPaywallView: View {
     }
     .task {
       await purchaseStore.prepare()
+    }
+    .onAppear {
+      guard !didCaptureView else { return }
+      didCaptureView = true
+      TelemetryService.shared.capture(
+        .purchaseFlow,
+        properties: [.purchaseState: "viewed"]
+      )
     }
     .alert(item: noticeBinding) { notice in
       Alert(

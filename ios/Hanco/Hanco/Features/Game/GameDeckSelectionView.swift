@@ -517,6 +517,20 @@ private struct GameDeckListView: View {
         .font(.caption2.weight(.bold))
         .foregroundStyle(AppPalette.accent)
       }
+      if let progress = gameProgress.progress(
+        for: preset.deck.deckId,
+        gameKind: gameKind,
+        inputMode: .builtInKorean10Key
+      ) {
+        Text(
+          String(
+            format: AppLocalization.string("game.selection.best_score.korean_10key"),
+            progress.bestScore.formatted()
+          )
+        )
+        .font(.caption2.weight(.bold))
+        .foregroundStyle(AppPalette.secondary)
+      }
     }
     .frame(maxWidth: .infinity, minHeight: 206, alignment: .topLeading)
     .padding(14)
@@ -752,14 +766,26 @@ private struct GameDeckListView: View {
           .foregroundStyle(AppPalette.accent)
           .accessibilityIdentifier("game.deck.best_score.\(deck.deckId)")
         }
-        if gameKind == .flow || gameKind == .acidRain || gameKind == .choseong
-          || gameKind == .wordMatch || gameKind == .dictation,
-          let progress = gameProgress.progress(
-            for: deck.deckId,
-            gameKind: gameKind,
-            inputMode: .osIME
+        if let progress = gameProgress.progress(
+          for: deck.deckId,
+          gameKind: gameKind,
+          inputMode: .builtInKorean10Key
+        ) {
+          Text(
+            String(
+              format: AppLocalization.string("game.selection.best_score.korean_10key"),
+              progress.bestScore.formatted()
+            )
           )
-        {
+          .font(.caption2.weight(.bold))
+          .foregroundStyle(AppPalette.secondary)
+          .accessibilityIdentifier("game.deck.best_score.korean_10key.\(deck.deckId)")
+        }
+        if let progress = gameProgress.progress(
+          for: deck.deckId,
+          gameKind: gameKind,
+          inputMode: .osIME
+        ) {
           Text(
             String(
               format: AppLocalization.string("game.selection.best_score.os_ime"),

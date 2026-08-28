@@ -29,7 +29,7 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 - `ko`: UI와 덱명·제작자·태그는 한국어로 제공한다. 학습 항목의 한국어 뜻·읽기가 없으면 영어 뜻·로마자를 사용한다.
 - `en`·`ko`·미지원 언어에서는 일본어 뜻이나 가타카나를 fallback으로 노출하지 않는다.
 - 첫 실행은 기기 선호 언어 중 `ja`·`ko`·`en` 첫 일치를 사용하고, 일치하지 않으면 영어로 시작한다. 사용자가 설정에서 고른 앱 언어는 영속화한다.
-- Android M7은 별도 재개 결정 전까지 보류한다. 1.1 글로벌 출시는 현재 iOS 프로젝트에서만 준비한다.
+- Android M7은 2026-08-21 사용자 결정으로 재개했으며 Google Play는 iOS App Store와 분리된 출시 트랙으로 준비한다. Android 소스·listing 준비가 iOS 1.1 제출 범위를 변경하지 않는다.
 
 ## 3. App Store 메타데이터
 
@@ -98,4 +98,4 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 
 이 문서는 출시 실행 승인이 아니다. 실제 App Store Connect 변경 결과와 제출 ID는 변경 시점에 `release/app_store_submission.json` 또는 별도 후속 제출 기록에 사실대로 남긴다.
 
-Android는 현재 보류 상태다. 이 문서의 실행 범위에는 Android 프로젝트 생성, Google Play 등록 또는 Android 현지화가 포함되지 않는다.
+Android는 별도 Google Play 출시 트랙에서 진행 중이다. 이 문서의 실행 범위에는 Play Console 변경이나 Android 배포 승인이 포함되지 않으며, Android listing 계약은 `release/google_play_metadata.json`과 `release/GOOGLE_PLAY_QA.md`에서 관리한다.

@@ -416,6 +416,7 @@ struct PiyoDeckImportPreviewView: View {
   @State private var showsPaywall = false
   @State private var showsReplaceConfirmation = false
   @State private var shouldCopyAfterPurchase = false
+  @State private var shouldInstallAfterPurchase = false
   @State private var currentExportArtifact: PiyoDeckExportArtifact?
   @State private var isExportingCurrent = false
   @State private var showsExportError = false
@@ -485,13 +486,23 @@ struct PiyoDeckImportPreviewView: View {
     }
     .sheet(isPresented: $showsPaywall) {
       DeckMakerPaywallView(purchaseStore: purchaseStore) {
-        guard shouldCopyAfterPurchase else { return }
-        shouldCopyAfterPurchase = false
-        importAsCopy()
+        if shouldInstallAfterPurchase {
+          shouldInstallAfterPurchase = false
+          install(replacing: false)
+        } else if shouldCopyAfterPurchase {
+          shouldCopyAfterPurchase = false
+          importAsCopy()
+        }
       }
     }
     .sheet(item: $currentExportArtifact, onDismiss: finishCurrentExport) { artifact in
-      PiyoDeckActivityView(artifact: artifact) {
+      PiyoDeckActivityView(artifact: artifact) { completed in
+        if completed {
+          TelemetryService.shared.capture(
+            .deckMakerAction,
+            properties: [.action: "exported"]
+          )
+        }
         Task { @MainActor in finishCurrentExport() }
       }
     }
@@ -750,10 +761,13 @@ struct PiyoDeckImportPreviewView: View {
       switch collision {
       case .new:
         primaryButton(
-          "piyodeck.import.action.import",
-          systemImage: "square.and.arrow.down",
+          canInstallNewDeck
+            ? "piyodeck.import.action.import"
+            : "piyodeck.import.action.unlock_pro",
+          systemImage: canInstallNewDeck ? "square.and.arrow.down" : "lock.fill",
           accessibilityIdentifier: "piyodeck.import.action.import"
         ) {
+          shouldCopyAfterPurchase = false
           install(replacing: false)
         }
       case .identical:
@@ -776,6 +790,7 @@ struct PiyoDeckImportPreviewView: View {
           if purchaseStore.hasAccess {
             importAsCopy()
           } else {
+            shouldInstallAfterPurchase = false
             shouldCopyAfterPurchase = true
             showsPaywall = true
           }
@@ -895,6 +910,12 @@ struct PiyoDeckImportPreviewView: View {
 
   private func install(replacing: Bool) {
     guard replacing || collision == .new else { return }
+    if !replacing, !canInstallNewDeck {
+      shouldCopyAfterPurchase = false
+      shouldInstallAfterPurchase = true
+      showsPaywall = true
+      return
+    }
     // Re-importing a derived user deck replaces its payload, but it must not
     // erase where that deck originated. The incoming package intentionally
     // carries no local installation metadata, so retain lineage from the
@@ -912,6 +933,7 @@ struct PiyoDeckImportPreviewView: View {
           contentSHA256: candidate.package.contentSHA256,
           packageFormatVersion: candidate.package.manifest.formatVersion,
           isLocallyModified: false,
+          hasPiyokeyProAccess: purchaseStore.hasAccess,
           derivedFromDeckId: derivedFromDeckId
         )
         // A same-ID import after deletion is classified as a new install
@@ -919,8 +941,20 @@ struct PiyoDeckImportPreviewView: View {
         // import so retained review history becomes available again in both
         // the re-import and active-replacement paths.
         _ = reviewDeck.reconcile(with: installed)
+        TelemetryService.shared.capture(
+          .deckMakerAction,
+          properties: [
+            .action: "imported",
+            .itemCountBucket: TelemetryService.shared.itemCountBucket(installed.items.count),
+            .deckSource: "imported",
+          ]
+        )
         isSaving = false
         coordinator.finishImport()
+      } catch PiyokeyProAccessError.freeUserDeckLimitReached {
+        isSaving = false
+        shouldInstallAfterPurchase = true
+        showsPaywall = true
       } catch {
         isSaving = false
         coordinator.dismissCandidate(showNext: false)
@@ -951,7 +985,16 @@ struct PiyoDeckImportPreviewView: View {
           source: .created,
           contentSHA256: package.contentSHA256,
           packageFormatVersion: package.manifest.formatVersion,
-          isLocallyModified: true
+          isLocallyModified: true,
+          hasPiyokeyProAccess: purchaseStore.hasAccess
+        )
+        TelemetryService.shared.capture(
+          .deckMakerAction,
+          properties: [
+            .action: "copied",
+            .itemCountBucket: TelemetryService.shared.itemCountBucket(copy.items.count),
+            .deckSource: "created",
+          ]
         )
         isSaving = false
         coordinator.finishImport()
@@ -961,6 +1004,10 @@ struct PiyoDeckImportPreviewView: View {
         coordinator.reportSaveFailure()
       }
     }
+  }
+
+  private var canInstallNewDeck: Bool {
+    deckLibrary.canInstallNewUserDeck(hasPiyokeyProAccess: purchaseStore.hasAccess)
   }
 }
 
@@ -972,14 +1019,14 @@ extension PiyoDeckDocumentCoordinator {
 
 struct PiyoDeckActivityView: UIViewControllerRepresentable {
   let artifact: PiyoDeckExportArtifact
-  let onComplete: () -> Void
+  let onComplete: (Bool) -> Void
 
   func makeUIViewController(context: Context) -> UIActivityViewController {
     let controller = UIActivityViewController(
       activityItems: [artifact.url],
       applicationActivities: nil
     )
-    controller.completionWithItemsHandler = { _, _, _, _ in onComplete() }
+    controller.completionWithItemsHandler = { _, completed, _, _ in onComplete(completed) }
     return controller
   }
 

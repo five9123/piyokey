@@ -39,6 +39,49 @@ class WorkspaceDoctorTests(unittest.TestCase):
             workspace_doctor.branch_status("codex/123-device-setup")[0], "PASS"
         )
 
+    def test_issue_from_branch_reads_codex_issue_number(self):
+        self.assertEqual(
+            workspace_doctor.issue_from_branch("codex/59-project-reorganization"),
+            59,
+        )
+        self.assertIsNone(workspace_doctor.issue_from_branch("main"))
+
+    def test_ownership_status_requires_matching_issue_branch_and_worktree(self):
+        with tempfile.TemporaryDirectory() as directory:
+            worktree = Path(directory)
+            metadata = {
+                "schema_version": 1,
+                "issue": 59,
+                "owner": "codex-task",
+                "branch": "codex/59-project-reorganization",
+                "worktree": str(worktree),
+            }
+            self.assertEqual(
+                workspace_doctor.ownership_status(
+                    "codex/59-project-reorganization", worktree, metadata
+                )[0],
+                "PASS",
+            )
+            metadata["issue"] = 58
+            self.assertEqual(
+                workspace_doctor.ownership_status(
+                    "codex/59-project-reorganization", worktree, metadata
+                )[0],
+                "FAIL",
+            )
+
+    def test_ownership_status_warns_when_unclaimed(self):
+        self.assertEqual(
+            workspace_doctor.ownership_status("codex/59-task", ROOT, None)[0],
+            "WARN",
+        )
+
+    def test_ownership_status_accepts_unclaimed_main_baseline(self):
+        self.assertEqual(
+            workspace_doctor.ownership_status("main", ROOT, None)[0],
+            "PASS",
+        )
+
     def test_python_version_requires_3_11(self):
         self.assertEqual(workspace_doctor.python_version_status((3, 10, 9))[0], "FAIL")
         self.assertEqual(workspace_doctor.python_version_status((3, 11, 0))[0], "PASS")

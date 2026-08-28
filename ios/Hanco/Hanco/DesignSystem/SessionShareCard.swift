@@ -149,6 +149,7 @@ struct SessionShareButton: View {
 
   let model: SessionShareCardModel
   let accessibilityIdentifier: String
+  let analyticsGameMode: String?
 
   @State private var artifact: SessionShareArtifact?
   @State private var cachedArtifact: SessionShareArtifact?
@@ -157,6 +158,16 @@ struct SessionShareButton: View {
   @State private var activeWork: Work?
   @State private var preparationGate = SessionShareSingleFlightGate()
   @State private var preparationTask: Task<Void, Never>?
+
+  init(
+    model: SessionShareCardModel,
+    accessibilityIdentifier: String,
+    analyticsGameMode: String? = nil
+  ) {
+    self.model = model
+    self.accessibilityIdentifier = accessibilityIdentifier
+    self.analyticsGameMode = analyticsGameMode
+  }
 
   var body: some View {
     VStack(spacing: 7) {
@@ -216,7 +227,9 @@ struct SessionShareButton: View {
       }
     }
     .sheet(item: $artifact) { artifact in
-      SessionActivityView(artifact: artifact)
+      SessionActivityView(artifact: artifact) { completed in
+        if completed { captureCompletion(action: "shared") }
+      }
         .ignoresSafeArea()
     }
     .onDisappear {
@@ -249,6 +262,7 @@ struct SessionShareButton: View {
       switch work {
       case .save:
         saveResult = await SessionShareImageSaver.save(preparedArtifact.pngData)
+        if saveResult == .saved { captureCompletion(action: "saved_image") }
       case .share:
         artifact = preparedArtifact
       }
@@ -276,6 +290,12 @@ struct SessionShareButton: View {
     case .permissionDenied: "result.share.permission_denied"
     case .failed: "result.share.save_failed"
     }
+  }
+
+  private func captureCompletion(action: String) {
+    var properties: [AnalyticsProperty: Any] = [.action: action]
+    if let analyticsGameMode { properties[.gameMode] = analyticsGameMode }
+    TelemetryService.shared.capture(.shareCompleted, properties: properties)
   }
 }
 
@@ -464,15 +484,20 @@ struct SessionShareArtifact: Identifiable {
 
 private struct SessionActivityView: UIViewControllerRepresentable {
   let artifact: SessionShareArtifact
+  let onComplete: (Bool) -> Void
 
   func makeUIViewController(context: Context) -> UIActivityViewController {
-    UIActivityViewController(
+    let controller = UIActivityViewController(
       activityItems: [
         SessionShareImageSource(image: artifact.image, pngData: artifact.pngData),
         artifact.caption,
       ],
       applicationActivities: nil
     )
+    controller.completionWithItemsHandler = { _, completed, _, _ in
+      onComplete(completed)
+    }
+    return controller
   }
 
   func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}

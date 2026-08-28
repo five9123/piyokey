@@ -1,0 +1,34 @@
+<resources>
+  <string name="retention_my_piyo">MY Piyo</string>
+  <string name="retention_stamp_completed">completed</string>
+  <string name="retention_stamp_missed">missed</string>
+  <string name="retention_stamp_today">today, not completed</string>
+  <string name="retention_stamp_upcoming">upcoming</string>
+  <string name="retention_week_progress">This week %1$d/7 · %2$d-day streak</string>
+  <string name="retention_daily_cta">Daily 3-minute challenge</string>
+  <string name="home_quick_piyo_cup_title">Weekly Piyo Cup</string>
+  <string name="home_quick_piyo_cup_detail">Jump into a 60-second run</string>
+  <string name="home_quick_random_title">5 random words</string>
+  <string name="home_quick_random_detail">A quick mix picked for you</string>
+  <string name="home_quick_random_retry">Try 5 new words</string>
+  <string name="retention_current_streak">Current</string><string name="retention_longest_streak">Longest</string><string name="retention_total_stamps">Stamps</string><string name="retention_rewards">7-day rewards</string><string name="retention_reward_unlocked">%1$d days ✓</string><string name="retention_reward_locked">%1$d days</string>
+  <string-array name="retention_encouragements"><item>Let’s start together today, piyo!</item><item>Three minutes is enough to grow.</item><item>Your fingers remember every try!</item><item>Keep the streak warm today!</item><item>One word at a time is perfect.</item><item>Great work today, piyo!</item><item>Today’s stamp looks wonderful!</item><item>Your streak is shining!</item><item>Welcome back, I missed you!</item><item>Starting again is always a win.</item></string-array>
+  <string-array name="retention_weekdays"><item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item></string-array>
+  <string name="curriculum_title">Learn step by step</string>
+  <string name="curriculum_subtitle">Master the keyboard, syllables, words, and sentences.</string>
+  <string name="curriculum_chapter">Chapter %1$d · %2$s</string>
+  <string name="curriculum_chapter_1">Basic consonants</string><string name="curriculum_chapter_2">Basic vowels</string><string name="curriculum_chapter_3">Build syllables</string><string name="curriculum_chapter_4">Batchim</string><string name="curriculum_chapter_5">Words</string><string name="curriculum_chapter_6">Sentences</string>
+  <string name="curriculum_stage_consonants">Find consonant keys</string><string name="curriculum_stage_vowels">Find vowel keys</string><string name="curriculum_stage_syllables">Combine syllables</string><string name="curriculum_stage_batchim">Type final consonants</string><string name="curriculum_stage_words">Everyday words</string><string name="curriculum_stage_spacing">Practice one space</string><string name="curriculum_stage_sentences">Greetings and daily sentences</string>
+  <string name="curriculum_item_count">%1$d questions · clear at 80%%</string>
+  <string name="curriculum_locked">Locked lesson</string>
+  <string name="curriculum_resume">Continue where you stopped</string>
+  <string name="curriculum_free_practice">Free practice with my decks</string>
+  <string name="review_title">Review deck</string><string name="review_count">%1$d words to review</string><string name="review_empty">Mistyped words will appear here automatically.</string><string name="review_start">Start review practice</string><string name="review_progress">Perfect %1$d/%2$d</string><string name="review_remove">Remove</string>
+  <string name="review_add_manually">Add a word</string><string name="review_choose_word">Choose from my decks</string>
+  <string name="reminder_title">Daily reminder</string><string name="reminder_default_off">Allow notifications for a daily 20:00 local-time reminder. You can change the time.</string><string name="reminder_time">Local time %1$02d:%2$02d</string><string name="reminder_choose_time">Choose reminder time</string>
+  <string name="action_save">Save</string><string name="action_cancel">Cancel</string>
+  <string name="retention_piyo_accessibility">My Piyo character</string>
+  <string name="wardrobe_title">Piyo wardrobe</string><string name="wardrobe_preview">Final Piyo appearance preview</string>
+  <string name="wardrobe_auto">Auto · growth look</string><string name="wardrobe_none">No accessory</string>
+  <string name="wardrobe_ribbon">Streak ribbon</string><string name="wardrobe_beret">Star beret</string><string name="wardrobe_bow">Rainbow bow</string><string name="wardrobe_topik_glasses">TOPIK glasses</string><string name="wardrobe_trophy">Champion trophy</string>
+</resources>

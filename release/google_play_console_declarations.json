@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "status": "operator_review_required_not_applied",
+  "generated_at": "2026-08-27T00:00:00+09:00",
+  "source_candidate": {
+    "application_id": "app.piyokey.piyokey",
+    "version_name": "1.1.0",
+    "version_code": 8
+  },
+  "app_access": {
+    "all_features_available_without_developer_account": true,
+    "restricted_access_credentials_required": false,
+    "optional_google_play_games_sign_in": true,
+    "notes": "Play Games sign-in is user initiated from an eligible result screen; lessons, decks, games, and local progress remain usable while signed out."
+  },
+  "ads": {
+    "contains_ads": false,
+    "advertising_sdk_present": false,
+    "advertising_id_permission_expected": false
+  },
+  "target_audience_draft": {
+    "operator_confirmation_required": true,
+    "recommended_age_groups": ["13-15", "16-17", "18+"],
+    "designed_for_children": false,
+    "basis": "The product is a reading-intensive Korean typing and TOPIK learning tool, is not marketed to children, and has no child-directed characters, ads, social feed, or account system."
+  },
+  "content_rating_draft": {
+    "operator_confirmation_required": true,
+    "app_or_game": "APP",
+    "category": "EDUCATION",
+    "contains_in_app_purchases": true,
+    "violence": false,
+    "fear_or_horror": false,
+    "sexual_content_or_nudity": false,
+    "profanity_or_crude_humor": false,
+    "controlled_substances": false,
+    "gambling_or_simulated_gambling": false,
+    "unrestricted_web_access": false,
+    "user_to_user_content_exchange": false,
+    "notes": "Play Games exposes scores and achievements but the app has no chat, public profile editor, social feed, or public user-deck upload. Confirm the current IARC wording in Console before submission."
+  },
+  "data_safety_evidence": {
+    "operator_confirmation_required": true,
+    "tracking": false,
+    "analytics_sdk_present": false,
+    "advertising_sdk_present": false,
+    "developer_account_system_present": false,
+    "local_only_data": [
+      "learning progress and streaks",
+      "downloaded and imported deck payloads",
+      "personal deck drafts",
+      "review items and game history",
+      "cached one-time purchase entitlement"
+    ],
+    "off_device_boundaries": [
+      {
+        "service": "Static HTTPS catalog host",
+        "trigger": "App launch refresh and official deck download",
+        "payload": "HTTP request metadata plus catalog/deck resource path; no learning record or personal deck content",
+        "final_declaration": "Confirm the selected production host's IP/log retention and service-provider terms before answering Data safety."
+      },
+      {
+        "service": "Google Play Billing Library 9.1.0",
+        "trigger": "Foreground product and purchase-state query, purchase, or restore",
+        "payload": "Google Play product and purchase transaction data; the app retains only entitlement state and purchase-token handling locally and has no receipt server",
+        "final_declaration": "Apply Google Play's payment-processing exception only if the final integration meets every condition in the Data safety instructions."
+      },
+      {
+        "service": "Google Play Games Services v2 22.0.0",
+        "trigger": "Configured build checks authentication; sign-in and leaderboard opening are user initiated; eligible local scores and achievements sync when authenticated",
+        "payload": "Play Games player authentication state, eligible score values, and achievement progress",
+        "final_declaration": "Review the SDK Index/provider disclosure for the exact shipped SDK and declare all SDK collection or sharing required by the current form."
+      },
+      {
+        "service": "User-selected mail or browser app",
+        "trigger": "User opens feedback, support, or privacy",
+        "payload": "Feedback draft may contain app version, language, screen source, and official deck ID; the user reviews and sends it outside PIYOKEY",
+        "final_declaration": "Treat as a user-initiated external action and keep the public privacy notice aligned."
+      }
+    ],
+    "security_answers": {
+      "data_encrypted_in_transit": true,
+      "user_can_request_developer_account_deletion": "not_applicable_no_developer_account",
+      "local_data_deletion": "Android clear-storage or uninstall, plus in-app user-deck delete/export flows"
+    },
+    "final_collects_or_shares_answer": "UNRESOLVED_UNTIL_PRODUCTION_HOST_AND_SDK_DISCLOSURES_ARE_REVIEWED"
+  },
+  "permissions_expected_in_merged_release_manifest": [
+    "android.permission.INTERNET",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "android.permission.WRITE_EXTERNAL_STORAGE:maxSdkVersion=28",
+    "com.android.vending.BILLING"
+  ],
+  "permissions_prohibited": [
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.MANAGE_EXTERNAL_STORAGE",
+    "com.google.android.gms.permission.AD_ID"
+  ],
+  "official_references": [
+    "https://support.google.com/googleplay/android-developer/answer/10787469?hl=en",
+    "https://developers.google.com/android/guides/play-data-disclosure",
+    "https://support.google.com/googleplay/android-developer/answer/9867159?hl=en",
+    "https://support.google.com/googleplay/android-developer/answer/9859655?hl=en"
+  ]
+}

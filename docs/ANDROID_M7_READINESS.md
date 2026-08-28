@@ -1,16 +1,19 @@
 # Android M7 착수 준비 현황
 
-기준일: 2026-08-23 (JST)
+기준일: 2026-08-27 (JST)
 
 ## 결론
 
 M7의 문서상 HOLD는 사용자의 명시적 요청으로 해제했다. Android는 현재 로컬
 iOS 1.1 build 7과 PRD v5.8, `shared/` 계약을 포팅 기준으로 사용한다. A0 골격과
-M1 공용 코어는 완료했고 M2 내장 키보드·연습 기능 베이스도 구현했다. M2는 코드와
-에뮬레이터 흐름·다중 MotionEvent 계측 하네스 검증을 통과했지만 실제 기기의 입력
-지연과 동시 두 손가락 입력 게이트가 남아 있어 전체 완료로 닫지 않는다. 중앙 저장소 협업이나 Google Play
-외부 상태를 만들기 전에는 현재 대규모 미커밋 작업을 review 가능한 baseline으로
-선별 이전해야 한다.
+M1 공용 코어부터 M5 커리큘럼·리텐션까지 중앙 저장소 `main`에 반영했다. M6A는
+온보딩·설정·OS IME 기반을 구현했고 M6B는 나머지 다섯 게임과 번들 콘텐츠 계약을
+완성했다. M6C는 오프라인 발음·효과음, 결과 공유, 성장 피요·옷장,
+adaptive icon과 접근성 폴리싱을 구현해 API 35 자동 회귀와 Release 빌드를 통과했다.
+출시 전 공용 light/dark 테마·벡터 아이콘·큰 글자 화면을 추가로 정리했고,
+Google Play용 en-US·ja·ko listing 초안과 아이콘·피처 그래픽도 저장소 계약으로
+준비했다. 사용자의 요청에 따라 입력 지연·실제 두 손가락·알림 수신·외부 음악·IME
+종류별 확인은 기능 개발을 막지 않고 출시 후보 통합 실기기 QA에 유지한다.
 
 공개 App Store lookup으로 일본 storefront의 iOS 1.0.2가 2026-08-18에 출시된
 상태를 확인했다. 저장소의 제출 문서는 아직 build 6 심사 대기 기록이라 운영
@@ -45,11 +48,16 @@ M1 공용 코어는 완료했고 M2 내장 키보드·연습 기능 베이스도
 | Android Studio | 미설치 | CLI와 wrapper, 기존 API 35 AVD로 M2 구현·화면 검증 가능. 장기 개발 환경에는 안정 채널 설치 필요 |
 | Android 골격 | 완료 | `:app`, 순수 core 4개, `:feature:practice`, Gradle 9.5 wrapper와 version catalog |
 | Android M1 검증 | 완료 | Kotlin 35 tests, Hangul line 99.68%·branch 95.78%, lintDebug·assembleDebug 통과 |
-| Android M2 기능 베이스 | 코드·계측 하네스 완료, 실기기 gate 열림 | session 12 tests, keyboard 8 tests, API 35 자동 MotionEvent/frame-commit 1 pass·물리 gate 1 skip, feature lint 0 |
+| Android M2 기능 베이스 | 자동 완료·실기기 gate 이관 | session/keyboard 자동 회귀와 API 35 MotionEvent/frame-commit 통과. 정량 물리 gate는 출시 후보 QA에 유지 |
+| Android M3~M5 | 완료 | 정적 카탈로그·원자 복구·발견, 흐름 게임·공통 결과, 커리큘럼·복습·스트릭·데일리·리마인더 |
+| Android M6A | 구현·자동 검증 완료 | F1 온보딩, F2a 연습 OS IME, F10 설정, ja/en/ko, API 35 앱 회귀, lint, Debug/Release APK |
+| Android M6B | 구현·자동 검증 완료 | F6~F6e 여섯 게임, 15×100 프리셋, 받아쓰기 MP3, 띄어쓰기 6글, 게임 OS IME, API 35 회귀 |
+| Android M6C | 구현·자동 검증 완료 | F8~F12 오디오·공유 PNG·성장 피요/옷장·adaptive icon·접근성, API 35 회귀와 Release APK |
 | 교차 플랫폼 package | 완료 | canonical 1,109 bytes writer 일치, pretty golden reader 수용, SHA·Unicode malicious golden 거부 |
 | application ID | 후보 | `app.piyokey.piyokey`; Play Console 충돌 확인과 사용자 확정 전 외부 사용 금지 |
-| source baseline | 차단 | main commit 1개, remote 없음, 대규모 modified/deleted/untracked 상태. 기존 변경을 임의 commit하지 않음 |
-| Google Play 상태 | 미착수 | 앱 생성·서명·Play Games·Billing 상품 생성 모두 별도 외부 gate |
+| source baseline | 완료 | private GitHub 원격, Issue/Project/PR/CI와 Issue별 `codex/` 브랜치 운용. 사용자 원본 dirty worktree는 별도 보존 |
+| Google Play listing 소스 | 자동 완료 | en-US·ja·ko 문구, 512 아이콘, 1024×500 무알파 피처 그래픽과 preflight 계약 |
+| Google Play Console | 미착수 | 앱 ID 소유권·서명·Play Games·Billing·정책 설문·스크린샷은 별도 외부 gate |
 
 ## 구현 순서
 
@@ -60,16 +68,17 @@ M1 공용 코어는 완료했고 M2 내장 키보드·연습 기능 베이스도
    test-only 계측 하네스까지 준비했으며 실제 기기에서 warm-up 20·측정 100의
    frame-commit p95와 동시 2-pointer gate를 통과한 뒤 완료로 닫는다. OS IME adapter는
    PRD §13 순서대로 M6에 구현한다.
-4. M3~M5: 정적 카탈로그·설치/복구, 게임, 커리큘럼·복습·스트릭.
-5. M6 parity: ja/en/ko, 581 MP3, 설정·공유·성장·접근성.
+4. M3~M5 완료: 정적 카탈로그·설치/복구, 흐름 게임, 커리큘럼·복습·스트릭.
+5. M6 기능 구현 완료: M6A 온보딩·설정·연습 OS IME, M6B 여섯 게임·게임 OS IME,
+   M6C 효과음·발음·공유·성장/옷장·접근성·브랜딩을 자동 검증했다.
 6. M7 release: Play Billing/Play Games adapter, API 26/36/37 호환, Pixel 6
    60fps·오디오 혼합·파일 가져오기 실기기 gate.
 
 각 단계는 화면 복제보다 공용 계약 통과를 먼저 완료한다. 세션 중에는 파일,
 결제, IME 설정, 랭킹 인증, 오류 모달을 열지 않는다.
 
-M2 다음 기능인 M3는 시작하지 않았다. 현재 A0+M1+M2 증분을 중앙 저장소 전용
-브랜치로 선별 이전하고 review한 뒤 다음 범위를 시작한다.
+M6A 뒤에도 기기 수동 QA를 요구하지 않는 기능 묶음을 연속 구현한다. 기능·자동
+출시 검증이 모두 끝난 뒤에만 통합 실기기 체크리스트를 사용자에게 전달한다.
 
 ## 확정한 Android 경계
 
@@ -93,11 +102,12 @@ M2 다음 기능인 M3는 시작하지 않았다. 현재 A0+M1+M2 증분을 중�
    현재 기기는 API 37.0 설치와 debug build를 완료했다.
 3. `app.piyokey.piyokey` 사용 가능 여부를 Play Console에서 확인한 뒤 최종 ID를
    확정한다.
-4. Android Studio와 JDK 17, API 26 최소 OS 기기/에뮬레이터, Pixel 6 성능 기기를
-   준비한다. 우선 API 29+ 실기기를 연결해 M2 하네스의 runner argument를 켜고
-   touch-down→frame-commit proxy p95 50ms 이하와 실제 동시 2-pointer rollover를
-   측정한다. JSON 원시 표본과 기기/API/Hz를 증거로 보존한다.
+4. 출시 후보 단계에 API 26 최소 OS, target API, 실제 Galaxy 입력·IME·오디오·알림,
+   60fps 성능을 하나의 통합 QA로 실행하고 원시 증거를 보존한다.
 5. iOS 1.1의 아직 열린 IAP·콘텐츠 권리·실기기 gate를 Android 출시 계획과
    함께 다시 동결한다.
-6. shared 3D 원본으로 Android adaptive launcher icon을 생성·검증한다. A0 debug
-   앱은 아직 launcher icon을 선언하지 않아 lint warning을 유지한다.
+6. Android launcher/adaptive icon은 공용 1024 RGB 원본을 빌드 생성 리소스로
+   사용한다. Play Console 등록 전 실제 런처 마스크별 시각 확인만 통합 QA에 남긴다.
+7. 최종 서명 후보가 고정된 뒤 그 빌드에서 en-US·ja·ko 1080×1920 전화
+   스크린샷 4장씩을 캡처하고 `release/google_play_metadata.json`의 보류 상태를
+   실제 Console 기록과 함께 갱신한다.

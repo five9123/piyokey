@@ -1,3 +1,4 @@
+import DeckKit
 import SwiftUI
 
 struct DailyChallenge: Equatable, Identifiable {
@@ -5,6 +6,208 @@ struct DailyChallenge: Equatable, Identifiable {
   let items: [CurriculumItem]
 
   var id: JSTDay { day }
+}
+
+struct RandomWordPracticeSource: Equatable {
+  let item: DeckItem
+  let sourceDeckID: String
+  let sourceTags: [String]
+
+  var wordKey: String {
+    item.ko.precomposedStringWithCanonicalMapping
+  }
+}
+
+struct RandomWordPracticeSession: Equatable, Identifiable {
+  let id: UUID
+  let sources: [RandomWordPracticeSource]
+
+  init(id: UUID = UUID(), sources: [RandomWordPracticeSource]) {
+    self.id = id
+    self.sources = sources
+  }
+
+  var wordKeys: [String] { sources.map(\.wordKey) }
+}
+
+struct RandomWordPracticeHistory {
+  static let storageKey = "retention.random_word_practice.recent_words"
+  static let maximumCount = 20
+
+  private let defaults: UserDefaults
+
+  init(defaults: UserDefaults = .standard) {
+    self.defaults = defaults
+  }
+
+  var recentWordKeys: [String] {
+    defaults.stringArray(forKey: Self.storageKey) ?? []
+  }
+
+  func record(_ session: RandomWordPracticeSession) {
+    var updated = recentWordKeys
+    for key in session.wordKeys {
+      updated.removeAll { $0 == key }
+      updated.append(key)
+    }
+    defaults.set(Array(updated.suffix(Self.maximumCount)), forKey: Self.storageKey)
+  }
+}
+
+enum RandomWordPracticeCatalog {
+  static let itemCount = 5
+
+  static func fallbackDeckID(for goal: OnboardingGoal?) -> String {
+    switch goal {
+    case .keyboard: "official_keyboard_start"
+    case .travel: "official_daily_words"
+    case .topik, .none: "official_topik_one"
+    case .trends: "official_trending_korean"
+    }
+  }
+
+  static func bundledFallbackDecks(
+    goal: OnboardingGoal?,
+    catalog: Catalog?,
+    bundle: Bundle = .main
+  ) -> [Deck] {
+    var decks: [Deck] = []
+    let goalDeckID = fallbackDeckID(for: goal)
+    if let entry = catalog?.decks.first(where: { $0.deckId == goalDeckID }),
+      let deck = loadBundledDeck(entry, bundle: bundle)
+    {
+      decks.append(deck)
+    }
+    if let piyoCupDeck = PiyoCupDeckLoader.load(bundle: bundle),
+      !decks.contains(where: { $0.deckId == piyoCupDeck.deckId })
+    {
+      decks.append(piyoCupDeck)
+    }
+    return decks
+  }
+
+  static func makeSession(
+    installedDecks: [Deck],
+    fallbackDecks: [Deck],
+    preferredTags: [String],
+    recentWordKeys: [String],
+    limit: Int = itemCount
+  ) -> RandomWordPracticeSession? {
+    var generator = SystemRandomNumberGenerator()
+    return makeSession(
+      installedDecks: installedDecks,
+      fallbackDecks: fallbackDecks,
+      preferredTags: preferredTags,
+      recentWordKeys: recentWordKeys,
+      limit: limit,
+      using: &generator
+    )
+  }
+
+  static func makeSession<R: RandomNumberGenerator>(
+    installedDecks: [Deck],
+    fallbackDecks: [Deck],
+    preferredTags: [String],
+    recentWordKeys: [String],
+    limit: Int = itemCount,
+    using generator: inout R
+  ) -> RandomWordPracticeSession? {
+    guard limit > 0 else { return nil }
+    let preferredTagSet = Set(preferredTags)
+    let eligibleInstalledDecks = installedDecks.filter { $0.official && $0.type == .word }
+    let preferredDecks = eligibleInstalledDecks.filter {
+      !preferredTagSet.isDisjoint(with: $0.tags)
+    }
+    let otherInstalledDecks = eligibleInstalledDecks.filter { deck in
+      !preferredDecks.contains(where: { $0.deckId == deck.deckId })
+    }
+    let installedDeckIDs = Set(eligibleInstalledDecks.map(\.deckId))
+    let eligibleFallbackDecks = fallbackDecks.filter {
+      $0.official && $0.type == .word && !installedDeckIDs.contains($0.deckId)
+    }
+
+    let tiers = [preferredDecks, otherInstalledDecks, eligibleFallbackDecks]
+      .map { sources(from: $0) }
+    let recent = Set(recentWordKeys)
+    var selected: [RandomWordPracticeSource] = []
+    var selectedWordKeys: Set<String> = []
+    var deferredRecent: [[RandomWordPracticeSource]] = []
+
+    for tier in tiers {
+      var shuffled = tier
+      shuffled.shuffle(using: &generator)
+      deferredRecent.append(shuffled.filter { recent.contains($0.wordKey) })
+      appendUnique(
+        shuffled.filter { !recent.contains($0.wordKey) },
+        to: &selected,
+        selectedWordKeys: &selectedWordKeys,
+        limit: limit
+      )
+      if selected.count == limit { break }
+    }
+
+    if selected.count < limit {
+      for tier in deferredRecent {
+        appendUnique(
+          tier,
+          to: &selected,
+          selectedWordKeys: &selectedWordKeys,
+          limit: limit
+        )
+        if selected.count == limit { break }
+      }
+    }
+
+    guard selected.count == limit else { return nil }
+    return RandomWordPracticeSession(sources: selected)
+  }
+
+  private static func sources(from decks: [Deck]) -> [RandomWordPracticeSource] {
+    decks.flatMap { deck in
+      deck.items.compactMap { item in
+        guard isSingleWord(item.ko) else { return nil }
+        return RandomWordPracticeSource(
+          item: item,
+          sourceDeckID: deck.deckId,
+          sourceTags: deck.tags
+        )
+      }
+    }
+  }
+
+  private static func isSingleWord(_ target: String) -> Bool {
+    !target.isEmpty && target.rangeOfCharacter(from: .whitespacesAndNewlines) == nil
+  }
+
+  private static func appendUnique(
+    _ candidates: [RandomWordPracticeSource],
+    to selected: inout [RandomWordPracticeSource],
+    selectedWordKeys: inout Set<String>,
+    limit: Int
+  ) {
+    for candidate in candidates where selected.count < limit {
+      if selectedWordKeys.insert(candidate.wordKey).inserted {
+        selected.append(candidate)
+      }
+    }
+  }
+
+  private static func loadBundledDeck(_ entry: CatalogDeck, bundle: Bundle) -> Deck? {
+    guard entry.official,
+      !entry.fileUrl.contains(".."),
+      entry.fileUrl.hasPrefix("decks/"),
+      let resourceRoot = bundle.resourceURL
+    else { return nil }
+    let url = resourceRoot.appendingPathComponent(entry.fileUrl).standardizedFileURL
+    guard url.path.hasPrefix(resourceRoot.standardizedFileURL.path + "/"),
+      let data = try? Data(contentsOf: url),
+      let deck = try? DeckKitJSON.decodeDeck(from: data),
+      deck.deckId == entry.deckId,
+      deck.version == entry.version,
+      DeckValidator.validate(deck).isEmpty
+    else { return nil }
+    return deck
+  }
 }
 
 enum DailyChallengeCatalog {
@@ -559,7 +762,66 @@ struct DailyChallengePracticeDestination: View {
       },
       onPracticeCompletion: { _, _ in
         retention.record(.dailyChallenge, on: challenge.day)
-      }
+      },
+      analyticsSessionKind: "daily",
+      analyticsDeckSource: "daily"
     )
+  }
+}
+
+struct RandomWordPracticeDestination: View {
+  @EnvironmentObject private var deckLibrary: DeckLibrary
+  @EnvironmentObject private var retention: RetentionLibrary
+  @EnvironmentObject private var onboarding: OnboardingLibrary
+
+  let catalog: Catalog?
+  @State private var session: RandomWordPracticeSession
+  @State private var retentionSession: RetentionSessionContext
+  private let history: RandomWordPracticeHistory
+
+  init(
+    initialSession: RandomWordPracticeSession,
+    catalog: Catalog?,
+    history: RandomWordPracticeHistory = RandomWordPracticeHistory()
+  ) {
+    self.catalog = catalog
+    self.history = history
+    _session = State(initialValue: initialSession)
+    _retentionSession = State(initialValue: RetentionSessionContext())
+  }
+
+  var body: some View {
+    PracticeView(
+      targets: session.sources.map(\.item.ko),
+      sessionTitle: AppLocalization.string("home.quick.random.session_title"),
+      reviewSources: session.sources.map {
+        PracticeReviewSource(item: $0.item, sourceDeckId: $0.sourceDeckID)
+      },
+      sourceTags: Array(Set(session.sources.flatMap(\.sourceTags))).sorted(),
+      catalogDecks: catalog?.decks ?? [],
+      onPracticeCompletion: { _, _ in
+        retention.record(.quickPractice, session: retentionSession)
+      },
+      onSessionRestart: startNextSession,
+      retryTitle: "home.quick.random.retry",
+      retrySystemImage: "shuffle"
+    )
+    .id(session.id)
+  }
+
+  private func startNextSession() {
+    let fallbackDecks = RandomWordPracticeCatalog.bundledFallbackDecks(
+      goal: onboarding.selectedGoal,
+      catalog: catalog
+    )
+    guard let nextSession = RandomWordPracticeCatalog.makeSession(
+      installedDecks: deckLibrary.installed,
+      fallbackDecks: fallbackDecks,
+      preferredTags: onboarding.preferredTags,
+      recentWordKeys: history.recentWordKeys
+    ) else { return }
+    history.record(nextSession)
+    retentionSession = RetentionSessionContext()
+    session = nextSession
   }
 }

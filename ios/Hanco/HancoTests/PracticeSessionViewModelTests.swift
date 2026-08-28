@@ -1,6 +1,6 @@
+import HangulEngine
 import UIKit
 import XCTest
-import HangulEngine
 
 @testable import Hanco
 
@@ -448,6 +448,161 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertTrue(KoreanKeyboardAvailability.containsKorean(languages: ["ko"]))
     XCTAssertFalse(
       KoreanKeyboardAvailability.containsKorean(languages: ["ja-JP", nil, "en-US"])
+    )
+  }
+
+  func testKorean10KeyGoldenRecipesCoverEveryCompatibilityJamo() {
+    let expected: [Character: [Korean10KeyKey]] = [
+      "ㄱ": [.giyeok], "ㅋ": [.giyeok, .giyeok],
+      "ㄲ": [.giyeok, .giyeok, .giyeok],
+      "ㄴ": [.nieun], "ㄹ": [.nieun, .nieun],
+      "ㄷ": [.digeut], "ㅌ": [.digeut, .digeut],
+      "ㄸ": [.digeut, .digeut, .digeut],
+      "ㅂ": [.bieup], "ㅍ": [.bieup, .bieup],
+      "ㅃ": [.bieup, .bieup, .bieup],
+      "ㅅ": [.siot], "ㅎ": [.siot, .siot],
+      "ㅆ": [.siot, .siot, .siot],
+      "ㅈ": [.jieut], "ㅊ": [.jieut, .jieut],
+      "ㅉ": [.jieut, .jieut, .jieut],
+      "ㅇ": [.ieung], "ㅁ": [.ieung, .ieung],
+      "ㅣ": [.vertical], "ㅡ": [.horizontal],
+      "ㅏ": [.vertical, .dot], "ㅑ": [.vertical, .dot, .dot],
+      "ㅓ": [.dot, .vertical], "ㅕ": [.dot, .dot, .vertical],
+      "ㅗ": [.dot, .horizontal], "ㅛ": [.dot, .dot, .horizontal],
+      "ㅜ": [.horizontal, .dot], "ㅠ": [.horizontal, .dot, .dot],
+      "ㅐ": [.vertical, .dot, .vertical],
+      "ㅒ": [.vertical, .dot, .dot, .vertical],
+      "ㅔ": [.dot, .vertical, .vertical],
+      "ㅖ": [.dot, .dot, .vertical, .vertical],
+      "ㅘ": [.dot, .horizontal, .vertical, .dot],
+      "ㅙ": [.dot, .horizontal, .vertical, .dot, .vertical],
+      "ㅚ": [.dot, .horizontal, .vertical],
+      "ㅝ": [.horizontal, .dot, .dot, .vertical],
+      "ㅞ": [.horizontal, .dot, .dot, .vertical, .vertical],
+      "ㅟ": [.horizontal, .dot, .vertical],
+      "ㅢ": [.horizontal, .vertical],
+      " ": [.space],
+    ]
+
+    XCTAssertEqual(expected.count, 41)
+    for (jamo, recipe) in expected {
+      XCTAssertEqual(Korean10KeyInterpreter.recipe(for: jamo), recipe, "recipe for \(jamo)")
+    }
+    XCTAssertNil(Korean10KeyInterpreter.recipe(for: "A"))
+  }
+
+  func testKorean10KeyEmitsOnlyCompletedJamoIntoSharedJudge() throws {
+    for target in ["가나", "꽤", "뼈", "휘", "의자", "언니", "띄어 쓰기", "외국"] {
+      let model = PracticeSessionViewModel(target: target)
+      var interpreter = Korean10KeyInterpreter()
+      for jamo in try JamoDecomposer.keySequence(for: target) {
+        let recipe = try XCTUnwrap(Korean10KeyInterpreter.recipe(for: jamo))
+        if interpreter.nextKey(for: model.nextExpectedKey) == .next {
+          XCTAssertEqual(
+            interpreter.input(.next, expecting: model.nextExpectedKey),
+            .separatorAccepted
+          )
+        }
+        for (index, key) in recipe.enumerated() {
+          let result = interpreter.input(key, expecting: model.nextExpectedKey)
+          if index == recipe.count - 1 {
+            guard case .committed(let emitted) = result else {
+              return XCTFail("Expected committed \(jamo), got \(result)")
+            }
+            XCTAssertEqual(emitted, jamo)
+            model.input(emitted)
+          } else if case .pending = result {
+            XCTAssertEqual(model.nextExpectedKey, jamo)
+          } else {
+            XCTFail("Recipe for \(jamo) committed too early")
+          }
+        }
+      }
+      XCTAssertTrue(model.isComplete, target)
+      XCTAssertEqual(model.enteredText, target)
+      XCTAssertEqual(model.mistakeCount, 0)
+    }
+  }
+
+  func testKorean10KeyBackspaceRewindsPendingStrokeBeforeHangul() {
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(
+      interpreter.input(.vertical, expecting: "ㅑ"),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      interpreter.input(.dot, expecting: "ㅑ"),
+      .pending(display: "ㅏ")
+    )
+    XCTAssertEqual(interpreter.backspace(), .pendingChanged(display: "ㅣ"))
+    XCTAssertEqual(interpreter.input(.dot, expecting: "ㅑ"), .pending(display: "ㅏ"))
+    XCTAssertEqual(interpreter.input(.dot, expecting: "ㅑ"), .committed("ㅑ"))
+    XCTAssertEqual(interpreter.backspace(), .forwardToHangulEngine)
+  }
+
+  func testKorean10KeyRequiresAdvanceBetweenConsecutiveConsonantsInSameGroup() {
+    let model = PracticeSessionViewModel(target: "언니")
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(interpreter.input(.ieung, expecting: model.nextExpectedKey), .committed("ㅇ"))
+    model.input("ㅇ")
+    XCTAssertEqual(
+      interpreter.input(.dot, expecting: model.nextExpectedKey),
+      .pending(display: "ㆍ")
+    )
+    XCTAssertEqual(interpreter.input(.vertical, expecting: model.nextExpectedKey), .committed("ㅓ"))
+    model.input("ㅓ")
+    XCTAssertEqual(interpreter.input(.nieun, expecting: model.nextExpectedKey), .committed("ㄴ"))
+    model.input("ㄴ")
+
+    XCTAssertEqual(model.nextExpectedKey, "ㄴ")
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .next)
+    XCTAssertEqual(
+      interpreter.input(.nieun, expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㄴ")
+    )
+    model.input("ㄹ")
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .next)
+    XCTAssertEqual(
+      interpreter.input(.next, expecting: model.nextExpectedKey),
+      .separatorAccepted
+    )
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .nieun)
+    XCTAssertEqual(
+      interpreter.input(.nieun, expecting: model.nextExpectedKey),
+      .committed("ㄴ")
+    )
+  }
+
+  func testKorean10KeyWrongGroupCountsOneMistakeAndResetsPendingRecipe() {
+    let model = PracticeSessionViewModel(target: "카")
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(
+      interpreter.input(.giyeok, expecting: model.nextExpectedKey),
+      .pending(display: "ㄱ")
+    )
+    XCTAssertEqual(
+      interpreter.input(.nieun, expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㅋ")
+    )
+    model.input("ㄴ")
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .giyeok)
+  }
+
+  func testBuiltInKeyboardLayoutUnknownValueFallsBackToDubeolsik() {
+    XCTAssertEqual(BuiltInKeyboardLayout.resolved(from: "future-layout"), .dubeolsik)
+    XCTAssertEqual(
+      BuiltInKeyboardLayout.resolved(from: BuiltInKeyboardLayout.korean10Key.rawValue),
+      .korean10Key
+    )
+    XCTAssertEqual(BuiltInKeyboardLayout.dubeolsik.gameRecordInputMode, .builtIn)
+    XCTAssertEqual(
+      BuiltInKeyboardLayout.korean10Key.gameRecordInputMode,
+      .builtInKorean10Key
     )
   }
 }

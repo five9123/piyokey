@@ -2,7 +2,6 @@ package app.piyokey.feature.practice
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -44,6 +44,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -91,16 +92,6 @@ fun DubeolsikKeyboard(
     isShifted = isShifted,
     enabled = options.showsKeyGuide,
   )
-  val guidePulse by rememberInfiniteTransition(label = "keyboard-guide").animateFloat(
-    initialValue = 0.34f,
-    targetValue = 0.78f,
-    animationSpec = infiniteRepeatable(
-      animation = tween(durationMillis = 1_000),
-      repeatMode = RepeatMode.Reverse,
-    ),
-    label = "keyboard-guide-alpha",
-  )
-
   val latestOnJamo = rememberUpdatedState(onJamo)
   val latestOnBackspace = rememberUpdatedState(onBackspace)
   val latestHapticsEnabled = rememberUpdatedState(options.hapticsEnabled)
@@ -131,7 +122,7 @@ fun DubeolsikKeyboard(
   Box(
     modifier = modifier
       .fillMaxWidth()
-      .background(KeyboardColors.KeyboardBackground)
+      .background(MaterialTheme.colorScheme.surfaceVariant)
       .padding(horizontal = 8.dp, vertical = 8.dp)
       .semantics { contentDescription = keyboardLabel },
   ) {
@@ -140,7 +131,6 @@ fun DubeolsikKeyboard(
         definitions = DubeolsikLayout.topRow,
         isShifted = isShifted,
         guide = guide,
-        guidePulse = guidePulse,
         pressedCounts = pressedCounts,
         targetRegistry = targetRegistry,
         options = options,
@@ -150,7 +140,6 @@ fun DubeolsikKeyboard(
         definitions = DubeolsikLayout.homeRow,
         isShifted = isShifted,
         guide = guide,
-        guidePulse = guidePulse,
         pressedCounts = pressedCounts,
         targetRegistry = targetRegistry,
         options = options,
@@ -167,7 +156,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_shift),
           action = Shift,
           highlighted = guide.highlightedAction == Shift,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Shift] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -182,7 +170,6 @@ fun DubeolsikKeyboard(
             accessibilityLabel = keyboardKeyDescription(definition, isShifted, options),
             action = action,
             highlighted = guide.highlightedAction == action,
-            guidePulse = guidePulse,
             pressed = (pressedCounts[action] ?: 0) > 0,
             targetRegistry = targetRegistry,
             onActivate = activationHandler.value,
@@ -194,7 +181,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_backspace),
           action = Backspace,
           highlighted = false,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Backspace] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -210,7 +196,6 @@ fun DubeolsikKeyboard(
           accessibilityLabel = stringResource(R.string.keyboard_space),
           action = Space,
           highlighted = guide.highlightedAction == Space,
-          guidePulse = guidePulse,
           pressed = (pressedCounts[Space] ?: 0) > 0,
           targetRegistry = targetRegistry,
           onActivate = activationHandler.value,
@@ -271,7 +256,6 @@ private fun KeyboardCharacterRow(
   definitions: List<JamoKeyDefinition>,
   isShifted: Boolean,
   guide: KeyboardGuideState,
-  guidePulse: Float,
   pressedCounts: Map<KeyboardAction, Int>,
   targetRegistry: KeyboardTouchTargetRegistry,
   options: PracticeKeyboardOptions,
@@ -290,7 +274,6 @@ private fun KeyboardCharacterRow(
         accessibilityLabel = keyboardKeyDescription(definition, isShifted, options),
         action = action,
         highlighted = guide.highlightedAction == action,
-        guidePulse = guidePulse,
         pressed = (pressedCounts[action] ?: 0) > 0,
         targetRegistry = targetRegistry,
         onActivate = onActivate,
@@ -320,7 +303,6 @@ private fun KeyboardKeycap(
   accessibilityLabel: String,
   action: KeyboardAction,
   highlighted: Boolean,
-  guidePulse: Float,
   pressed: Boolean,
   targetRegistry: KeyboardTouchTargetRegistry,
   onActivate: (KeyboardAction) -> Unit,
@@ -335,16 +317,13 @@ private fun KeyboardKeycap(
     animationSpec = tween(durationMillis = 60),
     label = "key-press",
   )
-  val elevation by animateDpAsState(
-    targetValue = if (highlighted) (5 + guidePulse * 7).dp else 2.dp,
-    animationSpec = tween(durationMillis = 120),
-    label = "key-guide-elevation",
-  )
+  val guidePulse = animatedKeyboardGuidePulse(highlighted)
+  val elevation = if (highlighted) (5 + guidePulse * 7).dp else 2.dp
   val shape = RoundedCornerShape(11.dp)
   val color = when {
-    highlighted -> KeyboardColors.GuideSoft
-    selected -> KeyboardColors.SelectedKey
-    else -> KeyboardColors.Key
+    highlighted -> MaterialTheme.colorScheme.secondaryContainer
+    selected -> MaterialTheme.colorScheme.primaryContainer
+    else -> MaterialTheme.colorScheme.surface
   }
 
   Surface(
@@ -354,10 +333,11 @@ private fun KeyboardKeycap(
       .shadow(
         elevation = elevation,
         shape = shape,
-        ambientColor = if (highlighted) KeyboardColors.Guide.copy(alpha = guidePulse) else Color.Black,
-        spotColor = if (highlighted) KeyboardColors.Guide.copy(alpha = guidePulse) else Color.Black,
+        ambientColor = if (highlighted) MaterialTheme.colorScheme.primary.copy(alpha = guidePulse) else Color.Black,
+        spotColor = if (highlighted) MaterialTheme.colorScheme.primary.copy(alpha = guidePulse) else Color.Black,
       )
       .onGloballyPositioned { targetRegistry.register(action, it.boundsInRoot()) }
+      .testTag("keyboard-key-${action.testId()}")
       .semantics {
         contentDescription = accessibilityLabel
         role = Role.Button
@@ -378,13 +358,13 @@ private fun KeyboardKeycap(
           Modifier
             .fillMaxWidth(0.34f)
             .height(4.dp)
-            .background(KeyboardColors.MutedInk.copy(alpha = 0.28f), RoundedCornerShape(99.dp)),
+            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.34f), RoundedCornerShape(99.dp)),
         )
       } else {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Text(
             text = title,
-            color = KeyboardColors.Ink,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 21.sp,
             fontWeight = FontWeight.SemiBold,
             lineHeight = KeyboardKeycapMetrics.MainLineHeightSp.sp,
@@ -395,7 +375,7 @@ private fun KeyboardKeycap(
           if (romanHint != null) {
             Text(
               text = romanHint,
-              color = KeyboardColors.MutedInk,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
               fontSize = 9.sp,
               fontWeight = FontWeight.Medium,
               lineHeight = KeyboardKeycapMetrics.RomanLineHeightSp.sp,
@@ -408,6 +388,29 @@ private fun KeyboardKeycap(
       }
     }
   }
+}
+
+private fun KeyboardAction.testId(): String = when (this) {
+  is JamoKey -> base.toString()
+  Backspace -> "backspace"
+  Shift -> "shift"
+  Space -> "space"
+}
+
+@Composable
+private fun animatedKeyboardGuidePulse(highlighted: Boolean): Float {
+  if (!highlighted) return 0f
+  val transition = rememberInfiniteTransition(label = "keyboard-guide")
+  val pulse by transition.animateFloat(
+    initialValue = 0.34f,
+    targetValue = 0.78f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 1_000),
+      repeatMode = RepeatMode.Reverse,
+    ),
+    label = "keyboard-guide-alpha",
+  )
+  return pulse
 }
 
 private class KeyboardTouchTargetRegistry {
@@ -450,14 +453,4 @@ private class KeyboardTouchTargetRegistry {
     val dy = maxOf(rect.top - point.y, 0f, point.y - rect.bottom)
     return dx * dx + dy * dy
   }
-}
-
-internal object KeyboardColors {
-  val KeyboardBackground = Color(0xFFF8F4FF)
-  val Key = Color(0xFFFFFFFF)
-  val SelectedKey = Color(0xFFE9E1FF)
-  val Guide = Color(0xFF7557FF)
-  val GuideSoft = Color(0xFFECE7FF)
-  val Ink = Color(0xFF242034)
-  val MutedInk = Color(0xFF716B7C)
 }

@@ -8,6 +8,11 @@ struct DailyReminderPreference: Equatable {
   var minute: Int
 }
 
+enum DailyReminderDefaults {
+  static let localWorkdayEndHour = 20
+  static let minute = 0
+}
+
 struct DailyReminderSettingsStore {
   static let enabledKey = "retention.reminder.enabled"
   static let hourKey = "retention.reminder.hour"
@@ -23,9 +28,9 @@ struct DailyReminderSettingsStore {
     DailyReminderPreference(
       isEnabled: defaults.bool(forKey: Self.enabledKey),
       hour: defaults.object(forKey: Self.hourKey) == nil
-        ? 20 : defaults.integer(forKey: Self.hourKey),
+        ? DailyReminderDefaults.localWorkdayEndHour : defaults.integer(forKey: Self.hourKey),
       minute: defaults.object(forKey: Self.minuteKey) == nil
-        ? 0 : defaults.integer(forKey: Self.minuteKey)
+        ? DailyReminderDefaults.minute : defaults.integer(forKey: Self.minuteKey)
     )
   }
 
@@ -60,8 +65,6 @@ enum DailyReminderRequest {
 
   static func dateComponents(hour: Int, minute: Int) -> DateComponents {
     var components = DateComponents()
-    components.calendar = RetentionCalendar.jst
-    components.timeZone = RetentionCalendar.jst.timeZone
     components.hour = hour
     components.minute = minute
     return components
@@ -165,6 +168,16 @@ final class DailyReminderLibrary: ObservableObject {
       guard !Task.isCancelled else { return }
       apply(result)
     }
+  }
+
+  @discardableResult
+  func enableFromOnboarding() async -> DailyReminderScheduleResult {
+    schedulingTask?.cancel()
+    status = .scheduling
+    let result = await scheduler.schedule(hour: preference.hour, minute: preference.minute)
+    guard !Task.isCancelled else { return .failed }
+    apply(result)
+    return result
   }
 
   func setTime(hour: Int, minute: Int) {

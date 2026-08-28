@@ -201,6 +201,7 @@ enum RetentionActivityKind: String, Codable, CaseIterable, Hashable {
   case curriculum
   case game
   case dailyChallenge = "daily_challenge"
+  case quickPractice = "quick_practice"
 }
 
 struct RetentionDayRecord: Codable, Equatable, Identifiable {

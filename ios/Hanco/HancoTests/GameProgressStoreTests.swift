@@ -140,6 +140,14 @@ final class GameProgressStoreTests: XCTestCase {
     _ = try store.append(
       makeRecord(score: 900, accuracy: 95, playedAt: date(2), inputMode: .osIME)
     )
+    _ = try store.append(
+      makeRecord(
+        score: 800,
+        accuracy: 92,
+        playedAt: date(3),
+        inputMode: .builtInKorean10Key
+      )
+    )
     let library = GameProgressLibrary(store: store)
 
     XCTAssertEqual(
@@ -149,6 +157,13 @@ final class GameProgressStoreTests: XCTestCase {
     XCTAssertEqual(
       library.progress(for: "official_daily_words", inputMode: .osIME)?.bestScore,
       900
+    )
+    XCTAssertEqual(
+      library.progress(
+        for: "official_daily_words",
+        inputMode: .builtInKorean10Key
+      )?.bestScore,
+      800
     )
   }
 

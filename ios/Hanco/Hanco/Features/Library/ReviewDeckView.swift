@@ -78,7 +78,9 @@ struct ReviewDeckView: View {
         sessionTitle: AppLocalization.string("review.deck.title"),
         reviewSources: reviewDeck.activeItems.map {
           PracticeReviewSource(item: $0.deckItem, sourceDeckId: $0.sourceDeckId)
-        }
+        },
+        analyticsSessionKind: "review",
+        analyticsDeckSource: "review"
       )
     } label: {
       Label("review.deck.start", systemImage: "play.fill")

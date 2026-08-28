@@ -31,6 +31,9 @@ final class HancoUITests: XCTestCase {
     if name.contains("testR11RestoredDraft") {
       app.launchEnvironment["UITEST_SEED_USER_DECK_DRAFT"] = "1"
     }
+    if name.contains("testKorean10KeyLayoutCarriesInto") {
+      app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    }
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
   }
@@ -80,6 +83,90 @@ final class HancoUITests: XCTestCase {
     waitForValue("1 / 4 音節完了", on: target, timeout: 3)
     waitForValue("2 / 9", on: jamoProgress, timeout: 3)
     attachScreenshot(named: "practice-syllable-success-ja")
+  }
+
+  func testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments += ["-settings.font_scale", "large"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openFreePracticeSetup()
+    let layoutPicker = element("settings.builtin_keyboard_layout")
+    scrollToHittable(layoutPicker)
+    layoutPicker.tap()
+    app.buttons["韓国語10キー（天地人式）"].tap()
+    let start = app.buttons["practice.start"]
+    scrollToHittable(start)
+    start.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+
+    let vertical = app.buttons["keyboard.10key.vertical"]
+    let dot = app.buttons["keyboard.10key.dot"]
+    let horizontal = app.buttons["keyboard.10key.horizontal"]
+    let siot = app.buttons["keyboard.10key.siot"]
+    let ieung = app.buttons["keyboard.10key.ieung"]
+    let next = app.buttons["keyboard.10key.next"]
+    let space = app.buttons["keyboard.10key.space"]
+    let backspace = app.buttons["keyboard.backspace"]
+    XCTAssertTrue(vertical.exists)
+    XCTAssertTrue(dot.exists)
+    XCTAssertTrue(horizontal.exists)
+    XCTAssertTrue(siot.exists)
+    XCTAssertTrue(ieung.exists)
+    XCTAssertTrue(next.exists)
+    XCTAssertTrue(space.exists)
+    XCTAssertTrue(backspace.exists)
+    XCTAssertEqual(siot.label, "ㅅ、ㅎ、ㅆグループ")
+    XCTAssertFalse(app.buttons["keyboard.key.ㅅ"].exists)
+
+    for key in [vertical, dot, horizontal, siot, ieung, next, space, backspace] {
+      XCTAssertGreaterThanOrEqual(key.frame.minX, app.frame.minX)
+      XCTAssertLessThanOrEqual(key.frame.maxX, app.frame.maxX)
+    }
+    XCTAssertEqual(vertical.frame.midY, dot.frame.midY, accuracy: 1)
+    XCTAssertEqual(dot.frame.midY, horizontal.frame.midY, accuracy: 1)
+    XCTAssertLessThan(vertical.frame.midY, siot.frame.midY)
+    XCTAssertLessThan(siot.frame.midY, ieung.frame.midY)
+    XCTAssertEqual(next.frame.midY, ieung.frame.midY, accuracy: 1)
+    XCTAssertGreaterThan(space.frame.midY, next.frame.midY)
+
+    let progress = element("practice.jamo_progress.value")
+    siot.tap()
+    waitForValue("1 / 9", on: progress, timeout: 3)
+
+    vertical.tap()
+    XCTAssertEqual(progress.value as? String, "1 / 9")
+    backspace.tap()
+    XCTAssertEqual(progress.value as? String, "1 / 9")
+
+    vertical.tap()
+    dot.tap()
+    waitForValue("2 / 9", on: progress, timeout: 3)
+    XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
+    attachScreenshot(named: "practice-korean-10key-large-ja")
+  }
+
+  func testKorean10KeyLayoutCarriesIntoFlowGame() {
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.flow"].tap()
+    element("game.flow.preset.beginner").tap()
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.next"].exists)
+    XCTAssertFalse(app.buttons["keyboard.key.ㄱ"].exists)
+    app.buttons["game.end"].tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+  }
+
+  func testKorean10KeyLayoutCarriesIntoRecallGame() {
+    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["game.mode.choseong"].tap()
+    element("game.choseong.preset.beginner").tap()
+    XCTAssertTrue(element("choseong.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.10key.next"].exists)
+    XCTAssertFalse(app.buttons["keyboard.key.ㅎ"].exists)
   }
 
   func testCurriculumMapStartsWithSequentialCoreUnlocks() {
@@ -369,6 +456,34 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(myPiyoCard.waitForExistence(timeout: 3))
     XCTAssertTrue(primaryAction.exists)
     XCTAssertLessThan(myPiyoCard.frame.minY, primaryAction.frame.minY)
+  }
+
+  func testHomeQuickActionStartsRandomWords() {
+    let primaryAction = element("retention.daily_challenge")
+    let piyoCup = element("home.quick.piyo_cup")
+    let randomWords = element("home.quick.random")
+
+    XCTAssertTrue(primaryAction.waitForExistence(timeout: 3))
+    scrollToHittable(piyoCup)
+    XCTAssertTrue(piyoCup.isHittable)
+    XCTAssertTrue(randomWords.isHittable)
+    XCTAssertGreaterThan(piyoCup.frame.minY, primaryAction.frame.minY)
+    XCTAssertEqual(piyoCup.frame.minY, randomWords.frame.minY, accuracy: 2)
+
+    randomWords.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    waitForValue("1 / 5", on: element("practice.overall_progress"), timeout: 3)
+  }
+
+  func testHomeQuickActionStartsWeeklyPiyoCupDirectly() {
+    let piyoCup = app.buttons["home.quick.piyo_cup"]
+
+    app.swipeUp()
+    XCTAssertTrue(piyoCup.waitForExistence(timeout: 3))
+    XCTAssertTrue(piyoCup.isHittable)
+    piyoCup.tap()
+    XCTAssertFalse(element("game.selection.screen").exists)
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
   }
 
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
@@ -2096,6 +2211,8 @@ final class HancoUITests: XCTestCase {
     app.buttons["keyboard.key.ㅏ"].tap()
 
     XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.staticTexts["退勤後の20:00に毎日お知らせ"].exists)
+    XCTAssertTrue(app.buttons["通知を受け取ってミッション開始"].exists)
 
     let finish = app.buttons["onboarding.finish"]
     scrollToHittable(finish)
@@ -2446,6 +2563,48 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.tabBars.buttons["홈"].exists)
   }
 
+  func testPrivacyChoicesAreOptionalIndependentAndShownOncePerNoticeVersion() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    let analytics = app.switches["privacy_consent.analytics"]
+    let diagnostics = app.switches["privacy_consent.diagnostics"]
+    XCTAssertEqual(analytics.value as? String, "0")
+    XCTAssertEqual(diagnostics.value as? String, "0")
+    XCTAssertTrue(app.buttons["privacy_consent.continue_without_sharing"].isHittable)
+    analytics.tap()
+    XCTAssertEqual(analytics.value as? String, "1")
+    XCTAssertEqual(diagnostics.value as? String, "0")
+    app.buttons["privacy_consent.save"].tap()
+
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      showsPrivacyConsent: true
+    )
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+
+    openSettings()
+    let review = app.buttons["settings.review_privacy_choices"]
+    scrollToHittable(review)
+    review.tap()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(app.switches["privacy_consent.analytics"].value as? String, "1")
+    XCTAssertEqual(app.switches["privacy_consent.diagnostics"].value as? String, "0")
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("settings.screen").waitForExistence(timeout: 5))
+  }
+
   func testSettingsExposePublicPrivacySupportAndContentFeedbackLinks() {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
@@ -2498,6 +2657,7 @@ final class HancoUITests: XCTestCase {
     showsHatchOnboarding: Bool = false,
     respectsOnboardingState: Bool = false,
     forcesAppTour: Bool = false,
+    showsPrivacyConsent: Bool = false,
     practiceAutoSpeaks: Bool? = nil,
     audioProbe: Bool = false,
     seedsAppStoreCaptureState: Bool = false,
@@ -2526,6 +2686,15 @@ final class HancoUITests: XCTestCase {
     }
     if forcesAppTour {
       application.launchEnvironment["UITEST_FORCE_APP_TOUR"] = "1"
+    }
+    if showsPrivacyConsent {
+      application.launchArguments += [
+        "-onboarding.app_tour.completed", "YES",
+      ]
+    } else {
+      application.launchArguments += [
+        "-settings.privacy_notice_version", "1",
+      ]
     }
     application.launchEnvironment["UITEST_JST_DAY"] = "2026-07-19"
     application.launchEnvironment["UITEST_GAME_COUNTDOWN_STEP_SECONDS"] = "0.05"
