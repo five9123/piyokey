@@ -21,12 +21,12 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 원격 push 승인 후 PR/Issue/Project 갱신 → CI·리뷰 |
+| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 코드·증빙 push 및 PR/Issue/Project 갱신 완료 → CI·리뷰 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## #73 5언어·온보딩 통합 후보
 
-- 로컬 구현·검증·커밋은 완료했다. 코드/증빙의 GitHub 전송 승인이 부족하다는 권한 검토로 push가 거절되어 원격 PR/Issue/Project의 이번 갱신은 보류했다. 명시적 전송 승인 후 기존 #74 브랜치를 갱신하며 우회 전송하지 않는다.
+- 사용자가 코드·검증 기록의 GitHub 전송과 PR·Issue·Project 갱신을 명시적으로 승인해 기존 #74 브랜치에 push하고 원격 기록을 갱신했다. Project는 Verify, PR은 Draft로 유지한다. main 병합·CI 우회·배포는 승인 범위에 포함하지 않는다.
 - 사용자 진행 승인으로 `dcc32bf` 로컬 5언어 후보를 #73/PR #74에 통합했다. 원본 언어/리텐션 clone은 보존했다. 새 온보딩은 관심사 뒤 4단계·2열 예시 카드이며 돌아가기 버튼이 없다. 첫 홈은 추천, 실제 학습 뒤 이어하기다.
 - ja/en/es/de/fr 모두 iOS 1,124개 키·Android 517개 리소스 누락 0개, 공식 es/de/fr 뜻 627개·덱 이름 41개·태그 42개를 포함한다. 공용 schema/reader/writer·카탈로그 호환 계약을 함께 반영했다.
 - 검증 소스 `00fb528782bcceb84875778161fca0f4660fb3c8`, 증빙 `release/evidence/00fb528782bcceb84875778161fca0f4660fb3c8.json`. Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 366개·관련 UI 5개 통과. 마지막 변경은 배경·결과 마스코트의 성장 전 상태를 함께 검사하도록 테스트만 조정했으며, 동일 앱 소스 `a585771`의 단위·첫 홈 3개·Android 결과 재사용 범위를 증빙에 기록했다.
