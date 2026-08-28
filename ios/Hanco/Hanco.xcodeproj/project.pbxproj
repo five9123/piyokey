@@ -108,6 +108,7 @@
 		C20000000000000000000001 /* UserDeckDraftStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* UserDeckDraftStore.swift */; };
 		C20000000000000000000002 /* UserDeckDraftStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* UserDeckDraftStoreTests.swift */; };
 		C30000000000000000000001 /* TargetSpeechSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* TargetSpeechSynthesizer.swift */; };
+		C41000000000000000000001 /* HancoAdaptiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41000000000000000000001 /* HancoAdaptiveLayout.swift */; };
 		C40000000000000000000001 /* AnalyticsContract.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000001 /* AnalyticsContract.generated.swift */; };
 		C40000000000000000000002 /* TelemetryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000002 /* TelemetryService.swift */; };
 		C40000000000000000000003 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = G40000000000000000000003 /* PostHog */; };
@@ -135,6 +136,7 @@
 /* Begin PBXFileReference section */
 		B00000000000000000000001 /* HancoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoApp.swift; sourceTree = "<group>"; };
 		B00000000000000000000002 /* AppPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPalette.swift; sourceTree = "<group>"; };
+		B41000000000000000000001 /* HancoAdaptiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoAdaptiveLayout.swift; sourceTree = "<group>"; };
 		B00000000000000000000003 /* PracticeSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSessionViewModel.swift; sourceTree = "<group>"; };
 		B00000000000000000000004 /* HangulKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangulKeyboardView.swift; sourceTree = "<group>"; };
 		B00000000000000000000005 /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 		A0000000000000000000000E /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A41000000000000000000001 /* Layout */,
 				A0000000000000000000001E /* GameCenter */,
 				A0000000000000000000001A /* Audio */,
 				A0000000000000000000001D /* Persistence */,
@@ -463,6 +466,14 @@
 				A40000000000000000000001 /* Analytics */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		A41000000000000000000001 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				B41000000000000000000001 /* HancoAdaptiveLayout.swift */,
+			);
+			path = Layout;
 			sourceTree = "<group>";
 		};
 		A0000000000000000000001E /* GameCenter */ = {
@@ -831,6 +842,7 @@
 				C00000000000000000000060 /* GameCenterService.swift in Sources */,
 				C00000000000000000000010 /* AppRootView.swift in Sources */,
 				C00000000000000000000002 /* AppPalette.swift in Sources */,
+				C41000000000000000000001 /* HancoAdaptiveLayout.swift in Sources */,
 				C00000000000000000000003 /* PracticeSessionViewModel.swift in Sources */,
 				C00000000000000000000004 /* HangulKeyboardView.swift in Sources */,
 				C00000000000000000000005 /* PracticeView.swift in Sources */,
@@ -1035,7 +1047,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1061,7 +1073,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1080,7 +1092,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
 			};
 			name = Debug;
@@ -1100,7 +1112,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hanco.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hanco";
 			};
 			name = Release;
@@ -1114,7 +1126,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Hanco;
 			};
 			name = Debug;
@@ -1128,7 +1140,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Hanco;
 			};
 			name = Release;

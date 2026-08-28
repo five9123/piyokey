@@ -12,6 +12,7 @@
   <string name="settings_default_input">標準入力モード</string>
   <string name="settings_input_builtin">内蔵キーボード</string>
   <string name="settings_input_os">OSキーボード</string>
+  <string name="settings_physical_keyboard_guide">端末キーボードの配列ガイド</string>
   <string name="settings_appearance">表示</string>
   <string name="settings_font_size">文字サイズ</string>
   <string name="settings_small">小</string>

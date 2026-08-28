@@ -18,10 +18,14 @@
   <string name="onboarding_left_hand">Left · consonants</string>
   <string name="onboarding_right_hand">Right · vowels</string>
   <string name="onboarding_try">Try typing now</string>
+  <string name="onboarding_use_builtin_keyboard">Start with the built-in keyboard</string>
+  <string name="onboarding_use_device_keyboard">Start with a device keyboard</string>
   <string name="onboarding_first_input_title">Make your first 가</string>
   <string name="onboarding_first_input_hint">Only the next key is highlighted. Type ㄱ, then ㅏ.</string>
   <string name="onboarding_first_input_retry">Almost! Follow the highlighted key.</string>
   <string name="onboarding_first_input_next">Next key: %1$s</string>
+  <string name="onboarding_ime_missing">Add or enable a Korean keyboard, then return here to type.</string>
+  <string name="onboarding_ime_open_settings">Open keyboard settings</string>
   <string name="onboarding_reward_title">The egg cracked!</string>
   <string name="onboarding_reward_badge">First 가 reward</string>
   <string name="onboarding_hatch_handoff">Complete consonants, vowels, and syllable-building missions to hatch your Piyo. These three missions cannot be skipped.</string>

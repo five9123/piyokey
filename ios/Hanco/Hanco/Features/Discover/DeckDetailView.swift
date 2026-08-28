@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct DeckDetailView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
 
   let deck: CatalogDeck
@@ -18,6 +19,7 @@ struct DeckDetailView: View {
       }
       .padding(18)
       .padding(.bottom, 92)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     }
     .background(
       LinearGradient(
@@ -237,6 +239,7 @@ struct DeckDetailView: View {
         )
       }
     }
+    .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
     .font(.headline.weight(.bold))
     .foregroundStyle(.white)
     .padding(.horizontal, 18)

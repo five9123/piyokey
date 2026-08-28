@@ -566,6 +566,7 @@ struct DeckEditorView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.editMode) private var editMode
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @State private var draft: UserDeckDraft
   @State private var tagsText: String
   @State private var validationSummary = UserDeckValidationSummary(issues: [])
@@ -633,6 +634,7 @@ struct DeckEditorView: View {
           validationSection
           deleteSection
         }
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
         .accessibilityIdentifier("deck_editor.screen")
         .onChange(of: validationFocusRequest) { _ in
           focusFirstValidationIssue(using: proxy)

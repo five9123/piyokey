@@ -88,8 +88,8 @@ class AppPreferencesTest {
 
   @Test
   fun chaptersOneThroughFourForceBuiltinWithoutChangingPreference() {
-    assertEquals(InputMode.BUILTIN, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 1))
-    assertEquals(InputMode.BUILTIN, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 4))
+    assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 1))
+    assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 4))
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, 5))
     assertEquals(InputMode.OS_IME, OnboardingPolicy.resolvedInputMode(InputMode.OS_IME, null))
   }

@@ -681,14 +681,15 @@ final class HancoUITests: XCTestCase {
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
 
-    let automaticSpeech = app.buttons["practice.session_settings.auto_speak"]
+    let automaticSpeech = element("practice.session_settings.auto_speak")
     XCTAssertTrue(automaticSpeech.waitForExistence(timeout: 3))
-    XCTAssertFalse(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "0")
     automaticSpeech.tap()
 
+    app.buttons["practice.session_settings.close"].tap()
     settings.tap()
     app.buttons["practice.session_settings.sound_menu"].tap()
-    XCTAssertTrue(automaticSpeech.isSelected)
+    XCTAssertEqual(automaticSpeech.value as? String, "1")
     automaticSpeech.tap()
   }
 
@@ -697,8 +698,9 @@ final class HancoUITests: XCTestCase {
 
     app.buttons["practice.session_settings"].tap()
     app.buttons["practice.session_settings.display"].tap()
-    app.buttons["practice.session_settings.order"].tap()
+    element("practice.session_settings.order").tap()
     app.buttons["日本語の意味 → お題を表示 → 日本語式の読み方"].tap()
+    app.buttons["practice.session_settings.close"].tap()
 
     let meaning = element("practice.meaning.value")
     let target = element("practice.target.value")
@@ -832,6 +834,35 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(restoredField.waitForExistence(timeout: 5))
     restoredField.typeText("해")
     waitForValue("사랑해", on: restoredField, timeout: 3)
+  }
+
+  func testOSIMESessionSettingsPreservesProgressAndRestoresFocus() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("사")
+    waitForValue("사", on: imeField, timeout: 3)
+
+    for _ in 0..<3 {
+      app.buttons["practice.session_settings"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+      app.buttons["practice.session_settings.close"].tap()
+      XCTAssertTrue(element("practice.session_settings.overlay").waitForNonExistence(timeout: 3))
+      XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+    }
+
+    imeField.typeText("랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
   }
 
   func testHomeRecommendationsOpenDeckDetail() {
@@ -2178,7 +2209,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
     app.buttons["onboarding.next"].tap()  // Tap 3
 
-    XCTAssertTrue(element("onboarding.lesson.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
     XCTAssertEqual(element("onboarding.lesson.target.value").label, "가")
     app.buttons["keyboard.key.ㄱ"].tap()  // Tap 4: first actual input
     XCTAssertEqual(element("onboarding.lesson.entered.value").value as? String, "ㄱ")
@@ -2213,6 +2244,43 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("onboarding.goal.screen").exists)
+  }
+
+  func testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 1,
+      koreanKeyboardAvailable: true,
+      showsOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.goal.screen").waitForExistence(timeout: 5))
+    app.buttons["onboarding.goal.keyboard"].tap()  // Interaction 1
+    app.buttons["onboarding.next"].tap()  // Interaction 2
+    XCTAssertTrue(element("onboarding.keyboard.screen").waitForExistence(timeout: 3))
+    app.buttons["onboarding.input_device.hardware"].tap()  // Interaction 3
+
+    XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").waitForExistence(timeout: 3))
+    let firstInput = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(firstInput.waitForExistence(timeout: 3))
+    firstInput.typeText("가")  // Interaction 4: first real input
+
+    XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
+    let finish = app.buttons["onboarding.finish"]
+    scrollToHittable(finish)
+    finish.tap()
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+
+    let firstMission = app.buttons["ミッション1をはじめる"]
+    scrollToHittable(firstMission)
+    firstMission.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.key.R").exists)
+    XCTAssertFalse(element("keyboard.view").exists)
   }
 
   func testFirstHatchResultContinuesToSecondMissionWithoutRetry() {
@@ -2412,6 +2480,84 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
+  }
+
+  func testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This adaptive rotation gate runs on iPad-sized destinations")
+    }
+
+    XCUIDevice.shared.orientation = .portrait
+    let homeScreen = element("home.screen")
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-portrait-ja")
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+    attachScreenshot(named: "ipad-adaptive-home-landscape-ja")
+
+    XCUIDevice.shared.orientation = .portrait
+    waitForValue(adaptiveWidthClass(for: app.frame.width), on: homeScreen, timeout: 5)
+  }
+
+  func testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This adaptive session gate runs on iPad-sized destinations")
+    }
+
+    XCUIDevice.shared.orientation = .portrait
+    startPractice()
+    let target = element("practice.target.value")
+    let progress = element("practice.jamo_progress.value")
+    let mistakes = element("practice.mistakes.value")
+    XCTAssertEqual(target.label, "사랑해요")
+    XCTAssertEqual(progress.value as? String, "0 / 9")
+    XCTAssertEqual(mistakes.value as? String, "0")
+
+    app.buttons["keyboard.key.ㅅ"].tap()
+    waitForValue("1 / 9", on: progress, timeout: 3)
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    XCTAssertTrue(target.waitForExistence(timeout: 5))
+    waitForValue("1 / 9", on: progress, timeout: 5)
+    XCTAssertEqual(target.label, "사랑해요")
+    XCTAssertEqual(mistakes.value as? String, "0")
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+    attachScreenshot(named: "ipad-practice-landscape-active-ja")
+
+    XCUIDevice.shared.orientation = .portrait
+    XCTAssertTrue(target.waitForExistence(timeout: 5))
+    waitForValue("1 / 9", on: progress, timeout: 5)
+    XCTAssertEqual(target.label, "사랑해요")
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
+  }
+
+  func testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This accessibility layout gate runs on iPad-sized destinations")
+    }
+
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    waitForValue("accessibility", on: element("debug.dynamic_type"), timeout: 3)
+    XCTAssertTrue(element("settings.font_preview").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.buttons["settings.done"].isHittable)
+    attachScreenshot(named: "ipad-settings-accessibility-xxxl-ja")
+    app.buttons["settings.done"].tap()
+
+    openFreePracticeSetup()
+    let start = app.buttons["practice.start"]
+    scrollToHittable(start)
+    XCTAssertTrue(start.isHittable)
+    start.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].isHittable)
+    assertBuiltInKeyboardIsCenteredWithinIPadCap()
   }
 
   func testAppTourBackgroundTapAdvancesAndNextButtonDoesNotDoubleAdvance() {
@@ -2772,6 +2918,26 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
   }
 
+  private func assertBuiltInKeyboardIsCenteredWithinIPadCap(
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let leftKey = app.buttons["keyboard.key.ㅂ"]
+    let rightKey = app.buttons["keyboard.key.ㅔ"]
+    XCTAssertTrue(leftKey.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(rightKey.exists, file: file, line: line)
+    let keyboardMinX = leftKey.frame.minX
+    let keyboardMaxX = rightKey.frame.maxX
+    XCTAssertLessThanOrEqual(keyboardMaxX - keyboardMinX, 820, file: file, line: line)
+    XCTAssertEqual(
+      (keyboardMinX + keyboardMaxX) / 2,
+      app.frame.midX,
+      accuracy: 18,
+      file: file,
+      line: line
+    )
+  }
+
   private func openFreePracticeSetup() {
     openPracticeTab()
     let freePractice = element("curriculum.free_practice")
@@ -2782,10 +2948,16 @@ final class HancoUITests: XCTestCase {
 
   private func openPracticeTab() {
     guard !element("curriculum.map.screen").exists else { return }
-    let practice = app.tabBars.buttons["練習"]
+    let practice = app.buttons["練習"].firstMatch
     XCTAssertTrue(practice.waitForExistence(timeout: 3))
     practice.tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+  }
+
+  private func adaptiveWidthClass(for width: CGFloat) -> String {
+    if width < 600 { return "compact" }
+    if width < 900 { return "medium" }
+    return "wide"
   }
 
   private func openSettings() {

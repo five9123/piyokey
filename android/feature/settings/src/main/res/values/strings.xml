@@ -12,6 +12,7 @@
   <string name="settings_default_input">Default input mode</string>
   <string name="settings_input_builtin">Built-in</string>
   <string name="settings_input_os">OS keyboard</string>
+  <string name="settings_physical_keyboard_guide">Device keyboard layout guide</string>
   <string name="settings_appearance">Appearance</string>
   <string name="settings_font_size">Text size</string>
   <string name="settings_small">Small</string>

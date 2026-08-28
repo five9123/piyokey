@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct HomeView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
   @EnvironmentObject private var curriculumProgress: CurriculumProgressLibrary
@@ -27,7 +28,9 @@ struct HomeView: View {
           }
           HomeRecommendationsView(catalog: catalog)
         }
-        .padding(.horizontal, 18)
+        .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 16)
       }
       .background(
@@ -41,6 +44,7 @@ struct HomeView: View {
       .navigationTitle(Text("home.navigation_title"))
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier("home.screen")
+      .hancoAdaptiveDebugValue(adaptiveMetrics)
       .rootSettingsToolbar()
     }
   }
@@ -176,12 +180,14 @@ private struct HomeQuickActionsView: View {
       goal: onboarding.selectedGoal,
       catalog: catalog
     )
-    guard let session = RandomWordPracticeCatalog.makeSession(
-      installedDecks: deckLibrary.installed,
-      fallbackDecks: fallbackDecks,
-      preferredTags: onboarding.preferredTags,
-      recentWordKeys: history.recentWordKeys
-    ) else { return }
+    guard
+      let session = RandomWordPracticeCatalog.makeSession(
+        installedDecks: deckLibrary.installed,
+        fallbackDecks: fallbackDecks,
+        preferredTags: onboarding.preferredTags,
+        recentWordKeys: history.recentWordKeys
+      )
+    else { return }
     history.record(session)
     randomSession = session
     showsRandomPractice = true
@@ -376,6 +382,7 @@ private struct HomePrimaryActionView: View {
 }
 
 struct CurriculumMapView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var progress: CurriculumProgressLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
 
@@ -404,7 +411,9 @@ struct CurriculumMapView: View {
             freePracticeCard
           }
         }
-        .padding(.horizontal, 18)
+        .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 16)
       }
       .background(
@@ -416,7 +425,8 @@ struct CurriculumMapView: View {
         .ignoresSafeArea()
       )
       .navigationTitle(
-        Text(isHatchOnboarding ? "onboarding.hatch.navigation_title" : "curriculum.navigation_title")
+        Text(
+          isHatchOnboarding ? "onboarding.hatch.navigation_title" : "curriculum.navigation_title")
       )
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier(
@@ -618,9 +628,10 @@ struct CurriculumMapView: View {
 
   private func hatchStageRow(_ stage: CurriculumStage) -> some View {
     let completed = progress.completedStageIDs.contains(stage.id)
-    let isCurrent = HatchOnboardingPolicy.nextRequiredStage(
-      completedStageIDs: progress.completedStageIDs
-    )?.id == stage.id
+    let isCurrent =
+      HatchOnboardingPolicy.nextRequiredStage(
+        completedStageIDs: progress.completedStageIDs
+      )?.id == stage.id
     return CurriculumStageRow(
       stage: stage,
       stageProgress: progress.progress(for: stage.id),
@@ -872,7 +883,8 @@ private struct CurriculumPracticeDestination: View {
       onPersistenceFailureExit: onPersistenceFailureExit,
       chainsHatchMissions: chainsHatchMissions,
       isFinalHatchMission: isFinalHatchMission,
-      allowsOSKeyboard: stage.chapterNumber >= 5,
+      allowsOSKeyboard: true,
+      allowsKorean10Key: false,
       analyticsSessionKind: "lesson",
       analyticsDeckSource: "curriculum"
     )

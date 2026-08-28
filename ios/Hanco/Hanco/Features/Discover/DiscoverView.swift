@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct DiscoverView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @ObservedObject var viewModel: DiscoverViewModel
 
@@ -9,7 +10,9 @@ struct DiscoverView: View {
     NavigationStack {
       VStack(spacing: 0) {
         searchBar
-          .padding(.horizontal, 16)
+          .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+          .frame(maxWidth: .infinity)
+          .padding(.horizontal, adaptiveMetrics.horizontalPadding)
           .padding(.vertical, 10)
           .background(AppPalette.card)
           .appTourTarget(.discoverSearch)
@@ -159,6 +162,8 @@ struct DiscoverView: View {
 
         deckSuggestionCard
       }
+      .frame(maxWidth: adaptiveMetrics.hubContentMaxWidth)
+      .frame(maxWidth: .infinity)
       .padding(.vertical, 18)
     }
     .accessibilityIdentifier("discover.catalog")

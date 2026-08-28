@@ -131,6 +131,14 @@ fun SettingsSheet(
             label = { if (it == InputMode.BUILTIN) stringResource(R.string.settings_input_builtin) else stringResource(R.string.settings_input_os) },
             onSelect = { onPreferencesChange(preferences.copy(defaultInputMode = it)) },
           )
+          if (preferences.defaultInputMode == InputMode.OS_IME) {
+            ToggleRow(
+              stringResource(R.string.settings_physical_keyboard_guide),
+              preferences.showsPhysicalKeyboardGuide,
+            ) {
+              onPreferencesChange(preferences.copy(showsPhysicalKeyboardGuide = it))
+            }
+          }
         }
       }
       item {

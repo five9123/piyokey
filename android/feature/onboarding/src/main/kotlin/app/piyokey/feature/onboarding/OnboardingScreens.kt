@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,14 +44,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import app.piyokey.core.hangul.OSIMETextJudge
+import app.piyokey.core.hangul.OSIMETextJudgeStatus
 import app.piyokey.core.settings.AppPreferences
 import app.piyokey.core.design.PiyoAvatar
 import app.piyokey.core.settings.PiyoGrowthStage
 import app.piyokey.core.settings.PiyoSessionAppearance
 import app.piyokey.core.settings.OnboardingGoal
 import app.piyokey.core.settings.OnboardingIntroStep
+import app.piyokey.core.settings.InputMode
 import app.piyokey.feature.practice.DubeolsikKeyboard
+import app.piyokey.feature.practice.KoreanIMEInput
+import app.piyokey.feature.practice.PhysicalKeyboardGuide
 import app.piyokey.feature.practice.PracticeKeyboardOptions
+import app.piyokey.feature.practice.hasKoreanInputMethod
 
 private val Accent = Color(0xFFFF6F91)
 private val Yellow = Color(0xFFFFD65A)
@@ -59,6 +67,7 @@ private val Yellow = Color(0xFFFFD65A)
 fun OnboardingRoute(
   preferences: AppPreferences,
   onUpdate: (AppPreferences) -> Unit,
+  onOpenIMEHelp: () -> Unit = {},
   onEnableReminder: () -> Unit,
   onSkipReminder: () -> Unit,
   modifier: Modifier = Modifier,
@@ -86,7 +95,24 @@ fun OnboardingRoute(
       modifier = modifier,
     )
     preferences.onboardingIntroStep == OnboardingIntroStep.KEYBOARD -> KeyboardIntroScreen(
-      onNext = { onUpdate(preferences.copy(onboardingIntroStep = OnboardingIntroStep.FIRST_INPUT)) },
+      onBuiltIn = {
+        onUpdate(
+          preferences.copy(
+            onboardingIntroStep = OnboardingIntroStep.FIRST_INPUT,
+            defaultInputMode = InputMode.BUILTIN,
+            showsPhysicalKeyboardGuide = false,
+          ),
+        )
+      },
+      onDevice = {
+        onUpdate(
+          preferences.copy(
+            onboardingIntroStep = OnboardingIntroStep.FIRST_INPUT,
+            defaultInputMode = InputMode.OS_IME,
+            showsPhysicalKeyboardGuide = true,
+          ),
+        )
+      },
       onSkip = {
         onUpdate(
           preferences.copy(
@@ -100,6 +126,9 @@ fun OnboardingRoute(
       modifier = modifier,
     )
     else -> FirstInputScreen(
+      inputMode = preferences.defaultInputMode,
+      showsPhysicalKeyboardGuide = preferences.showsPhysicalKeyboardGuide,
+      onOpenIMEHelp = onOpenIMEHelp,
       onCompleted = {
         onUpdate(
           preferences.copy(
@@ -205,12 +234,21 @@ private fun TrustCard() {
 }
 
 @Composable
-private fun KeyboardIntroScreen(onNext: () -> Unit, onSkip: () -> Unit, modifier: Modifier) {
+private fun KeyboardIntroScreen(
+  onBuiltIn: () -> Unit,
+  onDevice: () -> Unit,
+  onSkip: () -> Unit,
+  modifier: Modifier,
+) {
   OnboardingFrame(2, true, onSkip, modifier) {
     Column(
-      Modifier.fillMaxSize().padding(22.dp).testTag("onboarding-keyboard"),
+      Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+        .padding(22.dp)
+        .testTag("onboarding-keyboard"),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterVertically),
+      verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
       PiyoMark(PiyoGrowthStage.EGG)
       Text(stringResource(R.string.onboarding_keyboard_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
@@ -222,8 +260,17 @@ private fun KeyboardIntroScreen(onNext: () -> Unit, onSkip: () -> Unit, modifier
       Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(18.dp)) {
         Text("ㄱ  +  ㅏ  →  가", Modifier.padding(horizontal = 24.dp, vertical = 15.dp), fontSize = 24.sp, fontWeight = FontWeight.Black)
       }
-      Button(onClick = onNext, modifier = Modifier.fillMaxWidth().testTag("onboarding-keyboard-try")) {
-        Text(stringResource(R.string.onboarding_try))
+      Button(
+        onClick = onBuiltIn,
+        modifier = Modifier.fillMaxWidth().testTag("onboarding-keyboard-builtin"),
+      ) {
+        Text(stringResource(R.string.onboarding_use_builtin_keyboard))
+      }
+      Button(
+        onClick = onDevice,
+        modifier = Modifier.fillMaxWidth().testTag("onboarding-keyboard-device"),
+      ) {
+        Text(stringResource(R.string.onboarding_use_device_keyboard))
       }
     }
   }
@@ -244,10 +291,18 @@ private fun HandCard(example: String, title: String, modifier: Modifier) {
 }
 
 @Composable
-private fun FirstInputScreen(onCompleted: () -> Unit, modifier: Modifier) {
+private fun FirstInputScreen(
+  inputMode: InputMode,
+  showsPhysicalKeyboardGuide: Boolean,
+  onOpenIMEHelp: () -> Unit,
+  onCompleted: () -> Unit,
+  modifier: Modifier,
+) {
   var entered by remember { mutableStateOf<List<Char>>(emptyList()) }
   var mistake by remember { mutableStateOf(false) }
+  var didComplete by remember { mutableStateOf(false) }
   val expected = listOf('ㄱ', 'ㅏ')
+  val context = LocalContext.current
   OnboardingFrame(3, false, {}, modifier) {
     Column(
       Modifier.fillMaxSize().testTag("onboarding-first-input"),
@@ -277,23 +332,74 @@ private fun FirstInputScreen(onCompleted: () -> Unit, modifier: Modifier) {
           fontWeight = FontWeight.Bold,
         )
       }
-      DubeolsikKeyboard(
-        nextExpectedJamo = expected.getOrNull(entered.size),
-        onJamo = { jamo ->
-          if (jamo == expected.getOrNull(entered.size)) {
+      if (inputMode == InputMode.BUILTIN) {
+        DubeolsikKeyboard(
+          nextExpectedJamo = expected.getOrNull(entered.size),
+          onJamo = { jamo ->
+            if (jamo == expected.getOrNull(entered.size)) {
+              mistake = false
+              entered = entered + jamo
+              if (entered.size == expected.size && !didComplete) {
+                didComplete = true
+                onCompleted()
+              }
+            } else {
+              mistake = true
+            }
+          },
+          onBackspace = {
+            entered = entered.dropLast(1)
             mistake = false
-            entered = entered + jamo
-            if (entered.size == expected.size) onCompleted()
-          } else {
-            mistake = true
+          },
+          options = PracticeKeyboardOptions(showsKeyGuide = true, showsRomanHints = true, hapticsEnabled = true),
+        )
+      } else {
+        if (!hasKoreanInputMethod(context)) {
+          Surface(
+            color = Color(0xFFFFF0F4),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+          ) {
+            Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+              Text(stringResource(R.string.onboarding_ime_missing), textAlign = TextAlign.Center)
+              TextButton(onClick = onOpenIMEHelp) {
+                Text(stringResource(R.string.onboarding_ime_open_settings))
+              }
+            }
           }
-        },
-        onBackspace = {
-          entered = entered.dropLast(1)
-          mistake = false
-        },
-        options = PracticeKeyboardOptions(showsKeyGuide = true, showsRomanHints = true, hapticsEnabled = true),
-      )
+        }
+        KoreanIMEInput(
+          visibleText = if (entered.size == expected.size) "가" else "",
+          showSoftwareKeyboard = false,
+          onText = { snapshot ->
+            val evaluation = OSIMETextJudge.evaluate(
+              target = "가",
+              committedText = snapshot.committedText,
+              markedText = snapshot.composingText,
+            )
+            entered = evaluation.acceptedSequence
+            when (val status = evaluation.status) {
+              is OSIMETextJudgeStatus.ConfirmedMismatch -> mistake = true
+              OSIMETextJudgeStatus.ComposingMismatch -> Unit
+              is OSIMETextJudgeStatus.Matching -> {
+                mistake = false
+                if (status.completed && !status.isComposing && !didComplete) {
+                  didComplete = true
+                  onCompleted()
+                }
+              }
+            }
+          },
+          modifier = Modifier.fillMaxWidth().height(1.dp),
+          testTag = "onboarding-os-ime-field",
+        )
+        if (showsPhysicalKeyboardGuide) {
+          PhysicalKeyboardGuide(
+            nextExpectedJamo = expected.getOrNull(entered.size),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+          )
+        }
+      }
     }
   }
 }

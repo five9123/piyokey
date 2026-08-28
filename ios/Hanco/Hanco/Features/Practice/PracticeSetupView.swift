@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct PracticeSetupView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var onboarding: OnboardingLibrary
 
@@ -55,6 +56,7 @@ struct PracticeSetupView: View {
       }
       .padding(.horizontal, 18)
       .padding(.vertical, 16)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.formContentMaxWidth)
     }
     .background(
       LinearGradient(

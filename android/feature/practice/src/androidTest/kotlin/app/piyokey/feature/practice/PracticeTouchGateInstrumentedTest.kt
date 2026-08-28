@@ -1,10 +1,11 @@
 package app.piyokey.feature.practice
 
 import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
@@ -25,7 +26,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class PracticeTouchGateInstrumentedTest {
   @get:Rule
-  val composeRule = createComposeRule()
+  val composeRule = createAndroidComposeRule<ComponentActivity>()
 
   @Test
   fun oneGesture_twoPointerRollover_deliversGiyeokThenA_withoutLossOrDuplication() {

@@ -519,6 +519,73 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(AppReleaseLinks.support.scheme, "https")
   }
 
+  func testAdaptiveMetricsUseActualAvailableWidthBoundaries() {
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 599).widthClass, .compact)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 600).widthClass, .medium)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 899).widthClass, .medium)
+    XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 900).widthClass, .wide)
+  }
+
+  func testAdaptiveMetricsGrowPaddingAndHubColumnsWithoutChangingContentCaps() {
+    let compact = HancoAdaptiveMetrics(availableWidth: 390)
+    let medium = HancoAdaptiveMetrics(availableWidth: 744)
+    let wide = HancoAdaptiveMetrics(availableWidth: 1_180)
+
+    XCTAssertEqual(
+      [compact.horizontalPadding, medium.horizontalPadding, wide.horizontalPadding],
+      [18, 24, 32]
+    )
+    XCTAssertEqual(
+      [compact.hubColumnCount, medium.hubColumnCount, wide.hubColumnCount],
+      [2, 3, 4]
+    )
+    XCTAssertFalse(compact.usesTwoColumnDashboard)
+    XCTAssertFalse(medium.usesTwoColumnDashboard)
+    XCTAssertTrue(wide.usesTwoColumnDashboard)
+    XCTAssertEqual(wide.formContentMaxWidth, 680)
+    XCTAssertEqual(wide.readableContentMaxWidth, 720)
+    XCTAssertEqual(wide.resultContentMaxWidth, 760)
+    XCTAssertEqual(wide.hubContentMaxWidth, 1_120)
+    XCTAssertEqual(wide.sessionLaneMaxWidth, 920)
+    XCTAssertEqual(wide.keyboardMaxWidth, 820)
+    XCTAssertLessThanOrEqual(wide.keyboardMaxWidth, wide.sessionLaneMaxWidth)
+    XCTAssertLessThanOrEqual(wide.formContentMaxWidth, wide.readableContentMaxWidth)
+  }
+
+  func testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions() throws {
+    let base = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㄱ"))
+    XCTAssertEqual(base.key?.latin, "R")
+    XCTAssertEqual(base.hand, .left)
+    XCTAssertEqual(base.finger, .index)
+    XCTAssertFalse(base.requiresShift)
+
+    let shifted = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: "ㅒ"))
+    XCTAssertEqual(shifted.key?.latin, "O")
+    XCTAssertEqual(shifted.hand, .right)
+    XCTAssertEqual(shifted.finger, .ring)
+    XCTAssertTrue(shifted.requiresShift)
+    XCTAssertEqual(shifted.shiftHand, .left)
+
+    let space = try XCTUnwrap(PhysicalDubeolsikLayout.target(for: " "))
+    XCTAssertNil(space.key)
+    XCTAssertEqual(space.hand, .both)
+    XCTAssertEqual(space.finger, .thumb)
+
+    let homeKeys = PhysicalDubeolsikLayout.rows.joined().filter(\.isHomePosition)
+    XCTAssertEqual(Set(homeKeys.map(\.latin)), Set(["F", "J"]))
+    XCTAssertEqual(Set(homeKeys.map(\.baseJamo)), Set(["ㄹ", "ㅓ"]))
+  }
+
+  func testPhysicalDubeolsikGuideCoversEveryBuiltInBaseAndShiftJamo() {
+    let base = Array("ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔㅁㄴㅇㄹㅎㅗㅓㅏㅣㅋㅌㅊㅍㅠㅜㅡ")
+    let shifted = Array("ㅃㅉㄸㄲㅆㅒㅖ")
+
+    for jamo in base + shifted {
+      XCTAssertNotNil(PhysicalDubeolsikLayout.target(for: jamo), "Missing mapping for \(jamo)")
+    }
+    XCTAssertNil(PhysicalDubeolsikLayout.target(for: "가"))
+  }
+
   func testContentReportEmailIncludesOnlyRequiredContext() throws {
     let url = ContentFeedbackLinkBuilder.makeURL(
       context: .report(deckID: "official_daily_words", deckVersion: 4),

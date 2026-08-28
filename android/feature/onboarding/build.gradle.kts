@@ -19,6 +19,7 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":core:hangul"))
   implementation(project(":core:settings"))
   implementation(project(":core:design"))
   implementation(project(":feature:practice"))

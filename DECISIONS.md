@@ -1264,6 +1264,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2·M7
 - 영향 범위: Android practice androidTest, Compose test dependencies, Android CI compile gate, M2 physical evidence·handoff·완료 판정
 
+## 2026-08-25 iPhone+iPad Universal 앱과 적응형 화면 범위
+- 결정: 기존 App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`, Xcode project·scheme을 유지하고 iOS target을 iPhone+iPad Universal로 확장한다. iPhone은 기존 portrait만 유지하고 iPad는 iPadOS 16+ 네 방향, Split View 1/2·1/3, Stage Manager와 resizable window를 지원한다. `UIRequiresFullScreen` opt-out, 별도 iPad target·앱 레코드·sidebar는 만들지 않는다.
+- 결정: 적응형 화면은 기기 모델이 아니라 실제 가용 폭을 기준으로 공통 metrics에서 compact `<600pt`, medium `600..<900pt`, wide `>=900pt`를 계산한다. compact는 iPhone 구성을 재사용하고 읽기 콘텐츠 720pt, 허브/카탈로그 1120pt, 세션 문제 lane 920pt, 내장 키보드 820pt를 최대 폭 기준으로 둔다.
+- 결정: 방향·창 크기 변경은 현재 탭·문제·입력·점수·콤보·목숨·타이머를 보존하며 세션 중 새 설정·파일·결제·연결 안내 모달을 허용하지 않는다. iPad 공식 지원의 통합 출시는 Issue #10의 적응형 화면, Issue #12의 물리 키보드 OS IME 실기기 gate, Issue #17의 두벌식 배열·권장 운지 학습 UX를 함께 요구한다.
+- 근거: Slack·Threads 피드백의 핵심은 확대된 iPhone 화면이 아니라 iPad와 Bluetooth 키보드로 실제 두벌식 위치를 익히는 것이다. 같은 앱·상태 모델을 유지한 채 폭과 window contract만 분리해야 iPhone 회귀와 세션 무중단 원칙을 보존할 수 있다.
+- 관련 PRD 섹션: §2.3, F2, F2a, F4, F6, F10, §7, §12.2, §13
+- 영향 범위: iOS target device family·Info.plist 방향, 공통 adaptive layout, 홈·둘러보기·연습·게임·결과·마이페이지·설정, iPad 자동·수동 QA와 App Store 증빙
+
 ## 2026-08-25 Android 실기기 QA의 출시 후보 통합 gate 이관
 - 결정: 사용자의 명시적 요청에 따라 Android 개발 중 반복적으로 로컬 실기기를 요구하는 수동·정량 QA는 기능별 면제로 처리하지 않고 M3~M6 전체 구현과 자동 검증이 끝난 출시 후보 단계의 통합 실기기 QA로 이관한다. 각 마일스톤은 JVM·instrumented 자동 회귀, lint, debug/release build와 가능한 에뮬레이터 검증을 계속 통과해야 한다.
 - 결정: M2는 다양한 단어 16개·자모 101/101 실기기 기능 gate, 사용자 직접 입력 확인, 자동 representative-plan·2-pointer MotionEvent 회귀를 근거로 후속 구현을 허용한다. 물리 touch-down→frame-commit p95 50ms 이하와 50쌍 rollover 누락·중복 0은 삭제하거나 완화하지 않는다. 마지막 유효 정량 측정은 짧은 자모열 불필요 스크롤 제거 뒤 p50 38ms·p95 54ms·max 64ms였고, 키 가이드 애니메이션 재구성 범위 최적화는 자동 테스트·lint·빌드까지 통과했으나 이 결정에 따라 실기기 재측정은 출시 후보로 남긴다.
@@ -1272,6 +1280,21 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 관련 PRD 섹션: F2 AC, §7.2, §12, §13 M2~M7, §14
 - 영향 범위: Android 마일스톤 완료 판정, GitHub Project 상태, M2 성능 evidence, M3~M6 착수 조건, 출시 후보 실기기 QA 체크리스트
 
+## 2026-08-26 iOS OS IME 세션 설정의 포커스 격리
+- 결정: OS IME 입력 중 세션 설정을 열 때 숨겨진 `UITextField`의 first responder를 먼저 해제하고, 다음 메인 실행 주기에 앱 내부 설정 패널을 표시한다. 패널을 닫으면 다음 실행 주기에 입력 포커스를 복구하며, 현재 문제·승인 자모·오타·세션 시간은 초기화하거나 일시정지하지 않는다. SwiftUI `Menu` 기반 세션 설정은 iPadOS 26.6의 하드웨어 키보드 keyplane 전환과 함께 AttributeGraph 재진입 크래시를 일으키므로 사용하지 않는다.
+- 결정: 최신 Android M6 포팅은 OS IME `EditText` adapter를 사용하지만 연습 중 전역 설정 시트를 열지 않고 입력 방식 `DropdownMenu`만 노출하므로, SwiftUI context menu와 iPadOS keyplane이 재진입하는 동일 크래시 경로는 존재하지 않는다. Android는 IME 뷰 생명주기와 순수 `core:session` 상태를 분리해 현재 입력·타이머를 보존한다.
+- 근거: 실제 iPad의 두 SIGABRT 로그가 `UIKeyboardLayoutStar` keyplane 갱신 중 `_UIContextMenuView`와 SwiftUI `UpdateContextMenuInteraction`을 거쳐 `AG::Graph::value_set` precondition에 도달했다. 포커스 해제와 설정 표시를 같은 AttributeGraph 갱신에서 분리하면 키보드 전환의 재진입을 없애면서 사용자의 타이핑 진행을 유지할 수 있다.
+- 관련 PRD 섹션: F2a, F10, §11.1, §12.2, §13 M6·M7
+- 영향 범위: `OSIMEInputPanel`, `PracticeView`, 세션 설정 UI, iOS UI 회귀, Android F2a/F10 선행 계약
+
+## 2026-08-27 초기 온보딩의 기기 키보드 선택과 기초 레슨 허용
+- 결정: 두벌식 소개 화면의 기존 단일 체험 버튼을 `내장 키보드로 시작`과 `기기 키보드로 시작` 두 선택으로 교체한다. 선택 버튼이 바로 첫 `가` 입력 화면으로 이동하므로 목표 선택·다음·입력 방식 선택 뒤 네 번째 상호작용이 실제 입력이라는 F1 경계를 유지한다. 기기 키보드 선택은 `input_mode=os_ime`와 별도의 참조 배열 표시 설정으로 저장하고 챕터1~3 부화 미션과 챕터4에도 이어진다.
+- 결정: 물리 연결 여부는 추정하지 않는다. 기기 키보드 입력은 #12에서 검증한 `UITextField` committed/marked diff 판정을 그대로 사용하고, 앱은 QWERTY 문자 영역의 두벌식 자모·라틴 문자·다음 키·권장 손·손가락·반대 손 Shift만 안내한다. 실제 사용 손가락은 감지하거나 채점하지 않는다. 기존 사용자의 기본 입력과 참조 배열은 각각 내장·OFF로 유지한다.
+- 결정: 최신 Android M6 포팅에도 같은 `내장/기기` 초기 선택, 첫 `가`의 OS IME 판정, 두벌식 물리 배열 가이드, 챕터1~4 입력 방식 유지와 설정 저장을 적용한다. 챕터1~4에서는 입력 방식 변경 UI만 잠그고 온보딩·설정에서 확정한 OS IME는 강제로 내장 키보드로 되돌리지 않는다.
+- 근거: 실제 iPad와 Bluetooth 한국어 키보드에서 일반 연습 입력은 성공했지만 첫 온보딩과 부화 미션이 내장 키보드로 고정돼, 물리 배열을 배우려는 사용자가 가장 처음부터 원하는 입력 장치를 사용할 수 없었다. 입력 판정기를 새로 만들지 않고 이미 검증된 OS IME 경로를 확장하면 판정 일관성을 유지하면서 첫 경험의 강제를 제거할 수 있다.
+- 관련 PRD 섹션: F1, F2a, F4, F10, §7.2, §12.2, §13 M6·M7
+- 결정: Android 연습 화면은 전역 설정 시트를 세션 중 노출하지 않고 입력 방식 `DropdownMenu`만 제공하므로 iPadOS의 SwiftUI context-menu/키보드 keyplane 크래시 경로는 존재하지 않는다. Android에서는 IME `EditText`와 순수 reducer 상태를 유지한 채 입력 방식만 전환하며, 이 경로를 Compose 계측 회귀로 검증한다.
+- 영향 범위: iOS·Android 온보딩 입력 선택, `PhysicalKeyboardGuideView`/`PhysicalKeyboardGuide`, 챕터1~4 입력 허용, 키보드 설정 저장, ja/en/ko 로컬라이제이션, iPad·Android Bluetooth/USB 키보드 QA
 ## 2026-08-25 Android M7 M3 정적 카탈로그·원자 저장·발견 흐름 완료
 - 결정: Android M3는 `core:data`가 Room 설치 메타데이터·다운로드 이력·persistent journal을, 앱 전용 파일이 실제 catalog/deck payload를 소유하도록 고정한다. 쓰기는 `journal Room transaction → 같은 디렉터리 atomic move → metadata Room transaction` 순서이며, 현재 검증본과 직전 검증본·quarantine으로 시작 시 이전 또는 새 pair에 수렴한다. 손상된 최신 payload는 직전 검증본으로 복구하고 둘 다 유효하지 않을 때만 해당 설치를 격리하거나 번들 catalog로 fallback한다.
 - 결정: 앱은 번들 공식 26덱 또는 검증 cache를 즉시 표시하고 `PIYOKEY_CATALOG_URL`이 주입된 경우에만 동일 HTTPS content root에서 ETag와 If-Modified-Since 조건부 GET을 수행한다. 네트워크·HTTP·schema·의미 검증 실패는 현재 화면을 실패 상태로 바꾸지 않으며 계정·쓰기 API·download count mutation을 만들지 않는다.

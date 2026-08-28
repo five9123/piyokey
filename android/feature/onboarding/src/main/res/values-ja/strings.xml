@@ -18,10 +18,14 @@
   <string name="onboarding_left_hand">左・子音</string>
   <string name="onboarding_right_hand">右・母音</string>
   <string name="onboarding_try">今すぐ入力する</string>
+  <string name="onboarding_use_builtin_keyboard">アプリ内キーボードではじめる</string>
+  <string name="onboarding_use_device_keyboard">端末キーボードではじめる</string>
   <string name="onboarding_first_input_title">はじめての「가」を作ろう</string>
   <string name="onboarding_first_input_hint">次のキーだけ光ります。ㄱ、ㅏの順に入力してください。</string>
   <string name="onboarding_first_input_retry">おしい！光っているキーを押してみよう。</string>
   <string name="onboarding_first_input_next">次のキー：%1$s</string>
+  <string name="onboarding_ime_missing">韓国語キーボードを追加または有効にしてから、ここに戻って入力してください。</string>
+  <string name="onboarding_ime_open_settings">キーボード設定を開く</string>
   <string name="onboarding_reward_title">たまごにヒビが入った！</string>
   <string name="onboarding_reward_badge">はじめての「가」ごほうび</string>
   <string name="onboarding_hatch_handoff">子音・母音・文字の組み立てミッションでピヨをかえそう。この3つのミッションはスキップできません。</string>

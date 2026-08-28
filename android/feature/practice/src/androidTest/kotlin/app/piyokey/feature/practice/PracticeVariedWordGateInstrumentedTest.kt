@@ -3,6 +3,7 @@ package app.piyokey.feature.practice
 import android.content.Context
 import android.os.Build
 import android.os.SystemClock
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
@@ -66,7 +67,7 @@ internal val VARIED_WORD_GATE_TARGETS = listOf(
 @RunWith(AndroidJUnit4::class)
 class PracticeVariedWordGateInstrumentedTest {
   @get:Rule
-  val composeRule = createComposeRule()
+  val composeRule = createAndroidComposeRule<ComponentActivity>()
 
   @Test
   fun representativePlan_coversComplexCompositionAndTheWholeKeyboard() {

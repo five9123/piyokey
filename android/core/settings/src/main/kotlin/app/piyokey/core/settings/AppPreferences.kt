@@ -75,6 +75,7 @@ data class AppPreferences(
   val romanHintsEnabled: Boolean = true,
   val keyGuideEnabled: Boolean = true,
   val defaultInputMode: InputMode = InputMode.BUILTIN,
+  val showsPhysicalKeyboardGuide: Boolean = false,
   val displayPreset: PracticeDisplayPreset = PracticeDisplayPreset.LEARNING,
   val showsTarget: Boolean = true,
   val showsMeaning: Boolean = true,
@@ -205,11 +206,7 @@ object OnboardingPolicy {
   fun resolvedInputMode(
     preferred: InputMode,
     curriculumChapterNumber: Int?,
-  ): InputMode = if (curriculumChapterNumber != null && curriculumChapterNumber <= 4) {
-    InputMode.BUILTIN
-  } else {
-    preferred
-  }
+  ): InputMode = preferred
 
   fun nextHatchChapter(completed: Int): Int? =
     if (completed in 0 until requiredHatchChapters) completed + 1 else null

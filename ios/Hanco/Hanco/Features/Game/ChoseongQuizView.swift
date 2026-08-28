@@ -1436,6 +1436,7 @@ struct ChoseongTypingView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.hancoFontScale) private var fontScale
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var discoverViewModel: DiscoverViewModel
@@ -1527,8 +1528,10 @@ struct ChoseongTypingView: View {
       .frame(maxHeight: .infinity)
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
 
       inputArea
+        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(gameBackground.ignoresSafeArea())

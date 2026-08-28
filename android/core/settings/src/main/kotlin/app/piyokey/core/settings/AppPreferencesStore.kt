@@ -53,6 +53,7 @@ class AppPreferencesStore private constructor(
     romanHintsEnabled = preferences[Keys.romanHints] ?: true,
     keyGuideEnabled = preferences[Keys.keyGuide] ?: true,
     defaultInputMode = enumValue(preferences[Keys.defaultInputMode], InputMode.BUILTIN),
+    showsPhysicalKeyboardGuide = preferences[Keys.showsPhysicalKeyboardGuide] ?: false,
     displayPreset = enumValue(preferences[Keys.displayPreset], PracticeDisplayPreset.LEARNING),
     showsTarget = preferences[Keys.showsTarget] ?: true,
     showsMeaning = preferences[Keys.showsMeaning] ?: true,
@@ -98,6 +99,7 @@ class AppPreferencesStore private constructor(
     preferences[Keys.romanHints] = value.romanHintsEnabled
     preferences[Keys.keyGuide] = value.keyGuideEnabled
     preferences[Keys.defaultInputMode] = value.defaultInputMode.name
+    preferences[Keys.showsPhysicalKeyboardGuide] = value.showsPhysicalKeyboardGuide
     preferences[Keys.displayPreset] = value.displayPreset.name
     preferences[Keys.showsTarget] = value.showsTarget
     preferences[Keys.showsMeaning] = value.showsMeaning
@@ -148,6 +150,7 @@ class AppPreferencesStore private constructor(
     val romanHints = booleanPreferencesKey("settings.roman_hints")
     val keyGuide = booleanPreferencesKey("settings.key_guide")
     val defaultInputMode = stringPreferencesKey("settings.input_mode")
+    val showsPhysicalKeyboardGuide = booleanPreferencesKey("settings.physical_keyboard_guide")
     val displayPreset = stringPreferencesKey("settings.practice_display_preset")
     val showsTarget = booleanPreferencesKey("settings.practice_shows_target")
     val showsMeaning = booleanPreferencesKey("settings.practice_shows_meaning")

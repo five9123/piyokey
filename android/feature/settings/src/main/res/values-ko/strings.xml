@@ -12,6 +12,7 @@
   <string name="settings_default_input">기본 입력 모드</string>
   <string name="settings_input_builtin">내장 키보드</string>
   <string name="settings_input_os">OS 키보드</string>
+  <string name="settings_physical_keyboard_guide">기기 키보드 배열 가이드</string>
   <string name="settings_appearance">화면</string>
   <string name="settings_font_size">글자 크기</string>
   <string name="settings_small">작게</string>

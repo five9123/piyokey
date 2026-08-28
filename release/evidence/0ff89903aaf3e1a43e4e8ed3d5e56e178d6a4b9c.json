@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "verified_commit": "0ff89903aaf3e1a43e4e8ed3d5e56e178d6a4b9c",
+  "verified_tree": "dfd95c12f5ca96371caa78f604f2f99dcd1f2e42",
+  "branch": "codex/17-physical-keyboard-learning",
+  "scope": "Issue #17 latest-main keyboard integration",
+  "result": "pass",
+  "recorded_at": "2026-08-27T14:55:38.365534+00:00",
+  "checks": [
+    {
+      "name": "iPad issue regression",
+      "status": "pass",
+      "command": "xcodebuild test-without-building selected issue tests",
+      "note": "56 unit tests and 5 relevant iPad UI tests passed; result /tmp/piyokey-issue17-main-merge-clean.xcresult"
+    },
+    {
+      "name": "iPhone F10 settings",
+      "status": "pass",
+      "command": "xcodebuild test selected F10 settings test",
+      "note": "1/1 passed; result /tmp/piyokey-issue17-settings-iphone.xcresult"
+    },
+    {
+      "name": "Android related regression",
+      "status": "pass",
+      "command": "gradle settings practice onboarding settings app regression",
+      "note": "BUILD SUCCESSFUL"
+    },
+    {
+      "name": "Android onboarding/settings instrumentation",
+      "status": "pass",
+      "command": "gradle connected tests on emulator",
+      "note": "5/5 passed"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "tools/release_preflight.py",
+      "note": "PASS"
+    }
+  ],
+  "manual_gates": [
+    "Galaxy ADB RSA authorization and physical touch-down p95 <=50ms / two-pointer rollover report",
+    "iPad real Bluetooth first 가, hatch mission persistence, repeated settings with no new crash report",
+    "GitHub branch/PR refresh requires explicit push authorization"
+  ]
+}

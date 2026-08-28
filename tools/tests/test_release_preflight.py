@@ -81,6 +81,33 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertIn("Game Center availability IDs must be unique", messages)
         self.assertTrue(any("piyokey.unknown.board" in message for message in messages))
 
+    def test_ios_universal_contract_is_repository_valid(self):
+        project = (ROOT / "ios/Hanco/Hanco.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+        info = release_preflight.load_plist(ROOT / "ios/Hanco/Hanco/Resources/Info.plist")
+        self.assertEqual(release_preflight.ios_universal_contract_findings(project, info), [])
+
+    def test_ios_universal_contract_rejects_device_orientation_and_window_drift(self):
+        project = "TARGETED_DEVICE_FAMILY = 1;"
+        info = {
+            "UISupportedInterfaceOrientations": [
+                "UIInterfaceOrientationPortrait",
+                "UIInterfaceOrientationLandscapeLeft",
+            ],
+            "UISupportedInterfaceOrientations~ipad": ["UIInterfaceOrientationPortrait"],
+            "UIRequiresFullScreen": True,
+        }
+        messages = {
+            finding.message
+            for finding in release_preflight.ios_universal_contract_findings(project, info)
+        }
+        self.assertTrue(any("iPhone and iPad device families" in message for message in messages))
+        self.assertTrue(any("iPhone orientations must remain portrait-only" in message for message in messages))
+        self.assertTrue(any("iPad must declare all four" in message for message in messages))
+        self.assertIn(
+            "UIRequiresFullScreen must remain absent for iPad multitasking and resizable windows",
+            messages,
+        )
+
     def test_store_metadata_respects_apple_field_limits(self):
         messages = {finding.message for finding in release_preflight.repository_checks(ROOT)}
         self.assertFalse(any("store field" in message for message in messages))
