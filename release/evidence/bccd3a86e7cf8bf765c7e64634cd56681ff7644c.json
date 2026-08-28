@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "verified_commit": "bccd3a86e7cf8bf765c7e64634cd56681ff7644c",
+  "verified_tree": "829cb7ff12520494ac3e84e9f473291710a5adb8",
+  "branch": "codex/59-project-reorganization",
+  "scope": "Issue #59 project operating baseline",
+  "result": "pass",
+  "recorded_at": "2026-08-27T14:21:32.327368+00:00",
+  "checks": [
+    {
+      "name": "tools-tests",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B -m unittest discover -s tools/tests -p test_*.py",
+      "note": "75 tests passed"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B tools/release_preflight.py",
+      "note": "repository preflight passed"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B tools/workspace_doctor.py --scope repo --strict",
+      "note": "clean and ownership matched"
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "no whitespace errors"
+    }
+  ],
+  "manual_gates": []
+}

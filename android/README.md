@@ -2,6 +2,18 @@
 
 Android M7의 A0~M6C와 앱 1.1 무료 사용자 덱 문서 수명주기 구현이다. 한글 입력·덱·`.piyodeck`·게임 규칙 계약은 순수 Kotlin으로 고정하고, Compose 연습·발견·오프라인 덱·전체 게임·SAF 사용자 덱을 5탭 앱 셸에 연결한다.
 
+## 현재 출시 상태
+
+기능 소스와 로컬 Release 빌드는 완성 단계지만 아직 Google Play에 올릴 수 있는 최종 출시 후보는 아니다. 공용 브랜드 테마·벡터 아이콘·라이트/다크·큰 글자 회귀까지 자동 검증한 뒤에도 다음 외부 gate가 남는다.
+
+- 최종 application ID와 Play Console 앱 소유권
+- 공개 운영 카탈로그와 콘텐츠·고정 발음 권리 승인
+- upload signing identity, Deck Maker 상품, Play Games 리소스
+- 스토어 메타데이터·스크린샷과 동일 서명 AAB 생성
+- 그 AAB를 설치한 Galaxy의 Issue #19 통합 실기기 QA
+
+따라서 일반 `assembleRelease`·`bundleRelease` 산출물은 소스 증빙일 뿐 업로드하지 않는다. 모든 외부 입력과 서명이 갖춰진 `bundleDistributionRelease` 산출물만 최종 후보가 될 수 있다.
+
 ## 고정 도구 체인
 
 - Gradle Wrapper 9.5.0
@@ -124,9 +136,9 @@ M4 증분 파일과 검증은 `docs/ANDROID_M7_M4_HANDOFF.md`에 기록한다.
 
 - `core:retention`은 iOS parity 6챕터·7스테이지, 별/해금, JST 주간·스트릭·보상, 결정적 5문제 데일리와 복습 졸업 정책을 Android 없이 검증한다.
 - 연습 checkpoint는 현재 문제·수락 자모·오타 resolution·유효 시간만 저장하며 background 구간을 제외하고 정확히 복구한다.
-- Room v2→v3은 M3/M4 데이터를 보존하면서 커리큘럼, 복습, 스트릭 활동, 3/5/7 영구 보상과 기본 OFF 리마인더 preference를 추가한다.
+- Room v2→v3은 M3/M4 데이터를 보존하면서 커리큘럼, 복습, 스트릭 활동, 3/5/7 영구 보상과 리마인더 preference를 추가한다.
 - 홈 MY 피요+7일 카드·데일리·추천, 연습 탭 커리큘럼/자유연습, 마이페이지 피요 상세·수동 복습·시간 지정 리마인더를 ja/en/ko로 제공한다.
-- 로컬 리마인더는 exact-alarm 권한 없이 예약하고 재부팅 뒤 복원하며, Android 13+ 알림 권한은 사용자가 켤 때만 요청한다.
+- 로컬 리마인더는 온보딩에서 Android 13+ 알림 권한을 허용하면 현지 시각 20:00로 자동 활성화한다. exact-alarm 권한 없이 다음 현지 시각을 매일 다시 계산하고 재부팅·시각·시간대 변경 뒤 복원하며, 설정의 ON/OFF·시간 지정은 선택 사항이다.
 - JVM session 14·game 11·retention 9·data 7 tests, API 35 data 12 tests와 app M3~M5 6 tests, 관련 lint와 debug APK가 통과했다.
 - 실기기 입력·60초 frame·최종 알림 수신은 출시 후보 통합 QA Issue #19에 유지한다.
 

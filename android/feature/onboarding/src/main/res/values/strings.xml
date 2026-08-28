@@ -26,6 +26,10 @@
   <string name="onboarding_reward_badge">First 가 reward</string>
   <string name="onboarding_hatch_handoff">Complete consonants, vowels, and syllable-building missions to hatch your Piyo. These three missions cannot be skipped.</string>
   <string name="onboarding_hatch_begin">Begin hatch mission 1</string>
+  <string name="onboarding_reminder_title">A daily reminder after work at 20:00</string>
+  <string name="onboarding_reminder_detail">Just allow notifications and we’ll schedule it automatically for 20:00 in your device’s local time. You can change the time later.</string>
+  <string name="onboarding_reminder_allow_and_begin">Allow reminders and begin</string>
+  <string name="onboarding_reminder_not_now">Begin without reminders</string>
   <string name="hatch_title">Hatch missions</string>
   <string name="hatch_progress">%1$d of %2$d complete</string>
   <string name="hatch_mission">Mission %1$d</string>

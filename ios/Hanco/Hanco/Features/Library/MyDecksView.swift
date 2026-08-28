@@ -208,13 +208,29 @@ struct MyPageView: View {
               _ = try? UserDeckDraftStore.live.clear(
                 draftID: latestDraftID ?? presentation.draftID
               )
+              TelemetryService.shared.capture(
+                .deckMakerAction,
+                properties: [
+                  .action: "deleted",
+                  .itemCountBucket: TelemetryService.shared.itemCountBucket(
+                    presentation.draft.items.count
+                  ),
+                  .deckSource: presentation.source == .imported ? "imported" : "created",
+                ]
+              )
             }
           }
         )
       }
       .sheet(isPresented: exportArtifactBinding) {
         if let artifact = documentCoordinator.exportArtifact {
-          PiyoDeckActivityView(artifact: artifact) {
+          PiyoDeckActivityView(artifact: artifact) { completed in
+            if completed {
+              TelemetryService.shared.capture(
+                .deckMakerAction,
+                properties: [.action: "exported"]
+              )
+            }
             Task { @MainActor in finishExportPresentation() }
           }
         }
@@ -1286,11 +1302,22 @@ struct MyPageView: View {
     deletionPresentation = nil
     guard deletingDeckID == nil else { return }
     deletingDeckID = deck.deckId
+    let source = deckLibrary.records[deck.deckId]?.source
     Task { @MainActor in
       defer { deletingDeckID = nil }
       do {
         try await deckLibrary.removeAndWait(deck.deckId)
         _ = await reviewDeck.markSourceUnavailable(deckId: deck.deckId)
+        if source == .created || source == .imported {
+          TelemetryService.shared.capture(
+            .deckMakerAction,
+            properties: [
+              .action: "deleted",
+              .itemCountBucket: TelemetryService.shared.itemCountBucket(deck.items.count),
+              .deckSource: source == .imported ? "imported" : "created",
+            ]
+          )
+        }
       } catch {
         deletionFailure = DeckDeletionFailure(deckName: deck.appName)
       }
@@ -1298,6 +1325,8 @@ struct MyPageView: View {
   }
 
   private func requestDeckMaker(_ action: DeckMakerAction) {
+    TelemetryService.shared.capture(.featureViewed, properties: [.feature: "deck_maker"])
+    TelemetryService.shared.setCrashContext(feature: "deck_maker")
     if purchaseStore.hasAccess {
       routeDeckMakerAction(action)
     } else {
@@ -1479,6 +1508,20 @@ struct MyPageView: View {
     }
     _ = reviewDeck.reconcile(with: installed)
     _ = try? UserDeckDraftStore.live.clear(draftID: draftID)
+    let action: String
+    switch presentation.draft.origin {
+    case .new: action = "created"
+    case .editing: action = "edited"
+    case .officialCopy: action = "copied"
+    }
+    TelemetryService.shared.capture(
+      .deckMakerAction,
+      properties: [
+        .action: action,
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(installed.items.count),
+        .deckSource: presentation.source == .imported ? "imported" : "created",
+      ]
+    )
   }
 
   private func saveChangedSourceDraftAsCopy(
@@ -1504,6 +1547,14 @@ struct MyPageView: View {
     )
     _ = reviewDeck.reconcile(with: installed)
     _ = try? UserDeckDraftStore.live.clear(draftID: draftID)
+    TelemetryService.shared.capture(
+      .deckMakerAction,
+      properties: [
+        .action: "copied",
+        .itemCountBucket: TelemetryService.shared.itemCountBucket(installed.items.count),
+        .deckSource: "created",
+      ]
+    )
   }
 
   private func restoreDraftIfAvailable() {

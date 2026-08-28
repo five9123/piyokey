@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "provider_region": "posthog_cloud_eu",
+  "free_tier_only": true,
+  "gates": {
+    "posthog_eu_project_created": true,
+    "posthog_billing_limit_guarded": true,
+    "firebase_ios_app_registered": false,
+    "firebase_android_app_registered": false,
+    "ios_dsym_symbolication_verified": false,
+    "android_r8_mapping_verified": false,
+    "android_anr_verified": false,
+    "web_source_maps_verified": false,
+    "posthog_geoip_disabled": false,
+    "opt_out_network_silence_verified": false,
+    "consent_notice_ui_verified": false,
+    "analytics_only_consent_verified": false,
+    "diagnostics_only_consent_verified": false,
+    "privacy_policy_published": false,
+    "privacy_retention_and_deletion_verified": false,
+    "live_privacy_copy_matches_build": false,
+    "app_store_privacy_updated": false,
+    "play_data_safety_updated": false,
+    "product_dashboard_created": true,
+    "crash_alerts_created": false
+  }
+}

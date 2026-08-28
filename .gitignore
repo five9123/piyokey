@@ -62,3 +62,5 @@ dist/
 *.provisionprofile
 AuthKey_*.p8
 *Secrets.xcconfig
+android/app/google-services.json
+ios/Hanco/Hanco/Resources/GoogleService-Info.plist

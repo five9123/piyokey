@@ -24,6 +24,10 @@
 - [ ] Sandbox/TestFlight에서 같은 결제 시나리오와 재실행 entitlement를 정확한 1.1 빌드로 확인
 - [ ] `release/app_store_submission.json#next_submission`의 수동 게이트를 실제 증거에 맞춰 갱신
 - [ ] `python3 tools/release_preflight.py --strict` 성공
+- [ ] 공개 개인정보처리방침이 PostHog Cloud EU·Firebase Crashlytics·보존/삭제·철회 절차를 설명하고 앱 내/스토어 URL과 일치
+- [ ] App Privacy를 Data Collected=Yes, Tracking=No 및 7개 데이터 유형으로 갱신하고 `PrivacyInfo.xcprivacy`와 대조
+- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en/ko로 확인
+- [ ] PostHog 수신 이벤트에서 `$geoip_disable=true`와 위치/IP 속성 미보관을 확인
 
 ## 0. 과거 릴리스 후보 — 1.0.2 (6)
 
@@ -43,7 +47,7 @@
 - [x] iPhone 전용, iOS 16+, 세로 방향 설정
 - [x] `PrivacyInfo.xcprivacy` 번들 포함
 - [x] Required Reason API: `UserDefaults / CA92.1`, `ActiveKeyboards / 54BD.1`
-- [x] 추적·수집 데이터 없음 선언
+- [ ] 선택형 분석·진단 수집 선언(Data Collected=Yes, Tracking=No)과 7개 데이터 유형을 다음 RC에 반영
 - [x] 비면제 자체 암호화 미사용 선언(Apple SDK의 HTTPS만 사용)
 - [x] 최종 Bundle ID `app.piyokey.Piyokey` 확정
 - [x] App Store Connect App ID `6794853985` 및 명시적 Bundle ID 등록

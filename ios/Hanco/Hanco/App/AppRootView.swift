@@ -40,6 +40,16 @@ private enum AppTab: Hashable {
   case practice
   case game
   case myPage
+
+  var analyticsValue: String {
+    switch self {
+    case .home: "home"
+    case .discover: "discover"
+    case .practice: "practice"
+    case .game: "game"
+    case .myPage: "my_page"
+    }
+  }
 }
 
 private enum AppTourStep: Int, CaseIterable {
@@ -110,8 +120,15 @@ struct AppRootView: View {
   @AppStorage(SettingsPreferenceKeys.language) private var language =
     AppLanguage.preferred.rawValue
   @AppStorage(OnboardingStore.appTourCompletedKey) private var appTourCompleted = false
+  @AppStorage(SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+  private var anonymousAnalyticsEnabled = false
+  @AppStorage(SettingsPreferenceKeys.crashDiagnosticsEnabled)
+  private var crashDiagnosticsEnabled = false
+  @AppStorage(SettingsPreferenceKeys.privacyNoticeVersion)
+  private var privacyNoticeVersion = 0
   @State private var selectedTab: AppTab = .home
   @State private var showsSettings = false
+  @State private var showsPrivacyConsent = false
   @State private var hatchGateIsActive: Bool?
   @State private var appTourStep: AppTourStep?
 
@@ -190,6 +207,25 @@ struct AppRootView: View {
         )
         .preferredColorScheme(HancoTheme.resolved(from: theme).colorScheme)
     }
+    .sheet(isPresented: $showsPrivacyConsent) {
+      PrivacyConsentView(
+        initialAnalyticsEnabled: anonymousAnalyticsEnabled,
+        initialDiagnosticsEnabled: crashDiagnosticsEnabled,
+        onSave: applyPrivacyChoices,
+        onContinueWithoutSharing: {
+          applyPrivacyChoices(analytics: false, diagnostics: false)
+        }
+      )
+      .environment(
+        \.locale,
+        AppLanguage.resolved(from: language).locale
+      )
+      .environment(
+        \.hancoFontScale,
+        HancoFontScale.resolved(from: fontScale).multiplier
+      )
+      .preferredColorScheme(HancoTheme.resolved(from: theme).colorScheme)
+    }
     .task { discoverViewModel.loadIfNeeded() }
     .task { await deckMakerPurchaseStore.prepare() }
     .task { await piyoDeckDocumentCoordinator.resumePendingIfNeeded() }
@@ -207,6 +243,12 @@ struct AppRootView: View {
       withAnimation(.easeOut(duration: 0.22)) {
         appTourStep = .home
       }
+    }
+    .task(id: shouldPresentPrivacyConsent) {
+      guard shouldPresentPrivacyConsent else { return }
+      await Task.yield()
+      guard !Task.isCancelled, shouldPresentPrivacyConsent else { return }
+      showsPrivacyConsent = true
     }
     .onAppear {
       HancoSoundEngine.shared.setEnabled(soundEffectsEnabled)
@@ -323,6 +365,32 @@ struct AppRootView: View {
       && appTourStep == nil
   }
 
+  private var shouldPresentPrivacyConsent: Bool {
+    PrivacyNoticePolicy.shouldPresent(
+      reviewedVersion: privacyNoticeVersion,
+      onboardingCompleted: !onboarding.shouldPresent && !shouldPresentHatchGate,
+      appTourCompleted: appTourCompleted,
+      hasBlockingPresentation: showsSettings || appTourStep != nil || selectedTab != .home
+    )
+  }
+
+  private func applyPrivacyChoices(analytics: Bool, diagnostics: Bool) {
+    anonymousAnalyticsEnabled = analytics
+    crashDiagnosticsEnabled = diagnostics
+    privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
+    TelemetryService.shared.updateConsent(
+      productAnalytics: analytics,
+      crashDiagnostics: diagnostics
+    )
+    if analytics {
+      TelemetryService.shared.capture(
+        .featureViewed,
+        properties: [.feature: selectedTab.analyticsValue]
+      )
+    }
+    showsPrivacyConsent = false
+  }
+
   private func advanceAppTour() {
     guard let currentStep = appTourStep else { return }
     guard let nextStep = AppTourStep(rawValue: currentStep.rawValue + 1) else {
@@ -337,6 +405,10 @@ struct AppRootView: View {
 
   private func completeAppTour() {
     appTourCompleted = true
+    TelemetryService.shared.capture(
+      .onboardingStepCompleted,
+      properties: [.onboardingStep: "app_tour"]
+    )
     selectedTab = .home
     withAnimation(.easeOut(duration: 0.2)) {
       appTourStep = nil
@@ -412,6 +484,17 @@ struct AppRootView: View {
       .accessibilityIdentifier("tab.my_page")
     }
     .tint(AppPalette.accent)
+    .onAppear {
+      TelemetryService.shared.capture(
+        .featureViewed,
+        properties: [.feature: selectedTab.analyticsValue]
+      )
+      TelemetryService.shared.setCrashContext(feature: selectedTab.analyticsValue)
+    }
+    .onChange(of: selectedTab) { tab in
+      TelemetryService.shared.capture(.featureViewed, properties: [.feature: tab.analyticsValue])
+      TelemetryService.shared.setCrashContext(feature: tab.analyticsValue)
+    }
     .accessibilityHidden(appTourStep != nil)
     .overlayPreferenceValue(AppTourTargetPreferenceKey.self) { targets in
       GeometryReader { proxy in

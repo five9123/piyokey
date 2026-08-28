@@ -91,6 +91,8 @@ import app.piyokey.core.game.TypingRoundBuilder
 import app.piyokey.core.hangul.HangulComposer
 import app.piyokey.core.hangul.JamoDecomposer
 import app.piyokey.core.design.PiyoAvatar
+import app.piyokey.core.design.PiyokeyIcon
+import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.platform.PiyokeySoundEngine
 import app.piyokey.core.platform.PronunciationPlayer
 import app.piyokey.core.platform.SoundCue
@@ -131,7 +133,11 @@ fun GameDeckSelectionScreen(
     verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
     item {
-      TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.games_title)}") }
+      TextButton(onClick = onBack) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.size(6.dp))
+        Text(stringResource(R.string.games_title))
+      }
       Text(stringResource(R.string.choose_game_course), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
       Text(stringResource(R.string.built_in_courses), color = Color.Gray)
     }
@@ -480,7 +486,14 @@ fun AcidRainRoute(
 fun SpacingSelectionScreen(passages: List<SpacingPassage>, onBack: () -> Unit, onSelect: (SpacingPassage) -> Unit) {
   BackHandler(onBack = onBack)
   LazyColumn(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("spacing-select"), contentPadding = PaddingValues(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-    item { TextButton(onClick = onBack) { Text("‹ ${stringResource(R.string.games_title)}") }; Text(stringResource(R.string.spacing_choose), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black) }
+    item {
+      TextButton(onClick = onBack) {
+        PiyokeyIcon(PiyokeyIconKind.BACK, null, Modifier.size(18.dp))
+        Spacer(Modifier.size(6.dp))
+        Text(stringResource(R.string.games_title))
+      }
+      Text(stringResource(R.string.spacing_choose), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
+    }
     items(passages, key = SpacingPassage::id) { passage ->
       Card(Modifier.fillMaxWidth().clickable { onSelect(passage) }.testTag("spacing-level-${passage.level}"), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(Modifier.padding(18.dp)) {
@@ -530,7 +543,11 @@ fun SpacingGameRoute(
   } ?: 0L)
   Column(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFFFFE8F0), Color(0xFFF1EDFF), Color.White))).padding(14.dp).testTag("spacing-game")) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-      TextButton(onClick = onClose) { Text("× ${stringResource(R.string.close)}") }
+      TextButton(onClick = onClose) {
+        PiyokeyIcon(PiyokeyIconKind.CLOSE, null, Modifier.size(18.dp))
+        Spacer(Modifier.size(6.dp))
+        Text(stringResource(R.string.close))
+      }
       Text(
         "${state.cursor}/${state.engine.boundaryCount} · ${visibleElapsedMillis / 1_000}s",
         Modifier.weight(1f),
@@ -674,7 +691,9 @@ fun SpacingResultScreen(
 @Composable private fun CompactGameHud(question: String, score: Int, combo: Int, onClose: () -> Unit) {
   val closeDescription = stringResource(R.string.close)
   Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
+    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) {
+      Box(contentAlignment = Alignment.Center) { PiyokeyIcon(PiyokeyIconKind.CLOSE, null, Modifier.size(22.dp), tint = GameInk) }
+    }
     MiniMetric(stringResource(R.string.questions), question, Modifier.weight(1f))
     MiniMetric(stringResource(R.string.score), score.toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.combo), combo.toString(), Modifier.weight(1f))
@@ -684,7 +703,9 @@ fun SpacingResultScreen(
 @Composable private fun RainHud(state: AcidRainState, onClose: () -> Unit) {
   val closeDescription = stringResource(R.string.close)
   Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
-    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) { Box(contentAlignment = Alignment.Center) { Text("×", fontSize = 28.sp) } }
+    Surface(Modifier.size(44.dp).clickable(onClick = onClose).semantics { contentDescription = closeDescription }, CircleShape, Color.White) {
+      Box(contentAlignment = Alignment.Center) { PiyokeyIcon(PiyokeyIconKind.CLOSE, null, Modifier.size(22.dp), tint = GameInk) }
+    }
     MiniMetric(stringResource(R.string.time), ceil(state.remainingTimeMillis / 1000.0).toInt().toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.score), state.score.toString(), Modifier.weight(1f))
     MiniMetric(stringResource(R.string.combo), state.combo.toString(), Modifier.weight(1f))

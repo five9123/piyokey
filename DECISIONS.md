@@ -1387,6 +1387,25 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: unsigned 재현 빌드와 실제 배포 자격을 분리하고 모든 외부·비밀 입력을 fail closed하면 개발 중 Play 상태를 만들거나 비밀을 커밋하지 않으면서도 잘못된 package·누락된 서비스 ID·불안전한 manifest·미승인 콘텐츠로 AAB를 업로드하는 경로를 차단할 수 있다.
 - 영향 범위: Android application/version identity, Release R8·resource shrink·signing, manifest security, Source CI APK/AAB, 정적 카탈로그·법무·Play Console·최종 실기기 Issue #19.
 
+## 2026-08-26 전 플랫폼 익명 제품 분석·크래시 진단
+
+- 관련: PRD F10, §10, §12, Issue #43.
+- 결정: iOS/iPadOS·Android·웹의 익명 제품 분석은 PostHog Cloud EU, iOS/iPadOS·Android의 크래시/ANR은 Firebase Crashlytics, 웹 오류는 PostHog Error Tracking을 사용한다. 무료 제공량을 운영 기준으로 하고 초과 과금은 별도 승인 전 허용하지 않는다.
+- 결정: `익명 사용 분석`과 `크래시 진단`은 서로 독립적이고 기본 OFF다. Debug/test, 프로젝트 토큰 누락, Firebase 설정 파일 누락은 모두 no-op이며 앱 핵심 기능과 일반 빌드를 실패시키지 않는다. 실제 배포 task에서만 외부 설정·심볼·mapping·정책 gate를 fail closed로 검증한다.
+- 결정: `shared/analytics/events.json`을 유일한 allowlist로 두고 Swift/Kotlin/TypeScript 계약을 생성한다. 자동 UI/키 입력 캡처, 세션 리플레이, heatmap, 사용자 identify/person profile, 광고 ID, 자유 문자열·사용자 덱 내용·경로·hash·영수증을 금지한다. 이벤트는 기능·세션·게임·덱 출처·Deck Maker·구매의 의미적 상태와 bucket 수치만 포함한다.
+- 결정: SDK는 앱/웹 어댑터 계층에만 위치하고 학습·게임 reducer와 공용 코어는 공급자를 import하지 않는다. 모바일 Crashlytics context도 같은 allowlist의 enum만 사용하며 웹 오류 자동 캡처는 진단 동의 뒤에만 켠다.
+- 근거: 선호 기능과 이탈 지점을 익명 aggregate로 확인하면서도 타이핑 학습 앱의 입력 내용과 로컬 사용자 문서를 수집 경계 밖에 유지해야 한다. 독립 동의·기본 OFF·키 누락 no-op·배포 gate를 함께 두면 개발과 오프라인 기능을 외부 서비스 상태에 종속시키지 않는다.
+- 영향 범위: 공용 이벤트 계약/생성기, iOS/iPadOS·Android 설정과 SDK 어댑터, 웹 패키지, Apple Privacy manifest·Play Data safety·개인정보처리방침·릴리스 preflight, PostHog/Firebase 운영 대시보드.
+
+## 2026-08-26 익명 분석·진단 최초 선택 안내
+
+- 관련: PRD F10, §10, §11, Issue #43.
+- 결정: 현재 개인정보 고지를 검토하지 않은 사용자는 온보딩·부화 미션·앱 투어가 끝난 홈 유휴 상태에서 최초 1회 선택 안내를 본다. 익명 사용 분석과 크래시 진단은 각각 사전 선택하지 않고, `선택 저장`과 `공유하지 않고 계속`을 같은 화면에서 제공한다. 거부는 앱 기능·결제 접근을 제한하지 않는다.
+- 결정: 검토 여부는 단순 Boolean 대신 고지 버전으로 저장한다. 목적·공급자·데이터 범주가 실질적으로 바뀔 때만 버전을 올려 다시 안내하며, 설정에서는 현재 선택·공급자·제외 범주·개인정보처리방침을 언제든 다시 확인하고 철회할 수 있다.
+- 결정: 활성 레슨/게임, 결과 자동 전환, 파일 가져오기·편집·결제·다른 모달 위에는 개인정보 안내를 표시하지 않는다. 앱의 설정/온보딩을 건너뛰는 자동 UI 테스트는 고지 검토 상태도 명시적으로 고정하고, 별도 동의 UI 회귀에서만 미검토 상태를 사용한다.
+- 근거: Apple의 익명 사용 데이터 동의·철회 요구와 Google Play의 명확한 고지·affirmative action 원칙을 만족하면서도 PRD §11의 세션 무인터럽트와 기본 OFF 계약을 보존해야 한다.
+- 영향 범위: iOS/iPadOS AppRoot·Settings·UserDefaults·현지화/UI 회귀, Android app shell·DataStore·Settings Compose·현지화/계측 회귀, 웹 통합용 동의 문구, 스토어 심사 안내·개인정보처리방침 출시 gate.
+
 ## 2026-08-26 GitHub Actions 비활성화와 로컬 검증 전환
 
 - 관련: Issue #47, `docs/REPOSITORY_POLICY.md`.
@@ -1433,3 +1452,56 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 기존 비소모성/일회성 상품 ID `app.piyokey.deckmaker.lifetime`은 구매 호환성을 위해 유지하되 사용자 노출명은 ja=`ピヨキー pro`, en=`typee pro`, ko=`피요키 프로`로 바꾼다. 같은 평생 구매가 사용자 덱 무제한 보관과 기존 생성·편집·공식 덱 사본 기능을 함께 해제한다.
 - 근거: 사용자가 요청한 “3개 무료, 4개 이상 유료”를 기기 내 활성 보관 수로 정의하면 삭제로 무료 선택권을 되돌려 주면서도 반복 열람을 추적하는 불필요한 감시 상태를 만들지 않는다. 기존 상품 ID를 유지하면 이미 구매한 사용자의 entitlement와 StoreKit/Play Billing 복원 계약을 깨지 않는다.
 - 영향 범위: PRD·스토어 메타데이터, iOS `DeckLibrary`/문서 미리보기/paywall, Android `DeckRepository`/문서 미리보기/paywall, ja/en/ko 문자열, 무료 한도·교체·구매 재개 자동 회귀.
+
+## 2026-08-27 F8 온보딩 동의 기반 현지 퇴근 시간 리마인더
+
+- 결정: 신규 사용자는 첫 `가` 입력 보상 화면에서 기기 현지 시각 20:00의 매일 연습 알림을 제안받는다. `알림 받고 시작`을 선택해 OS 권한을 허용하면 앱 내 별도 토글 조작 없이 즉시 활성화하고, 거부하거나 `알림 없이 시작`을 선택하면 예약하지 않는다. iOS 반복 트리거는 고정 시간대를 갖지 않고, Android는 매 알림 뒤 다음 현지 20:00을 다시 계산하며 부팅·수동 시각·시간대 변경에도 재예약한다. 기존 사용자가 직접 지정한 활성화 상태와 시간은 마이그레이션으로 덮어쓰지 않고, 설정의 ON/OFF·시간 지정은 선택적 오버라이드로 유지한다.
+- 근거: 권한을 허용한 사용자가 다시 앱 설정을 찾아 활성화해야 하는 이중 동의를 제거하면서, 거부·건너뛰기를 명확히 보장하고 여행·서머타임 뒤 알림이 생활 시간에서 밀리는 회귀를 막기 위함이다.
+- 관련 PRD 섹션: F1, F8, F10, §11.1
+- 영향 범위: iOS `DailyReminderLibrary`·`OnboardingView`, Android `DailyReminderScheduler`·`OnboardingRoute`, 양 플랫폼 알림 현지화·회귀 테스트.
+
+## 2026-08-27 한국어 10키 분석 입력 모드 계약
+
+- 관련: PRD §10, iOS 한국어 10키 게임 연동 결정, Issue #43.
+- 결정: 공통 분석 `input_mode`의 닫힌 enum에 `builtin_korean_10key`를 추가한다. iOS 연습과 다섯 직접 입력 게임은 선택한 내장 배열이 한국어 10키일 때 이 값을 사용하고, 두벌식 `builtin` 및 `os_ime`와 구분한다.
+- 결정: exact 입력·조합 텍스트, 키 순서, 정답·오답 문자열은 계속 전송하지 않는다. 새 값은 세션 단위의 고정 배열 분류만 나타내며 Swift·Kotlin·TypeScript 생성 계약을 함께 갱신한다.
+- 근거: 병합된 로컬 기록은 이미 10키를 별도 입력 모드로 구분한다. 분석 allowlist가 이를 받지 않으면 계약 검증에서 해당 세션 이벤트 전체가 폐기되어 완료율과 게임 사용량이 누락되므로, 비민감 고정 enum으로만 구분한다.
+- 영향 범위: 공용 분석 이벤트 계약, iOS 연습·게임 의미 이벤트, 생성된 iOS/Android/웹 계약과 관련 자동 검증.
+
+## 2026-08-27 Android 출시 수준 판정과 시각·사용성 폴리싱
+
+- 관련: PRD F1~F12, §7, §12.1, §13 M7, Issue #19, Issue #55.
+- 결정: M1~M6D와 R1.1 기능 소스가 존재한다는 사실만으로 Android를 출시 후보로 부르지 않는다. 출시 후보 동결 전에는 공용 PIYOKEY light/dark color·typography·shape theme, 문자열 glyph가 아닌 접근 가능한 벡터 동작 아이콘, 공용 1024×1024 브랜드 원본의 앱 내부 표시, 홈·발견·연습·게임·마이페이지의 다크 모드·큰 글자 화면을 자동 회귀로 검증한다.
+- 결정: Android 브랜드 리소스는 iOS asset catalog 경로를 직접 참조하지 않고 `shared/brand/piyokey_app_icon_source.png`를 단일 원본으로 사용한다. iOS AppIcon과 Android launcher·앱 내부 로고가 동일한 shared 파일에서 파생되는지를 release preflight가 확인한다.
+- 결정: API 35에서 dark theme·large text 상태의 다섯 기본 목적지와 공통 설정 접근성을 계측 테스트로 고정한다. 로컬 Source CI 동등 959 tasks, Python preflight와 56개 도구 테스트, Debug/Release APK·AAB·manifest 계약을 통과해야 시각 폴리싱 소스 완료로 판단한다.
+- 결정: 이 소스 완료는 Play 배포 승인이 아니다. final application ID/Play 소유권, 공개 catalog, 콘텐츠·고정 발음 권리, upload signing, Billing·Games Console, 스토어 메타데이터·스크린샷을 동일 배포 설정으로 확정한 뒤 생성한 signed AAB만 Issue #19 실기기 QA 대상이 된다.
+- 근거: 초기 Android 화면은 핵심 기능은 연결돼 있었지만 기본 Material 색상, 문자열 아이콘, 다크 모드의 고정 밝은 surface 등으로 출시판의 시각 일관성과 접근성 기준에 미달했다. 소스 폴리싱·외부 배포 준비·실기기 품질 검증을 분리해야 “기능 완료”를 “출시 가능”으로 오인하지 않는다.
+- 영향 범위: `core:design`, app shell, onboarding/discover/practice/game/retention/settings Compose UI, Android brand resource generation, release preflight, Source CI, Issue #19·#55.
+
+## 2026-08-27 Google Play listing 소스와 외부 게이트 분리
+
+- 관련: PRD §12.1, §13 M7, Issue #19, Issue #55, Google Play 스토어 등록정보·미리보기 자산 요구사항.
+- 결정: Android `1.1.0 (8)`의 Google Play 초안은 `release/google_play_metadata.json`을 기계 판독 기준으로 삼고 en-US·ja·ko 이름·짧은 설명·전체 설명, Education·광고 없음, 지원·개인정보 URL을 함께 관리한다. `release_preflight.py`는 30/80/4,000자 제한, 로케일, target SDK 36, 512×512 알파 PNG 아이콘, 1024×500 무알파 피처 그래픽과 140자 대체 텍스트를 검증한다.
+- 결정: Play 아이콘은 `shared/brand/piyokey_app_icon_source.png`에서 파생한다. 피처 그래픽은 같은 공용 브랜드 이미지를 참조해 내장 이미지 생성으로 만든 원본을 보존하고, `tools/generate_google_play_assets.swift`가 기존 파일을 덮어쓰지 않으면서 규격 산출물의 부재만 채운다.
+- 결정: 전화 스크린샷은 임시·디버그 빌드에서 만들지 않는다. 최종 application ID·서명·운영 설정이 고정된 동일 signed release candidate에서 en-US·ja·ko 1080×1920 4장씩 캡처한다. Play Console 앱 생성·ID 소유권·콘텐츠 권리·upload signing·Billing·Games·Data safety·콘텐츠 등급·스크린샷 업로드·Issue #19 실기기 QA는 저장소 검증과 별개인 열린 외부 게이트로 유지한다.
+- 근거: 스토어 문구와 그래픽을 버전 관리·자동 검증하면 Console 입력 전 제품 약속과 자산 규격의 드리프트를 막을 수 있다. 반면 스크린샷과 서명·상품·정책 정보는 실제 배포 후보와 외부 계정 상태에 의존하므로 소스 완료와 동일시할 수 없다.
+- 영향 범위: `release/google_play_metadata.json`, `release/google_play/`, `release/GOOGLE_PLAY_QA.md`, Google Play 자산 생성기, release preflight, Android M7 readiness·global rollout 문서.
+
+## 2026-08-27 Android 홈 원탭 연습·Google Play 콘솔 초안
+
+- 관련: Issue #19·#51·#55, PRD §4 S2, F6·F7·F8·F11, §13 M7.
+- 결정: iOS에서 확정된 홈의 `주간 피요컵`과 `랜덤 단어 5개`를 Android에도 같은 계약으로 포팅한다. 다운로드한 공식 단어 덱의 온보딩 선호 태그를 우선하고, 부족하면 목표별 번들 공식 덱과 흐름 초급 풀을 사용한다. 공백·중복 한국어를 제외하고 최근 20개를 우선 회피하며 결과 재시작은 다른 5개를 뽑는다.
+- 결정: 랜덤 연습 오타는 항목별 원본 덱 ID로 복습에 수집하고 완료는 `quick_practice` 스탬프만 기록한다. 주간컵은 기본 설정이 OS IME여도 경쟁 조건을 위해 내장 두벌식으로 고정하며, 앱 초기 번들 로딩 시점과 무관하게 버튼 클릭에서 로컬 덱을 재확보한다.
+- 결정: Google Play Data safety를 `수집 없음`으로 미리 확정하지 않는다. 앱 자체 분석·광고·계정 서버는 없지만 운영 정적 호스트의 요청 로그, Play Billing 9.1.0, Play Games v2 22.0.0의 기기 밖 처리까지 최종 배포 구성에서 검토해야 한다. 저장소에는 출시 노트·상품 문구·앱 접근·대상 연령·등급·권한·데이터 경계의 근거 초안만 두고 실제 콘솔 답변은 외부 게이트로 유지한다.
+- 근거: 홈 기능 패리티를 맞추면서 빠른 연습의 리텐션·복습 의미를 보존하고, Google이 제3자 SDK 전송까지 Data safety 범위로 정의한 현재 지침에 맞춰 과소 고지를 방지한다.
+- 영향 범위: Android retention/settings/data/app/Compose 홈·결과, ja/en/ko 문자열, Google Play metadata·console declaration·release preflight, JVM·에뮬레이터 회귀. 실기기·Play Console은 Issue #19에 유지한다.
+
+## 2026-08-27 프로젝트 운영 기준선과 검증 증빙
+
+- 관련: Issue #59, 저장소 운영·릴리스 검증 체계.
+- 결정: `AGENTS.md`는 변하지 않는 제품 철칙과 문서 routing만 유지한다. 현재 main·활성 작업·출시 gate는 `PROJECT_STATUS.md`, 작업 순서와 WIP 제한은 `ROADMAP.md`에서 관리하고, 과거의 장문 상태 기록은 `docs/archive/AGENTS-2026-08-27.md`로 보존한다.
+- 결정: 모든 작업은 Issue 번호가 포함된 `codex/<issue>-<slug>` branch와 전용 worktree를 사용한다. 시작 시 담당자·Issue·branch·절대 worktree 경로를 각 worktree의 Git metadata에 기록하며 strict workspace 진단은 dirty 상태, 누락되거나 불일치하는 작업 branch 소유권을 실패로 처리한다. 공유 기준선인 `main`은 Issue 소유권을 두지 않으며, 병합 후 main·clean·`origin/main` 동일 tree일 때만 안전하게 소유권을 해제한다.
+- 결정: GitHub Actions 비활성 기간의 로컬 검증은 clean commit에서 실행하고 `release/evidence/<검증대상 전체 SHA>.json`에 명령·결과·수동 gate를 기록한다. 증빙은 실제 실행을 대체하지 않으며 PR 본문에서 검증 대상 SHA와 연결한다.
+- 결정: 실기기 설치, archive, TestFlight·Play 배포는 `git fetch --prune origin` 후 제품 파일 tree가 `origin/main`과 같고 작업공간이 clean·소유권 일치일 때만 수행한다. 소스 완료와 기기·스토어·권리 gate는 계속 별도 상태로 관리한다.
+- 근거: 시간에 따라 변하는 상태와 영구 규칙을 분리하고, worktree 소유·검증 대상·배포 소스를 기계적으로 확인해야 비개발자 운영에서도 오래된 branch, 섞인 변경, 다른 SHA의 테스트 결과를 최신 기준선으로 오인하지 않는다.
+- 영향 범위: `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, workflow·device setup·PR template, workspace doctor, worktree ownership, commit-addressed local evidence.
