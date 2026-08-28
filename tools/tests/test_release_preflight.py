@@ -95,7 +95,8 @@ class ReleasePreflightTests(unittest.TestCase):
         source = json.loads((ROOT / "release/global_app_store_metadata.json").read_text(encoding="utf-8"))
         invalid = copy.deepcopy(source)
         invalid["app_record"]["planned_primary_locale"] = "ja"
-        invalid["version_1_1_localization_scope"]["app_ui_and_content_locales"] = ["ja", "en", "ko", "es"]
+        invalid["version_1_1_localization_scope"]["app_ui_locales"] = ["ja", "en", "ko"]
+        invalid["version_1_1_localization_scope"]["preserved_content_locales"] = ["ja", "en"]
         invalid["version_1_1_localization_scope"]["unsupported_app_language_fallback"] = "ja"
         invalid["version_1_1_localization_scope"]["app_store_metadata_locales"] = ["ja", "en-US", "ko"]
         invalid["version_1_1_localization_scope"]["android_m7"] = "active"
@@ -118,7 +119,8 @@ class ReleasePreflightTests(unittest.TestCase):
             }
 
         self.assertIn("Global planned primary locale must be en-US", messages)
-        self.assertIn("Version 1.1 app UI/content locales must be exactly ja, en, and ko", messages)
+        self.assertIn("Version 1.1 app UI locales must be exactly ja and en", messages)
+        self.assertIn("Preserved learning content locales must remain ja, en, and ko", messages)
         self.assertIn("Unsupported app language fallback must be en", messages)
         self.assertIn(
             "Version 1.1 App Store metadata locales must be exactly en-US, en-GB, en-AU, en-CA, ko, and ja",

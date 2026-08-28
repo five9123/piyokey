@@ -10,7 +10,7 @@
 - [ ] Paid Applications 계약, 세금·은행 정보를 활성 상태로 확인
 - [ ] Apple Small Business Program 가입/미가입 상태와 예상 수수료를 Account Holder가 확인
 - [ ] 비소모성 `app.piyokey.deckmaker.lifetime` 생성 및 ja/en-US/ko 상품명·설명 입력
-- [ ] 1.1 앱 UI·콘텐츠 언어를 ja/en/ko로 동결하고 App Store 메타데이터를 en-US/en-GB/en-AU/en-CA/ko/ja로 준비
+- [ ] 1.1 앱 UI 언어를 ja/en으로 제한하고 학습 콘텐츠를 그대로 보존하며 App Store 메타데이터를 en-US/en-GB/en-AU/en-CA/ko/ja로 준비
 - [ ] en-GB/en-AU/en-CA의 `copy_from` 초안을 App Store Connect 필수 필드·스크린샷으로 실제 저장하고 재확인
 - [ ] 프랑스어·스페인어·중국어 등 추가 UI·metadata-only 현지화가 1.1 제출에 섞이지 않았는지 확인
 - [ ] 앱과 typee pro IAP 모두 `All Countries or Regions` 및 향후 storefront 자동 포함으로 설정
@@ -26,7 +26,7 @@
 - [ ] `python3 tools/release_preflight.py --strict` 성공
 - [ ] 공개 개인정보처리방침이 PostHog Cloud EU·Firebase Crashlytics·보존/삭제·철회 절차를 설명하고 앱 내/스토어 URL과 일치
 - [ ] App Privacy를 Data Collected=Yes, Tracking=No 및 7개 데이터 유형으로 갱신하고 `PrivacyInfo.xcprivacy`와 대조
-- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en/ko로 확인
+- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en으로 확인
 - [ ] PostHog 수신 이벤트에서 `$geoip_disable=true`와 위치/IP 속성 미보관을 확인
 
 ## 0. 과거 릴리스 후보 — 1.0.2 (6)
@@ -42,7 +42,7 @@
 ## 1. 현재 자동 확인 가능한 P0
 
 - [x] AppIcon 1024×1024, alpha 없음
-- [x] `ja/en/ko` 앱 표시명: `ピヨキー / typee / typee`
+- [x] `ja/en` 앱 표시명: `ピヨキー / typee` (ko 기기·기존 UI 설정은 영어 fallback)
 - [x] 세 언어 `Localizable.strings` 키·서식 인자 일치
 - [x] iPhone 전용, iOS 16+, 세로 방향 설정
 - [x] `PrivacyInfo.xcprivacy` 번들 포함
@@ -129,7 +129,7 @@ python3 tools/release_preflight.py --strict
 ## 4. 로컬라이제이션·콘텐츠 권리 P0
 
 - [ ] 일본어 전체 화면의 번역, 줄바꿈, 조사의 자연스러움 원어민 검수
-- [ ] 영어·한국어에서 키 노출, 잘림, `%@/%d` 같은 포맷 문자열 노출 없음
+- [ ] 일본어·영어 및 기존 한국어 UI 설정의 영어 전환에서 키 노출, 잘림, `%@/%d` 같은 포맷 문자열 노출 없음
 - [ ] `es-MX`·`fr-FR`·`zh-Hant`·`ar-SA` 기기 언어 새 설치가 영어 UI·영어 콘텐츠·`typee`로 시작하고 일본어 뜻·가타카나를 노출하지 않음
 - [ ] 덱의 모든 `ko` 입력·일본어 뜻·초성 힌트 교차 검수
 - [x] 출시 카탈로그에 실제 아티스트·그룹·곡·프로그램·캐릭터명과 실제 가사/대사 없음 확인
@@ -165,7 +165,7 @@ python3 tools/release_preflight.py --strict
 - [x] 순서 확정: 홈 → 입력 성공 → 커리큘럼 → 게임 허브 → 게임 플레이 → 성장/옷장 → 결과 → 스탬프/보상
 - [x] 일본어 스크린샷 8장을 App Store Connect에 업로드하고 위 순서로 정렬
 - [x] 일본 1차 출시용 일본어 스크린샷과 ja/en/ko 메타데이터 작성
-- [ ] 영어/한국어 전용 스크린샷은 1.1 `All Countries or Regions` 제출 전에 별도 제작
+- [ ] 영어 UI 스크린샷(한국어 스토어 페이지에도 영어 UI 사용)은 1.1 `All Countries or Regions` 제출 전에 별도 제작
 - [ ] TestFlight 내부 QA: 새 설치/업데이트/오프라인/알림 거부 스모크
 - [ ] 일본어 사용자 외부 베타에서 입력 이해도·번역·키캡 터치 오류 확인
 - [x] TestFlight와 제출용 빌드의 version/build/hash 및 Game Center 실기기 확인 결과 기록

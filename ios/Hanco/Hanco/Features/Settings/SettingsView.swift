@@ -220,7 +220,6 @@ struct SettingsView: View {
       ) {
         Text("settings.language.japanese").tag(AppLanguage.japanese.rawValue)
         Text("settings.language.english").tag(AppLanguage.english.rawValue)
-        Text("settings.language.korean").tag(AppLanguage.korean.rawValue)
       }
     }
   }

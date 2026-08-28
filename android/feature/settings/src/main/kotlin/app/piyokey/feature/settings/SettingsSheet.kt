@@ -452,7 +452,6 @@ private fun fontScaleLabel(value: FontScale): String = when (value) {
 private fun languageLabel(value: AppLanguage): String = when (value) {
   AppLanguage.JAPANESE -> "日本語"
   AppLanguage.ENGLISH -> "English"
-  AppLanguage.KOREAN -> "한국어"
 }
 
 @Composable

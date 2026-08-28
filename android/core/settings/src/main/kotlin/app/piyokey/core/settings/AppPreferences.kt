@@ -2,11 +2,16 @@ package app.piyokey.core.settings
 
 enum class AppLanguage(val tag: String) {
   JAPANESE("ja"),
-  ENGLISH("en"),
-  KOREAN("ko");
+  ENGLISH("en");
 
   companion object {
     fun resolve(tag: String?): AppLanguage = entries.firstOrNull { it.tag == tag } ?: ENGLISH
+
+    // DataStore stores enum names, not language tags. Retired Korean preferences
+    // always become English, even when the device also prefers Japanese.
+    fun fromStored(raw: String?, preferredTags: List<String>): AppLanguage =
+      if (raw == null) preferred(preferredTags)
+      else entries.firstOrNull { it.name == raw || it.tag == raw } ?: ENGLISH
 
     fun preferred(tags: List<String>): AppLanguage = tags.firstNotNullOfOrNull { tag ->
       val language = tag.substringBefore('-').substringBefore('_').lowercase()

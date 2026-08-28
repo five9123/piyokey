@@ -25,8 +25,8 @@ submission history. Do not edit the historical App Store version record when pre
 | Made for Kids | No |
 | Copyright | 2026 Jungmin Oh |
 
-Use `release/global_app_store_metadata.json` for the 1.1 rollout. App UI and content remain
-limited to Japanese, English, and Korean. App Store metadata is prepared for English
+Use `release/global_app_store_metadata.json` for the 1.1 rollout. App UI languages are
+limited to Japanese and English; Korean learning content is unchanged. App Store metadata is prepared for English
 (U.S.), English (U.K.), English (Australia), English (Canada), Korean, and Japanese;
 other UI and metadata-only localizations are deferred until post-launch demand review.
 

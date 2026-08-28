@@ -61,6 +61,11 @@ android {
   namespace = "app.piyokey.piyokey"
   compileSdk = 37
 
+  androidResources {
+    // Keep legacy learning strings in source, but ship only supported UI locales.
+    localeFilters += listOf("en", "ja")
+  }
+
   defaultConfig {
     applicationId = configuredApplicationId.get()
     minSdk = 26

@@ -60,6 +60,7 @@ struct HancoApp: App {
         seedUserDeckDraftFixture()
       }
     #endif
+    AppLanguage.migrateLegacyPreference()
     TelemetryService.shared.configure()
   }
 

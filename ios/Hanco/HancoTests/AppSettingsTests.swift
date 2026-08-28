@@ -31,7 +31,9 @@ final class AppSettingsTests: XCTestCase {
 
   func testPreferredLanguageUsesSupportedDeviceLanguageAndEnglishFallback() {
     XCTAssertEqual(AppLanguage.preferred(from: ["ja-JP", "en-US"]), .japanese)
-    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "en-US"]), .korean)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "en-US"]), .english)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR"]), .english)
+    XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "ja-JP"]), .japanese)
     XCTAssertEqual(AppLanguage.preferred(from: ["en-GB"]), .english)
     XCTAssertEqual(
       AppLanguage.preferred(from: ["es-MX", "fr-FR", "zh-Hant", "ar-SA"]),
@@ -45,6 +47,54 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(permutations.count, 6)
     XCTAssertEqual(Set(permutations.map { $0.map(\.rawValue).joined(separator: ",") }).count, 6)
     XCTAssertTrue(permutations.allSatisfy { Set($0) == Set(PracticePromptField.allCases) })
+  }
+
+  func testKoreanUIPreferenceMigratesWithoutChangingOtherDefaults() throws {
+    let suiteName = "AppSettingsTests.languageMigration.\(UUID().uuidString)"
+    let isolated = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defer { isolated.removePersistentDomain(forName: suiteName) }
+    isolated.set("ko", forKey: SettingsPreferenceKeys.language)
+    isolated.set("dark", forKey: SettingsPreferenceKeys.theme)
+    isolated.set("사랑", forKey: "preserved.learning.target")
+    let before = try XCTUnwrap(isolated.persistentDomain(forName: suiteName))
+
+    AppLanguage.migrateLegacyPreference(in: isolated)
+
+    var expected = before
+    expected[SettingsPreferenceKeys.language] = "en"
+    XCTAssertEqual(isolated.persistentDomain(forName: suiteName)! as NSDictionary, expected as NSDictionary)
+    XCTAssertEqual(AppLanguage.resolved(from: "ko"), .english)
+    AppLanguage.migrateLegacyPreference(in: isolated)
+    XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), "en")
+    for language in ["ja", "en"] {
+      isolated.set(language, forKey: SettingsPreferenceKeys.language)
+      AppLanguage.migrateLegacyPreference(in: isolated)
+      XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), language)
+    }
+  }
+
+  func testBundleDoesNotOfferKoreanUIButPreservesKoreanLearningContent() {
+    XCTAssertEqual(Set(AppLanguage.allCases.map(\.rawValue)), ["ja", "en"])
+    XCTAssertFalse(Bundle.main.localizations.contains("ko"))
+    XCTAssertNil(Bundle.main.path(forResource: "ko", ofType: "lproj"))
+    XCTAssertEqual(KoreanLearningContent.string("curriculum.chapter_1_basic_consonants.item_1.reading"), "기역")
+    for item in CurriculumCatalog.chapters.flatMap(\.stages).flatMap(\.items) {
+      let preserved = item.deckItem.localizations?["ko"]
+      XCTAssertEqual(preserved?.meaning, KoreanLearningContent.string(item.meaningKey))
+      XCTAssertEqual(preserved?.reading, KoreanLearningContent.string(item.readingKey))
+      XCTAssertNotEqual(preserved?.meaning, item.meaningKey)
+      XCTAssertNotEqual(preserved?.reading, item.readingKey)
+    }
+  }
+
+  func testLegacyKoreanUIUsesExistingEnglishCluesWithoutChangingKoreanTarget() {
+    defaults.set("ko", forKey: SettingsPreferenceKeys.language)
+    XCTAssertEqual(AppLanguage.current, .english)
+    let item = CurriculumCatalog.chapters[4].stages[0].items[0].deckItem
+    XCTAssertEqual(item.ko, "사랑")
+    XCTAssertEqual(item.appMeaning, item.localizedMeaning(languageCode: "en"))
+    XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
+    XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Settings")
   }
 
   func testFontScaleHasThreeIncreasingLevels() {
@@ -129,7 +179,6 @@ final class AppSettingsTests: XCTestCase {
     let expectations: [(AppLanguage, String, String, String, String)] = [
       (.japanese, "設定", "ピヨキー", "ピヨちゃん", "ja_JP"),
       (.english, "Settings", "typee", "Piyo", "en_US"),
-      (.korean, "설정", "typee", "피요", "ko_KR"),
     ]
 
     for (language, title, brand, mascotName, localeIdentifier) in expectations {
@@ -145,7 +194,6 @@ final class AppSettingsTests: XCTestCase {
     let expectedBrands: [(AppLanguage, String)] = [
       (.japanese, "ピヨキー"),
       (.english, "typee"),
-      (.korean, "typee"),
     ]
 
     for (language, brand) in expectedBrands {
@@ -487,7 +535,7 @@ final class AppSettingsTests: XCTestCase {
   func testDeckSuggestionEmailDoesNotInventDeckContext() throws {
     let url = ContentFeedbackLinkBuilder.makeURL(
       context: .suggestion(source: .discover),
-      language: .korean,
+      language: .english,
       appVersion: "1.0.1",
       buildNumber: "4"
     )

@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #65 한국어 UI 제거 | In Progress | `codex/65-remove-korean-ui` / `/private/tmp/piyokey-issue65-remove-korean-ui` | #64 위에서 ja/en UI·기존 ko 설정 영어 전환 구현, 콘텐츠 보존·양 플랫폼 회귀 검증 중 |
 | #63 / PR #64 사용자 덱 `.typedeck` 확장자 | Blocked | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 로컬 회귀 통과·Draft PR 생성 완료; GitHub Actions 활성화 및 CI·검토 승인 후 병합 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 | #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
@@ -30,7 +31,7 @@
 ## 열린 출시 gate
 
 - #7: Game Center 계약 전체 점검.
-- #12 / PR #15: Bluetooth·물리 키보드 iOS 호환성.
+- #12 / PR #15: 사용자가 실기기 검증 완료를 확인함. 소스 통합·CI·검토·병합은 별도 단계다.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
@@ -52,4 +53,4 @@
 
 - #63은 스토어 미디어·지원 URL·별도 Pro 변경과 분리했다. 검증 대상 `d788a78659831188542a31208bcbe1af540129db`, 증빙 `release/evidence/d788a78659831188542a31208bcbe1af540129db.json`: Python 78개, SwiftPM 42개, iOS 문서 흐름 8개, Android 관련 단위 테스트·앱 Kotlin 컴파일, repository preflight·fixture 재생성 통과.
 - 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니며, 설정 변경이나 CI 우회 병합을 하지 않았다. 활성화·계정 상태 확인 후 최신 PR HEAD에서 검증한다.
-- #18 → #49 → #50은 Draft·미완료 iPad/물리 키보드 gate를 유지한다. #15도 실제 물리 키보드 QA가 남아 있고, Later #14는 main과 충돌한다. 기존 로컬 ahead 커밋과 worktree는 변경하거나 삭제하지 않았다.
+- #18 → #49 → #50과 #15의 iPad·물리 키보드 실기기 검증은 2026-08-28 사용자가 완료를 확인했다. Draft PR의 소스 통합·CI·검토는 별도로 남아 있다. Later #14는 main과 충돌하며 기존 로컬 ahead 커밋과 worktree는 변경하거나 삭제하지 않았다.

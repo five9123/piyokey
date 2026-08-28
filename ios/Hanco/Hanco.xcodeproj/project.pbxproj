@@ -14,6 +14,7 @@
 		C00000000000000000000005 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000005 /* PracticeView.swift */; };
 		C00000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000006 /* Assets.xcassets */; };
 		C00000000000000000000007 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000007 /* Localizable.strings */; };
+		C65000000000000000000001 /* KoreanLearningContent.strings in Resources */ = {isa = PBXBuildFile; fileRef = B65000000000000000000001 /* KoreanLearningContent.strings */; };
 		C00000000000000000000008 /* HangulEngine in Frameworks */ = {isa = PBXBuildFile; productRef = G00000000000000000000002 /* HangulEngine */; };
 		C00000000000000000000009 /* PracticeSessionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000008 /* PracticeSessionViewModelTests.swift */; };
 		C0000000000000000000000A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000B /* XCTest.framework */; };
@@ -208,14 +209,13 @@
 		B00000000000000000000049 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		B0000000000000000000004A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B0000000000000000000004B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		B0000000000000000000004C /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B65000000000000000000001 /* KoreanLearningContent.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = KoreanLearningContent.strings; sourceTree = "<group>"; };
 		B0000000000000000000004D /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		B0000000000000000000004E /* MascotGrowthSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotGrowthSystem.swift; sourceTree = "<group>"; };
 		B0000000000000000000004F /* MascotGrowthSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotGrowthSystemTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000050 /* PiyokeyLogoMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiyokeyLogoMark.swift; sourceTree = "<group>"; };
 		B00000000000000000000051 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B00000000000000000000052 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B00000000000000000000053 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B00000000000000000000055 /* RecoverableJSONFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverableJSONFile.swift; sourceTree = "<group>"; };
 		B00000000000000000000056 /* ChoseongQuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoseongQuizView.swift; sourceTree = "<group>"; };
 		B00000000000000000000057 /* ChoseongQuizViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoseongQuizViewModelTests.swift; sourceTree = "<group>"; };
@@ -377,6 +377,7 @@
 			children = (
 				B00000000000000000000006 /* Assets.xcassets */,
 				B00000000000000000000007 /* Localizable.strings */,
+				B65000000000000000000001 /* KoreanLearningContent.strings */,
 				B00000000000000000000054 /* InfoPlist.strings */,
 				B00000000000000000000018 /* catalog.json */,
 				B00000000000000000000020 /* decks */,
@@ -739,7 +740,6 @@
 			knownRegions = (
 				ja,
 				en,
-				ko,
 				Base,
 			);
 			mainGroup = A00000000000000000000002;
@@ -766,6 +766,7 @@
 			files = (
 				C00000000000000000000006 /* Assets.xcassets in Resources */,
 				C00000000000000000000007 /* Localizable.strings in Resources */,
+				C65000000000000000000001 /* KoreanLearningContent.strings in Resources */,
 				C00000000000000000000051 /* InfoPlist.strings in Resources */,
 				C00000000000000000000016 /* catalog.json in Resources */,
 				C00000000000000000000020 /* decks in Resources */,
@@ -945,7 +946,6 @@
 			children = (
 				B0000000000000000000000C /* ja */,
 				B0000000000000000000004B /* en */,
-				B0000000000000000000004C /* ko */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -955,7 +955,6 @@
 			children = (
 				B00000000000000000000051 /* ja */,
 				B00000000000000000000052 /* en */,
-				B00000000000000000000053 /* ko */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

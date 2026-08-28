@@ -1505,3 +1505,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 실기기 설치, archive, TestFlight·Play 배포는 `git fetch --prune origin` 후 제품 파일 tree가 `origin/main`과 같고 작업공간이 clean·소유권 일치일 때만 수행한다. 소스 완료와 기기·스토어·권리 gate는 계속 별도 상태로 관리한다.
 - 근거: 시간에 따라 변하는 상태와 영구 규칙을 분리하고, worktree 소유·검증 대상·배포 소스를 기계적으로 확인해야 비개발자 운영에서도 오래된 branch, 섞인 변경, 다른 SHA의 테스트 결과를 최신 기준선으로 오인하지 않는다.
 - 영향 범위: `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, workflow·device setup·PR template, workspace doctor, worktree ownership, commit-addressed local evidence.
+
+## 2026-08-28 한국어 UI 제거와 학습 콘텐츠 보존
+
+- 관련: Issue #65, PRD F10·§11. 사용자는 한국어 UI 전체 제거와 연습 콘텐츠 무변경을 요청했다.
+- 결정: iOS·Android UI 언어와 OS 앱별 언어 목록은 일본어·영어만 제공한다. 기존 `ko`/`KOREAN` UI 설정은 영어로 해석하며, 신규 설치는 기기 선호 언어의 첫 ja/en 일치 또는 영어 기본값을 사용한다. 학습 진행·덱·구매 설정을 재설정하지 않는다.
+- 결정: iOS `ko.lproj`와 Android `values-ko`는 기존 학습 값 보존을 위해 원본 그대로 남기되 앱 리소스에서 제외한다. iOS 커리큘럼이 참조하던 한국어 학습 문자열 119개는 값 변경 없이 비지역화 `KoreanLearningContent.strings`로 분리한다. 이 테이블은 UI 번역으로 사용하지 않는다.
+- 결정: UI 언어 타입과 사용자 덱 콘텐츠 언어 타입을 분리해 기존 ko 뜻·읽기·메타데이터를 읽고 다시 저장할 수 있게 유지한다. `shared/` 콘텐츠·schema·fixture·manifest·MP3와 기존 ja/en/ko 번역 원본은 수정하지 않는다.
+- 결정: 한국어 App Store·Google Play 메타데이터 로케일과 외부 지원 문서는 앱 UI 언어와 별개로 유지한다. 한국어 UI 지원 주장은 제거하며 한국어 스토어용 앱 화면은 영어 UI로 캡처한다.
+- 근거: 한국어 학습 대상과 한국어 인터페이스를 분리해야 UI 제거가 정답·뜻·읽기·사용자 덱의 손실로 이어지지 않는다.

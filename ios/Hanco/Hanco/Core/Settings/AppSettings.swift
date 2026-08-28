@@ -301,7 +301,6 @@ enum HancoTheme: String, CaseIterable, Identifiable {
 enum AppLanguage: String, CaseIterable, Identifiable {
   case japanese = "ja"
   case english = "en"
-  case korean = "ko"
 
   var id: String { rawValue }
 
@@ -309,7 +308,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     switch self {
     case .japanese: Locale(identifier: "ja_JP")
     case .english: Locale(identifier: "en_US")
-    case .korean: Locale(identifier: "ko_KR")
     }
   }
 
@@ -339,6 +337,12 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 
   static func resolved(from rawValue: String) -> AppLanguage {
     AppLanguage(rawValue: rawValue) ?? .english
+  }
+
+  /// Change only the retired UI preference; never touch decks or learning history.
+  static func migrateLegacyPreference(in defaults: UserDefaults = .standard) {
+    guard defaults.string(forKey: SettingsPreferenceKeys.language) == "ko" else { return }
+    defaults.set(AppLanguage.english.rawValue, forKey: SettingsPreferenceKeys.language)
   }
 }
 

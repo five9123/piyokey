@@ -60,7 +60,6 @@ REQUIRED_COLLECTED_DATA = {
 EXPECTED_DISPLAY_NAMES = {
     "ja": "ピヨキー",
     "en": "typee",
-    "ko": "typee",
 }
 
 DEFAULT_TYPING_SOUND_SHA256 = "0a2399f0434b35b58e25ae22f858e447f77d2c4429557312ac51deb8358a9427"
@@ -75,7 +74,7 @@ DECK_MAKER_LOCALIZATIONS = {
 }
 STOREKIT_LOCALE_MAP = {"ja": "ja", "en-US": "en_US", "ko": "ko"}
 
-VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "ko"})
+VERSION_1_1_APP_LOCALES = frozenset({"ja", "en"})
 GLOBAL_APP_STORE_LOCALES = frozenset({"en-US", "en-GB", "en-AU", "en-CA", "ko", "ja"})
 GLOBAL_APP_STORE_NAMES = {
     "ja": "韓国語タイピング - ピヨキー",
@@ -258,8 +257,13 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
         scope = {}
     add(
         findings,
-        is_exact_string_list(scope.get("app_ui_and_content_locales"), VERSION_1_1_APP_LOCALES),
-        "Version 1.1 app UI/content locales must be exactly ja, en, and ko",
+        is_exact_string_list(scope.get("app_ui_locales"), VERSION_1_1_APP_LOCALES),
+        "Version 1.1 app UI locales must be exactly ja and en",
+    )
+    add(
+        findings,
+        is_exact_string_list(scope.get("preserved_content_locales"), {"ja", "en", "ko"}),
+        "Preserved learning content locales must remain ja, en, and ko",
     )
     add(
         findings,

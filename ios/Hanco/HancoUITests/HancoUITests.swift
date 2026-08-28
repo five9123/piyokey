@@ -2529,12 +2529,34 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(persistedSound.value as? String, "0")
     XCTAssertTrue(app.buttons["Soft"].isSelected)
 
-    let korean = app.buttons["한국어"]
-    scrollToHittable(korean, direction: .down)
-    korean.tap()
-    XCTAssertTrue(app.navigationBars["설정"].waitForExistence(timeout: 5))
-    XCTAssertFalse(app.tabBars.buttons["설정"].exists)
-    XCTAssertTrue(app.tabBars.buttons["홈"].exists)
+    let japanese = app.buttons["日本語"]
+    scrollToHittable(japanese, direction: .down)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+    japanese.tap()
+    XCTAssertTrue(app.navigationBars["設定"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.tabBars.buttons["ホーム"].exists)
+  }
+
+  func testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments.replaceSubrange(0..<4, with: [
+      "-AppleLanguages", "(ko)", "-AppleLocale", "ko_KR",
+    ])
+    app.launchArguments += ["-settings.language", "ko"]
+    app.launch()
+    XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 5))
+    openSettings()
+    XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+    let english = app.buttons["English"]
+    scrollToHittable(english)
+    XCTAssertTrue(english.exists)
+    XCTAssertTrue(app.buttons["日本語"].exists)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+    app.buttons["settings.done"].tap()
+    app.tabBars.buttons["Practice"].tap()
+    XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(app.tabBars.buttons["연습"].exists)
   }
 
   func testPrivacyChoicesAreOptionalIndependentAndShownOncePerNoticeVersion() {

@@ -44,7 +44,7 @@ class AppPreferencesStore private constructor(
   }
 
   private fun decode(preferences: Preferences): AppPreferences = AppPreferences(
-    language = enumValue(preferences[Keys.language], AppLanguage.preferred(preferredLanguages())),
+    language = AppLanguage.fromStored(preferences[Keys.language], preferredLanguages()),
     theme = enumValue(preferences[Keys.theme], AppTheme.LIGHT),
     fontScale = enumValue(preferences[Keys.fontScale], FontScale.STANDARD),
     soundEffectsEnabled = preferences[Keys.soundEffects] ?: true,
