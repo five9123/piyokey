@@ -21,7 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #79 iPad 화면 밀도·스토어 이미지 | In Progress | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로·세로 개선 후 최종 회귀·5언어 실제 UI 촬영·10시장 이미지 검수 |
+| #79 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 소스·시뮬레이터 회귀·5언어 촬영·10시장 이미지 110장 검수 완료. PR 리뷰/CI 후 새 RC·실기기·최종 이미지 대조·업로드 |
 | #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국/미국 세금 정보 완료 및 나머지 제출 gate 검증 |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |

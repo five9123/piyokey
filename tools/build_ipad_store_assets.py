@@ -29,9 +29,13 @@ def select_attachment(entries, scene, language):
     return matches[0]["exportedFileName"]
 
 
-def build(capture: Path, output: Path, renderer: Path):
+def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str):
     from PIL import Image, ImageDraw
 
+    capture_commit = subprocess.check_output(["git", "rev-parse", "--verify", capture_source_ref + "^{commit}"], cwd=ROOT, text=True).strip()
+    capture_build = json.loads((capture / "capture-source.json").read_text()) if (capture / "capture-source.json").exists() else None
+    if capture_build and capture_build["app_source_commit"] != capture_commit:
+        raise ValueError("Capture source ref does not match the recorded app build")
     copy = json.loads((ROOT / "release/store-assets/localizations.json").read_text())
     output.mkdir(parents=True, exist_ok=False)
     # The renderer resolves source/output paths against the repository.
@@ -97,7 +101,11 @@ def build(capture: Path, output: Path, renderer: Path):
         sections.append(f'<section id="{code}"><h2>{html.escape(locale["market"])} · {code}</h2><p>실제 UI: {language} · 13인치 PNG 10장 · <a href="{code}/alternate/keyboard-landscape.png">가로 대체 이미지</a></p><div class="grid">{pics}</div></section>')
         print(f"{code}: 10 portrait + 1 landscape, dimensions/RGB/decode verified", flush=True)
     save(output / "manifest.json", {"issue": 79, "uploaded": False, "store_slot": "iPad 13-inch",
-        "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "source_commit": capture_commit,
+        "capture_build": capture_build,
+        "candidate_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "candidate_app_changes_since_capture": subprocess.check_output(
+            ["git", "diff", "--name-only", capture_commit, "HEAD", "--", "ios/Hanco/Hanco"], cwd=ROOT, text=True).splitlines(),
         "source_diff_sha256": hashlib.sha256(subprocess.check_output(["git", "diff", "--", "ios"], cwd=ROOT)).hexdigest(),
         "note": "Local iPad improvements; not the uploaded TestFlight build 7. Final RC and native-language review remain required.",
         "primary_count": 100, "alternate_count": 10, "sources": source_manifest, "images": outputs})
@@ -109,5 +117,6 @@ if __name__ == "__main__":
     parser.add_argument("--capture", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--renderer", required=True, type=Path)
+    parser.add_argument("--capture-source-ref", required=True, help="App source used to build the captured simulator app (not necessarily current HEAD)")
     args = parser.parse_args()
-    build(args.capture.resolve(), args.output.resolve(), args.renderer.resolve())
+    build(args.capture.resolve(), args.output.resolve(), args.renderer.resolve(), args.capture_source_ref)
