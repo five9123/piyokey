@@ -1784,6 +1784,11 @@ struct ChoseongTypingView: View {
     usesLandscapeCards && expandsSessionCards ? adaptiveMetrics.learningScale : 1
   }
 
+  private var compositionScale: CGFloat {
+    // Keep the two text rows below the preview clear of the keyboard on iPad mini.
+    usesLandscapeCards && !expandsSessionCards ? 1 : adaptiveMetrics.learningScale
+  }
+
   private var choseongQuizCard: some View {
     VStack(spacing: usesLandscapeCards ? 6 : 10) {
       Text("choseong.initials.title")
@@ -1932,7 +1937,7 @@ struct ChoseongTypingView: View {
       reactionRevision: viewModel.feedbackRevision,
       automaticProp: mascotAppearance.automaticProp,
       pose: .front,
-      size: 52 * adaptiveMetrics.learningScale,
+      size: 52 * compositionScale,
       calm: true
     )
     .accessibilityIdentifier("\(mode.accessibilityNamespace).mascot")
@@ -2026,7 +2031,7 @@ struct ChoseongTypingView: View {
     VStack(spacing: 6) {
       HStack(spacing: 10) {
         gameMascot
-          .frame(width: 70 * adaptiveMetrics.learningScale, height: 106 * adaptiveMetrics.learningScale)
+          .frame(width: 70 * compositionScale, height: 106 * compositionScale)
 
         VStack(spacing: 4) {
           SyllableAssemblyPreview(
@@ -2034,7 +2039,7 @@ struct ChoseongTypingView: View {
             incomingJamo: viewModel.lastAcceptedKey,
             revision: viewModel.compositionRevision,
             shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin,
-            displayScale: adaptiveMetrics.learningScale
+            displayScale: compositionScale
           )
 
           HStack(spacing: 6) {
