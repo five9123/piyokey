@@ -2603,7 +2603,10 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.buttons["practice.result.share"].exists)
     XCTAssertFalse(app.buttons["practice.result.review"].exists)
     XCTAssertFalse(app.buttons["result.done"].exists)
-    XCTAssertEqual(element("mascot.current").value as? String, "ひびが入ったたまご")
+    XCTAssertEqual(
+      element("practice.result.screen").descendants(matching: .any)["mascot.current"].value as? String,
+      "ひびが入ったたまご"
+    )
     let nextMission = app.buttons["onboarding.hatch.result.continue"]
     XCTAssertTrue(nextMission.exists)
 
