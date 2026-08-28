@@ -85,7 +85,7 @@ EXPECTED_IPAD_ORIENTATIONS = frozenset(
     }
 )
 
-VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "es"})
+VERSION_1_1_APP_LOCALES = frozenset({"ja", "en", "es", "de", "fr"})
 GLOBAL_APP_STORE_LOCALES = frozenset({"en-US", "en-GB", "en-AU", "en-CA", "ko", "ja"})
 GLOBAL_APP_STORE_NAMES = {
     "ja": "韓国語タイピング - ピヨキー",
@@ -269,7 +269,7 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
     add(
         findings,
         is_exact_string_list(scope.get("app_ui_locales"), VERSION_1_1_APP_LOCALES),
-        "Version 1.1 app UI locales must be exactly ja, en, and es",
+        "Version 1.1 app UI locales must be exactly ja, en, es, de, and fr",
     )
     add(
         findings,

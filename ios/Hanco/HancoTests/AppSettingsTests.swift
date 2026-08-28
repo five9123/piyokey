@@ -40,7 +40,7 @@ final class AppSettingsTests: XCTestCase {
     }
     XCTAssertEqual(AppLanguage.preferred(from: ["en-US", "es-MX"]), .english)
     XCTAssertEqual(
-      AppLanguage.preferred(from: ["fr-FR", "zh-Hant", "ar-SA"]),
+      AppLanguage.preferred(from: ["zh-Hant", "ar-SA"]),
       .english
     )
   }
@@ -70,7 +70,7 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(AppLanguage.resolved(from: "ko"), .english)
     AppLanguage.migrateLegacyPreference(in: isolated)
     XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), "en")
-    for language in ["ja", "en", "es"] {
+    for language in ["ja", "en", "es", "de", "fr"] {
       isolated.set(language, forKey: SettingsPreferenceKeys.language)
       AppLanguage.migrateLegacyPreference(in: isolated)
       XCTAssertEqual(isolated.string(forKey: SettingsPreferenceKeys.language), language)
@@ -78,7 +78,7 @@ final class AppSettingsTests: XCTestCase {
   }
 
   func testBundleDoesNotOfferKoreanUIButPreservesKoreanLearningContent() {
-    XCTAssertEqual(Set(AppLanguage.allCases.map(\.rawValue)), ["ja", "en", "es"])
+    XCTAssertEqual(Set(AppLanguage.allCases.map(\.rawValue)), ["ja", "en", "es", "de", "fr"])
     XCTAssertFalse(Bundle.main.localizations.contains("ko"))
     XCTAssertNil(Bundle.main.path(forResource: "ko", ofType: "lproj"))
     XCTAssertEqual(KoreanLearningContent.string("curriculum.chapter_1_basic_consonants.item_1.reading"), "기역")
@@ -101,13 +101,13 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Settings")
   }
 
-  func testSpanishUIKeepsEnglishLearningContentAndEditorLanguage() {
+  func testSpanishUIUsesSpanishLearningContentAndEditorLanguage() {
     defaults.set("es", forKey: SettingsPreferenceKeys.language)
     XCTAssertEqual(AppLanguage.current, .spanish)
-    XCTAssertEqual(DeckContentLanguage.current, .english)
+    XCTAssertEqual(DeckContentLanguage.current, .spanish)
     let item = CurriculumCatalog.chapters[4].stages[0].items[0].deckItem
     XCTAssertEqual(item.ko, "사랑")
-    XCTAssertEqual(item.appMeaning, item.localizedMeaning(languageCode: "en"))
+    XCTAssertEqual(item.appMeaning, "Amor")
     XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
     XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Ajustes")
   }
@@ -116,6 +116,25 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(HancoFontScale.allCases.count, 3)
     XCTAssertLessThan(HancoFontScale.small.multiplier, HancoFontScale.standard.multiplier)
     XCTAssertLessThan(HancoFontScale.standard.multiplier, HancoFontScale.large.multiplier)
+  }
+
+  func testGermanAndFrenchDeviceRegionsAndLearningClues() {
+    for (language, regions, meaning) in [
+      (AppLanguage.german, ["de-DE", "de-AT", "de_CH"], "Liebe"),
+      (AppLanguage.french, ["fr-FR", "fr-CA", "fr-BE", "fr_CH"], "Amour"),
+    ] {
+      for region in regions {
+        XCTAssertEqual(AppLanguage.preferred(from: [region, "en-US"]), language)
+      }
+      defaults.set(language.rawValue, forKey: SettingsPreferenceKeys.language)
+      AppLanguage.migrateLegacyPreference()
+      XCTAssertEqual(AppLanguage.current, language)
+      XCTAssertEqual(DeckContentLanguage.current.rawValue, language.rawValue)
+      let item = CurriculumCatalog.chapters[4].stages[0].items[0].deckItem
+      XCTAssertEqual(item.ko, "사랑")
+      XCTAssertEqual(item.appMeaning, meaning)
+      XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
+    }
   }
 
   func testAllLanguageResourcesHaveIdenticalKeysAndFormatArguments() throws {
@@ -184,7 +203,7 @@ final class AppSettingsTests: XCTestCase {
       }
 
       XCTAssertEqual(Set(messages).count, MascotDailyEncouragement.messageCount)
-      let quotes = language == .spanish ? ("«", "»") : language == .english ? ("“", "”") : ("「", "」")
+      let quotes = language == .spanish || language == .french ? ("«", "»") : language == .german ? ("„", "“") : language == .english ? ("“", "”") : ("「", "」")
       XCTAssertTrue(messages.allSatisfy { $0.hasPrefix(quotes.0) && $0.hasSuffix(quotes.1) })
       XCTAssertTrue(messages.allSatisfy { $0.count <= 42 })
     }
@@ -195,6 +214,8 @@ final class AppSettingsTests: XCTestCase {
       (.japanese, "設定", "ピヨキー", "ピヨちゃん", "ja_JP"),
       (.english, "Settings", "typee", "Piyo", "en_US"),
       (.spanish, "Ajustes", "typee", "Piyo", "es_ES"),
+      (.german, "Einstellungen", "typee", "Piyo", "de_DE"),
+      (.french, "Réglages", "typee", "Piyo", "fr_FR"),
     ]
 
     for (language, title, brand, mascotName, localeIdentifier) in expectations {
@@ -211,6 +232,8 @@ final class AppSettingsTests: XCTestCase {
       (.japanese, "ピヨキー"),
       (.english, "typee"),
       (.spanish, "typee"),
+      (.german, "typee"),
+      (.french, "typee"),
     ]
 
     for (language, brand) in expectedBrands {

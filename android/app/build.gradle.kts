@@ -63,7 +63,7 @@ android {
 
   androidResources {
     // Keep legacy learning strings in source, but ship only supported UI locales.
-    localeFilters += listOf("en", "ja", "es")
+    localeFilters += listOf("en", "ja", "es", "de", "fr")
   }
 
   defaultConfig {

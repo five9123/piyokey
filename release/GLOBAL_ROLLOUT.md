@@ -1,6 +1,6 @@
 # typee / ピヨキー 글로벌 출시 계획
 
-- 상태: App Store Connect 글로벌 등록 준비 완료 — 출시·규제 gate 미완료
+- 상태: App Store Connect 글로벌 등록 준비 중 — 언어 확장 로컬 후보·출시·규제 gate 미완료
 - 작성일: 2026-08-14
 - 대상: 한국을 포함한 전 세계 App Store
 - 기준 앱: App Store Connect 앱 ID `6794853985`, Bundle ID `app.piyokey.Piyokey`
@@ -16,6 +16,7 @@
 | 한국어 (`ko`) | `typee` | `한글 타자 연습 - typee` |
 | 영어 (`en`) | `typee` | `Korean Typing - typee` |
 | 스페인어 (`es`) | `typee` | 스페인어 스토어 메타데이터는 별도 검증 |
+| 독일어 (`de`)·프랑스어 (`fr`) | `typee` | `language_expansion_store_draft.json` 초안, 미등록 |
 | 그 밖의 언어 | 영어로 fallback → `typee` | 영어 fallback → `Korean Typing - typee` |
 
 브랜드는 국가가 아니라 앱 언어를 따른다. 일본어에서는 `ピヨキー`, 한국어·영어·미지원 언어에서는 `typee`를 표시한다. 따라서 일본 밖의 일본어 사용자에게 `ピヨキー`가, 일본 스토어의 비일본어 사용자에게 `typee`가 보일 수 있다.
@@ -24,13 +25,13 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 
 ## 2. 제품·콘텐츠 현지화 계약
 
-- 앱 1.1의 UI 로케일은 `ja`·`en`·`es`를 제공한다. 기존 한국어 UI 설정은 영어로 전환하며 학습 원본은 수정하지 않는다.
+- 앱 1.1의 UI 로케일은 `ja`·`en`·`es`·`de`·`fr`를 제공한다. 기존 한국어 UI 설정은 영어로 전환하며 학습 원본은 수정하지 않는다.
 - `ja`: 기존 일본어 UI, 일본어 뜻, 가타카나 읽기를 유지한다.
 - `en`: 전체 UI를 자연스러운 영어로 제공하고, 공식 덱은 영어 뜻과 라틴 문자 로마자를 갖춘다.
-- `es`: 전체 UI는 스페인어이며 학습 뜻·읽기·덱 메타데이터·덱 편집 언어는 기존 영어를 사용한다.
+- `es`·`de`·`fr`: 전체 UI, 기본 학습 뜻, 공식 덱 메타데이터·항목·편집 언어를 각각 제공한다. 로마자는 영어와 공통이며 사용자 덱에서 번역이 없으면 영어로 fallback한다.
 - `ko`: 앱 UI로 제공하지 않는다. 기존 한국어 목표·번역·읽기·발음·덱 메타데이터는 보존하고 영어 UI에서는 기존 영어 콘텐츠를 표시한다.
-- `en`·`es`·`ko`·미지원 언어에서는 일본어 뜻이나 가타카나를 fallback으로 노출하지 않는다.
-- 첫 실행은 기기 선호 언어 중 `ja`·`en`·`es` 첫 일치를 사용하고, 일치하지 않으면 영어로 시작한다. 사용자가 설정에서 고른 앱 언어는 영속화한다.
+- `en`·`es`·`de`·`fr`·`ko`·미지원 언어에서는 일본어 뜻이나 가타카나를 fallback으로 노출하지 않는다.
+- 첫 실행은 기기 선호 언어 중 `ja`·`en`·`es`·`de`·`fr` 첫 일치를 사용하고, 일치하지 않으면 영어로 시작한다. 사용자가 설정에서 고른 앱 언어는 영속화한다.
 - Android M7은 2026-08-21 사용자 결정으로 재개했으며 Google Play는 iOS App Store와 분리된 출시 트랙으로 준비한다. Android 소스·listing 준비가 iOS 1.1 제출 범위를 변경하지 않는다.
 
 ## 3. App Store 메타데이터
@@ -42,13 +43,17 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 - `global_app_store_metadata.json`의 `copy_from`은 초안 중복을 줄이기 위한 표기일 뿐 App Store Connect 값이 아니다. 제출 전 en-GB·en-AU·en-CA의 필수 필드와 스크린샷을 실제 로케일에 저장하고 다시 읽어 확인한다.
 - 모든 App Store 표시명은 `현지화된 기능 설명 - 브랜드` 순서로 작성하고 브랜드만 앞에 단독 배치하지 않는다.
 - 일본어 로케일: 이름 `韓国語タイピング - ピヨキー`; 현재 일본어 설명과 스크린샷의 제품 약속을 유지한다.
-- 한국어 스토어 로케일: 이름 `한글 타자 연습 - typee`; 지원 UI가 일본어·영어·스페인어임을 설명하고 영어 UI로 캡처한 스크린샷을 사용한다. 학습 콘텐츠는 변경하지 않는다.
+- 한국어 스토어 로케일: 이름 `한글 타자 연습 - typee`; 지원 UI가 일본어·영어·스페인어·독일어·프랑스어임을 설명하고 영어 UI로 캡처한 스크린샷을 사용한다. 학습 콘텐츠는 변경하지 않는다.
 - 영어 로케일: en-US·en-GB는 `Korean Typing - typee`, 이름 충돌이 확인된 en-AU·en-CA는 저장 가능한 `Korean Typing Practice - typee`를 사용하고 영어 뜻·로마자 읽기를 명시한다.
 - 영어·한국어 설명은 일본어 뜻이나 가타카나가 제공된다고 주장하지 않는다.
 - 2026-08-28 en-US primary 변경은 Apple이 각 버전의 필수 영어 스크린샷을 먼저 요구해 저장되지 않았다. 영어 스크린샷을 등록하기 전까지 primary는 일본어로 유지한다.
 - 앱 이름 변경 전에 지원·마케팅·개인정보처리방침 페이지의 `typee`/`ピヨキー` 표기와 연락처를 함께 검수한다.
-- 사용자 요청으로 `zh-Hans`·`zh-Hant`·`de-DE`·`fr-FR`·`es-ES`·`pt-BR`·`id`의 미디어 현지화를 허용한다. 원본은 실제 영어 UI이며 현지어 마케팅 설명을 얹는다. 사진·영상의 별도 지원 언어 안내는 사용자의 후속 요청으로 제거하고, 실제 UI와 Pro 구매 안내는 유지한다. 카피는 `release/store-assets/localizations.json`, 제작·검증 절차는 `release/store-assets/README.md`를 따른다. 새 로케일의 필수 메타데이터 저장과 스토어 업로드는 아직 별도 gate이며, 번역 이미지 생성만으로 해당 로케일 등록을 완료 처리하지 않는다.
-- 후속 #65/#67에서 앱 UI가 ja/en/es로 변경됐다. 기존 미디어는 제작 이력으로 보존하며 한국어·스페인어 스토어의 최종 후보 화면을 각각 영어·스페인어 UI로 재촬영한다.
+- 사용자 요청으로 `zh-Hans`·`zh-Hant`·`de-DE`·`fr-FR`·`es-ES`·`pt-BR`·`id`의 미디어 현지화를 허용한다. 기존 제작물은 실제 영어 UI에 현지어 마케팅 설명을 얹었다. 새 후보의 es/de/fr은 각 실제 UI로 재촬영하고 ko 및 나머지 미지원 UI 시장은 영어를 사용한다. 사진·영상의 별도 지원 언어 안내는 사용자의 후속 요청으로 제거하고, 실제 UI와 Pro 구매 안내는 유지한다. 카피는 `release/store-assets/localizations.json`, 제작·검증 절차는 `release/store-assets/README.md`를 따른다. 새 로케일의 필수 메타데이터 저장과 스토어 업로드는 아직 별도 gate이며, 번역 이미지 생성만으로 해당 로케일 등록을 완료 처리하지 않는다.
+- 후속 #65/#67에서 앱 UI가 ja/en/es로 변경됐다. 기존 미디어는 제작 이력으로 보존하며 현재 로컬 확장에 맞춰 ko는 영어, es/de/fr는 해당 UI로 최종 후보 화면을 재촬영한다.
+
+### 로컬 언어 확장 후보
+
+`release/language_expansion_store_draft.json`에 es-ES/de-DE/fr-FR의 App Store/Play 설명·이름·부제·키워드·Pro·지원 FAQ 초안을 둔다. 현지어 검수 후 각 운영 metadata와 Console에 반영해야 하며 업로드 완료를 뜻하지 않는다. 기존 10개 시장 미디어는 역사적 증빙이고 `capture_status=recapture_required`다. 촬영 도구와 UI 테스트는 ja/en/es/de/fr를 지원하지만 새 화면 촬영은 아직 수행하지 않았다. 새 카탈로그는 구버전 앱을 위해 별도 namespace로 게시해야 한다. 자세한 순서는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
 ## 4. Availability 계약
 
@@ -58,10 +63,10 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 
 ## 5. 공통 출시 게이트
 
-- `ja`·`en` UI 문자열 누락 및 브랜드 문자열 회귀 테스트 통과
+- `ja`·`en`·`es`·`de`·`fr` UI 문자열 누락 및 브랜드 문자열 회귀 테스트 통과
 - 앱과 Deck Maker IAP의 availability가 `All Countries or Regions`이며 향후 storefront 자동 포함이 켜져 있음
-- `es`·`fr`·`zh-Hant`·`ar` 등 미지원 기기 언어의 새 설치가 영어 UI와 `typee`로 안전하게 시작함
-- 공식 덱의 영어 뜻·로마자와 영어/한국어 덱 메타데이터 스키마·콘텐츠 검증 통과
+- `zh-Hant`·`ar` 등 미지원 기기 언어의 새 설치가 영어 UI와 `typee`로 안전하게 시작함
+- 공식 덱의 en/es/de/fr 뜻·공통 로마자와 en/ko/es/de/fr 덱 메타데이터 스키마·콘텐츠 검증 통과
 - 일본어가 아닌 앱 언어에서 일본어 뜻·가타카나 fallback이 발생하지 않음
 - App Store 이름이 ja=`韓国語タイピング - ピヨキー`, ko=`한글 타자 연습 - typee`, en-US·en-GB=`Korean Typing - typee`, en-AU·en-CA=`Korean Typing Practice - typee`이며 홈 화면·인앱 브랜드는 ja=`ピヨキー`, 그 밖의 언어=`typee`인지 확인
 - 영어·한국어 App Store 설명, 키워드, 스크린샷, 지원·개인정보처리방침 페이지 검수

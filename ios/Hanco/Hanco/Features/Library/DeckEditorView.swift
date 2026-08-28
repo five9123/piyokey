@@ -4,14 +4,17 @@ import Security
 import SwiftUI
 import UIKit
 
-/// Content can retain Korean translations even though the UI supports ja/en/es.
+/// Content retains Korean translations independently of the UI language list.
 enum DeckContentLanguage: String {
   case japanese = "ja"
   case english = "en"
   case korean = "ko"
+  case spanish = "es"
+  case german = "de"
+  case french = "fr"
 
   static var current: DeckContentLanguage {
-    AppLanguage.current == .japanese ? .japanese : .english
+    DeckContentLanguage(rawValue: AppLanguage.current.rawValue) ?? .english
   }
 }
 
@@ -466,7 +469,7 @@ struct UserDeckDraft: Equatable {
         !localization.authorNickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       else { return false }
       guard localization.tags.count == baseTags.count else { return false }
-      guard languageCode == AppLanguage.english.rawValue else { return true }
+      guard languageCode != "ko" else { return true }
       return items.allSatisfy { item in
         guard let localization = item.localizations?[languageCode] else { return false }
         return !localization.meaning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -830,10 +833,7 @@ struct DeckEditorView: View {
   }
 
   private var editingLanguageNameKey: String {
-    switch AppLanguage.current {
-    case .japanese: "settings.language.japanese"
-    case .english, .spanish: "settings.language.english"
-    }
+    AppLanguage.current.nameKey
   }
 
   private var itemsSection: some View {

@@ -191,11 +191,11 @@ object CatalogBundleValidator {
   }
 }
 
-private val supportedContentLocalizationCodes = setOf("en", "ko")
+private val supportedContentLocalizationCodes = setOf("en", "ko", "es", "de", "fr")
 
 private fun requiredItemLocalizationCodes(
   metadata: Map<String, DeckMetadataLocalization>?,
-): Set<String> = if (metadata?.containsKey("en") == true) setOf("en") else emptySet()
+): Set<String> = metadata?.keys.orEmpty() - "ko"
 
 private fun MutableList<ContentValidationIssue>.validateMetadataLocalizations(
   localizations: Map<String, DeckMetadataLocalization>?,

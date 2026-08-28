@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="retention_my_piyo">MON Piyo</string>
+  <string name="retention_stamp_completed">terminé</string>
+  <string name="retention_stamp_missed">manqué</string>
+  <string name="retention_stamp_today">aujourd’hui, non terminé</string>
+  <string name="retention_stamp_upcoming">à venir</string>
+  <string name="retention_week_progress">Cette semaine %1$d/7 · série de %2$d jours</string>
+  <string name="retention_daily_cta">Défi quotidien de 3 minutes</string>
+  <string name="home_quick_piyo_cup_title">Coupe Piyo hebdomadaire</string>
+  <string name="home_quick_piyo_cup_detail">Lance une partie de 60 secondes</string>
+  <string name="home_quick_random_title">5 mots au hasard</string>
+  <string name="home_quick_random_detail">Un petit mélange choisi pour toi</string>
+  <string name="home_quick_random_retry">Essayer 5 nouveaux mots</string>
+  <string name="retention_current_streak">Actuel</string>
+  <string name="retention_longest_streak">Plus longue</string>
+  <string name="retention_total_stamps">Tampons</string>
+  <string name="retention_rewards">Récompenses sur 7 jours</string>
+  <string name="retention_reward_unlocked">%1$d jours ✓</string>
+  <string name="retention_reward_locked">%1$d jours</string>
+  <string-array name="retention_encouragements">
+    <item>Commençons ensemble aujourd’hui, cui-cui !</item>
+    <item>Trois minutes suffisent pour grandir.</item>
+    <item>Tes doigts retiennent chaque essai !</item>
+    <item>Entretiens ta série aujourd’hui !</item>
+    <item>Un mot à la fois, c’est parfait.</item>
+    <item>Bravo pour aujourd’hui, cui-cui !</item>
+    <item>Ton tampon du jour est magnifique !</item>
+    <item>Ta série brille !</item>
+    <item>Te revoilà, tu m’as manqué !</item>
+    <item>Recommencer est toujours une victoire.</item>
+  </string-array>
+  <string-array name="retention_weekdays">
+    <item>L</item>
+    <item>M</item>
+    <item>M</item>
+    <item>J</item>
+    <item>V</item>
+    <item>S</item>
+    <item>D</item>
+  </string-array>
+  <string name="curriculum_title">Apprendre pas à pas</string>
+  <string name="curriculum_subtitle">Maîtrise le clavier, les syllabes, les mots et les phrases.</string>
+  <string name="curriculum_chapter">Chapitre %1$d · %2$s</string>
+  <string name="curriculum_chapter_1">Consonnes de base</string>
+  <string name="curriculum_chapter_2">Voyelles de base</string>
+  <string name="curriculum_chapter_3">Former des syllabes</string>
+  <string name="curriculum_chapter_4">Batchim</string>
+  <string name="curriculum_chapter_5">Mots</string>
+  <string name="curriculum_chapter_6">Phrases</string>
+  <string name="curriculum_stage_consonants">Trouver les touches des consonnes</string>
+  <string name="curriculum_stage_vowels">Trouver les touches des voyelles</string>
+  <string name="curriculum_stage_syllables">Combiner les syllabes</string>
+  <string name="curriculum_stage_batchim">Saisir les consonnes finales</string>
+  <string name="curriculum_stage_words">Mots du quotidien</string>
+  <string name="curriculum_stage_spacing">Pratiquer un espace</string>
+  <string name="curriculum_stage_sentences">Salutations et phrases du quotidien</string>
+  <string name="curriculum_item_count">%1$d questions · réussite à 80%%</string>
+  <string name="curriculum_locked">Leçon verrouillée</string>
+  <string name="curriculum_resume">Continuer là où tu t’es arrêté</string>
+  <string name="curriculum_free_practice">Entraînement libre avec mes paquets</string>
+  <string name="review_title">Paquet de révision</string>
+  <string name="review_count">%1$d mots à réviser</string>
+  <string name="review_empty">Les mots mal saisis apparaîtront ici automatiquement.</string>
+  <string name="review_start">Commencer la révision</string>
+  <string name="review_progress">Parfait %1$d/%2$d</string>
+  <string name="review_remove">Retirer</string>
+  <string name="review_add_manually">Ajouter un mot</string>
+  <string name="review_choose_word">Choisir dans mes paquets</string>
+  <string name="reminder_title">Rappel quotidien</string>
+  <string name="reminder_default_off">Autorise les notifications pour un rappel quotidien à 20 h, heure locale. Tu peux changer l’heure.</string>
+  <string name="reminder_time">Heure locale %1$02d:%2$02d</string>
+  <string name="reminder_choose_time">Choisir l’heure du rappel</string>
+  <string name="action_save">Enregistrer</string>
+  <string name="action_cancel">Annuler</string>
+  <string name="retention_piyo_accessibility">Mon personnage Piyo</string>
+  <string name="wardrobe_title">Garde-robe de Piyo</string>
+  <string name="wardrobe_preview">Aperçu final de l’apparence de Piyo</string>
+  <string name="wardrobe_auto">Auto · apparence de croissance</string>
+  <string name="wardrobe_none">Aucun accessoire</string>
+  <string name="wardrobe_ribbon">Ruban de série</string>
+  <string name="wardrobe_beret">Béret étoilé</string>
+  <string name="wardrobe_bow">Nœud arc-en-ciel</string>
+  <string name="wardrobe_topik_glasses">Lunettes TOPIK</string>
+  <string name="wardrobe_trophy">Trophée du champion</string>
+</resources>

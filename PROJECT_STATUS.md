@@ -21,7 +21,19 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| 로컬 요청: es/de/fr 확장 (Issue/PR 미등록) | Verify: 로컬 소스·코어 검증 완료 | Codex 단독, `codex/local-es-de-fr`; `outputs/local-language-expansion` 독립 clone | 전체 앱/화면·현지어 검수 후 실제 Issue/소유권·PR 등록; 원격 작업은 사용자 로컬 우선 요청으로 보류 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+
+## 로컬 es/de/fr 후보 검증
+
+- 기준: 로컬에 보존된 병합 main `47371de950dcb28530f69b91ec596f53e2818ab3`. 원격을 새로 fetch하거나 Issue/Project/PR를 변경하지 않았다. 원본 dirty `codex/63-typedeck` 파일은 그대로 보존했다.
+- 구현: ja/en/es/de/fr UI, 스페인어 기본 학습 뜻 37개 보완, es/de/fr 각 627개 공식 의미·덱 이름 41개·태그 42개·작성자, schema·validator·편집/조회·선택 저장·분석 enum·스토어 초안/촬영 설정.
+- 통과: Python 92개, Swift 공용 코어 45개, Kotlin 공용/설정 코어 57개, preflight, 수정 iOS source parse, Apple strings 파싱·중복 검사, Android 8개 모듈 AAPT2 리소스 compile. Swift/Kotlin은 실제 기존 XCTest/JUnit을 설치 컴파일러로 직접 실행했으며 전체 앱 빌드는 아니다. 새 `.typedeck`는 세 구현의 동일 바이트 golden 왕복 검증을 포함한다.
+- 보존: 덱 snapshot 67개와 catalog 2개의 기존 의미/ID/순서/ja/en/ko 값이 동일하다(새 번역·버전·시각·경로/size 변경 제외). 기존 MP3·벡터·영어 번역 원본 585개 파일도 byte 일치. 공식 덱 버전은 증가하고 게임 preset v3의 경쟁 identity는 유지한다.
+- 미완료: SwiftPM sandbox 생성, Xcode cache/CoreSimulator 접근, Gradle 로컬 socket 권한 제한으로 정상 전체 앱 빌드·앱 단위/UI/계측은 검증하지 못했다. 보호 설정을 해제하지 않았다. 현지어 사람 검수·작은 화면/큰 글자·결제/공유·최종 RC 촬영·스토어 저장/업로드도 남아 있다.
+- 배포 호환: 구버전 앱은 es/de/fr locale 키를 거부하므로 새 카탈로그는 별도 namespace로 게시해야 한다. 기존 URL·실제 앱 배포 설정은 변경하지 않았다. 새 번역이 든 파일은 받는 앱 업데이트가 필요하다.
+- 소유권: 로컬 우선 요청에 따른 독립 clone 예외다. 실제 Issue 없이 claim metadata를 만들지 않았으며 strict workspace doctor의 소유권 gate와 CI/리뷰를 통과했다고 기록하지 않는다. PR #70의 일회성 CI 예외는 재사용하지 않는다.
+- 인계: `docs/LANGUAGE_EXPANSION_CHECKLIST.md`, `release/language_expansion_store_draft.json`, `artifacts/language-expansion/README.md`.
 
 ## 최근 소스 통합
 
@@ -48,12 +60,12 @@
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
-- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 ja/en/es RC와 일치하지 않으므로 ko 스토어는 영어 UI, es-ES 스토어는 스페인어 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
+- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 main ja/en/es와 로컬 ja/en/es/de/fr 후보에 일치하지 않으므로 ko 스토어는 영어 UI, es/de/fr 스토어는 각각 해당 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
 
-2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
+2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 새 로컬 확장 clone은 `outputs/local-language-expansion`에 있고 원격 push를 수행하지 않는다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 
 ## 상태 갱신 체크
 

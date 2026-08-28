@@ -245,7 +245,7 @@
 "settings.practice_mascot_detail" = "Show or hide the character during practice";
 "settings.game_display" = "Game display";
 "settings.choseong_meaning" = "Initials game meaning";
-"settings.choseong_meaning_detail" = "Show the English meaning for every question";
+"settings.choseong_meaning_detail" = "Show the meaning for every question";
 "settings.app_information" = "App information";
 "settings.privacy_policy" = "Privacy policy";
 "settings.privacy" = "Privacy";
@@ -525,7 +525,7 @@
 "game.mode.flow_detail" = "Type as many flowing cards as you can in 60 seconds.";
 "game.mode.acid_rain_detail" = "Type the Korean words falling from above before they reach the ground.";
 "game.mode.choseong_detail" = "Read the Korean initials and type the full answer yourself.";
-"game.mode.word_match_detail" = "Read the English meaning and type the full Korean answer yourself.";
+"game.mode.word_match_detail" = "Read the meaning and type the full Korean answer yourself.";
 "game.mode.dictation_detail" = "Listen to the Korean audio without a text clue and type what you hear.";
 "game.mode.spacing_detail" = "Restore the missing spaces in a Korean passage of 100–200 characters.";
 "game.mode.choose_deck" = "Choose a deck";
@@ -1141,3 +1141,6 @@
 "piyodeck.import.action.replace.same_version_hint" = "Replaces the current deck with different content using the same version number. Opens a confirmation.";
 
 "settings.language.spanish" = "Español";
+
+"settings.language.german" = "Deutsch";
+"settings.language.french" = "Français";

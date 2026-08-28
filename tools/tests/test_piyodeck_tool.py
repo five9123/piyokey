@@ -24,6 +24,27 @@ class PiyoDeckToolTests(unittest.TestCase):
     package_fixture = ROOT / "shared/piyodeck/fixtures/valid/basic.typedeck"
     schema = ROOT / "shared/schema/deck.schema.json"
 
+    def test_new_content_languages_round_trip_without_losing_legacy_fields(self):
+        import copy
+        source = json.loads(self.fixture.read_text())
+        expanded = json.loads((self.fixture.parent / "localized-deck.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "expanded.json"
+            path.write_text(json.dumps(expanded, ensure_ascii=False))
+            packed = Path(directory) / "expanded.typedeck"
+            piyodeck_tool.pack(path, packed)
+            self.assertEqual(packed.read_bytes(), (self.fixture.parent / "localized.typedeck").read_bytes())
+            imported = piyodeck_tool.validate_package(packed, self.schema).deck
+            self.assertEqual(imported, expanded)
+            for original, item in zip(source["items"], imported["items"]):
+                for field in ("id", "ko", "meaning_ja", "reading_ja", "audio"):
+                    self.assertEqual(item[field], original[field])
+        for language in ("es", "de", "fr"):
+            incomplete = copy.deepcopy(expanded)
+            del incomplete["items"][0]["localizations"][language]
+            self.assertTrue(any(f"localizations.{language}" in issue
+                                for issue in piyodeck_tool.deck_semantic_issues(incomplete)))
+
     def test_pack_requires_typedeck_extension(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "legacy.piyodeck"

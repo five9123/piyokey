@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture current ja/en/ko simulator UI and footage; never uploads or submits."""
+"""Capture current ja/en/es/de/fr simulator UI and footage; never uploads or submits."""
 from __future__ import annotations
 
 import argparse
@@ -64,7 +64,7 @@ def capture(language: str, device: str, output: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--languages", nargs="+", choices=["ja", "en", "ko"], default=["ja", "en", "ko"])
+    parser.add_argument("--languages", nargs="+", choices=["ja", "en", "es", "de", "fr"], default=["ja", "en", "es", "de", "fr"])
     parser.add_argument("--device", default="00608B21-6BB5-4F22-BDD2-9A4F67DA4C59")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()

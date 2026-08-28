@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="practice_overall_progress">Frage %1$d von %2$d</string>
+  <string name="practice_overall_progress_accessibility">Übungsfortschritt: Frage %1$d von %2$d</string>
+  <string name="practice_jamo_progress_accessibility">Jamo-Fortschritt: %1$d von %2$d</string>
+  <string name="practice_composition_label">Silbenaufbau</string>
+  <string name="practice_composition_placeholder">Mit dem Tippen beginnen</string>
+  <string name="practice_feedback_idle">Folge der markierten Taste</string>
+  <string name="practice_feedback_correct">Gut!</string>
+  <string name="practice_feedback_incorrect">Versuche %1$s</string>
+  <string name="practice_feedback_complete">Geschafft!</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">Integrierte koreanische Tastatur</string>
+  <string name="keyboard_shift">Umschalt</string>
+  <string name="keyboard_backspace">Rücktaste</string>
+  <string name="keyboard_space">Leertaste</string>
+  <string name="keyboard_key_with_roman">%1$s, %2$s</string>
+  <string name="practice_input_builtin_short">App</string>
+  <string name="practice_input_os_short">OS</string>
+  <string name="practice_input_builtin">Integrierte Tastatur</string>
+  <string name="practice_input_os">Systemtastatur</string>
+  <string name="practice_ime_missing">Keine koreanische Tastatur erkannt. Du kannst weiter tippen oder die Systemeinstellungen öffnen.</string>
+  <string name="practice_ime_open_settings">Tastatureinstellungen</string>
+  <string name="practice_play_pronunciation">Koreanische Aussprache abspielen</string>
+  <string name="practice_piyo_accessibility">Piyo reagiert auf deine Eingabe</string>
+  <string name="physical_keyboard_hand_left">linke Hand</string>
+  <string name="physical_keyboard_hand_right">rechte Hand</string>
+  <string name="physical_keyboard_hand_both">beide Hände</string>
+  <string name="physical_keyboard_finger_little">kleiner Finger</string>
+  <string name="physical_keyboard_finger_ring">Ringfinger</string>
+  <string name="physical_keyboard_finger_middle">Mittelfinger</string>
+  <string name="physical_keyboard_finger_index">Zeigefinger</string>
+  <string name="physical_keyboard_finger_thumb">Daumen</string>
+  <string name="physical_keyboard_space">Leertaste</string>
+  <string name="physical_keyboard_next_key">Als Nächstes: %1$s (%2$s)</string>
+  <string name="physical_keyboard_finger">%1$s · %2$s</string>
+  <string name="physical_keyboard_shift_finger">%1$s Umschalt + %2$s · %3$s</string>
+  <string name="physical_keyboard_ready">Tippe mit der koreanischen Dubeolsik-Tastatur deines Geräts</string>
+</resources>

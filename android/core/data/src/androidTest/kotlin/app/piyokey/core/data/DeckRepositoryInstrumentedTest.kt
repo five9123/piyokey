@@ -359,7 +359,7 @@ class DeckRepositoryInstrumentedTest {
     )
 
     assertEquals(CatalogRefreshResult.Updated(11), repository.refreshCatalog())
-    assertEquals(11, repository.snapshot().catalog.catalogVersion)
+    assertEquals(12, repository.snapshot().catalog.catalogVersion)
     assertEquals(CatalogRefreshResult.NotModified, repository.refreshCatalog())
     assertEquals(null to null, requests.first())
     assertEquals(
@@ -395,8 +395,8 @@ class DeckRepositoryInstrumentedTest {
     val current = requireNotNull(database.dao().catalogState())
     File(context.filesDir, "piyokey/content/${current.payloadName}").writeText("broken")
 
-    assertEquals(10, repository.snapshot().catalog.catalogVersion)
-    assertEquals(10, database.dao().catalogState()?.catalogVersion)
+    assertEquals(11, repository.snapshot().catalog.catalogVersion)
+    assertEquals(11, database.dao().catalogState()?.catalogVersion)
   }
 
   @Test

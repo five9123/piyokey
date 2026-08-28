@@ -3,7 +3,9 @@ package app.piyokey.core.settings
 enum class AppLanguage(val tag: String) {
   JAPANESE("ja"),
   ENGLISH("en"),
-  SPANISH("es");
+  SPANISH("es"),
+  GERMAN("de"),
+  FRENCH("fr");
 
   companion object {
     fun resolve(tag: String?): AppLanguage = entries.firstOrNull { it.tag == tag } ?: ENGLISH

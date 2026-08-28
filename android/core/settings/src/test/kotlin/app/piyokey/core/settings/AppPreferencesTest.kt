@@ -8,15 +8,15 @@ import kotlin.test.assertTrue
 class AppPreferencesTest {
   @Test
   fun preferredLocaleUsesFirstSupportedLanguageAndEnglishFallback() {
-    assertEquals(AppLanguage.JAPANESE, AppLanguage.preferred(listOf("fr-FR", "ko-KR", "ja-JP")))
+    assertEquals(AppLanguage.JAPANESE, AppLanguage.preferred(listOf("zh-Hant", "ko-KR", "ja-JP")))
     assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("ko-KR")))
     assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("ko-KR", "en-US")))
-    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("de-DE")))
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("zh-Hant")))
   }
 
   @Test
   fun retiredKoreanSettingFallsBackToEnglishWithoutRemovingContentLanguage() {
-    assertEquals(listOf("ja", "en", "es"), AppLanguage.entries.map { it.tag })
+    assertEquals(listOf("ja", "en", "es", "de", "fr"), AppLanguage.entries.map { it.tag })
     for (legacy in listOf("KOREAN", "ko")) {
       assertEquals(AppLanguage.ENGLISH, AppLanguage.fromStored(legacy, listOf("ja-JP")))
       assertEquals(AppLanguage.ENGLISH, AppLanguage.resolve(legacy))
@@ -35,6 +35,18 @@ class AppPreferencesTest {
     assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("SPANISH", listOf("en-US")))
     assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("es", listOf("ja-JP")))
     assertEquals(AppLanguage.SPANISH, AppLanguage.resolve("es"))
+  }
+
+  @Test
+  fun germanAndFrenchRegionsPersistExplicitSelections() {
+    for ((language, tags) in mapOf(
+      AppLanguage.GERMAN to listOf("de-DE", "de-AT", "de_CH"),
+      AppLanguage.FRENCH to listOf("fr-FR", "fr-CA", "fr-BE", "fr_CH"),
+    )) {
+      for (tag in tags) assertEquals(language, AppLanguage.preferred(listOf(tag, "en-US")))
+      assertEquals(language, AppLanguage.fromStored(language.name, listOf("ja-JP")))
+      assertEquals(language, AppLanguage.fromStored(language.tag, listOf("en-US")))
+    }
   }
 
   @Test

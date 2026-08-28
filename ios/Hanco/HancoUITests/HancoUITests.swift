@@ -7,10 +7,28 @@ final class HancoUITests: XCTestCase {
   private var storeCaptureLanguage: String {
     if name.contains("GlobalEN") { return "en" }
     if name.contains("GlobalKO") { return "ko" }
+    if name.contains("GlobalES") { return "es" }
+    if name.contains("GlobalDE") { return "de" }
+    if name.contains("GlobalFR") { return "fr" }
     return "ja"
   }
 
   private func storeText(_ ja: String, _ en: String, _ ko: String) -> String {
+    let translations: [String: [String: String]] = [
+      "es": ["4-day streak": "Racha de 4 días", "MY PIYO": "MI PIYO", "End practice": "Terminar práctica",
+             "Game": "Juego", "Profile": "Perfil", "Piyo": "Piyo", "Practice": "Práctica"],
+      "de": ["4-day streak": "4-Tage-Serie", "MY PIYO": "MEIN PIYO", "End practice": "Übung beenden",
+             "Game": "Spiel", "Profile": "Profil", "Piyo": "Piyo", "Practice": "Üben"],
+      "fr": ["4-day streak": "Série de 4 jours", "MY PIYO": "MON PIYO", "End practice": "Terminer l’exercice",
+             "Game": "Jeu", "Profile": "Profil", "Piyo": "Piyo", "Practice": "S’entraîner"],
+    ]
+    if let language = translations[storeCaptureLanguage] {
+      guard let value = language[en] else {
+        XCTFail("Missing store capture label: \(storeCaptureLanguage):\(en)")
+        return en
+      }
+      return value
+    }
     switch storeCaptureLanguage {
     case "en": return en
     case "ko": return en
@@ -2238,6 +2256,9 @@ final class HancoUITests: XCTestCase {
   func testAppStoreScreenshotGlobalJA() { captureGlobalStoreAssets() }
   func testAppStoreScreenshotGlobalEN() { captureGlobalStoreAssets() }
   func testAppStoreScreenshotGlobalKO() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalES() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalDE() { captureGlobalStoreAssets() }
+  func testAppStoreScreenshotGlobalFR() { captureGlobalStoreAssets() }
 
   private func captureGlobalStoreAssets() {
     testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick()
@@ -2903,6 +2924,7 @@ final class HancoUITests: XCTestCase {
     scrollSettingsLanguageIntoView(spanish)
     XCTAssertTrue(spanish.isSelected)
     attachScreenshot(named: "spanish-settings")
+    scrollSettingsLanguageIntoView(app.buttons["English"])
     app.buttons["English"].tap()
     XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
     scrollSettingsLanguageIntoView(app.buttons["Español"])
@@ -2919,6 +2941,39 @@ final class HancoUITests: XCTestCase {
     scrollSettingsLanguageIntoView(app.buttons["Español"])
     XCTAssertTrue(app.buttons["Español"].isSelected)
     XCTAssertFalse(app.buttons["한국어"].exists)
+  }
+
+  func testGermanAndFrenchLanguageSelectionSurvivesRelaunch() {
+    for (region, code, title, home, name) in [
+      ("de-AT", "de", "Einstellungen", "Start", "Deutsch"),
+      ("fr-CA", "fr", "Réglages", "Accueil", "Français"),
+    ] {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: true)
+      app.launchArguments.replaceSubrange(0..<4, with: [
+        "-AppleLanguages", "(\(region))", "-AppleLocale", region,
+      ])
+      app.launch()
+      XCTAssertTrue(app.buttons[home].firstMatch.waitForExistence(timeout: 8))
+      openSettings()
+      XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+      scrollSettingsLanguageIntoView(app.buttons["English"])
+      app.buttons["English"].tap()
+      XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+      scrollSettingsLanguageIntoView(app.buttons[name])
+      app.buttons[name].tap()
+      XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+      attachScreenshot(named: "\(code)-settings")
+      app.buttons["settings.done"].tap()
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: false)
+      app.launch()
+      XCTAssertTrue(app.buttons[home].firstMatch.waitForExistence(timeout: 8))
+      openSettings()
+      scrollSettingsLanguageIntoView(app.buttons[name])
+      XCTAssertTrue(app.buttons[name].isSelected)
+      app.buttons["settings.done"].tap()
+    }
   }
 
   func testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice() {
@@ -3044,7 +3099,7 @@ final class HancoUITests: XCTestCase {
     seedsFutureCurriculumSchema: Bool = false
   ) -> XCUIApplication {
     let application = XCUIApplication()
-    let captureLocale = ["ja": "ja_JP", "en": "en_US", "ko": "ko_KR"][storeCaptureLanguage]!
+    let captureLocale = ["ja": "ja_JP", "en": "en_US", "ko": "ko_KR", "es": "es_ES", "de": "de_DE", "fr": "fr_FR"][storeCaptureLanguage]!
     application.launchArguments += ["-AppleLanguages", "(\(storeCaptureLanguage))", "-AppleLocale", captureLocale]
     if name.contains("testAppStoreScreenshotGlobal") {
       application.launchArguments += ["-settings.language", storeCaptureLanguage]

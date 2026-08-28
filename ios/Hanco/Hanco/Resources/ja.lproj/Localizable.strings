@@ -1141,3 +1141,6 @@
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";
 
 "settings.language.spanish" = "Español";
+
+"settings.language.german" = "Deutsch";
+"settings.language.french" = "Français";

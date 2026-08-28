@@ -93,6 +93,18 @@ final class PiyoDeckPackageTests: XCTestCase {
     )
   }
 
+  func testExpandedLanguagePackageMatchesCrossPlatformGolden() throws {
+    let root = try repositoryRoot()
+    let deckSchema = try schema("deck.schema.json", root: root)
+    let deck = try DeckKitJSON.decodeDeck(from: fixture("valid/localized-deck.json", root: root))
+    let golden = try fixture("valid/localized.typedeck", root: root)
+    let exported = try PiyoDeckPackageWriter.write(deck: deck, deckSchemaData: deckSchema)
+    XCTAssertEqual(exported, golden)
+    let imported = try PiyoDeckPackageReader.read(data: golden, deckSchemaData: deckSchema)
+    XCTAssertEqual(imported.deck, deck)
+    XCTAssertEqual(Set(try XCTUnwrap(imported.deck.localizations).keys), ["en", "ko", "es", "de", "fr"])
+  }
+
   func testSharedBinaryCaseManifestDrivesEveryReaderExpectation() throws {
     let root = try repositoryRoot()
     let deckSchema = try schema("deck.schema.json", root: root)

@@ -243,7 +243,11 @@
 		B40000000000000000000001 /* AnalyticsContract.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsContract.generated.swift; sourceTree = "<group>"; };
 		B40000000000000000000002 /* TelemetryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryService.swift; sourceTree = "<group>"; };
 		B67000000000000000000001 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D9440DA5174DB8D76799D965 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F6F7D4C8E30821AC49A731D9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B67000000000000000000002 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0886D779AB7065CEE36976DA /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9AFF0D3C5B040387828EF7C1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -754,6 +758,8 @@
 				ja,
 				en,
 				es,
+				de,
+				fr,
 				Base,
 			);
 			mainGroup = A00000000000000000000002;
@@ -962,6 +968,8 @@
 				B0000000000000000000000C /* ja */,
 				B0000000000000000000004B /* en */,
 				B67000000000000000000001 /* es */,
+				F6F7D4C8E30821AC49A731D9 /* fr */,
+				D9440DA5174DB8D76799D965 /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -972,6 +980,8 @@
 				B00000000000000000000051 /* ja */,
 				B00000000000000000000052 /* en */,
 				B67000000000000000000002 /* es */,
+				9AFF0D3C5B040387828EF7C1 /* fr */,
+				0886D779AB7065CEE36976DA /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

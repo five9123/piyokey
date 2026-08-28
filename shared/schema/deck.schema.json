@@ -84,7 +84,10 @@
       "minProperties": 1,
       "properties": {
         "en": { "$ref": "#/$defs/deckLocalization" },
-        "ko": { "$ref": "#/$defs/deckLocalization" }
+        "ko": { "$ref": "#/$defs/deckLocalization" },
+        "es": { "$ref": "#/$defs/deckLocalization" },
+        "de": { "$ref": "#/$defs/deckLocalization" },
+        "fr": { "$ref": "#/$defs/deckLocalization" }
       }
     },
     "itemLocalization": {
@@ -102,7 +105,10 @@
       "minProperties": 1,
       "properties": {
         "en": { "$ref": "#/$defs/itemLocalization" },
-        "ko": { "$ref": "#/$defs/itemLocalization" }
+        "ko": { "$ref": "#/$defs/itemLocalization" },
+        "es": { "$ref": "#/$defs/itemLocalization" },
+        "de": { "$ref": "#/$defs/itemLocalization" },
+        "fr": { "$ref": "#/$defs/itemLocalization" }
       }
     },
     "item": {

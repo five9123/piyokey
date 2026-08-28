@@ -1,0 +1,374 @@
+{
+  "deck_id": "official_fun_friend_reactions",
+  "version": 3,
+  "name": "友だちとの韓国語リアクション",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 1,
+  "tags": [
+    "友だち",
+    "リアクション",
+    "今どき",
+    "公式"
+  ],
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "대박 진짜야",
+      "reading_ja": "テバク チンチャヤ",
+      "meaning_ja": "すごい、本当？",
+      "audio": "audio/ko_ea455b86da4d7bd20203.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Wow, really?",
+          "reading": "daebak jinjjaya"
+        },
+        "es": {
+          "meaning": "¡Vaya! ¿En serio?",
+          "reading": "daebak jinjjaya"
+        },
+        "de": {
+          "meaning": "Wow, wirklich?",
+          "reading": "daebak jinjjaya"
+        },
+        "fr": {
+          "meaning": "Waouh, vraiment ?",
+          "reading": "daebak jinjjaya"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "너무 웃겨",
+      "reading_ja": "ノム ウッキョ",
+      "meaning_ja": "面白すぎる",
+      "audio": "audio/ko_d705361c3cae21371c4c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "That's hilarious",
+          "reading": "neomu utgyeo"
+        },
+        "es": {
+          "meaning": "Qué risa",
+          "reading": "neomu utgyeo"
+        },
+        "de": {
+          "meaning": "Das ist zum Totlachen",
+          "reading": "neomu utgyeo"
+        },
+        "fr": {
+          "meaning": "C’est hilarant",
+          "reading": "neomu utgyeo"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "말도 안 돼",
+      "reading_ja": "マルド アン ドェ",
+      "meaning_ja": "ありえない",
+      "audio": "audio/ko_afccdcf4a5d07e80eb03.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "No way",
+          "reading": "maldo an dwae"
+        },
+        "es": {
+          "meaning": "No puede ser",
+          "reading": "maldo an dwae"
+        },
+        "de": {
+          "meaning": "Das gibt’s doch nicht",
+          "reading": "maldo an dwae"
+        },
+        "fr": {
+          "meaning": "C’est pas possible",
+          "reading": "maldo an dwae"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "이건 레전드야",
+      "reading_ja": "イゴン レジョンドゥヤ",
+      "meaning_ja": "これは伝説級だよ",
+      "audio": "audio/ko_14d698ce8033ba0b2bdf.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "This is legendary",
+          "reading": "igeon rejeondeuya"
+        },
+        "es": {
+          "meaning": "Esto es legendario",
+          "reading": "igeon rejeondeuya"
+        },
+        "de": {
+          "meaning": "Das ist legendär",
+          "reading": "igeon rejeondeuya"
+        },
+        "fr": {
+          "meaning": "C’est légendaire",
+          "reading": "igeon rejeondeuya"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "완전 내 취향",
+      "reading_ja": "ワンジョン ネ チュィヒャン",
+      "meaning_ja": "完全に私の好み",
+      "audio": "audio/ko_0104ced33fa40c1e84a1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Totally my type",
+          "reading": "wanjeon nae chwihyang"
+        },
+        "es": {
+          "meaning": "Totalmente mi estilo",
+          "reading": "wanjeon nae chwihyang"
+        },
+        "de": {
+          "meaning": "Ganz mein Geschmack",
+          "reading": "wanjeon nae chwihyang"
+        },
+        "fr": {
+          "meaning": "Tout à fait mon style",
+          "reading": "wanjeon nae chwihyang"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "나 지금 소름 돋아",
+      "reading_ja": "ナ チグム ソルム トダ",
+      "meaning_ja": "今、鳥肌が立った",
+      "audio": "audio/ko_16abe994beba40b1d17c.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I just got goosebumps",
+          "reading": "na jigeum soreum dota"
+        },
+        "es": {
+          "meaning": "Se me acaba de poner la piel de gallina",
+          "reading": "na jigeum soreum dota"
+        },
+        "de": {
+          "meaning": "Ich habe gerade Gänsehaut bekommen",
+          "reading": "na jigeum soreum dota"
+        },
+        "fr": {
+          "meaning": "Je viens d’avoir la chair de poule",
+          "reading": "na jigeum soreum dota"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "너 폼 미쳤다",
+      "reading_ja": "ノ ポム ミチョッタ",
+      "meaning_ja": "今日の君、絶好調だね",
+      "audio": "audio/ko_420216e75a4430786818.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You're on fire today",
+          "reading": "neo pom michyeotda"
+        },
+        "es": {
+          "meaning": "Hoy estás que te sales",
+          "reading": "neo pom michyeotda"
+        },
+        "de": {
+          "meaning": "Du bist heute in Höchstform",
+          "reading": "neo pom michyeotda"
+        },
+        "fr": {
+          "meaning": "Tu es en feu aujourd’hui",
+          "reading": "neo pom michyeotda"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "이걸 해냈다고",
+      "reading_ja": "イゴル ヘネッタゴ",
+      "meaning_ja": "これをやり遂げたって？",
+      "audio": "audio/ko_612b61b62976392ebf5f.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You pulled this off?",
+          "reading": "igeol haenaetdago"
+        },
+        "es": {
+          "meaning": "¿Has conseguido hacerlo?",
+          "reading": "igeol haenaetdago"
+        },
+        "de": {
+          "meaning": "Du hast das geschafft?",
+          "reading": "igeol haenaetdago"
+        },
+        "fr": {
+          "meaning": "Tu as réussi ça ?",
+          "reading": "igeol haenaetdago"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "나만 몰랐어",
+      "reading_ja": "ナマン モルラッソ",
+      "meaning_ja": "知らなかったの私だけ？",
+      "audio": "audio/ko_383289db3f6fdbc20c63.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Was I the only one who didn't know?",
+          "reading": "naman molrateo"
+        },
+        "es": {
+          "meaning": "¿Solo yo no lo sabía?",
+          "reading": "naman molrateo"
+        },
+        "de": {
+          "meaning": "Wusste nur ich das nicht?",
+          "reading": "naman molrateo"
+        },
+        "fr": {
+          "meaning": "Il n’y a que moi qui ne savais pas ?",
+          "reading": "naman molrateo"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "다시 말해 줘",
+      "reading_ja": "タシ マレ ジョ",
+      "meaning_ja": "もう一回言って",
+      "audio": "audio/ko_2ff890f7dd02948292e4.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Say that again",
+          "reading": "dasi malhae jwo"
+        },
+        "es": {
+          "meaning": "Dilo otra vez",
+          "reading": "dasi malhae jwo"
+        },
+        "de": {
+          "meaning": "Sag das noch einmal",
+          "reading": "dasi malhae jwo"
+        },
+        "fr": {
+          "meaning": "Redis-le",
+          "reading": "dasi malhae jwo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "오늘 텐션 최고야",
+      "reading_ja": "オヌル テンション チェゴヤ",
+      "meaning_ja": "今日のテンション最高",
+      "audio": "audio/ko_996445fdae3ef3f192c6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "The energy is great today",
+          "reading": "oneul tensyeon choegoya"
+        },
+        "es": {
+          "meaning": "Hoy hay una energía increíble",
+          "reading": "oneul tensyeon choegoya"
+        },
+        "de": {
+          "meaning": "Heute ist die Stimmung super",
+          "reading": "oneul tensyeon choegoya"
+        },
+        "fr": {
+          "meaning": "L’énergie est super aujourd’hui",
+          "reading": "oneul tensyeon choegoya"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "그건 인정이지",
+      "reading_ja": "クゴン インジョンイジ",
+      "meaning_ja": "それは認める",
+      "audio": "audio/ko_06b5fe28be50efa0c3a3.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll give you that",
+          "reading": "geugeon injeongiji"
+        },
+        "es": {
+          "meaning": "Eso te lo reconozco",
+          "reading": "geugeon injeongiji"
+        },
+        "de": {
+          "meaning": "Das muss man dir lassen",
+          "reading": "geugeon injeongiji"
+        },
+        "fr": {
+          "meaning": "Ça, je te l’accorde",
+          "reading": "geugeon injeongiji"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Korean Reactions with Friends",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Friends",
+        "Reactions",
+        "Trending",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "친구와 쓰는 한국어 리액션",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "친구",
+        "리액션",
+        "요즘",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Reacciones coreanas entre amigos",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Amigos",
+        "Reacciones",
+        "Tendencias",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Koreanische Reaktionen unter Freunden",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Freunde",
+        "Reaktionen",
+        "Im Trend",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Réactions coréennes entre amis",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Amis",
+        "Réactions",
+        "Tendances",
+        "Officiel"
+      ]
+    }
+  }
+}
