@@ -65,10 +65,13 @@ def capture(language: str, device: str, output: Path) -> None:
 def capture_screenshots(language: str, device: str, output: Path, derived_data: Path) -> None:
     folder = output / language
     folder.mkdir(parents=True, exist_ok=False)
+    test_runs = list((derived_data / "Build/Products").glob("Hanco_*.xctestrun"))
+    if len(test_runs) != 1:
+        raise ValueError("Expected one completed build-for-testing in derived data")
     command = [
-        "xcodebuild", "test-without-building", "-project", "ios/Hanco/Hanco.xcodeproj",
-        "-scheme", "Hanco", "-destination", f"platform=iOS Simulator,id={device}",
-        "-derivedDataPath", str(derived_data), "-parallel-testing-enabled", "NO",
+        "xcodebuild", "test-without-building", "-xctestrun", str(test_runs[0]),
+        "-destination", f"platform=iOS Simulator,id={device}",
+        "-parallel-testing-enabled", "NO",
         "-resultBundlePath", str(folder / "capture.xcresult"),
         f"-only-testing:HancoUITests/HancoUITests/testAppStoreScreenshotGlobal{language.upper()}",
     ]

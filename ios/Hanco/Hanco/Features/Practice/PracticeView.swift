@@ -12,6 +12,7 @@ struct PracticeView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.hancoFontScale) private var fontScale
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
@@ -170,10 +171,18 @@ struct PracticeView: View {
     VStack(spacing: 0) {
       GeometryReader { viewport in
         ScrollView {
-          VStack(spacing: adaptiveMetrics.isExpanded ? 20 : 12) {
-            targetCard(minHeight: adaptiveMetrics.isExpanded ? viewport.size.height * 0.50 : 0)
+          let sideBySide = adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall
+            && !dynamicTypeSize.isAccessibilitySize
+          let layout = sideBySide
+            ? AnyLayout(HStackLayout(spacing: 20))
+            : AnyLayout(VStackLayout(spacing: adaptiveMetrics.isExpanded ? 20 : 12))
+          layout {
+            targetCard(minHeight: adaptiveMetrics.isExpanded
+              ? (sideBySide ? max(0, viewport.size.height - 40) : viewport.size.height * 0.50) : 0)
             if practiceShowsMascot || practiceShowsComposition {
-              compositionCard(minHeight: adaptiveMetrics.isExpanded ? viewport.size.height * 0.36 : 0)
+              compositionCard(minHeight: adaptiveMetrics.isExpanded
+                ? (sideBySide ? max(0, viewport.size.height - 40) : viewport.size.height * 0.36) : 0)
+                .frame(width: sideBySide ? max(280, (viewport.size.width - 68) * 0.34) : nil)
             } else if inputMode == .osIME, allowsOSKeyboard {
               osIMEInputPanel(showsFocusRecovery: true)
                 .padding(.horizontal, 14)

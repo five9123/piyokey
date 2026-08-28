@@ -2192,7 +2192,7 @@ final class HancoUITests: XCTestCase {
   }
 
   func testAppStoreScreenshotGamesShowCurrentProgressWithChick() {
-    app.tabBars.buttons[storeText("ゲーム", "Game", "게임")].tap()
+    app.buttons[storeText("ゲーム", "Game", "게임")].firstMatch.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
     storeScene("game-hub", hold: 3.5)
 
@@ -2303,7 +2303,7 @@ final class HancoUITests: XCTestCase {
     app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] = "1"
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-    app.tabBars.buttons[storeText("マイページ", "Profile", "마이페이지")].tap()
+    app.buttons[storeText("マイページ", "Profile", "마이페이지")].firstMatch.tap()
     let createDeck = app.buttons["my_decks.create"]
     scrollToHittable(createDeck)
     createDeck.tap()
@@ -2818,6 +2818,16 @@ final class HancoUITests: XCTestCase {
                                 ("マイページ", "my_page.screen")] {
         let button = app.buttons[tab].firstMatch
         XCTAssertTrue(button.waitForExistence(timeout: 3))
+        // The native iPad tab strip pages at smaller widths; AX still exposes
+        // the clipped tab, so reveal it before tapping its center.
+        let nextPage = app.buttons["次のページ"].firstMatch
+        let previousPage = app.buttons["前のページ"].firstMatch
+        if previousPage.exists, button.frame.minX < previousPage.frame.maxX {
+          previousPage.tap()
+        }
+        if nextPage.exists, button.frame.maxX > nextPage.frame.minX {
+          nextPage.tap()
+        }
         button.tap()
         XCTAssertTrue(element(identifier).waitForExistence(timeout: 5))
         attachScreenshot(named: "ipad-\(identifier)-\(suffix)-ja")
@@ -2870,6 +2880,12 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(target.label, "사랑해요")
     XCTAssertEqual(mistakes.value as? String, "0")
     assertBuiltInKeyboardFillsIPadWidth()
+    let landscapeComposition = element("practice.composition.card")
+    XCTAssertTrue(landscapeComposition.exists)
+    XCTAssertLessThanOrEqual(landscapeComposition.frame.maxY,
+                            app.buttons["keyboard.key.ㅂ"].frame.minY)
+    XCTAssertLessThanOrEqual(element("practice.target.card").frame.maxY,
+                            app.buttons["keyboard.key.ㅂ"].frame.minY)
     attachScreenshot(named: "ipad-practice-landscape-active-ja")
 
     XCUIDevice.shared.orientation = .portrait
