@@ -268,6 +268,7 @@ final class DeckMakerPurchaseStore: ObservableObject {
       return false
     }
 
+    capturePurchaseState("started")
     activity = .purchasing
     defer { activity = .idle }
     do {
@@ -276,20 +277,25 @@ final class DeckMakerPurchaseStore: ObservableObject {
         guard entitlement.productID == productID, entitlement.isActive else {
           await refreshEntitlement()
           if !hasAccess { notice = .purchaseFailed }
+          capturePurchaseState(hasAccess ? "completed" : "failed")
           return hasAccess
         }
         hasAccess = true
         notice = nil
+        capturePurchaseState("completed")
         return true
       case .pending:
         notice = .purchasePending
+        capturePurchaseState("pending")
         return false
       case .userCancelled:
         notice = nil
+        capturePurchaseState("cancelled")
         return false
       }
     } catch {
       notice = .purchaseFailed
+      capturePurchaseState("failed")
       return false
     }
   }
@@ -303,15 +309,24 @@ final class DeckMakerPurchaseStore: ObservableObject {
       try await storefront.synchronize()
       await refreshEntitlement()
       notice = hasAccess ? .restoreSucceeded : .nothingToRestore
+      if hasAccess { capturePurchaseState("restored") }
       return hasAccess
     } catch {
       notice = .restoreFailed
+      capturePurchaseState("failed")
       return false
     }
   }
 
   func dismissNotice() {
     notice = nil
+  }
+
+  private func capturePurchaseState(_ state: String) {
+    TelemetryService.shared.capture(
+      .purchaseFlow,
+      properties: [.purchaseState: state]
+    )
   }
 
   private func refreshEntitlement() async {

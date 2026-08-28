@@ -119,6 +119,16 @@ final class DeckLibrary: ObservableObject {
       installedDecks[entry.deckId] = payload.deck
       records[entry.deckId] = record
       downloadHistory[entry.deckId] = payload.deck.tags
+      TelemetryService.shared.capture(
+        .deckDownloaded,
+        properties: [
+          .deckSource: payload.source == .bundle ? "bundled" : "catalog",
+          .deckCategory: TelemetryService.shared.deckCategory(
+            tags: payload.deck.tags,
+            level: payload.deck.level
+          ),
+        ]
+      )
     } catch {
       failedDeckIDs.insert(entry.deckId)
     }

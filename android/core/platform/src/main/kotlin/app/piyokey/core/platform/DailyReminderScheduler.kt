@@ -1,5 +1,6 @@
 package app.piyokey.core.platform
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,8 +8,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import app.piyokey.core.data.PiyokeyDatabase
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -16,18 +19,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+object DailyReminderDefaults {
+  const val LOCAL_WORKDAY_END_HOUR = 20
+  const val MINUTE = 0
+}
+
 class DailyReminderScheduler(private val context: Context) {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
   fun schedule(hour: Int, minute: Int) {
     require(hour in 0..23 && minute in 0..59)
-    val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
-    var next = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0)
-    if (!next.isAfter(now)) next = next.plusDays(1)
-    alarmManager.setInexactRepeating(
+    val next = nextDailyReminder(
+      ZonedDateTime.now(ZoneId.systemDefault()),
+      hour,
+      minute,
+    )
+    alarmManager.setWindow(
       AlarmManager.RTC_WAKEUP,
       next.toInstant().toEpochMilli(),
-      AlarmManager.INTERVAL_DAY,
+      DELIVERY_WINDOW_MILLIS,
       pendingIntent(),
     )
   }
@@ -43,7 +53,10 @@ class DailyReminderScheduler(private val context: Context) {
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
   )
 
-  private companion object { const val REQUEST_CODE = 7912 }
+  private companion object {
+    const val REQUEST_CODE = 7912
+    const val DELIVERY_WINDOW_MILLIS = 15 * 60 * 1_000L
+  }
 }
 
 class DailyReminderReceiver : BroadcastReceiver() {
@@ -74,7 +87,12 @@ class DailyReminderReceiver : BroadcastReceiver() {
       )
       .setAutoCancel(true)
       .build()
-    manager.notify(NOTIFICATION_ID, notification)
+    val canPostNotification = Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
+      context,
+      Manifest.permission.POST_NOTIFICATIONS,
+    ) == PackageManager.PERMISSION_GRANTED
+    if (canPostNotification) manager.notify(NOTIFICATION_ID, notification)
+    rescheduleEnabledReminder(context, goAsync())
   }
 
   private companion object {
@@ -85,16 +103,33 @@ class DailyReminderReceiver : BroadcastReceiver() {
 
 class DailyReminderBootReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent?) {
-    if (intent?.action != Intent.ACTION_BOOT_COMPLETED) return
-    val pendingResult = goAsync()
-    CoroutineScope(Dispatchers.IO).launch {
-      try {
-        PiyokeyDatabase.open(context).dao().reminderPreference()?.takeIf { it.isEnabled }?.let { preference ->
-          DailyReminderScheduler(context).schedule(preference.hour, preference.minute)
-        }
-      } finally {
-        pendingResult.finish()
+    if (intent?.action !in RESCHEDULE_ACTIONS) return
+    rescheduleEnabledReminder(context, goAsync())
+  }
+
+  private companion object {
+    val RESCHEDULE_ACTIONS = setOf(
+      Intent.ACTION_BOOT_COMPLETED,
+      Intent.ACTION_TIME_CHANGED,
+      Intent.ACTION_TIMEZONE_CHANGED,
+    )
+  }
+}
+
+private fun rescheduleEnabledReminder(context: Context, pendingResult: BroadcastReceiver.PendingResult) {
+  CoroutineScope(Dispatchers.IO).launch {
+    try {
+      PiyokeyDatabase.open(context).dao().reminderPreference()?.takeIf { it.isEnabled }?.let { preference ->
+        DailyReminderScheduler(context).schedule(preference.hour, preference.minute)
       }
+    } finally {
+      pendingResult.finish()
     }
   }
+}
+
+internal fun nextDailyReminder(now: ZonedDateTime, hour: Int, minute: Int): ZonedDateTime {
+  require(hour in 0..23 && minute in 0..59)
+  val today = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0)
+  return if (today.isAfter(now)) today else today.plusDays(1)
 }

@@ -26,6 +26,10 @@
   <string name="onboarding_reward_badge">첫 ‘가’ 보상</string>
   <string name="onboarding_hatch_handoff">자음·모음·글자 조합 미션을 끝내 피요를 부화시켜요. 이 세 미션은 건너뛸 수 없어요.</string>
   <string name="onboarding_hatch_begin">부화 미션 1 시작</string>
+  <string name="onboarding_reminder_title">퇴근 후 20:00에 매일 알림</string>
+  <string name="onboarding_reminder_detail">알림만 허용하면 기기 현지 시각 20:00로 자동 설정해요. 시간은 나중에 바꿀 수 있어요.</string>
+  <string name="onboarding_reminder_allow_and_begin">알림 받고 미션 시작</string>
+  <string name="onboarding_reminder_not_now">알림 없이 시작</string>
   <string name="hatch_title">부화 미션</string>
   <string name="hatch_progress">%1$d / %2$d 완료</string>
   <string name="hatch_mission">미션 %1$d</string>
