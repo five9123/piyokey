@@ -2839,6 +2839,49 @@ final class HancoUITests: XCTestCase {
     }
   }
 
+  func testIPadLandscapeGameControlsRemainVisible() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("iPad landscape game layout review")
+    }
+    for (mode, screen, prompt) in [
+      ("flow", "game.play.screen", ""),
+      ("acid_rain", "acid_rain.play.screen", ""),
+      ("word_match", "word_match.play.screen", "word_match.prompt.value"),
+      ("choseong", "choseong.play.screen", "choseong.initials.value"),
+      ("dictation", "dictation.play.screen", "dictation.replay"),
+    ] {
+      app.terminate()
+      XCUIDevice.shared.orientation = .landscapeLeft
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 60, flowStartIndex: 0)
+      app.launch()
+      app.buttons["ゲーム"].firstMatch.tap()
+      scrollAndTap(app.buttons["game.mode.\(mode)"])
+      XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+      element("game.\(mode).preset.beginner").tap()
+      XCTAssertTrue(element(screen).waitForExistence(timeout: 5))
+      assertBuiltInKeyboardFillsIPadWidth()
+      XCTAssertLessThanOrEqual(app.buttons["keyboard.backspace"].frame.maxY, app.frame.maxY)
+      if !prompt.isEmpty {
+        XCTAssertTrue(element(prompt).exists)
+        XCTAssertGreaterThanOrEqual(element(prompt).frame.minY, app.frame.minY)
+        XCTAssertLessThan(element(prompt).frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY)
+        let feedback = element("\(mode).typing.feedback")
+        XCTAssertTrue(feedback.exists)
+        XCTAssertLessThanOrEqual(feedback.frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY)
+      }
+      attachScreenshot(named: "ipad-game-\(mode)-landscape-ja")
+    }
+    returnToGameHub()
+    scrollAndTap(app.buttons["game.mode.spacing"])
+    XCTAssertTrue(element("spacing.selection.screen").waitForExistence(timeout: 5))
+    element("spacing.passage.morning_commute").tap()
+    XCTAssertTrue(element("spacing.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["spacing.control.space"].isHittable)
+    XCTAssertTrue(app.buttons["spacing.control.next"].isHittable)
+    XCTAssertLessThanOrEqual(app.buttons["spacing.control.space"].frame.maxY, app.frame.maxY)
+    attachScreenshot(named: "ipad-game-spacing-landscape-ja")
+  }
+
   func testIPadAdaptiveWidthRecalculatesAcrossRotationAndPreservesSelectedTab() throws {
     guard max(app.frame.width, app.frame.height) >= 1_000 else {
       throw XCTSkip("This adaptive rotation gate runs on iPad-sized destinations")
