@@ -21,12 +21,14 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #65 한국어 UI 제거 | In Progress | `codex/65-remove-korean-ui` / `/private/tmp/piyokey-issue65-remove-korean-ui` | #64 위에서 ja/en UI·기존 ko 설정 영어 전환 구현, 콘텐츠 보존·양 플랫폼 회귀 검증 중 |
+| #65 / PR #66 한국어 UI 제거 | Verify (Draft) | `codex/65-remove-korean-ui` / `/private/tmp/piyokey-issue65-remove-korean-ui` | ja/en UI·기존 ko 설정 영어 전환·콘텐츠 보존 검증 완료. #64 병합 후 main 재대상화·CI·검토 |
 | #63 / PR #64 사용자 덱 `.typedeck` 확장자 | Blocked | `codex/63-typedeck` / `/Users/jungminoh/Documents/hanco` | 로컬 회귀 통과·Draft PR 생성 완료; GitHub Actions 활성화 및 CI·검토 승인 후 병합 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 | #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
 
 플랫폼별 동시 `In Progress`는 하나를 원칙으로 하며, 공용 충돌 파일은 한 작업만 소유한다.
+
+#65 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 최종 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en만 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두었으며 병합·설치·배포는 하지 않았다.
 
 ## 열린 출시 gate
 
