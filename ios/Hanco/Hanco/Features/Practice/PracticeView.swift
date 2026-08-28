@@ -172,10 +172,10 @@ struct PracticeView: View {
       GeometryReader { viewport in
         ScrollView {
           VStack(spacing: sessionCardSpacing) {
-            targetCard(minHeight: adaptiveMetrics.isExpanded
+            targetCard(minHeight: expandsSessionCards
               ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.55 : 0)
             if practiceShowsMascot || practiceShowsComposition {
-              compositionCard(minHeight: adaptiveMetrics.isExpanded
+              compositionCard(minHeight: expandsSessionCards
                 ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.45 : 0)
             } else if inputMode == .osIME, allowsOSKeyboard {
               osIMEInputPanel(showsFocusRecovery: true)
@@ -524,7 +524,13 @@ struct PracticeView: View {
   }
 
   private var sessionCardSpacing: CGFloat { usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 20 : 12) }
-  private var sessionVerticalPadding: CGFloat { usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 20 : 10) }
+  private var sessionVerticalPadding: CGFloat {
+    usesLandscapeCards ? (expandsSessionCards ? 8 : 4) : (adaptiveMetrics.isExpanded ? 20 : 10)
+  }
+
+  private var expandsSessionCards: Bool {
+    adaptiveMetrics.isExpanded && (!usesLandscapeCards || adaptiveMetrics.availableHeight >= 800)
+  }
 
   private var speakTargetButton: some View {
     Button(action: speakCurrentTarget) {
@@ -542,7 +548,7 @@ struct PracticeView: View {
   }
 
   private func targetCard(minHeight: CGFloat) -> some View {
-    VStack(alignment: .leading, spacing: usesLandscapeCards ? 6 : 9) {
+    VStack(alignment: .leading, spacing: usesLandscapeCards ? 4 : 9) {
       if !usesLandscapeCards {
         HStack {
           Spacer()
@@ -578,7 +584,7 @@ struct PracticeView: View {
         }
       }
     }
-    .padding(usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 24 : 14))
+    .padding(usesLandscapeCards ? 6 : (adaptiveMetrics.isExpanded ? 24 : 14))
     .frame(maxWidth: .infinity, minHeight: minHeight)
     .overlay(alignment: .topTrailing) {
       if usesLandscapeCards { speakTargetButton.padding(10) }

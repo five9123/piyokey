@@ -1563,7 +1563,7 @@ struct ChoseongTypingView: View {
             }
             .frame(minHeight: max(0, viewport.size.height - 20))
             .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.vertical, expandsSessionCards ? 10 : 4)
             .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
           }
           .scrollDismissesKeyboard(.never)
@@ -1774,7 +1774,7 @@ struct ChoseongTypingView: View {
     adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall && !dynamicTypeSize.isAccessibilitySize
   }
 
-  private var quizCardPadding: CGFloat { usesLandscapeCards ? 8 : 20 }
+  private var quizCardPadding: CGFloat { usesLandscapeCards ? (expandsSessionCards ? 8 : 6) : 20 }
 
   private var expandsSessionCards: Bool {
     adaptiveMetrics.isTall || adaptiveMetrics.availableHeight >= 800

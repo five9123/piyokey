@@ -2861,7 +2861,7 @@ final class HancoUITests: XCTestCase {
         XCTAssertEqual(typing.frame.midX, app.frame.midX, accuracy: 80)
         let feedback = element("\(mode).typing.feedback")
         XCTAssertTrue(feedback.exists)
-        XCTAssertLessThanOrEqual(feedback.frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY)
+        XCTAssertLessThanOrEqual(feedback.frame.maxY, app.buttons["keyboard.key.ㅂ"].frame.minY - 14)
       }
       attachScreenshot(named: "ipad-game-\(mode)-landscape-ja")
     }
@@ -2923,7 +2923,9 @@ final class HancoUITests: XCTestCase {
                                element("practice.target.card").frame.maxY)
     XCTAssertEqual(landscapeComposition.frame.midX, app.frame.midX, accuracy: 2)
     XCTAssertLessThanOrEqual(landscapeComposition.frame.maxY,
-                            app.buttons["keyboard.key.ㅂ"].frame.minY)
+                            app.buttons["keyboard.key.ㅂ"].frame.minY - 10)
+    XCTAssertLessThanOrEqual(element("practice.entered_text.value").frame.maxY,
+                            app.buttons["keyboard.key.ㅂ"].frame.minY - 14)
     XCTAssertLessThanOrEqual(element("practice.target.card").frame.maxY,
                             app.buttons["keyboard.key.ㅂ"].frame.minY)
     XCTAssertLessThan(app.buttons["keyboard.key.ㅂ"].frame.minY - landscapeComposition.frame.maxY, 40)
