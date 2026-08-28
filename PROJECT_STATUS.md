@@ -3,7 +3,7 @@
 마지막 갱신: 2026-08-27 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 운영 기준선: 프로젝트 재정비 PR #60 병합
+최근 운영 기준선: 프로젝트 재정비 PR #60·#61 병합
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -21,8 +21,8 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #58 현지 20시 리마인더 | In Progress | `codex/58-onboarding-local-reminder` / `/private/tmp/piyokey-issue-58` | 최신 main 반영 후 관련 회귀와 PR |
-| #10 → #46 → #17 iPad 스택 | Verify | `codex/17-physical-keyboard-learning` / `/private/tmp/piyokey-issue17` | 최신 main 통합 자동 회귀 통과; Galaxy ADB 승인 후 입력 지연·rollover 실기기 gate, 이어서 #18 → #49 → #50 갱신 |
+| #58 현지 20시 리마인더 | Verify | `codex/58-onboarding-local-reminder` / `/private/tmp/piyokey-issue-58` | 구현 PR 병합 후 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+| #10 → #46 → #17 iPad 스택 | Draft/Verify | 전용 iPad·stack worktree | #18 → #49 → #50 순서로 기준 main 반영 및 검증 |
 
 플랫폼별 동시 `In Progress`는 하나를 원칙으로 하며, 공용 충돌 파일은 한 작업만 소유한다.
 
@@ -32,6 +32,7 @@
 - #12 / PR #15: Bluetooth·물리 키보드 iOS 호환성.
 - #17 / PR #50: iPad 사용자 Bluetooth 입력 확인과 Galaxy touch-down p95·2-pointer rollover 실기기 증빙.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
+- #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
 - iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 

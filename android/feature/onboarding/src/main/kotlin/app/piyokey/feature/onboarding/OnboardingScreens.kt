@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,11 +68,14 @@ fun OnboardingRoute(
   preferences: AppPreferences,
   onUpdate: (AppPreferences) -> Unit,
   onOpenIMEHelp: () -> Unit = {},
+  onEnableReminder: () -> Unit,
+  onSkipReminder: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   when {
     preferences.firstInputCompleted -> FirstRewardScreen(
-      onBeginHatch = { onUpdate(preferences.copy(hatchHandoffCompleted = true)) },
+      onEnableReminder = onEnableReminder,
+      onSkipReminder = onSkipReminder,
       modifier = modifier,
     )
     preferences.onboardingIntroStep == OnboardingIntroStep.GOAL -> GoalScreen(
@@ -401,9 +405,18 @@ private fun FirstInputScreen(
 }
 
 @Composable
-private fun FirstRewardScreen(onBeginHatch: () -> Unit, modifier: Modifier) {
+private fun FirstRewardScreen(
+  onEnableReminder: () -> Unit,
+  onSkipReminder: () -> Unit,
+  modifier: Modifier,
+) {
   Column(
-    modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp).testTag("onboarding-first-reward"),
+    modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.background)
+      .verticalScroll(rememberScrollState())
+      .padding(24.dp)
+      .testTag("onboarding-first-reward"),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterVertically),
   ) {
@@ -413,8 +426,20 @@ private fun FirstRewardScreen(onBeginHatch: () -> Unit, modifier: Modifier) {
       Text(stringResource(R.string.onboarding_reward_badge), Modifier.padding(16.dp), fontWeight = FontWeight.Black)
     }
     Text(stringResource(R.string.onboarding_hatch_handoff), textAlign = TextAlign.Center)
-    Button(onClick = onBeginHatch, modifier = Modifier.fillMaxWidth().testTag("onboarding-begin-hatch")) {
-      Text(stringResource(R.string.onboarding_hatch_begin))
+    Card(
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+      shape = RoundedCornerShape(20.dp),
+    ) {
+      Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(stringResource(R.string.onboarding_reminder_title), fontWeight = FontWeight.Black)
+        Text(stringResource(R.string.onboarding_reminder_detail), style = MaterialTheme.typography.bodySmall)
+      }
+    }
+    Button(onClick = onEnableReminder, modifier = Modifier.fillMaxWidth().testTag("onboarding-enable-reminder")) {
+      Text(stringResource(R.string.onboarding_reminder_allow_and_begin))
+    }
+    TextButton(onClick = onSkipReminder, modifier = Modifier.testTag("onboarding-begin-hatch")) {
+      Text(stringResource(R.string.onboarding_reminder_not_now))
     }
   }
 }

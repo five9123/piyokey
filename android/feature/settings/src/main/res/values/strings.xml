@@ -43,7 +43,7 @@
   <string name="settings_choseong_meaning">Show choseong meanings</string>
   <string name="settings_reminder">Practice reminder</string>
   <string name="settings_reminder_enabled">Enable reminder</string>
-  <string name="settings_reminder_time">Time %1$02d:%2$02d</string>
+  <string name="settings_reminder_time">Local time %1$02d:%2$02d</string>
   <string name="settings_about">App information</string>
   <string name="settings_data_privacy">Privacy</string>
   <string name="settings_anonymous_analytics">Anonymous usage analytics</string>

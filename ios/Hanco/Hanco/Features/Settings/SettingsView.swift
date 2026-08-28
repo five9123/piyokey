@@ -114,6 +114,7 @@ struct SettingsView: View {
       applyPracticePreset(preset)
       captureSetting("practice_display", value: preset.rawValue)
     }
+    .hancoUITestDynamicTypeOverride()
     .onChange(of: anonymousAnalyticsEnabled) { enabled in
       privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
       TelemetryService.shared.updateConsent(
@@ -473,7 +474,7 @@ struct SettingsView: View {
         .pickerStyle(.menu)
         .accessibilityIdentifier("retention.reminder.minute")
 
-        Text("retention.reminder.jst")
+        Text("retention.reminder.local_time")
           .font(.caption.weight(.bold))
           .foregroundStyle(AppPalette.mutedInk)
         Spacer()

@@ -1,5 +1,6 @@
 package app.piyokey.piyokey
 
+import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -8,6 +9,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -46,9 +48,35 @@ class M6OnboardingInstrumentedTest {
     composeRule.onNodeWithTag("keyboard-key-ㄱ").performClick() // tap 4: first real typing input
     composeRule.onNodeWithTag("keyboard-key-ㅏ").performClick()
     composeRule.onNodeWithTag("onboarding-first-reward").assertIsDisplayed()
+    // Permission consent is verified separately; this path verifies the explicit no-reminder choice.
     composeRule.onNodeWithTag("onboarding-begin-hatch").performClick()
     composeRule.waitUntil(timeoutMillis = 15_000) {
       runCatching { composeRule.onNodeWithTag("hatch-start-1").fetchSemanticsNode() }.isSuccess
+    }
+    composeRule.onNodeWithTag("hatch-start-1").assertIsDisplayed()
+  }
+
+  @Test
+  fun notificationConsentEnablesLocalTwentyHundredReminder() {
+    val instrumentation = InstrumentationRegistry.getInstrumentation()
+    val context = instrumentation.targetContext
+    instrumentation.uiAutomation.grantRuntimePermission(
+      context.packageName,
+      Manifest.permission.POST_NOTIFICATIONS,
+    )
+
+    composeRule.waitUntil(timeoutMillis = 15_000) {
+      runCatching { composeRule.onNodeWithTag("onboarding-goal").fetchSemanticsNode() }.isSuccess
+    }
+    composeRule.onNodeWithTag("onboarding-goal-keyboard").performClick()
+    composeRule.onNodeWithTag("onboarding-goal").performScrollToIndex(5)
+    composeRule.onNodeWithTag("onboarding-next").performClick()
+    composeRule.onNodeWithTag("onboarding-keyboard-try").performClick()
+    composeRule.onNodeWithTag("keyboard-key-ㄱ").performClick()
+    composeRule.onNodeWithTag("keyboard-key-ㅏ").performClick()
+    composeRule.onNodeWithTag("onboarding-enable-reminder").performClick()
+    composeRule.waitUntil(timeoutMillis = 15_000) {
+      runCatching { composeRule.onNodeWithTag("hatch-gate").fetchSemanticsNode() }.isSuccess
     }
     composeRule.onNodeWithTag("hatch-start-1").assertIsDisplayed()
   }

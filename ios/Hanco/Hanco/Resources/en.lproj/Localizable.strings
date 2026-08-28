@@ -828,10 +828,10 @@
 "retention.rewards.7.title" = "Day 7: headphones";
 "retention.rewards.7.condition" = "Earn by stamping all 7 days this week";
 "retention.reminder.title" = "Practice reminder";
-"retention.reminder.detail" = "One reminder a day at a time you choose. Off by default.";
+"retention.reminder.detail" = "Allow notifications for a daily 20:00 local-time reminder. You can change the time.";
 "retention.reminder.hour" = "Hour";
 "retention.reminder.minute" = "Minute";
-"retention.reminder.jst" = "JST";
+"retention.reminder.local_time" = "Local time";
 "retention.reminder.denied" = "Notifications aren't allowed. You can change this in iPhone Settings.";
 "retention.reminder.failed" = "Couldn't set the reminder. Please try again.";
 "retention.reminder.notification_title" = "Just 3 minutes of Hangul today!";
@@ -892,8 +892,10 @@
 "onboarding.bulk.download" = "Download all three";
 "onboarding.bulk.complete" = "All three added";
 "onboarding.bulk.failed" = "Some decks couldn't be added. You can try again in the app.";
-"onboarding.reminder.title" = "Remind me daily at 20:00";
-"onboarding.reminder.detail" = "Off by default. You can change the time later.";
+"onboarding.reminder.title" = "A daily reminder after work at 20:00";
+"onboarding.reminder.detail" = "Just allow notifications and we'll schedule it automatically for 20:00 in your device's local time. You can change the time later.";
+"onboarding.reminder.allow_and_begin" = "Allow reminders and begin";
+"onboarding.reminder.not_now" = "Begin without reminders";
 "onboarding.finish" = "Start typee";
 
 "app.name" = "typee";
