@@ -2294,7 +2294,20 @@ final class HancoUITests: XCTestCase {
 
   private func captureGlobalStoreAssets() {
     let isIPadCapture = max(app.frame.width, app.frame.height) >= 1_000
-    if isIPadCapture { XCUIDevice.shared.orientation = .landscapeLeft }
+    if isIPadCapture {
+      // Launch in the intended orientation; rotating during the seeded home launch
+      // can leave the simulator's interface in portrait despite its device orientation.
+      app.terminate()
+      XCUIDevice.shared.orientation = .landscapeLeft
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 60,
+                            flowStartIndex: 0, seedsAppStoreCaptureState: true)
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+      let landscape = XCTNSPredicateExpectation(
+        predicate: NSPredicate { _, _ in self.app.frame.width > self.app.frame.height }, object: nil
+      )
+      XCTAssertEqual(XCTWaiter.wait(for: [landscape], timeout: 5), .completed)
+    }
     testAppStoreScreenshotDailyAndPracticeShowCurrentProgressWithChick()
     testAppStoreScreenshotGamesShowCurrentProgressWithChick()
     returnToGameHub()
