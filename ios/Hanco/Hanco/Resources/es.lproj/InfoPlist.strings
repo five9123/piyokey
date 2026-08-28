@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "typee";
+"CFBundleName" = "typee";
+"CFBundleTypeName" = "Mazo de typee";
+"UTTypeDescription" = "Mazo de typee";
+"NSPhotoLibraryAddUsageDescription" = "typee necesita acceso a Fotos para guardar la imagen del resultado de tu juego.";

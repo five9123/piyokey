@@ -1116,3 +1116,5 @@
 "piyodeck.import.action.replace.hint" = "現在のデッキを読み込んだ内容で置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.downgrade_hint" = "古いバージョンで現在のデッキを置き換えます。確認画面が開きます。";
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";
+
+"settings.language.spanish" = "Español";

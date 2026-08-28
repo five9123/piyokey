@@ -301,6 +301,7 @@ enum HancoTheme: String, CaseIterable, Identifiable {
 enum AppLanguage: String, CaseIterable, Identifiable {
   case japanese = "ja"
   case english = "en"
+  case spanish = "es"
 
   var id: String { rawValue }
 
@@ -308,6 +309,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     switch self {
     case .japanese: Locale(identifier: "ja_JP")
     case .english: Locale(identifier: "en_US")
+    case .spanish: Locale(identifier: "es_ES")
     }
   }
 

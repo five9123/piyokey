@@ -66,4 +66,7 @@
   <string name="settings_cancel">Cancel</string>
   <string name="settings_done">Done</string>
   <string name="settings_open">Open settings</string>
+  <string name="settings_language_japanese">日本語</string>
+  <string name="settings_language_english">English</string>
+  <string name="settings_language_spanish">Español</string>
 </resources>

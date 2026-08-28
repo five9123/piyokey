@@ -16,7 +16,7 @@ class AppPreferencesTest {
 
   @Test
   fun retiredKoreanSettingFallsBackToEnglishWithoutRemovingContentLanguage() {
-    assertEquals(listOf("ja", "en"), AppLanguage.entries.map { it.tag })
+    assertEquals(listOf("ja", "en", "es"), AppLanguage.entries.map { it.tag })
     for (legacy in listOf("KOREAN", "ko")) {
       assertEquals(AppLanguage.ENGLISH, AppLanguage.fromStored(legacy, listOf("ja-JP")))
       assertEquals(AppLanguage.ENGLISH, AppLanguage.resolve(legacy))
@@ -24,6 +24,17 @@ class AppPreferencesTest {
     assertEquals(AppLanguage.JAPANESE, AppLanguage.fromStored(null, listOf("ja-JP")))
     assertEquals(AppLanguage.JAPANESE, AppLanguage.fromStored("JAPANESE", listOf("en-US")))
     assertEquals(AppLanguage.ENGLISH, AppLanguage.fromStored("ENGLISH", listOf("ja-JP")))
+  }
+
+  @Test
+  fun spanishRegionsResolveAndExplicitPreferenceSurvivesDeviceChanges() {
+    for (tag in listOf("es-ES", "es-MX", "es-419", "es_AR")) {
+      assertEquals(AppLanguage.SPANISH, AppLanguage.preferred(listOf(tag, "ja-JP")))
+    }
+    assertEquals(AppLanguage.ENGLISH, AppLanguage.preferred(listOf("en-US", "es-MX")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("SPANISH", listOf("en-US")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.fromStored("es", listOf("ja-JP")))
+    assertEquals(AppLanguage.SPANISH, AppLanguage.resolve("es"))
   }
 
   @Test

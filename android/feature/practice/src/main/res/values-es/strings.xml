@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="practice_overall_progress">Pregunta %1$d de %2$d</string>
+  <string name="practice_overall_progress_accessibility">Progreso de práctica: pregunta %1$d de %2$d</string>
+  <string name="practice_jamo_progress_accessibility">Progreso de jamos: %1$d de %2$d</string>
+  <string name="practice_composition_label">Componiendo</string>
+  <string name="practice_composition_placeholder">Empieza a escribir</string>
+  <string name="practice_feedback_idle">Sigue la tecla resaltada</string>
+  <string name="practice_feedback_correct">¡Bien!</string>
+  <string name="practice_feedback_incorrect">Prueba %1$s</string>
+  <string name="practice_feedback_complete">¡Completado!</string>
+  <string name="practice_sample_target_1">사랑해요</string>
+  <string name="practice_sample_target_2">안녕하세요</string>
+  <string name="practice_sample_target_3">최고예요</string>
+  <string name="keyboard_accessibility_label">Teclado coreano integrado</string>
+  <string name="keyboard_shift">Mayúsculas</string>
+  <string name="keyboard_backspace">Retroceso</string>
+  <string name="keyboard_space">Espacio</string>
+  <string name="keyboard_key_with_roman">%1$s, %2$s</string>
+  <string name="practice_input_builtin_short">App</string>
+  <string name="practice_input_os_short">Sistema</string>
+  <string name="practice_input_builtin">Teclado integrado</string>
+  <string name="practice_input_os">Teclado del sistema</string>
+  <string name="practice_ime_missing">No se ha detectado un teclado coreano. Puedes seguir escribiendo o abrir los ajustes del sistema.</string>
+  <string name="practice_ime_open_settings">Ajustes del teclado</string>
+  <string name="practice_play_pronunciation">Reproducir pronunciación coreana</string>
+  <string name="practice_piyo_accessibility">Piyo reaccionando a tu escritura</string>
+</resources>

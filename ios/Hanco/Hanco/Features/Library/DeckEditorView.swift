@@ -4,7 +4,7 @@ import Security
 import SwiftUI
 import UIKit
 
-/// Content can retain Korean translations even though the UI supports only ja/en.
+/// Content can retain Korean translations even though the UI supports ja/en/es.
 enum DeckContentLanguage: String {
   case japanese = "ja"
   case english = "en"
@@ -830,7 +830,7 @@ struct DeckEditorView: View {
   private var editingLanguageNameKey: String {
     switch AppLanguage.current {
     case .japanese: "settings.language.japanese"
-    case .english: "settings.language.english"
+    case .english, .spanish: "settings.language.english"
     }
   }
 

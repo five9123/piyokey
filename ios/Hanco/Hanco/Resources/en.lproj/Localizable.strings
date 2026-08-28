@@ -1116,3 +1116,5 @@
 "piyodeck.import.action.replace.hint" = "Replaces the current deck with the imported content. Opens a confirmation.";
 "piyodeck.import.action.replace.downgrade_hint" = "Replaces the current deck with an older version. Opens a confirmation.";
 "piyodeck.import.action.replace.same_version_hint" = "Replaces the current deck with different content using the same version number. Opens a confirmation.";
+
+"settings.language.spanish" = "Español";

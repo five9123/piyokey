@@ -10,6 +10,7 @@
 	<array>
 		<string>ja</string>
 		<string>en</string>
+		<string>es</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>

@@ -2537,6 +2537,36 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.tabBars.buttons["ホーム"].exists)
   }
 
+  func testSpanishDeviceLanguageSwitchAndPersistence() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments.replaceSubrange(0..<4, with: [
+      "-AppleLanguages", "(es-MX)", "-AppleLocale", "es_MX",
+    ])
+    app.launch()
+    XCTAssertTrue(app.tabBars.buttons["Inicio"].waitForExistence(timeout: 8))
+    openSettings()
+    XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
+    let spanish = app.buttons["Español"]
+    scrollToHittable(spanish)
+    XCTAssertTrue(spanish.isSelected)
+    app.buttons["English"].tap()
+    XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+    app.buttons["Español"].tap()
+    XCTAssertTrue(app.navigationBars["Ajustes"].waitForExistence(timeout: 5))
+    app.buttons["settings.done"].tap()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false)
+    app.launch()
+    XCTAssertTrue(app.tabBars.buttons["Inicio"].waitForExistence(timeout: 8))
+    app.tabBars.buttons["Práctica"].tap()
+    XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+    openSettings()
+    scrollToHittable(app.buttons["Español"])
+    XCTAssertTrue(app.buttons["Español"].isSelected)
+    XCTAssertFalse(app.buttons["한국어"].exists)
+  }
+
   func testRetiredKoreanLanguageShowsEnglishUIAndKeepsKoreanPractice() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true)

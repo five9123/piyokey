@@ -240,6 +240,8 @@
 		B30000000000000000000001 /* TargetSpeechSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetSpeechSynthesizer.swift; sourceTree = "<group>"; };
 		B40000000000000000000001 /* AnalyticsContract.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsContract.generated.swift; sourceTree = "<group>"; };
 		B40000000000000000000002 /* TelemetryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryService.swift; sourceTree = "<group>"; };
+		B67000000000000000000001 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B67000000000000000000002 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -740,6 +742,7 @@
 			knownRegions = (
 				ja,
 				en,
+				es,
 				Base,
 			);
 			mainGroup = A00000000000000000000002;
@@ -946,6 +949,7 @@
 			children = (
 				B0000000000000000000000C /* ja */,
 				B0000000000000000000004B /* en */,
+				B67000000000000000000001 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -955,6 +959,7 @@
 			children = (
 				B00000000000000000000051 /* ja */,
 				B00000000000000000000052 /* en */,
+				B67000000000000000000002 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
