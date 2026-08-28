@@ -21,15 +21,16 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | In Progress | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 최종 2열 레벨 카드/부화→홈 검증과 SHA 증빙 정리 후 CI/리뷰 |
+| #73 / Draft PR #74 온보딩·첫 홈·5언어 통합 | Verify | codex/73-onboarding-level / /private/tmp/piyokey-issue73-onboarding | 로컬 검증 완료; 비활성 CI 복구·리뷰 후 순차 통합 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## #73 5언어·온보딩 통합 후보
 
 - 사용자 진행 승인으로 `dcc32bf` 로컬 5언어 후보를 #73/PR #74에 통합했다. 원본 언어/리텐션 clone은 보존했다. 새 온보딩은 관심사 뒤 4단계·2열 예시 카드이며 돌아가기 버튼이 없다. 첫 홈은 추천, 실제 학습 뒤 이어하기다.
 - ja/en/es/de/fr 모두 iOS 1,124개 키·Android 517개 리소스 누락 0개, 공식 es/de/fr 뜻 627개·덱 이름 41개·태그 42개를 포함한다. 공용 schema/reader/writer·카탈로그 호환 계약을 함께 반영했다.
-- Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 365개와 5언어 선택 복원 통과. 최종 레벨 카드와 부화→홈 UI 재검증의 상세는 최신 SHA 증빙을 따른다.
-- 부화 실패는 시뮬레이터의 촬영용 성장 값이 앱 컨테이너 밖에 남아 새 설치 테스트에 유입된 문제였다. DEBUG 테스트 초기값을 명시하고, 투어 배경 접근성이 숨겨진 동안에는 카드 존재를 검사하지 않도록 검증 시점을 정리했다. 실제 성장 정책은 변경하지 않았다.
+- 검증 소스 `00fb528782bcceb84875778161fca0f4660fb3c8`, 증빙 `release/evidence/00fb528782bcceb84875778161fca0f4660fb3c8.json`. Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 366개·관련 UI 5개 통과. 마지막 변경은 배경·결과 마스코트의 성장 전 상태를 함께 검사하도록 테스트만 조정했으며, 동일 앱 소스 `a585771`의 단위·첫 홈 3개·Android 결과 재사용 범위를 증빙에 기록했다.
+- 부화 성장 실패는 시뮬레이터의 촬영용 성장 값이 앱 컨테이너 밖에 남아 새 설치 테스트에 유입된 문제였다. DEBUG 초기값과 결과 화면/투어 이후 테스트 범위를 명확히 했다. 별도로 화면 종료 시 미시작 세션이 빈 체크포인트를 다시 저장하던 문제를 수정해 부화→첫 홈→재실행에서 추천을 유지한다. 명시적 재도전의 초기화 저장은 유지한다.
+- Android 공유 에뮬레이터 재실행은 테스트 중 앱 삭제로 중단됐다. 기존 에뮬레이터/다른 작업을 중단하지 않고 Issue #73 전용 API35 에뮬레이터에서 UI 14개를 모두 재검증했다.
 - GitHub Actions/리뷰와 원어민·전체 화면/실기기·새 카탈로그 namespace·최종 RC 촬영·스토어 gate는 별도다. 과거 로컬 환경의 앱 빌드/기기 접근 실패 기록은 역사적 증빙이며 현재 통합 검증과 구분한다.
 - 상세: `docs/LANGUAGE_COVERAGE.md`, `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`.
 
