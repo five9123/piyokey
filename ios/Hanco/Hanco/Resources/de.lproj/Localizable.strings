@@ -77,7 +77,7 @@
 "keyboard.space" = "Leertaste";
 "keyboard.accessibility_label" = "Koreanische Tastatur";
 "keyboard.layout.title" = "Integriertes Tastaturlayout";
-"keyboard.layout.detail" = "Ab Kapitel 5 sowie beim freien Üben und mit Decks. Das Layout wird beim Sitzungsstart festgelegt.";
+"keyboard.layout.detail" = "Ab Kapitel 5 und beim Üben mit Decks. Das Layout wird beim Sitzungsstart festgelegt.";
 "keyboard.layout.dubeolsik" = "Dubeolsik (Standard)";
 "keyboard.layout.korean_10key" = "Koreanisch mit 10 Tasten";
 "keyboard.layout.korean_10key_help" = "Tippe eine Konsonantengruppe mehrmals an, nutze → zwischen aufeinanderfolgenden Konsonanten derselben Gruppe oder kombiniere ㅣ, ㆍ und ㅡ in der markierten Reihenfolge.";
@@ -274,8 +274,6 @@
 "curriculum.free_selection" = "Frei wählen";
 "curriculum.resume" = "Fortsetzen";
 "curriculum.locked" = "Vorherige Stufe abschließen zum Freischalten";
-"curriculum.free_practice" = "Freies Üben";
-"curriculum.free_practice_detail" = "Tastatur einstellen und drei Zieltexte üben";
 "curriculum.chapter_1.title" = "Grundkonsonanten";
 "curriculum.chapter_2.title" = "Grundvokale";
 "curriculum.chapter_3.title" = "Silben bilden";

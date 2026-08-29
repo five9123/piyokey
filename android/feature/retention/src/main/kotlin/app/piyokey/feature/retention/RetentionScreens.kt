@@ -379,7 +379,6 @@ fun CurriculumMapScreen(
   progress: Map<String, UserProgressEntity>,
   activeStageId: String?,
   onStage: (CurriculumStage) -> Unit,
-  onFreePractice: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val completed = progress.keys
@@ -443,11 +442,6 @@ fun CurriculumMapScreen(
             Text(if (saved == null) "☆☆☆" else "★".repeat(saved.stars) + "☆".repeat(3 - saved.stars))
           }
         }
-      }
-    }
-    item {
-      OutlinedButton(onClick = onFreePractice, modifier = Modifier.fillMaxWidth().testTag("curriculum-free-practice")) {
-        Text(stringResource(R.string.curriculum_free_practice))
       }
     }
   }

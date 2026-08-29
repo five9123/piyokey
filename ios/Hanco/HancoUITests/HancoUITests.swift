@@ -135,15 +135,13 @@ final class HancoUITests: XCTestCase {
     app.launchArguments += ["-settings.font_scale", "large"]
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-    openFreePracticeSetup()
+    openSettings()
     let layoutPicker = element("settings.builtin_keyboard_layout")
     scrollToHittable(layoutPicker)
     layoutPicker.tap()
     app.buttons["韓国語10キー（天地人式）"].tap()
-    let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    start.tap()
-    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    app.buttons["settings.done"].tap()
+    startPractice()
 
     let vertical = app.buttons["keyboard.10key.vertical"]
     let dot = app.buttons["keyboard.10key.dot"]
@@ -221,6 +219,11 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.staticTexts["スタンプを集めよう"].exists)
     XCTAssertTrue(app.buttons["root.settings"].exists)
     attachScreenshot(named: "curriculum-map-ja")
+    scrollToHittable(element("curriculum.stage.chapter_6_sentences"))
+    app.scrollViews.firstMatch.swipeUp()
+    XCTAssertFalse(element("curriculum.free_practice").exists)
+    XCTAssertFalse(element("practice.setup.screen").exists)
+    attachScreenshot(named: "curriculum-bottom-without-free-practice-ja")
   }
 
   func testChapterSixSpacingMissionPracticesTheSpaceKey() {
@@ -812,22 +815,21 @@ final class HancoUITests: XCTestCase {
     XCTAssertLessThan(meaning.frame.minY, target.frame.minY)
   }
 
-  func testJapaneseSetupDefaultsAndKeepsSettingsOutsideSession() {
-    openFreePracticeSetup()
-    XCTAssertTrue(app.staticTexts["ハングルを組み立てよう"].exists)
-    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
-    XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
-    XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
+  func testJapaneseSettingsDefaultsCarryIntoDeckPractice() {
+    openSettings()
     let sound = app.switches["settings.sound"]
     scrollToHittable(sound)
     XCTAssertEqual(sound.value as? String, "1")
     XCTAssertTrue(element("settings.sound_preset").isEnabled)
-    attachScreenshot(named: "practice-setup-ja")
+    attachScreenshot(named: "practice-common-settings-ja")
 
-    let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    start.tap()
-    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    scrollToHittable(app.switches["settings.key_guide"])
+    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+    XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
+    XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
+
+    app.buttons["settings.done"].tap()
+    startPractice()
     XCTAssertFalse(app.switches["settings.key_guide"].exists)
     XCTAssertFalse(app.switches["settings.roman_hints"].exists)
     XCTAssertFalse(app.switches["settings.haptics"].exists)
@@ -835,13 +837,13 @@ final class HancoUITests: XCTestCase {
   }
 
   func testSoundSettingAndPresetPersistAcrossRelaunch() {
-    openFreePracticeSetup()
+    openSettings()
     let sound = app.switches["settings.sound"]
     scrollToHittable(sound)
     XCTAssertEqual(sound.value as? String, "1")
 
-    XCTAssertTrue(app.buttons["標準"].isSelected)
-    let soft = app.buttons["ソフト"]
+    XCTAssertTrue(element("settings.sound_preset").buttons["標準"].isSelected)
+    let soft = element("settings.sound_preset").buttons["ソフト"]
     XCTAssertTrue(soft.waitForExistence(timeout: 2))
     soft.tap()
     XCTAssertTrue(soft.isSelected)
@@ -859,7 +861,7 @@ final class HancoUITests: XCTestCase {
     let persistedSound = app.switches["settings.sound"]
     scrollToHittable(persistedSound)
     XCTAssertEqual(persistedSound.value as? String, "0")
-    XCTAssertTrue(app.buttons["ソフト"].isSelected)
+    XCTAssertTrue(element("settings.sound_preset").buttons["ソフト"].isSelected)
     XCTAssertFalse(element("settings.sound_preset").isEnabled)
   }
 
@@ -1065,26 +1067,23 @@ final class HancoUITests: XCTestCase {
   }
 
   func testRomanHintPreferencePersistsAcrossRelaunch() {
-    openFreePracticeSetup()
+    openSettings()
     let romanHints = app.switches["settings.roman_hints"]
-    XCTAssertTrue(romanHints.waitForExistence(timeout: 2))
-    romanHints.tap()
+    scrollAndTap(romanHints)
     XCTAssertEqual(romanHints.value as? String, "0")
 
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: false)
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-    openFreePracticeSetup()
+    openSettings()
 
     let persistedRomanHints = app.switches["settings.roman_hints"]
-    XCTAssertTrue(persistedRomanHints.waitForExistence(timeout: 5))
+    scrollToHittable(persistedRomanHints)
     XCTAssertEqual(persistedRomanHints.value as? String, "0")
 
-    let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    start.tap()
-    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    app.buttons["settings.done"].tap()
+    startPractice()
     XCTAssertNotEqual(app.buttons["keyboard.key.ㅂ"].value as? String, "q")
   }
 
@@ -2976,12 +2975,7 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "ipad-settings-accessibility-xxxl-ja")
     app.buttons["settings.done"].tap()
 
-    openFreePracticeSetup()
-    let start = app.buttons["practice.start"]
-    scrollToHittable(start)
-    XCTAssertTrue(start.isHittable)
-    start.tap()
-    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    startPractice()
     XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].isHittable)
     assertBuiltInKeyboardFillsIPadWidth()
   }
@@ -3382,9 +3376,21 @@ final class HancoUITests: XCTestCase {
   }
 
   private func startPractice() {
-    openFreePracticeSetup()
-    let start = app.buttons["practice.start"]
-    scrollAndTap(start)
+    // Preserve the caller's preferences while installing the old three-target fixture
+    // through the existing deck store, then enter a real user-facing deck session.
+    app.terminate()
+    app.launchEnvironment = app.launchEnvironment.filter {
+      !$0.key.hasPrefix("UITEST_RESET_") && !$0.key.hasPrefix("UITEST_SEED_")
+    }
+    app.launchEnvironment["UITEST_SEED_PRACTICE_DECK"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    let profile = app.buttons[storeText("マイページ", "Profile", "마이페이지")].firstMatch
+    XCTAssertTrue(profile.waitForExistence(timeout: 3))
+    profile.tap()
+    let deck = element("my_decks.deck.user_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+    scrollToHittable(deck)
+    deck.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
   }
 
@@ -3416,12 +3422,6 @@ final class HancoUITests: XCTestCase {
       file: file,
       line: line
     )
-  }
-
-  private func openFreePracticeSetup() {
-    openPracticeTab()
-    scrollAndTap(element("curriculum.free_practice"))
-    XCTAssertTrue(app.buttons["practice.start"].waitForExistence(timeout: 5))
   }
 
   private func openPracticeTab() {

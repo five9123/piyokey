@@ -62,6 +62,9 @@ struct HancoApp: App {
       if ProcessInfo.processInfo.environment["UITEST_SEED_USER_DECK_DRAFT"] == "1" {
         seedUserDeckDraftFixture()
       }
+      if ProcessInfo.processInfo.environment["UITEST_SEED_PRACTICE_DECK"] == "1" {
+        seedPracticeDeckFixture()
+      }
     #endif
     AppLanguage.migrateLegacyPreference()
     TelemetryService.shared.configure()
@@ -284,6 +287,33 @@ struct HancoApp: App {
       updatedAt: updatedAt,
       items: Array(items.prefix(itemCount))
     )
+  }
+
+  private func seedPracticeDeckFixture() {
+    let date = Date(timeIntervalSince1970: 1_786_675_200)
+    installUITestDeck(
+      Deck(
+        deckId: "user_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        version: 1,
+        name: "タイピング練習",
+        author: DeckAuthor(id: "user_local", nickname: "テスト学習者"),
+        official: false,
+        type: .word,
+        level: 1,
+        tags: ["練習"],
+        createdAt: date,
+        updatedAt: date,
+        items: (1...3).map { index in
+          let key = "practice.sample_target_\(index)"
+          return DeckItem(
+            id: "item_" + String(repeating: String(index), count: 32),
+            ko: AppLocalization.string(key),
+            readingJa: AppLocalization.string("\(key).reading"),
+            meaningJa: AppLocalization.string("\(key).meaning"),
+            audio: nil
+          )
+        }
+      ))
   }
 
   private func installUITestDeck(_ deck: Deck) {

@@ -58,7 +58,6 @@
   <string name="curriculum_item_count">%1$d Fragen · ab 80%% geschafft</string>
   <string name="curriculum_locked">Gesperrte Lektion</string>
   <string name="curriculum_resume">Weitermachen, wo du aufgehört hast</string>
-  <string name="curriculum_free_practice">Frei mit meinen Decks üben</string>
   <string name="review_title">Wiederholungsdeck</string>
   <string name="review_count">%1$d Wörter zum Wiederholen</string>
   <string name="review_empty">Wörter mit Tippfehlern erscheinen hier automatisch.</string>

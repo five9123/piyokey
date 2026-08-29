@@ -20,14 +20,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -144,7 +141,6 @@ import app.piyokey.core.settings.OnboardingPolicy
 import app.piyokey.core.settings.PiyoWardrobePolicy
 import app.piyokey.core.settings.PiyoAccessory
 import app.piyokey.core.settings.PrivacyNoticePolicy
-import app.piyokey.feature.discover.DeckCard
 import app.piyokey.feature.discover.DeckDetailScreen
 import app.piyokey.feature.discover.DiscoverScreen
 import app.piyokey.feature.discover.MyDecksScreen
@@ -554,7 +550,6 @@ private fun PiyokeyApp(
   var activeSpacingPassage by remember { mutableStateOf<SpacingPassage?>(null) }
   var spacingGameResult by remember { mutableStateOf<SpacingGameState?>(null) }
   var gameSeed by remember { mutableStateOf(0L) }
-  var showFreePractice by remember { mutableStateOf(false) }
   var showSettings by remember { mutableStateOf(false) }
   var appTourStep by remember { mutableStateOf(0) }
   val reminderScheduler = remember { DailyReminderScheduler(context) }
@@ -2102,31 +2097,7 @@ private fun PiyokeyApp(
             )
           },
         )
-        RootTab.PRACTICE -> if (showFreePractice) {
-          PracticeDeckChooser(
-            installed = current.installed,
-            onPlay = ::play,
-            onSample = {
-              val targets = listOf(
-                context.getString(app.piyokey.feature.practice.R.string.practice_sample_target_1),
-                context.getString(app.piyokey.feature.practice.R.string.practice_sample_target_2),
-                context.getString(app.piyokey.feature.practice.R.string.practice_sample_target_3),
-              )
-              activePractice = ActivePractice(
-                installed = null,
-                catalogEntry = null,
-                targets = targets,
-                items = null,
-                sourceDeckId = null,
-                kind = PracticeKind.FREE,
-                inputMode = preferences.defaultInputMode,
-                sessionDay = JstDay.fromEpochMillis(System.currentTimeMillis()),
-              )
-            },
-            onFindDecks = { tab = RootTab.DISCOVER },
-            onBack = { showFreePractice = false },
-          )
-        } else {
+        RootTab.PRACTICE -> {
           CurriculumMapScreen(
             progress = currentLearning.progress,
             activeStageId = currentLearning.activeSession?.stageId,
@@ -2145,7 +2116,6 @@ private fun PiyokeyApp(
                 checkpoint = currentLearning.activeSession?.takeIf { it.stageId == stage.id }?.checkpoint,
               )
             },
-            onFreePractice = { showFreePractice = true },
           )
         }
         RootTab.GAMES -> when (gameStage) {
@@ -2477,58 +2447,6 @@ private fun PiyokeyApp(
         )
       },
     )
-  }
-}
-
-@Composable
-private fun PracticeDeckChooser(
-  installed: List<InstalledDeck>,
-  onPlay: (InstalledDeck) -> Unit,
-  onSample: () -> Unit,
-  onFindDecks: () -> Unit,
-  onBack: () -> Unit,
-) {
-  val languageCode = LocalConfiguration.current.locales[0].language
-  LazyColumn(
-    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-    contentPadding = PaddingValues(18.dp),
-    verticalArrangement = Arrangement.spacedBy(12.dp),
-  ) {
-    item {
-      TextButton(onClick = onBack) { Text(stringResource(R.string.back_to_curriculum)) }
-      Text(
-        stringResource(R.string.practice_choose_deck),
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Black,
-      )
-    }
-    if (installed.isEmpty()) {
-      item { Button(onClick = onFindDecks) { Text(stringResource(app.piyokey.feature.discover.R.string.my_decks_find)) } }
-    } else {
-      items(installed, key = { it.metadata.deckId }) { item ->
-        val synthetic = CatalogDeck(
-          deckId = item.deck.deckId,
-          version = item.deck.version,
-          name = item.deck.name,
-          authorNickname = item.deck.author.nickname,
-          official = item.deck.official,
-          featured = false,
-          type = item.deck.type,
-          level = item.deck.level,
-          tags = item.deck.tags,
-          itemCount = item.deck.items.size,
-          sizeBytes = 1,
-          downloadsTotal = 0,
-          downloads7d = 0,
-          createdAt = item.deck.createdAt,
-          previewItems = emptyList(),
-          fileUrl = "decks/${item.deck.deckId}.json",
-          localizations = item.deck.localizations,
-        )
-        DeckCard(synthetic, true, languageCode, { onPlay(item) })
-      }
-    }
-    item { Button(onClick = onSample, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_sample)) } }
   }
 }
 

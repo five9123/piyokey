@@ -96,3 +96,13 @@
 - iPhone 통합 앱 단위 358개와 관련 UI 6개를 통과했다. 마지막 앱 변경 `b5ebf09`에서 단위 358개·언어/세션 UI 2개를 재검증했다. 이후 변경은 UI 테스트의 iPad 스크롤 범위 판정뿐이며 iPhone·iPad 스페인어 전환/저장 재검증을 통과했다. iPad 회전·세션 보존·접근성 큰 글자 UI 3개도 통과했다.
 - iOS 번들·Android APK에 ja/en/es 리소스가 포함됨을 확인했다. `shared/`·Swift 공용 엔진·Android DeckKit은 #66 대비 변경이 없다. 스페인어 UI 학습 뜻·읽기·덱 편집은 기존 영어를 사용한다.
 - Actions `enabled=false`이며 CI/리뷰 규칙·보호 설정을 변경하지 않았다. 사용자의 이번 요청에 대한 명시적 예외 승인으로 PR #70을 병합한다. 이 예외를 이후 PR이나 출시 gate에 확대하지 않는다. 스토어/실기기/결제/권리 gate는 별도로 남아 있다.
+
+## #71 프리프랙티스 제거 검증
+
+- iOS·Android 연습 탭 하단 카드와 전용 준비/선택 화면을 제거했다. 커리큘럼·일반 덱 연습·공통 설정과 기존 기록 schema는 유지한다. PR #72 병합은 소스 반영만 의미하며 실기기 설치·스토어 배포 완료로 확대하지 않는다.
+- 기존 검증 대상 `b07c59f969c56e1f4641e7714e90acf82f1fc8f9`, 증빙 `release/evidence/b07c59f969c56e1f4641e7714e90acf82f1fc8f9.json`. iPhone 관련 UI 8개·ja/en/es resource 1개, iPad 하단 지도·큰 글자 UI 2개, Android retention 단위 13개·앱/기기 테스트 Kotlin 컴파일, preflight·strict doctor 통과.
+- iPhone 최초 9개 선택 실행은 테스트 탐색 순서·동일 이름 옵션 때문에 2개 실패했다. 두 테스트를 공통 설정 순서·사운드 picker 범위에 맞춰 각각 재실행해 통과했다. 전체 9개를 한 번에 재실행한 결과로 표현하지 않는다. iOS 제품 소스는 `693a7ca`, Android 소스는 `10ee7db`와 동일하며 이후 변경은 해당 테스트와 검증 문서뿐이다.
+- 2026-08-29 최신 main `a678e0f`를 병합하고 새 de/fr UI 리소스에서도 제거된 진입 문구를 정리했다. repository preflight와 UI 언어 범위 8개, Android retention 단위·앱/기기 테스트 Kotlin 컴파일, iPad 커리큘럼 하단 미노출·큰 글자 접근성 UI 2개를 통과했다.
+- iPhone 관련 UI 5개 중 3개는 첫 선택 실행에서 통과했고, 2개는 simulator runner/AX 종료 뒤 각각 새 simulator에서 재실행해 통과했다. 5개 전체가 한 번에 통과한 결과로 표현하지 않는다.
+- 최신 main 통합 소스는 `f370f5e2e64b3083be497f4ebd1f00a0ce163c02`, 증빙은 `release/evidence/f370f5e2e64b3083be497f4ebd1f00a0ce163c02.json`이다.
+- Android 기기 instrumentation은 미실행. 저장소 Actions `enabled=false`와 승인 리뷰 0건을 재확인했다. 사용자가 2026-08-29 대화에서 PR #72 병합을 명시 승인했으므로 이번 PR에 한해 CI·별도 리뷰 없는 예외로 squash merge하고 Issue #71·Project를 완료 처리한다. 보호 설정은 변경하지 않으며 이 예외를 이후 PR이나 출시 gate로 확대하지 않는다. 기존 기본 작업폴더의 dirty 파일은 보존했다.

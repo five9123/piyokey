@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "verified_commit": "b07c59f969c56e1f4641e7714e90acf82f1fc8f9",
+  "verified_tree": "e9d94d227f27769f4a0da4532f38856fcf865099",
+  "branch": "codex/71-remove-free-practice",
+  "scope": "Issue #71 프리프랙티스 제거: iPhone/iPad UI, localization, Android compile/retention",
+  "result": "pass",
+  "recorded_at": "2026-08-28T12:48:48.355208+00:00",
+  "checks": [
+    {
+      "name": "targeted-regressions",
+      "status": "pass",
+      "command": "python3.12 /tmp/piyokey71-verify-results.py",
+      "note": "iPhone 8 UI+1 locale accepted across original and two corrected selector reruns; iPad 2 UI; Android retention 13. Original 9-case run had 2 test-locator failures; both corrected cases passed reruns. iOS production/resources equal 693a7ca; Android source equal 10ee7db."
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "android-compile",
+      "status": "pass",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :app:compileDebugKotlin :app:compileDebugAndroidTestKotlin :core:retention:test",
+      "note": "Executed from android; instrumentation compiled, not run on a device."
+    }
+  ],
+  "manual_gates": [
+    "Android device instrumentation and store/device distribution not performed.",
+    "GitHub Actions enabled=false; CI and review required before main merge."
+  ]
+}
