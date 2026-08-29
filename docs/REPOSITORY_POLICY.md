@@ -43,9 +43,18 @@ not the durable release archive.
 
 ## Verification and merge gate
 
-GitHub Actions is active. Pull requests run the workflows selected by the
-triggers under `.github/workflows/`, including source and offline pronunciation
-contract checks.
+GitHub Actions is active. Pull requests run only the workflows selected by the
+native path filters under `.github/workflows/`. Python content/release contracts
+absorb the former standalone pronunciation workflow; Swift, iOS, and Android
+each have an independently scoped workflow. Pure documentation changes do not
+start a platform build, while `release/**` keeps the fast Python contract and
+`shared/**` keeps Python plus both mobile consumers.
+
+`Scheduled platform regression` runs every Monday at 03:00 JST and can also be
+started manually. It runs iOS unit tests on the pinned simulator and Android
+instrumentation tests on an API 35 emulator. A failed or incomplete scheduled
+run closes the release gate until the failure is explained or a succeeding run
+covers the same source.
 
 Workflow dependencies use full commit SHAs with a nearby reviewed release tag
 comment. Repository settings allow GitHub-owned actions only and require SHA
@@ -62,6 +71,8 @@ maintainer therefore applies this fail-closed manual gate:
 - wait until the pull request has no pending or in-progress checks;
 - require every displayed, applicable check to complete successfully;
 - treat failure, cancellation, timeout, or an unexplained skip as blocking;
+- treat a workflow omitted by its documented path filter as not applicable,
+  not as a successful check;
 - verify that the head commit has not changed after the successful runs; and
 - squash merge only after those conditions are recorded in the pull request.
 

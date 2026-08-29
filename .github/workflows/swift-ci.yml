@@ -1,0 +1,35 @@
+name: Swift contracts
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/swift-ci.yml'
+      - 'ios/HangulEngine/**'
+      - 'shared/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/swift-ci.yml'
+      - 'ios/HangulEngine/**'
+      - 'shared/**'
+  workflow_dispatch:
+
+concurrency:
+  group: swift-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  swift-contracts:
+    name: Swift shared engine
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Test HangulEngine and DeckKit
+        working-directory: ios/HangulEngine
+        run: swift test

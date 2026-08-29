@@ -1,0 +1,72 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/android-ci.yml'
+      - 'android/**'
+      - 'shared/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/android-ci.yml'
+      - 'android/**'
+      - 'shared/**'
+  workflow_dispatch:
+
+concurrency:
+  group: android-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  android-contracts:
+    name: Android M6D/R1.1C release contracts and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
+      - name: Run Android M1-M6D/R1.1C contracts, UI checks, lint, APK, and AAB
+        working-directory: android
+        run: >-
+          ./gradlew
+          :core:hangul:jacocoTestCoverageVerification
+          :core:deckkit:test
+          :core:piyodeck:test
+          :core:session:test
+          :core:game:test
+          :core:retention:test
+          :core:settings:test
+          :core:platform:test
+          :core:data:testDebugUnitTest
+          :feature:practice:testDebugUnitTest
+          :feature:practice:assembleDebugAndroidTest
+          :app:assembleDebugAndroidTest
+          :feature:practice:lintDebug
+          :core:data:lintDebug
+          :feature:discover:lintDebug
+          :feature:game:lintDebug
+          :feature:retention:lintDebug
+          :feature:onboarding:lintDebug
+          :feature:settings:lintDebug
+          :core:platform:lintDebug
+          :core:design:lintDebug
+          :app:lintDebug
+          :app:assembleDebug
+          :app:assembleRelease
+          :app:bundleRelease
+          :app:verifyReleaseManifestContract
+          --no-daemon
