@@ -2,9 +2,10 @@
 
 ## Source layout
 
-PIYOKEY uses one private source monorepo. The existing `ios/` tree remains in
-place, the active Kotlin/Compose port lives under `android/`, and a future web
-port will live under `web/`. Cross-platform contracts live under `shared/`;
+PIYOKEY uses one private source monorepo. The active iOS/iPadOS product lives
+under `ios/`; the existing Kotlin/Compose port under `android/` is frozen as
+historical reference and is not an active maintenance or release target. A
+future web port will live under `web/`. Shared contracts live under `shared/`;
 platform UI, storage, audio, input, and purchase integrations stay in their
 platform trees.
 
@@ -45,22 +46,22 @@ not the durable release archive.
 
 GitHub Actions is active. Pull requests run only the workflows selected by the
 native path filters under `.github/workflows/`. Python content/release contracts
-absorb the former standalone pronunciation workflow; Swift, iOS, and Android
-each have an independently scoped workflow. Pure documentation changes do not
-start a platform build, while `release/**` keeps the fast Python contract and
-`shared/**` keeps Python plus both mobile consumers.
+absorb the former standalone pronunciation workflow; Swift and iOS each have
+an independently scoped workflow. Pure documentation changes do not start a
+platform build, while `release/**` keeps the fast Python contract and
+`shared/**` keeps Python plus the active Swift/iOS consumer. Frozen `android/`
+changes do not start CI and are not part of routine work.
 
-`Scheduled platform regression` runs every Monday at 03:00 JST and can also be
-started manually. It runs iOS unit tests on the pinned simulator and Android
-instrumentation tests on an API 35 emulator. A failed or incomplete scheduled
-run closes the release gate until the failure is explained or a succeeding run
-covers the same source.
+`Scheduled iOS regression` runs every Monday at 03:00 JST and can also be
+started manually. It runs iOS unit tests on the pinned simulator. A failed or
+incomplete scheduled run closes the release gate until the failure is explained
+or a succeeding run covers the same source.
 
 Workflow dependencies use full commit SHAs with a nearby reviewed release tag
 comment. Repository settings allow GitHub-owned actions only and require SHA
 pinning. Dependabot vulnerability alerts and automated security updates are
 enabled; `.github/dependabot.yml` schedules version-update pull requests for
-GitHub Actions, Android Gradle, and the standalone web analytics package. A
+GitHub Actions and the standalone web analytics package. A
 Dependabot pull request follows the same test and merge gate as any other PR.
 
 The repository is private, and the current GitHub plan does not expose branch

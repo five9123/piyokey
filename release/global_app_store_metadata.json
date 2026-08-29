@@ -119,7 +119,7 @@
       "id"
     ],
     "media_copy_source": "release/store-assets/localizations.json",
-    "android_m7": "resumed_separate_google_play_release_track",
+    "android_m7": "frozen_reference_only",
     "localized_learning_content_locales": [
       "ja",
       "en",

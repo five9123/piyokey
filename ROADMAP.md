@@ -14,11 +14,8 @@
    - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 9 실기기 QA
    - strict preflight 통과 뒤에만 App Review 제출
 3. CI 비용·검증 범위 최적화
-   - docs-only 변경의 Android AAB·iOS 전체 build를 분리
-   - iOS unit test와 Android instrumentation을 정기·release workflow로 보강
-4. Android 1.1 출시 후보
-   - Play Console·서명·권리·외부 리소스 확정
-   - Issue #19 동일 signed AAB 통합 실기기 QA
+   - docs-only 변경의 iOS 전체 build를 분리
+   - iOS unit test를 정기·수동 release workflow로 보강
 
 ## Next — 병합된 소스의 외부 gate 완결
 
@@ -35,6 +32,7 @@
 - 자동 발음·게임 힌트 #8 및 관련 Draft PR
 - 기본 dirty worktree recovery queue: `typee.app` 링크, 흔들림 애니메이션 수정, 스토어/Pro 자산을 기능별 새 issue·최신 main branch로 재적용
 - 신규 플랫폼·추가 언어(이번 es/de/fr 확장 제외)·클라우드 동기화
+- Android 재개는 기존 포트 backlog가 아니라 별도 승인된 새 PRD·초기 설계로만 검토
 
 Later 작업은 R1.1 출시 파일이나 공용 충돌 파일을 동시에 소유하지 않는다.
 
@@ -42,6 +40,7 @@ Later 작업은 R1.1 출시 파일이나 공용 충돌 파일을 동시에 소�
 
 - 전체 동시 개발 최대 2개: release-critical 1개와 독립 탐색 1개.
 - 플랫폼별 `In Progress` 최대 1개.
+- 활성 네이티브 플랫폼은 iOS/iPadOS뿐이며 `android/`는 참고용 동결 상태다.
 - non-draft PR은 검증 완료·병합 준비 상태만 허용.
 - `PRD.md`, `DECISIONS.md`, `AGENTS.md`, localization, catalog·audio manifest는 단일 소유.
 - 완료는 코드 작성이 아니라 검증 증빙, PR 병합, Issue/Project 종료까지 포함한다.

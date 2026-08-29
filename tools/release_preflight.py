@@ -95,7 +95,7 @@ GLOBAL_APP_STORE_NAMES = {
     "en-AU": "Korean Typing Practice - typee",
     "en-CA": "Korean Typing Practice - typee",
 }
-ANDROID_M7_STATE = "resumed_separate_google_play_release_track"
+ANDROID_M7_STATE = "frozen_reference_only"
 ALL_COUNTRIES_SELECTION = "ALL_COUNTRIES_OR_REGIONS"
 GOOGLE_PLAY_LOCALES = frozenset({"en-US", "ja", "ko"})
 GOOGLE_PLAY_EXTERNAL_GATES = frozenset(
@@ -289,7 +289,7 @@ def global_app_store_metadata_findings(path: Path) -> list[Finding]:
     add(
         findings,
         scope.get("android_m7") == ANDROID_M7_STATE,
-        "Android M7 must remain on its resumed, separate Google Play release track",
+        "Android must remain frozen as reference-only source",
     )
 
     availability = document.get("availability", {})
@@ -778,24 +778,17 @@ def repository_checks(root: Path) -> list[Finding]:
     game_center_service_path = app / "Core/GameCenter/GameCenterService.swift"
     metadata_path = root / "release/app_store_metadata.json"
     global_metadata_path = root / "release/global_app_store_metadata.json"
-    google_play_metadata_path = root / "release/google_play_metadata.json"
-    google_play_console_path = root / "release/google_play_console_declarations.json"
     purchase_source_path = app / "Core/Purchases/DeckMakerPurchaseStore.swift"
     storekit_config_path = app / "Resources/DeckMaker.storekit"
     scheme_path = root / "ios/Hanco/Hanco.xcodeproj/xcshareddata/xcschemes/Hanco.xcscheme"
     export_options_path = root / "release/ExportOptions.plist"
     upload_options_path = root / "release/ExportOptionsUpload.plist"
-    android_manifest_path = root / "android/app/src/main/AndroidManifest.xml"
-    android_build_path = root / "android/app/build.gradle.kts"
-    android_file_paths = root / "android/app/src/main/res/xml/file_paths.xml"
     analytics_contract_path = root / "shared/analytics/events.json"
     analytics_doc_path = root / "docs/ANALYTICS.md"
     analytics_release_path = root / "release/analytics_release_state.json"
     analytics_privacy_draft_path = root / "release/PRIVACY_POLICY_ANALYTICS_DRAFT.md"
-    play_data_safety_path = root / "release/PLAY_DATA_SAFETY_SETUP.md"
     web_analytics_path = root / "web/analytics/src/index.ts"
     ios_telemetry_path = app / "Core/Analytics/TelemetryService.swift"
-    android_telemetry_path = root / "android/app/src/main/java/app/piyokey/piyokey/TelemetryRuntime.kt"
 
     for path in (
         project_path,
@@ -809,24 +802,17 @@ def repository_checks(root: Path) -> list[Finding]:
         game_center_service_path,
         metadata_path,
         global_metadata_path,
-        google_play_metadata_path,
-        google_play_console_path,
         purchase_source_path,
         storekit_config_path,
         scheme_path,
         export_options_path,
         upload_options_path,
-        android_manifest_path,
-        android_build_path,
-        android_file_paths,
         analytics_contract_path,
         analytics_privacy_draft_path,
-        play_data_safety_path,
         analytics_doc_path,
         analytics_release_path,
         web_analytics_path,
         ios_telemetry_path,
-        android_telemetry_path,
     ):
         add(findings, path.exists(), f"Required file is missing: {path.relative_to(root)}")
     if findings:
@@ -991,8 +977,6 @@ def repository_checks(root: Path) -> list[Finding]:
         findings.append(Finding("ERROR", f"Invalid App Store metadata: {error}"))
 
     findings.extend(global_app_store_metadata_findings(global_metadata_path))
-    findings.extend(google_play_metadata_findings(google_play_metadata_path, root))
-    findings.extend(google_play_console_declaration_findings(google_play_console_path))
 
     purchase_source = purchase_source_path.read_text(encoding="utf-8")
     for contract in (
@@ -1135,53 +1119,6 @@ def repository_checks(root: Path) -> list[Finding]:
         findings.append(Finding("ERROR", f"Invalid AppIcon: {error}"))
 
     try:
-        android_manifest = android_manifest_path.read_text(encoding="utf-8")
-        android_build = android_build_path.read_text(encoding="utf-8")
-        android_paths = android_file_paths.read_text(encoding="utf-8")
-        add(findings, 'android:icon="@mipmap/ic_launcher"' in android_manifest, "Android launcher icon is missing")
-        add(findings, 'android:roundIcon="@mipmap/ic_launcher_round"' in android_manifest, "Android round launcher icon is missing")
-        add(findings, '${applicationId}.files' in android_manifest, "Android FileProvider must use the application ID authority")
-        add(findings, 'android:exported="false"' in android_manifest, "Android FileProvider must not be exported")
-        add(
-            findings,
-            'android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"' in android_manifest,
-            "Android legacy image-save permission must be limited to API 28",
-        )
-        for prohibited_permission in (
-            "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.MANAGE_EXTERNAL_STORAGE",
-            "com.google.android.gms.permission.AD_ID",
-        ):
-            add(
-                findings,
-                prohibited_permission not in android_manifest,
-                f"Android manifest must not request {prohibited_permission}",
-            )
-        add(findings, 'android:allowBackup="false"' in android_manifest, "Android local-only data must not be backed up")
-        add(findings, 'path="shared_results/"' in android_paths, "Android share provider must expose only result cache files")
-        add(
-            findings,
-            "../shared/brand/piyokey_app_icon_source.png" in android_build
-            and 'rename { "piyokey_logo.png" }' in android_build,
-            "Android launcher/share logo must derive from the shared brand source",
-        )
-        add(findings, 'android.permission.INTERNET' in android_manifest, "Android telemetry requires INTERNET permission")
-        add(
-            findings,
-            'firebase_crashlytics_collection_enabled' in android_manifest and 'android:value="false"' in android_manifest,
-            "Android Crashlytics collection must default to false",
-        )
-        for required in (
-            "libs.posthog.android",
-            "libs.firebase.crashlytics",
-            'project(":core:analytics")',
-            'PIYOKEY_ANALYTICS_PRIVACY_CONFIRMED',
-        ):
-            add(findings, required in android_build, f"Android telemetry build integration is missing: {required}")
-    except OSError as error:
-        findings.append(Finding("ERROR", f"Invalid Android release resources: {error}"))
-
-    try:
         contract = json.loads(analytics_contract_path.read_text(encoding="utf-8"))
         add(findings, contract.get("schema_version") == 1, "Analytics contract schema version differs")
         add(findings, len(contract.get("events", {})) >= 10, "Analytics contract has too few semantic events")
@@ -1205,7 +1142,6 @@ def repository_checks(root: Path) -> list[Finding]:
             "privacy_retention_and_deletion_verified",
             "live_privacy_copy_matches_build",
             "app_store_privacy_updated",
-            "play_data_safety_updated",
         }
         add(
             findings,
@@ -1216,11 +1152,9 @@ def repository_checks(root: Path) -> list[Finding]:
         findings.append(Finding("ERROR", f"Invalid analytics contract or release state: {error}"))
 
     ios_telemetry = ios_telemetry_path.read_text(encoding="utf-8")
-    android_telemetry = android_telemetry_path.read_text(encoding="utf-8")
     web_telemetry = web_analytics_path.read_text(encoding="utf-8")
     for source, label in (
         (ios_telemetry, "iOS"),
-        (android_telemetry, "Android"),
         (web_telemetry, "Web"),
     ):
         add(findings, "sessionReplay" in source or "disable_session_recording" in source, f"{label} replay disable is missing")

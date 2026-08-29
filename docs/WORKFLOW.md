@@ -116,12 +116,12 @@ PR check는 변경 경로에 따라 다음처럼 선택된다. 경로 필터로 
 | `release/**` | Python tools/content/release contracts |
 | `ios/Hanco/**` | Python contracts + iOS simulator build |
 | `ios/HangulEngine/**` | Python contracts + Swift contracts + iOS simulator build |
-| `android/**` | Python contracts + Android contracts/build |
-| `shared/**` | Python + Swift + iOS + Android |
+| `android/**` | 없음; Android 포트는 참고용 동결 |
+| `shared/**` | Python + Swift + iOS |
 | `.github/workflows/**` | Python contracts + 수정한 플랫폼 workflow 자체 |
 
-주 1회 `Scheduled platform regression`은 iOS unit test와 Android instrumentation을
-실행하며 `workflow_dispatch`로도 시작할 수 있다. 정기 회귀가 실패하거나 완료되지
+주 1회 `Scheduled iOS regression`은 iOS unit test를 실행하며
+`workflow_dispatch`로도 시작할 수 있다. 정기 회귀가 실패하거나 완료되지
 않으면 release candidate를 승인하지 않는다. Dependabot PR도 자동 병합하지 않고
 위 경로 범위와 동일한 fail-closed 판정을 적용한다.
 

@@ -1663,3 +1663,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 저장소는 GitHub-owned Action만 허용하고 full-length SHA pinning을 요구한다. Dependabot vulnerability alerts와 automated security fixes를 활성화하며 GitHub Actions·Android Gradle·`web/analytics` npm version update를 매주 별도 PR로 받는다.
 - 결정: Dependabot PR도 일반 PR과 동일하게 적용되는 모든 CI 성공 후 squash merge한다. 자동 merge, 저장소 공개 범위·요금제·Actions paid overage 변경은 허용하지 않는다.
 - 근거: mutable tag와 불필요한 third-party Action 허용 범위를 제거하고, 알려진 취약점 및 version drift를 별도 검토 가능한 PR로 노출한다.
+
+## 2026-08-30 Android 포트 동결과 iOS 전용 활성 범위
+
+- 관련: 사용자 결정 “향후 모든 작업에서 android는 배제”, PRD v6.14, Issue #116.
+- 결정: iOS/iPadOS만 현재 제품 개발·출시 범위로 둔다. `android/`는 삭제하지 않고 과거 구현과 공용 계약 이력의 참고 자료로 동결한다. 이후 일반 기능·버그 수정·의존성 갱신·CI·instrumentation·Google Play 출시 작업에서 Android를 제외한다.
+- 결정: Android Gradle Dependabot과 Android 전용 GitHub Actions를 중지하고 Issue #19의 기존 포트 출시 gate를 종료한다. 공용 schema 변경은 활성 Python reference, Swift와 웹 Builder 계약으로 검증하며 동결된 Kotlin reader의 동등성 유지를 새 변경의 acceptance criterion으로 두지 않는다.
+- 결정: Android를 다시 개발하려면 기존 M7 backlog의 연속 작업이나 단순 포팅으로 재개하지 않는다. 사용자가 승인한 별도 PRD·로드맵·Issue에서 사용자·범위·기술 기준·데이터 호환 전략을 처음부터 결정한다. 동결 소스 삭제 여부도 그 결정 전에는 다루지 않는다.
+- 근거: 현재 Android 결과물을 지속 보정하는 것보다 제품·아키텍처 기준을 다시 세우는 편이 필요하다는 사용자 판단을 반영하고, iOS 1.1 출시와 품질 gate에 작업·CI 비용을 집중한다.

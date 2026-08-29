@@ -10,7 +10,6 @@ PR_WORKFLOWS = {
     "source": WORKFLOWS / "source-ci.yml",
     "swift": WORKFLOWS / "swift-ci.yml",
     "ios": WORKFLOWS / "ios-ci.yml",
-    "android": WORKFLOWS / "android-ci.yml",
 }
 
 
@@ -59,8 +58,8 @@ class CIWorkflowScopeTests(unittest.TestCase):
             "PRD.md": {"source"},
             "ios/Hanco/Hanco/App.swift": {"source", "ios"},
             "ios/HangulEngine/Sources/DeckKit/Deck.swift": {"source", "swift", "ios"},
-            "android/app/build.gradle.kts": {"source", "android"},
-            "shared/schema/deck.schema.json": {"source", "swift", "ios", "android"},
+            "android/app/build.gradle.kts": set(),
+            "shared/schema/deck.schema.json": {"source", "swift", "ios"},
             ".github/workflows/ios-ci.yml": {"source", "ios"},
             ".github/workflows/platform-regression.yml": {"source"},
         }
@@ -85,14 +84,13 @@ class CIWorkflowScopeTests(unittest.TestCase):
                         f"{workflow.name}:{line_number} must pin {match.group(1)}",
                     )
 
-    def test_scheduled_regression_has_manual_dispatch_and_device_suites(self) -> None:
+    def test_scheduled_ios_regression_has_manual_dispatch(self) -> None:
         regression = (WORKFLOWS / "platform-regression.yml").read_text(encoding="utf-8")
         self.assertIn("  schedule:", regression)
         self.assertIn("  workflow_dispatch:", regression)
         self.assertIn("xcodebuild test", regression)
-        self.assertIn(":core:data:connectedDebugAndroidTest", regression)
-        self.assertIn(":feature:practice:connectedDebugAndroidTest", regression)
-        self.assertIn(":app:connectedDebugAndroidTest", regression)
+        self.assertNotIn("Android", regression)
+        self.assertNotIn("connectedDebugAndroidTest", regression)
 
 
 if __name__ == "__main__":

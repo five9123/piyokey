@@ -10,20 +10,11 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
 
-  - package-ecosystem: gradle
-    directory: /android
-    schedule:
-      interval: weekly
-      day: monday
-      time: "09:10"
-      timezone: Asia/Tokyo
-    open-pull-requests-limit: 5
-
   - package-ecosystem: npm
     directory: /web/analytics
     schedule:
       interval: weekly
       day: monday
-      time: "09:20"
+      time: "09:10"
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
