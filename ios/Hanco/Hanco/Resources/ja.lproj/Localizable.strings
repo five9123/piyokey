@@ -1029,11 +1029,13 @@
 "deck_editor.items.reorder" = "並べ替え";
 "deck_editor.items.reorder.done" = "完了";
 "deck_editor.item.title" = "項目";
-"deck_editor.item.korean" = "韓国語（10文字以内）";
+"deck_editor.item.korean" = "韓国語";
 "deck_editor.item.reading_ja" = "読み方（カタカナ）";
 "deck_editor.item.meaning_ja" = "意味（日本語）";
 "deck_editor.item.reading" = "読み方";
 "deck_editor.item.meaning" = "意味";
+"deck_editor.item.korean_count_format" = "音節 %d/%d・文字 %d/%d";
+"deck_editor.item.text_count_format" = "%d/%d文字";
 "deck_editor.cancel" = "キャンセル";
 "deck_editor.save" = "保存";
 "deck_editor.saving" = "保存中";
@@ -1044,13 +1046,14 @@
 "deck_editor.delete.confirm.message" = "デッキ本体は削除されますが、学習記録は同じIDで読み込むと再接続されます。";
 "deck_editor.delete.confirm.action" = "削除";
 "deck_editor.validation.section" = "確認してください";
+"deck_editor.validation.single_language" = "保存前に従来の内容から1つ選んでください。";
 "deck_editor.validation.name_required" = "デッキ名を入力してください。";
 "deck_editor.validation.author_required" = "作成者名を入力してください。";
 "deck_editor.validation.tags" = "タグを1〜8個入力してください。";
 "deck_editor.validation.tags_duplicate" = "同じタグは1回だけ使えます。";
 "deck_editor.validation.items_required" = "学習項目を1つ以上追加してください。";
-"deck_editor.validation.korean_length" = "韓国語は空白を含め10文字以内です。";
-"deck_editor.validation.korean_input" = "韓国語キーボードで入力できるハングルを含めてください。";
+"deck_editor.validation.korean_length" = "韓国語は空白を除いて9音節以内、空白を含めて10文字以内です。";
+"deck_editor.validation.korean_input" = "韓国語にはハングル音節と空白だけを使用してください。";
 "deck_editor.validation.item_limit" = "学習項目は最大1,000個です。";
 "deck_editor.validation.text_length" = "入力できる文字数を超えています。";
 "deck_editor.validation.duplicate" = "重複している項目があります。";
@@ -1103,7 +1106,13 @@
 
 /* R1.1 deck authoring safety and accessibility */
 "common.cancel" = "キャンセル";
-"deck_editor.language.accessibility_format" = "%@の内容を編集中";
+"deck_editor.language.accessibility_format" = "デッキ言語：%@";
+"deck_editor.language.single_help" = "デッキ言語は検索・分類用です。変更しても韓国語・意味・読み方は変わりません。";
+"deck_editor.language.multilingual_warning" = "この従来デッキには複数の内容があります。デッキ言語を変える前に、残す内容を1つ選んでください。";
+"deck_editor.language.bundle_picker" = "残す内容";
+"deck_editor.language.change.title" = "残す内容を選びますか？";
+"deck_editor.language.change.message" = "選んだ韓国語・意味・読み方は残り、ほかの言語の内容は削除されます。";
+"deck_editor.language.change.confirm" = "この内容を残す";
 "deck_editor.item.position_format" = "項目 %d／%d";
 "deck_editor.item.empty" = "未入力";
 "deck_editor.draft.save_failed" = "下書きを端末に保存できませんでした。この画面を閉じずに、もう一度お試しください。";

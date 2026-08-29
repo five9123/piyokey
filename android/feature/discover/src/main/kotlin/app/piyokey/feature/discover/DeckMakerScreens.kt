@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -30,10 +32,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -50,7 +52,6 @@ import app.piyokey.core.design.PiyokeyIcon
 import app.piyokey.core.design.PiyokeyIconKind
 import app.piyokey.core.piyodeck.UserDeckDraft
 import app.piyokey.core.piyodeck.UserDeckItemDraft
-import app.piyokey.core.piyodeck.UserDeckLanguage
 import app.piyokey.core.piyodeck.UserDeckValidationField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -148,17 +149,18 @@ fun UserDeckEditorScreen(
   onClose: (UserDeckDraft) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val appLocaleCode = currentUserDeckLanguage().code
   var localeCode by remember(initialDraft.deckId) {
-    mutableStateOf(initialDraft.defaultLocale ?: appLocaleCode)
+    mutableStateOf(initialDraft.defaultLocale ?: "ja")
   }
   var localeInput by remember(initialDraft.deckId) { mutableStateOf(localeCode) }
+  var pendingLocaleCode by remember(initialDraft.deckId) { mutableStateOf<String?>(null) }
   var draft by remember(initialDraft.deckId) { mutableStateOf(initialDraft) }
   var expandedItemId by remember(initialDraft.deckId) { mutableStateOf(draft.items.firstOrNull()?.id) }
   var validationMessage by remember { mutableStateOf<Int?>(null) }
   var itemFocusRequest by remember { mutableStateOf<Pair<UserDeckValidationField, Int>?>(null) }
   var focusRequestSerial by remember { mutableStateOf(0) }
   val listState = rememberLazyListState()
+  val languageFocus = remember { FocusRequester() }
   val nameFocus = remember { FocusRequester() }
   val authorFocus = remember { FocusRequester() }
   val tagsFocus = remember { FocusRequester() }
@@ -170,6 +172,43 @@ fun UserDeckEditorScreen(
   }
   BackHandler { onClose(draft) }
   LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { onDraftChanged(draft) }
+
+  fun synchronizeLocale(canonical: String) {
+    localeCode = canonical
+    localeInput = canonical
+    validationMessage = null
+  }
+
+  fun applyDeckLanguageRetag(canonical: String) {
+    draft = draft.retagDeckLanguage(canonical)
+    synchronizeLocale(canonical)
+  }
+
+  fun selectContentBundle(canonical: String) {
+    draft = draft.selectContentBundle(canonical)
+    synchronizeLocale(canonical)
+  }
+
+  pendingLocaleCode?.let { pending ->
+    AlertDialog(
+      onDismissRequest = { pendingLocaleCode = null },
+      title = { Text(stringResource(R.string.deck_editor_language_change_title)) },
+      text = { Text(stringResource(R.string.deck_editor_language_change_message)) },
+      confirmButton = {
+        TextButton(onClick = {
+          selectContentBundle(pending)
+          pendingLocaleCode = null
+        }) {
+          Text(stringResource(R.string.deck_editor_language_change_confirm))
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { pendingLocaleCode = null }) {
+          Text(stringResource(R.string.action_cancel))
+        }
+      },
+    )
+  }
 
   LazyColumn(
     state = listState,
@@ -189,10 +228,14 @@ fun UserDeckEditorScreen(
             if (summary.issues.isEmpty()) {
               validationMessage = null
               onDraftChanged(draft)
-              onSave(draft.copy(defaultLocale = localeCode), localeCode)
+              onSave(draft, localeCode)
             } else {
               validationMessage = R.string.deck_editor_validation_error
               when (val field = summary.firstField) {
+                UserDeckValidationField.Language -> {
+                  languageFocus.requestFocus()
+                  scope.launch { listState.animateScrollToItem(1) }
+                }
                 UserDeckValidationField.Name,
                 UserDeckValidationField.Author,
                 UserDeckValidationField.Tags,
@@ -240,16 +283,44 @@ fun UserDeckEditorScreen(
             value = localeInput,
             onValueChange = { localeInput = it },
             label = { Text(stringResource(R.string.deck_editor_language, "BCP 47")) },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).focusRequester(languageFocus).testTag("deck-editor-language"),
             singleLine = true,
           )
-          OutlinedButton(onClick = {
-            UserDeckDraft.canonicalLocale(localeInput)?.let { canonical ->
-              localeCode = canonical
-              localeInput = canonical
-              draft = draft.copy(defaultLocale = canonical)
+          val canonicalLocaleInput = UserDeckDraft.canonicalLocale(localeInput)
+          OutlinedButton(
+            onClick = {
+              canonicalLocaleInput?.let { canonical ->
+              if (draft.requiresContentBundleSelection && canonical in draft.contentLocaleCodes) {
+                pendingLocaleCode = canonical
+              } else if (!draft.requiresContentBundleSelection) {
+                applyDeckLanguageRetag(canonical)
+              }
             }
-          }) { Text(stringResource(R.string.action_ok)) }
+            },
+            enabled = canonicalLocaleInput != null &&
+              (!draft.requiresContentBundleSelection || canonicalLocaleInput in draft.contentLocaleCodes),
+          ) { Text(stringResource(R.string.action_ok)) }
+        }
+        Text(
+          stringResource(R.string.deck_editor_language_single_help),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          style = MaterialTheme.typography.bodySmall,
+        )
+        if (draft.requiresContentBundleSelection) {
+          Text(
+            stringResource(R.string.deck_editor_language_multilingual_warning),
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.testTag("deck-editor-language-warning"),
+          )
+          Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+          ) {
+            draft.contentLocaleCodes.forEach { code ->
+              OutlinedButton(onClick = { localeInput = code }) { Text(code) }
+            }
+          }
         }
         validationMessage?.let {
           Text(
@@ -367,22 +438,67 @@ private fun DeckEditorItem(
       if (expanded) {
         OutlinedTextField(
           value = item.ko,
-          onValueChange = { onChange(item.copy(ko = it)) },
+          onValueChange = {
+            onChange(item.copy(ko = UserDeckDraft.acceptedKoreanInput(item.ko, it)))
+          },
           label = { Text(stringResource(R.string.deck_editor_korean)) },
           modifier = Modifier.fillMaxWidth().focusRequester(koreanFocus).testTag("deck-editor-item-$index-ko"),
           keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.None),
         )
+        Text(
+          stringResource(
+            R.string.deck_editor_korean_count,
+            item.ko.count { it != ' ' },
+            UserDeckDraft.MAXIMUM_KOREAN_SYLLABLE_COUNT,
+            item.ko.length,
+            UserDeckDraft.MAXIMUM_KOREAN_CHARACTER_COUNT,
+          ),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         OutlinedTextField(
           value = item.reading(localeCode),
-          onValueChange = { onChange(item.withReading(it, localeCode)) },
+          onValueChange = {
+            onChange(
+              item.withReading(
+                UserDeckDraft.acceptedMeaningOrReadingInput(item.reading(localeCode), it),
+                localeCode,
+              ),
+            )
+          },
           label = { Text(stringResource(R.string.deck_editor_reading)) },
           modifier = Modifier.fillMaxWidth().focusRequester(readingFocus),
         )
+        Text(
+          stringResource(
+            R.string.deck_editor_text_count,
+            UserDeckDraft.productCharacterCount(item.reading(localeCode)),
+            UserDeckDraft.MAXIMUM_MEANING_OR_READING_COUNT,
+          ),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         OutlinedTextField(
           value = item.meaning(localeCode),
-          onValueChange = { onChange(item.withMeaning(it, localeCode)) },
+          onValueChange = {
+            onChange(
+              item.withMeaning(
+                UserDeckDraft.acceptedMeaningOrReadingInput(item.meaning(localeCode), it),
+                localeCode,
+              ),
+            )
+          },
           label = { Text(stringResource(R.string.deck_editor_meaning)) },
           modifier = Modifier.fillMaxWidth().focusRequester(meaningFocus),
+        )
+        Text(
+          stringResource(
+            R.string.deck_editor_text_count,
+            UserDeckDraft.productCharacterCount(item.meaning(localeCode)),
+            UserDeckDraft.MAXIMUM_MEANING_OR_READING_COUNT,
+          ),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
           TextButton(onClick = onMoveUp, enabled = index > 0) {
@@ -403,17 +519,8 @@ private fun UserDeckValidationField.itemIndexOrNull(): Int? = when (this) {
   is UserDeckValidationField.ItemKorean -> index
   is UserDeckValidationField.ItemReading -> index
   is UserDeckValidationField.ItemMeaning -> index
+  UserDeckValidationField.Language -> null
   else -> null
-}
-
-@Composable
-private fun currentUserDeckLanguage(): UserDeckLanguage = when (LocalConfiguration.current.locales[0].language) {
-  "ja" -> UserDeckLanguage.JAPANESE
-  "ko" -> UserDeckLanguage.KOREAN
-  "es" -> UserDeckLanguage.SPANISH
-  "de" -> UserDeckLanguage.GERMAN
-  "fr" -> UserDeckLanguage.FRENCH
-  else -> UserDeckLanguage.ENGLISH
 }
 
 private fun DeckMakerUiNotice.messageResource(): Int = when (this) {

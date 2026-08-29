@@ -1635,3 +1635,15 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 표시 fallback은 exact 태그 → primary language subtag → `default_locale` → `en` → legacy 일본어 base field다. v1 일본어 base 덱을 Pro에서 편집하면 `default_locale=ja`와 `ja` localization을 합성하되 base 값을 그대로 유지한다. v2 base field는 `ja`가 있으면 일본어, 없으면 default locale을 mirror한다.
 - 근거: v1 manifest에 새 필드를 섞으면 배포된 strict reader가 손상된 v1처럼 보거나 계약 밖 입력을 받게 된다. container는 바뀌지 않았으므로 deck schema만 올리면 구 reader는 지원되지 않는 새 schema로 안전하게 거부하고, 새 reader는 기존 ja/en/ko 파일과 새 다국어 파일을 함께 처리할 수 있다.
 - 영향 범위: `.typedeck` SPEC·schema·fixture, Python/Swift/Kotlin reader·writer·validator, iOS/Android Pro 덱 초안·언어 선택·저장, cross-platform 계약 테스트. 웹 Builder `d31a351`은 v2 payload shape와 deterministic writer 방향은 맞지만 manifest를 schema 1로 쓰므로 schema 2로 갱신 전 출력은 새 strict reader가 거부한다.
+
+## 2026-08-29 사용자 제작 덱의 발견용 덱 언어 정책
+
+- 관련: Issue #87 후속, 웹 Builder 제품 합의, PRD F5.9·§8.4, iOS·Android Pro 편집기, 공식 ja/en/es/de/fr 콘텐츠 정책. 이 결정은 같은 날 기록한 사용자 편집 덱의 `설명 언어 1:1` 결정을 대체한다.
+- 결정: 학습 대상은 한국어로 고정하고 항목 편집 모델은 언어에 종속되지 않는 `한국어 / 뜻 / 발음` 단일 묶음으로 둔다. `설명 언어`라는 사용자 노출 개념은 없애고, 덱이 어떤 언어 사용자 커뮤니티를 위한 것인지 나타내는 canonical BCP 47 `덱 언어` 하나를 필수 system metadata로 둔다. 앱 UI 언어와 자동 결합하지 않고 추천 목록 밖 정상 태그도 보존한다.
+- 결정: schema v2에 별도 discovery 필드를 추가하지 않는다. 사용자 덱의 덱 언어를 `default_locale`과 단일 deck/item localization key에 매핑해 기존 reader·writer와 호환한다. 이 key는 wire 호환 계층이며 항목 입력을 언어별 번역 묶음으로 나누지 않는다.
+- 결정: 덱 언어를 바꾸면 기존 단일 key의 덱 metadata·뜻·발음을 새 canonical key로 그대로 이동하고 `default_locale`을 갱신한다. 콘텐츠를 비우거나 자동 번역하지 않는다. 기존 다국어 사용자 덱과 공식 덱 사본만 편집 진입 시 보존할 콘텐츠 묶음 하나를 명시적으로 선택하고 다른 묶음 제거를 확인한다. 이후 재태깅은 선택된 콘텐츠를 보존한다.
+- 결정: 공식·번들·원격 덱은 사용자 제공 UI 언어 ja/en/es/de/fr를 한 안정적인 `deck_id`에 함께 담고, 기존 ko metadata도 원문 보존하는 현재 다국어 정책을 유지한다. 공용 schema v2, fixture, fallback과 reader·writer도 다국어를 계속 지원하며 언어별 공식 덱으로 복제하지 않는다.
+- 결정: 제작 UI는 한국어 공백 제외 9음절·공백 포함 10자, 뜻·발음 각 20자를 상한으로 사용한다. 공용 schema의 10자·500자·300자 상한은 기존 파일을 계속 읽고 변경 없이 내보내기 위해 유지한다. 더 긴 기존 콘텐츠를 자동 절단하지 않고 편집 저장 시 제품 검증 오류로 안내한다.
+- 근거: 항목 콘텐츠와 발견 metadata를 분리하면 UI가 단순해지고 덱 언어를 향후 검색·커뮤니티 집계에 활용하면서도, BCP 47 schema-v2와 공식 다국어 카탈로그·legacy 문서의 호환성을 유지할 수 있다.
+- 구현 경계: GitHub `main` `e1fb099`의 공용 codec과 공식 덱 정책은 그대로 사용한다. 모바일 제품 계층은 legacy 콘텐츠 묶음 선택과 이후 덱 언어 `retag`를 별도 동작으로 구현하며, 존재하지 않는 새 key를 선택해 metadata·뜻·발음을 비우는 동작은 허용하지 않는다. 공용 schema 상한과 다국어 reader·writer는 이 제품 UI 제한 때문에 축소하지 않는다.
+- 영향 범위: iOS `UserDeckDraft`·편집 화면·검증/현지화, Android `UserDeckDraft`·Compose 편집 화면·검증/현지화, legacy 다국어 선택 회귀, 웹/모바일 교차 편집 테스트. 공용 schema·fixture와 공식 카탈로그 데이터는 변경하지 않는다.

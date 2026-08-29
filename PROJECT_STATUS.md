@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | 현재 `origin/main`·앱 소스 `08787c8`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | 후속 설명 언어 선택 UI를 검토·통합한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
+| iOS 1.1 | 현재 `origin/main`·앱 소스 `08787c8`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | 후속 발견용 덱 언어 UI를 구현·통합한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
@@ -24,19 +24,19 @@
 | #93 `main` 기준선 자기참조 제거 | Done | 이 문서가 포함된 후속 PR로 `main` 반영 | 이후 정확한 SHA는 상단 명령으로 조회 |
 | #91 웹 `.typedeck` 완료 현황 동기화 | Done | 이 문서가 포함된 후속 PR로 `main` 반영 | 후속 작업은 최신 `main`에서 분리 |
 | #89 상태 문서 동기화 | Done | 이 문서가 포함된 후속 PR로 `main` 반영 | 후속 작업은 최신 `main`에서 분리 |
-| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Done | 구현은 `main` `08787c8` 병합 완료; 웹 PR #6도 merged; `/private/tmp/piyokey-issue87-typedeck` 보존 | 병합 뒤 나타난 미커밋 후속 선택 UI 후보만 별도 검토 |
+| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Done | 구현은 `main` `08787c8` 병합 완료; 웹 PR #6도 merged; `/private/tmp/piyokey-issue87-typedeck` 보존 | 발견용 덱 언어·compact 길이 정책은 #95에서 통합 |
+| #95 발견용 덱 언어·compact 편집 정책 | In Progress | `codex/95-deck-language-retag`; `/private/tmp/piyokey-issue87-typedeck` | 관련 회귀·preflight 통과; 통합 PR의 필수 CI 확인 후 병합 |
 | #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue85` 보존 | 후속 작업은 최신 `main`에서 분리 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
-## #87 `.typedeck` BCP 47·deck schema v2
+## #87 `.typedeck` BCP 47·deck schema v2 및 후속 덱 언어 구현
 
-- PR #88을 2026-08-29 JST squash merge했다. Issue #87은 Closed, GitHub Project는 Done이며 `main` SHA는 `08787c8378b46ec9635a5dac8c7522324bcaea11`이다.
-- 컨테이너 `format_version`은 1을 유지하고 콘텐츠 `deck_schema_version`을 2로 올렸다. 새 reader는 v1·v2를 모두 읽고 새 writer는 `default_locale`과 canonical BCP 47 localization key를 쓰며, malformed·duplicate·noncanonical tag를 거부하고 정상 unknown tag를 보존한다.
-- fallback은 exact tag → primary language → `default_locale` → `en` → legacy Japanese base 순서다. Python·Swift·Kotlin 공용 fixture, 플랫폼 간 writer/reader 계약과 iOS·Android Pro 모델을 동기화했다.
-- 저장소 Actions를 전체 활성화했다. Source CI의 Python 100개·fixture/preflight, SwiftPM, iOS simulator build, Android 테스트·전체 lint·debug/release APK·AAB·release manifest와 별도 발음 자산 계약이 모두 통과했다.
-- 웹 PR #6 commit `4a7c9c8`도 병합됐다. 모바일 multilingual golden과 1,592바이트·SHA-256 `b9087f69994f4c325d208cce69cc9ff79de232945c13855e6b9a8427313615c1`로 동일하며 로컬 59개 테스트·lint·typecheck·build·감사, GitHub Release `verify`, Vercel이 모두 통과했다. `production-analytics`는 PR 조건에 따라 정상 skip됐다.
-- PR 병합 직후 #87 보존 worktree에 15개·421삽입/55삭제의 설명 언어 선택 UI 후속 후보가 새로 나타났다. PR #88과 `main`에는 포함되지 않았으며 삭제·덮어쓰기·추가 커밋 없이 보존한다.
+- 모바일 PR #88은 2026-08-29 JST `08787c8378b46ec9635a5dac8c7522324bcaea11`로 병합됐고 Issue #87은 Closed다. GitHub의 발음 자산, Python 계약, Swift shared engine, iOS simulator, Android release 계약·build 검사가 모두 성공했다.
+- 웹 PR #6은 commit `4a7c9c8306d557ea0344db34072a8845d18c1db0`에서 배포 branch `agent/publish-piyokey-web`로 병합됐다. Release `verify`와 Vercel은 성공했고 `production-analytics`는 PR 조건에 따라 정상 skip됐다. 웹 저장소 `main`은 별도로 `e2fd990c7d137796a28b655f97a56c47114c810e`다.
+- 공용 container v1·deck schema v2, canonical BCP 47, unknown-tag 보존, 완전성 검사, fallback과 모바일 multilingual golden은 현재 합의와 호환된다. 공식 덱은 사용자 제공 UI 언어 ja/en/es/de/fr를 한 안정적인 덱에 유지하고 기존 ko metadata도 원문 보존한다.
+- 후속 제품 결정은 사용자 노출 `설명 언어`를 없애고 `한국어 / 뜻 / 발음` 단일 콘텐츠와 발견용 BCP 47 덱 언어 하나를 두는 것이다. 덱 언어 변경은 값을 비우지 않는 재태깅이며 제작 UI는 한국어 9음절·뜻/발음 각 20자를 사용한다. 공용 schema의 더 넓은 기존 reader 상한은 유지한다.
+- 이 후속 결정은 #95에서 구현했지만 아직 GitHub 모바일 `main`에 통합되지 않았다. legacy 콘텐츠 묶음 선택과 이후 무손실 retag를 분리하고, iOS·Android compact 덱 언어 UI와 9/10/20 제품 validator·입력 차단·카운터로 교체했다. unknown valid tag, 공식 ja/en/es/de/fr+기존 ko 보존, legacy 선택, retag 값 보존, 기존 긴 문서의 변경 없는 materialize와 편집 저장 오류를 양 플랫폼 테스트로 고정했다.
 
 ## #85 연습 챕터 5·6 스테이지 확장
 
@@ -52,7 +52,7 @@
 | 구분 | 확정 결과 | 처리 |
 |---|---|---|
 | 원격 기준선 | 현재 `origin/main`; PR #88 기능과 PR #92 웹 연계 완료 현황까지 반영 | 정확한 SHA는 상단 명령으로 조회하고 새 출시 후보·후속 작업의 기준선으로 사용 |
-| `.typedeck` 연계 PR | 모바일 #88·웹 #6 모두 merged; 모바일 전체 Actions, 웹 Release `verify`·Vercel 성공 | 미커밋 후속 선택 UI 후보만 별도 검토 |
+| `.typedeck` 연계 PR | 모바일 #88·웹 #6 모두 merged; 모바일 전체 Actions, 웹 Release `verify`·Vercel 성공 | 후속 덱 언어 제품 변경은 새 작업으로 분리 |
 | worktree | 총 22개; 기본 `/Users/jungminoh/Documents/hanco`와 #87 보존 worktree가 dirty, 나머지 20개 clean | 두 dirty 작업공간을 삭제·덮어쓰기 하지 않고 후속 후보를 별도 검토 |
 | 기본 dirty worktree | 닫힌 #63 branch 위 tracked 44개·untracked 5개; 현재 main보다 오래된 기반 | release 기준이 아님. 새 branch에서 기능별 재적용·검증 전까지 보존 |
 | stash | 1개, 35파일·1,214삽입/155삭제; 스토어 미디어·Pro·지원 URL 계열 | apply/drop하지 않음; 복구 원본으로만 유지 |
