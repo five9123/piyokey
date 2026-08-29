@@ -45,7 +45,10 @@
 
 "recommendations.home.title" = "Recommended for you";
 "recommendations.home.subtitle" = "Picked from tags in your downloaded decks";
-"recommendations.home.cold_start_subtitle" = "Popular official decks to try first";
+"recommendations.home.cold_start_subtitle" = "Official decks selected for your goal";
+"recommendations.home.next_step.title" = "Your next step";
+"recommendations.home.next_step.subtitle" = "The next decks matched to your recent practice";
+"recommendations.home.next_step.cold_start_subtitle" = "Build your skills in a clear learning order";
 "recommendations.result.title" = "Decks with similar tags";
 "recommendations.result.subtitle" = "Find your next deck to practice";
 

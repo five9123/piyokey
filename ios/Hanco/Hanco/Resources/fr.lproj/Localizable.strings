@@ -43,7 +43,10 @@
 "practice.result.retry" = "Réessayer";
 "recommendations.home.title" = "Recommandés pour toi";
 "recommendations.home.subtitle" = "Choisis selon les tags de tes paquets téléchargés";
-"recommendations.home.cold_start_subtitle" = "Paquets officiels populaires pour commencer";
+"recommendations.home.cold_start_subtitle" = "Paquets officiels choisis selon ton objectif";
+"recommendations.home.next_step.title" = "Ta prochaine étape";
+"recommendations.home.next_step.subtitle" = "Les prochains paquets adaptés à ton entraînement récent";
+"recommendations.home.next_step.cold_start_subtitle" = "Progresse en suivant un parcours d’apprentissage clair";
 "recommendations.result.title" = "Paquets avec des tags similaires";
 "recommendations.result.subtitle" = "Trouve ton prochain paquet d’entraînement";
 "practice.setup.navigation_title" = "S’entraîner";

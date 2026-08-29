@@ -3,7 +3,7 @@
 마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 통합 기준선: PR #74, `9af01ef96e06472eb3d842880649b5e697c5877e` — 4단계 온보딩·첫 홈 추천·ja/en/es/de/fr
+최근 통합 기준선: PR #80, `a678e0f7bc3618eb131d7b742322dbddb0ad96a8` — iPad 화면 밀도·가로 스토어 이미지
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -21,6 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #81 iOS 홈 추천 두 영역 | Verify | `codex/81-home-recommendation-rows` / `/private/tmp/piyokey-issue81` | 개인화·다음 단계 각 3개, 중복 제거, iPhone 가로 스크롤·iPad 3열 구현 및 관련 단위/iPhone·iPad UI 회귀 통과. PR 리뷰·CI 필요 |
 | #79 / PR #80 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로에서도 문제→피요·입력→키보드 순서 유지, 크기/여백 수정·mini/Pro 선택 회귀 통과. 10시장 가로 100장+ZIP 10개 검수 완료. 업로드는 Chrome `Not allowed`로 차단; PR 리뷰/CI·새 RC·스토어 등록 필요 |
 | #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국 세금 정보 완료 및 나머지 제출 gate 검증 (미국 Foreign Status/W-8BEN Active 확인) |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |

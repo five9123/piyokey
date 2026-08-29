@@ -1033,6 +1033,9 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("curriculum.free_practice").exists)
     XCTAssertFalse(app.switches["retention.reminder.toggle"].exists)
     XCTAssertTrue(element("home.recommendations").waitForExistence(timeout: 5))
+    XCTAssertTrue(element("home.recommendations.personal").exists)
+    XCTAssertTrue(element("home.recommendations.next_step").exists)
+    XCTAssertTrue(element("home.next_step.official_consonants").exists)
     let recommendation = element("home.recommendation.official_topik_one")
     XCTAssertTrue(recommendation.waitForExistence(timeout: 3))
     scrollToHittable(recommendation)
@@ -2834,6 +2837,21 @@ final class HancoUITests: XCTestCase {
         }
         button.tap()
         XCTAssertTrue(element(identifier).waitForExistence(timeout: 5))
+        if identifier == "home.screen" {
+          let nextStepCards = [
+            element("home.next_step.official_consonants"),
+            element("home.next_step.official_vowels"),
+            element("home.next_step.official_syllable_building"),
+          ]
+          XCTAssertTrue(element("home.recommendations.personal").waitForExistence(timeout: 5))
+          XCTAssertTrue(element("home.recommendations.next_step").exists)
+          nextStepCards.forEach { XCTAssertTrue($0.exists) }
+          scrollToHittable(nextStepCards[0])
+          XCTAssertEqual(nextStepCards[0].frame.midY, nextStepCards[1].frame.midY, accuracy: 2)
+          XCTAssertEqual(nextStepCards[1].frame.midY, nextStepCards[2].frame.midY, accuracy: 2)
+          XCTAssertGreaterThanOrEqual(nextStepCards[0].frame.minX, app.frame.minX)
+          XCTAssertLessThanOrEqual(nextStepCards[2].frame.maxX, app.frame.maxX)
+        }
         attachScreenshot(named: "ipad-\(identifier)-\(suffix)-ja")
       }
       openSettings()

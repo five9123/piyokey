@@ -43,7 +43,10 @@
 "practice.result.retry" = "Erneut versuchen";
 "recommendations.home.title" = "Für dich empfohlen";
 "recommendations.home.subtitle" = "Nach den Tags deiner heruntergeladenen Decks ausgewählt";
-"recommendations.home.cold_start_subtitle" = "Beliebte offizielle Decks für den Einstieg";
+"recommendations.home.cold_start_subtitle" = "Offizielle Decks passend zu deinem Ziel";
+"recommendations.home.next_step.title" = "Dein nächster Schritt";
+"recommendations.home.next_step.subtitle" = "Die nächsten Decks passend zu deinem letzten Training";
+"recommendations.home.next_step.cold_start_subtitle" = "Baue deine Fähigkeiten in einer klaren Lernreihenfolge auf";
 "recommendations.result.title" = "Decks mit ähnlichen Tags";
 "recommendations.result.subtitle" = "Finde dein nächstes Übungsdeck";
 "practice.setup.navigation_title" = "Üben";

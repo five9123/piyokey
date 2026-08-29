@@ -45,7 +45,10 @@
 
 "recommendations.home.title" = "나를 위한 추천";
 "recommendations.home.subtitle" = "다운로드한 덱의 태그를 바탕으로 골랐어요";
-"recommendations.home.cold_start_subtitle" = "먼저 시작하기 좋은 인기 공식 덱이에요";
+"recommendations.home.cold_start_subtitle" = "선택한 목표에 맞는 공식 덱이에요";
+"recommendations.home.next_step.title" = "다음 단계";
+"recommendations.home.next_step.subtitle" = "최근 연습 결과에 맞는 다음 덱이에요";
+"recommendations.home.next_step.cold_start_subtitle" = "현재 수준에서 차례대로 실력을 키워요";
 "recommendations.result.title" = "비슷한 태그의 덱";
 "recommendations.result.subtitle" = "다음에 연습할 덱을 찾아보세요";
 
