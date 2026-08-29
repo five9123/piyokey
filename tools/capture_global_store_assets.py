@@ -62,14 +62,43 @@ def capture(language: str, device: str, output: Path) -> None:
     print(f"{language}: capture complete", flush=True)
 
 
+def capture_screenshots(language: str, device: str, output: Path, derived_data: Path) -> None:
+    folder = output / language
+    folder.mkdir(parents=True, exist_ok=False)
+    test_runs = list((derived_data / "Build/Products").glob("Hanco_*.xctestrun"))
+    if len(test_runs) != 1:
+        raise ValueError("Expected one completed build-for-testing in derived data")
+    command = [
+        "xcodebuild", "test-without-building", "-xctestrun", str(test_runs[0]),
+        "-destination", f"platform=iOS Simulator,id={device}",
+        "-parallel-testing-enabled", "NO",
+        "-resultBundlePath", str(folder / "capture.xcresult"),
+        f"-only-testing:HancoUITests/HancoUITests/testAppStoreScreenshotGlobal{language.upper()}",
+    ]
+    with (folder / "capture.log").open("w") as log:
+        result = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+    (folder / "timing.json").write_text(json.dumps({"test_exit_code": result.returncode,
+                                                 "device": device, "screenshots_only": True}) + "\n")
+    subprocess.run(["xcrun", "xcresulttool", "export", "attachments", "--path", str(folder / "capture.xcresult"),
+                    "--output-path", str(folder / "attachments")], check=True, stdout=subprocess.DEVNULL)
+    if result.returncode:
+        raise RuntimeError(f"Capture UI test failed ({language}); inspect {folder / 'capture.log'}")
+    print(f"{language}: screenshot capture complete", flush=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--languages", nargs="+", choices=["ja", "en", "es", "de", "fr"], default=["ja", "en", "es", "de", "fr"])
     parser.add_argument("--device", default="00608B21-6BB5-4F22-BDD2-9A4F67DA4C59")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--screenshots-only", action="store_true")
+    parser.add_argument("--derived-data", type=Path, default=ROOT / "artifacts/store-localization/DerivedData")
     args = parser.parse_args()
     for language in args.languages:
-        capture(language, args.device, args.output.resolve())
+        if args.screenshots_only:
+            capture_screenshots(language, args.device, args.output.resolve(), args.derived_data.resolve())
+        else:
+            capture(language, args.device, args.output.resolve())
 
 
 if __name__ == "__main__":

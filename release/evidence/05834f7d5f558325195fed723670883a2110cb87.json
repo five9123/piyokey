@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "verified_commit": "05834f7d5f558325195fed723670883a2110cb87",
+  "verified_tree": "e4dc9bd60934018f2fe4536435684cad4b7d40bd",
+  "branch": "codex/79-final-qa",
+  "scope": "#79 iPad source, selected simulator regressions and 110 local store images; release readiness still blocked",
+  "result": "fail",
+  "recorded_at": "2026-08-28T17:59:01.594164+00:00",
+  "checks": [
+    {
+      "name": "python_tools",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests",
+      "note": "97 tests; python-clean.log"
+    },
+    {
+      "name": "swift_packages",
+      "status": "pass",
+      "command": "swift test --scratch-path /private/tmp/piyokey-qa79-results/swift-build",
+      "note": "45 tests; unchanged SwiftPM/shared source, swift.log"
+    },
+    {
+      "name": "ios_final_unit_and_game_ui",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/GameFit/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination \"platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/iphone-quiz-final.xcresult \"-only-testing:HancoTests\" \"-only-testing:HancoUITests/HancoUITests/testKorean10KeyLayoutCarriesIntoFlowGame\" \"-only-testing:HancoUITests/HancoUITests/testKorean10KeyLayoutCarriesIntoRecallGame\" \"-only-testing:HancoUITests/HancoUITests/testChoseongAndWordMatchShareThreeQuestionPronunciationHintBudget\" \"-only-testing:HancoUITests/HancoUITests/testDictationUsesAudioOnlyPromptAndCompletesTypedAnswer\"",
+      "note": "App 9369b95: 367 unit + 4 UI; current HEAD differs only in documentation/store builder"
+    },
+    {
+      "name": "iphone_practice_and_result_recheck",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/After/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64-x86_64.xctestrun -destination \"platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/iphone-recheck.xcresult \"-only-testing:HancoTests\" \"-only-testing:HancoUITests/HancoUITests/testDoneExitsPracticeAndGameResultsEvenDuringReveal\" \"-only-testing:HancoUITests/HancoUITests/testInitialJapanesePracticeScreenSnapshot\" \"-only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace\" \"-only-testing:HancoUITests/HancoUITests/testSessionSwitchesToOSIMEAndKeepsAcceptedJamoProgress\"",
+      "note": "App d3917ea: 367 unit + 4 UI. Earlier 15 selected UI had one result-timing failure; failed case passed on rerun. Logs retained; not full UI suite."
+    },
+    {
+      "name": "ipad_pro_main_rotation_accessibility",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/After/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64-x86_64.xctestrun -destination \"platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/ipad-pro-final.xcresult \"-only-testing:HancoUITests/HancoUITests/testIPadMainScreensPortraitAndLandscape\" \"-only-testing:HancoUITests/HancoUITests/testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard\" \"-only-testing:HancoUITests/HancoUITests/testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable\"",
+      "note": "d3917ea: 3 UI, six screens portrait/landscape, session state and accessibility. Unaffected by final quiz-only layout change."
+    },
+    {
+      "name": "ipad_mini_main_and_practice",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/After/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64-x86_64.xctestrun -destination \"platform=iOS Simulator,id=9CFC020B-ECE8-4179-917F-3B8670B637BF\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/ipad-mini-final.xcresult \"-only-testing:HancoUITests/HancoUITests/testIPadMainScreensPortraitAndLandscape\" \"-only-testing:HancoUITests/HancoUITests/testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard\"",
+      "note": "d3917ea: 2 UI; earlier 8-case run had native tab paging failure, corrected and rerun. Other 7 cases passed."
+    },
+    {
+      "name": "ipad_mini_six_games",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/GameFit/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination \"platform=iOS Simulator,id=9CFC020B-ECE8-4179-917F-3B8670B637BF\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/ipad-games-fixed.xcresult \"-only-testing:HancoUITests/HancoUITests/testIPadLandscapeGameControlsRemainVisible\"",
+      "note": "9369b95: one UI loops all six games; 6 captures visually reviewed. Word quiz previously extended keyboard 4.5pt beyond screen; fixed."
+    },
+    {
+      "name": "release_simulator_arm64",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination \"generic/platform=iOS Simulator\" -derivedDataPath /private/tmp/piyokey-qa79-results/Release -clonedSourcePackagesDirPath /private/tmp/piyokey-qa79-results/DerivedData/SourcePackages -disableAutomaticPackageResolution ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO",
+      "note": "9369b95 Release compile; not a signed device archive/IPA"
+    },
+    {
+      "name": "store_capture_five_languages",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/capture_global_store_assets.py --screenshots-only --derived-data /private/tmp/piyokey-qa79-results/After --device 3E5DF64B-1515-4AF4-87A8-9113E50DD416 --languages ja en es de fr --output artifacts/ipad-store/capture-final",
+      "note": "5 capture tests pass, 55 real UI images. Preserved d3917ea app binary; later quiz landscape changes not in rendered store scenes."
+    },
+    {
+      "name": "ipad_store_render",
+      "status": "pass",
+      "command": "/Users/jungminoh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 tools/build_ipad_store_assets.py --capture artifacts/ipad-store/capture-final --output artifacts/ipad-store/delivery --renderer /private/tmp/piyokey-qa79-results/screenshot-renderer --capture-source-ref d3917ea",
+      "note": "100 portrait + 10 landscape RGB/decode/dimensions pass; 165 source/output hashes rechecked; 10 locale contacts and all alternates visually reviewed; final RC comparison required"
+    },
+    {
+      "name": "repository_preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "preflight-clean.log"
+    },
+    {
+      "name": "strict_release_readiness",
+      "status": "fail",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py --strict",
+      "note": "38 existing release gates remain; no store submission or release approval"
+    },
+    {
+      "name": "workspace_owner",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "clean worktree, Issue79 ownership and GitHub auth confirmed; doctor-clean.log"
+    }
+  ],
+  "manual_gates": [
+    "CI enabled=false; normal review/CI requirement not waived",
+    "New build number and final signed RC/TestFlight update/device QA",
+    "IAP agreement/banking/tax/review metadata and sandbox purchase/cancel/pending/restore/refund",
+    "Files/iCloud/AirDrop/1000 items, OS IME/hardware keyboard/audio/GameCenter/60fps/notification checks on final device build",
+    "Privacy/content rights/native-language human review/store upload and saved-state recheck"
+  ]
+}

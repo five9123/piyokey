@@ -613,6 +613,7 @@ struct PhysicalKeyboardGuideView: View {
 }
 
 struct HangulKeyboardView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   let nextExpectedKey: Character?
   var options = HangulKeyboardOptions()
   var onInputStart: () -> Void = {}
@@ -698,7 +699,7 @@ struct HangulKeyboardView: View {
           isPressed: isPressed(.character(" ")),
           onActivate: activate
         )
-        .frame(maxWidth: 180)
+        .frame(maxWidth: adaptiveMetrics.isExpanded ? adaptiveMetrics.availableWidth * 0.4 : 180)
         .overlay {
           Capsule()
             .fill(AppPalette.mutedInk.opacity(0.24))
@@ -849,6 +850,7 @@ struct HangulKeyboardView: View {
 }
 
 struct Korean10KeyKeyboardView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   let nextExpectedKey: Korean10KeyKey?
   var options = HangulKeyboardOptions()
   var onInputStart: () -> Void = {}
@@ -898,6 +900,8 @@ struct Korean10KeyKeyboardView: View {
         )
       }
     }
+    .frame(maxWidth: adaptiveMetrics.isExpanded ? 600 : .infinity)
+    .frame(maxWidth: .infinity)
     .padding(.horizontal, 12)
     .padding(.top, 10)
     .padding(.bottom, 8)
@@ -1026,6 +1030,7 @@ private struct KeyDefinition: Identifiable {
 }
 
 private struct Keycap: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.hancoFontScale) private var fontScale
 
   let title: String?
@@ -1054,11 +1059,11 @@ private struct Keycap: View {
       if let title {
         VStack(spacing: 0) {
           Text(verbatim: title)
-            .font(.system(size: 21 * fontScale, weight: .semibold, design: .rounded))
+            .font(.system(size: 21 * fontScale * (adaptiveMetrics.isExpanded ? 1.15 : 1), weight: .semibold, design: .rounded))
             .foregroundStyle(AppPalette.ink)
           if let romanHint {
             Text(verbatim: romanHint)
-              .font(.system(size: 9 * fontScale, weight: .medium, design: .rounded))
+              .font(.system(size: 9 * fontScale * (adaptiveMetrics.isExpanded ? 1.15 : 1), weight: .medium, design: .rounded))
               .foregroundStyle(AppPalette.mutedInk)
           }
         }
@@ -1069,7 +1074,7 @@ private struct Keycap: View {
       }
     }
     .frame(maxWidth: .infinity)
-    .frame(height: height)
+    .frame(height: height * adaptiveMetrics.keyboardScale)
     .scaleEffect(isPressed ? 0.95 : 1)
     .animation(.easeOut(duration: 0.06), value: isPressed)
     .anchorPreference(key: KeyboardKeyBoundsPreferenceKey.self, value: .bounds) {

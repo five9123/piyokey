@@ -147,23 +147,20 @@ struct AppRootView: View {
   }
 
   var body: some View {
-    GeometryReader { proxy in
-      let adaptiveMetrics = HancoAdaptiveMetrics(availableWidth: proxy.size.width)
-      Group {
-        if onboarding.shouldPresent {
-          OnboardingView()
-        } else if shouldPresentHatchGate {
-          CurriculumMapView(
-            catalog: nil,
-            isHatchOnboarding: true,
-            onHatchCompleted: finishHatchOnboarding
-          )
-        } else {
-          mainTabs
-        }
+    Group {
+      if onboarding.shouldPresent {
+        OnboardingView()
+      } else if shouldPresentHatchGate {
+        CurriculumMapView(
+          catalog: nil,
+          isHatchOnboarding: true,
+          onHatchCompleted: finishHatchOnboarding
+        )
+      } else {
+        mainTabs
       }
-      .environment(\.hancoAdaptiveMetrics, adaptiveMetrics)
     }
+    .hancoAdaptiveLayout()
     .environmentObject(deckLibrary)
     .environmentObject(deckMakerPurchaseStore)
     .environmentObject(piyoDeckDocumentCoordinator)
@@ -194,6 +191,7 @@ struct AppRootView: View {
     }
     .sheet(isPresented: $showsSettings) {
       SettingsView(showsCloseButton: true)
+        .hancoAdaptiveLayout()
         .environmentObject(deckLibrary)
         .environmentObject(curriculumProgress)
         .environmentObject(retention)
@@ -219,6 +217,7 @@ struct AppRootView: View {
           applyPrivacyChoices(analytics: false, diagnostics: false)
         }
       )
+      .hancoAdaptiveLayout()
       .environment(
         \.locale,
         AppLanguage.resolved(from: language).locale

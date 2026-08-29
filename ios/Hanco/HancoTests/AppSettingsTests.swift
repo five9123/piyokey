@@ -562,7 +562,7 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(HancoAdaptiveMetrics(availableWidth: 900).widthClass, .wide)
   }
 
-  func testAdaptiveMetricsGrowPaddingAndHubColumnsWithoutChangingContentCaps() {
+  func testAdaptiveMetricsGrowContentWithWindowWhileKeepingFormsReadable() {
     let compact = HancoAdaptiveMetrics(availableWidth: 390)
     let medium = HancoAdaptiveMetrics(availableWidth: 744)
     let wide = HancoAdaptiveMetrics(availableWidth: 1_180)
@@ -582,10 +582,29 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(wide.readableContentMaxWidth, 720)
     XCTAssertEqual(wide.resultContentMaxWidth, 760)
     XCTAssertEqual(wide.hubContentMaxWidth, 1_120)
-    XCTAssertEqual(wide.sessionLaneMaxWidth, 920)
-    XCTAssertEqual(wide.keyboardMaxWidth, 820)
-    XCTAssertLessThanOrEqual(wide.keyboardMaxWidth, wide.sessionLaneMaxWidth)
+    XCTAssertGreaterThan(wide.sessionLaneMaxWidth, wide.readableContentMaxWidth)
+    XCTAssertEqual(wide.keyboardMaxWidth, wide.availableWidth)
+    XCTAssertGreaterThan(wide.keyboardMaxWidth, wide.sessionLaneMaxWidth)
     XCTAssertLessThanOrEqual(wide.formContentMaxWidth, wide.readableContentMaxWidth)
+  }
+
+  func testAdaptiveKeyboardRespectsPortraitLandscapeAndShortWindows() {
+    let portrait = HancoAdaptiveMetrics(availableWidth: 1_032, availableHeight: 1_300)
+    let landscape = HancoAdaptiveMetrics(availableWidth: 1_376, availableHeight: 950)
+    let shortWindow = HancoAdaptiveMetrics(availableWidth: 800, availableHeight: 480)
+    let split = HancoAdaptiveMetrics(availableWidth: 507, availableHeight: 1_300)
+    XCTAssertTrue(portrait.isTall)
+    XCTAssertFalse(landscape.isTall)
+    XCTAssertGreaterThan(portrait.keyboardScale, landscape.keyboardScale)
+    XCTAssertGreaterThan(landscape.keyboardScale, shortWindow.keyboardScale)
+    XCTAssertEqual(split.keyboardScale, 1)
+    XCTAssertEqual(split.typographyScale, 1)
+    XCTAssertEqual(split.learningScale, 1)
+    XCTAssertEqual(split.keyboardMaxWidth, 507)
+    XCTAssertGreaterThan(landscape.learningScale, portrait.learningScale)
+    let mini = HancoAdaptiveMetrics(availableWidth: 1_133, availableHeight: 700)
+    XCTAssertGreaterThan(mini.learningScale, 1)
+    XCTAssertLessThan(mini.learningScale, landscape.learningScale)
   }
 
   func testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions() throws {

@@ -12,6 +12,7 @@ struct PracticeView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.hancoFontScale) private var fontScale
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
@@ -168,21 +169,26 @@ struct PracticeView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      ScrollView {
-        VStack(spacing: 12) {
-          targetCard
-          if practiceShowsMascot || practiceShowsComposition {
-            compositionCard
-          } else if inputMode == .osIME, allowsOSKeyboard {
-            osIMEInputPanel(showsFocusRecovery: true)
-              .padding(.horizontal, 14)
+      GeometryReader { viewport in
+        ScrollView {
+          VStack(spacing: sessionCardSpacing) {
+            targetCard(minHeight: expandsSessionCards
+              ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.55 : 0)
+            if practiceShowsMascot || practiceShowsComposition {
+              compositionCard(minHeight: expandsSessionCards
+                ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.45 : 0)
+            } else if inputMode == .osIME, allowsOSKeyboard {
+              osIMEInputPanel(showsFocusRecovery: true)
+                .padding(.horizontal, 14)
+            }
           }
+          .padding(.horizontal, adaptiveMetrics.isExpanded ? 24 : 14)
+          .padding(.vertical, sessionVerticalPadding)
+          .frame(minHeight: viewport.size.height, alignment: adaptiveMetrics.isExpanded ? .center : .top)
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
+        .scrollDismissesKeyboard(.never)
       }
-      .scrollDismissesKeyboard(.never)
 
       inputArea
         .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
@@ -499,7 +505,7 @@ struct PracticeView: View {
     HStack(spacing: 8) {
       ProgressView(value: overallSessionProgress, total: 1)
         .tint(AppPalette.accent)
-        .frame(width: 128)
+        .frame(width: adaptiveMetrics.isExpanded ? 180 : 128)
 
       Text(verbatim: "\(viewModel.currentTargetIndex + 1) / \(viewModel.targets.count)")
         .font(.caption.monospacedDigit().weight(.bold))
@@ -513,27 +519,46 @@ struct PracticeView: View {
     .accessibilityIdentifier("practice.overall_progress")
   }
 
-  private var targetCard: some View {
-    VStack(alignment: .leading, spacing: 9) {
-      HStack {
-        Spacer()
-        Button {
-          speakCurrentTarget()
-        } label: {
-          Label("practice.speak_target", systemImage: "speaker.wave.2.fill")
-            .font(.subheadline.weight(.bold))
-            .foregroundStyle(AppPalette.secondary)
-            .padding(.horizontal, 11)
-            .padding(.vertical, 7)
-            .background(AppPalette.accentSoft.opacity(0.48), in: Capsule())
+  private var usesLandscapeCards: Bool {
+    adaptiveMetrics.isExpanded && !adaptiveMetrics.isTall && !dynamicTypeSize.isAccessibilitySize
+  }
+
+  private var sessionCardSpacing: CGFloat { usesLandscapeCards ? 8 : (adaptiveMetrics.isExpanded ? 20 : 12) }
+  private var sessionVerticalPadding: CGFloat {
+    usesLandscapeCards ? (expandsSessionCards ? 8 : 4) : (adaptiveMetrics.isExpanded ? 20 : 10)
+  }
+
+  private var expandsSessionCards: Bool {
+    adaptiveMetrics.isExpanded && (!usesLandscapeCards || adaptiveMetrics.availableHeight >= 800)
+  }
+
+  private var speakTargetButton: some View {
+    Button(action: speakCurrentTarget) {
+      Label("practice.speak_target", systemImage: "speaker.wave.2.fill")
+        .font(.subheadline.weight(.bold))
+        .foregroundStyle(AppPalette.secondary)
+        .padding(.horizontal, adaptiveMetrics.isExpanded ? 16 : 11)
+        .padding(.vertical, adaptiveMetrics.isExpanded ? 10 : 7)
+        .frame(minHeight: adaptiveMetrics.isExpanded ? 44 : nil)
+        .background(AppPalette.accentSoft.opacity(0.48), in: Capsule())
+    }
+    .buttonStyle(.plain)
+    .accessibilityValue(Text(verbatim: viewModel.target))
+    .accessibilityIdentifier("practice.speak_target")
+  }
+
+  private func targetCard(minHeight: CGFloat) -> some View {
+    VStack(alignment: .leading, spacing: usesLandscapeCards ? 4 : 9) {
+      if !usesLandscapeCards {
+        HStack {
+          Spacer()
+          speakTargetButton
         }
-        .buttonStyle(.plain)
-        .accessibilityValue(Text(verbatim: viewModel.target))
-        .accessibilityIdentifier("practice.speak_target")
       }
 
       ForEach(resolvedPromptOrder.fields) { field in
         promptField(field)
+          .padding(.horizontal, usesLandscapeCards ? 120 : 0)
       }
 
       if practiceShowsJamo {
@@ -559,8 +584,14 @@ struct PracticeView: View {
         }
       }
     }
-    .padding(14)
+    .padding(usesLandscapeCards ? 6 : (adaptiveMetrics.isExpanded ? 24 : 14))
+    .frame(maxWidth: .infinity, minHeight: minHeight)
+    .overlay(alignment: .topTrailing) {
+      if usesLandscapeCards { speakTargetButton.padding(10) }
+    }
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("practice.target.card")
     .overlay {
       RoundedRectangle(cornerRadius: 24, style: .continuous)
         .fill(AppPalette.error.opacity(errorFlashOpacity))
@@ -583,7 +614,7 @@ struct PracticeView: View {
         TargetSyllableProgressView(
           target: viewModel.target,
           units: viewModel.targetSyllableProgress,
-          fontScale: fontScale
+          fontScale: fontScale * adaptiveMetrics.learningScale
         )
         .id(viewModel.currentTargetIndex)
       }
@@ -608,7 +639,7 @@ struct PracticeView: View {
 
   private func meaningPromptText(_ value: String) -> some View {
     Text(verbatim: value)
-      .font(.system(size: max(14, 17 * fontScale), weight: .regular, design: .rounded))
+      .font(.system(size: max(14, 17 * fontScale * (usesLandscapeCards ? adaptiveMetrics.learningScale : 1)), weight: .regular, design: .rounded))
       .foregroundStyle(AppPalette.mutedInk)
       .multilineTextAlignment(.center)
       .padding(.horizontal, 14)
@@ -631,7 +662,7 @@ struct PracticeView: View {
       .accessibilityIdentifier(identifier)
   }
 
-  private var compositionCard: some View {
+  private func compositionCard(minHeight: CGFloat) -> some View {
     VStack(spacing: 8) {
       HStack(spacing: 10) {
         if practiceShowsMascot {
@@ -644,10 +675,10 @@ struct PracticeView: View {
             gazeY: mascotGazeY,
             intensity: min(CGFloat(viewModel.correctStreak) / 20, 1),
             speech: mascotSpeech,
-            size: 52,
+            size: 52 * adaptiveMetrics.learningScale,
             calm: true
           )
-          .frame(width: 70, height: 106)
+          .frame(width: 70 * adaptiveMetrics.learningScale, height: 106 * adaptiveMetrics.learningScale)
         }
 
         if practiceShowsComposition {
@@ -656,7 +687,8 @@ struct PracticeView: View {
               text: compositionPreviewText,
               incomingJamo: viewModel.lastAcceptedKey,
               revision: viewModel.compositionRevision,
-              shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin
+              shouldAnimateJoin: viewModel.shouldAnimateSyllableJoin,
+              displayScale: adaptiveMetrics.learningScale
             )
 
             HStack(spacing: 6) {
@@ -680,8 +712,11 @@ struct PracticeView: View {
     }
     .frame(maxWidth: .infinity)
     .padding(.horizontal, 14)
-    .padding(.vertical, 10)
+    .padding(.vertical, usesLandscapeCards ? 4 : 10)
+    .frame(minHeight: minHeight)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("practice.composition.card")
     .scaleEffect(completionCardScale)
     .overlay {
       ZStack {
@@ -1303,7 +1338,8 @@ struct PracticeView: View {
 }
 
 private struct JamoProgressTrack: View {
-  private static let chipWidth: CGFloat = 30
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+  private var chipWidth: CGFloat { 30 * adaptiveMetrics.typographyScale }
   private static let chipSpacing: CGFloat = 7
   private static let horizontalSafeInset: CGFloat = 2
 
@@ -1316,7 +1352,7 @@ private struct JamoProgressTrack: View {
   }
 
   private var estimatedContentWidth: CGFloat {
-    let chipWidths = CGFloat(sequence.count) * Self.chipWidth
+    let chipWidths = CGFloat(sequence.count) * chipWidth
     let spacing = CGFloat(max(sequence.count - 1, 0)) * Self.chipSpacing
     return chipWidths + spacing + Self.horizontalSafeInset * 2
   }
@@ -1332,7 +1368,7 @@ private struct JamoProgressTrack: View {
               Text(verbatim: String(jamo))
                 .font(.system(.body, design: .rounded, weight: .bold))
                 .foregroundStyle(index < completedCount ? .white : AppPalette.ink)
-                .frame(width: Self.chipWidth, height: 34)
+                .frame(width: chipWidth, height: 34 * adaptiveMetrics.typographyScale)
                 .background(
                   index < completedCount
                     ? AppPalette.accent : AppPalette.accentSoft.opacity(0.38),
@@ -1365,7 +1401,7 @@ private struct JamoProgressTrack: View {
         }
       }
     }
-    .frame(height: 38)
+    .frame(height: 38 * adaptiveMetrics.typographyScale)
   }
 
   private func edgeFades(overflows: Bool) -> some View {
@@ -1806,6 +1842,7 @@ struct SyllableAssemblyPreview: View {
   let incomingJamo: Character?
   let revision: Int
   let shouldAnimateJoin: Bool
+  var displayScale: CGFloat = 1
 
   @State private var previousText = ""
   @State private var stagedPrevious = ""
@@ -1820,7 +1857,7 @@ struct SyllableAssemblyPreview: View {
     ZStack {
       Circle()
         .fill(AppPalette.accentSoft.opacity(0.66))
-        .frame(width: 96, height: 96)
+        .frame(width: 96 * displayScale, height: 96 * displayScale)
 
       if isShowingParts {
         HStack(spacing: 0) {
@@ -1835,7 +1872,7 @@ struct SyllableAssemblyPreview: View {
           .scaleEffect(resultScale)
       }
     }
-    .frame(width: 112, height: 100)
+    .frame(width: 112 * displayScale, height: 100 * displayScale)
     .onAppear {
       previousText = text
     }
@@ -1850,7 +1887,7 @@ struct SyllableAssemblyPreview: View {
 
   private func previewText(_ value: String) -> some View {
     Text(verbatim: value)
-      .font(.system(size: 46 * fontScale, weight: .bold, design: .rounded))
+      .font(.system(size: 46 * fontScale * displayScale, weight: .bold, design: .rounded))
       .foregroundStyle(AppPalette.ink)
       .minimumScaleFactor(0.62)
       .lineLimit(1)

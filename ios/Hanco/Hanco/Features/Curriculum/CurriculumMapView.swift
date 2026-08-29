@@ -2,6 +2,7 @@ import DeckKit
 import SwiftUI
 
 struct HomeView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
@@ -20,15 +21,20 @@ struct HomeView: View {
           }
           TimelineView(.periodic(from: .now, by: 60)) { _ in
             let today = JSTDay(date: RetentionClock.now())
-            VStack(spacing: 14) {
+            let dashboard = usesLandscapeDashboard
+              ? AnyLayout(HStackLayout(alignment: .top, spacing: 24))
+              : AnyLayout(VStackLayout(spacing: 14))
+            dashboard {
               RetentionHomeView(today: today)
-              HomePrimaryActionView(today: today, catalog: catalog)
-              HomeQuickActionsView(catalog: catalog)
+              VStack(spacing: 14) {
+                HomePrimaryActionView(today: today, catalog: catalog)
+                HomeQuickActionsView(catalog: catalog)
+              }
             }
           }
           HomeRecommendationsView(catalog: catalog)
         }
-        .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+        .frame(maxWidth: usesLandscapeDashboard ? adaptiveMetrics.hubContentMaxWidth : adaptiveMetrics.readableContentMaxWidth)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 16)
@@ -47,6 +53,11 @@ struct HomeView: View {
       .hancoAdaptiveDebugValue(adaptiveMetrics)
       .rootSettingsToolbar()
     }
+  }
+
+  private var usesLandscapeDashboard: Bool {
+    adaptiveMetrics.availableWidth >= 1_100 && !adaptiveMetrics.isTall
+      && !dynamicTypeSize.isAccessibilitySize
   }
 
   private var hasPersistenceFailure: Bool {
@@ -725,6 +736,7 @@ struct CurriculumMapView: View {
 }
 
 private struct HomeRecommendationsView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var onboarding: OnboardingLibrary
 
@@ -757,7 +769,7 @@ private struct HomeRecommendationsView: View {
                 DeckDetailView(deck: deck, catalogDecks: catalog.decks)
               } label: {
                 DeckCardView(deck: deck)
-                  .frame(width: 282)
+                  .frame(width: adaptiveMetrics.isExpanded ? 380 : 282)
               }
               .buttonStyle(.plain)
               .accessibilityIdentifier("home.recommendation.\(deck.deckId)")

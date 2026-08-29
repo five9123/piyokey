@@ -298,7 +298,7 @@ struct DiscoverView: View {
         LazyHStack(spacing: 12) {
           ForEach(Array(decks.enumerated()), id: \.element.deckId) { index, deck in
             deckLink(deck, rank: showsRank ? index + 1 : nil)
-              .frame(width: 290)
+              .frame(width: adaptiveMetrics.isExpanded ? 390 : 290)
           }
         }
         .padding(.horizontal, 18)
