@@ -47,6 +47,13 @@ GitHub Actions is active. Pull requests run the workflows selected by the
 triggers under `.github/workflows/`, including source and offline pronunciation
 contract checks.
 
+Workflow dependencies use full commit SHAs with a nearby reviewed release tag
+comment. Repository settings allow GitHub-owned actions only and require SHA
+pinning. Dependabot vulnerability alerts and automated security updates are
+enabled; `.github/dependabot.yml` schedules version-update pull requests for
+GitHub Actions, Android Gradle, and the standalone web analytics package. A
+Dependabot pull request follows the same test and merge gate as any other PR.
+
 The repository is private, and the current GitHub plan does not expose branch
 protection or repository rulesets for it. Until the account owner explicitly
 approves a plan change, GitHub cannot technically prevent an early merge. The

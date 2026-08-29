@@ -1655,3 +1655,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: failure·cancelled·timed out·설명 없는 skipped 결과는 병합을 막고, 성공 뒤 head commit이 바뀌면 새 결과를 다시 요구한다. 일반 작업에 과거 예외를 재사용하지 않으며 긴급 예외는 해당 PR에 기록된 사용자의 명시적 승인이 필요하다.
 - 결정: GitHub Pro가 승인되면 required status checks, conversation 해결, force push·branch 삭제 금지와 PR 전용 변경을 `main`에 기술적으로 강제한다. 요금제·저장소 공개 범위·Actions paid overage는 Account Owner 승인 없이 바꾸지 않는다.
 - 근거: 현재 제약을 실제 보호 규칙으로 오인하지 않으면서도 CI 완료 전 병합을 운영상 금지하고, 비용과 소스 공개 범위가 바뀌는 결정을 사용자에게 남긴다.
+
+## 2026-08-29 Actions·의존성 공급망 보안
+
+- 관련: Issue #101. 기존 workflow는 `actions/checkout@v4`, `actions/setup-python@v5`, `actions/setup-java@v4` 이동 태그를 사용했고 저장소는 모든 외부 Action을 허용했으며 Dependabot alerts와 security updates가 꺼져 있었다.
+- 결정: 공식 `actions/checkout` v5.1.0, `actions/setup-python` v6.3.0, `actions/setup-java` v5.7.0의 검증된 full commit SHA를 사용한다. 세 commit의 `action.yml`이 모두 Node 24 runtime을 선언함을 upstream에서 확인했고 tag는 설명 주석으로만 남긴다.
+- 결정: 저장소는 GitHub-owned Action만 허용하고 full-length SHA pinning을 요구한다. Dependabot vulnerability alerts와 automated security fixes를 활성화하며 GitHub Actions·Android Gradle·`web/analytics` npm version update를 매주 별도 PR로 받는다.
+- 결정: Dependabot PR도 일반 PR과 동일하게 적용되는 모든 CI 성공 후 squash merge한다. 자동 merge, 저장소 공개 범위·요금제·Actions paid overage 변경은 허용하지 않는다.
+- 근거: mutable tag와 불필요한 third-party Action 허용 범위를 제거하고, 알려진 취약점 및 version drift를 별도 검토 가능한 PR로 노출한다.
