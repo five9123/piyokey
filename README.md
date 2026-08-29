@@ -1,16 +1,17 @@
 # PIYOKEY / ピヨキー
 
-일본어 사용자가 한국어 타이핑을 배우는 앱입니다. 현재 iOS 앱과 공용
-한글 조합·덱 계약이 구현되어 있으며, Android와 웹은 같은 저장소에
-추가합니다.
+일본어를 포함한 다섯 UI 언어 사용자가 한국어 타이핑을 배우는 앱입니다. iOS
+SwiftUI 앱과 Android Kotlin/Compose 앱, 두 플랫폼이 공유하는 한글 조합·덱 계약이
+구현되어 있습니다. `.typedeck` 웹 Builder 앱은 별도
+[`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소에서 운영합니다.
 
 ## 저장소 구조
 
 ```text
 .
 ├── ios/                  # SwiftUI 앱과 Swift 공용 로직
-├── android/              # M7 Kotlin/Compose 앱과 순수 Kotlin core
-├── web/                  # 웹 버전 착수 시 추가
+├── android/              # Kotlin/Compose 앱과 순수 Kotlin core
+├── web/                  # 앱과 웹이 공유하는 독립 analytics 계약 패키지
 ├── shared/               # 스키마, 테스트 벡터, 목 카탈로그, 오프라인 음원
 ├── tools/                # 콘텐츠 생성·검증 도구
 ├── release/              # 현재 릴리스 메타데이터와 필수 스크린샷
@@ -23,10 +24,13 @@
 `shared/test_vectors.json`, JSON Schema, 카탈로그 fixture를 공통 계약으로
 사용해 Swift·Kotlin·TypeScript 구현의 동작을 맞춥니다.
 
+웹 Builder는 이 저장소의 schema-v2 `.typedeck` 계약과 교차 fixture를 따르지만
+소스·배포 수명주기는 `hanco_web`에서 별도로 관리합니다.
+
 ## 시작하기
 
-요구 환경은 Xcode와 Swift 5.10+, Python 3.11+, Android용 JDK 17+와 API 37
-SDK입니다. iOS 앱은
+요구 환경은 Xcode와 Swift 5.10+, Python 3.11+, Android Gradle용 JDK 17+
+(로컬 권장 JDK 21)와 API 37 SDK입니다. iOS 앱은
 `ios/Hanco/Hanco.xcodeproj`의 `Hanco` scheme으로 실행합니다.
 
 저장소 루트에서 빠른 검증을 실행합니다.
@@ -61,5 +65,6 @@ xcodebuild test \
 
 자세한 내용은 [협업 가이드](CONTRIBUTING.md),
 [새 디바이스·AI agent 온보딩](docs/DEVICE_SETUP.md),
+[GitHub Project 운영](docs/GITHUB_PROJECTS_GUIDE.md),
 [아키텍처](docs/ARCHITECTURE.md), [저장소 정책](docs/REPOSITORY_POLICY.md)을
 참조하세요.
