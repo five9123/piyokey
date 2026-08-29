@@ -117,7 +117,7 @@ final class ReviewDeckStoreTests: XCTestCase {
     }
   }
 
-  func testLegacyReviewSnapshotWithoutLocalizationsStillLoads() throws {
+  func testLegacyReviewSnapshotWithoutLocalizationsUsesJapaneseBaseFallback() throws {
     try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
     let legacy = """
       {
@@ -139,7 +139,8 @@ final class ReviewDeckStoreTests: XCTestCase {
 
     let loaded = try XCTUnwrap(store.loadSnapshot().activeItems.first)
     XCTAssertNil(loaded.localizations)
-    XCTAssertNil(loaded.deckItem.localizedMeaning(languageCode: "en"))
+    XCTAssertEqual(loaded.deckItem.localizedMeaning(languageCode: "en"), "会社")
+    XCTAssertEqual(loaded.deckItem.localizedReading(languageCode: "en"), "フェサ")
     XCTAssertEqual(loaded.missCount, 2)
     XCTAssertEqual(loaded.consecutivePerfect, 1)
   }
