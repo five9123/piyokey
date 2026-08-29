@@ -87,9 +87,23 @@ PR로 병렬화할 수 있습니다.
 
 ## GitHub 보호 규칙
 
-`main` 직접 push와 force push를 금지합니다. PR, 승인, conversation 해결,
-필수 CI 통과를 요구하고 merge queue 또는 최신 main 반영 정책을 사용합니다.
-Release와 store 제출은 일반 개발 권한과 분리된 별도 책임자가 수행합니다.
+저장소는 private이며 현재 GitHub 요금제에서는 branch protection과 ruleset API가
+제공되지 않는다. GitHub Pro 도입 또는 공개 전환을 사용자 승인 없이 수행하지
+않는다. 기술적 보호를 사용할 수 있을 때까지 다음 수동 fail-closed gate를 모든
+PR에 적용한다.
+
+1. `main`에 직접 push하거나 force push하지 않는다.
+2. PR에 표시된 check가 pending 또는 in progress인 동안 병합하지 않는다.
+3. 적용되는 모든 check가 성공해야 하며 failure·cancelled·timed out·설명 없는
+   skipped 결과는 병합을 막는다.
+4. 성공 확인 뒤 head commit이 바뀌면 새 결과를 다시 기다린다.
+5. 조건을 확인한 뒤 squash merge한다.
+
+예외는 해당 PR에 기록된 사용자의 명시적 승인이 있을 때만 한 번 적용한다. 과거
+예외를 재사용하지 않고 실기기·스토어·계정·서명 gate를 면제하지 않는다. GitHub
+Pro가 승인되면 이 계약을 required status checks, conversation 해결, force push와
+삭제 금지, PR 전용 변경 규칙으로 기술적으로 강제한다. Release와 store 제출은
+일반 개발 권한과 분리된 별도 책임자가 수행한다.
 
 실기기 설치, TestFlight·Play 배포, archive 또는 distribution bundle 생성 전에는
 배포하는 파일 트리가 원격 기준선과 같은지 fail-closed로 확인합니다.

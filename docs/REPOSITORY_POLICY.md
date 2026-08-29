@@ -41,11 +41,26 @@ with version, checksum, provenance, and retrieval location when an external
 artifact is release-critical. GitHub Actions artifacts are temporary CI output,
 not the durable release archive.
 
-## Local verification mode
+## Verification and merge gate
 
-GitHub Actions is disabled at the repository level. The workflow definitions
-under `.github/workflows/` remain in source control for possible future reuse,
-but no pull request or push may rely on them running.
+GitHub Actions is active. Pull requests run the workflows selected by the
+triggers under `.github/workflows/`, including source and offline pronunciation
+contract checks.
+
+The repository is private, and the current GitHub plan does not expose branch
+protection or repository rulesets for it. Until the account owner explicitly
+approves a plan change, GitHub cannot technically prevent an early merge. The
+maintainer therefore applies this fail-closed manual gate:
+
+- wait until the pull request has no pending or in-progress checks;
+- require every displayed, applicable check to complete successfully;
+- treat failure, cancellation, timeout, or an unexplained skip as blocking;
+- verify that the head commit has not changed after the successful runs; and
+- squash merge only after those conditions are recorded in the pull request.
+
+An emergency exception requires explicit user approval recorded in that pull
+request. A past exception is not reusable and never waives device, store,
+account, signing, or external-service gates.
 
 Every executable change still requires an issue, an issue-owned branch, and a
 pull request. Before requesting verification, the primary agent must run the
@@ -57,14 +72,15 @@ following in the issue or pull request:
 - tests or manual gates that were not run and why;
 - any device, store, account, signing, or external-service gate still open.
 
-Local results are evidence for the tested commit only. They do not replace
-required user approval, real-device checks, store review, service-console
-verification, or release signing. A pull request stays in `Verify` until those
-applicable gates are resolved, and it is merged manually after approval.
+Local results are evidence for the tested commit only. They do not replace the
+successful GitHub checks or required user approval, real-device checks, store
+review, service-console verification, or release signing. A pull request stays
+in `Verify` until its applicable external gates are resolved.
 
-Re-enabling GitHub Actions requires explicit user approval plus confirmation of
-the account billing and Actions spending-limit behavior. Paid overage must not
-be enabled implicitly.
+If GitHub Pro is later approved, enable required status checks, required
+conversation resolution, blocked force pushes and deletions, and pull-request
+only changes on `main`. Do not change repository visibility, billing, or paid
+overage implicitly.
 
 ## Large-file policy
 

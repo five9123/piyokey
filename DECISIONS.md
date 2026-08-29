@@ -1647,3 +1647,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 항목 콘텐츠와 발견 metadata를 분리하면 UI가 단순해지고 덱 언어를 향후 검색·커뮤니티 집계에 활용하면서도, BCP 47 schema-v2와 공식 다국어 카탈로그·legacy 문서의 호환성을 유지할 수 있다.
 - 구현 경계: GitHub `main` `e1fb099`의 공용 codec과 공식 덱 정책은 그대로 사용한다. 모바일 제품 계층은 legacy 콘텐츠 묶음 선택과 이후 덱 언어 `retag`를 별도 동작으로 구현하며, 존재하지 않는 새 key를 선택해 metadata·뜻·발음을 비우는 동작은 허용하지 않는다. 공용 schema 상한과 다국어 reader·writer는 이 제품 UI 제한 때문에 축소하지 않는다.
 - 영향 범위: iOS `UserDeckDraft`·편집 화면·검증/현지화, Android `UserDeckDraft`·Compose 편집 화면·검증/현지화, legacy 다국어 선택 회귀, 웹/모바일 교차 편집 테스트. 공용 schema·fixture와 공식 카탈로그 데이터는 변경하지 않는다.
+
+## 2026-08-29 private 저장소의 main 병합 gate
+
+- 관련: Issue #97. GitHub Actions는 활성화돼 있지만 private 저장소의 현재 요금제에서는 branch protection과 repository ruleset API가 HTTP 403으로 거부된다.
+- 결정: 저장소는 private로 유지하고 GitHub Pro 결제나 공개 전환을 자동으로 수행하지 않는다. 기술적 보호를 사용할 수 있을 때까지 PR의 pending·in-progress check가 모두 끝나고 적용되는 모든 check가 성공한 뒤에만 squash merge하는 수동 fail-closed gate를 사용한다.
+- 결정: failure·cancelled·timed out·설명 없는 skipped 결과는 병합을 막고, 성공 뒤 head commit이 바뀌면 새 결과를 다시 요구한다. 일반 작업에 과거 예외를 재사용하지 않으며 긴급 예외는 해당 PR에 기록된 사용자의 명시적 승인이 필요하다.
+- 결정: GitHub Pro가 승인되면 required status checks, conversation 해결, force push·branch 삭제 금지와 PR 전용 변경을 `main`에 기술적으로 강제한다. 요금제·저장소 공개 범위·Actions paid overage는 Account Owner 승인 없이 바꾸지 않는다.
+- 근거: 현재 제약을 실제 보호 규칙으로 오인하지 않으면서도 CI 완료 전 병합을 운영상 금지하고, 비용과 소스 공개 범위가 바뀌는 결정을 사용자에게 남긴다.
