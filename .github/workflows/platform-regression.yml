@@ -25,3 +25,4 @@ jobs:
           -project ios/Hanco/Hanco.xcodeproj
           -scheme Hanco
           -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
+          -only-testing:HancoTests

@@ -89,6 +89,8 @@ class CIWorkflowScopeTests(unittest.TestCase):
         self.assertIn("  schedule:", regression)
         self.assertIn("  workflow_dispatch:", regression)
         self.assertIn("xcodebuild test", regression)
+        self.assertIn("-only-testing:HancoTests", regression)
+        self.assertNotIn("-only-testing:HancoUITests", regression)
         self.assertNotIn("Android", regression)
         self.assertNotIn("connectedDebugAndroidTest", regression)
 

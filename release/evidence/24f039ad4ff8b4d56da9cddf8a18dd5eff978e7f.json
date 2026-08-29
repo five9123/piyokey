@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "24f039ad4ff8b4d56da9cddf8a18dd5eff978e7f",
+  "verified_tree": "da0579b843cdf8fbdfb5ec760d54b404cd7628e2",
+  "branch": "codex/118-ios-unit-scope",
+  "scope": "Issue #118 scheduled iOS unit-test scope",
+  "result": "pass",
+  "recorded_at": "2026-08-29T15:55:40.462490+00:00",
+  "checks": [
+    {
+      "name": "workflow-yaml",
+      "status": "pass",
+      "command": "ruby YAML.parse_file for every .github/workflows/*.yml",
+      "note": ""
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py (103 tests)",
+      "note": ""
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "GitHub PR의 적용 가능한 check 성공과 병합 후 Scheduled iOS regression workflow_dispatch 실제 성공 확인"
+  ]
+}

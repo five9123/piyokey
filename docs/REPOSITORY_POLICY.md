@@ -57,6 +57,10 @@ started manually. It runs iOS unit tests on the pinned simulator. A failed or
 incomplete scheduled run closes the release gate until the failure is explained
 or a succeeding run covers the same source.
 
+The scheduled job explicitly selects `HancoTests`; it does not run
+`HancoUITests`. UI tests remain a targeted change or release-candidate gate so
+the weekly unit signal stays bounded and repeatable.
+
 Workflow dependencies use full commit SHAs with a nearby reviewed release tag
 comment. Repository settings allow GitHub-owned actions only and require SHA
 pinning. Dependabot vulnerability alerts and automated security updates are
