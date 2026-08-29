@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "5c60fff5c3e53d172e69ac79a73121a49eb81cd9",
+  "verified_tree": "41a3dcf49e5b3c43dd80a488749207545805a04a",
+  "branch": "codex/83-final-status",
+  "scope": "Issue #83 final repository status and iOS major-screen audit",
+  "result": "pass",
+  "recorded_at": "2026-08-29T03:58:15.501606+00:00",
+  "checks": [
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "primary major screens",
+      "status": "pass",
+      "command": "xcrun xcodebuild test-without-building -xctestrun artifacts/issue-83/DerivedData/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605 -resultBundlePath artifacts/issue-83/major-screens.xcresult -only-testing 7 selected HancoUITests",
+      "note": "7 tests, 0 failures; 19 screenshots"
+    },
+    {
+      "name": "additional major screens",
+      "status": "pass",
+      "command": "xcrun xcodebuild test-without-building -xctestrun artifacts/issue-83/DerivedData/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605 -resultBundlePath artifacts/issue-83/additional-screens.xcresult -only-testing 3 selected HancoUITests",
+      "note": "3 tests, 0 failures; 5 screenshots"
+    }
+  ],
+  "manual_gates": [
+    "실기기, App Store, IAP, Game Center, notification, catalog rights gates remain open"
+  ]
+}

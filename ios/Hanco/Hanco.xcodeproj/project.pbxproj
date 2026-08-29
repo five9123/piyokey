@@ -21,7 +21,6 @@
 		C0000000000000000000000B /* HancoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000D /* HancoUITests.swift */; };
 		C0000000000000000000000C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000B /* XCTest.framework */; };
 		C0000000000000000000000D /* InputLatencyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000F /* InputLatencyMonitor.swift */; };
-		C0000000000000000000000E /* PracticeSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000010 /* PracticeSetupView.swift */; };
 		C0000000000000000000000F /* ChickMascotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000011 /* ChickMascotView.swift */; };
 		C00000000000000000000010 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000012 /* AppRootView.swift */; };
 		C00000000000000000000011 /* CatalogRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000013 /* CatalogRepository.swift */; };
@@ -150,7 +149,6 @@
 		B0000000000000000000000D /* HancoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HancoUITests.swift; sourceTree = "<group>"; };
 		B0000000000000000000000E /* HancoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HancoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0000000000000000000000F /* InputLatencyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputLatencyMonitor.swift; sourceTree = "<group>"; };
-		B00000000000000000000010 /* PracticeSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSetupView.swift; sourceTree = "<group>"; };
 		B00000000000000000000011 /* ChickMascotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChickMascotView.swift; sourceTree = "<group>"; };
 		B00000000000000000000012 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
 		B00000000000000000000013 /* CatalogRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogRepository.swift; sourceTree = "<group>"; };
@@ -378,7 +376,6 @@
 				B00000000000000000000004 /* HangulKeyboardView.swift */,
 				B00000000000000000000005 /* PracticeView.swift */,
 				B0000000000000000000000F /* InputLatencyMonitor.swift */,
-				B00000000000000000000010 /* PracticeSetupView.swift */,
 				B0000000000000000000001E /* DeckPracticeDestination.swift */,
 				B00000000000000000000027 /* PracticeResultView.swift */,
 				B00000000000000000000044 /* OSIMEInputView.swift */,
@@ -861,7 +858,6 @@
 				C00000000000000000000004 /* HangulKeyboardView.swift in Sources */,
 				C00000000000000000000005 /* PracticeView.swift in Sources */,
 				C0000000000000000000000D /* InputLatencyMonitor.swift in Sources */,
-				C0000000000000000000000E /* PracticeSetupView.swift in Sources */,
 				C0000000000000000000000F /* ChickMascotView.swift in Sources */,
 				C0000000000000000000004E /* MascotGrowthSystem.swift in Sources */,
 				C00000000000000000000050 /* PiyokeyLogoMark.swift in Sources */,

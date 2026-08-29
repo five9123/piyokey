@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "verified_commit": "f370f5e2e64b3083be497f4ebd1f00a0ce163c02",
+  "verified_tree": "98ea5ce7450fd00396a934386a599d0f4643bd2d",
+  "branch": "codex/71-remove-free-practice",
+  "scope": "Issue #71 latest main integration: remove Free Practice from Practice tab",
+  "result": "pass",
+  "recorded_at": "2026-08-29T03:05:08.905161+00:00",
+  "checks": [
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Python 3.12.13; gh auth warning is sandbox/keychain scoped"
+    },
+    {
+      "name": "ui-language-scope",
+      "status": "pass",
+      "command": "python3 -m unittest tools.tests.test_ui_language_scope",
+      "note": "8 tests passed"
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "python3 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "android-regression",
+      "status": "pass",
+      "command": "env JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ./gradlew :core:retention:test :app:compileDebugKotlin :app:compileDebugAndroidTestKotlin",
+      "note": "BUILD SUCCESSFUL; 179 tasks"
+    },
+    {
+      "name": "iphone-practice-primary-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace -only-testing:HancoUITests/HancoUITests/testRomanHintPreferencePersistsAcrossRelaunch -only-testing:HancoUITests/HancoUITests/testSoundSettingAndPresetPersistAcrossRelaunch",
+      "note": "3 tests passed"
+    },
+    {
+      "name": "iphone-curriculum-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoUITests/HancoUITests/testCurriculumMapStartsWithSequentialCoreUnlocks",
+      "note": "individual rerun passed after aggregate simulator runner termination"
+    },
+    {
+      "name": "iphone-common-settings-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5 -only-testing:HancoUITests/HancoUITests/testJapaneseSettingsDefaultsCarryIntoDeckPractice",
+      "note": "individual rerun passed on a fresh simulator after aggregate AX termination"
+    },
+    {
+      "name": "ipad-practice-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5 -only-testing:HancoUITests/HancoUITests/testCurriculumMapStartsWithSequentialCoreUnlocks -only-testing:HancoUITests/HancoUITests/testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable",
+      "note": "2 tests passed"
+    }
+  ],
+  "manual_gates": [
+    "GitHub Actions is disabled and an independent approving review is still required before merge",
+    "Android device instrumentation was compiled but not executed"
+  ]
+}

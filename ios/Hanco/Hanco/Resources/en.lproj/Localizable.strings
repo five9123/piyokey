@@ -85,7 +85,7 @@
 "keyboard.space" = "Space";
 "keyboard.accessibility_label" = "Korean keyboard";
 "keyboard.layout.title" = "Built-in keyboard layout";
-"keyboard.layout.detail" = "Used in Chapter 5+, free practice, and deck practice. The layout is fixed when a session starts.";
+"keyboard.layout.detail" = "Used in Chapter 5+ and deck practice. The layout is fixed when a session starts.";
 "keyboard.layout.dubeolsik" = "2-Set (default)";
 "keyboard.layout.korean_10key" = "Korean 10-Key";
 "keyboard.layout.korean_10key_help" = "Repeat a grouped consonant key, use → between consecutive consonants in the same group, or combine ㅣ, ㆍ, and ㅡ in the highlighted order.";
@@ -286,8 +286,6 @@
 "curriculum.free_selection" = "Choose freely";
 "curriculum.resume" = "Resume";
 "curriculum.locked" = "Clear the previous stage to unlock";
-"curriculum.free_practice" = "Free practice";
-"curriculum.free_practice_detail" = "Adjust keyboard settings and practice three targets";
 
 "curriculum.chapter_1.title" = "Basic consonants";
 "curriculum.chapter_2.title" = "Basic vowels";
