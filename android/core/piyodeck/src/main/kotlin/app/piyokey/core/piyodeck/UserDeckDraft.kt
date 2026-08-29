@@ -16,6 +16,9 @@ public enum class UserDeckLanguage(public val code: String) {
   JAPANESE("ja"),
   ENGLISH("en"),
   KOREAN("ko"),
+  SPANISH("es"),
+  GERMAN("de"),
+  FRENCH("fr"),
 }
 
 public sealed interface UserDeckDraftOrigin {
@@ -281,7 +284,7 @@ public data class UserDeckDraft(
       if (language != UserDeckLanguage.JAPANESE && code == language.code) return@filter true
       if (localization.name.isBlank() || localization.authorNickname.isBlank()) return@filter false
       if (localization.tags.size != baseTags.size) return@filter false
-      if (code != UserDeckLanguage.ENGLISH.code) return@filter true
+      if (code == UserDeckLanguage.KOREAN.code) return@filter true
       items.all { item ->
         item.localizations?.get(code)?.let { it.meaning.isNotBlank() && it.reading.isNotBlank() } == true
       }

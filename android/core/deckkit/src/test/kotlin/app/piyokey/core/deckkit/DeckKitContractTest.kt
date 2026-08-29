@@ -32,7 +32,7 @@ class DeckKitContractTest {
   @Test
   fun officialCatalogAndTwentySixDecksPassSharedAndSemanticContracts() {
     val catalog = loadValidatedCatalog(mockCatalogRoot)
-    assertEquals(10, catalog.catalogVersion)
+    assertEquals(11, catalog.catalogVersion)
     assertEquals(26, catalog.decks.size)
     assertTrue(catalog.decks.all(CatalogDeck::official))
     assertTrue(catalog.decks.all { it.previewItems.size in 1..10 })
@@ -97,7 +97,7 @@ class DeckKitContractTest {
     val updateRoot = mockCatalogRoot.resolve("updates")
     val baseCatalog = loadValidatedCatalog(mockCatalogRoot)
     val updateCatalog = loadValidatedCatalog(updateRoot)
-    assertEquals(11, updateCatalog.catalogVersion)
+    assertEquals(12, updateCatalog.catalogVersion)
     assertEquals(26, updateCatalog.decks.size)
     assertEquals(baseCatalog.decks.map(DeckKitContractTest::catalogDeckId).toSet(), updateCatalog.decks.map(DeckKitContractTest::catalogDeckId).toSet())
 
@@ -110,9 +110,9 @@ class DeckKitContractTest {
 
     val baseDaily = baseCatalog.decks.single { it.deckId == "official_daily_words" }
     val updateDaily = updateCatalog.decks.single { it.deckId == "official_daily_words" }
-    assertEquals(4, baseDaily.version)
+    assertEquals(5, baseDaily.version)
     assertEquals(12, baseDaily.itemCount)
-    assertEquals(5, updateDaily.version)
+    assertEquals(6, updateDaily.version)
     assertEquals(13, updateDaily.itemCount)
     assertEquals("약속", decks.single { it.deckId == "official_daily_words" }.items.last().ko)
     updateCatalog.decks.filterNot { it.deckId == "official_daily_words" }.forEach { updated ->
@@ -166,6 +166,28 @@ class DeckKitContractTest {
   }
 
   @Test
+  fun expandedContentLocalesResolveRegionsAndRequireCompleteMeanings() {
+    val catalog = loadValidatedCatalog(mockCatalogRoot)
+    val entry = catalog.decks.first()
+    val deck = DeckKitJson.decodeValidatedDeck(
+      mockCatalogRoot.resolve(entry.fileUrl).readText(), deckSchemaSource,
+    )
+    for ((code, region) in mapOf("es" to "es-MX", "de" to "de-AT", "fr" to "fr-CA")) {
+      val item = deck.items.first()
+      assertEquals(deck.localizations?.get(code)?.name, deck.localizedName(region))
+      assertEquals(item.localizations?.get(code)?.meaning, item.localizedMeaning(region))
+      assertEquals(item.localizations?.get("en")?.reading, item.localizedReading(region))
+      assertEquals(entry.previewItems.first().localizedMeaning(region), item.localizedMeaning(region))
+      val broken = deck.copy(items = deck.items.mapIndexed { index, value ->
+        if (index == 0) value.copy(localizations = value.localizations.orEmpty() - code) else value
+      })
+      assertTrue(DeckValidator.validate(broken).any {
+        it.code == "missing_localization" && it.path == "items[0].localizations.$code"
+      })
+    }
+  }
+
+  @Test
   fun localizedAccessUsesJapaneseSourceKoreanThenEnglishAndEnglishForOtherLocales() {
     val catalog = loadValidatedCatalog(mockCatalogRoot)
     val catalogDeck = catalog.decks.first()
@@ -179,13 +201,13 @@ class DeckKitContractTest {
 
     assertEquals(deck.name, deck.localizedName("ja-JP"))
     assertEquals(deck.localizations?.get("ko")?.name, deck.localizedName("ko_KR"))
-    assertEquals(deck.localizations?.get("en")?.name, deck.localizedName("fr-FR"))
-    assertEquals(catalogDeck.localizations?.get("en")?.name, catalogDeck.localizedName("de"))
+    assertEquals(deck.localizations?.get("en")?.name, deck.localizedName("zh-Hant"))
+    assertEquals(catalogDeck.localizations?.get("en")?.name, catalogDeck.localizedName("it"))
     assertEquals(item.meaningJa, item.localizedMeaning("ja"))
     assertEquals(item.localizations?.get("en")?.meaning, item.localizedMeaning("ko"))
     assertEquals(item.localizations?.get("en")?.reading, item.localizedReading("fr"))
     assertEquals(preview.localizations?.get("en")?.meaning, preview.localizedMeaning("zh-Hant"))
-    assertEquals(tag.localizations?.get("en"), tag.localizedTag("es"))
+    assertEquals(tag.localizations?.get("en"), tag.localizedTag("pt"))
 
     val explicitKorean = item.copy(
       localizations = item.localizations.orEmpty() + (

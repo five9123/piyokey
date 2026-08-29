@@ -1,0 +1,368 @@
+{
+  "deck_id": "official_trending_korean",
+  "version": 5,
+  "name": "今どき韓国語",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "word",
+  "level": 2,
+  "tags": [
+    "今どき",
+    "SNS",
+    "公式"
+  ],
+  "created_at": "2026-02-25T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "레전드",
+      "reading_ja": "レジョンドゥ",
+      "meaning_ja": "伝説級",
+      "audio": "audio/ko_a0ccb4f04744f618c784.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "legendary",
+          "reading": "rejeondeu"
+        },
+        "es": {
+          "meaning": "legendario",
+          "reading": "rejeondeu"
+        },
+        "de": {
+          "meaning": "Legendär",
+          "reading": "rejeondeu"
+        },
+        "fr": {
+          "meaning": "légendaire",
+          "reading": "rejeondeu"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "찐이다",
+      "reading_ja": "チニダ",
+      "meaning_ja": "本物だ",
+      "audio": "audio/ko_22c90aa54a150c53dc7b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "It's the real deal",
+          "reading": "jjinida"
+        },
+        "es": {
+          "meaning": "Es auténtico",
+          "reading": "jjinida"
+        },
+        "de": {
+          "meaning": "Das ist echt",
+          "reading": "jjinida"
+        },
+        "fr": {
+          "meaning": "C’est authentique",
+          "reading": "jjinida"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "폼 미쳤다",
+      "reading_ja": "ポム ミチョッタ",
+      "meaning_ja": "絶好調だ",
+      "audio": "audio/ko_14aaa85fe192088f2797.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "You're on fire",
+          "reading": "pom michyeotda"
+        },
+        "es": {
+          "meaning": "Estás que te sales",
+          "reading": "pom michyeotda"
+        },
+        "de": {
+          "meaning": "Du bist in Höchstform",
+          "reading": "pom michyeotda"
+        },
+        "fr": {
+          "meaning": "Tu es au sommet de ta forme",
+          "reading": "pom michyeotda"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "저점매수",
+      "reading_ja": "チョジョムメス",
+      "meaning_ja": "底値買い",
+      "audio": "audio/ko_f5ce92f18ddbe70c5ece.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "buying the dip",
+          "reading": "jeojeommaesu"
+        },
+        "es": {
+          "meaning": "comprar tras una caída del precio",
+          "reading": "jeojeommaesu"
+        },
+        "de": {
+          "meaning": "Kauf bei Kursrückgang",
+          "reading": "jeojeommaesu"
+        },
+        "fr": {
+          "meaning": "achat après une baisse des cours",
+          "reading": "jeojeommaesu"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "너 뭐 돼",
+      "reading_ja": "ノ ムォ ドェ",
+      "meaning_ja": "お前、何様？",
+      "audio": "audio/ko_a55b7482135f22705fdb.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Who do you think you are?",
+          "reading": "neo mwo dwae"
+        },
+        "es": {
+          "meaning": "¿Quién te crees que eres?",
+          "reading": "neo mwo dwae"
+        },
+        "de": {
+          "meaning": "Für wen hältst du dich?",
+          "reading": "neo mwo dwae"
+        },
+        "fr": {
+          "meaning": "Tu te prends pour qui ?",
+          "reading": "neo mwo dwae"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "야호",
+      "reading_ja": "ヤホ",
+      "meaning_ja": "やっほー",
+      "audio": "audio/ko_76e9a12ea8ae92109aa6.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Woo-hoo!",
+          "reading": "yaho"
+        },
+        "es": {
+          "meaning": "¡Yuju!",
+          "reading": "yaho"
+        },
+        "de": {
+          "meaning": "Juhu!",
+          "reading": "yaho"
+        },
+        "fr": {
+          "meaning": "Youhou !",
+          "reading": "yaho"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "완전 좋아",
+      "reading_ja": "ワンジョン チョア",
+      "meaning_ja": "すごく好き",
+      "audio": "audio/ko_39490b6e7f3e7c23d5af.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I love it",
+          "reading": "wanjeon joha"
+        },
+        "es": {
+          "meaning": "Me encanta",
+          "reading": "wanjeon joha"
+        },
+        "de": {
+          "meaning": "Ich finde es toll",
+          "reading": "wanjeon joha"
+        },
+        "fr": {
+          "meaning": "J’adore",
+          "reading": "wanjeon joha"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "가보자고",
+      "reading_ja": "カボジャゴ",
+      "meaning_ja": "行ってみよう",
+      "audio": "audio/ko_d790729c6cf0ce7a4f51.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's go check it out",
+          "reading": "gabojago"
+        },
+        "es": {
+          "meaning": "Vamos a verlo",
+          "reading": "gabojago"
+        },
+        "de": {
+          "meaning": "Schauen wir es uns an",
+          "reading": "gabojago"
+        },
+        "fr": {
+          "meaning": "Allons voir ça",
+          "reading": "gabojago"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "인정",
+      "reading_ja": "インジョン",
+      "meaning_ja": "同意",
+      "audio": "audio/ko_bb87832283f89efca668.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Agreed",
+          "reading": "injeong"
+        },
+        "es": {
+          "meaning": "De acuerdo",
+          "reading": "injeong"
+        },
+        "de": {
+          "meaning": "Stimmt",
+          "reading": "injeong"
+        },
+        "fr": {
+          "meaning": "D’accord",
+          "reading": "injeong"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "취향 저격",
+      "reading_ja": "チュィヒャン チョギョク",
+      "meaning_ja": "好みにぴったり",
+      "audio": "audio/ko_66bd414d95573fcf90bb.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Exactly my taste",
+          "reading": "chwihyang jeogyeok"
+        },
+        "es": {
+          "meaning": "Justo mi estilo",
+          "reading": "chwihyang jeogyeok"
+        },
+        "de": {
+          "meaning": "Genau mein Geschmack",
+          "reading": "chwihyang jeogyeok"
+        },
+        "fr": {
+          "meaning": "Exactement mon style",
+          "reading": "chwihyang jeogyeok"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "소확행",
+      "reading_ja": "ソファケン",
+      "meaning_ja": "小さくても確かな幸せ",
+      "audio": "audio/ko_bcb9aa01b77abd6e72ff.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "small but certain happiness",
+          "reading": "sohwakhaeng"
+        },
+        "es": {
+          "meaning": "pequeña felicidad segura",
+          "reading": "sohwakhaeng"
+        },
+        "de": {
+          "meaning": "Kleines, sicheres Glück",
+          "reading": "sohwakhaeng"
+        },
+        "fr": {
+          "meaning": "petit bonheur certain",
+          "reading": "sohwakhaeng"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "눈치 게임",
+      "reading_ja": "ヌンチ ゲイム",
+      "meaning_ja": "空気の読み合い",
+      "audio": "audio/ko_b25ab7dfb912524f7eac.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "reading-the-room game",
+          "reading": "nunchi geim"
+        },
+        "es": {
+          "meaning": "juego de anticipar a los demás",
+          "reading": "nunchi geim"
+        },
+        "de": {
+          "meaning": "Spiel ums richtige Gespür",
+          "reading": "nunchi geim"
+        },
+        "fr": {
+          "meaning": "jeu d’anticipation des autres",
+          "reading": "nunchi geim"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Korean Slang & Trends",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Trending",
+        "Social Media",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "요즘 한국어",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "요즘",
+        "SNS",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Jerga y tendencias coreanas",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Tendencias",
+        "Redes sociales",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Koreanischer Slang & Trends",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Im Trend",
+        "Soziale Medien",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Argot et tendances en coréen",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Tendances",
+        "Réseaux sociaux",
+        "Officiel"
+      ]
+    }
+  }
+}

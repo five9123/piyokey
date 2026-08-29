@@ -345,8 +345,7 @@ struct RetentionHomeView: View {
     let encouragement = AppLocalization.string(
       dailyEncouragementKey
     )
-    let streakText = String(
-      format: AppLocalization.string("retention.streak.current_format"),
+    let streakText = AppLocalization.format("retention.streak.current_format",
       streak.current
     )
     let daySummary = calendarDays.map { day in
@@ -518,16 +517,14 @@ private struct StampWeekHeader: View {
       Spacer(minLength: 6)
       VStack(alignment: .trailing, spacing: 3) {
         Text(
-          String(
-            format: AppLocalization.string("retention.week.progress_format"),
+          AppLocalization.format("retention.week.progress_format",
             stampedDayCount
           )
         )
         .font(.subheadline.monospacedDigit().weight(.black))
         .foregroundStyle(AppPalette.accent)
         Text(
-          String(
-            format: AppLocalization.string("retention.streak.current_format"),
+          AppLocalization.format("retention.streak.current_format",
             streak.current
           )
         )
@@ -670,8 +667,7 @@ struct MyPiyoDetailView: View {
       SevenDayStampRow(today: today)
 
       Text(
-        String(
-          format: AppLocalization.string("retention.streak.longest_format"),
+        AppLocalization.format("retention.streak.longest_format",
           streak.longest
         )
       )

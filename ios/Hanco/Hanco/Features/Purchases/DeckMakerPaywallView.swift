@@ -277,9 +277,7 @@ struct DeckMakerPaywallView: View {
       }
       return AppLocalization.string("deck_maker.paywall.retry")
     }
-    return String(
-      format: AppLocalization.string("deck_maker.paywall.purchase_format"),
-      locale: AppLocalization.locale,
+    return AppLocalization.format("deck_maker.paywall.purchase_format",
       displayPrice
     )
   }

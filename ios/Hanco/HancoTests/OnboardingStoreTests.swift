@@ -10,6 +10,7 @@ final class OnboardingStoreTests: XCTestCase {
     let store = OnboardingStore(defaults: defaults)
     var snapshot = OnboardingSnapshot.empty
     snapshot.selectedGoal = .travel
+    snapshot.selectedLevel = .words
     snapshot.step = .lesson
     snapshot.isCompleted = true
 
@@ -72,10 +73,43 @@ final class OnboardingStoreTests: XCTestCase {
     defer { clear(defaults) }
     let store = OnboardingStore(defaults: defaults)
     defaults.set(true, forKey: OnboardingStore.appTourCompletedKey)
+    defaults.set(true, forKey: OnboardingStore.homeLearningStartedKey)
 
     store.reset()
 
     XCTAssertFalse(defaults.bool(forKey: OnboardingStore.appTourCompletedKey))
+    XCTAssertFalse(defaults.bool(forKey: OnboardingStore.homeLearningStartedKey))
+  }
+
+  func testExistingCompletedAndInFlightSnapshotsKeepTheirStepWithoutLevel() throws {
+    for step in [1, 2, 3] {
+      for completed in [false, true] {
+        let data = Data("{\"schema_version\":1,\"is_completed\":\(completed),\"was_skipped\":false,\"selected_goal\":\"travel\",\"step\":\(step)}".utf8)
+        let snapshot = try JSONDecoder().decode(OnboardingSnapshot.self, from: data)
+        XCTAssertNil(snapshot.selectedLevel)
+        XCTAssertEqual(snapshot.step.rawValue, step)
+        XCTAssertEqual(snapshot.isCompleted, completed)
+      }
+    }
+    XCTAssertEqual(OnboardingStep.allCases.map(\.position), [1, 2, 3, 4])
+  }
+
+  @MainActor
+  func testLevelSelectionAndStepSurviveRelaunchAndSkip() {
+    let defaults = makeDefaults()
+    defer { clear(defaults) }
+    let store = OnboardingStore(defaults: defaults)
+    let library = OnboardingLibrary(store: store, hasLegacyData: { false })
+    library.select(.trends)
+    library.selectLevel(.sentences)
+    library.move(to: .level)
+    let restored = OnboardingLibrary(store: store, hasLegacyData: { false })
+    XCTAssertEqual(restored.selectedGoal, .trends)
+    XCTAssertEqual(restored.selectedLevel, .sentences)
+    XCTAssertEqual(restored.snapshot.step, .level)
+    restored.complete(skipped: true)
+    XCTAssertEqual(restored.selectedLevel, .sentences)
+    XCTAssertFalse(restored.shouldPresent)
   }
 
   func testLegacyGoalValuesMigrateToCurrentLaunchGoals() throws {

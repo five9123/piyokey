@@ -756,7 +756,7 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
     if not items:
         issues.append("$.items: at least one item is required")
     seen_ids: set[str] = set()
-    english_metadata = isinstance(localizations, dict) and "en" in localizations
+    required_locales = set(localizations) - {"ko"} if isinstance(localizations, dict) else set()
     for index, item in enumerate(items):
         if not isinstance(item, dict):
             continue
@@ -784,10 +784,9 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
             if not _trimmed(item.get(field)):
                 issues.append(f"{path}.{field}: must not be blank")
         item_localizations = item.get("localizations")
-        if english_metadata and (
-            not isinstance(item_localizations, dict) or "en" not in item_localizations
-        ):
-            issues.append(f"{path}.localizations.en: required by English deck metadata")
+        for language in sorted(required_locales):
+            if not isinstance(item_localizations, dict) or language not in item_localizations:
+                issues.append(f"{path}.localizations.{language}: required by deck metadata")
         if isinstance(item_localizations, dict):
             for language, localization in item_localizations.items():
                 if not isinstance(localization, dict):

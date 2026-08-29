@@ -52,10 +52,42 @@ enum OnboardingGoal: String, Codable, CaseIterable, Identifiable {
   }
 }
 
+enum OnboardingLevel: String, Codable, CaseIterable, Identifiable {
+  case beginner, jamo, words, sentences
+
+  var id: Self { self }
+  var titleKey: String { "onboarding.level.\(rawValue).title" }
+  var detailKey: String { "onboarding.level.\(rawValue).detail" }
+
+  func recommendationRank(level: Int, tags: [String], isSentence: Bool) -> Int {
+    switch self {
+    case .beginner:
+      return abs(level - 1) * 10 + (tags.contains("入門") ? 0 : 1)
+    case .jamo:
+      return abs(level - 1) * 10 + (!tags.contains("入門") && !isSentence ? 0 : 1)
+    case .words:
+      return abs(level - 2) * 10
+    case .sentences:
+      return max(0, level - 3) * 10 + (isSentence && level >= 2 ? 0 : 1)
+    }
+  }
+}
+
 enum OnboardingStep: Int, Codable, CaseIterable {
   case goal = 1
-  case keyboard
-  case lesson
+  // Preserve stored step IDs from the original three-step introduction.
+  case level = 4
+  case keyboard = 2
+  case lesson = 3
+
+  var position: Int {
+    switch self {
+    case .goal: 1
+    case .level: 2
+    case .keyboard: 3
+    case .lesson: 4
+    }
+  }
 }
 
 struct OnboardingSnapshot: Codable, Equatable {
@@ -64,6 +96,7 @@ struct OnboardingSnapshot: Codable, Equatable {
   var wasSkipped: Bool
   var selectedGoal: OnboardingGoal?
   var step: OnboardingStep
+  var selectedLevel: OnboardingLevel? = nil
 
   static let empty = OnboardingSnapshot(
     schemaVersion: 1,
@@ -78,6 +111,7 @@ struct OnboardingSnapshot: Codable, Equatable {
     case isCompleted = "is_completed"
     case wasSkipped = "was_skipped"
     case selectedGoal = "selected_goal"
+    case selectedLevel = "selected_level"
     case step
   }
 }
@@ -91,6 +125,7 @@ struct OnboardingStore {
   static let stateBackupKey = "onboarding.state.backup"
   static let stateCorruptKey = "onboarding.state.corrupt"
   static let appTourCompletedKey = "onboarding.app_tour.completed"
+  static let homeLearningStartedKey = "onboarding.home_learning_started"
   private static let currentSchemaVersion = 1
 
   private let defaults: UserDefaults
@@ -158,6 +193,7 @@ struct OnboardingStore {
     defaults.removeObject(forKey: Self.stateBackupKey)
     defaults.removeObject(forKey: Self.stateCorruptKey)
     defaults.removeObject(forKey: Self.appTourCompletedKey)
+    defaults.removeObject(forKey: Self.homeLearningStartedKey)
   }
 }
 
@@ -222,10 +258,15 @@ final class OnboardingLibrary: ObservableObject {
   }
 
   var selectedGoal: OnboardingGoal? { snapshot.selectedGoal }
+  var selectedLevel: OnboardingLevel? { snapshot.selectedLevel }
   var preferredTags: [String] { snapshot.selectedGoal?.preferredTags ?? [] }
 
   func select(_ goal: OnboardingGoal) {
     mutate { $0.selectedGoal = goal }
+  }
+
+  func selectLevel(_ level: OnboardingLevel) {
+    mutate { $0.selectedLevel = level }
   }
 
   func move(to step: OnboardingStep) {

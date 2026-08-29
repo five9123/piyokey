@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "verified_commit": "1c7dc566e0ebd3302f7a35a2a563735ebc21a6dc",
+  "verified_tree": "0764c23d7b0f8e226f5c287c9268516dc52f79c3",
+  "branch": "codex/79-final-qa",
+  "scope": "#79 final stacked iPad layout, all-landscape App Store assets, and release readiness (not release approval)",
+  "result": "fail",
+  "recorded_at": "2026-08-28T19:17:39.400119+00:00",
+  "checks": [
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": "clean owned worktree; gh authenticated; origin/main fa28c490"
+    },
+    {
+      "name": "python",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests",
+      "note": "97 tests; python-final-head.log"
+    },
+    {
+      "name": "swift-shared-reused",
+      "status": "pass",
+      "command": "swift test --scratch-path /private/tmp/piyokey-qa79-results/swift-build",
+      "note": "45 prior tests; shared and pure Swift package unchanged; not rerun for UI-only revision"
+    },
+    {
+      "name": "iphone-unit-ui",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/Stacked/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination \"platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/iphone-stacked-final.xcresult \"-only-testing:HancoTests\" \"-only-testing:HancoUITests/HancoUITests/testInitialJapanesePracticeScreenSnapshot\" \"-only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace\" \"-only-testing:HancoUITests/HancoUITests/testDictationUsesAudioOnlyPromptAndCompletesTypedAnswer\" \"-only-testing:HancoUITests/HancoUITests/testChoseongAndWordMatchShareThreeQuestionPronunciationHintBudget\"",
+      "note": "iphone-stacked-final.xcresult at c49bc84: 367 unit and 4 focused UI pass. f674b57 changes only expanded short-landscape quiz composition scale, no compact iPhone behavior"
+    },
+    {
+      "name": "ipad-mini-final",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/piyokey-qa79-results/Stacked/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -destination \"platform=iOS Simulator,id=9CFC020B-ECE8-4179-917F-3B8670B637BF\" -parallel-testing-enabled NO -resultBundlePath /private/tmp/piyokey-qa79-results/mini-clearance-final.xcresult \"-only-testing:HancoUITests/HancoUITests/testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard\" \"-only-testing:HancoUITests/HancoUITests/testIPadLandscapeGameControlsRemainVisible\"",
+      "note": "mini-clearance-final.xcresult: final app f674b57, 2 UI pass covering practice rotation/input preservation and 6 landscape games. Images visually checked; caption clearance enforced"
+    },
+    {
+      "name": "ipad-pro-final",
+      "status": "pass",
+      "command": "python3.12 /private/tmp/verify_pro_orientation79.py",
+      "note": "pro-orientation-verified.xcresult: 2 UI pass on HEAD, actual app width > height required; 6 games plus portrait/landscape practice visually checked"
+    },
+    {
+      "name": "ipad-accessibility",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -only-testing:HancoUITests/HancoUITests/testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable",
+      "note": "pro-stacked-final.xcresult at c49bc84: portrait accessibility case pass. Landscape cases in that older result were actually portrait and are NOT final landscape evidence; superseded by pro-orientation-verified"
+    },
+    {
+      "name": "release-simulator",
+      "status": "pass",
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination \"platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416\" -derivedDataPath /private/tmp/piyokey-qa79-results/Release -clonedSourcePackagesDirPath /private/tmp/piyokey-qa79-results/DerivedData/SourcePackages -disableAutomaticPackageResolution",
+      "note": "release-stacked-clearance.log: final app f674b57. Earlier generic-destination/-arch command failed before compilation; no signed archive created"
+    },
+    {
+      "name": "store-capture",
+      "status": "pass",
+      "command": "python3.12 /private/tmp/capture_landscape_v3_79.py",
+      "note": "5 UI languages pass, 50 actual landscape sources; captured at 5b5ab82; app code identical to f674b57 and HEAD; executable SHA256 7314bce8d272f4ec6f1b555d163550b01bb954152057120b8bc8a9f658b07e88"
+    },
+    {
+      "name": "landscape-assets",
+      "status": "pass",
+      "command": "python3 /private/tmp/verify_landscape_delivery79.py",
+      "note": "100 RGB 2752x2064 PNG, 50 source PNG, 160 SHA256 including 10 ZIPs, ZIP CRC/count pass; ja preview byte identity; all 10 contact sheets plus full-size representative images visually checked. Not native-language human approval"
+    },
+    {
+      "name": "app-source-identity",
+      "status": "pass",
+      "command": "git diff --exit-code f674b57 HEAD -- ios/Hanco/Hanco shared",
+      "note": "No app/shared source change since final mini fix"
+    },
+    {
+      "name": "preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": "preflight-final-head.log"
+    },
+    {
+      "name": "strict-release",
+      "status": "fail",
+      "command": "python3.12 tools/release_preflight.py --strict",
+      "note": "strict-final-head.log: 38 existing open release findings"
+    },
+    {
+      "name": "store-upload",
+      "status": "fail",
+      "command": "Chrome browser file chooser setFiles for en-US iPad 13-inch",
+      "note": "File upload returned -32000 Not allowed. Re-read slot: 0 of 10. No image upload/save/review submission completed; do not bypass permission restriction"
+    }
+  ],
+  "manual_gates": [
+    "PR #80 CI/independent review: Actions disabled; no reviews/checks. Prior exceptions do not apply. Explicit current-PR exception or normal gates required before merge.",
+    "After merge, fresh origin/main tree gate and new signed RC/TestFlight build; current 1.1(7) does not contain #79.",
+    "Actual iPhone/iPad update preservation, Split View/Stage Manager, OS/physical keyboards, audio, Files/iCloud/AirDrop, 1000 items, Game Center/60fps/notifications.",
+    "Paid Apps Agreement Pending User Info; bank and Korea tax pending. US Foreign Status and W-8BEN Active observed. Account Holder must complete financial forms.",
+    "IAP review metadata/version association and Sandbox purchase/cancel/pending/restore/refund; privacy/rights/DSA gates.",
+    "Restore permitted browser file upload or user uploads provided files. Final RC/media match and native-language review before review submission.",
+    "Seven new store localizations require public metadata registration; public copy edits require action-time confirmation. Existing six version locales remain untouched."
+  ]
+}

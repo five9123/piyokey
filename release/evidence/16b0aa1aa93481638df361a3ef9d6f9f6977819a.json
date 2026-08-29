@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "16b0aa1aa93481638df361a3ef9d6f9f6977819a",
+  "verified_tree": "1ac4b187301ad35e13b9bb351ae133b810d11522",
+  "branch": "codex/local-es-de-fr",
+  "scope": "Simulator and emulator connection preflight only; app tests not started",
+  "result": "fail",
+  "recorded_at": "2026-08-28T12:24:53.897599+00:00",
+  "checks": [
+    {
+      "name": "iOS simulator connection",
+      "status": "fail",
+      "command": "xcrun simctl list devices available --json",
+      "note": "CoreSimulatorService connection invalid; log access Operation not permitted; device set unavailable."
+    },
+    {
+      "name": "Android device connection",
+      "status": "fail",
+      "command": "/Users/jungminoh/Library/Android/sdk/platform-tools/adb devices -l",
+      "note": "ADB could not install smartsocket listener: Operation not permitted; server could not start."
+    },
+    {
+      "name": "Android AVD registration",
+      "status": "pass",
+      "command": "/Users/jungminoh/Library/Android/sdk/emulator/emulator -list-avds",
+      "note": "hantap_test listed; does not prove boot or application execution."
+    },
+    {
+      "name": "Workspace policy",
+      "status": "fail",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Python 3.12.13 passes; Issue ownership remains unclaimed under local-only exception. GitHub auth warning; no remote operation."
+    },
+    {
+      "name": "iOS app and UI tests",
+      "status": "skip",
+      "command": "xcodebuild test",
+      "note": "Not started because simulator service cannot be accessed in this execution environment."
+    },
+    {
+      "name": "Android connected instrumentation",
+      "status": "skip",
+      "command": "./gradlew :app:connectedDebugAndroidTest",
+      "note": "Not started because ADB server cannot listen in this execution environment."
+    }
+  ],
+  "manual_gates": [
+    "A local execution environment with authorized CoreSimulator and ADB access is required; the current session cannot request elevated execution.",
+    "Run existing iOS language persistence, formatting, reminder and large text tests; Android settings/discovery/editor/retention and large text instrumentation; verify all es/de/fr screens and capture evidence.",
+    "Physical device notification timing, performance, purchases and store gates remain separate from simulator validation."
+  ]
+}

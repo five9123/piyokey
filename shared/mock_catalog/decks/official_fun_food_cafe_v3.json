@@ -1,0 +1,374 @@
+{
+  "deck_id": "official_fun_food_cafe",
+  "version": 3,
+  "name": "カフェ・グルメのひと言",
+  "author": {
+    "id": "official_hanco",
+    "nickname": "ピヨキー 公式"
+  },
+  "official": true,
+  "type": "sentence",
+  "level": 2,
+  "tags": [
+    "韓国旅行",
+    "グルメ",
+    "会話",
+    "公式"
+  ],
+  "created_at": "2026-04-06T00:00:00Z",
+  "updated_at": "2026-08-28T00:00:00Z",
+  "items": [
+    {
+      "id": "i_001",
+      "ko": "디저트는 못 참아",
+      "reading_ja": "ティジョトゥヌン モッ チャマ",
+      "meaning_ja": "デザートは我慢できない",
+      "audio": "audio/ko_e38d7b64228e32f4d85d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I can't resist dessert",
+          "reading": "dijeoteuneun mot chama"
+        },
+        "es": {
+          "meaning": "No puedo resistirme al postre",
+          "reading": "dijeoteuneun mot chama"
+        },
+        "de": {
+          "meaning": "Ich kann Nachtisch nicht widerstehen",
+          "reading": "dijeoteuneun mot chama"
+        },
+        "fr": {
+          "meaning": "Je ne peux pas résister au dessert",
+          "reading": "dijeoteuneun mot chama"
+        }
+      }
+    },
+    {
+      "id": "i_002",
+      "ko": "여기 또 오고 싶다",
+      "reading_ja": "ヨギ ト オゴ シプタ",
+      "meaning_ja": "ここにまた来たい",
+      "audio": "audio/ko_921c21fc461a5d8eb4f1.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I want to come here again",
+          "reading": "yeogi tto ogo sipda"
+        },
+        "es": {
+          "meaning": "Quiero volver aquí",
+          "reading": "yeogi tto ogo sipda"
+        },
+        "de": {
+          "meaning": "Ich möchte wieder hierherkommen",
+          "reading": "yeogi tto ogo sipda"
+        },
+        "fr": {
+          "meaning": "Je veux revenir ici",
+          "reading": "yeogi tto ogo sipda"
+        }
+      }
+    },
+    {
+      "id": "i_003",
+      "ko": "매운맛 도전할게요",
+      "reading_ja": "メウンマッ トジョナルケヨ",
+      "meaning_ja": "辛い味に挑戦します",
+      "audio": "audio/ko_6f24f8ff089e493c704b.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "I'll try the spicy version",
+          "reading": "maeunmat dojeonhalgeyo"
+        },
+        "es": {
+          "meaning": "Voy a probar la versión picante",
+          "reading": "maeunmat dojeonhalgeyo"
+        },
+        "de": {
+          "meaning": "Ich probiere die scharfe Variante",
+          "reading": "maeunmat dojeonhalgeyo"
+        },
+        "fr": {
+          "meaning": "Je vais essayer la version épicée",
+          "reading": "maeunmat dojeonhalgeyo"
+        }
+      }
+    },
+    {
+      "id": "i_004",
+      "ko": "아이스로 주세요",
+      "reading_ja": "アイスロ ジュセヨ",
+      "meaning_ja": "アイスでください",
+      "audio": "audio/ko_92ef2d58b56dd6b421c5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Iced, please",
+          "reading": "aiseuro juseyo"
+        },
+        "es": {
+          "meaning": "Con hielo, por favor",
+          "reading": "aiseuro juseyo"
+        },
+        "de": {
+          "meaning": "Mit Eis, bitte",
+          "reading": "aiseuro juseyo"
+        },
+        "fr": {
+          "meaning": "Avec des glaçons, s’il vous plaît",
+          "reading": "aiseuro juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_005",
+      "ko": "덜 맵게 해 주세요",
+      "reading_ja": "トル メプケ ヘ ジュセヨ",
+      "meaning_ja": "辛さ控えめにしてください",
+      "audio": "audio/ko_6e3cf6662cd83e3e9306.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Please make it less spicy",
+          "reading": "deol maepge hae juseyo"
+        },
+        "es": {
+          "meaning": "Menos picante, por favor",
+          "reading": "deol maepge hae juseyo"
+        },
+        "de": {
+          "meaning": "Bitte weniger scharf",
+          "reading": "deol maepge hae juseyo"
+        },
+        "fr": {
+          "meaning": "Moins épicé, s’il vous plaît",
+          "reading": "deol maepge hae juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_006",
+      "ko": "이거 진짜 맛있다",
+      "reading_ja": "イゴ チンチャ マシッタ",
+      "meaning_ja": "これ、本当においしい",
+      "audio": "audio/ko_bcc105b025239446ce5e.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "This is really delicious",
+          "reading": "igeo jinjja matitda"
+        },
+        "es": {
+          "meaning": "Esto está riquísimo",
+          "reading": "igeo jinjja matitda"
+        },
+        "de": {
+          "meaning": "Das ist wirklich lecker",
+          "reading": "igeo jinjja matitda"
+        },
+        "fr": {
+          "meaning": "C’est vraiment délicieux",
+          "reading": "igeo jinjja matitda"
+        }
+      }
+    },
+    {
+      "id": "i_007",
+      "ko": "한입만 주세요",
+      "reading_ja": "ハニムマン ジュセヨ",
+      "meaning_ja": "一口だけください",
+      "audio": "audio/ko_9c1e4289632221260870.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Just one bite, please",
+          "reading": "hanipman juseyo"
+        },
+        "es": {
+          "meaning": "Solo un bocado, por favor",
+          "reading": "hanipman juseyo"
+        },
+        "de": {
+          "meaning": "Nur einen Bissen, bitte",
+          "reading": "hanipman juseyo"
+        },
+        "fr": {
+          "meaning": "Juste une bouchée, s’il te plaît",
+          "reading": "hanipman juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_008",
+      "ko": "사진부터 찍자",
+      "reading_ja": "サジンブト チクチャ",
+      "meaning_ja": "まず写真を撮ろう",
+      "audio": "audio/ko_2ee76cfb23467d29e4c8.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "Let's take a photo first",
+          "reading": "sajinbuteo jjikja"
+        },
+        "es": {
+          "meaning": "Hagamos una foto primero",
+          "reading": "sajinbuteo jjikja"
+        },
+        "de": {
+          "meaning": "Machen wir erst ein Foto",
+          "reading": "sajinbuteo jjikja"
+        },
+        "fr": {
+          "meaning": "Prenons d’abord une photo",
+          "reading": "sajinbuteo jjikja"
+        }
+      }
+    },
+    {
+      "id": "i_009",
+      "ko": "카페 분위기 좋다",
+      "reading_ja": "カペ プニギ チョタ",
+      "meaning_ja": "カフェの雰囲気がいい",
+      "audio": "audio/ko_080768f21f03bdfff3b5.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "This cafe has a great vibe",
+          "reading": "kape bunwigi johda"
+        },
+        "es": {
+          "meaning": "Esta cafetería tiene muy buen ambiente",
+          "reading": "kape bunwigi johda"
+        },
+        "de": {
+          "meaning": "Dieses Café hat eine tolle Atmosphäre",
+          "reading": "kape bunwigi johda"
+        },
+        "fr": {
+          "meaning": "Ce café a une super ambiance",
+          "reading": "kape bunwigi johda"
+        }
+      }
+    },
+    {
+      "id": "i_010",
+      "ko": "추천 메뉴 뭐예요",
+      "reading_ja": "チュチョン メニュ ムォエヨ",
+      "meaning_ja": "おすすめは何ですか",
+      "audio": "audio/ko_84c3e6a41671ebea1351.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "What do you recommend?",
+          "reading": "chucheon menyu mwoyeyo"
+        },
+        "es": {
+          "meaning": "¿Qué me recomienda?",
+          "reading": "chucheon menyu mwoyeyo"
+        },
+        "de": {
+          "meaning": "Was empfehlen Sie?",
+          "reading": "chucheon menyu mwoyeyo"
+        },
+        "fr": {
+          "meaning": "Que recommandez-vous ?",
+          "reading": "chucheon menyu mwoyeyo"
+        }
+      }
+    },
+    {
+      "id": "i_011",
+      "ko": "포장해 주세요",
+      "reading_ja": "ポジャンヘ ジュセヨ",
+      "meaning_ja": "持ち帰りにしてください",
+      "audio": "audio/ko_2828ac779428bdb5384d.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "To go, please",
+          "reading": "pojanghae juseyo"
+        },
+        "es": {
+          "meaning": "Para llevar, por favor",
+          "reading": "pojanghae juseyo"
+        },
+        "de": {
+          "meaning": "Zum Mitnehmen, bitte",
+          "reading": "pojanghae juseyo"
+        },
+        "fr": {
+          "meaning": "À emporter, s’il vous plaît",
+          "reading": "pojanghae juseyo"
+        }
+      }
+    },
+    {
+      "id": "i_012",
+      "ko": "계산은 따로 할게요",
+      "reading_ja": "ケサヌン タロ ハルケヨ",
+      "meaning_ja": "別会計にします",
+      "audio": "audio/ko_1822a0f0ac1f86f8daa7.mp3",
+      "localizations": {
+        "en": {
+          "meaning": "We'll pay separately",
+          "reading": "gyesaneun ttaro halgeyo"
+        },
+        "es": {
+          "meaning": "Pagaremos por separado",
+          "reading": "gyesaneun ttaro halgeyo"
+        },
+        "de": {
+          "meaning": "Wir zahlen getrennt",
+          "reading": "gyesaneun ttaro halgeyo"
+        },
+        "fr": {
+          "meaning": "Nous paierons séparément",
+          "reading": "gyesaneun ttaro halgeyo"
+        }
+      }
+    }
+  ],
+  "localizations": {
+    "en": {
+      "name": "Cafe & Food One-Liners",
+      "author_nickname": "typee Official",
+      "tags": [
+        "Korea Travel",
+        "Food & Dining",
+        "Conversation",
+        "Official"
+      ]
+    },
+    "ko": {
+      "name": "카페·맛집 한마디",
+      "author_nickname": "피요키 공식",
+      "tags": [
+        "한국 여행",
+        "맛집",
+        "회화",
+        "공식"
+      ]
+    },
+    "es": {
+      "name": "Frases de cafetería y restaurante",
+      "author_nickname": "typee Oficial",
+      "tags": [
+        "Viajes a Corea",
+        "Comida y restaurantes",
+        "Conversación",
+        "Oficial"
+      ]
+    },
+    "de": {
+      "name": "Kurze Sprüche für Café & Essen",
+      "author_nickname": "typee Offiziell",
+      "tags": [
+        "Korea-Reisen",
+        "Essen & Restaurants",
+        "Gespräch",
+        "Offiziell"
+      ]
+    },
+    "fr": {
+      "name": "Petites phrases au café et au restaurant",
+      "author_nickname": "typee Officiel",
+      "tags": [
+        "Voyage en Corée",
+        "Cuisine et restaurants",
+        "Conversation",
+        "Officiel"
+      ]
+    }
+  }
+}

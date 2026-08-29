@@ -153,7 +153,7 @@
 "app_tour.finish" = "ホームへ";
 "app_tour.progress_format" = "%d / %d";
 "app_tour.homePrimary.title" = "まずは今日の3分から";
-"app_tour.homePrimary.detail" = "ホームの大きなボタンから、目的に合った5問や前回の続きへすぐ進めます。";
+"app_tour.homePrimary.detail" = "レベルと目的に合うデッキから始めましょう。練習したあとは、このボタンから続きを始められます。";
 "app_tour.discoverSearch.title" = "好きな韓国語を見つけよう";
 "app_tour.discoverSearch.detail" = "「さがす」ではデッキ名・タグ・作者を検索して、気になる教材をダウンロードできます。";
 "app_tour.practiceCurriculum.title" = "基礎を順番に伸ばそう";
@@ -1004,7 +1004,7 @@
 "deck_maker.product.unavailable.title" = "価格を取得できませんでした";
 "deck_maker.product.unavailable.message" = "しばらくしてから、価格をもう一度読み込んでください。";
 
-/* PIYOKEY deck documents and editor */
+/* ピヨキー deck documents and editor */
 "deck_editor.title.new" = "新しいデッキ";
 "deck_editor.title.edit" = "デッキを編集";
 "deck_editor.title.copy" = "自分用コピーを編集";
@@ -1139,3 +1139,28 @@
 "piyodeck.import.action.replace.same_version_hint" = "同じバージョン番号の異なる内容で現在のデッキを置き換えます。確認画面が開きます。";
 
 "settings.language.spanish" = "Español";
+
+// Onboarding level and first home recommendation
+"onboarding.level.title" = "韓国語はどのくらい入力できますか？";
+"onboarding.level.subtitle" = "今の自分に近いものを選んでください。目的とレベルに合う最初のデッキをおすすめします。";
+"onboarding.level.beginner.title" = "これからはじめる";
+"onboarding.level.beginner.detail" = "キーボードの位置とハングルから覚えたい";
+"onboarding.level.jamo.title" = "子音・母音がわかる";
+"onboarding.level.jamo.detail" = "文字は読めるので、やさしい単語を入力したい";
+"onboarding.level.words.title" = "簡単な単語を入力できる";
+"onboarding.level.words.detail" = "速さを伸ばして、役立つ表現にも挑戦したい";
+"onboarding.level.sentences.title" = "文も入力できる";
+"onboarding.level.sentences.detail" = "長めのフレーズをスムーズに入力したい";
+"home.primary.recommend_eyebrow" = "最初におすすめのデッキ";
+"home.primary.recommend_detail" = "あなたのレベルと目的に合わせて選びました";
+
+"settings.language.german" = "Deutsch";
+"settings.language.french" = "Français";
+
+"onboarding.level.beginner.example" = "ㄱ · ㅏ";
+
+"onboarding.level.jamo.example" = "가 · 나";
+
+"onboarding.level.words.example" = "학교";
+
+"onboarding.level.sentences.example" = "같이 걷고 싶어요";

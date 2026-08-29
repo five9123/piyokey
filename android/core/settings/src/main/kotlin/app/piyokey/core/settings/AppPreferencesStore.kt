@@ -31,6 +31,8 @@ class AppPreferencesStore private constructor(
   suspend fun resetOnboarding() = update {
     it.copy(
       onboardingGoal = null,
+      onboardingLevel = null,
+      homeLearningStarted = false,
       onboardingIntroStep = OnboardingIntroStep.GOAL,
       onboardingIntroSkipped = false,
       firstInputCompleted = false,
@@ -68,6 +70,8 @@ class AppPreferencesStore private constructor(
     crashDiagnosticsEnabled = preferences[Keys.crashDiagnosticsEnabled] ?: false,
     privacyNoticeVersion = (preferences[Keys.privacyNoticeVersion] ?: 0).coerceAtLeast(0),
     onboardingGoal = preferences[Keys.onboardingGoal]?.let { raw -> enumValueOrNull<OnboardingGoal>(raw) },
+    onboardingLevel = preferences[Keys.onboardingLevel]?.let { raw -> enumValueOrNull<OnboardingLevel>(raw) },
+    homeLearningStarted = preferences[Keys.homeLearningStarted] ?: false,
     onboardingIntroStep = enumValue(preferences[Keys.onboardingIntroStep], OnboardingIntroStep.GOAL),
     onboardingIntroSkipped = preferences[Keys.onboardingIntroSkipped] ?: false,
     firstInputCompleted = preferences[Keys.firstInputCompleted] ?: false,
@@ -115,6 +119,9 @@ class AppPreferencesStore private constructor(
     preferences[Keys.privacyNoticeVersion] = value.privacyNoticeVersion
     value.onboardingGoal?.let { preferences[Keys.onboardingGoal] = it.name }
       ?: preferences.remove(Keys.onboardingGoal)
+    value.onboardingLevel?.let { preferences[Keys.onboardingLevel] = it.name }
+      ?: preferences.remove(Keys.onboardingLevel)
+    preferences[Keys.homeLearningStarted] = value.homeLearningStarted
     preferences[Keys.onboardingIntroStep] = value.onboardingIntroStep.name
     preferences[Keys.onboardingIntroSkipped] = value.onboardingIntroSkipped
     preferences[Keys.firstInputCompleted] = value.firstInputCompleted
@@ -165,6 +172,8 @@ class AppPreferencesStore private constructor(
     val crashDiagnosticsEnabled = booleanPreferencesKey("settings.crash_diagnostics_enabled")
     val privacyNoticeVersion = intPreferencesKey("settings.privacy_notice_version")
     val onboardingGoal = stringPreferencesKey("onboarding.goal")
+    val onboardingLevel = stringPreferencesKey("onboarding.level")
+    val homeLearningStarted = booleanPreferencesKey("onboarding.home_learning_started")
     val onboardingIntroStep = stringPreferencesKey("onboarding.intro_step")
     val onboardingIntroSkipped = booleanPreferencesKey("onboarding.intro_skipped")
     val firstInputCompleted = booleanPreferencesKey("onboarding.first_input_completed")

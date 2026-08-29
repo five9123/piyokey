@@ -28,6 +28,8 @@ struct OnboardingView: View {
         switch onboarding.snapshot.step {
         case .goal:
           goalStep
+        case .level:
+          levelStep
         case .keyboard:
           keyboardStep
         case .lesson:
@@ -68,9 +70,8 @@ struct OnboardingView: View {
     VStack(spacing: 8) {
       HStack {
         Text(
-          String(
-            format: AppLocalization.string("onboarding.progress_format"),
-            onboarding.snapshot.step.rawValue,
+          AppLocalization.format("onboarding.progress_format",
+            onboarding.snapshot.step.position,
             OnboardingStep.allCases.count
           )
         )
@@ -88,7 +89,7 @@ struct OnboardingView: View {
       }
 
       ProgressView(
-        value: Double(onboarding.snapshot.step.rawValue),
+        value: Double(onboarding.snapshot.step.position),
         total: Double(OnboardingStep.allCases.count)
       )
       .tint(AppPalette.accent)
@@ -135,7 +136,7 @@ struct OnboardingView: View {
         }
 
         primaryButton(title: "onboarding.next", systemImage: "arrow.right") {
-          onboarding.move(to: .keyboard)
+          onboarding.move(to: .level)
           captureOnboardingStep("goal")
         }
         .disabled(onboarding.selectedGoal == nil)
@@ -160,6 +161,73 @@ struct OnboardingView: View {
     .padding(15)
     .background(AppPalette.card.opacity(0.92), in: RoundedRectangle(cornerRadius: 18))
     .accessibilityIdentifier("onboarding.trust")
+  }
+
+  private var levelStep: some View {
+    ScrollView {
+      VStack(spacing: 20) {
+        MascotView(stage: .egg, eggPattern: companion.eggPattern, size: 82)
+          .frame(width: 112, height: 150)
+        VStack(spacing: 7) {
+          Text("onboarding.level.title")
+            .font(.system(.title2, design: .rounded, weight: .bold))
+            .foregroundStyle(AppPalette.ink)
+          Text("onboarding.level.subtitle")
+            .font(.subheadline)
+            .foregroundStyle(AppPalette.mutedInk)
+        }
+        .multilineTextAlignment(.center)
+
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+          ForEach(OnboardingLevel.allCases) { level in
+            levelCard(level)
+          }
+        }
+
+        primaryButton(title: "onboarding.next", systemImage: "arrow.right") {
+          onboarding.move(to: .keyboard)
+        }
+        .disabled(onboarding.selectedLevel == nil)
+        .opacity(onboarding.selectedLevel == nil ? 0.45 : 1)
+        .accessibilityIdentifier("onboarding.next")
+      }
+      .padding(.horizontal, 20)
+      .padding(.bottom, 24)
+      .hancoCenteredContent(maxWidth: adaptiveMetrics.readableContentMaxWidth)
+    }
+    .accessibilityIdentifier("onboarding.level.screen")
+  }
+
+  private func levelCard(_ level: OnboardingLevel) -> some View {
+    let selected = onboarding.selectedLevel == level
+    return Button {
+      onboarding.selectLevel(level)
+    } label: {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(verbatim: AppLocalization.string("onboarding.level.\(level.rawValue).example"))
+          .font(.title2.weight(.bold))
+          .foregroundStyle(AppPalette.accent)
+        Text(LocalizedStringKey(level.titleKey))
+          .font(.headline.weight(.bold))
+        Text(LocalizedStringKey(level.detailKey))
+          .font(.caption)
+      }
+      .fixedSize(horizontal: false, vertical: true)
+      .foregroundStyle(AppPalette.ink)
+      .frame(maxWidth: .infinity, minHeight: 105, alignment: .leading)
+      .padding(15)
+      .background(
+        selected ? AppPalette.accentSoft : AppPalette.card,
+        in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+      )
+      .overlay {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+          .strokeBorder(selected ? AppPalette.accent : AppPalette.keyShadow, lineWidth: 1.5)
+      }
+    }
+    .buttonStyle(.plain)
+    .accessibilityAddTraits(selected ? .isSelected : [])
+    .accessibilityIdentifier("onboarding.level.\(level.rawValue)")
   }
 
   private func goalCard(_ goal: OnboardingGoal) -> some View {

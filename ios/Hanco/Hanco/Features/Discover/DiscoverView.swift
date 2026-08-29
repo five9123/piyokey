@@ -71,7 +71,7 @@ struct DiscoverView: View {
       Picker("discover.filter.level", selection: $viewModel.selectedLevel) {
         Text("discover.filter.all").tag(Optional<Int>.none)
         ForEach(1...3, id: \.self) { level in
-          Text(String(format: AppLocalization.string("deck.level.format"), level))
+          Text(AppLocalization.format("deck.level.format", level))
             .tag(Optional(level))
         }
       }
@@ -242,7 +242,7 @@ struct DiscoverView: View {
           .font(.headline.weight(.bold))
         Spacer()
         Text(
-          String(format: AppLocalization.string("discover.results.count"), viewModel.filteredDecks.count)
+          AppLocalization.format("discover.results.count", viewModel.filteredDecks.count)
         )
         .font(.caption.weight(.semibold))
         .foregroundStyle(AppPalette.mutedInk)
@@ -298,7 +298,7 @@ struct DiscoverView: View {
         LazyHStack(spacing: 12) {
           ForEach(Array(decks.enumerated()), id: \.element.deckId) { index, deck in
             deckLink(deck, rank: showsRank ? index + 1 : nil)
-              .frame(width: 290)
+              .frame(width: adaptiveMetrics.isExpanded ? 390 : 290)
           }
         }
         .padding(.horizontal, 18)

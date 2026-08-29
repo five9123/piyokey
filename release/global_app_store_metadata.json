@@ -74,7 +74,9 @@
       "ko": "typee",
       "en": "typee",
       "unsupported": "typee",
-      "es": "typee"
+      "es": "typee",
+      "de": "typee",
+      "fr": "typee"
     },
     "unsupported_locale_fallback": "en",
     "korean_language_device_brand": "typee",
@@ -84,7 +86,9 @@
     "app_ui_locales": [
       "ja",
       "en",
-      "es"
+      "es",
+      "de",
+      "fr"
     ],
     "preserved_content_locales": [
       "ja",
@@ -100,11 +104,29 @@
       "ko",
       "ja"
     ],
-    "additional_app_languages": "deferred_until_post_launch_demand_review",
+    "additional_app_languages": "es_de_fr_ui_and_learning_content_authorized_2026_08_28",
     "additional_metadata_only_locales": "ten_market_media_localization_authorized_2026_08_28_required_metadata_pending",
-    "app_store_media_locales": ["ja", "en-US", "ko", "zh-Hans", "zh-Hant", "de-DE", "fr-FR", "es-ES", "pt-BR", "id"],
+    "app_store_media_locales": [
+      "ja",
+      "en-US",
+      "ko",
+      "zh-Hans",
+      "zh-Hant",
+      "de-DE",
+      "fr-FR",
+      "es-ES",
+      "pt-BR",
+      "id"
+    ],
     "media_copy_source": "release/store-assets/localizations.json",
-    "android_m7": "resumed_separate_google_play_release_track"
+    "android_m7": "resumed_separate_google_play_release_track",
+    "localized_learning_content_locales": [
+      "ja",
+      "en",
+      "es",
+      "de",
+      "fr"
+    ]
   },
   "content_localization": {
     "ja": {
@@ -145,7 +167,7 @@
       {
         "id": "localized_brand_regression",
         "status": "pending",
-        "requirement": "Verify ja=ピヨキー and ko, en, and unsupported=typee on clean install and app-language changes."
+        "requirement": "Verify ja=ピヨキー and en/es/de/fr, retired ko, and unsupported=typee on clean install and app-language changes."
       },
       {
         "id": "all_countries_availability",
@@ -155,22 +177,22 @@
       {
         "id": "unsupported_language_english_fallback",
         "status": "pending",
-        "requirement": "Verify clean installs under representative unsupported LTR and RTL device languages, including fr, zh-Hant, and ar, start in English with the typee brand and do not expose Japanese content fallback."
+        "requirement": "Verify unsupported LTR and RTL device languages, including zh-Hant and ar, start in English with typee; es/de/fr regional variants must use their supported UI, without Japanese content fallback."
       },
       {
         "id": "english_content_coverage",
         "status": "pending",
-        "requirement": "Validate English meanings and romanized readings for every globally visible official deck item."
+        "requirement": "Validate en/es/de/fr meanings and shared romanized readings for every globally visible official deck item; retain legacy ja/en/ko content."
       },
       {
         "id": "non_japanese_fallback",
         "status": "pending",
-        "requirement": "Verify that English, Spanish, Korean, and unsupported languages never display Japanese meanings or katakana as fallback."
+        "requirement": "Verify en/es/de/fr, retired Korean UI, and unsupported languages never display Japanese meanings or katakana as fallback."
       },
       {
         "id": "store_assets",
-        "status": "ten_locale_media_locally_generated_verified_pending_upload_and_web_copy",
-        "requirement": "Review the ten-locale media pack, verify final release-candidate match, save required metadata for seven new store locales, upload and re-read media; separately approve support and privacy pages."
+        "status": "recapture_required_for_expanded_ui_before_upload",
+        "requirement": "Recapture final RC ja/en/es/de/fr screens, map ko to English UI, review copy, save required metadata, upload and re-read media; separately approve support/privacy pages. Historical media are not evidence for this candidate."
       },
       {
         "id": "english_variant_materialization",
@@ -262,7 +284,7 @@
       "subtitle": "Learn Korean by Typing",
       "promotional_text": "Learn the Korean keyboard in three minutes a day with guided lessons, playful games, smart review, and your growing chick companion.",
       "keywords": "Korean,Hangul,typing,keyboard,Dubeolsik,TOPIK,language,learning",
-      "description": "You can recognize Hangul. Now learn to type it.\n\ntypee is a Korean typing tutor that helps you learn the standard Dubeolsik keyboard with Piyo, your growing chick companion. There are no accounts or ads. Core learning and up to three installed user decks are free; an optional one-time purchase unlocks unlimited user decks plus in-app creation and editing.\n\nLEARN STEP BY STEP\nMove from consonants and vowels to syllable composition, batchim, words, and phrases. See the next key and follow each jamo as you type.\n\nSTART WITH THE BUILT-IN KEYBOARD\nPractice without adding a Korean keyboard to your iPhone. When you are ready, switch to the iOS Korean keyboard for real-world input practice.\n\nPRACTICE WITH OFFICIAL DECKS\nLearn with everyday, travel, TOPIK, original K-pop-inspired phrases, and original K-drama-style conversations. Every globally available official deck includes clear English meanings and romanized readings.\n\nUSE YOUR OWN DECKS\nKeep up to three valid .typedeck user decks installed for free, then practice, play compatible games, export, delete, or replace the same deck ID. The optional lifetime typee pro purchase unlocks a fourth deck, unlimited user-deck storage, creation, and editing. Documents and purchase data are never uploaded to a typee server.\n\nPLAY SIX GAMES\nBuild speed, accuracy, recall, listening, and spacing skills with Flow, Word Rain, Initials Quiz, Word Quiz, Dictation, and Spacing.\n\nREVIEW WHAT YOU MISS\nMistyped items are collected for review. Daily three-minute practice, streaks, and Piyo's growth make it easier to keep going.\n\nBUILT WITH PRIVACY IN MIND\n• No ads; lessons and games are free, with up to three installed user decks\n• Optional one-time typee pro purchase for unlimited user decks, creation, and editing\n• No account registration\n• Learning records and settings stay on your device\n• Bundled content works offline\n• Japanese, English, and Spanish interface languages\n\nMove from reading Korean to typing it yourself—one key at a time with typee.",
+      "description": "You can recognize Hangul. Now learn to type it.\n\ntypee is a Korean typing tutor that helps you learn the standard Dubeolsik keyboard with Piyo, your growing chick companion. There are no accounts or ads. Core learning and up to three installed user decks are free; an optional one-time purchase unlocks unlimited user decks plus in-app creation and editing.\n\nLEARN STEP BY STEP\nMove from consonants and vowels to syllable composition, batchim, words, and phrases. See the next key and follow each jamo as you type.\n\nSTART WITH THE BUILT-IN KEYBOARD\nPractice without adding a Korean keyboard to your iPhone. When you are ready, switch to the iOS Korean keyboard for real-world input practice.\n\nPRACTICE WITH OFFICIAL DECKS\nLearn with everyday, travel, TOPIK, original K-pop-inspired phrases, and original K-drama-style conversations. Every globally available official deck includes clear English meanings and romanized readings.\n\nUSE YOUR OWN DECKS\nKeep up to three valid .typedeck user decks installed for free, then practice, play compatible games, export, delete, or replace the same deck ID. The optional lifetime typee pro purchase unlocks a fourth deck, unlimited user-deck storage, creation, and editing. Documents and purchase data are never uploaded to a typee server.\n\nPLAY SIX GAMES\nBuild speed, accuracy, recall, listening, and spacing skills with Flow, Word Rain, Initials Quiz, Word Quiz, Dictation, and Spacing.\n\nREVIEW WHAT YOU MISS\nMistyped items are collected for review. Daily three-minute practice, streaks, and Piyo's growth make it easier to keep going.\n\nBUILT WITH PRIVACY IN MIND\n• No ads; lessons and games are free, with up to three installed user decks\n• Optional one-time typee pro purchase for unlimited user decks, creation, and editing\n• No account registration\n• Learning records and settings stay on your device\n• Bundled content works offline\n• Japanese, English, Spanish, German, and French interface languages\n\nMove from reading Korean to typing it yourself—one key at a time with typee.",
       "whats_new_draft": "Keep up to three .typedeck user decks free. The optional lifetime typee pro purchase unlocks a fourth deck, unlimited user-deck storage, creation, editing, and editable official-deck copies. Everything remains local-only, with no account or public upload service."
     },
     "en-GB": {

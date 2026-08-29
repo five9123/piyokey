@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">typee</string>
+  <string name="nav_home">Start</string>
+  <string name="nav_discover">Entdecken</string>
+  <string name="nav_practice">Üben</string>
+  <string name="nav_games">Spiele</string>
+  <string name="nav_profile">Profil</string>
+  <string name="loading_content">Geprüfte Offline-Inhalte werden geladen…</string>
+  <string name="practice_choose_deck">Heruntergeladenes Deck auswählen</string>
+  <string name="practice_sample">Beispiel ausprobieren</string>
+  <string name="games_coming_next">Spielmodi werden vorbereitet.</string>
+  <string name="close_session">Schließen</string>
+  <string name="retry_load">Erneut versuchen</string>
+  <string name="dismiss_error">Schließen</string>
+  <string name="retry_save">Erneut speichern</string>
+  <string name="back_to_curriculum">Zurück zum Lernplan</string>
+  <string name="practice_result_share_title">Koreanisch tippen üben</string>
+  <string name="practice_result_share_level">Übungssitzung</string>
+</resources>

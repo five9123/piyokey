@@ -147,23 +147,20 @@ struct AppRootView: View {
   }
 
   var body: some View {
-    GeometryReader { proxy in
-      let adaptiveMetrics = HancoAdaptiveMetrics(availableWidth: proxy.size.width)
-      Group {
-        if onboarding.shouldPresent {
-          OnboardingView()
-        } else if shouldPresentHatchGate {
-          CurriculumMapView(
-            catalog: nil,
-            isHatchOnboarding: true,
-            onHatchCompleted: finishHatchOnboarding
-          )
-        } else {
-          mainTabs
-        }
+    Group {
+      if onboarding.shouldPresent {
+        OnboardingView()
+      } else if shouldPresentHatchGate {
+        CurriculumMapView(
+          catalog: nil,
+          isHatchOnboarding: true,
+          onHatchCompleted: finishHatchOnboarding
+        )
+      } else {
+        mainTabs
       }
-      .environment(\.hancoAdaptiveMetrics, adaptiveMetrics)
     }
+    .hancoAdaptiveLayout()
     .environmentObject(deckLibrary)
     .environmentObject(deckMakerPurchaseStore)
     .environmentObject(piyoDeckDocumentCoordinator)
@@ -189,8 +186,12 @@ struct AppRootView: View {
       showsSettings = true
     }
     .id(language)
+    .onChange(of: language) { _ in
+      dailyReminder.refreshLocalizedContent()
+    }
     .sheet(isPresented: $showsSettings) {
       SettingsView(showsCloseButton: true)
+        .hancoAdaptiveLayout()
         .environmentObject(deckLibrary)
         .environmentObject(curriculumProgress)
         .environmentObject(retention)
@@ -216,6 +217,7 @@ struct AppRootView: View {
           applyPrivacyChoices(analytics: false, diagnostics: false)
         }
       )
+      .hancoAdaptiveLayout()
       .environment(
         \.locale,
         AppLanguage.resolved(from: language).locale
@@ -653,8 +655,7 @@ private struct AppTourOverlay: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
           Text(
-            verbatim: String(
-              format: AppLocalization.string("app_tour.progress_format"),
+            verbatim: AppLocalization.format("app_tour.progress_format",
               step.rawValue + 1,
               AppTourStep.allCases.count
             )

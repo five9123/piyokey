@@ -2,6 +2,28 @@ import DeckKit
 import Foundation
 
 enum DeckRecommendationEngine {
+  static func starterRecommendations(
+    catalog: Catalog?,
+    preferredTags: [String],
+    level: OnboardingLevel?,
+    limit: Int = 3
+  ) -> [CatalogDeck] {
+    guard let catalog, limit > 0 else { return [] }
+    let learner = level ?? .beginner
+    let preferred = Set(preferredTags)
+    return Array(catalog.decks.filter(\.official).sorted { lhs, rhs in
+      let leftRank = learner.recommendationRank(level: lhs.level, tags: lhs.tags, isSentence: lhs.type == .sentence)
+      let rightRank = learner.recommendationRank(level: rhs.level, tags: rhs.tags, isSentence: rhs.type == .sentence)
+      if leftRank != rightRank { return leftRank < rightRank }
+      let leftTags = preferred.intersection(lhs.tags).count
+      let rightTags = preferred.intersection(rhs.tags).count
+      if leftTags != rightTags { return leftTags > rightTags }
+      if lhs.featured != rhs.featured { return lhs.featured }
+      if lhs.downloadsTotal != rhs.downloadsTotal { return lhs.downloadsTotal > rhs.downloadsTotal }
+      return lhs.deckId < rhs.deckId
+    }.prefix(limit))
+  }
+
   static func homeRecommendations(
     catalog: Catalog?,
     downloadHistory: [String: [String]],

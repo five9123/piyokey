@@ -48,7 +48,7 @@
   <string name="main_tour_tap">Toca la pantalla para continuar.</string>
   <string name="main_tour_skip">Omitir recorrido</string>
   <string name="main_tour_home_title">Hoy empieza aquí</string>
-  <string name="main_tour_home_detail">Usa la acción diaria después de la tarjeta MI Piyo.</string>
+  <string name="main_tour_home_detail">Empieza con un mazo elegido según tu nivel e intereses. Después de practicar, usa este botón para continuar.</string>
   <string name="main_tour_discover_title">Buscar un mazo</string>
   <string name="main_tour_discover_detail">Busca contenido verificado y disponible sin conexión en Descubrir.</string>
   <string name="main_tour_practice_title">Sigue las lecciones</string>
@@ -64,4 +64,19 @@
   <string name="onboarding_use_device_keyboard">Empezar con el teclado del dispositivo</string>
   <string name="onboarding_ime_missing">Añade o activa un teclado coreano y vuelve aquí para escribir.</string>
   <string name="onboarding_ime_open_settings">Abrir ajustes del teclado</string>
+
+    <string name="onboarding_level_title">¿Qué puedes escribir en coreano?</string>
+    <string name="onboarding_level_subtitle">Elige lo que te resulte cómodo hoy. Usaremos tu nivel y tus intereses para recomendarte tu primer mazo.</string>
+    <string name="onboarding_level_beginner_title">Estoy empezando</string>
+    <string name="onboarding_level_beginner_detail">Quiero aprender el teclado y las letras coreanas.</string>
+    <string name="onboarding_level_jamo_title">Conozco las letras</string>
+    <string name="onboarding_level_jamo_detail">Puedo leer consonantes y vocales y quiero probar palabras fáciles.</string>
+    <string name="onboarding_level_words_title">Puedo escribir palabras sencillas</string>
+    <string name="onboarding_level_words_detail">Quiero ganar velocidad y practicar expresiones útiles.</string>
+    <string name="onboarding_level_sentences_title">Puedo escribir frases</string>
+    <string name="onboarding_level_sentences_detail">Quiero practicar frases más largas con confianza.</string>
+    <string name="onboarding_level_beginner_example">ㄱ · ㅏ</string>
+    <string name="onboarding_level_jamo_example">가 · 나</string>
+    <string name="onboarding_level_words_example">학교</string>
+    <string name="onboarding_level_sentences_example">같이 걷고 싶어요</string>
 </resources>

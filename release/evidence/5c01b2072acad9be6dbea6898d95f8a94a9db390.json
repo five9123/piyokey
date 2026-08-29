@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "5c01b2072acad9be6dbea6898d95f8a94a9db390",
+  "verified_tree": "2f828729d197086708436011100b953515ec117a",
+  "branch": "codex/77-ios11-submission",
+  "scope": "Issue #77 release decision and current submission blockers; app/archive unchanged",
+  "result": "fail",
+  "recorded_at": "2026-08-28T16:41:24.474745+00:00",
+  "checks": [
+    {
+      "name": "Tools regression",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests",
+      "note": "96 tests including pending/manual/automatic release mode coverage"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Clean worktree",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "Submission readiness",
+      "status": "fail",
+      "command": "python3.12 tools/release_preflight.py --strict",
+      "note": "38 remaining external/manual findings; final review not sent"
+    }
+  ],
+  "manual_gates": [
+    "Paid Apps Pending User Info: Account Holder bank and Korea/US tax forms; IAP, rights/privacy, final RC media/native review, full regression and exact-build device/Sandbox checks remain open."
+  ]
+}

@@ -461,6 +461,8 @@ private fun languageLabel(value: AppLanguage): String = when (value) {
   AppLanguage.JAPANESE -> stringResource(R.string.settings_language_japanese)
   AppLanguage.ENGLISH -> stringResource(R.string.settings_language_english)
   AppLanguage.SPANISH -> stringResource(R.string.settings_language_spanish)
+  AppLanguage.GERMAN -> stringResource(R.string.settings_language_german)
+  AppLanguage.FRENCH -> stringResource(R.string.settings_language_french)
 }
 
 @Composable

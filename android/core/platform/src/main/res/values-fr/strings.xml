@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="reminder_channel_name">Entraînement quotidien</string>
+  <string name="reminder_notification_title">Tes 3 minutes d’entraînement typee</string>
+  <string name="reminder_notification_body">Prolonge ta série de saisie en coréen aujourd’hui.</string>
+  <string name="feedback_proposal_subject">[typee] Proposition de paquet</string>
+  <string name="feedback_report_subject">[typee] Signalement de contenu</string>
+  <string name="feedback_combined_subject">[typee] Avis sur le contenu</string>
+  <string name="feedback_proposal_body">Thème :\nNiveau visé :\nMots souhaités :\nMotif de la suggestion :\n\nN’inclus aucun mot de passe, adresse, parole de chanson ou dialogue de série original. Les envois sont vérifiés manuellement et ne sont pas publiés automatiquement.</string>
+  <string name="feedback_report_body">Expression à signaler :\nType (faute / sens / lecture / audio / droits) :\nDétails :\n\nN’inclus aucun mot de passe, adresse, parole de chanson ou dialogue de série original. Les signalements sont vérifiés manuellement et ne sont pas publiés automatiquement.</string>
+  <string name="feedback_combined_body">Type (proposition de paquet / signalement) :\nThème ou expression :\nNiveau visé ou type de problème :\nDétails :\n\nN’inclus aucun mot de passe, adresse, parole de chanson ou dialogue de série original. Les envois sont vérifiés manuellement et ne sont pas publiés automatiquement.</string>
+  <string name="feedback_metadata_heading">--- Informations ajoutées automatiquement ---</string>
+  <string name="feedback_metadata_type">Type</string>
+  <string name="feedback_metadata_source">Écran d’origine</string>
+  <string name="feedback_metadata_app">Version/build de l’application</string>
+  <string name="feedback_metadata_language">Langue</string>
+  <string name="feedback_metadata_deck">ID/version du paquet</string>
+</resources>

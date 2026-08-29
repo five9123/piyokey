@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,7 +51,25 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertNotIn("Next submission record must target version 1.1", messages)
         self.assertNotIn("Submission marketing version must match Xcode", messages)
         self.assertNotIn("Submission build number must match Xcode", messages)
-        self.assertIn("Next submission release mode must be resolved independently of availability", messages)
+        release_mode_error = "Next submission release mode must be resolved independently of availability"
+        self.assertNotIn(release_mode_error, messages)
+
+        submission_path = ROOT / "release/app_store_submission.json"
+        source = json.loads(submission_path.read_text(encoding="utf-8"))
+        original_read_text = Path.read_text
+        for mode, unresolved in (("pending_separate_decision", True), ("manual_after_approval", False)):
+            with self.subTest(release_mode=mode):
+                candidate = copy.deepcopy(source)
+                candidate["next_submission"]["release_mode"] = mode
+
+                def read_text(path, *args, **kwargs):
+                    if path == submission_path:
+                        return json.dumps(candidate)
+                    return original_read_text(path, *args, **kwargs)
+
+                with patch.object(Path, "read_text", read_text):
+                    candidate_messages = {finding.message for finding in release_preflight.strict_checks(ROOT)}
+                self.assertEqual(release_mode_error in candidate_messages, unresolved)
 
     def test_deck_maker_storekit_configuration_is_repository_valid(self):
         messages = {finding.message for finding in release_preflight.repository_checks(ROOT)}
@@ -146,7 +165,7 @@ class ReleasePreflightTests(unittest.TestCase):
             }
 
         self.assertIn("Global planned primary locale must be en-US", messages)
-        self.assertIn("Version 1.1 app UI locales must be exactly ja, en, and es", messages)
+        self.assertIn("Version 1.1 app UI locales must be exactly ja, en, es, de, and fr", messages)
         self.assertIn("Preserved learning content locales must remain ja, en, and ko", messages)
         self.assertIn("Unsupported app language fallback must be en", messages)
         self.assertIn(

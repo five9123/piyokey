@@ -127,9 +127,9 @@
   <string name="user_deck_export_current">先に現在版を書き出す</string>
   <string name="user_deck_replace_confirm_title">現在のデッキを置き換えますか？</string>
   <string name="user_deck_replace_confirm_body">読み込んだファイルで現在版を置き換えます。プレイ履歴と同じ項目の復習記録は残ります。</string>
-  <string name="user_deck_error_invalid">有効なPIYOKEYユーザーデッキではありません。既存のデッキは変更していません。</string>
+  <string name="user_deck_error_invalid">有効なピヨキーユーザーデッキではありません。既存のデッキは変更していません。</string>
   <string name="user_deck_error_too_large">8 MiBの安全上限を超えています。既存のデッキは変更していません。</string>
-  <string name="user_deck_error_update">新しいPIYOKEY形式のデッキです。アプリを更新してから読み込んでください。</string>
+  <string name="user_deck_error_update">新しいピヨキー形式のデッキです。アプリを更新してから読み込んでください。</string>
   <string name="user_deck_error_read">選択したファイルを読み込めませんでした。既存のデッキは変更していません。</string>
   <string name="discover_propose_deck">ほしいデッキを提案する</string>
   <string name="deck_report_content">このデッキの内容を報告</string>
@@ -137,4 +137,8 @@
   <string name="user_deck_import_as_copy_locked">別のコピーとして読み込む・ピヨキー プロ</string>
   <string name="deck_editor_move_up">項目を上へ移動</string>
   <string name="deck_editor_move_down">項目を下へ移動</string>
+
+<plurals name="deck_item_count">
+  <item quantity="other">%1$d項目</item>
+</plurals>
 </resources>

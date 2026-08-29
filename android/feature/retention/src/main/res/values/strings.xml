@@ -30,4 +30,18 @@
   <string name="wardrobe_title">Piyo wardrobe</string><string name="wardrobe_preview">Final Piyo appearance preview</string>
   <string name="wardrobe_auto">Auto · growth look</string><string name="wardrobe_none">No accessory</string>
   <string name="wardrobe_ribbon">Streak ribbon</string><string name="wardrobe_beret">Star beret</string><string name="wardrobe_bow">Rainbow bow</string><string name="wardrobe_topik_glasses">TOPIK glasses</string><string name="wardrobe_trophy">Champion trophy</string>
+
+    <string name="home_primary_recommend_eyebrow">A deck to start with</string>
+    <string name="home_primary_recommend_detail">Picked for your level and interests</string>
+    <string name="home_primary_resume_eyebrow">Jump back in</string>
+    <string name="home_primary_resume_detail">Continue your practice</string>
+
+<plurals name="review_count">
+  <item quantity="one">%1$d word to review</item>
+  <item quantity="other">%1$d words to review</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="one">This week %1$d/7 · %2$d-day streak</item>
+  <item quantity="other">This week %1$d/7 · %2$d-day streak</item>
+</plurals>
 </resources>

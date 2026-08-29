@@ -169,6 +169,7 @@ enum FlowGameCourse: String, Codable, Equatable {
 
 struct GameDeckSelectionView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var gameCenter: GameCenterService
 
   let onFindDecks: () -> Void
@@ -183,7 +184,7 @@ struct GameDeckSelectionView: View {
           LazyVGrid(
             columns: Array(
               repeating: GridItem(.flexible(), spacing: 14),
-              count: adaptiveMetrics.hubColumnCount
+              count: dynamicTypeSize.isAccessibilitySize ? 1 : (adaptiveMetrics.widthClass == .wide ? 3 : 2)
             ),
             alignment: .center,
             spacing: 14
@@ -245,7 +246,7 @@ struct GameDeckSelectionView: View {
       ZStack {
         RoundedRectangle(cornerRadius: 19, style: .continuous)
           .fill(Color.yellow.opacity(0.22))
-          .frame(width: 62, height: 62)
+          .frame(width: 62 * adaptiveMetrics.typographyScale, height: 62 * adaptiveMetrics.typographyScale)
         Image(systemName: "crown.fill")
           .font(.system(size: 28, weight: .black))
           .foregroundStyle(Color.orange)
@@ -324,7 +325,7 @@ struct GameDeckSelectionView: View {
       ZStack {
         RoundedRectangle(cornerRadius: 18, style: .continuous)
           .fill(tint.opacity(0.15))
-          .frame(width: 58, height: 58)
+          .frame(width: 58 * adaptiveMetrics.typographyScale, height: 58 * adaptiveMetrics.typographyScale)
         Image(systemName: systemImage)
           .font(.system(size: 27, weight: .bold))
           .foregroundStyle(tint)
@@ -515,8 +516,7 @@ private struct GameDeckListView: View {
         inputMode: .builtIn
       ) {
         Text(
-          String(
-            format: AppLocalization.string("game.selection.best_score.builtin"),
+          AppLocalization.format("game.selection.best_score.builtin",
             progress.bestScore.formatted()
           )
         )
@@ -529,8 +529,7 @@ private struct GameDeckListView: View {
         inputMode: .builtInKorean10Key
       ) {
         Text(
-          String(
-            format: AppLocalization.string("game.selection.best_score.korean_10key"),
+          AppLocalization.format("game.selection.best_score.korean_10key",
             progress.bestScore.formatted()
           )
         )
@@ -740,7 +739,7 @@ private struct GameDeckListView: View {
           .lineLimit(2)
         HStack(spacing: 7) {
           Text(gameKind == .flow ? course.localizedName : gameKind.titleKey)
-          Text(String(format: AppLocalization.string("deck.items.format"), deck.items.count))
+          Text(AppLocalization.format("deck.items.format", deck.items.count))
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(AppPalette.secondary)
@@ -761,10 +760,9 @@ private struct GameDeckListView: View {
           inputMode: .builtIn
         ) {
           Text(
-            String(
-              format: AppLocalization.string(
+            AppLocalization.format(
                 bestScoreKey
-              ),
+              ,
               progress.bestScore.formatted()
             )
           )
@@ -778,8 +776,7 @@ private struct GameDeckListView: View {
           inputMode: .builtInKorean10Key
         ) {
           Text(
-            String(
-              format: AppLocalization.string("game.selection.best_score.korean_10key"),
+            AppLocalization.format("game.selection.best_score.korean_10key",
               progress.bestScore.formatted()
             )
           )
@@ -793,8 +790,7 @@ private struct GameDeckListView: View {
           inputMode: .osIME
         ) {
           Text(
-            String(
-              format: AppLocalization.string("game.selection.best_score.os_ime"),
+            AppLocalization.format("game.selection.best_score.os_ime",
               progress.bestScore.formatted()
             )
           )

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "00fb528782bcceb84875778161fca0f4660fb3c8",
+  "verified_tree": "0d6c663e12fe281bd74422275ac5004994d3408b",
+  "branch": "codex/73-onboarding-level",
+  "scope": "Issue #73 / PR #74: five-language integration, four example level cards without Back, first-home recommendation and resume; source 00fb528 (runtime unchanged from a585771; only retained-mascot test query adjusted)",
+  "result": "pass",
+  "recorded_at": "2026-08-28T16:03:57.034735+00:00",
+  "checks": [
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean 00fb528; Issue #73 ownership retained."
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": "PASS; /private/tmp/piyokey73-final-preflight.log"
+    },
+    {
+      "name": "python-regression",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests",
+      "note": "96 passed; strings, formats, plural/array parity, content snapshots. /private/tmp/piyokey73-final-python.log"
+    },
+    {
+      "name": "swift-package",
+      "status": "pass",
+      "command": "swift test",
+      "note": "cwd ios/HangulEngine; 45 passed. /private/tmp/piyokey73-final-swift.log"
+    },
+    {
+      "name": "ios-unit-and-home",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=00608B21-6BB5-4F22-BDD2-9A4F67DA4C59' -derivedDataPath /private/tmp/piyokey73-derived -parallel-testing-enabled NO -only-testing:HancoTests -only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs -only-testing:HancoUITests/HancoUITests/testFirstHomeRecommendsUntilDeckPracticeStartsAndThenResumesAfterRelaunch -only-testing:HancoUITests/HancoUITests/testFutureCurriculumSchemaKeepsHatchResultRecoverable",
+      "note": "366 units + 3 UI passed on a585771; runtime and these tests are identical at 00fb528. First-home recommendation survives hatch completion and relaunch; download does not set resume; practice does. Future schema remains recoverable. /private/tmp/piyokey73-home-final-ios.log"
+    },
+    {
+      "name": "ios-level-locales-and-growth",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=00608B21-6BB5-4F22-BDD2-9A4F67DA4C59' -derivedDataPath /private/tmp/piyokey73-derived -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testFirstHatchResultContinuesToSecondMissionWithoutRetry -only-testing:HancoUITests/HancoUITests/testLevelScreenSupportsAllLanguagesAndRestoresSelection",
+      "note": "2 UI passed on 00fb528 after checking every retained mascot view (the background practice screen can retain a duplicate identifier). Includes ja/en/es/de/fr example text, no Back, restored choice, first growth/name. /private/tmp/piyokey73-final-verified-locales-ios.log"
+    },
+    {
+      "name": "android-scoped-regression",
+      "status": "pass",
+      "command": "env JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home ANDROID_HOME=/Users/jungminoh/Library/Android/sdk ANDROID_SERIAL=emulator-5556 ./gradlew :app:connectedDebugAndroidTest :core:deckkit:test :core:piyodeck:test :core:settings:testDebugUnitTest :core:data:testDebugUnitTest :app:lintDebug -Pandroid.testInstrumentationRunnerArguments.class=app.piyokey.piyokey.M6OnboardingInstrumentedTest,app.piyokey.piyokey.M6SettingsInstrumentedTest,app.piyokey.piyokey.HomeQuickActionsInstrumentedTest,app.piyokey.piyokey.M3DiscoveryFlowInstrumentedTest,app.piyokey.piyokey.R11DeckMakerEditorInstrumentedTest",
+      "note": "cwd android; runtime identical to a585771; dedicated piyokey_issue73 API35 emulator, 14 UI, 63 unit cases across deckkit/piyodeck/settings/data (incremental tasks), lint passed. /private/tmp/piyokey73-isolated-final-android.log. Earlier shared-emulator runs aborted; system log records deletePackageX killing the instrumented app, so they are not counted as passes. Editor-only 4 passed before isolation."
+    },
+    {
+      "name": "language-ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor dcc32bf HEAD",
+      "note": "Full local five-language source integrated; git diff dcc32bf -- shared is empty. Original clone not modified by this work."
+    }
+  ],
+  "manual_gates": [
+    "GitHub Actions enabled=false; CI/review and main merge not performed or waived.",
+    "Native-language review, full screen/accessibility/device coverage, purchases/sharing/OS behavior remain manual release gates.",
+    "New catalog namespace deployment, old URL preservation and final RC store capture/upload are not performed.",
+    "No store deployment or physical-device installation. Original dirty main workspace and language/retention clones preserved."
+  ]
+}

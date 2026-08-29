@@ -1,9 +1,9 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-28 JST
+마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 통합 기준선: 기존 작업 8개와 스페인어 UI를 포함한 PR #70
+최근 통합 기준선: PR #74, `9af01ef96e06472eb3d842880649b5e697c5877e` — 4단계 온보딩·첫 홈 추천·ja/en/es/de/fr
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `1.1 (7)` 소스 기준선 | 글로벌 메타데이터·typee pro IAP 준비, 10개 로케일 사진 100장·영상 10개 로컬 제작/기술검증 완료, 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
+| iOS 1.1 | PR #74 main `9af01ef`, `1.1 (7)` | 서명 archive·Distribution IPA 검증, TestFlight 업로드·Apple 처리 완료, Ready to Submit·1.1 버전에 build 7 연결 저장/재조회 완료; 승인 후 자동·전 사용자 즉시 출시 확정, App Review 미제출 | 최종 빌드 일치·현지어 검수·스토어 미디어 업로드·신규 로케일 필수 메타데이터·IAP 심사 스크린샷, Paid Apps Agreement, Sandbox 결제/복원/환불, Files/iCloud/AirDrop, 1,000항목 |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
@@ -21,8 +21,22 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #71 / PR #72 연습 탭 프리프랙티스 제거 | Blocked (CI·리뷰) | `codex/71-remove-free-practice` / `/private/tmp/piyokey-issue71-free-practice` | 소스·관련 로컬 검증 완료; Actions 활성화·CI·검토 승인 후 병합 |
+| #71 / PR #72 연습 탭 프리프랙티스 제거 | Blocked (CI·리뷰) | `codex/71-remove-free-practice` / `/private/tmp/piyokey-issue71-free-practice` | PR 브랜치 갱신; Actions 활성화·CI·검토 승인 후 병합 |
+| #79 / PR #80 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로에서도 문제→피요·입력→키보드 순서 유지, 크기/여백 수정·mini/Pro 선택 회귀 통과. 10시장 가로 100장+ZIP 10개 검수 완료. 업로드는 Chrome `Not allowed`로 차단; PR 리뷰/CI·새 RC·스토어 등록 필요 |
+| #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국 세금 정보 완료 및 나머지 제출 gate 검증 (미국 Foreign Status/W-8BEN Active 확인) |
+| #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+
+## #73 5언어·온보딩 main 통합 완료
+
+- PR #74를 사용자 main 병합·배포 요청과 로컬 검증에 근거해 2026-08-29 JST squash merge했다. main SHA는 `9af01ef96e06472eb3d842880649b5e697c5877e`; Issue #73은 Closed, Project는 Done이다. 사용자는 CI·별도 리뷰 없는 예외 병합도 추가로 명시 승인했다. Actions·보호 설정을 변경하지 않았으며 App Store 심사 gate는 면제하지 않는다. 배포는 #75에서 추적한다.
+- 사용자 진행 승인으로 `dcc32bf` 로컬 5언어 후보를 #73/PR #74에 통합했다. 원본 언어/리텐션 clone은 보존했다. 새 온보딩은 관심사 뒤 4단계·2열 예시 카드이며 돌아가기 버튼이 없다. 첫 홈은 추천, 실제 학습 뒤 이어하기다.
+- ja/en/es/de/fr 모두 iOS 1,124개 키·Android 517개 리소스 누락 0개, 공식 es/de/fr 뜻 627개·덱 이름 41개·태그 42개를 포함한다. 공용 schema/reader/writer·카탈로그 호환 계약을 함께 반영했다.
+- 검증 소스 `00fb528782bcceb84875778161fca0f4660fb3c8`, 증빙 `release/evidence/00fb528782bcceb84875778161fca0f4660fb3c8.json`. Python 96개, SwiftPM 45개, Android 관련 단위 63개·Debug 빌드/lint·UI 14개, iOS 앱 단위 366개·관련 UI 5개 통과. 마지막 변경은 배경·결과 마스코트의 성장 전 상태를 함께 검사하도록 테스트만 조정했으며, 동일 앱 소스 `a585771`의 단위·첫 홈 3개·Android 결과 재사용 범위를 증빙에 기록했다.
+- 부화 성장 실패는 시뮬레이터의 촬영용 성장 값이 앱 컨테이너 밖에 남아 새 설치 테스트에 유입된 문제였다. DEBUG 초기값과 결과 화면/투어 이후 테스트 범위를 명확히 했다. 별도로 화면 종료 시 미시작 세션이 빈 체크포인트를 다시 저장하던 문제를 수정해 부화→첫 홈→재실행에서 추천을 유지한다. 명시적 재도전의 초기화 저장은 유지한다.
+- Android 공유 에뮬레이터 재실행은 테스트 중 앱 삭제로 중단됐다. 기존 에뮬레이터/다른 작업을 중단하지 않고 Issue #73 전용 API35 에뮬레이터에서 UI 14개를 모두 재검증했다.
+- GitHub Actions/별도 리뷰는 이번 사용자 승인 예외로 수동 병합했다. 원어민·전체 화면/실기기·새 카탈로그 namespace·최종 RC 촬영·스토어 gate는 별도다. 과거 로컬 환경의 앱 빌드/기기 접근 실패 기록은 역사적 증빙이며 현재 통합 검증과 구분한다.
+- 상세: `docs/LANGUAGE_COVERAGE.md`, `docs/LANGUAGE_REVIEW.md`, `docs/LANGUAGE_EXPANSION_CHECKLIST.md`.
 
 ## 최근 소스 통합
 
@@ -40,19 +54,23 @@
 
 플랫폼별 동시 `In Progress`는 하나를 원칙으로 하며, 공용 충돌 파일은 한 작업만 소유한다.
 
-#65 단독 단계의 과거 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 당시 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en을 제공했다. 현재 #67 통합 APK와 iOS 번들은 ja/en/es를 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두고 #68에 별도 보존한 뒤 PR #70에 통합했다. PR #70으로 원격 main에 반영했으며 이번 작업에서 실기기 설치·스토어 배포는 하지 않았다.
+#65 단독 단계의 과거 검증 대상은 `a24ac1eff362cad3218b8a806c0f50078493e1b9`이며 증빙은 `release/evidence/a24ac1eff362cad3218b8a806c0f50078493e1b9.json`이다. Python 82개·iOS 관련 단위/UI 57개(동일 소스 빌드), clean commit 재검증 56개·Android 설정/덱 33개 및 Debug assemble/lint·preflight를 통과했다. 당시 APK에는 한국어 UI locale이 없고 iOS 번들은 ja/en을 제공했다. PR #67 당시 APK와 iOS 번들은 ja/en/es였으며, 현재 PR #74 main은 ja/en/es/de/fr를 제공한다. `shared/`·기존 학습 문자열·음원·덱 schema는 기준 #64 대비 변경이 없다. 기존 스토어/Pro 미커밋 변경은 원래 worktree에 그대로 두고 #68에 별도 보존한 뒤 PR #70에 통합했다. PR #70으로 원격 main에 반영했으며 이번 작업에서 실기기 설치·스토어 배포는 하지 않았다.
 
 ## 열린 출시 gate
+
+- #79 iPad 후속 수정은 업로드된 1.1(7)에 포함되지 않는다. 병합 후 새 빌드 번호로 RC를 만들고 해당 빌드의 기기 QA·스토어 이미지 일치를 확인해야 한다.
 
 - #7: Game Center 계약 전체 점검.
 - #19: Android 동일 signed AAB의 입력 지연, rollover, IME, 오디오, 알림, Files, Billing, Play Games, 60fps 통합 QA.
 - #58: iOS·Android 실제 기기에서 온보딩 알림 권한 동의 뒤 현지 20시 수신 확인.
-- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate.
+- iOS 1.1: `release/APP_STORE_QA.md`의 미완료 수동 gate. Free Apps Agreement Active / Paid Apps Agreement Pending User Info로 갱신된 상태를 확인했다. Account Holder의 은행 계좌 및 한국 세금 양식 입력이 남아 있다. 2026-08-29 미국 Foreign Status·W-8BEN Active를 확인했다. 사용자는 승인 후 자동 출시·단계 배포 없이 전 사용자 즉시 공개를 확정했으며 콘솔 설정과 일치한다. 심사 확인 창은 Continue하지 않고 취소했으며 제출 완료가 아니다. `release/TESTFLIGHT_1_1_SMOKE.md`는 정확한 1.1(7) 실기기 검증 전용이며 아직 미실행이다.
 - App Store 글로벌 배포: 175개 국가 또는 지역 선택 완료. 145개 지역은 처리 중이며 EU 29개 지역은 DSA 거래자 상태 입력 전까지 보류. 기본 언어 en-US 전환은 필수 영어 스크린샷 등록 전까지 차단.
-- App Store 미디어: 한국어 UI 제거 전 ja/en/ko 촬영 테스트 3/3 통과. 현재 ja/en/es RC와 일치하지 않으므로 ko 스토어는 영어 UI, es-ES 스토어는 스페인어 UI로 다시 촬영해야 한다. `ja`, `en-US`, `ko`, `zh-Hans`, `zh-Hant`, `de-DE`, `fr-FR`, `es-ES`, `pt-BR`, `id` 10개 로케일의 100 PNG·10 MP4 제작 및 전체 재검토 완료(2026-08-28 09:16 JST). 지원 언어 안내 없이 실제 UI·현지어 카피·Pro 구매 안내를 유지했다. 사진·영상 contact sheet, 60개 자막, 체크섬과 총 7,920프레임 디코딩 재검증 통과. 영어 홈 CTA 말줄임은 실제 앱 UI의 후속 개선 항목으로 기록했다. **업로드는 Apple 로그인 만료로 차단**: Chrome 미디어 관리자 진입과 앱 내 브라우저 모두 로그인 화면이며, 기존 자산 삭제·신규 업로드·저장·심사 제출은 하지 않았다. 재로그인 뒤 반영을 재개한다. `release/store-assets/verification-20260828.json`과 `artifacts/store-localization/delivery/index.html` 참조. 현지어 사람 검수·최종 RC 일치·신규 로케일 필수 메타데이터·저장 후 재조회는 미완료. GitHub CLI 인증은 2026-08-28 확인했고 보존 작업 #68/PR #69 및 통합 작업 #67/PR #70을 Issue/Project에 반영했다.
+- App Store 미디어: iPhone 기존 10시장 100 PNG·10 MP4 결과는 보존하며 최종 RC 일치 재확인 전이다 (`release/store-assets/verification-20260828.json`). #79 iPad는 최종 앱 f674b57과 동일한 촬영 소스로 **모든 기본 이미지 가로 2752×2064, 10시장 100장, 대체본 0장**을 제작했다. 5 UI 언어 촬영·160개 SHA-256·ZIP 10개·전체 contact sheet 검수 완료. 전달: `/Users/jungminoh/Documents/hanco/outputs/ipad-1.1-landscape-store-20260829/index.html`. Chrome 로그인은 유지되지만 영어(미국) iPad 파일 업로드가 `-32000 Not allowed`로 실패했고 슬롯 재조회 `0 of 10`이다. 이번 작업에서 업로드/저장/심사 제출 완료 없음; 기존 iPhone 미디어·공개 메타데이터는 변경하지 않았다. 현재 일본어·영어 4지역·한국어만 등록돼 있으며 7시장 신규 로케일 메타데이터, 오래된 지원 언어 안내 수정 확인, 현지어 사람 검수·최종 RC 일치·업로드 권한/저장 후 재조회가 남아 있다. 상세 `release/IPAD_1_1_QA.md`, 증빙 `release/evidence/1c7dc566e0ebd3302f7a35a2a563735ebc21a6dc.json`.
 - Android 1.1: `release/GOOGLE_PLAY_QA.md`의 운영자·Play Console·권리·서명 gate.
 
 ## 작업공간 현황
+
+`outputs/local-language-expansion`의 `codex/local-es-de-fr` (`dcc32bf`)를 사용자 진행 승인에 따라 #73 작업 후보에 통합했다. 원본 언어 clone과 후속 `outputs/local-retention-improvements`, 기본 dirty 작업공간은 수정하지 않았다. 로컬 후보의 과거 독립 작업 예외는 해당 시점 기록이며 현재 통합 작업은 Issue #73 소유권·PR #74로 관리한다.
 
 2026-08-27 재정비에서 병합 완료·clean worktree 9개와 로컬 branch 8개를 제거했다. 현재 #58, #9, #12, #46, #17, iPad #10, #65와 새 #67·#68 작업공간을 보존한다. 기본 `/Users/jungminoh/Documents/hanco`는 dirty `codex/63-typedeck`이며 원본 파일을 변경하지 않았다. 소유권은 main 병합 후 clean `main`과 `origin/main`이 같을 때만 해제한다. dirty worktree는 확인 없이 삭제·이동하지 않는다.
 
@@ -83,6 +101,8 @@
 ## #71 프리프랙티스 제거 검증
 
 - iOS·Android 연습 탭 하단 카드와 전용 준비/선택 화면을 제거했다. 커리큘럼·일반 덱 연습·공통 설정과 기존 기록 schema는 유지한다. PR #72는 Draft이며 main 병합·실기기 설치·스토어 배포는 하지 않았다.
-- 검증 대상 `b07c59f969c56e1f4641e7714e90acf82f1fc8f9`, 증빙 `release/evidence/b07c59f969c56e1f4641e7714e90acf82f1fc8f9.json`. iPhone 관련 UI 8개·ja/en/es resource 1개, iPad 하단 지도·큰 글자 UI 2개, Android retention 단위 13개·앱/기기 테스트 Kotlin 컴파일, preflight·strict doctor 통과.
+- 기존 검증 대상 `b07c59f969c56e1f4641e7714e90acf82f1fc8f9`, 증빙 `release/evidence/b07c59f969c56e1f4641e7714e90acf82f1fc8f9.json`. iPhone 관련 UI 8개·ja/en/es resource 1개, iPad 하단 지도·큰 글자 UI 2개, Android retention 단위 13개·앱/기기 테스트 Kotlin 컴파일, preflight·strict doctor 통과.
 - iPhone 최초 9개 선택 실행은 테스트 탐색 순서·동일 이름 옵션 때문에 2개 실패했다. 두 테스트를 공통 설정 순서·사운드 picker 범위에 맞춰 각각 재실행해 통과했다. 전체 9개를 한 번에 재실행한 결과로 표현하지 않는다. iOS 제품 소스는 `693a7ca`, Android 소스는 `10ee7db`와 동일하며 이후 변경은 해당 테스트와 검증 문서뿐이다.
+- 2026-08-29 최신 main `a678e0f`를 병합하고 새 de/fr UI 리소스에서도 제거된 진입 문구를 정리했다. repository preflight와 UI 언어 범위 8개, Android retention 단위·앱/기기 테스트 Kotlin 컴파일, iPad 커리큘럼 하단 미노출·큰 글자 접근성 UI 2개를 통과했다.
+- iPhone 관련 UI 5개 중 3개는 첫 선택 실행에서 통과했고, 2개는 simulator runner/AX 종료 뒤 각각 새 simulator에서 재실행해 통과했다. 5개 전체가 한 번에 통과한 결과로 표현하지 않는다.
 - Android 기기 instrumentation은 미실행. 저장소 Actions `enabled=false`를 재확인했으며 CI/리뷰 예외나 보호 설정 변경은 하지 않았다. 기존 기본 작업폴더의 dirty 파일은 보존했다.

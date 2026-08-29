@@ -373,6 +373,23 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(restored.mistakeCount, 1)
     XCTAssertEqual(restored.completedJamoCount, 1)
     XCTAssertEqual(restored.activeDuration, 4, accuracy: 0.001)
+    XCTAssertTrue(restored.hasResumableProgress)
+  }
+
+  func testOnlyStartedUnfinishedSessionsHaveResumableProgress() {
+    let model = PracticeSessionViewModel(targets: ["가", "나"])
+    XCTAssertFalse(model.hasResumableProgress)
+    model.input("ㄴ")
+    XCTAssertTrue(model.hasResumableProgress)
+    model.input("ㄱ")
+    model.input("ㅏ")
+    XCTAssertTrue(model.hasResumableProgress)
+    model.advance()
+    model.input("ㄴ")
+    model.input("ㅏ")
+    XCTAssertFalse(model.hasResumableProgress)
+    model.reset()
+    XCTAssertFalse(model.hasResumableProgress)
   }
 
   func testPausedTimingExcludesBackgroundTimeAndResumesFromForeground() {

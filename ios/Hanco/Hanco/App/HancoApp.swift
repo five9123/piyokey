@@ -43,6 +43,9 @@ struct HancoApp: App {
       }
       if ProcessInfo.processInfo.environment["UITEST_RESET_MASCOT"] == "1" {
         MascotCompanionLibrary.allKeys.forEach(UserDefaults.standard.removeObject(forKey:))
+        // Simulator-wide capture preferences can survive clearing the app domain.
+        // Shadow those values so fresh-install tests start before any celebration.
+        UserDefaults.standard.set(0, forKey: MascotCompanionLibrary.celebratedStageKey)
       }
       if ProcessInfo.processInfo.environment["UITEST_SEED_APP_STORE_CAPTURE"] == "1" {
         seedAppStoreCaptureState()

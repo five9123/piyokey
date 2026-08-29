@@ -82,4 +82,18 @@
   <string name="wardrobe_bow">Lazo arcoíris</string>
   <string name="wardrobe_topik_glasses">Gafas TOPIK</string>
   <string name="wardrobe_trophy">Trofeo de campeón</string>
+
+    <string name="home_primary_recommend_eyebrow">Un mazo para empezar</string>
+    <string name="home_primary_recommend_detail">Elegido según tu nivel e intereses</string>
+    <string name="home_primary_resume_eyebrow">Retoma la práctica</string>
+    <string name="home_primary_resume_detail">Continúa tu práctica</string>
+
+<plurals name="review_count">
+  <item quantity="one">%1$d palabra para repasar</item>
+  <item quantity="other">%1$d palabras para repasar</item>
+</plurals>
+<plurals name="retention_week_progress">
+  <item quantity="one">Esta semana %1$d/7 · racha de %2$d día</item>
+  <item quantity="other">Esta semana %1$d/7 · racha de %2$d días</item>
+</plurals>
 </resources>

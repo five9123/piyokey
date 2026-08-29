@@ -43,6 +43,7 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":core:settings"))
   implementation(project(":core:deckkit"))
   implementation(project(":core:piyodeck"))
   implementation(project(":core:game"))

@@ -60,7 +60,7 @@ DECK_FIELDS = {
 ITEM_FIELDS = {"id", "ko", "reading_ja", "meaning_ja", "audio"}
 OPTIONAL_DECK_FIELDS = {"localizations"}
 OPTIONAL_ITEM_FIELDS = {"localizations"}
-SUPPORTED_LOCALIZATION_CODES = {"en", "ko"}
+SUPPORTED_LOCALIZATION_CODES = {"en", "ko", "es", "de", "fr"}
 
 
 _GTTS_GENERATOR: Any | None = None
@@ -371,6 +371,14 @@ def validate_deck(deck: Any) -> list[dict[str, str]]:
                 path=f"{path}.localizations",
                 issues=issues,
             )
+
+        metadata = deck.get("localizations")
+        required_locales = set(metadata) - {"ko"} if isinstance(metadata, dict) else set()
+        item_localizations = item_value.get("localizations")
+        for language in sorted(required_locales):
+            if not isinstance(item_localizations, dict) or language not in item_localizations:
+                issues.append(issue("error", "missing_localization", f"{path}.localizations.{language}",
+                                    "공개된 메타데이터 언어의 뜻과 읽기가 필요합니다."))
 
         audio = item_value.get("audio")
         if audio is not None and not _nonempty_string(audio):
