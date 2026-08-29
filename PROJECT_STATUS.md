@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | 최신 `main`에 iPad·5언어·schema v2·Pro 덱 언어 retag까지 통합. TestFlight `1.1 (7)`은 최신 소스 이전 빌드 | 새 build 번호 RC 생성 후 TestFlight 실기기·IAP·미디어·현지어·출시 gate 검증 |
+| iOS 1.1 | 최신 `main`에 iPad·5언어·schema v2·Pro 덱 언어 retag까지 통합. TestFlight `1.1 (8)`도 Pro 덱 언어 retag 이전 소스이며 프로젝트 후보는 `1.1 (9)` | build 9 archive·TestFlight 처리 후 정확한 후보로 실기기·IAP·미디어·현지어·출시 gate 검증 |
 | Android 1.1 | Kotlin/Compose 앱과 공용 core 구현, 소스 버전 `1.1.0 (8)`. Play 미배포 | 최종 서명 AAB와 Play 설정을 확정하고 Issue #19의 동일 AAB 실기기 통합 QA |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 활성. GitHub-owned action만 허용하고 action SHA pinning·Dependabot alerts/security updates를 적용. private 저장소의 현재 요금제에서는 branch protection/ruleset 사용 불가 | 모든 표시 PR check 성공 후에만 squash merge하는 수동 fail-closed gate 유지 |
@@ -24,7 +24,7 @@
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
-| #75 기존 iOS 1.1 (7) TestFlight | Verify | build 7을 RC로 사용하지 않고 최신 `main`의 새 build로 대체 |
+| #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
 | #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
 | #58 현지 20시 리마인더 | Verify | iOS·Android 실제 기기에서 권한 동의 뒤 현지 20시 수신 확인 |
 | #19 Android 출시 후보 통합 QA | Blocked | Console·서명·권리·Billing·Play Games가 반영된 동일 AAB를 Galaxy에서 검증 |
@@ -40,7 +40,7 @@
 
 - 소스·CI 성공은 TestFlight·App Review·App Store 또는 Google Play 출시 완료가 아니다.
 - iOS 새 RC는 `workspace_doctor.py --strict --require-origin-main`을 통과한 최신
-  `origin/main` tree에서 생성하고, build 7의 과거 검증을 재사용하지 않는다.
+  `origin/main` tree에서 생성하고, build 7·8의 과거 검증을 재사용하지 않는다.
 - Android는 `bundleDistributionRelease`로 만든 동일 서명 AAB만 Issue #19와 Play
   제출 후보로 사용한다.
 - Account Holder의 법적·세금·은행 선언, 콘텐츠 권리 승인과 실제 기기 확인은

@@ -1,13 +1,13 @@
-# typee / ピヨキー 1.1 (7) TestFlight smoke record
+# typee / ピヨキー 1.1 (9) TestFlight smoke record
 
 이 기록은 새 1.1 후보 전용이다. 1.0.2 완료 기록이나 시뮬레이터 결과를 그대로 옮기지 않는다. 아래 항목은 아직 실제 TestFlight 빌드로 실행하지 않았다.
 
 ## 빌드 식별
 
-- Version/build: `1.1 (7)`
+- Version/build: `1.1 (9)`
 - Bundle ID: `app.piyokey.Piyokey`
-- Main source: `9af01ef96e06472eb3d842880649b5e697c5877e`
-- 아카이브·IPA 증빙: `release/IOS_1_1_BUILD_7.md`
+- Main source: archive 직전 `origin/main` SHA 기록 대기
+- 아카이브·IPA 증빙: `release/IOS_1_1_BUILD_9.md` (생성 대기)
 - Tester / Device / OS / Date: 미기록
 - TestFlight 설치·검증 결과: 미실행
 

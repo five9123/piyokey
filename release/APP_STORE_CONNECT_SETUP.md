@@ -16,7 +16,7 @@ submission history. Do not edit the historical App Store version record when pre
 | Bundle ID | `app.piyokey.Piyokey` |
 | SKU | `piyokey-ios-001` |
 | User access | Full Access |
-| Version | `1.1` (project build 7; increment before archive if that build number is no longer available) |
+| Version | `1.1` (project candidate build 9; build 7 remains linked and build 8 is an uploaded superseded candidate) |
 | Primary category | Education |
 | Secondary category | Games / Word |
 | Price | Free download with one optional non-consumable in-app purchase |
@@ -186,8 +186,8 @@ Create the leaderboards and achievements exactly as listed in `release/GAME_CENT
 
 ## Archive and export
 
-Create the next archive from the `Hanco` scheme with version `1.1` and an unused build
-number (the project currently uses build 7). Export a local IPA with
+Create the next archive from the `Hanco` scheme with version `1.1` and build `9` from a
+clean tree matching the latest `origin/main`. Export a local IPA with
 `release/ExportOptions.plist` or upload the same archive with
 `release/ExportOptionsUpload.plist`; automatic signing must resolve team `X44BQNTAH9`
 and Bundle ID `app.piyokey.Piyokey`. Verify that the app target has the **In-App

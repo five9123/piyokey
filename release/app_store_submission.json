@@ -153,13 +153,15 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_testflight_complete_build_linked",
+    "record_status": "version_1_1_build_9_source_candidate_pending_archive",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
     "marketing_version": "1.1",
-    "build_number": "7",
+    "build_number": "9",
+    "currently_linked_build_number": "7",
+    "latest_uploaded_superseded_build_number": "8",
     "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
     "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
     "localized_media": {
