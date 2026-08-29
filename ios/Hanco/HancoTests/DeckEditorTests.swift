@@ -5,10 +5,11 @@ import XCTest
 @testable import Hanco
 
 final class DeckEditorTests: XCTestCase {
-  func testExpandedEditingLanguagesPreserveOriginalKoreanAndJapaneseFields() throws {
+  func testExpandedEditingLanguagesCreateOneToOneUserDecks() throws {
     let original = makeUserDeck(version: 4)
     for (language, meaning) in [(DeckContentLanguage.spanish, "Hola"), (.german, "Hallo"), (.french, "Bonjour")] {
       var draft = UserDeckDraft(editing: original)
+      draft.retagDeckLanguage(language.rawValue)
       draft.setName("Test", for: language)
       draft.setAuthorNickname("Piyo", for: language)
       draft.setTags(original.tags, for: language)
@@ -21,10 +22,13 @@ final class DeckEditorTests: XCTestCase {
       for (item, source) in zip(saved.items, original.items) {
         XCTAssertEqual(item.id, source.id)
         XCTAssertEqual(item.ko, source.ko)
-        XCTAssertEqual(item.meaningJa, source.meaningJa)
-        XCTAssertEqual(item.readingJa, source.readingJa)
+        XCTAssertEqual(item.meaningJa, meaning)
+        XCTAssertEqual(item.readingJa, "annyeong")
         XCTAssertEqual(item.localizations?[language.rawValue]?.meaning, meaning)
+        XCTAssertEqual(Set(item.localizations?.keys.map { $0 } ?? []), [language.rawValue])
       }
+      XCTAssertEqual(saved.defaultLocale, language.rawValue)
+      XCTAssertEqual(Set(saved.localizations?.keys.map { $0 } ?? []), [language.rawValue])
     }
   }
 
@@ -266,6 +270,7 @@ final class DeckEditorTests: XCTestCase {
       newAt: Date(timeIntervalSince1970: 100),
       uuidHexGenerator: { generated.next()! }
     )
+    draft.retagDeckLanguage("en")
     draft.setName("My Korean Deck", for: .english)
     draft.setAuthorNickname("Piyo", for: .english)
     draft.setTags(["travel"], for: .english)
@@ -291,7 +296,7 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(deck.localizedName(languageCode: "en"), "My Korean Deck")
   }
 
-  func testUnknownCanonicalLocaleSurvivesProEditMaterialization() throws {
+  func testUnknownCanonicalLocaleSurvivesLegacySelectionAndRoundTrip() throws {
     let unknownLocale = "sl-rozaj-biske"
     let source = Deck(
       deckId: "user_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -324,16 +329,28 @@ final class DeckEditorTests: XCTestCase {
       defaultLocale: "ar"
     )
 
-    let edited = try UserDeckDraft(editing: source).validatedDeck(localeCode: "ar")
+    var draft = UserDeckDraft(editing: source)
+    XCTAssertTrue(draft.requiresContentBundleSelection)
+    XCTAssertEqual(Set(draft.contentLocaleCodes), ["ar", unknownLocale])
+    draft.selectContentBundle(unknownLocale)
+    let edited = try draft.validatedDeck(localeCode: unknownLocale)
 
-    XCTAssertEqual(edited.defaultLocale, "ar")
+    XCTAssertEqual(edited.defaultLocale, unknownLocale)
     XCTAssertEqual(edited.localizations?[unknownLocale], source.localizations?[unknownLocale])
     XCTAssertEqual(edited.items[0].localizations?[unknownLocale], source.items[0].localizations?[unknownLocale])
+    XCTAssertEqual(Set(edited.localizations?.keys.map { $0 } ?? []), [unknownLocale])
+    XCTAssertEqual(Set(edited.items[0].localizations?.keys.map { $0 } ?? []), [unknownLocale])
   }
 
-  func testEditingKoreanLocalizationPreservesJapaneseBaseAndEnglishLocalization() throws {
+  func testEditingMultilingualDeckRequiresSelectionAndKeepsOnlyKorean() throws {
     let original = makeMultilingualUserDeck()
     var draft = UserDeckDraft(editing: original)
+
+    XCTAssertThrowsError(try draft.validatedDeck(language: .korean)) { error in
+      let validationError = error as? UserDeckDraftValidationError
+      XCTAssertEqual(validationError?.issues.first?.code, "single_deck_language")
+    }
+    draft.selectContentBundle("ko")
 
     XCTAssertEqual(draft.name(for: .korean), "내 단어")
     XCTAssertEqual(draft.authorNickname(for: .korean), "피요")
@@ -349,43 +366,40 @@ final class DeckEditorTests: XCTestCase {
 
     let edited = try draft.validatedDeck(language: .korean)
 
-    XCTAssertEqual(edited.name, original.name)
-    XCTAssertEqual(edited.author.nickname, original.author.nickname)
-    XCTAssertEqual(edited.tags, original.tags)
-    XCTAssertEqual(edited.items[0].readingJa, original.items[0].readingJa)
-    XCTAssertEqual(edited.items[0].meaningJa, original.items[0].meaningJa)
+    XCTAssertEqual(edited.name, "내 여행 단어")
+    XCTAssertEqual(edited.author.nickname, "병아리")
+    XCTAssertEqual(edited.tags, ["여행"])
+    XCTAssertEqual(edited.items[0].readingJa, "안녕하세요")
+    XCTAssertEqual(edited.items[0].meaningJa, "정중한 인사")
     XCTAssertEqual(edited.localizations?["ko"]?.name, "내 여행 단어")
     XCTAssertEqual(edited.items[0].localizations?["ko"]?.meaning, "정중한 인사")
-    XCTAssertEqual(edited.localizations?["en"], original.localizations?["en"])
-    XCTAssertEqual(edited.items[0].localizations?["en"], original.items[0].localizations?["en"])
+    XCTAssertEqual(Set(edited.localizations?.keys.map { $0 } ?? []), ["ko"])
+    XCTAssertEqual(Set(edited.items[0].localizations?.keys.map { $0 } ?? []), ["ko"])
   }
 
-  func testEditingMissingNonJapaneseLocalizationStartsEmptyAndRequiresCompleteTranslation() {
+  func testDeckLanguageRetagPreservesExistingContentInsteadOfStartingEmpty() throws {
     let original = makeUserDeck(version: 2)
     var draft = UserDeckDraft(editing: original)
+    let originalMetadata = DeckMetadataLocalization(
+      name: original.name,
+      authorNickname: original.author.nickname,
+      tags: original.tags
+    )
+    let originalItem = DeckItemLocalization(
+      meaning: original.items[0].meaningJa,
+      reading: original.items[0].readingJa
+    )
 
-    XCTAssertEqual(draft.name(for: .english), "")
-    XCTAssertEqual(draft.authorNickname(for: .english), "")
-    XCTAssertEqual(draft.tags(for: .english), [])
-    XCTAssertEqual(draft.items[0].reading(for: .english), "")
-    XCTAssertEqual(draft.items[0].meaning(for: .english), "")
+    draft.retagDeckLanguage("fr-CA")
+    let retagged = try draft.validatedDeck(localeCode: "fr-CA")
 
-    draft.setName("My edited words", for: .english)
-    draft.items[0].setMeaning("greeting", for: .english)
-
-    let partial = draft.materializedDeck(language: .english)
-
-    XCTAssertEqual(partial.name, original.name)
-    XCTAssertEqual(partial.author.nickname, original.author.nickname)
-    XCTAssertEqual(partial.tags, original.tags)
-    XCTAssertEqual(partial.items[0].readingJa, original.items[0].readingJa)
-    XCTAssertEqual(partial.items[0].meaningJa, original.items[0].meaningJa)
-    XCTAssertEqual(partial.localizations?["en"]?.name, "My edited words")
-    XCTAssertEqual(partial.localizations?["en"]?.authorNickname, "")
-    XCTAssertEqual(partial.localizations?["en"]?.tags, [])
-    XCTAssertEqual(partial.items[0].localizations?["en"]?.reading, "")
-    XCTAssertEqual(partial.items[0].localizations?["en"]?.meaning, "greeting")
-    XCTAssertThrowsError(try draft.validatedDeck(language: .english))
+    XCTAssertEqual(retagged.defaultLocale, "fr-CA")
+    XCTAssertEqual(retagged.localizations, ["fr-CA": originalMetadata])
+    XCTAssertEqual(retagged.items[0].localizations, ["fr-CA": originalItem])
+    XCTAssertEqual(retagged.name, original.name)
+    XCTAssertEqual(retagged.author.nickname, original.author.nickname)
+    XCTAssertEqual(retagged.items[0].meaningJa, original.items[0].meaningJa)
+    XCTAssertEqual(retagged.items[0].readingJa, original.items[0].readingJa)
   }
 
   func testKoreanMetadataWithoutKoreanItemsIsRejectedByVersionTwoContract() {
@@ -408,6 +422,7 @@ final class DeckEditorTests: XCTestCase {
 
   func testClearingCurrentLanguageMetadataFailsInsteadOfDroppingLocalization() {
     var draft = UserDeckDraft(editing: makeMultilingualUserDeck())
+    draft.selectContentBundle("ko")
     draft.setName("", for: .korean)
 
     XCTAssertThrowsError(try draft.validatedDeck(language: .korean)) { error in
@@ -440,6 +455,73 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(deck.localizations?["ja"]?.name, "私の単語")
     XCTAssertEqual(deck.items[0].localizations?["ja"]?.reading, "アンニョン")
     XCTAssertEqual(deck.items[0].localizations?["ja"]?.meaning, "こんにちは")
+  }
+
+  func testOfficialFiveLanguageBundleAndKoreanMetadataStayIntactUntilSelection() {
+    let localizations = ["ja", "en", "es", "de", "fr", "ko"]
+    let metadata = Dictionary(uniqueKeysWithValues: localizations.map { code in
+      (code, DeckMetadataLocalization(name: "name-\(code)", authorNickname: "Piyo", tags: [code]))
+    })
+    let itemLocalizations = Dictionary(uniqueKeysWithValues: localizations.map { code in
+      (code, DeckItemLocalization(meaning: "meaning-\(code)", reading: "reading-\(code)"))
+    })
+    let official = makeOfficialDeck().withLocalizationsForTest(
+      metadata: metadata,
+      itemLocalizations: itemLocalizations,
+      defaultLocale: "ja"
+    )
+    var generated = [firstHex, secondHex, thirdHex].makeIterator()
+    var draft = UserDeckDraft(
+      copyingOfficial: official,
+      uuidHexGenerator: { generated.next()! }
+    )
+
+    XCTAssertTrue(draft.requiresContentBundleSelection)
+    XCTAssertEqual(Set(draft.contentLocaleCodes), Set(localizations))
+    XCTAssertEqual(draft.metadataLocalizations, official.localizations)
+    XCTAssertEqual(draft.items[0].localizations, official.items[0].localizations)
+
+    draft.selectContentBundle("fr")
+    XCTAssertEqual(draft.metadataLocalizations, ["fr": metadata["fr"]!])
+    XCTAssertEqual(draft.items[0].localizations, ["fr": itemLocalizations["fr"]!])
+    XCTAssertEqual(Set(official.localizations?.keys.map { $0 } ?? []), Set(localizations))
+    XCTAssertEqual(official.localizations?["ko"], metadata["ko"])
+  }
+
+  func testProductInputBoundariesAndLegacyValidationPreservation() {
+    let nineSyllablesAndOneSpace = "가가가가 나나나나나"
+    XCTAssertEqual(nineSyllablesAndOneSpace.count, 10)
+    XCTAssertEqual(
+      UserDeckDraft.acceptedKoreanInput(current: "", proposed: nineSyllablesAndOneSpace),
+      nineSyllablesAndOneSpace
+    )
+    XCTAssertEqual(
+      UserDeckDraft.acceptedKoreanInput(current: nineSyllablesAndOneSpace, proposed: "가가가가가나나나나나"),
+      nineSyllablesAndOneSpace
+    )
+    XCTAssertEqual(UserDeckDraft.acceptedKoreanInput(current: "가", proposed: "가a"), "가")
+
+    let twenty = String(repeating: "a", count: 20)
+    XCTAssertEqual(UserDeckDraft.acceptedMeaningOrReadingInput(current: "", proposed: twenty), twenty)
+    XCTAssertEqual(
+      UserDeckDraft.acceptedMeaningOrReadingInput(current: twenty, proposed: twenty + "a"),
+      twenty
+    )
+
+    var draft = UserDeckDraft(editing: makeUserDeck(version: 1))
+    draft.items[0].ko = "가가가가가나나나나나"
+    draft.items[0].readingJa = String(repeating: "r", count: 21)
+    draft.items[0].meaningJa = String(repeating: "m", count: 21)
+
+    let unchangedExport = draft.materializedDeck(language: .japanese)
+    XCTAssertEqual(unchangedExport.items[0].ko, draft.items[0].ko)
+    XCTAssertEqual(unchangedExport.items[0].readingJa, draft.items[0].readingJa)
+    XCTAssertEqual(unchangedExport.items[0].meaningJa, draft.items[0].meaningJa)
+    XCTAssertThrowsError(try draft.validatedDeck(language: .japanese)) { error in
+      let codes = Set((error as? UserDeckDraftValidationError)?.issues.map(\.code) ?? [])
+      XCTAssertTrue(codes.contains("user_deck_korean_length"))
+      XCTAssertTrue(codes.contains("user_deck_text_length"))
+    }
   }
 
   private func makeUserDeck(
@@ -579,6 +661,39 @@ final class DeckEditorTests: XCTestCase {
         "en": DeckMetadataLocalization(name: "My Words", authorNickname: "Piyo", tags: ["daily"]),
         "ko": DeckMetadataLocalization(name: "내 단어", authorNickname: "피요", tags: ["일상"]),
       ]
+    )
+  }
+}
+
+private extension Deck {
+  func withLocalizationsForTest(
+    metadata: [String: DeckMetadataLocalization],
+    itemLocalizations: [String: DeckItemLocalization],
+    defaultLocale: String
+  ) -> Deck {
+    Deck(
+      deckId: deckId,
+      version: version,
+      name: name,
+      author: author,
+      official: official,
+      type: type,
+      level: level,
+      tags: tags,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      items: items.map { item in
+        DeckItem(
+          id: item.id,
+          ko: item.ko,
+          readingJa: item.readingJa,
+          meaningJa: item.meaningJa,
+          audio: item.audio,
+          localizations: itemLocalizations
+        )
+      },
+      localizations: metadata,
+      defaultLocale: defaultLocale
     )
   }
 }

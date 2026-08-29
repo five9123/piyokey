@@ -80,7 +80,12 @@
   <string name="deck_maker_notice_restore_failed">No se ha podido comprobar la compra. Inténtalo de nuevo cuando tengas conexión.</string>
   <string name="deck_maker_notice_product_unavailable">typee pro no está disponible temporalmente. Inténtalo de nuevo cuando Google Play esté conectado.</string>
   <string name="deck_editor_title">Editor de mazos</string>
-  <string name="deck_editor_language">Idioma de edición: %1$s</string>
+  <string name="deck_editor_language">Idioma del mazo: %1$s</string>
+  <string name="deck_editor_language_single_help">Sirve para descubrirlo. Cambiarlo conserva el coreano, el significado y la lectura.</string>
+  <string name="deck_editor_language_multilingual_warning">Este mazo antiguo tiene varios contenidos. Elige uno antes de cambiar el idioma del mazo.</string>
+  <string name="deck_editor_language_change_title">¿Elegir el contenido que conservar?</string>
+  <string name="deck_editor_language_change_message">Se conservarán el coreano, el significado y la lectura elegidos. Se eliminarán los demás contenidos localizados.</string>
+  <string name="deck_editor_language_change_confirm">Conservar este contenido</string>
   <string name="deck_editor_name">Nombre del mazo</string>
   <string name="deck_editor_author">Nombre visible del autor</string>
   <string name="deck_editor_tags">Etiquetas separadas por comas</string>
@@ -90,6 +95,8 @@
   <string name="deck_editor_korean">Coreano</string>
   <string name="deck_editor_reading">Lectura</string>
   <string name="deck_editor_meaning">Significado</string>
+  <string name="deck_editor_korean_count">Sílabas %1$d/%2$d · Caracteres %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d caracteres</string>
   <string name="deck_editor_add_item">Añadir elemento</string>
   <string name="deck_editor_delete_item">Eliminar elemento</string>
   <string name="deck_editor_save">Guardar</string>

@@ -114,6 +114,9 @@ struct UserDeckValidationSummary: Equatable {
   }
 
   private static func localizationKey(for issue: ContentValidationIssue) -> String {
+    if issue.code == "single_deck_language" {
+      return "deck_editor.validation.single_language"
+    }
     if issue.path == "name", issue.code == "required" {
       return "deck_editor.validation.name_required"
     }
@@ -129,16 +132,18 @@ struct UserDeckValidationSummary: Equatable {
     if issue.path == "items", issue.code == "min_items" {
       return "deck_editor.validation.items_required"
     }
-    if issue.code == "max_target_length" {
+    if issue.code == "max_target_length" || issue.code == "user_deck_korean_length" {
       return "deck_editor.validation.korean_length"
     }
-    if issue.code == "undecomposable_ko" || issue.code == "missing_hangul" {
+    if issue.code == "undecomposable_ko" || issue.code == "missing_hangul"
+      || issue.code == "user_deck_korean_input"
+    {
       return "deck_editor.validation.korean_input"
     }
     if issue.code == "user_deck_item_limit" {
       return "deck_editor.validation.item_limit"
     }
-    if issue.code == "max_length" {
+    if issue.code == "max_length" || issue.code == "user_deck_text_length" {
       return "deck_editor.validation.text_length"
     }
     if issue.code == "duplicate" {
@@ -151,6 +156,7 @@ struct UserDeckValidationSummary: Equatable {
   }
 
   private static func field(for path: String) -> UserDeckValidationField? {
+    if path == "default_locale" { return .language }
     if path == "name" || (path.hasPrefix("localizations.") && path.hasSuffix(".name")) {
       return .name
     }
@@ -184,6 +190,7 @@ struct UserDeckValidationSummary: Equatable {
 }
 
 enum UserDeckValidationField: Equatable {
+  case language
   case name
   case author
   case tags
@@ -225,6 +232,80 @@ struct UserDeckDraft: Equatable {
   var derivedFromDeckID: String? {
     guard case .officialCopy(let sourceDeckID) = origin else { return nil }
     return sourceDeckID
+  }
+
+  /// Locale keys that contain independent legacy content bundles. Japanese base fields are mirrors.
+  var contentLocaleCodes: [String] {
+    var localizedCodes = Set(metadataLocalizations?.keys ?? Dictionary<String, DeckMetadataLocalization>().keys)
+    for item in items {
+      localizedCodes.formUnion(item.localizations?.keys ?? Dictionary<String, DeckItemLocalization>().keys)
+    }
+    if (defaultLocale == nil || defaultLocale == "ja"), hasLegacyBaseContent {
+      localizedCodes.insert("ja")
+    }
+    if !localizedCodes.isEmpty { return localizedCodes.sorted() }
+    return hasLegacyBaseContent ? ["ja"] : []
+  }
+
+  var requiresContentBundleSelection: Bool {
+    contentLocaleCodes.count > 1
+  }
+
+  /// Collapses a legacy multilingual deck to one existing bundle after explicit UI confirmation.
+  mutating func selectContentBundle(_ localeCode: String) {
+    precondition(
+      Self.canonicalLocale(localeCode) == localeCode,
+      "Content locale must be a canonical BCP 47 tag."
+    )
+    precondition(
+      contentLocaleCodes.contains(localeCode),
+      "Content bundle selection must use an existing locale."
+    )
+
+    let existingMetadata = metadataForContent(localeCode)
+
+    name = existingMetadata.name
+    authorNickname = existingMetadata.authorNickname
+    tags = existingMetadata.tags
+    metadataLocalizations = [localeCode: existingMetadata]
+    defaultLocale = localeCode
+
+    for index in items.indices {
+      let existingItem = localizationForContent(items[index], localeCode: localeCode)
+      items[index].meaningJa = existingItem.meaning
+      items[index].readingJa = existingItem.reading
+      items[index].localizations = [localeCode: existingItem]
+    }
+  }
+
+  /// Moves the sole content bundle to a new discovery/community locale without changing values.
+  mutating func retagDeckLanguage(_ localeCode: String) {
+    precondition(
+      Self.canonicalLocale(localeCode) == localeCode,
+      "Deck language must be a canonical BCP 47 tag."
+    )
+    precondition(
+      !requiresContentBundleSelection,
+      "Select one legacy content bundle before changing the deck language."
+    )
+
+    let sourceLocale = contentLocaleCodes.first
+    let existingMetadata = sourceLocale.map(metadataForContent)
+      ?? DeckMetadataLocalization(name: name, authorNickname: authorNickname, tags: tags)
+    name = existingMetadata.name
+    authorNickname = existingMetadata.authorNickname
+    tags = existingMetadata.tags
+    metadataLocalizations = [localeCode: existingMetadata]
+    defaultLocale = localeCode
+
+    for index in items.indices {
+      let existingItem = sourceLocale.map {
+        localizationForContent(items[index], localeCode: $0)
+      } ?? DeckItemLocalization(meaning: items[index].meaningJa, reading: items[index].readingJa)
+      items[index].meaningJa = existingItem.meaning
+      items[index].readingJa = existingItem.reading
+      items[index].localizations = [localeCode: existingItem]
+    }
   }
 
   func name(for language: DeckContentLanguage) -> String {
@@ -296,8 +377,10 @@ struct UserDeckDraft: Equatable {
     createdAt = date
     baseVersion = 0
     authorID = Self.localAuthorID
-    metadataLocalizations = nil
-    defaultLocale = nil
+    metadataLocalizations = [
+      "ja": DeckMetadataLocalization(name: "", authorNickname: "", tags: [])
+    ]
+    defaultLocale = "ja"
     name = ""
     authorNickname = ""
     type = .word
@@ -305,7 +388,8 @@ struct UserDeckDraft: Equatable {
     tags = []
     items = [
       UserDeckItemDraft(
-        id: Self.makeIdentifier(prefix: "item_", using: uuidHexGenerator)
+        id: Self.makeIdentifier(prefix: "item_", using: uuidHexGenerator),
+        localizations: ["ja": DeckItemLocalization(meaning: "", reading: "")]
       )
     ]
   }
@@ -411,11 +495,10 @@ struct UserDeckDraft: Equatable {
     }
     let defaultMetadata = outputMetadata[resolvedDefaultLocale]
     let japaneseMetadata = outputMetadata["ja"]
-    let baseName = japaneseMetadata?.name
-      ?? mirroredBaseValue(name, currentValue: defaultMetadata?.name ?? displayName)
+    let baseName = japaneseMetadata?.name ?? defaultMetadata?.name ?? displayName
     let baseAuthorNickname = japaneseMetadata?.authorNickname
-      ?? mirroredBaseValue(authorNickname, currentValue: defaultMetadata?.authorNickname ?? displayAuthorNickname)
-    let baseTags = japaneseMetadata?.tags ?? (tags.isEmpty ? defaultMetadata?.tags ?? displayTags : tags)
+      ?? defaultMetadata?.authorNickname ?? displayAuthorNickname
+    let baseTags = japaneseMetadata?.tags ?? defaultMetadata?.tags ?? displayTags
     let declaredCodes = Set(outputMetadata.keys)
     return Deck(
       deckId: deckID,
@@ -445,9 +528,9 @@ struct UserDeckDraft: Equatable {
           id: $0.id,
           ko: $0.ko,
           readingJa: japanese?.reading
-            ?? mirroredBaseValue($0.readingJa, currentValue: fallback?.reading ?? currentReading),
+            ?? fallback?.reading ?? currentReading,
           meaningJa: japanese?.meaning
-            ?? mirroredBaseValue($0.meaningJa, currentValue: fallback?.meaning ?? currentMeaning),
+            ?? fallback?.meaning ?? currentMeaning,
           audio: nil,
           localizations: itemLocalizations
         )
@@ -466,7 +549,10 @@ struct UserDeckDraft: Equatable {
 
   func validationIssues(at date: Date = Date(), localeCode: String) -> [ContentValidationIssue] {
     let deck = materializedDeck(at: date, localeCode: localeCode)
-    return UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
+    return singleDeckLanguageIssues(for: deck)
+      + UserDeckValidator.validate(deck)
+      + schemaBoundaryIssues(for: deck)
+      + productBoundaryIssues(for: deck)
   }
 
   func validationSummary(
@@ -489,17 +575,14 @@ struct UserDeckDraft: Equatable {
 
   func validatedDeck(at date: Date = Date(), localeCode: String) throws -> Deck {
     let deck = materializedDeck(at: date, localeCode: localeCode)
-    let issues = UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
+    let issues = singleDeckLanguageIssues(for: deck)
+      + UserDeckValidator.validate(deck)
+      + schemaBoundaryIssues(for: deck)
+      + productBoundaryIssues(for: deck)
     guard issues.isEmpty else {
       throw UserDeckDraftValidationError(issues: issues)
     }
     return deck
-  }
-
-  private func mirroredBaseValue(_ baseValue: String, currentValue: String) -> String {
-    baseValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-      ? currentValue
-      : baseValue
   }
 
   static func parseTags(_ text: String) -> [String] {
@@ -553,6 +636,54 @@ struct UserDeckDraft: Equatable {
     return filtered.isEmpty ? nil : filtered
   }
 
+  private func metadataForContent(_ localeCode: String) -> DeckMetadataLocalization {
+    if let localized = metadataLocalizations?[localeCode] { return localized }
+    if localeCode == "ja" {
+      return DeckMetadataLocalization(name: name, authorNickname: authorNickname, tags: tags)
+    }
+    return DeckMetadataLocalization(name: "", authorNickname: "", tags: [])
+  }
+
+  private func localizationForContent(
+    _ item: UserDeckItemDraft,
+    localeCode: String
+  ) -> DeckItemLocalization {
+    if let localized = item.localizations?[localeCode] { return localized }
+    if localeCode == "ja" {
+      return DeckItemLocalization(meaning: item.meaningJa, reading: item.readingJa)
+    }
+    return DeckItemLocalization(meaning: "", reading: "")
+  }
+
+  private var hasLegacyBaseContent: Bool {
+    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      || !authorNickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      || !tags.isEmpty
+      || items.contains {
+        !$0.meaningJa.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+          || !$0.readingJa.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      }
+  }
+
+  private func singleDeckLanguageIssues(for deck: Deck) -> [ContentValidationIssue] {
+    let localeCodes = Set(deck.localizations?.keys ?? Dictionary<String, DeckMetadataLocalization>().keys)
+    guard contentLocaleCodes.count == 1,
+      !requiresContentBundleSelection,
+      localeCodes.count == 1,
+      let defaultLocale = deck.defaultLocale,
+      localeCodes.contains(defaultLocale)
+    else {
+      return [
+        ContentValidationIssue(
+          code: "single_deck_language",
+          path: "default_locale",
+          message: "A user deck must declare exactly one deck language"
+        )
+      ]
+    }
+    return []
+  }
+
   private func schemaBoundaryIssues(for deck: Deck) -> [ContentValidationIssue] {
     var issues: [ContentValidationIssue] = []
 
@@ -582,6 +713,82 @@ struct UserDeckDraft: Equatable {
     }
     return issues
   }
+
+  private func productBoundaryIssues(for deck: Deck) -> [ContentValidationIssue] {
+    var issues: [ContentValidationIssue] = []
+    for (index, item) in deck.items.enumerated() {
+      let koreanCharactersValid = item.ko.allSatisfy { character in
+        character == " " || character.unicodeScalars.allSatisfy { scalar in
+          (0xAC00...0xD7A3).contains(scalar.value)
+        }
+      }
+      if !item.ko.isEmpty, !koreanCharactersValid {
+        issues.append(
+          ContentValidationIssue(
+            code: "user_deck_korean_input",
+            path: "items[\(index)].ko",
+            message: "Korean must contain only Hangul syllables and spaces"
+          )
+        )
+      }
+      let syllableCount = item.ko.filter { $0 != " " }.count
+      if item.ko.count > Self.maximumKoreanCharacterCount
+        || syllableCount > Self.maximumKoreanSyllableCount
+      {
+        issues.append(
+          ContentValidationIssue(
+            code: "user_deck_korean_length",
+            path: "items[\(index)].ko",
+            message: "Korean is limited to 9 syllables excluding spaces and 10 characters including spaces"
+          )
+        )
+      }
+      if Self.productCharacterCount(item.readingJa) > Self.maximumMeaningOrReadingCount {
+        issues.append(
+          ContentValidationIssue(
+            code: "user_deck_text_length",
+            path: "items[\(index)].reading_ja",
+            message: "Reading is limited to 20 characters"
+          )
+        )
+      }
+      if Self.productCharacterCount(item.meaningJa) > Self.maximumMeaningOrReadingCount {
+        issues.append(
+          ContentValidationIssue(
+            code: "user_deck_text_length",
+            path: "items[\(index)].meaning_ja",
+            message: "Meaning is limited to 20 characters"
+          )
+        )
+      }
+    }
+    return issues
+  }
+
+  static func acceptedKoreanInput(current: String, proposed: String) -> String {
+    let charactersValid = proposed.allSatisfy { character in
+      character == " " || character.unicodeScalars.allSatisfy { scalar in
+        (0xAC00...0xD7A3).contains(scalar.value)
+      }
+    }
+    let withinLimits = proposed.count <= maximumKoreanCharacterCount
+      && proposed.filter { $0 != " " }.count <= maximumKoreanSyllableCount
+    if charactersValid && withinLimits { return proposed }
+    return proposed.count < current.count ? proposed : current
+  }
+
+  static func acceptedMeaningOrReadingInput(current: String, proposed: String) -> String {
+    if productCharacterCount(proposed) <= maximumMeaningOrReadingCount { return proposed }
+    return productCharacterCount(proposed) < productCharacterCount(current) ? proposed : current
+  }
+
+  static func productCharacterCount(_ value: String) -> Int {
+    value.unicodeScalars.count
+  }
+
+  static let maximumKoreanSyllableCount = 9
+  static let maximumKoreanCharacterCount = 10
+  static let maximumMeaningOrReadingCount = 20
 
   private func appendMaximumLengthIssue(
     _ value: String,
@@ -632,6 +839,7 @@ struct DeckEditorView: View {
   typealias DraftChangeAction = @MainActor (UserDeckDraft) throws -> ActiveUserDeckDraft
 
   private enum FocusedField: Hashable {
+    case language
     case name
     case author
     case tags
@@ -648,6 +856,8 @@ struct DeckEditorView: View {
   @State private var tagsText: String
   @State private var editingLocaleCode: String
   @State private var localeInput: String
+  @State private var pendingContentLocaleCode: String?
+  @State private var showsContentBundleSelectionConfirmation = false
   @State private var validationSummary = UserDeckValidationSummary(issues: [])
   @State private var saveErrorKey: String?
   @State private var isSaving = false
@@ -689,7 +899,7 @@ struct DeckEditorView: View {
     onDelete: DeleteAction?
   ) {
     _draft = State(initialValue: draft)
-    let initialLocale = draft.defaultLocale ?? AppLanguage.current.rawValue
+    let initialLocale = draft.defaultLocale ?? "ja"
     _editingLocaleCode = State(initialValue: initialLocale)
     _localeInput = State(initialValue: initialLocale)
     _latestDraftID = State(initialValue: draftID)
@@ -775,6 +985,22 @@ struct DeckEditorView: View {
       } message: {
         Text("deck_editor.delete.confirm.message")
       }
+      .alert(
+        "deck_editor.language.change.title",
+        isPresented: $showsContentBundleSelectionConfirmation
+      ) {
+        Button("deck_editor.cancel", role: .cancel) {
+          pendingContentLocaleCode = nil
+        }
+        Button("deck_editor.language.change.confirm", role: .destructive) {
+          if let pendingContentLocaleCode {
+            selectContentBundle(pendingContentLocaleCode)
+          }
+          pendingContentLocaleCode = nil
+        }
+      } message: {
+        Text("deck_editor.language.change.message")
+      }
     }
     .interactiveDismissDisabled(isSaving || isDeleting || onDraftChange != nil)
     .onDisappear {
@@ -828,7 +1054,13 @@ struct DeckEditorView: View {
   ) -> Binding<String> {
     Binding(
       get: { item.wrappedValue.reading(localeCode: editingLocaleCode) },
-      set: { value in item.wrappedValue.setReading(value, localeCode: editingLocaleCode) }
+      set: { value in
+        let current = item.wrappedValue.reading(localeCode: editingLocaleCode)
+        item.wrappedValue.setReading(
+          UserDeckDraft.acceptedMeaningOrReadingInput(current: current, proposed: value),
+          localeCode: editingLocaleCode
+        )
+      }
     )
   }
 
@@ -837,7 +1069,25 @@ struct DeckEditorView: View {
   ) -> Binding<String> {
     Binding(
       get: { item.wrappedValue.meaning(localeCode: editingLocaleCode) },
-      set: { value in item.wrappedValue.setMeaning(value, localeCode: editingLocaleCode) }
+      set: { value in
+        let current = item.wrappedValue.meaning(localeCode: editingLocaleCode)
+        item.wrappedValue.setMeaning(
+          UserDeckDraft.acceptedMeaningOrReadingInput(current: current, proposed: value),
+          localeCode: editingLocaleCode
+        )
+      }
+    )
+  }
+
+  private func koreanBinding(for item: Binding<UserDeckItemDraft>) -> Binding<String> {
+    Binding(
+      get: { item.wrappedValue.ko },
+      set: { proposed in
+        item.wrappedValue.ko = UserDeckDraft.acceptedKoreanInput(
+          current: item.wrappedValue.ko,
+          proposed: proposed
+        )
+      }
     )
   }
 
@@ -849,21 +1099,41 @@ struct DeckEditorView: View {
         }
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
+        .focused($focusedField, equals: .language)
+        .id("deck_editor.field.language")
+        .accessibilityIdentifier("deck_editor.language")
         Button {
-          guard let canonical = UserDeckDraft.canonicalLocale(localeInput) else { return }
-          editingLocaleCode = canonical
-          localeInput = canonical
-          draft.defaultLocale = canonical
-          tagsText = draft.tags(localeCode: canonical).joined(separator: ", ")
+          requestDeckLanguageChange()
         } label: {
           Image(systemName: "checkmark.circle.fill")
         }
+        .disabled(
+          UserDeckDraft.canonicalLocale(localeInput) == nil
+            || (draft.requiresContentBundleSelection
+              && !draft.contentLocaleCodes.contains(UserDeckDraft.canonicalLocale(localeInput) ?? ""))
+        )
         .accessibilityLabel(
           String(
             format: AppLocalization.string("deck_editor.language.accessibility_format"),
             editingLocaleCode
           )
         )
+      }
+
+      Text("deck_editor.language.single_help")
+        .font(.caption)
+        .foregroundStyle(AppPalette.mutedInk)
+
+      if draft.requiresContentBundleSelection {
+        Label("deck_editor.language.multilingual_warning", systemImage: "exclamationmark.triangle.fill")
+          .font(.caption)
+          .foregroundStyle(AppPalette.errorText)
+
+        Picker("deck_editor.language.bundle_picker", selection: $localeInput) {
+          ForEach(draft.contentLocaleCodes, id: \.self) { code in
+            Text(code).tag(code)
+          }
+        }
       }
 
       TextField("deck_editor.name", text: currentNameBinding, axis: .vertical)
@@ -1019,23 +1289,56 @@ struct DeckEditorView: View {
   ) -> some View {
     let itemID = item.wrappedValue.id
     return VStack(alignment: .leading, spacing: 10) {
-      TextField("deck_editor.item.korean", text: item.ko, axis: .vertical)
+      TextField("deck_editor.item.korean", text: koreanBinding(for: item), axis: .vertical)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .focused($focusedField, equals: .itemKorean(itemID))
         .id("deck_editor.field.item.\(index).korean")
         .accessibilityIdentifier("deck_editor.item.\(index).korean")
+      Text(
+        AppLocalization.format(
+          "deck_editor.item.korean_count_format",
+          item.wrappedValue.ko.filter { $0 != " " }.count,
+          UserDeckDraft.maximumKoreanSyllableCount,
+          item.wrappedValue.ko.count,
+          UserDeckDraft.maximumKoreanCharacterCount
+        )
+      )
+      .font(.caption.monospacedDigit())
+      .foregroundStyle(AppPalette.mutedInk)
 
       TextField("deck_editor.item.reading", text: currentReadingBinding(for: item), axis: .vertical)
         .textInputAutocapitalization(.never)
         .focused($focusedField, equals: .itemReading(itemID))
         .id("deck_editor.field.item.\(index).reading")
         .accessibilityIdentifier("deck_editor.item.\(index).reading")
+      Text(
+        AppLocalization.format(
+          "deck_editor.item.text_count_format",
+          UserDeckDraft.productCharacterCount(
+            item.wrappedValue.reading(localeCode: editingLocaleCode)
+          ),
+          UserDeckDraft.maximumMeaningOrReadingCount
+        )
+      )
+      .font(.caption.monospacedDigit())
+      .foregroundStyle(AppPalette.mutedInk)
 
       TextField("deck_editor.item.meaning", text: currentMeaningBinding(for: item), axis: .vertical)
         .focused($focusedField, equals: .itemMeaning(itemID))
         .id("deck_editor.field.item.\(index).meaning")
         .accessibilityIdentifier("deck_editor.item.\(index).meaning")
+      Text(
+        AppLocalization.format(
+          "deck_editor.item.text_count_format",
+          UserDeckDraft.productCharacterCount(
+            item.wrappedValue.meaning(localeCode: editingLocaleCode)
+          ),
+          UserDeckDraft.maximumMeaningOrReadingCount
+        )
+      )
+      .font(.caption.monospacedDigit())
+      .foregroundStyle(AppPalette.mutedInk)
     }
     .padding(.vertical, 6)
   }
@@ -1133,6 +1436,34 @@ struct DeckEditorView: View {
     }
   }
 
+  private func requestDeckLanguageChange() {
+    guard let canonical = UserDeckDraft.canonicalLocale(localeInput) else { return }
+    if draft.requiresContentBundleSelection {
+      guard draft.contentLocaleCodes.contains(canonical) else { return }
+      pendingContentLocaleCode = canonical
+      showsContentBundleSelectionConfirmation = true
+    } else {
+      applyDeckLanguageRetag(canonical)
+    }
+  }
+
+  private func selectContentBundle(_ localeCode: String) {
+    draft.selectContentBundle(localeCode)
+    synchronizeLocaleState(localeCode)
+  }
+
+  private func applyDeckLanguageRetag(_ localeCode: String) {
+    draft.retagDeckLanguage(localeCode)
+    synchronizeLocaleState(localeCode)
+  }
+
+  private func synchronizeLocaleState(_ localeCode: String) {
+    editingLocaleCode = localeCode
+    localeInput = localeCode
+    tagsText = draft.tags(localeCode: localeCode).joined(separator: ", ")
+    validationSummary = draft.validationSummary(localeCode: localeCode)
+  }
+
   private func saveAsCopy() {
     guard let onSaveAsCopy else { return }
     draftSaveTask?.cancel()
@@ -1187,6 +1518,9 @@ struct DeckEditorView: View {
   private func focusFirstValidationIssue(using proxy: ScrollViewProxy) {
     guard let field = validationSummary.firstField else { return }
     switch field {
+    case .language:
+      focusedField = .language
+      scrollAndAnnounce("deck_editor.field.language", using: proxy)
     case .name:
       focusedField = .name
       scrollAndAnnounce("deck_editor.field.name", using: proxy)

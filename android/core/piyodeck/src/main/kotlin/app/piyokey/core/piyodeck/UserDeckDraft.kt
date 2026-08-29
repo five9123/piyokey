@@ -77,6 +77,7 @@ public data class UserDeckItemDraft(
 }
 
 public sealed interface UserDeckValidationField {
+  public data object Language : UserDeckValidationField
   public data object Name : UserDeckValidationField
   public data object Author : UserDeckValidationField
   public data object Tags : UserDeckValidationField
@@ -97,6 +98,7 @@ public data class UserDeckValidationSummary(
     get() = issues.firstNotNullOfOrNull { fieldFor(it.path) }
 
   private fun fieldFor(path: String): UserDeckValidationField? {
+    if (path == "default_locale") return UserDeckValidationField.Language
     if (path == "name" || (path.startsWith("localizations.") && path.endsWith(".name"))) {
       return UserDeckValidationField.Name
     }
@@ -145,6 +147,86 @@ public data class UserDeckDraft(
 ) {
   public val derivedFromDeckId: String?
     get() = (origin as? UserDeckDraftOrigin.OfficialCopy)?.sourceDeckId
+
+  /** Locale keys that contain independent legacy content bundles. Japanese base fields are mirrors. */
+  public val contentLocaleCodes: List<String>
+    get() {
+      val localizedCodes = buildSet {
+        addAll(metadataLocalizations.orEmpty().keys)
+        items.forEach { item -> addAll(item.localizations.orEmpty().keys) }
+        if ((defaultLocale == null || defaultLocale == UserDeckLanguage.JAPANESE.code) && hasLegacyBaseContent()) {
+          add(UserDeckLanguage.JAPANESE.code)
+        }
+      }
+      return when {
+        localizedCodes.isNotEmpty() -> localizedCodes.sorted()
+        hasLegacyBaseContent() -> listOf(UserDeckLanguage.JAPANESE.code)
+        else -> emptyList()
+      }
+    }
+
+  public val requiresContentBundleSelection: Boolean
+    get() = contentLocaleCodes.size > 1
+
+  /**
+   * Collapses a legacy multilingual deck to one existing content bundle.
+   * The UI must confirm removal of all other bundles before calling this method.
+   */
+  public fun selectContentBundle(localeCode: String): UserDeckDraft {
+    require(canonicalLocale(localeCode) == localeCode) {
+      "Content locale must be a canonical BCP 47 tag."
+    }
+    require(localeCode in contentLocaleCodes) {
+      "Content bundle selection must use an existing locale."
+    }
+    val selectedMetadata = metadataForContent(localeCode)
+    val selectedItems = items.map { item ->
+      val selectedLocalization = localizationForContent(item, localeCode)
+      item.copy(
+        readingJa = selectedLocalization.reading,
+        meaningJa = selectedLocalization.meaning,
+        localizations = mapOf(localeCode to selectedLocalization),
+      )
+    }
+    return copy(
+      metadataLocalizations = mapOf(localeCode to selectedMetadata),
+      name = selectedMetadata.name,
+      authorNickname = selectedMetadata.authorNickname,
+      tags = selectedMetadata.tags,
+      items = selectedItems,
+      defaultLocale = localeCode,
+    )
+  }
+
+  /** Moves the sole content bundle to a new discovery/community locale without changing its values. */
+  public fun retagDeckLanguage(localeCode: String): UserDeckDraft {
+    require(canonicalLocale(localeCode) == localeCode) {
+      "Deck language must be a canonical BCP 47 tag."
+    }
+    require(!requiresContentBundleSelection) {
+      "Select one legacy content bundle before changing the deck language."
+    }
+    val sourceLocale = contentLocaleCodes.singleOrNull()
+    val selectedMetadata = sourceLocale?.let(::metadataForContent)
+      ?: DeckMetadataLocalization(name, authorNickname, tags)
+    val selectedItems = items.map { item ->
+      val selectedLocalization = sourceLocale?.let { localizationForContent(item, it) }
+        ?: DeckItemLocalization(item.meaningJa, item.readingJa)
+      item.copy(
+        readingJa = selectedLocalization.reading,
+        meaningJa = selectedLocalization.meaning,
+        localizations = mapOf(localeCode to selectedLocalization),
+      )
+    }
+    return copy(
+      metadataLocalizations = mapOf(localeCode to selectedMetadata),
+      name = selectedMetadata.name,
+      authorNickname = selectedMetadata.authorNickname,
+      tags = selectedMetadata.tags,
+      items = selectedItems,
+      defaultLocale = localeCode,
+    )
+  }
 
   public fun name(language: UserDeckLanguage): String = name(language.code)
   public fun name(localeCode: String): String =
@@ -225,10 +307,9 @@ public data class UserDeckDraft(
     }
     val defaultMetadata = outputMetadata[resolvedDefaultLocale]
     val japaneseMetadata = outputMetadata[UserDeckLanguage.JAPANESE.code]
-    val baseName = japaneseMetadata?.name ?: name.ifBlank { defaultMetadata?.name ?: displayName }
-    val baseAuthor = japaneseMetadata?.authorNickname
-      ?: authorNickname.ifBlank { defaultMetadata?.authorNickname ?: displayAuthor }
-    val baseTags = japaneseMetadata?.tags ?: tags.ifEmpty { defaultMetadata?.tags ?: displayTags }
+    val baseName = japaneseMetadata?.name ?: defaultMetadata?.name ?: displayName
+    val baseAuthor = japaneseMetadata?.authorNickname ?: defaultMetadata?.authorNickname ?: displayAuthor
+    val baseTags = japaneseMetadata?.tags ?: defaultMetadata?.tags ?: displayTags
     val declaredCodes = outputMetadata.keys
     return Deck(
       deckId = deckId,
@@ -254,8 +335,8 @@ public data class UserDeckDraft(
         DeckItem(
           id = item.id,
           ko = item.ko,
-          readingJa = japanese?.reading ?: item.readingJa.ifBlank { fallback?.reading ?: item.reading(localeCode) },
-          meaningJa = japanese?.meaning ?: item.meaningJa.ifBlank { fallback?.meaning ?: item.meaning(localeCode) },
+          readingJa = japanese?.reading ?: fallback?.reading ?: item.reading(localeCode),
+          meaningJa = japanese?.meaning ?: fallback?.meaning ?: item.meaning(localeCode),
           audio = null,
           localizations = itemLocalizations,
         )
@@ -282,6 +363,18 @@ public data class UserDeckDraft(
   }
 
   private fun validationIssues(deck: Deck): List<ContentValidationIssue> = buildList {
+    val localeCodes = deck.localizations.orEmpty().keys
+    if (contentLocaleCodes.size != 1 || requiresContentBundleSelection ||
+      localeCodes.size != 1 || deck.defaultLocale !in localeCodes
+    ) {
+      add(
+        ContentValidationIssue(
+          "single_deck_language",
+          "default_locale",
+          "A user deck must declare exactly one deck language",
+        ),
+      )
+    }
     addAll(DeckValidator.validate(deck))
     addAll(PiyoDeckUserDeckValidator.validate(deck).map { ContentValidationIssue(it.code, it.path, it.message) })
     maximumLength(deck.name, 120, "name")
@@ -290,6 +383,35 @@ public data class UserDeckDraft(
     deck.items.forEachIndexed { index, item ->
       maximumLength(item.readingJa, 300, "items[$index].reading_ja")
       maximumLength(item.meaningJa, 500, "items[$index].meaning_ja")
+      productItemIssues(item, index)
+    }
+  }
+
+  private fun MutableList<ContentValidationIssue>.productItemIssues(item: DeckItem, index: Int) {
+    val koreanCharactersValid = item.ko.all { character -> character == ' ' || character in '\uAC00'..'\uD7A3' }
+    if (item.ko.isNotEmpty() && !koreanCharactersValid) {
+      add(
+        ContentValidationIssue(
+          "user_deck_korean_input",
+          "items[$index].ko",
+          "Korean must contain only Hangul syllables and spaces",
+        ),
+      )
+    }
+    if (item.ko.length > MAXIMUM_KOREAN_CHARACTER_COUNT || item.ko.count { it != ' ' } > MAXIMUM_KOREAN_SYLLABLE_COUNT) {
+      add(
+        ContentValidationIssue(
+          "user_deck_korean_length",
+          "items[$index].ko",
+          "Korean is limited to 9 syllables excluding spaces and 10 characters including spaces",
+        ),
+      )
+    }
+    if (productCharacterCount(item.readingJa) > MAXIMUM_MEANING_OR_READING_COUNT) {
+      add(ContentValidationIssue("user_deck_text_length", "items[$index].reading_ja", "Reading is limited to 20 characters"))
+    }
+    if (productCharacterCount(item.meaningJa) > MAXIMUM_MEANING_OR_READING_COUNT) {
+      add(ContentValidationIssue("user_deck_text_length", "items[$index].meaning_ja", "Meaning is limited to 20 characters"))
     }
   }
 
@@ -331,6 +453,26 @@ public data class UserDeckDraft(
     return filtered.ifEmpty { null }
   }
 
+  private fun metadataForContent(localeCode: String): DeckMetadataLocalization =
+    metadataLocalizations?.get(localeCode)
+      ?: if (localeCode == UserDeckLanguage.JAPANESE.code) {
+        DeckMetadataLocalization(name, authorNickname, tags)
+      } else {
+        DeckMetadataLocalization("", "", emptyList())
+      }
+
+  private fun localizationForContent(item: UserDeckItemDraft, localeCode: String): DeckItemLocalization =
+    item.localizations?.get(localeCode)
+      ?: if (localeCode == UserDeckLanguage.JAPANESE.code) {
+        DeckItemLocalization(item.meaningJa, item.readingJa)
+      } else {
+        DeckItemLocalization("", "")
+      }
+
+  private fun hasLegacyBaseContent(): Boolean =
+    name.isNotBlank() || authorNickname.isNotBlank() || tags.isNotEmpty() ||
+      items.any { item -> item.meaningJa.isNotBlank() || item.readingJa.isNotBlank() }
+
   public companion object {
     public const val LOCAL_AUTHOR_ID: String = "user_local"
 
@@ -348,7 +490,16 @@ public data class UserDeckDraft(
       type = DeckType.WORD,
       level = 1,
       tags = emptyList(),
-      items = listOf(UserDeckItemDraft(makeIdentifier("item_", hexGenerator))),
+      items = listOf(
+        UserDeckItemDraft(
+          id = makeIdentifier("item_", hexGenerator),
+          localizations = mapOf(UserDeckLanguage.JAPANESE.code to DeckItemLocalization("", "")),
+        ),
+      ),
+      metadataLocalizations = mapOf(
+        UserDeckLanguage.JAPANESE.code to DeckMetadataLocalization("", "", emptyList()),
+      ),
+      defaultLocale = UserDeckLanguage.JAPANESE.code,
     )
 
     public fun editing(deck: Deck): UserDeckDraft {
@@ -415,6 +566,26 @@ public data class UserDeckDraft(
     public fun canonicalLocale(input: String): String? =
       LocaleTag.canonicalize(input.replace('_', '-'))
 
+    public fun acceptedKoreanInput(current: String, proposed: String): String {
+      val charactersValid = proposed.all { character -> character == ' ' || character in '\uAC00'..'\uD7A3' }
+      val withinLimits = proposed.length <= MAXIMUM_KOREAN_CHARACTER_COUNT &&
+        proposed.count { it != ' ' } <= MAXIMUM_KOREAN_SYLLABLE_COUNT
+      if (charactersValid && withinLimits) return proposed
+      return if (proposed.length < current.length) proposed else current
+    }
+
+    public fun acceptedMeaningOrReadingInput(current: String, proposed: String): String =
+      if (productCharacterCount(proposed) <= MAXIMUM_MEANING_OR_READING_COUNT ||
+        productCharacterCount(proposed) < productCharacterCount(current)
+      ) {
+        proposed
+      } else {
+        current
+      }
+
+    public fun productCharacterCount(value: String): Int =
+      value.codePointCount(0, value.length)
+
     public fun parseTags(text: String): List<String> = text
       .split(',', '、', '\n')
       .map(String::trim)
@@ -428,5 +599,8 @@ public data class UserDeckDraft(
 
     private fun randomUuidHex(): String = UUID.randomUUID().toString().replace("-", "")
     private val HEX_IDENTIFIER = Regex("^[0-9a-f]{32}$")
+    public const val MAXIMUM_KOREAN_SYLLABLE_COUNT: Int = 9
+    public const val MAXIMUM_KOREAN_CHARACTER_COUNT: Int = 10
+    public const val MAXIMUM_MEANING_OR_READING_COUNT: Int = 20
   }
 }

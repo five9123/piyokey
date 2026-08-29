@@ -80,7 +80,12 @@
   <string name="deck_maker_notice_restore_failed">Der Kauf konnte nicht geprüft werden. Versuche es erneut, wenn du online bist.</string>
   <string name="deck_maker_notice_product_unavailable">typee pro ist vorübergehend nicht verfügbar. Versuche es mit Google-Play-Verbindung erneut.</string>
   <string name="deck_editor_title">Deckeditor</string>
-  <string name="deck_editor_language">Bearbeitungssprache: %1$s</string>
+  <string name="deck_editor_language">Decksprache: %1$s</string>
+  <string name="deck_editor_language_single_help">Dient der Auffindbarkeit. Koreanisch, Bedeutung und Lesung bleiben beim Ändern erhalten.</string>
+  <string name="deck_editor_language_multilingual_warning">Dieses ältere Deck hat mehrere Inhaltspakete. Wähle vor dem Ändern der Decksprache eines aus.</string>
+  <string name="deck_editor_language_change_title">Beizubehaltenden Inhalt wählen?</string>
+  <string name="deck_editor_language_change_message">Das gewählte Koreanisch, die Bedeutung und die Lesung bleiben erhalten. Andere lokalisierte Inhalte werden entfernt.</string>
+  <string name="deck_editor_language_change_confirm">Diesen Inhalt behalten</string>
   <string name="deck_editor_name">Deckname</string>
   <string name="deck_editor_author">Anzeigename des Autors</string>
   <string name="deck_editor_tags">Tags, durch Kommas getrennt</string>
@@ -90,6 +95,8 @@
   <string name="deck_editor_korean">Koreanisch</string>
   <string name="deck_editor_reading">Lesung</string>
   <string name="deck_editor_meaning">Bedeutung</string>
+  <string name="deck_editor_korean_count">Silben %1$d/%2$d · Zeichen %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d Zeichen</string>
   <string name="deck_editor_add_item">Eintrag hinzufügen</string>
   <string name="deck_editor_delete_item">Eintrag löschen</string>
   <string name="deck_editor_save">Speichern</string>

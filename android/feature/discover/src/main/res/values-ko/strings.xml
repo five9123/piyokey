@@ -79,7 +79,12 @@
   <string name="deck_maker_notice_restore_failed">구매를 확인하지 못했어요. 온라인에서 다시 시도해 주세요.</string>
   <string name="deck_maker_notice_product_unavailable">현재 피요키 프로를 사용할 수 없어요. Google Play 연결 뒤 다시 시도해 주세요.</string>
   <string name="deck_editor_title">덱 편집</string>
-  <string name="deck_editor_language">편집 언어: %1$s</string>
+  <string name="deck_editor_language">덱 언어: %1$s</string>
+  <string name="deck_editor_language_single_help">발견·분류용 정보예요. 변경해도 한국어·뜻·발음은 그대로 유지돼요.</string>
+  <string name="deck_editor_language_multilingual_warning">이 기존 덱에는 여러 콘텐츠 묶음이 있어요. 덱 언어를 바꾸기 전에 유지할 묶음 하나를 선택해 주세요.</string>
+  <string name="deck_editor_language_change_title">유지할 콘텐츠를 선택할까요?</string>
+  <string name="deck_editor_language_change_message">선택한 한국어·뜻·발음은 유지되고, 다른 언어의 콘텐츠 묶음은 삭제돼요.</string>
+  <string name="deck_editor_language_change_confirm">이 콘텐츠 유지</string>
   <string name="deck_editor_name">덱 이름</string>
   <string name="deck_editor_author">제작자 표시명</string>
   <string name="deck_editor_tags">태그(쉼표로 구분)</string>
@@ -89,6 +94,8 @@
   <string name="deck_editor_korean">한국어</string>
   <string name="deck_editor_reading">읽기</string>
   <string name="deck_editor_meaning">뜻</string>
+  <string name="deck_editor_korean_count">음절 %1$d/%2$d · 글자 %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d자</string>
   <string name="deck_editor_add_item">항목 추가</string>
   <string name="deck_editor_delete_item">항목 삭제</string>
   <string name="deck_editor_save">저장</string>

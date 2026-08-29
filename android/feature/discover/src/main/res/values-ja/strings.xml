@@ -79,7 +79,12 @@
   <string name="deck_maker_notice_restore_failed">購入を確認できませんでした。オンラインで再度お試しください。</string>
   <string name="deck_maker_notice_product_unavailable">現在ピヨキー プロを利用できません。Google Play接続後にお試しください。</string>
   <string name="deck_editor_title">デッキ編集</string>
-  <string name="deck_editor_language">編集中の言語：%1$s</string>
+  <string name="deck_editor_language">デッキ言語：%1$s</string>
+  <string name="deck_editor_language_single_help">検索・分類用です。変更しても韓国語・意味・読み方は変わりません。</string>
+  <string name="deck_editor_language_multilingual_warning">この従来デッキには複数の内容があります。デッキ言語を変える前に残す内容を選んでください。</string>
+  <string name="deck_editor_language_change_title">残す内容を選びますか？</string>
+  <string name="deck_editor_language_change_message">選んだ韓国語・意味・読み方は残り、ほかの言語の内容は削除されます。</string>
+  <string name="deck_editor_language_change_confirm">この内容を残す</string>
   <string name="deck_editor_name">デッキ名</string>
   <string name="deck_editor_author">作者の表示名</string>
   <string name="deck_editor_tags">タグ（カンマ区切り）</string>
@@ -89,6 +94,8 @@
   <string name="deck_editor_korean">韓国語</string>
   <string name="deck_editor_reading">読み方</string>
   <string name="deck_editor_meaning">意味</string>
+  <string name="deck_editor_korean_count">音節 %1$d/%2$d・文字 %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d文字</string>
   <string name="deck_editor_add_item">項目を追加</string>
   <string name="deck_editor_delete_item">項目を削除</string>
   <string name="deck_editor_save">保存</string>

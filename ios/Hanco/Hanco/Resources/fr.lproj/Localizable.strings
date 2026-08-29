@@ -999,11 +999,13 @@
 "deck_editor.items.reorder" = "Réorganiser";
 "deck_editor.items.reorder.done" = "Terminé";
 "deck_editor.item.title" = "Élément";
-"deck_editor.item.korean" = "Coréen (10 caractères maximum)";
+"deck_editor.item.korean" = "Coréen";
 "deck_editor.item.reading_ja" = "Lecture japonaise";
 "deck_editor.item.meaning_ja" = "Sens en japonais";
 "deck_editor.item.reading" = "Lecture";
 "deck_editor.item.meaning" = "Sens";
+"deck_editor.item.korean_count_format" = "Syllabes %d/%d · Caractères %d/%d";
+"deck_editor.item.text_count_format" = "%d/%d caractères";
 "deck_editor.cancel" = "Annuler";
 "deck_editor.save" = "Enregistrer";
 "deck_editor.saving" = "Enregistrement";
@@ -1014,13 +1016,14 @@
 "deck_editor.delete.confirm.message" = "Le fichier sera supprimé. L’historique sera rétabli si tu importes à nouveau le même ID.";
 "deck_editor.delete.confirm.action" = "Supprimer";
 "deck_editor.validation.section" = "Vérifier ces champs";
+"deck_editor.validation.single_language" = "Choisis un contenu existant avant d’enregistrer.";
 "deck_editor.validation.name_required" = "Saisis un nom de paquet.";
 "deck_editor.validation.author_required" = "Saisis un nom d’auteur.";
 "deck_editor.validation.tags" = "Saisis 1 à 8 tags.";
 "deck_editor.validation.tags_duplicate" = "N’utilise chaque tag qu’une fois.";
 "deck_editor.validation.items_required" = "Ajoute au moins un élément d’apprentissage.";
-"deck_editor.validation.korean_length" = "Le texte coréen est limité à 10 caractères, espaces compris.";
-"deck_editor.validation.korean_input" = "Inclus du hangeul saisissable avec un clavier coréen.";
+"deck_editor.validation.korean_length" = "Le coréen est limité à 9 syllabes hors espaces et 10 caractères espaces compris.";
+"deck_editor.validation.korean_input" = "Utilise uniquement des syllabes hangeul et des espaces en coréen.";
 "deck_editor.validation.item_limit" = "Un paquet peut contenir jusqu’à 1 000 éléments.";
 "deck_editor.validation.text_length" = "Un ou plusieurs champs sont trop longs.";
 "deck_editor.validation.duplicate" = "Le paquet contient un élément en double.";
@@ -1073,7 +1076,13 @@
 
 /* R1.1 deck authoring safety and accessibility */
 "common.cancel" = "Annuler";
-"deck_editor.language.accessibility_format" = "Langue du contenu : %@";
+"deck_editor.language.accessibility_format" = "Langue du paquet : %@";
+"deck_editor.language.single_help" = "La langue du paquet sert à le découvrir. La modifier conserve le coréen, le sens et la lecture.";
+"deck_editor.language.multilingual_warning" = "Cet ancien paquet contient plusieurs contenus. Choisis-en un avant de changer la langue du paquet.";
+"deck_editor.language.bundle_picker" = "Contenu à conserver";
+"deck_editor.language.change.title" = "Choisir le contenu à conserver ?";
+"deck_editor.language.change.message" = "Le coréen, le sens et la lecture choisis seront conservés. Les autres contenus localisés seront supprimés.";
+"deck_editor.language.change.confirm" = "Conserver ce contenu";
 "deck_editor.item.position_format" = "Élément %d sur %d";
 "deck_editor.item.empty" = "Non renseigné";
 "deck_editor.draft.save_failed" = "Impossible d’enregistrer le brouillon sur cet appareil. Garde cet écran ouvert et réessaie.";

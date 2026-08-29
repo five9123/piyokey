@@ -20,7 +20,7 @@ class UserDeckDraftTest {
   private val nextHex = { (++sequence).toString(16).padStart(32, '0') }
 
   @Test
-  fun expandedEditingLanguagesPreserveExistingKoreanAndJapaneseFields() {
+  fun expandedEditingLanguagesCreateOneToOneUserDecks() {
     val source = sampleDeck(official = false, deckId = "user_00000000000000000000000000000001")
     for ((language, meaning) in mapOf(
       UserDeckLanguage.SPANISH to "Hola",
@@ -28,6 +28,7 @@ class UserDeckDraftTest {
       UserDeckLanguage.FRENCH to "Bonjour",
     )) {
       val draft = UserDeckDraft.editing(source)
+        .retagDeckLanguage(language.code)
         .withName("Test", language)
         .withAuthorNickname("Piyo", language)
         .withTags(source.tags, language)
@@ -39,10 +40,13 @@ class UserDeckDraftTest {
       saved.items.zip(source.items).forEach { (item, original) ->
         assertEquals(original.id, item.id)
         assertEquals(original.ko, item.ko)
-        assertEquals(original.meaningJa, item.meaningJa)
-        assertEquals(original.readingJa, item.readingJa)
+        assertEquals(meaning, item.meaningJa)
+        assertEquals("annyeong", item.readingJa)
         assertEquals(meaning, item.localizations?.get(language.code)?.meaning)
+        assertEquals(setOf(language.code), item.localizations.orEmpty().keys)
       }
+      assertEquals(language.code, saved.defaultLocale)
+      assertEquals(setOf(language.code), saved.localizations.orEmpty().keys)
     }
   }
 
@@ -88,6 +92,7 @@ class UserDeckDraftTest {
   @Test
   fun currentNonJapaneseFieldsMirrorIntoRequiredJapaneseBase() {
     val draft = UserDeckDraft.new(now, nextHex)
+      .retagDeckLanguage(UserDeckLanguage.ENGLISH.code)
       .withName("My deck", UserDeckLanguage.ENGLISH)
       .withAuthorNickname("Me", UserDeckLanguage.ENGLISH)
       .withTags(listOf("daily"), UserDeckLanguage.ENGLISH)
@@ -110,7 +115,7 @@ class UserDeckDraftTest {
   }
 
   @Test
-  fun unknownCanonicalLocaleSurvivesProEditMaterialization() {
+  fun unknownCanonicalLocaleSurvivesLegacySelectionAndRoundTrip() {
     val unknownLocale = "sl-rozaj-biske"
     val source = sampleDeck(false, "user_00000000000000000000000000000001").copy(
       defaultLocale = "ar",
@@ -128,14 +133,24 @@ class UserDeckDraftTest {
       ),
     )
 
-    val edited = UserDeckDraft.editing(source).validatedDeck(now, "ar")
+    val multilingual = UserDeckDraft.editing(source)
+    assertTrue(multilingual.requiresContentBundleSelection)
+    assertEquals(setOf("ar", unknownLocale), multilingual.contentLocaleCodes.toSet())
+    assertFailsWith<UserDeckDraftValidationException> {
+      multilingual.validatedDeck(now, "ar")
+    }
+    val edited = multilingual
+      .selectContentBundle(unknownLocale)
+      .validatedDeck(now, unknownLocale)
 
-    assertEquals("ar", edited.defaultLocale)
+    assertEquals(unknownLocale, edited.defaultLocale)
     assertEquals(source.localizations?.get(unknownLocale), edited.localizations?.get(unknownLocale))
     assertEquals(
       source.items.single().localizations?.get(unknownLocale),
       edited.items.single().localizations?.get(unknownLocale),
     )
+    assertEquals(setOf(unknownLocale), edited.localizations.orEmpty().keys)
+    assertEquals(setOf(unknownLocale), edited.items.single().localizations.orEmpty().keys)
   }
 
   @Test
@@ -163,6 +178,90 @@ class UserDeckDraftTest {
   @Test
   fun parseTagsAcceptsSupportedSeparators() {
     assertEquals(listOf("one", "two", "three"), UserDeckDraft.parseTags(" one, two、three\n"))
+  }
+
+  @Test
+  fun deckLanguageRetagPreservesMetadataMeaningAndReading() {
+    val original = sampleDeck(false, "user_00000000000000000000000000000001")
+    val draft = UserDeckDraft.editing(original).retagDeckLanguage("fr-CA")
+    val saved = draft.validatedDeck(now, "fr-CA")
+
+    assertEquals("fr-CA", saved.defaultLocale)
+    assertEquals(setOf("fr-CA"), saved.localizations.orEmpty().keys)
+    assertEquals(original.name, saved.name)
+    assertEquals(original.author.nickname, saved.author.nickname)
+    assertEquals(original.items.single().meaningJa, saved.items.single().meaningJa)
+    assertEquals(original.items.single().readingJa, saved.items.single().readingJa)
+    assertEquals(
+      DeckItemLocalization(original.items.single().meaningJa, original.items.single().readingJa),
+      saved.items.single().localizations?.get("fr-CA"),
+    )
+  }
+
+  @Test
+  fun officialFiveLanguageBundleAndKoreanMetadataStayIntactUntilSelection() {
+    val localeCodes = setOf("ja", "en", "es", "de", "fr", "ko")
+    val metadata = localeCodes.associateWith { code ->
+      DeckMetadataLocalization("name-$code", "Piyo", listOf(code))
+    }
+    val itemLocalizations = localeCodes.associateWith { code ->
+      DeckItemLocalization("meaning-$code", "reading-$code")
+    }
+    val source = sampleDeck(true, "official_basic").copy(
+      localizations = metadata,
+      defaultLocale = "ja",
+      items = sampleDeck(true, "official_basic").items.map { item ->
+        item.copy(localizations = itemLocalizations)
+      },
+    )
+
+    val untouched = UserDeckDraft.copyingOfficial(source, now, nextHex)
+    assertTrue(untouched.requiresContentBundleSelection)
+    assertEquals(localeCodes, untouched.contentLocaleCodes.toSet())
+    assertEquals(source.localizations, untouched.metadataLocalizations)
+    assertEquals(source.items.single().localizations, untouched.items.single().localizations)
+
+    val selected = untouched.selectContentBundle("fr")
+    assertEquals(mapOf("fr" to metadata.getValue("fr")), selected.metadataLocalizations)
+    assertEquals(mapOf("fr" to itemLocalizations.getValue("fr")), selected.items.single().localizations)
+    assertEquals(localeCodes, source.localizations.orEmpty().keys)
+    assertEquals(metadata.getValue("ko"), source.localizations?.get("ko"))
+  }
+
+  @Test
+  fun productInputBoundariesAndLegacyValidationPreservation() {
+    val nineSyllablesAndOneSpace = "가가가가 나나나나나"
+    assertEquals(10, nineSyllablesAndOneSpace.length)
+    assertEquals(
+      nineSyllablesAndOneSpace,
+      UserDeckDraft.acceptedKoreanInput("", nineSyllablesAndOneSpace),
+    )
+    assertEquals(
+      nineSyllablesAndOneSpace,
+      UserDeckDraft.acceptedKoreanInput(nineSyllablesAndOneSpace, "가가가가가나나나나나"),
+    )
+    assertEquals("가", UserDeckDraft.acceptedKoreanInput("가", "가a"))
+    val twenty = "a".repeat(20)
+    assertEquals(twenty, UserDeckDraft.acceptedMeaningOrReadingInput("", twenty))
+    assertEquals(twenty, UserDeckDraft.acceptedMeaningOrReadingInput(twenty, twenty + "a"))
+
+    val source = sampleDeck(false, "user_00000000000000000000000000000001")
+    val draft = UserDeckDraft.editing(source).copy(
+      items = UserDeckDraft.editing(source).items.map { item ->
+        item.copy(
+          ko = "가가가가가나나나나나",
+          readingJa = "r".repeat(21),
+          meaningJa = "m".repeat(21),
+        )
+      },
+    )
+    val unchanged = draft.materialize(now, "ja")
+    assertEquals(draft.items.single().ko, unchanged.items.single().ko)
+    assertEquals(draft.items.single().readingJa, unchanged.items.single().readingJa)
+    assertEquals(draft.items.single().meaningJa, unchanged.items.single().meaningJa)
+    val error = assertFailsWith<UserDeckDraftValidationException> { draft.validatedDeck(now, "ja") }
+    assertTrue(error.issues.any { it.code == "user_deck_korean_length" })
+    assertTrue(error.issues.any { it.code == "user_deck_text_length" })
   }
 
   private fun sampleDeck(official: Boolean, deckId: String): Deck = Deck(

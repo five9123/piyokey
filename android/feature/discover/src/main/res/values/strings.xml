@@ -79,7 +79,12 @@
   <string name="deck_maker_notice_restore_failed">The purchase could not be checked. Try again when you are online.</string>
   <string name="deck_maker_notice_product_unavailable">typee pro is temporarily unavailable. Try again when Google Play is connected.</string>
   <string name="deck_editor_title">Deck editor</string>
-  <string name="deck_editor_language">Editing language: %1$s</string>
+  <string name="deck_editor_language">Deck language: %1$s</string>
+  <string name="deck_editor_language_single_help">Used for discovery. Changing it keeps Korean, meaning, and reading unchanged.</string>
+  <string name="deck_editor_language_multilingual_warning">This legacy deck has multiple content bundles. Choose one to keep before changing the deck language.</string>
+  <string name="deck_editor_language_change_title">Choose the content to keep?</string>
+  <string name="deck_editor_language_change_message">The selected Korean, meaning, and reading will remain. Other localized content bundles will be removed.</string>
+  <string name="deck_editor_language_change_confirm">Keep this content</string>
   <string name="deck_editor_name">Deck name</string>
   <string name="deck_editor_author">Creator display name</string>
   <string name="deck_editor_tags">Tags, separated by commas</string>
@@ -89,6 +94,8 @@
   <string name="deck_editor_korean">Korean</string>
   <string name="deck_editor_reading">Reading</string>
   <string name="deck_editor_meaning">Meaning</string>
+  <string name="deck_editor_korean_count">Syllables %1$d/%2$d · Characters %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d characters</string>
   <string name="deck_editor_add_item">Add item</string>
   <string name="deck_editor_delete_item">Delete item</string>
   <string name="deck_editor_save">Save</string>

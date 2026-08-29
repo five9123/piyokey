@@ -80,7 +80,12 @@
   <string name="deck_maker_notice_restore_failed">Impossible de vérifier l’achat. Réessaie avec une connexion Internet.</string>
   <string name="deck_maker_notice_product_unavailable">typee pro est temporairement indisponible. Réessaie avec une connexion à Google Play.</string>
   <string name="deck_editor_title">Éditeur de paquet</string>
-  <string name="deck_editor_language">Langue d’édition : %1$s</string>
+  <string name="deck_editor_language">Langue du paquet : %1$s</string>
+  <string name="deck_editor_language_single_help">Sert à le découvrir. La modifier conserve le coréen, le sens et la lecture.</string>
+  <string name="deck_editor_language_multilingual_warning">Cet ancien paquet contient plusieurs contenus. Choisis-en un avant de changer la langue du paquet.</string>
+  <string name="deck_editor_language_change_title">Choisir le contenu à conserver ?</string>
+  <string name="deck_editor_language_change_message">Le coréen, le sens et la lecture choisis seront conservés. Les autres contenus localisés seront supprimés.</string>
+  <string name="deck_editor_language_change_confirm">Conserver ce contenu</string>
   <string name="deck_editor_name">Nom du paquet</string>
   <string name="deck_editor_author">Nom affiché de l’auteur</string>
   <string name="deck_editor_tags">Tags séparés par des virgules</string>
@@ -90,6 +95,8 @@
   <string name="deck_editor_korean">Coréen</string>
   <string name="deck_editor_reading">Lecture</string>
   <string name="deck_editor_meaning">Sens</string>
+  <string name="deck_editor_korean_count">Syllabes %1$d/%2$d · Caractères %3$d/%4$d</string>
+  <string name="deck_editor_text_count">%1$d/%2$d caractères</string>
   <string name="deck_editor_add_item">Ajouter un élément</string>
   <string name="deck_editor_delete_item">Supprimer l’élément</string>
   <string name="deck_editor_save">Enregistrer</string>
