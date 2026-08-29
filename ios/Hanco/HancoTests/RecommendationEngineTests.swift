@@ -63,6 +63,88 @@ final class RecommendationEngineTests: XCTestCase {
     XCTAssertTrue(recommendations.first?.featured == true)
   }
 
+  func testNextStepColdStartUsesOfficialPathWithoutDuplicatingPersonalPicks() throws {
+    let catalog = try BundleCatalogRepository().loadCatalog()
+    let personal = DeckRecommendationEngine.homeRecommendations(
+      catalog: catalog,
+      downloadHistory: [:],
+      installedDeckIDs: [],
+      preferredTags: OnboardingGoal.travel.preferredTags
+    )
+    let recommendations = DeckRecommendationEngine.nextStepRecommendations(
+      catalog: catalog,
+      installedDeckIDs: [],
+      excludingDeckIDs: Set(personal.map(\.deckId)),
+      preferredLevel: .beginner
+    )
+
+    XCTAssertEqual(recommendations.count, 3)
+    XCTAssertTrue(recommendations.allSatisfy(\.official))
+    XCTAssertTrue(Set(recommendations.map(\.deckId)).isDisjoint(with: personal.map(\.deckId)))
+    let learningPath = [
+      "official_keyboard_start", "official_consonants", "official_vowels",
+      "official_syllable_building", "official_batchim", "official_daily_words",
+      "official_verbs_adjectives", "official_daily_phrases",
+    ]
+    let expected = learningPath.filter {
+      !personal.map(\.deckId).contains($0)
+    }.prefix(3)
+    XCTAssertEqual(recommendations.map(\.deckId), Array(expected))
+  }
+
+  func testNextStepAdvancesOfficialPathAfterAccurateRecentPractice() throws {
+    let catalog = try BundleCatalogRepository().loadCatalog()
+    let recommendations = DeckRecommendationEngine.nextStepRecommendations(
+      catalog: catalog,
+      installedDeckIDs: ["official_daily_words"],
+      preferredLevel: .words,
+      recentDeckID: "official_daily_words",
+      recentAccuracy: 96
+    )
+
+    XCTAssertEqual(recommendations.count, 3)
+    XCTAssertEqual(recommendations.first?.deckId, "official_verbs_adjectives")
+    XCTAssertFalse(recommendations.contains { $0.deckId == "official_daily_words" })
+  }
+
+  func testNextStepReinforcesCurrentLevelAfterLowAccuracy() throws {
+    let catalog = try BundleCatalogRepository().loadCatalog()
+    let recommendations = DeckRecommendationEngine.nextStepRecommendations(
+      catalog: catalog,
+      installedDeckIDs: ["official_daily_words"],
+      preferredLevel: .words,
+      recentDeckID: "official_daily_words",
+      recentAccuracy: 72
+    )
+
+    XCTAssertEqual(recommendations.count, 3)
+    XCTAssertEqual(recommendations.first?.level, 1)
+    XCTAssertTrue(
+      DeckRecommendationEngine.nextStepRecommendations(
+        catalog: catalog,
+        installedDeckIDs: [],
+        preferredLevel: nil,
+        limit: 0
+      ).isEmpty
+    )
+  }
+
+  func testCurriculumChaptersMapToOfficialLearningPathDecks() {
+    XCTAssertEqual(
+      DeckRecommendationEngine.learningPathDeckID(forCurriculumChapter: 1),
+      "official_consonants"
+    )
+    XCTAssertEqual(
+      DeckRecommendationEngine.learningPathDeckID(forCurriculumChapter: 5),
+      "official_daily_words"
+    )
+    XCTAssertEqual(
+      DeckRecommendationEngine.learningPathDeckID(forCurriculumChapter: 6),
+      "official_daily_phrases"
+    )
+    XCTAssertNil(DeckRecommendationEngine.learningPathDeckID(forCurriculumChapter: 7))
+  }
+
   func testResultRecommendationsPreferUninstalledSameTagDecks() throws {
     let catalog = try BundleCatalogRepository().loadCatalog()
     let source = try XCTUnwrap(

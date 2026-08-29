@@ -45,7 +45,10 @@
 
 "recommendations.home.title" = "あなたへのおすすめ";
 "recommendations.home.subtitle" = "ダウンロードしたデッキのタグから選びました";
-"recommendations.home.cold_start_subtitle" = "まず試したい人気の公式デッキです";
+"recommendations.home.cold_start_subtitle" = "選んだ目標に合う公式デッキです";
+"recommendations.home.next_step.title" = "次のステップ";
+"recommendations.home.next_step.subtitle" = "最近の練習結果に合う次のデッキです";
+"recommendations.home.next_step.cold_start_subtitle" = "今のレベルから順番に進められます";
 "recommendations.result.title" = "同じタグのデッキ";
 "recommendations.result.subtitle" = "次に練習するデッキを見つけよう";
 

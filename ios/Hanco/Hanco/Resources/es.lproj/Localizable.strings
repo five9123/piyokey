@@ -44,7 +44,10 @@
 "practice.result.retry" = "Reintentar";
 "recommendations.home.title" = "Recomendados para ti";
 "recommendations.home.subtitle" = "Según las etiquetas de tus mazos descargados";
-"recommendations.home.cold_start_subtitle" = "Mazos oficiales populares para empezar";
+"recommendations.home.cold_start_subtitle" = "Mazos oficiales elegidos según tu objetivo";
+"recommendations.home.next_step.title" = "Tu siguiente paso";
+"recommendations.home.next_step.subtitle" = "Los próximos mazos según tu práctica reciente";
+"recommendations.home.next_step.cold_start_subtitle" = "Mejora siguiendo un orden de aprendizaje claro";
 "recommendations.result.title" = "Mazos con etiquetas similares";
 "recommendations.result.subtitle" = "Encuentra tu próximo mazo de práctica";
 "practice.setup.navigation_title" = "Práctica";

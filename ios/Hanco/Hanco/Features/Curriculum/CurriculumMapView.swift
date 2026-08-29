@@ -702,49 +702,174 @@ struct CurriculumMapView: View {
 
 private struct HomeRecommendationsView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+  @EnvironmentObject private var curriculumProgress: CurriculumProgressLibrary
   @EnvironmentObject private var deckLibrary: DeckLibrary
+  @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var onboarding: OnboardingLibrary
 
   let catalog: Catalog?
 
   @ViewBuilder
   var body: some View {
-    let recommendations = DeckRecommendationEngine.homeRecommendations(
+    let personalRecommendations = DeckRecommendationEngine.homeRecommendations(
       catalog: catalog,
       downloadHistory: deckLibrary.downloadHistory,
       installedDeckIDs: Set(deckLibrary.installedDecks.keys),
       preferredTags: onboarding.preferredTags
     )
-    if !recommendations.isEmpty, let catalog {
-      VStack(alignment: .leading, spacing: 10) {
-        Label("recommendations.home.title", systemImage: "sparkles")
-          .font(.headline.weight(.bold))
-          .foregroundStyle(AppPalette.ink)
-        Text(
-          deckLibrary.downloadHistory.isEmpty
-            ? "recommendations.home.cold_start_subtitle" : "recommendations.home.subtitle"
+    if !personalRecommendations.isEmpty, let catalog {
+      let recent = mostRecentLearningSignal(in: catalog)
+      let nextStepRecommendations = DeckRecommendationEngine.nextStepRecommendations(
+        catalog: catalog,
+        installedDeckIDs: Set(deckLibrary.installedDecks.keys),
+        excludingDeckIDs: Set(personalRecommendations.map(\.deckId)),
+        preferredLevel: onboarding.selectedLevel,
+        recentDeckID: recent?.deckID,
+        recentAccuracy: recent?.accuracy
+      )
+      VStack(alignment: .leading, spacing: 22) {
+        recommendationSection(
+          title: "recommendations.home.title",
+          subtitle: deckLibrary.downloadHistory.isEmpty
+            ? "recommendations.home.cold_start_subtitle"
+            : "recommendations.home.subtitle",
+          systemImage: "sparkles",
+          decks: personalRecommendations,
+          catalog: catalog,
+          identifier: "home.recommendations.personal",
+          itemIdentifierPrefix: "home.recommendation"
         )
+        if !nextStepRecommendations.isEmpty {
+          recommendationSection(
+            title: "recommendations.home.next_step.title",
+            subtitle: recent == nil
+              ? "recommendations.home.next_step.cold_start_subtitle"
+              : "recommendations.home.next_step.subtitle",
+            systemImage: "arrow.up.right.circle.fill",
+            decks: nextStepRecommendations,
+            catalog: catalog,
+            identifier: "home.recommendations.next_step",
+            itemIdentifierPrefix: "home.next_step"
+          )
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .accessibilityElement(children: .contain)
+      .accessibilityIdentifier("home.recommendations")
+    }
+  }
+
+  @ViewBuilder
+  private func recommendationSection(
+    title: LocalizedStringKey,
+    subtitle: LocalizedStringKey,
+    systemImage: String,
+    decks: [CatalogDeck],
+    catalog: Catalog,
+    identifier: String,
+    itemIdentifierPrefix: String
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Label(title, systemImage: systemImage)
+        .font(.headline.weight(.bold))
+        .foregroundStyle(AppPalette.ink)
+      Text(subtitle)
         .font(.caption)
         .foregroundStyle(AppPalette.mutedInk)
 
+      if adaptiveMetrics.isExpanded {
+        LazyVGrid(
+          columns: Array(
+            repeating: GridItem(.flexible(), spacing: 12, alignment: .top),
+            count: 3
+          ),
+          alignment: .leading,
+          spacing: 12
+        ) {
+          ForEach(decks, id: \.deckId) { deck in
+            recommendationLink(
+              deck: deck,
+              catalog: catalog,
+              compact: true,
+              identifier: "\(itemIdentifierPrefix).\(deck.deckId)"
+            )
+          }
+        }
+      } else {
         ScrollView(.horizontal, showsIndicators: false) {
-          HStack(spacing: 12) {
-            ForEach(recommendations, id: \.deckId) { deck in
-              NavigationLink {
-                DeckDetailView(deck: deck, catalogDecks: catalog.decks)
-              } label: {
-                DeckCardView(deck: deck)
-                  .frame(width: adaptiveMetrics.isExpanded ? 380 : 282)
-              }
-              .buttonStyle(.plain)
-              .accessibilityIdentifier("home.recommendation.\(deck.deckId)")
+          LazyHStack(spacing: 12) {
+            ForEach(decks, id: \.deckId) { deck in
+              recommendationLink(
+                deck: deck,
+                catalog: catalog,
+                compact: false,
+                identifier: "\(itemIdentifierPrefix).\(deck.deckId)"
+              )
+              .frame(width: 282)
             }
           }
           .padding(.bottom, 8)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .accessibilityIdentifier("home.recommendations")
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier(identifier)
+  }
+
+  private func recommendationLink(
+    deck: CatalogDeck,
+    catalog: Catalog,
+    compact: Bool,
+    identifier: String
+  ) -> some View {
+    NavigationLink {
+      DeckDetailView(deck: deck, catalogDecks: catalog.decks)
+    } label: {
+      DeckCardView(deck: deck, compact: compact)
+    }
+    .buttonStyle(.plain)
+    .accessibilityIdentifier(identifier)
+  }
+
+  private struct LearningSignal {
+    let deckID: String
+    let accuracy: Double
+    let date: Date
+  }
+
+  private func mostRecentLearningSignal(in catalog: Catalog) -> LearningSignal? {
+    let catalogDeckIDs = Set(catalog.decks.map(\.deckId))
+    let catalogSignal = gameProgress.records
+      .filter { catalogDeckIDs.contains($0.deckId) }
+      .max { $0.playedAt < $1.playedAt }
+      .map {
+        LearningSignal(deckID: $0.deckId, accuracy: $0.accuracy, date: $0.playedAt)
+      }
+    let curriculumSignal = curriculumProgress.stageProgress.values
+      .max { $0.completedAt < $1.completedAt }
+      .flatMap { progress -> LearningSignal? in
+        guard
+          let stage = CurriculumCatalog.stage(id: progress.stageId),
+          let deckID = DeckRecommendationEngine.learningPathDeckID(
+            forCurriculumChapter: stage.chapterNumber
+          )
+        else { return nil }
+        return LearningSignal(
+          deckID: deckID,
+          accuracy: progress.bestAccuracy,
+          date: progress.completedAt
+        )
+      }
+
+    switch (catalogSignal, curriculumSignal) {
+    case let (catalog?, curriculum?):
+      return catalog.date >= curriculum.date ? catalog : curriculum
+    case let (catalog?, nil):
+      return catalog
+    case let (nil, curriculum?):
+      return curriculum
+    case (nil, nil):
+      return nil
     }
   }
 }
