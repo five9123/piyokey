@@ -2,9 +2,10 @@
 
 ## Source layout
 
-PIYOKEY uses one private source monorepo. The existing `ios/` tree remains in
-place, the active Kotlin/Compose port lives under `android/`, and a future web
-port will live under `web/`. Cross-platform contracts live under `shared/`;
+PIYOKEY uses one private source monorepo. The active iOS/iPadOS product lives
+under `ios/`; the existing Kotlin/Compose port under `android/` is frozen as
+historical reference and is not an active maintenance or release target. A
+future web port will live under `web/`. Shared contracts live under `shared/`;
 platform UI, storage, audio, input, and purchase integrations stay in their
 platform trees.
 
@@ -43,15 +44,24 @@ not the durable release archive.
 
 ## Verification and merge gate
 
-GitHub Actions is active. Pull requests run the workflows selected by the
-triggers under `.github/workflows/`, including source and offline pronunciation
-contract checks.
+GitHub Actions is active. Pull requests run only the workflows selected by the
+native path filters under `.github/workflows/`. Python content/release contracts
+absorb the former standalone pronunciation workflow; Swift and iOS each have
+an independently scoped workflow. Pure documentation changes do not start a
+platform build, while `release/**` keeps the fast Python contract and
+`shared/**` keeps Python plus the active Swift/iOS consumer. Frozen `android/`
+changes do not start CI and are not part of routine work.
+
+`Scheduled iOS regression` runs every Monday at 03:00 JST and can also be
+started manually. It runs iOS unit tests on the pinned simulator. A failed or
+incomplete scheduled run closes the release gate until the failure is explained
+or a succeeding run covers the same source.
 
 Workflow dependencies use full commit SHAs with a nearby reviewed release tag
 comment. Repository settings allow GitHub-owned actions only and require SHA
 pinning. Dependabot vulnerability alerts and automated security updates are
 enabled; `.github/dependabot.yml` schedules version-update pull requests for
-GitHub Actions, Android Gradle, and the standalone web analytics package. A
+GitHub Actions and the standalone web analytics package. A
 Dependabot pull request follows the same test and merge gate as any other PR.
 
 The repository is private, and the current GitHub plan does not expose branch
@@ -62,6 +72,8 @@ maintainer therefore applies this fail-closed manual gate:
 - wait until the pull request has no pending or in-progress checks;
 - require every displayed, applicable check to complete successfully;
 - treat failure, cancellation, timeout, or an unexplained skip as blocking;
+- treat a workflow omitted by its documented path filter as not applicable,
+  not as a successful check;
 - verify that the head commit has not changed after the successful runs; and
 - squash merge only after those conditions are recorded in the pull request.
 

@@ -1,0 +1,27 @@
+name: Scheduled iOS regression
+
+on:
+  schedule:
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-regression-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ios-unit-tests:
+    name: iOS unit tests
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Run iOS unit tests
+        run: >-
+          xcodebuild test
+          -project ios/Hanco/Hanco.xcodeproj
+          -scheme Hanco
+          -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'

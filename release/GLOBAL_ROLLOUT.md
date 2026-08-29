@@ -107,4 +107,4 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 
 2026-08-28 App Store Connect에서 앱과 IAP의 175개 국가 또는 지역 및 향후 신규 storefront 자동 포함을 저장했다. 당시 일본 1개 지역은 Available, 145개 지역은 Processing to Available, EU 29개 지역은 Trader Status Not Provided였다. ja·en-US·en-GB·en-AU·en-CA·ko 이름과 1.1 제품 페이지 메타데이터, ja·en-US·ko IAP 현지화를 저장했다. 빌드·최신 스크린샷·IAP 심사 스크린샷·Paid Apps Agreement·DSA 등 출시 gate는 별도로 남아 있다.
 
-Android는 별도 Google Play 출시 트랙에서 진행 중이다. 이 문서의 실행 범위에는 Play Console 변경이나 Android 배포 승인이 포함되지 않으며, Android listing 계약은 `release/google_play_metadata.json`과 `release/GOOGLE_PLAY_QA.md`에서 관리한다.
+Android의 과거 Google Play 초안은 참고용으로 동결됐다. 2026-08-30 PRD v6.14 이후 이 문서의 실행 범위에는 Android 기능·CI·Play Console·배포 승인이 포함되지 않으며, 기존 listing 파일은 역사적 기록으로만 보존한다.

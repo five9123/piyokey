@@ -1,0 +1,39 @@
+name: iOS CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ios-ci.yml'
+      - 'ios/**'
+      - 'shared/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ios-ci.yml'
+      - 'ios/**'
+      - 'shared/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ios-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ios-build:
+    name: iOS simulator build
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Build app without signing
+        run: >-
+          xcodebuild build
+          -project ios/Hanco/Hanco.xcodeproj
+          -scheme Hanco
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO

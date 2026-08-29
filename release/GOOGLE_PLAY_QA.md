@@ -1,5 +1,7 @@
 # Google Play 출시 준비
 
+> 2026-08-30 사용자 결정으로 이 체크리스트는 동결된 과거 초안이다. 현재 출시 gate가 아니며 Android를 새 PRD에서 다시 설계하기 전에는 아래 작업을 진행하지 않는다.
+
 이 문서는 Android `1.1.0 (8)` 소스 후보를 Google Play 배포 후보로 전환할 때 사용하는 체크리스트다. `release/google_play_metadata.json`이 스토어 문구·자산·열린 gate의 기계 판독 기준이다.
 
 ## 저장소에서 완료하는 항목

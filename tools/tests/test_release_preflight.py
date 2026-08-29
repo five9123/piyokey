@@ -172,7 +172,7 @@ class ReleasePreflightTests(unittest.TestCase):
             "Version 1.1 App Store metadata locales must be exactly en-US, en-GB, en-AU, en-CA, ko, and ja",
             messages,
         )
-        self.assertIn("Android M7 must remain on its resumed, separate Google Play release track", messages)
+        self.assertIn("Android must remain frozen as reference-only source", messages)
         self.assertIn("Version 1.1 availability must select All Countries or Regions", messages)
         self.assertIn("Version 1.1 availability must include future storefronts", messages)
         self.assertIn("App and typee pro IAP availability must match", messages)

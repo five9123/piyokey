@@ -105,6 +105,26 @@ Pro가 승인되면 이 계약을 required status checks, conversation 해결, f
 삭제 금지, PR 전용 변경 규칙으로 기술적으로 강제한다. Release와 store 제출은
 일반 개발 권한과 분리된 별도 책임자가 수행한다.
 
+### CI 적용 범위
+
+PR check는 변경 경로에 따라 다음처럼 선택된다. 경로 필터로 표시되지 않은 workflow는
+성공으로 간주하는 check가 아니라 해당 PR에 적용되지 않는 check다.
+
+| 변경 경로 | 적용 workflow |
+|---|---|
+| `docs/**`, `README.md`, `PROJECT_STATUS.md`, `ROADMAP.md`만 | 없음; 문서 review와 수동 병합 gate |
+| `release/**` | Python tools/content/release contracts |
+| `ios/Hanco/**` | Python contracts + iOS simulator build |
+| `ios/HangulEngine/**` | Python contracts + Swift contracts + iOS simulator build |
+| `android/**` | 없음; Android 포트는 참고용 동결 |
+| `shared/**` | Python + Swift + iOS |
+| `.github/workflows/**` | Python contracts + 수정한 플랫폼 workflow 자체 |
+
+주 1회 `Scheduled iOS regression`은 iOS unit test를 실행하며
+`workflow_dispatch`로도 시작할 수 있다. 정기 회귀가 실패하거나 완료되지
+않으면 release candidate를 승인하지 않는다. Dependabot PR도 자동 병합하지 않고
+위 경로 범위와 동일한 fail-closed 판정을 적용한다.
+
 실기기 설치, TestFlight·Play 배포, archive 또는 distribution bundle 생성 전에는
 배포하는 파일 트리가 원격 기준선과 같은지 fail-closed로 확인합니다.
 
