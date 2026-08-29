@@ -21,7 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Verify | `codex/87-typedeck-bcp47` / `/private/tmp/piyokey-issue87-typedeck` | 웹 PR #6·commit `4a7c9c8` 연결 완료; 모바일 Actions 활성화 승인과 웹 billing CI 재실행 뒤 ready 전환 |
+| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Verify | `codex/87-typedeck-bcp47` / `/private/tmp/piyokey-issue87-typedeck` | 웹 PR #6·commit `4a7c9c8` 연결 완료; 활성화한 모바일 Actions CI와 웹 billing CI 재실행 확인 뒤 ready 전환 |
 | #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue85` 보존 | 후속 작업은 최신 `main`에서 분리 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
@@ -40,7 +40,7 @@
 | 구분 | 확정 결과 | 처리 |
 |---|---|---|
 | 원격 기준선 | `origin/main` `77a7dd6`; PR #86 연습 콘텐츠 확장까지 반영 | Issue #87 branch와 새 출시 후보의 기준선 |
-| 열린 PR | 모바일 #88 draft와 웹 #6 open; 로컬 다중 플랫폼 회귀·웹 writer golden·Vercel 통과 | 모바일 Actions 활성화 승인과 웹 billing/지출 한도 해소 후 Release checks 재실행 |
+| 열린 PR | 모바일 #88 draft와 웹 #6 open; 로컬 다중 플랫폼 회귀·웹 writer golden·Vercel 통과; 모바일 Actions 전체 활성화 | PR #88 CI 완료와 웹 billing/지출 한도 해소 후 Release checks 재실행 |
 | worktree | 총 19개; 기본 `/Users/jungminoh/Documents/hanco`만 dirty, 나머지 18개 clean | clean 보존본은 역사·검증 자료, 곧바로 삭제하지 않음 |
 | 기본 dirty worktree | 닫힌 #63 branch 위 tracked 44개·untracked 5개; 현재 main보다 오래된 기반 | release 기준이 아님. 새 branch에서 기능별 재적용·검증 전까지 보존 |
 | stash | 1개, 35파일·1,214삽입/155삭제; 스토어 미디어·Pro·지원 URL 계열 | apply/drop하지 않음; 복구 원본으로만 유지 |
