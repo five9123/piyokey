@@ -4,18 +4,18 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `origin/main` `77a7dd6`이다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거, PR #84의 저장소·화면 감사, PR #82의 홈 추천 두 영역과 PR #86의 연습 챕터 5·6 확장은 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. 업로드된 iOS `1.1 (7)`과 `1.1 (8)`은 최신 Pro 덱 언어 소스보다 오래되어 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
-1. `.typedeck` BCP 47 콘텐츠 언어 계약 v2 #87
-   - container v1과 deck schema v1 reader를 유지하면서 deck schema v2를 Python·Swift·Kotlin과 모바일 Pro 편집기에 적용
-   - 공용 fixture·교차 writer/reader 회귀, Actions CI와 웹 Builder 출력 호환을 확인한 뒤 병합
-2. 현지 20시 온보딩 리마인더 #58
-   - 소스 구현과 iOS/Android 자동 회귀 완료
-   - 실제 기기에서 권한 동의 뒤 현지 20시 알림 수신 확인 후 종료
-3. iOS 1.1 출시 후보
-   - PR #80·#72 및 최종 선택 기능을 포함한 새 build 번호로 archive/TestFlight 생성
+1. iOS 1.1 출시 후보
+   - 최신 `origin/main`과 tree가 같은 `1.1 (9)` archive/TestFlight 생성
    - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
    - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
+2. iOS 1.1 외부 출시 gate #77
+   - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 9 실기기 QA
+   - strict preflight 통과 뒤에만 App Review 제출
+3. CI 비용·검증 범위 최적화
+   - docs-only 변경의 Android AAB·iOS 전체 build를 분리
+   - iOS unit test와 Android instrumentation을 정기·release workflow로 보강
 4. Android 1.1 출시 후보
    - Play Console·서명·권리·외부 리소스 확정
    - Issue #19 동일 signed AAB 통합 실기기 QA

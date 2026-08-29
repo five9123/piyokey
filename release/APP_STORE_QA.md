@@ -6,7 +6,9 @@
 
 아래 항목은 다음 업데이트 `1.1`의 제출 게이트다. 이후 `1.0.2 (6)` 체크와 제출 ID는 과거 제출 증적으로 보존하며, `1.1` 완료 근거로 재사용하지 않는다.
 
-- [x] 미사용 build 번호로 `1.1 (7)` archive·Apple Distribution IPA 생성·서명 검증 (main `9af01ef`; `release/IOS_1_1_BUILD_7.md`)
+- [x] `1.1 (7)` archive·Apple Distribution IPA 생성·서명 검증 (main `9af01ef`; `release/IOS_1_1_BUILD_7.md`). 최신 RC 근거로 재사용하지 않음
+- [x] `1.1 (8)` archive·업로드·서명 검증 (main `a678e0f`; `release/IOS_1_1_BUILD_8.md`). Pro 덱 언어 retag 이전 소스라 superseded
+- [ ] 최신 `origin/main`에서 `1.1 (9)` archive·Apple Distribution IPA 생성·서명·업로드 검증 (`release/IOS_1_1_BUILD_9.md`)
 - [ ] Paid Applications 계약, 세금·은행 정보를 활성 상태로 확인
 - [ ] Apple Small Business Program 가입/미가입 상태와 예상 수수료를 Account Holder가 확인
 - [ ] 비소모성 `app.piyokey.deckmaker.lifetime` 생성 및 ja/en-US/ko 상품명·설명 입력
@@ -54,8 +56,8 @@
 - [x] 비면제 자체 암호화 미사용 선언(Apple SDK의 HTTPS만 사용)
 - [x] 최종 Bundle ID `app.piyokey.Piyokey` 확정
 - [x] App Store Connect App ID `6794853985` 및 명시적 Bundle ID 등록
-- [x] 마케팅 버전·빌드 번호 `1.1 (7)` 확인
-- [x] Release archive·Apple Distribution IPA 로컬 서명 검증 (`release/IOS_1_1_BUILD_7.md`)
+- [x] 소스 마케팅 버전·빌드 번호 `1.1 (9)` 확인
+- [ ] build 9 Release archive·Apple Distribution IPA 로컬 서명 검증 (`release/IOS_1_1_BUILD_9.md`)
 
 자동 점검:
 
