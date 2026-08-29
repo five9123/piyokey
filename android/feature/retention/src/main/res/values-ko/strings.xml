@@ -25,4 +25,9 @@
 <plurals name="retention_week_progress">
   <item quantity="other">이번 주 %1$d/7 · %2$d일 연속</item>
 </plurals>
+  <string name="curriculum_stage_travel_words">여행 단어</string>
+  <string name="curriculum_stage_study_work_words">학업·업무 단어</string>
+  <string name="curriculum_stage_travel_phrases">여행 표현</string>
+  <string name="curriculum_stage_daily_conversation">일상 대화</string>
+  <string name="curriculum_stage_fan_support">팬 응원 표현</string>
 </resources>
