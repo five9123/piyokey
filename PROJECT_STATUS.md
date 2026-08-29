@@ -21,7 +21,6 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #71 / PR #72 연습 탭 프리프랙티스 제거 | Blocked (CI·리뷰) | `codex/71-remove-free-practice` / `/private/tmp/piyokey-issue71-free-practice` | Actions 활성화·CI·검토 승인 후 병합 |
 | #79 / PR #80 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로에서도 문제→피요·입력→키보드 순서 유지, 크기/여백 수정·mini/Pro 선택 회귀 통과. 10시장 가로 100장+ZIP 10개 검수 완료. 업로드는 Chrome `Not allowed`로 차단; PR 리뷰/CI·새 RC·스토어 등록 필요 |
 | #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국 세금 정보 완료 및 나머지 제출 gate 검증 (미국 Foreign Status/W-8BEN Active 확인) |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
@@ -100,10 +99,10 @@
 
 ## #71 프리프랙티스 제거 검증
 
-- iOS·Android 연습 탭 하단 카드와 전용 준비/선택 화면을 제거했다. 커리큘럼·일반 덱 연습·공통 설정과 기존 기록 schema는 유지한다. PR #72는 아직 main에 병합하지 않았고 실기기 설치·스토어 배포도 하지 않았다.
+- iOS·Android 연습 탭 하단 카드와 전용 준비/선택 화면을 제거했다. 커리큘럼·일반 덱 연습·공통 설정과 기존 기록 schema는 유지한다. PR #72 병합은 소스 반영만 의미하며 실기기 설치·스토어 배포 완료로 확대하지 않는다.
 - 기존 검증 대상 `b07c59f969c56e1f4641e7714e90acf82f1fc8f9`, 증빙 `release/evidence/b07c59f969c56e1f4641e7714e90acf82f1fc8f9.json`. iPhone 관련 UI 8개·ja/en/es resource 1개, iPad 하단 지도·큰 글자 UI 2개, Android retention 단위 13개·앱/기기 테스트 Kotlin 컴파일, preflight·strict doctor 통과.
 - iPhone 최초 9개 선택 실행은 테스트 탐색 순서·동일 이름 옵션 때문에 2개 실패했다. 두 테스트를 공통 설정 순서·사운드 picker 범위에 맞춰 각각 재실행해 통과했다. 전체 9개를 한 번에 재실행한 결과로 표현하지 않는다. iOS 제품 소스는 `693a7ca`, Android 소스는 `10ee7db`와 동일하며 이후 변경은 해당 테스트와 검증 문서뿐이다.
 - 2026-08-29 최신 main `a678e0f`를 병합하고 새 de/fr UI 리소스에서도 제거된 진입 문구를 정리했다. repository preflight와 UI 언어 범위 8개, Android retention 단위·앱/기기 테스트 Kotlin 컴파일, iPad 커리큘럼 하단 미노출·큰 글자 접근성 UI 2개를 통과했다.
 - iPhone 관련 UI 5개 중 3개는 첫 선택 실행에서 통과했고, 2개는 simulator runner/AX 종료 뒤 각각 새 simulator에서 재실행해 통과했다. 5개 전체가 한 번에 통과한 결과로 표현하지 않는다.
 - 최신 main 통합 소스는 `f370f5e2e64b3083be497f4ebd1f00a0ce163c02`, 증빙은 `release/evidence/f370f5e2e64b3083be497f4ebd1f00a0ce163c02.json`이다.
-- Android 기기 instrumentation은 미실행. 저장소 Actions `enabled=false`를 재확인했으며 CI/리뷰 예외나 보호 설정 변경은 하지 않았다. 기존 기본 작업폴더의 dirty 파일은 보존했다.
+- Android 기기 instrumentation은 미실행. 저장소 Actions `enabled=false`와 승인 리뷰 0건을 재확인했다. 사용자가 2026-08-29 대화에서 PR #72 병합을 명시 승인했으므로 이번 PR에 한해 CI·별도 리뷰 없는 예외로 squash merge하고 Issue #71·Project를 완료 처리한다. 보호 설정은 변경하지 않으며 이 예외를 이후 PR이나 출시 gate로 확대하지 않는다. 기존 기본 작업폴더의 dirty 파일은 보존했다.
