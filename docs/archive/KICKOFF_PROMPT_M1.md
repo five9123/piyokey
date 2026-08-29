@@ -1,4 +1,10 @@
-# Claude Code 킥오프 프롬프트
+# 역사 기록: Claude Code M1 킥오프 프롬프트
+
+이 문서는 프로젝트 초기 M1 시작용 프롬프트의 역사 기록이다. 현재 작업 지침이나
+상태로 사용하지 않는다. 새 작업은 저장소 루트의 `AGENTS.md`, `PRD.md`,
+`PROJECT_STATUS.md`, `ROADMAP.md`를 따른다.
+
+## 당시 원문
 
 터미널에서 이 폴더로 이동 후 `claude` 실행, 아래를 붙여넣으세요.
 
@@ -19,9 +25,10 @@ M1 범위 (PRD §13, §6, §8):
 
 ---
 
-## 참고: 이 패키지에 이미 있는 것
+### 당시 패키지 메모
+
 - `PRD.md` v1.3 (전체 스펙)
-- `CLAUDE.md` (작업 규칙·마일스톤·철칙)
-- `shared/test_vectors.json` (검증 완료된 21케이스 — 수정하지 말 것)
-- `tools/gen_test_vectors.py` (벡터 생성기 — 케이스 추가 시 이걸 수정)
-- `DECISIONS.md` (결정 기록 시작됨)
+- `CLAUDE.md` (당시 작업 규칙·마일스톤·철칙)
+- `shared/test_vectors.json` (당시 검증된 21케이스 — 직접 수정 금지)
+- `tools/gen_test_vectors.py` (벡터 생성기)
+- `DECISIONS.md` (결정 기록)
