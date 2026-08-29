@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "cases": [
     {
       "id": "canonical-basic",
@@ -16,6 +16,54 @@
       "expectation": "accepted_noncanonical",
       "size_bytes": 1345,
       "sha256": "e9c34281fc45e1d1e71502f9920aab3b97783474473c4119e9787c92f37e4b84"
+    },
+    {
+      "id": "multilingual-ar-zh-hant",
+      "path": "valid/multilingual.typedeck",
+      "valid": true,
+      "expectation": "accepted_canonical",
+      "size_bytes": 1592,
+      "sha256": "b9087f69994f4c325d208cce69cc9ff79de232945c13855e6b9a8427313615c1"
+    },
+    {
+      "id": "malformed-locale",
+      "path": "invalid/malformed-locale.typedeck",
+      "valid": false,
+      "expectation": "invalid_content",
+      "size_bytes": 1586,
+      "sha256": "4d71c9091a4afd98802a69b7807a0a6cce856fb718cd2b13c2250f06ebfce984"
+    },
+    {
+      "id": "noncanonical-locale",
+      "path": "invalid/noncanonical-locale.typedeck",
+      "valid": false,
+      "expectation": "invalid_content",
+      "size_bytes": 1592,
+      "sha256": "d3615cf2452212ab2530ad0aa6c9c2076b2e00892f876549d2577ee00fa91776"
+    },
+    {
+      "id": "duplicate-locale",
+      "path": "invalid/duplicate-locale.typedeck",
+      "valid": false,
+      "expectation": "invalid_json",
+      "size_bytes": 1669,
+      "sha256": "bb14d35f24be89cb1dec65f0c894f2a99f911b4efa8e89f849a66200b6cadd42"
+    },
+    {
+      "id": "incomplete-locale",
+      "path": "invalid/incomplete-locale.typedeck",
+      "valid": false,
+      "expectation": "invalid_content",
+      "size_bytes": 1534,
+      "sha256": "aa836924efd18e8f1a03994372b03536cea4f0b54aff44373645e605c2b7be4d"
+    },
+    {
+      "id": "v2-content-declared-as-v1",
+      "path": "invalid/v2-content-declared-as-v1.typedeck",
+      "valid": false,
+      "expectation": "invalid_content",
+      "size_bytes": 1592,
+      "sha256": "7f9a6d47195b780390775120684db57a4742da9acabe5eaada4b2c1d743396e9"
     },
     {
       "id": "wrong-sha",

@@ -66,23 +66,25 @@ public struct DeckItem: Codable, Equatable, Sendable {
     self.localizations = localizations
   }
 
-  public func localizedMeaning(languageCode: String) -> String? {
-    guard normalizedLanguageCode(languageCode) != "ja" else { return meaningJa }
-    return localizedValue(languageCode: languageCode, keyPath: \.meaning)
+  public func localizedMeaning(languageCode: String, defaultLocale: String? = nil) -> String? {
+    localizedValue(languageCode: languageCode, defaultLocale: defaultLocale, keyPath: \.meaning)
+      ?? meaningJa
   }
 
-  public func localizedReading(languageCode: String) -> String? {
-    guard normalizedLanguageCode(languageCode) != "ja" else { return readingJa }
-    return localizedValue(languageCode: languageCode, keyPath: \.reading)
+  public func localizedReading(languageCode: String, defaultLocale: String? = nil) -> String? {
+    localizedValue(languageCode: languageCode, defaultLocale: defaultLocale, keyPath: \.reading)
+      ?? readingJa
   }
 
   private func localizedValue(
     languageCode: String,
+    defaultLocale: String?,
     keyPath: KeyPath<DeckItemLocalization, String>
   ) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    if let value = localizations?[code]?[keyPath: keyPath] { return value }
-    return localizations?["en"]?[keyPath: keyPath]
+    for code in LocaleTag.lookupCandidates(requested: languageCode, defaultLocale: defaultLocale) {
+      if let value = localizations?[code]?[keyPath: keyPath] { return value }
+    }
+    return nil
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -101,6 +103,7 @@ public struct Deck: Codable, Equatable, Sendable {
   public let type: DeckType
   public let level: Int
   public let tags: [String]
+  public let defaultLocale: String?
   public let createdAt: Date
   public let updatedAt: Date
   public let items: [DeckItem]
@@ -118,7 +121,8 @@ public struct Deck: Codable, Equatable, Sendable {
     createdAt: Date,
     updatedAt: Date,
     items: [DeckItem],
-    localizations: [String: DeckMetadataLocalization]? = nil
+    localizations: [String: DeckMetadataLocalization]? = nil,
+    defaultLocale: String? = nil
   ) {
     self.deckId = deckId
     self.version = version
@@ -132,40 +136,36 @@ public struct Deck: Codable, Equatable, Sendable {
     self.updatedAt = updatedAt
     self.items = items
     self.localizations = localizations
+    self.defaultLocale = defaultLocale
   }
 
   public func localizedName(languageCode: String) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return name }
-    return metadataLocalization(languageCode: code)?.name
+    metadataLocalization(languageCode: languageCode)?.name ?? name
   }
 
   public func localizedAuthorNickname(languageCode: String) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return author.nickname }
-    return metadataLocalization(languageCode: code)?.authorNickname
+    metadataLocalization(languageCode: languageCode)?.authorNickname ?? author.nickname
   }
 
   public func localizedTags(languageCode: String) -> [String]? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return tags }
-    return metadataLocalization(languageCode: code)?.tags
+    metadataLocalization(languageCode: languageCode)?.tags ?? tags
   }
 
   public func hasLocalization(languageCode: String) -> Bool {
-    let code = normalizedLanguageCode(languageCode)
-    return code == "ja" || localizations?[code] != nil || localizations?["en"] != nil
+    localizedName(languageCode: languageCode) != nil
   }
 
   private func metadataLocalization(languageCode: String) -> DeckMetadataLocalization? {
-    let code = normalizedLanguageCode(languageCode)
-    guard code != "ja" else { return nil }
-    return localizations?[code] ?? localizations?["en"]
+    for code in LocaleTag.lookupCandidates(requested: languageCode, defaultLocale: defaultLocale) {
+      if let value = localizations?[code] { return value }
+    }
+    return nil
   }
 
   private enum CodingKeys: String, CodingKey {
     case deckId = "deck_id"
     case version, name, author, official, type, level, tags, items, localizations
+    case defaultLocale = "default_locale"
     case createdAt = "created_at"
     case updatedAt = "updated_at"
   }

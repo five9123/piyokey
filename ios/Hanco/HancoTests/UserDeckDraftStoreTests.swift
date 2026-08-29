@@ -32,6 +32,7 @@ final class UserDeckDraftStoreTests: XCTestCase {
       ])
     )
     draft.setName("My unfinished deck", for: .english)
+    draft.defaultLocale = "fr-CA"
     draft.setTags(["draft"], for: .english)
     draft.items[0].ko = "아직"
     draft.items[0].setMeaning("", for: .english)

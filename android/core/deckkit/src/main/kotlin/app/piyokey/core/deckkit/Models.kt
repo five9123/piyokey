@@ -31,15 +31,13 @@ data class DeckItem(
   val audio: String?,
   val localizations: Map<String, DeckItemLocalization>? = null,
 ) {
-  fun localizedMeaning(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
-    "ja" -> meaningJa
-    else -> localizations?.get(code)?.meaning ?: localizations?.get("en")?.meaning
-  }
+  fun localizedMeaning(languageCode: String, defaultLocale: String? = null): String? =
+    LocaleTag.lookupCandidates(languageCode, defaultLocale)
+      .firstNotNullOfOrNull { localizations?.get(it)?.meaning } ?: meaningJa
 
-  fun localizedReading(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
-    "ja" -> readingJa
-    else -> localizations?.get(code)?.reading ?: localizations?.get("en")?.reading
-  }
+  fun localizedReading(languageCode: String, defaultLocale: String? = null): String? =
+    LocaleTag.lookupCandidates(languageCode, defaultLocale)
+      .firstNotNullOfOrNull { localizations?.get(it)?.reading } ?: readingJa
 }
 
 data class Deck(
@@ -55,32 +53,21 @@ data class Deck(
   val updatedAt: Instant,
   val items: List<DeckItem>,
   val localizations: Map<String, DeckMetadataLocalization>? = null,
+  val defaultLocale: String? = null,
 ) {
-  fun localizedName(languageCode: String): String? = when (val code = normalizeLanguageCode(languageCode)) {
-    "ja" -> name
-    else -> metadataLocalization(code)?.name ?: metadataLocalization("en")?.name
-  }
+  fun localizedName(languageCode: String): String? = metadataLocalization(languageCode)?.name ?: name
 
   fun localizedAuthorNickname(languageCode: String): String? =
-    when (val code = normalizeLanguageCode(languageCode)) {
-      "ja" -> author.nickname
-      else -> metadataLocalization(code)?.authorNickname
-        ?: metadataLocalization("en")?.authorNickname
-    }
+    metadataLocalization(languageCode)?.authorNickname ?: author.nickname
 
   fun localizedTags(languageCode: String): List<String>? =
-    when (val code = normalizeLanguageCode(languageCode)) {
-      "ja" -> tags
-      else -> metadataLocalization(code)?.tags ?: metadataLocalization("en")?.tags
-    }
+    metadataLocalization(languageCode)?.tags ?: tags
 
-  fun hasLocalization(languageCode: String): Boolean = when (val code = normalizeLanguageCode(languageCode)) {
-    "ja" -> true
-    else -> localizations?.containsKey(code) == true || localizations?.containsKey("en") == true
-  }
+  fun hasLocalization(languageCode: String): Boolean = localizedName(languageCode) != null
 
   private fun metadataLocalization(languageCode: String): DeckMetadataLocalization? =
-    localizations?.get(languageCode)
+    LocaleTag.lookupCandidates(languageCode, defaultLocale)
+      .firstNotNullOfOrNull { localizations?.get(it) }
 }
 
 data class CatalogPreviewItemLocalization(

@@ -112,9 +112,9 @@ final class PiyoDeckPackageTests: XCTestCase {
     let manifest = try XCTUnwrap(
       JSONSerialization.jsonObject(with: manifestData) as? [String: Any]
     )
-    XCTAssertEqual(manifest["schema_version"] as? Int, 1)
+    XCTAssertEqual(manifest["schema_version"] as? Int, 2)
     let cases = try XCTUnwrap(manifest["cases"] as? [[String: Any]])
-    XCTAssertGreaterThanOrEqual(cases.count, 15)
+    XCTAssertGreaterThanOrEqual(cases.count, 20)
     let sourceDeck = try DeckKitJSON.decodeDeck(
       from: fixture("valid/basic-deck.json", root: root)
     )
@@ -133,12 +133,20 @@ final class PiyoDeckPackageTests: XCTestCase {
       XCTAssertEqual(PiyoDeckDigest.sha256Hex(data), expectedSHA, identifier)
       if valid {
         let imported = try PiyoDeckPackageReader.read(data: data, deckSchemaData: deckSchema)
-        XCTAssertEqual(imported.deck, sourceDeck, identifier)
+        let expectedDeck =
+          identifier == "multilingual-ar-zh-hant"
+          ? try DeckKitJSON.decodeDeck(from: fixture("valid/multilingual-deck.json", root: root))
+          : sourceDeck
+        XCTAssertEqual(imported.deck, expectedDeck, identifier)
         let normalized = try PiyoDeckPackageWriter.write(
           deck: imported.deck,
           deckSchemaData: deckSchema
         )
-        XCTAssertEqual(normalized, canonical, identifier)
+        let expectedPackage =
+          identifier == "multilingual-ar-zh-hant"
+          ? try fixture("valid/multilingual.typedeck", root: root)
+          : canonical
+        XCTAssertEqual(normalized, expectedPackage, identifier)
       } else {
         switch tryRead(data, schema: deckSchema) {
         case .success:
@@ -267,10 +275,38 @@ final class PiyoDeckPackageTests: XCTestCase {
       $0 == .unsupportedFormatVersion(2)
     }
 
-    let futureDeckSchema = try rawPackage(deckData: deckData, deckSchemaVersion: 2)
+    let futureDeckSchema = try rawPackage(deckData: deckData, deckSchemaVersion: 3)
     assertImportError(tryRead(futureDeckSchema, schema: deckSchema)) {
-      $0 == .unsupportedDeckSchemaVersion(2)
+      $0 == .unsupportedDeckSchemaVersion(3)
     }
+  }
+
+  func testV2MultilingualFixtureRoundTripsAndRejectsInvalidLocaleContracts() throws {
+    let root = try repositoryRoot()
+    let deckSchema = try schema("deck.schema.json", root: root)
+    let packageData = try fixture("valid/multilingual.typedeck", root: root)
+    let imported = try PiyoDeckPackageReader.read(data: packageData, deckSchemaData: deckSchema)
+    XCTAssertEqual(imported.manifest.deckSchemaVersion, 2)
+    XCTAssertEqual(imported.deck.defaultLocale, "ar")
+    XCTAssertEqual(Set(imported.deck.localizations.map { Array($0.keys) } ?? []), ["ar", "zh-Hant"])
+    XCTAssertEqual(
+      try PiyoDeckPackageWriter.write(deck: imported.deck, deckSchemaData: deckSchema),
+      packageData
+    )
+    for name in [
+      "malformed-locale", "noncanonical-locale", "incomplete-locale",
+      "v2-content-declared-as-v1",
+    ] {
+      let result = tryRead(try fixture("invalid/\(name).typedeck", root: root), schema: deckSchema)
+      assertImportError(result) {
+        if case .deckSchemaViolation = $0 { return true }
+        if case .invalidUserDeck = $0 { return true }
+        return false
+      }
+    }
+    XCTAssertTrue(LocaleTag.isCanonical("sl-rozaj-biske"))
+    XCTAssertFalse(LocaleTag.isCanonical("fr_CA"))
+    XCTAssertFalse(LocaleTag.isCanonical("fr-ca"))
   }
 
   func testReaderVerifiesSHAAndManifestMetadataAfterZIPCRC() throws {
@@ -476,6 +512,8 @@ final class PiyoDeckPackageTests: XCTestCase {
       return "malformed_archive"
     case .crcMismatch:
       return "crc_mismatch"
+    case .deckSchemaViolation, .invalidUserDeck:
+      return "invalid_content"
     default:
       return "unexpected"
     }

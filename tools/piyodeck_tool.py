@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pack, inspect, and validate PIYOKEY ``.typedeck`` v1 documents.
+"""Pack, inspect, and validate PIYOKEY ``.typedeck`` documents.
 
 The implementation intentionally uses only the Python standard library.  It
 does not delegate archive parsing to ``zipfile`` because PIYOKEY's document
@@ -32,7 +32,8 @@ MANIFEST_SCHEMA = ROOT / "shared/schema/piyodeck-manifest-v1.schema.json"
 
 FORMAT_IDENTIFIER = "piyokey.deck-package"
 FORMAT_VERSION = 1
-DECK_SCHEMA_VERSION = 1
+DECK_SCHEMA_VERSION = 2
+SUPPORTED_DECK_SCHEMA_VERSIONS = frozenset({1, 2})
 ENTRY_NAMES = ("manifest.json", "deck.json")
 
 MAX_PACKAGE_BYTES = 8 * 1024 * 1024
@@ -52,6 +53,16 @@ DOS_DATE = 0x0021  # 1980-01-01
 USER_DECK_ID = re.compile(r"^user_[0-9a-f]{32}$")
 USER_ITEM_ID = re.compile(r"^item_[0-9a-f]{32}$")
 GENERIC_ID = re.compile(r"^[a-z0-9][a-z0-9_-]{2,63}$")
+
+_LANGUAGE_TAG = re.compile(
+    r"^(?:(?P<language>[A-Za-z]{2,3})(?P<extlangs>(?:-[A-Za-z]{3}){0,3})"
+    r"|(?P<language4>[A-Za-z]{4})|(?P<language_long>[A-Za-z]{5,8}))"
+    r"(?P<script>-[A-Za-z]{4})?(?P<region>-(?:[A-Za-z]{2}|[0-9]{3}))?"
+    r"(?P<variants>(?:-(?:[0-9][A-Za-z0-9]{3}|[A-Za-z0-9]{5,8}))*)"
+    r"(?P<extensions>(?:-[0-9A-WY-Za-wy-z](?:-[A-Za-z0-9]{2,8})+)*)"
+    r"(?P<private>-x(?:-[A-Za-z0-9]{1,8})+)?$"
+)
+_PRIVATE_LANGUAGE_TAG = re.compile(r"^x(?:-[A-Za-z0-9]{1,8})+$", re.IGNORECASE)
 
 
 class PiyoDeckToolError(Exception):
@@ -592,10 +603,15 @@ def schema_issues(instance: Any, schema: dict[str, Any]) -> list[str]:
             for key in required:
                 if key not in value:
                     issues.append(f"{path}.{key}: required property is missing")
-            if node.get("additionalProperties") is False:
+            additional_properties = node.get("additionalProperties")
+            if additional_properties is False:
                 for key in value:
                     if key not in properties:
                         issues.append(f"{path}.{key}: additional property is forbidden")
+            property_names = node.get("propertyNames")
+            if isinstance(property_names, dict):
+                for key in value:
+                    visit(key, property_names, f"{path}.<key:{key}>")
             minimum_properties = node.get("minProperties")
             if isinstance(minimum_properties, int) and len(value) < minimum_properties:
                 issues.append(f"{path}: expected at least {minimum_properties} properties")
@@ -603,6 +619,8 @@ def schema_issues(instance: Any, schema: dict[str, Any]) -> list[str]:
                 child_schema = properties.get(key)
                 if isinstance(child_schema, dict):
                     visit(child, child_schema, f"{path}.{key}")
+                elif isinstance(additional_properties, dict):
+                    visit(child, additional_properties, f"{path}.{key}")
 
         if isinstance(value, list):
             minimum = node.get("minItems")
@@ -662,6 +680,101 @@ def _trimmed(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def canonical_language_tag(value: str) -> str | None:
+    """Return structural BCP 47 canonical casing, or ``None`` if malformed."""
+
+    if not isinstance(value, str) or not 2 <= len(value) <= 63 or "_" in value:
+        return None
+    if _PRIVATE_LANGUAGE_TAG.fullmatch(value):
+        return "-".join(part.lower() for part in value.split("-"))
+    match = _LANGUAGE_TAG.fullmatch(value)
+    if match is None:
+        return None
+    parts = value.split("-")
+    output: list[str] = [parts[0].lower()]
+    index = 1
+    language_length = len(parts[0])
+    if language_length in (2, 3):
+        extlang_count = 0
+        while index < len(parts) and len(parts[index]) == 3 and parts[index].isalpha() and extlang_count < 3:
+            output.append(parts[index].lower())
+            index += 1
+            extlang_count += 1
+    if index < len(parts) and len(parts[index]) == 4 and parts[index].isalpha():
+        output.append(parts[index].title())
+        index += 1
+    if index < len(parts) and (
+        (len(parts[index]) == 2 and parts[index].isalpha())
+        or (len(parts[index]) == 3 and parts[index].isdigit())
+    ):
+        output.append(parts[index].upper() if parts[index].isalpha() else parts[index])
+        index += 1
+    output.extend(part.lower() for part in parts[index:])
+    return "-".join(output)
+
+
+def _locale_key_issues(localizations: Any, path: str) -> list[str]:
+    if not isinstance(localizations, dict):
+        return []
+    issues: list[str] = []
+    canonical_keys: set[str] = set()
+    for key in localizations:
+        canonical = canonical_language_tag(key)
+        if canonical is None:
+            issues.append(f"{path}.{key}: malformed BCP 47 language tag")
+        elif canonical != key:
+            issues.append(f"{path}.{key}: language tag must use canonical form {canonical}")
+        elif canonical in canonical_keys:
+            issues.append(f"{path}.{key}: duplicate canonical language tag")
+        canonical_keys.add(canonical or key)
+    return issues
+
+
+def locale_lookup_candidates(requested: str, default_locale: str | None) -> list[str]:
+    """Return localization keys in the normative display fallback order."""
+
+    normalized_requested = canonical_language_tag(requested.replace("_", "-"))
+    candidates: list[str] = []
+    if normalized_requested:
+        candidates.append(normalized_requested)
+        base = normalized_requested.split("-", 1)[0]
+        if base != normalized_requested:
+            candidates.append(base)
+    if default_locale:
+        candidates.append(default_locale)
+    candidates.append("en")
+    return list(dict.fromkeys(candidates))
+
+
+def localized_deck_value(deck: dict[str, Any], requested: str, field: str) -> Any:
+    """Resolve localized deck metadata, ending at the legacy Japanese base field."""
+
+    localizations = deck.get("localizations")
+    if isinstance(localizations, dict):
+        for candidate in locale_lookup_candidates(requested, deck.get("default_locale")):
+            localization = localizations.get(candidate)
+            if isinstance(localization, dict) and field in localization:
+                return localization[field]
+    if field == "author_nickname":
+        author = deck.get("author")
+        return author.get("nickname") if isinstance(author, dict) else None
+    return deck.get(field)
+
+
+def localized_item_value(
+    deck: dict[str, Any], item: dict[str, Any], requested: str, field: str
+) -> Any:
+    """Resolve an item clue, ending at the legacy ``*_ja`` base field."""
+
+    localizations = item.get("localizations")
+    if isinstance(localizations, dict):
+        for candidate in locale_lookup_candidates(requested, deck.get("default_locale")):
+            localization = localizations.get(candidate)
+            if isinstance(localization, dict) and field in localization:
+                return localization[field]
+    return item.get(f"{field}_ja")
+
+
 def _parse_datetime(value: Any) -> datetime | None:
     if not isinstance(value, str):
         return None
@@ -695,7 +808,7 @@ def _is_supported_target_character(character: str) -> bool:
         return False
 
 
-def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
+def deck_semantic_issues(deck: dict[str, Any], deck_schema_version: int | None = None) -> list[str]:
     issues: list[str] = []
 
     for path, value in (
@@ -731,6 +844,25 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
         issues.append("$.updated_at: must not be earlier than created_at")
 
     localizations = deck.get("localizations")
+    issues.extend(_locale_key_issues(localizations, "$.localizations"))
+    default_locale = deck.get("default_locale")
+    if deck_schema_version == 1:
+        if default_locale is not None:
+            issues.append("$.default_locale: deck schema v1 does not define this field")
+        if isinstance(localizations, dict):
+            for language in localizations:
+                if language not in {"en", "ko"}:
+                    issues.append(f"$.localizations.{language}: deck schema v1 supports only en and ko")
+    elif deck_schema_version == 2:
+        canonical_default = canonical_language_tag(default_locale) if isinstance(default_locale, str) else None
+        if canonical_default is None:
+            issues.append("$.default_locale: canonical BCP 47 language tag is required")
+        elif canonical_default != default_locale:
+            issues.append(f"$.default_locale: language tag must use canonical form {canonical_default}")
+        if not isinstance(localizations, dict) or not localizations:
+            issues.append("$.localizations: deck schema v2 requires at least one content locale")
+        elif default_locale not in localizations:
+            issues.append("$.default_locale: must name a key declared in localizations")
     if isinstance(localizations, dict):
         for language, localization in localizations.items():
             if not isinstance(localization, dict):
@@ -756,7 +888,13 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
     if not items:
         issues.append("$.items: at least one item is required")
     seen_ids: set[str] = set()
-    required_locales = set(localizations) - {"ko"} if isinstance(localizations, dict) else set()
+    catalog_required_locales = (
+        set(localizations) - {"ko"}
+        if deck_schema_version is None and isinstance(localizations, dict)
+        else set()
+    )
+    english_metadata = isinstance(localizations, dict) and "en" in localizations
+    declared_locales = set(localizations) if isinstance(localizations, dict) else set()
     for index, item in enumerate(items):
         if not isinstance(item, dict):
             continue
@@ -784,9 +922,24 @@ def deck_semantic_issues(deck: dict[str, Any]) -> list[str]:
             if not _trimmed(item.get(field)):
                 issues.append(f"{path}.{field}: must not be blank")
         item_localizations = item.get("localizations")
-        for language in sorted(required_locales):
+        for language in sorted(catalog_required_locales):
             if not isinstance(item_localizations, dict) or language not in item_localizations:
                 issues.append(f"{path}.localizations.{language}: required by deck metadata")
+        issues.extend(_locale_key_issues(item_localizations, f"{path}.localizations"))
+        if deck_schema_version == 1 and isinstance(item_localizations, dict):
+            for language in item_localizations:
+                if language not in {"en", "ko"}:
+                    issues.append(f"{path}.localizations.{language}: deck schema v1 supports only en and ko")
+        if deck_schema_version == 1 and english_metadata and (
+            not isinstance(item_localizations, dict) or "en" not in item_localizations
+        ):
+            issues.append(f"{path}.localizations.en: required by English deck metadata")
+        if deck_schema_version == 2:
+            item_locales = set(item_localizations) if isinstance(item_localizations, dict) else set()
+            for missing in sorted(declared_locales - item_locales):
+                issues.append(f"{path}.localizations.{missing}: required by declared content locales")
+            for extra in sorted(item_locales - declared_locales):
+                issues.append(f"{path}.localizations.{extra}: locale is not declared by deck metadata")
         if isinstance(item_localizations, dict):
             for language, localization in item_localizations.items():
                 if not isinstance(localization, dict):
@@ -856,7 +1009,7 @@ def _validate_manifest(manifest: Any) -> dict[str, Any]:
         if format_version != FORMAT_VERSION:
             raise PiyoDeckToolError(f"unsupported .typedeck format_version: {format_version}")
     if isinstance(deck_schema_version, int) and not isinstance(deck_schema_version, bool):
-        if deck_schema_version != DECK_SCHEMA_VERSION:
+        if deck_schema_version not in SUPPORTED_DECK_SCHEMA_VERSIONS:
             raise PiyoDeckToolError(
                 f"unsupported deck_schema_version: {deck_schema_version}"
             )
@@ -896,7 +1049,10 @@ def validate_package_data(data: bytes, deck_schema: dict[str, Any]) -> Validated
         if type(descriptor[field]) is not type(actual) or descriptor[field] != actual:
             raise PiyoDeckToolError(f"manifest mismatch: deck.{field}")
     _raise_issues("deck.json does not match deck schema", schema_issues(deck_value, deck_schema))
-    _raise_issues("deck.json fails DeckKit semantics", deck_semantic_issues(deck_value))
+    _raise_issues(
+        "deck.json fails DeckKit semantics",
+        deck_semantic_issues(deck_value, manifest["deck_schema_version"]),
+    )
     _raise_issues("deck.json is not a valid user deck", user_deck_issues(deck_value))
     return ValidatedPackage(
         package_size=len(data),
@@ -920,7 +1076,11 @@ def pack(deck_path: Path, output_path: Path) -> ValidatedPackage:
         raise PiyoDeckToolError("deck JSON root must be an object")
     deck_schema = _load_schema(DEFAULT_DECK_SCHEMA)
     _raise_issues("deck JSON does not match deck schema", schema_issues(deck, deck_schema))
-    _raise_issues("deck JSON fails DeckKit semantics", deck_semantic_issues(deck))
+    output_schema_version = 2 if "default_locale" in deck else 1
+    _raise_issues(
+        "deck JSON fails DeckKit semantics",
+        deck_semantic_issues(deck, output_schema_version),
+    )
     _raise_issues("deck JSON is not a valid user deck", user_deck_issues(deck))
 
     deck_data = canonical_json(deck)
@@ -931,7 +1091,7 @@ def pack(deck_path: Path, output_path: Path) -> ValidatedPackage:
     manifest = {
         "format": FORMAT_IDENTIFIER,
         "format_version": FORMAT_VERSION,
-        "deck_schema_version": DECK_SCHEMA_VERSION,
+        "deck_schema_version": output_schema_version,
         "deck": {
             "path": "deck.json",
             "media_type": "application/json",

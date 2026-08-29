@@ -186,7 +186,8 @@ enum PiyoDeckDocumentService {
           localizations: item.localizations
         )
       },
-      localizations: source.localizations
+      localizations: source.localizations,
+      defaultLocale: source.defaultLocale
     )
   }
 

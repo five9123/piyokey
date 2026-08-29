@@ -83,7 +83,7 @@ public enum PiyoDeckPackageReader {
       )
     }
 
-    let semanticIssues = DeckValidator.validate(deck)
+    let semanticIssues = DeckValidator.validate(deck, schemaVersion: manifest.deckSchemaVersion)
     guard semanticIssues.isEmpty else {
       throw PiyoDeckImportError.invalidUserDeck(semanticIssues)
     }
@@ -118,7 +118,7 @@ public enum PiyoDeckPackageReader {
     if manifest.formatVersion != PiyoDeckManifest.currentFormatVersion {
       throw PiyoDeckImportError.unsupportedFormatVersion(manifest.formatVersion)
     }
-    if manifest.deckSchemaVersion != PiyoDeckManifest.currentDeckSchemaVersion {
+    if !PiyoDeckManifest.supportedDeckSchemaVersions.contains(manifest.deckSchemaVersion) {
       throw PiyoDeckImportError.unsupportedDeckSchemaVersion(manifest.deckSchemaVersion)
     }
 

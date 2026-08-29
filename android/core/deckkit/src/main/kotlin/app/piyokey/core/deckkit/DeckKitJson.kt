@@ -80,7 +80,7 @@ object DeckKitJson {
       path = "$",
       allowed = setOf(
         "deck_id", "version", "name", "author", "official", "type", "level", "tags",
-        "localizations", "created_at", "updated_at", "items",
+        "default_locale", "localizations", "created_at", "updated_at", "items",
       ),
       required = setOf(
         "deck_id", "version", "name", "author", "official", "type", "level", "tags",
@@ -104,6 +104,7 @@ object DeckKitJson {
       localizations = objectValue.optionalObject("localizations", "$")?.mapValues {
         decodeMetadataLocalization(it.value.requireObject("$.localizations.${it.key}"), "$.localizations.${it.key}")
       },
+      defaultLocale = objectValue.optionalString("default_locale", "$"),
     )
   }
 
@@ -280,6 +281,7 @@ object DeckKitJson {
     put("type", deck.type.wireValue)
     put("level", deck.level)
     put("tags", deck.tags.toJsonArray())
+    deck.defaultLocale?.let { put("default_locale", it) }
     deck.localizations?.let { put("localizations", encodeMetadataLocalizations(it)) }
     put("created_at", deck.createdAt.toString())
     put("updated_at", deck.updatedAt.toString())
@@ -375,6 +377,9 @@ private fun JsonObject.checkKeys(
 
 private fun JsonObject.requiredString(key: String, path: String): String =
   getValue(key).requireString("$path.$key")
+
+private fun JsonObject.optionalString(key: String, path: String): String? =
+  get(key)?.requireString("$path.$key")
 
 private fun JsonObject.requiredInt(key: String, path: String): Int {
   val primitive = getValue(key) as? JsonPrimitive

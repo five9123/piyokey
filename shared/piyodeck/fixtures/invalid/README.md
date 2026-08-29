@@ -14,6 +14,13 @@ fixtures cover user-content policy failures:
 - `audio-deck.json`: embeds a remote audio URL, which v1 user packages forbid.
 - `unknown-field-deck.json`: carries an entitlement-like field rejected by the
   shared deck schema's `additionalProperties: false` rule.
+- `malformed-locale.typedeck`: uses a structurally invalid BCP 47 key.
+- `noncanonical-locale.typedeck`: uses valid subtags with noncanonical casing.
+- `duplicate-locale.typedeck`: repeats a localization JSON key.
+- `incomplete-locale.typedeck`: declares a locale without providing every
+  item's meaning and reading.
+- `v2-content-declared-as-v1.typedeck`: places `default_locale` and arbitrary
+  locale keys behind a legacy schema-1 manifest instead of versioning them.
 
 Run `python3 tools/gen_piyodeck_fixtures.py` to regenerate the shared binary
 fixtures and `../cases.json` deterministically.

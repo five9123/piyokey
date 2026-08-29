@@ -76,8 +76,15 @@ class UILanguageScopeTests(unittest.TestCase):
     def test_shared_korean_content_schema_remains_supported(self):
         import json
         schema = json.loads((ROOT / "shared/schema/deck.schema.json").read_text())
-        self.assertIn("ko", schema["$defs"]["deckLocalizations"]["properties"])
-        self.assertIn("ko", schema["$defs"]["itemLocalizations"]["properties"])
+        locale_pattern = re.compile(schema["$defs"]["localeTag"]["pattern"])
+        self.assertIsNotNone(locale_pattern.fullmatch("ko"))
+        for definition, value in (
+            ("deckLocalizations", "deckLocalization"),
+            ("itemLocalizations", "itemLocalization"),
+        ):
+            localizations = schema["$defs"][definition]
+            self.assertEqual(localizations["propertyNames"], {"$ref": "#/$defs/localeTag"})
+            self.assertEqual(localizations["additionalProperties"], {"$ref": f"#/$defs/{value}"})
 
     def test_learning_item_labels_are_not_mascot_accessories(self):
         for code, expected in {"es": "Elementos", "de": "Einträge", "fr": "Éléments"}.items():

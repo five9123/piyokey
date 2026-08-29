@@ -475,11 +475,16 @@ class DeckRepository private constructor(
   suspend fun commitUserDeckDraft(
     active: ActiveUserDeckDraft,
     language: UserDeckLanguage,
+  ): InstalledDeck = commitUserDeckDraft(active, language.code)
+
+  suspend fun commitUserDeckDraft(
+    active: ActiveUserDeckDraft,
+    localeCode: String,
   ): InstalledDeck = withContext(Dispatchers.IO) {
     userDeckMutationMutex.withLock {
       recoverPendingOperations()
       val nowMillis = clock()
-      val deck = active.draft.validatedDeck(Instant.ofEpochMilli(nowMillis), language)
+      val deck = active.draft.validatedDeck(Instant.ofEpochMilli(nowMillis), localeCode)
       val bytes = DeckKitJson.encodeDeck(deck).toByteArray(StandardCharsets.UTF_8)
       // Re-decode through the installed-content boundary before touching persistent state.
       val validatedDeck = decodeDeck(bytes)

@@ -1627,3 +1627,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: iPhone·600pt 미만 분할 창은 영역별 독립 가로 스크롤, iPad·600pt 이상 창은 영역별 3열 카드 한 줄을 사용한다. 기존 덱 상세 이동과 설치 흐름은 바꾸지 않는다.
 - 관련 PRD 섹션: §4 S2, F5.6, F5.7, §12.2
 - 영향 범위: iOS 추천 엔진·홈·덱 카드·ja/en/es/de/fr UI 및 보존 ko 리소스·단위/UI 테스트. Android 동등 확장은 별도 Issue로 추적한다.
+## 2026-08-29 `.typedeck` BCP 47 콘텐츠 언어와 deck schema v2
+
+- 관련: Issue #87 (Issue #63 확장자 변경의 후속), PRD F5.9·§8.4, 공용 schema/fixture/Python 도구, iOS·Android DeckKit과 Pro 편집기.
+- 결정: ZIP/container의 `format_version=1`은 유지하고, `default_locale` 및 allowlist 없는 canonical BCP 47 localization 키를 도입하는 `deck_schema_version=2`를 추가한다. 새 reader는 deck schema 1과 2를 모두 읽고, 새로 생성·편집한 문서는 2를 쓴다. `default_locale`이 없는 변경 없는 legacy model만 writer가 1로 재현한다.
+- 결정: v2 덱 metadata localization 키를 콘텐츠 언어의 완전한 선언으로 삼고 모든 항목에 각 언어의 뜻과 읽기를 요구한다. malformed·noncanonical·duplicate 키와 미선언/누락 item localization을 거부하되 알 수 없는 정상 태그는 import/edit/export에서 그대로 보존한다.
+- 결정: 표시 fallback은 exact 태그 → primary language subtag → `default_locale` → `en` → legacy 일본어 base field다. v1 일본어 base 덱을 Pro에서 편집하면 `default_locale=ja`와 `ja` localization을 합성하되 base 값을 그대로 유지한다. v2 base field는 `ja`가 있으면 일본어, 없으면 default locale을 mirror한다.
+- 근거: v1 manifest에 새 필드를 섞으면 배포된 strict reader가 손상된 v1처럼 보거나 계약 밖 입력을 받게 된다. container는 바뀌지 않았으므로 deck schema만 올리면 구 reader는 지원되지 않는 새 schema로 안전하게 거부하고, 새 reader는 기존 ja/en/ko 파일과 새 다국어 파일을 함께 처리할 수 있다.
+- 영향 범위: `.typedeck` SPEC·schema·fixture, Python/Swift/Kotlin reader·writer·validator, iOS/Android Pro 덱 초안·언어 선택·저장, cross-platform 계약 테스트. 웹 Builder `d31a351`은 v2 payload shape와 deterministic writer 방향은 맞지만 manifest를 schema 1로 쓰므로 schema 2로 갱신 전 출력은 새 strict reader가 거부한다.

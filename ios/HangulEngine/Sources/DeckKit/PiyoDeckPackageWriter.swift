@@ -57,6 +57,7 @@ public enum PiyoDeckPackageWriter {
     }
 
     let manifest = PiyoDeckManifest(
+      deckSchemaVersion: deck.defaultLocale == nil ? 1 : 2,
       deck: .init(
         deckId: deck.deckId,
         deckVersion: deck.version,

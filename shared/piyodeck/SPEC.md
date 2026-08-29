@@ -1,4 +1,4 @@
-# PIYOKEY Deck Package (`.typedeck`) v1
+# PIYOKEY Deck Package (`.typedeck`) container v1
 
 Status: target specification for PIYOKEY 1.1.
 
@@ -58,7 +58,7 @@ Unknown fields and duplicate JSON object keys are invalid.
 {
   "format": "piyokey.deck-package",
   "format_version": 1,
-  "deck_schema_version": 1,
+  "deck_schema_version": 2,
   "deck": {
     "path": "deck.json",
     "media_type": "application/json",
@@ -105,6 +105,36 @@ rules:
   `YYYY-MM-DDTHH:MM:SSZ`. Offsets and fractional seconds are rejected so every
   conforming writer emits identical timestamp bytes.
 
+### 4.1 Content locales (`deck_schema_version: 2`)
+
+Deck schema v2 adds the required root field `default_locale`. Deck and item
+`localizations` keys are canonical, structurally well-formed BCP 47 language
+tags such as `ar`, `es`, `fr-CA`, and `zh-Hant`; there is no language allowlist.
+Malformed tags, noncanonical casing, underscore separators, duplicate JSON
+keys, and a `default_locale` not declared by deck `localizations` are invalid.
+
+The deck metadata localization keys declare the complete set of content
+locales. Every item must contain a localization with nonempty `meaning` and
+`reading` for every declared locale, and may not contain an undeclared locale.
+Readers and editors retain all valid tags and values, including tags unknown to
+the app UI, through import, edit, and export.
+
+Display lookup uses the following ordered, de-duplicated candidates, then the
+legacy Japanese base field:
+
+1. the exact requested tag (`fr-CA`),
+2. its primary language subtag (`fr`),
+3. `default_locale`,
+4. `en`,
+5. the legacy base fields (`name`, `author.nickname`, `tags`, `reading_ja`, and
+   `meaning_ja`).
+
+The base fields remain required in v2. A v2 writer mirrors Japanese values when
+`ja` is declared; otherwise it mirrors the default-locale values. Migrating a
+v1 deck treats its historical base fields as Japanese, declares `ja`, and
+preserves those exact base values. This makes the final fallback explicit and
+keeps existing Japanese, English, and Korean documents importable.
+
 In particular, executable code, HTML behavior, plug-ins, remote URLs, purchase
 receipts, license keys, premium flags, expiry fields, account email, and device
 identifiers have no valid field in the document.
@@ -129,9 +159,17 @@ documents so the app can present an “update PIYOKEY” message when appropriat
 
 ## 6. Compatibility and updates
 
-A v1 reader accepts only `format_version: 1` and `deck_schema_version: 1`.
-Unknown future versions are preserved by the caller if desired but are not
-silently downgraded.
+The ZIP contract remains `format_version: 1`. New readers accept
+`deck_schema_version` 1 and 2. Schema v1 retains its deployed shape: no
+`default_locale`, only `en`/`ko` localization keys, and Japanese base fields.
+Schema v2 is used whenever `default_locale` is present and provides the locale
+contract in §4.1. New writers emit schema v1 only for an unchanged legacy model
+without `default_locale`; all newly created or edited Pro decks emit schema v2.
+
+This split avoids presenting a v2 `deck.json` to already deployed v1 readers,
+which correctly reject unsupported `deck_schema_version` without treating the
+file as corrupt. Unknown future versions are preserved by the caller if desired
+but are not silently downgraded.
 
 Editing a deck keeps its `deck_id` and stable item IDs, increments
 `deck.json.version`, and updates `updated_at`. Importers use those stable IDs to
@@ -140,7 +178,8 @@ in a package; purchase restoration belongs to StoreKit and app-local state.
 
 ## 7. Developer tooling
 
-The standard-library-only helper can create, inspect, and validate v1 packages
+The standard-library-only helper can create, inspect, and validate container-v1
+packages with deck schema v1 or v2
 from the repository root:
 
 ```sh
@@ -155,9 +194,13 @@ writing a deterministic package. `inspect` and `validate` apply the same strict
 v1 container and content checks; `validate` accepts an explicit deck schema so
 CI and compatibility checks can pin the intended schema revision.
 
-`fixtures/valid/basic.typedeck` is the canonical cross-platform binary golden.
+`fixtures/valid/basic.typedeck` is the legacy schema-v1 cross-platform binary golden.
 Python, Swift, and Kotlin writers must reproduce it byte-for-byte, and all three
 readers must accept it using the pinned shared deck schema.
+
+`fixtures/valid/multilingual.typedeck` is the schema-v2 cross-platform writer
+golden. It declares `default_locale: ar` and `ar` plus `zh-Hant` content; all
+three writers reproduce it byte-for-byte and all three readers accept it.
 
 `fixtures/valid/pretty-basic.typedeck` preserves valid pretty-printed entry
 bytes and must be accepted by all readers. `fixtures/cases.json` records the

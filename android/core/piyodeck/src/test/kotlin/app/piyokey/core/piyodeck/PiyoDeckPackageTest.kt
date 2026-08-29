@@ -152,8 +152,37 @@ class PiyoDeckPackageTest {
       assertFailsWith { readPackage(rawPackage(deckData, formatVersion = 2)) },
     )
     assertEquals(
-      PiyoDeckImportException.UnsupportedDeckSchemaVersion(2),
-      assertFailsWith { readPackage(rawPackage(deckData, deckSchemaVersion = 2)) },
+      PiyoDeckImportException.UnsupportedDeckSchemaVersion(3),
+      assertFailsWith { readPackage(rawPackage(deckData, deckSchemaVersion = 3)) },
+    )
+  }
+
+  @Test
+  fun v2MultilingualFixtureRoundTripsAndRejectsInvalidLocaleContracts() {
+    val shared = fixture("valid/multilingual.typedeck")
+    val imported = readPackage(shared)
+    assertEquals(2, imported.manifest.deckSchemaVersion)
+    assertEquals("ar", imported.deck.defaultLocale)
+    assertEquals(setOf("ar", "zh-Hant"), imported.deck.localizations.orEmpty().keys)
+    assertContentEquals(shared, PiyoDeckPackageWriter.write(imported.deck, deckSchemaSource))
+
+    listOf(
+      "malformed-locale",
+      "noncanonical-locale",
+      "incomplete-locale",
+      "v2-content-declared-as-v1",
+    ).forEach { name ->
+      val error = assertFailsWith<PiyoDeckImportException> {
+        readPackage(fixture("invalid/$name.typedeck"))
+      }
+      assertTrue(
+        error is PiyoDeckImportException.DeckSchemaViolation ||
+          error is PiyoDeckImportException.InvalidUserDeck,
+        "$name produced $error",
+      )
+    }
+    assertIs<PiyoDeckImportException.DuplicateJsonKey>(
+      assertFailsWith { readPackage(fixture("invalid/duplicate-locale.typedeck")) },
     )
   }
 

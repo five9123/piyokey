@@ -4,11 +4,11 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `origin/main` `c066638`이다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거, PR #84의 저장소·화면 감사와 PR #82의 홈 추천 두 영역은 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `origin/main` `77a7dd6`이다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거, PR #84의 저장소·화면 감사, PR #82의 홈 추천 두 영역과 PR #86의 연습 챕터 5·6 확장은 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
-1. 연습 챕터 5·6 스테이지 확장 #85 / PR #86
-   - iOS·Android 동일한 6챕터·12스테이지와 5언어 학습 콘텐츠·고정 음원 계약 적용
-   - 최신 main 통합 뒤 양 플랫폼 관련 회귀를 재검증해 병합
+1. `.typedeck` BCP 47 콘텐츠 언어 계약 v2 #87
+   - container v1과 deck schema v1 reader를 유지하면서 deck schema v2를 Python·Swift·Kotlin과 모바일 Pro 편집기에 적용
+   - 공용 fixture·교차 writer/reader 회귀, Actions CI와 웹 Builder 출력 호환을 확인한 뒤 병합
 2. 현지 20시 온보딩 리마인더 #58
    - 소스 구현과 iOS/Android 자동 회귀 완료
    - 실제 기기에서 권한 동의 뒤 현지 20시 알림 수신 확인 후 종료

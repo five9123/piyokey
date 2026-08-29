@@ -3,6 +3,8 @@ package app.piyokey.core.piyodeck
 import app.piyokey.core.deckkit.Deck
 import app.piyokey.core.deckkit.DeckAuthor
 import app.piyokey.core.deckkit.DeckItem
+import app.piyokey.core.deckkit.DeckItemLocalization
+import app.piyokey.core.deckkit.DeckMetadataLocalization
 import app.piyokey.core.deckkit.DeckType
 import java.time.Instant
 import kotlin.test.Test
@@ -66,6 +68,8 @@ class UserDeckDraftTest {
     assertTrue(materialized.items.single().id.startsWith("item_"))
     assertEquals(1, materialized.version)
     assertEquals(false, materialized.official)
+    assertEquals("ja", materialized.defaultLocale)
+    assertEquals("行く", materialized.items.single().localizations?.get("ja")?.meaning)
   }
 
   @Test
@@ -102,6 +106,36 @@ class UserDeckDraftTest {
     assertEquals("Me", deck.author.nickname)
     assertEquals("ga", deck.items.single().readingJa)
     assertEquals("go", deck.items.single().meaningJa)
+    assertEquals("en", deck.defaultLocale)
+  }
+
+  @Test
+  fun unknownCanonicalLocaleSurvivesProEditMaterialization() {
+    val unknownLocale = "sl-rozaj-biske"
+    val source = sampleDeck(false, "user_00000000000000000000000000000001").copy(
+      defaultLocale = "ar",
+      localizations = mapOf(
+        "ar" to DeckMetadataLocalization("كلمات", "Piyo", listOf("daily")),
+        unknownLocale to DeckMetadataLocalization("Besede", "Piyo", listOf("daily")),
+      ),
+      items = listOf(
+        sampleDeck(false, "user_00000000000000000000000000000001").items.single().copy(
+          localizations = mapOf(
+            "ar" to DeckItemLocalization("مرحبا", "annyeong"),
+            unknownLocale to DeckItemLocalization("pozdrav", "annyeong"),
+          ),
+        ),
+      ),
+    )
+
+    val edited = UserDeckDraft.editing(source).validatedDeck(now, "ar")
+
+    assertEquals("ar", edited.defaultLocale)
+    assertEquals(source.localizations?.get(unknownLocale), edited.localizations?.get(unknownLocale))
+    assertEquals(
+      source.items.single().localizations?.get(unknownLocale),
+      edited.items.single().localizations?.get(unknownLocale),
+    )
   }
 
   @Test

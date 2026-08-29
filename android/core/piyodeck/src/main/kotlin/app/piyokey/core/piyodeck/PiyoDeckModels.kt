@@ -28,7 +28,8 @@ public data class PiyoDeckManifest(
   public companion object {
     public const val FORMAT_IDENTIFIER: String = "piyokey.deck-package"
     public const val CURRENT_FORMAT_VERSION: Int = 1
-    public const val CURRENT_DECK_SCHEMA_VERSION: Int = 1
+    public const val CURRENT_DECK_SCHEMA_VERSION: Int = 2
+    public val SUPPORTED_DECK_SCHEMA_VERSIONS: Set<Int> = setOf(1, 2)
     public const val DECK_PATH: String = "deck.json"
     public const val DECK_MEDIA_TYPE: String = "application/json"
   }

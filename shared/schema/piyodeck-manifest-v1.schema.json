@@ -16,7 +16,7 @@
     },
     "deck_schema_version": {
       "type": "integer",
-      "enum": [1]
+      "enum": [1, 2]
     },
     "deck": {
       "$ref": "#/$defs/deckDescriptor"

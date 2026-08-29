@@ -67,4 +67,9 @@
   <string name="settings_cancel">취소</string>
   <string name="settings_done">완료</string>
   <string name="settings_open">설정 열기</string>
+  <string name="settings_language_japanese">日本語</string>
+  <string name="settings_language_english">English</string>
+  <string name="settings_language_spanish">Español</string>
+  <string name="settings_language_german">Deutsch</string>
+  <string name="settings_language_french">Français</string>
 </resources>

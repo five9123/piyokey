@@ -26,6 +26,7 @@ class DeckKitContractTest {
     },
   ).normalize()
   private val mockCatalogRoot = repositoryRoot.resolve("shared/mock_catalog")
+  private val fixtureRoot = repositoryRoot.resolve("shared/piyodeck/fixtures")
   private val deckSchemaSource = repositoryRoot.resolve("shared/schema/deck.schema.json").readText()
   private val catalogSchemaSource = repositoryRoot.resolve("shared/schema/catalog.schema.json").readText()
 
@@ -188,7 +189,7 @@ class DeckKitContractTest {
   }
 
   @Test
-  fun localizedAccessUsesJapaneseSourceKoreanThenEnglishAndEnglishForOtherLocales() {
+  fun localizedAccessUsesExactBaseDefaultEnglishThenLegacyJapaneseBase() {
     val catalog = loadValidatedCatalog(mockCatalogRoot)
     val catalogDeck = catalog.decks.first()
     val deck = DeckKitJson.decodeValidatedDeck(
@@ -199,11 +200,11 @@ class DeckKitContractTest {
     val preview = catalogDeck.previewItems.first()
     val tag = catalog.tags.first()
 
-    assertEquals(deck.name, deck.localizedName("ja-JP"))
+    assertEquals(deck.localizations?.get("en")?.name, deck.localizedName("ja-JP"))
     assertEquals(deck.localizations?.get("ko")?.name, deck.localizedName("ko_KR"))
     assertEquals(deck.localizations?.get("en")?.name, deck.localizedName("zh-Hant"))
     assertEquals(catalogDeck.localizations?.get("en")?.name, catalogDeck.localizedName("it"))
-    assertEquals(item.meaningJa, item.localizedMeaning("ja"))
+    assertEquals(item.localizations?.get("en")?.meaning, item.localizedMeaning("ja"))
     assertEquals(item.localizations?.get("en")?.meaning, item.localizedMeaning("ko"))
     assertEquals(item.localizations?.get("en")?.reading, item.localizedReading("fr"))
     assertEquals(preview.localizations?.get("en")?.meaning, preview.localizedMeaning("zh-Hant"))
@@ -230,6 +231,30 @@ class DeckKitContractTest {
       englishOnlyCatalogDeck.localizedName("en"),
       englishOnlyCatalogDeck.localizedName("ko"),
     )
+  }
+
+  @Test
+  fun arbitraryCanonicalLocalesAndFrCaBaseFallbackArePreserved() {
+    val multilingual = DeckKitJson.decodeValidatedDeck(
+      fixtureRoot.resolve("valid/multilingual-deck.json").readText(),
+      deckSchemaSource,
+    )
+    assertEquals("ar", multilingual.defaultLocale)
+    assertEquals(setOf("ar", "zh-Hant"), multilingual.localizations.orEmpty().keys)
+    assertEquals("韓語詞卡", multilingual.localizedName("zh-Hant"))
+    assertEquals("كلمات كورية", multilingual.localizedName("de-DE"))
+
+    val item = multilingual.items.first().copy(
+      localizations = multilingual.items.first().localizations.orEmpty() + mapOf(
+        "fr" to DeckItemLocalization("bonjour", "fr-reading"),
+        "en" to DeckItemLocalization("hello", "en-reading"),
+      ),
+    )
+    assertEquals("bonjour", item.localizedMeaning("fr-CA", "en"))
+    assertEquals("fr-reading", item.localizedReading("fr-CA", "en"))
+    assertTrue(LocaleTag.isCanonical("sl-rozaj-biske"))
+    assertFalse(LocaleTag.isCanonical("fr_CA"))
+    assertFalse(LocaleTag.isCanonical("fr-ca"))
   }
 
   @Test

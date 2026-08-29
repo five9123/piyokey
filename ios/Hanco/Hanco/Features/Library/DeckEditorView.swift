@@ -40,42 +40,53 @@ struct UserDeckItemDraft: Identifiable, Equatable {
   }
 
   func reading(for language: DeckContentLanguage) -> String {
-    language == .japanese
-      ? readingJa
-      : localizations?[language.rawValue]?.reading ?? ""
+    reading(localeCode: language.rawValue)
+  }
+
+  func reading(localeCode: String) -> String {
+    localeCode == "ja" ? readingJa : localizations?[localeCode]?.reading ?? ""
   }
 
   func meaning(for language: DeckContentLanguage) -> String {
-    language == .japanese
-      ? meaningJa
-      : localizations?[language.rawValue]?.meaning ?? ""
+    meaning(localeCode: language.rawValue)
+  }
+
+  func meaning(localeCode: String) -> String {
+    localeCode == "ja" ? meaningJa : localizations?[localeCode]?.meaning ?? ""
   }
 
   mutating func setReading(_ value: String, for language: DeckContentLanguage) {
-    guard language != .japanese else {
+    setReading(value, localeCode: language.rawValue)
+  }
+
+  mutating func setReading(_ value: String, localeCode: String) {
+    guard localeCode != "ja" else {
       readingJa = value
       return
     }
-    updateLocalization(language: language, reading: value)
+    updateLocalization(localeCode: localeCode, reading: value)
   }
 
   mutating func setMeaning(_ value: String, for language: DeckContentLanguage) {
-    guard language != .japanese else {
+    setMeaning(value, localeCode: language.rawValue)
+  }
+
+  mutating func setMeaning(_ value: String, localeCode: String) {
+    guard localeCode != "ja" else {
       meaningJa = value
       return
     }
-    updateLocalization(language: language, meaning: value)
+    updateLocalization(localeCode: localeCode, meaning: value)
   }
 
   private mutating func updateLocalization(
-    language: DeckContentLanguage,
+    localeCode: String,
     reading: String? = nil,
     meaning: String? = nil
   ) {
-    let languageCode = language.rawValue
-    let existing = localizations?[languageCode]
+    let existing = localizations?[localeCode]
     var updated = localizations ?? [:]
-    updated[languageCode] = DeckItemLocalization(
+    updated[localeCode] = DeckItemLocalization(
       meaning: meaning ?? existing?.meaning ?? "",
       reading: reading ?? existing?.reading ?? ""
     )
@@ -202,6 +213,7 @@ struct UserDeckDraft: Equatable {
   let baseVersion: Int
   let authorID: String
   var metadataLocalizations: [String: DeckMetadataLocalization]?
+  var defaultLocale: String?
 
   var name: String
   var authorNickname: String
@@ -216,45 +228,63 @@ struct UserDeckDraft: Equatable {
   }
 
   func name(for language: DeckContentLanguage) -> String {
-    language == .japanese
-      ? name
-      : metadataLocalizations?[language.rawValue]?.name ?? ""
+    name(localeCode: language.rawValue)
   }
 
   func authorNickname(for language: DeckContentLanguage) -> String {
-    language == .japanese
-      ? authorNickname
-      : metadataLocalizations?[language.rawValue]?.authorNickname ?? ""
+    authorNickname(localeCode: language.rawValue)
   }
 
   func tags(for language: DeckContentLanguage) -> [String] {
-    language == .japanese
-      ? tags
-      : metadataLocalizations?[language.rawValue]?.tags ?? []
+    tags(localeCode: language.rawValue)
+  }
+
+  func name(localeCode: String) -> String {
+    localeCode == "ja" ? name : metadataLocalizations?[localeCode]?.name ?? ""
+  }
+
+  func authorNickname(localeCode: String) -> String {
+    localeCode == "ja" ? authorNickname : metadataLocalizations?[localeCode]?.authorNickname ?? ""
+  }
+
+  func tags(localeCode: String) -> [String] {
+    localeCode == "ja" ? tags : metadataLocalizations?[localeCode]?.tags ?? []
   }
 
   mutating func setName(_ value: String, for language: DeckContentLanguage) {
-    guard language != .japanese else {
+    setName(value, localeCode: language.rawValue)
+  }
+
+  mutating func setName(_ value: String, localeCode: String) {
+    guard localeCode != "ja" else {
       name = value
       return
     }
-    updateMetadataLocalization(language: language, name: value)
+    updateMetadataLocalization(localeCode: localeCode, name: value)
   }
 
   mutating func setAuthorNickname(_ value: String, for language: DeckContentLanguage) {
-    guard language != .japanese else {
+    setAuthorNickname(value, localeCode: language.rawValue)
+  }
+
+  mutating func setAuthorNickname(_ value: String, localeCode: String) {
+    guard localeCode != "ja" else {
       authorNickname = value
       return
     }
-    updateMetadataLocalization(language: language, authorNickname: value)
+    updateMetadataLocalization(localeCode: localeCode, authorNickname: value)
   }
 
   mutating func setTags(_ value: [String], for language: DeckContentLanguage) {
-    guard language != .japanese else {
+    setTags(value, localeCode: language.rawValue)
+  }
+
+  mutating func setTags(_ value: [String], localeCode: String) {
+    guard localeCode != "ja" else {
       tags = value
       return
     }
-    updateMetadataLocalization(language: language, tags: value)
+    updateMetadataLocalization(localeCode: localeCode, tags: value)
   }
 
   init(
@@ -267,6 +297,7 @@ struct UserDeckDraft: Equatable {
     baseVersion = 0
     authorID = Self.localAuthorID
     metadataLocalizations = nil
+    defaultLocale = nil
     name = ""
     authorNickname = ""
     type = .word
@@ -287,6 +318,7 @@ struct UserDeckDraft: Equatable {
     baseVersion = deck.version
     authorID = deck.author.id
     metadataLocalizations = deck.localizations
+    defaultLocale = deck.defaultLocale ?? "ja"
     name = deck.name
     authorNickname = deck.author.nickname
     type = deck.type
@@ -315,6 +347,7 @@ struct UserDeckDraft: Equatable {
     baseVersion = 0
     authorID = Self.localAuthorID
     metadataLocalizations = deck.localizations
+    defaultLocale = deck.defaultLocale ?? "ja"
     name = deck.name
     authorNickname = deck.author.nickname
     type = deck.type
@@ -357,16 +390,33 @@ struct UserDeckDraft: Equatable {
   func materializedDeck(
     at date: Date = Date(),
     language: DeckContentLanguage = .current
-  ) -> Deck {
-    let displayName = name(for: language)
-    let displayAuthorNickname = authorNickname(for: language)
-    let displayTags = tags(for: language)
-    let baseName = mirroredBaseValue(name, currentValue: displayName)
-    let baseAuthorNickname = mirroredBaseValue(
-      authorNickname,
-      currentValue: displayAuthorNickname
-    )
-    let baseTags = tags.isEmpty ? displayTags : tags
+  ) -> Deck { materializedDeck(at: date, localeCode: language.rawValue) }
+
+  func materializedDeck(at date: Date = Date(), localeCode: String) -> Deck {
+    let displayName = name(localeCode: localeCode)
+    let displayAuthorNickname = authorNickname(localeCode: localeCode)
+    let displayTags = tags(localeCode: localeCode)
+    let resolvedDefaultLocale = defaultLocale
+      ?? ((localeCode == "ja" || metadataLocalizations?[localeCode] == nil) ? "ja" : localeCode)
+    var outputMetadata = compatibleMetadataLocalizations(
+      baseTags: tags.isEmpty ? displayTags : tags,
+      currentLocaleCode: localeCode
+    ) ?? [:]
+    if localeCode == "ja" || resolvedDefaultLocale == "ja" {
+      outputMetadata["ja"] = DeckMetadataLocalization(
+        name: name,
+        authorNickname: authorNickname,
+        tags: tags
+      )
+    }
+    let defaultMetadata = outputMetadata[resolvedDefaultLocale]
+    let japaneseMetadata = outputMetadata["ja"]
+    let baseName = japaneseMetadata?.name
+      ?? mirroredBaseValue(name, currentValue: defaultMetadata?.name ?? displayName)
+    let baseAuthorNickname = japaneseMetadata?.authorNickname
+      ?? mirroredBaseValue(authorNickname, currentValue: defaultMetadata?.authorNickname ?? displayAuthorNickname)
+    let baseTags = japaneseMetadata?.tags ?? (tags.isEmpty ? defaultMetadata?.tags ?? displayTags : tags)
+    let declaredCodes = Set(outputMetadata.keys)
     return Deck(
       deckId: deckID,
       version: origin == .editing ? baseVersion + 1 : 1,
@@ -379,21 +429,31 @@ struct UserDeckDraft: Equatable {
       createdAt: createdAt,
       updatedAt: max(date, createdAt),
       items: items.map {
-        let currentReading = $0.reading(for: language)
-        let currentMeaning = $0.meaning(for: language)
+        var itemLocalizations = $0.localizations ?? [:]
+        if localeCode == "ja" || resolvedDefaultLocale == "ja" {
+          itemLocalizations["ja"] = DeckItemLocalization(
+            meaning: $0.meaningJa,
+            reading: $0.readingJa
+          )
+        }
+        itemLocalizations = itemLocalizations.filter { declaredCodes.contains($0.key) }
+        let japanese = itemLocalizations["ja"]
+        let fallback = itemLocalizations[resolvedDefaultLocale]
+        let currentReading = $0.reading(localeCode: localeCode)
+        let currentMeaning = $0.meaning(localeCode: localeCode)
         return DeckItem(
           id: $0.id,
           ko: $0.ko,
-          readingJa: mirroredBaseValue($0.readingJa, currentValue: currentReading),
-          meaningJa: mirroredBaseValue($0.meaningJa, currentValue: currentMeaning),
+          readingJa: japanese?.reading
+            ?? mirroredBaseValue($0.readingJa, currentValue: fallback?.reading ?? currentReading),
+          meaningJa: japanese?.meaning
+            ?? mirroredBaseValue($0.meaningJa, currentValue: fallback?.meaning ?? currentMeaning),
           audio: nil,
-          localizations: $0.localizations
+          localizations: itemLocalizations
         )
       },
-      localizations: compatibleMetadataLocalizations(
-        baseTags: baseTags,
-        currentLanguage: language
-      )
+      localizations: outputMetadata,
+      defaultLocale: resolvedDefaultLocale
     )
   }
 
@@ -401,7 +461,11 @@ struct UserDeckDraft: Equatable {
     at date: Date = Date(),
     language: DeckContentLanguage = .current
   ) -> [ContentValidationIssue] {
-    let deck = materializedDeck(at: date, language: language)
+    validationIssues(at: date, localeCode: language.rawValue)
+  }
+
+  func validationIssues(at date: Date = Date(), localeCode: String) -> [ContentValidationIssue] {
+    let deck = materializedDeck(at: date, localeCode: localeCode)
     return UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
   }
 
@@ -409,14 +473,22 @@ struct UserDeckDraft: Equatable {
     at date: Date = Date(),
     language: DeckContentLanguage = .current
   ) -> UserDeckValidationSummary {
-    UserDeckValidationSummary(issues: validationIssues(at: date, language: language))
+    validationSummary(at: date, localeCode: language.rawValue)
+  }
+
+  func validationSummary(at date: Date = Date(), localeCode: String) -> UserDeckValidationSummary {
+    UserDeckValidationSummary(issues: validationIssues(at: date, localeCode: localeCode))
   }
 
   func validatedDeck(
     at date: Date = Date(),
     language: DeckContentLanguage = .current
   ) throws -> Deck {
-    let deck = materializedDeck(at: date, language: language)
+    try validatedDeck(at: date, localeCode: language.rawValue)
+  }
+
+  func validatedDeck(at date: Date = Date(), localeCode: String) throws -> Deck {
+    let deck = materializedDeck(at: date, localeCode: localeCode)
     let issues = UserDeckValidator.validate(deck) + schemaBoundaryIssues(for: deck)
     guard issues.isEmpty else {
       throw UserDeckDraftValidationError(issues: issues)
@@ -436,16 +508,19 @@ struct UserDeckDraft: Equatable {
       .filter { !$0.isEmpty }
   }
 
+  static func canonicalLocale(_ input: String) -> String? {
+    LocaleTag.canonicalize(input.replacingOccurrences(of: "_", with: "-"))
+  }
+
   private mutating func updateMetadataLocalization(
-    language: DeckContentLanguage,
+    localeCode: String,
     name: String? = nil,
     authorNickname: String? = nil,
     tags: [String]? = nil
   ) {
-    let languageCode = language.rawValue
-    let existing = metadataLocalizations?[languageCode]
+    let existing = metadataLocalizations?[localeCode]
     var updated = metadataLocalizations ?? [:]
-    updated[languageCode] = DeckMetadataLocalization(
+    updated[localeCode] = DeckMetadataLocalization(
       name: name ?? existing?.name ?? "",
       authorNickname: authorNickname ?? existing?.authorNickname ?? "",
       tags: tags ?? existing?.tags ?? []
@@ -455,21 +530,20 @@ struct UserDeckDraft: Equatable {
 
   private func compatibleMetadataLocalizations(
     baseTags: [String],
-    currentLanguage: DeckContentLanguage
+    currentLocaleCode: String
   ) -> [String: DeckMetadataLocalization]? {
     guard let metadataLocalizations else { return nil }
     let filtered = metadataLocalizations.filter { languageCode, localization in
       // Never discard the values being edited. Keeping an incomplete current
       // localization lets the validator surface required-field errors instead
       // of silently saving the untouched Japanese base.
-      if currentLanguage != .japanese, languageCode == currentLanguage.rawValue {
+      if currentLocaleCode != "ja", languageCode == currentLocaleCode {
         return true
       }
       guard !localization.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
         !localization.authorNickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       else { return false }
       guard localization.tags.count == baseTags.count else { return false }
-      guard languageCode != "ko" else { return true }
       return items.allSatisfy { item in
         guard let localization = item.localizations?[languageCode] else { return false }
         return !localization.meaning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -572,6 +646,8 @@ struct DeckEditorView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @State private var draft: UserDeckDraft
   @State private var tagsText: String
+  @State private var editingLocaleCode: String
+  @State private var localeInput: String
   @State private var validationSummary = UserDeckValidationSummary(issues: [])
   @State private var saveErrorKey: String?
   @State private var isSaving = false
@@ -613,9 +689,12 @@ struct DeckEditorView: View {
     onDelete: DeleteAction?
   ) {
     _draft = State(initialValue: draft)
+    let initialLocale = draft.defaultLocale ?? AppLanguage.current.rawValue
+    _editingLocaleCode = State(initialValue: initialLocale)
+    _localeInput = State(initialValue: initialLocale)
     _latestDraftID = State(initialValue: draftID)
     _tagsText = State(
-      initialValue: draft.tags(for: .current).joined(separator: ", ")
+      initialValue: draft.tags(localeCode: initialLocale).joined(separator: ", ")
     )
     let initiallyExpanded =
       draft.items.count <= 8
@@ -732,15 +811,15 @@ struct DeckEditorView: View {
 
   private var currentNameBinding: Binding<String> {
     Binding(
-      get: { draft.name(for: .current) },
-      set: { draft.setName($0, for: .current) }
+      get: { draft.name(localeCode: editingLocaleCode) },
+      set: { draft.setName($0, localeCode: editingLocaleCode) }
     )
   }
 
   private var currentAuthorNicknameBinding: Binding<String> {
     Binding(
-      get: { draft.authorNickname(for: .current) },
-      set: { draft.setAuthorNickname($0, for: .current) }
+      get: { draft.authorNickname(localeCode: editingLocaleCode) },
+      set: { draft.setAuthorNickname($0, localeCode: editingLocaleCode) }
     )
   }
 
@@ -748,8 +827,8 @@ struct DeckEditorView: View {
     for item: Binding<UserDeckItemDraft>
   ) -> Binding<String> {
     Binding(
-      get: { item.wrappedValue.reading(for: .current) },
-      set: { value in item.wrappedValue.setReading(value, for: .current) }
+      get: { item.wrappedValue.reading(localeCode: editingLocaleCode) },
+      set: { value in item.wrappedValue.setReading(value, localeCode: editingLocaleCode) }
     )
   }
 
@@ -757,13 +836,36 @@ struct DeckEditorView: View {
     for item: Binding<UserDeckItemDraft>
   ) -> Binding<String> {
     Binding(
-      get: { item.wrappedValue.meaning(for: .current) },
-      set: { value in item.wrappedValue.setMeaning(value, for: .current) }
+      get: { item.wrappedValue.meaning(localeCode: editingLocaleCode) },
+      set: { value in item.wrappedValue.setMeaning(value, localeCode: editingLocaleCode) }
     )
   }
 
   private var metadataSection: some View {
     Section {
+      HStack {
+        TextField(text: $localeInput) {
+          editingLanguageLabel
+        }
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        Button {
+          guard let canonical = UserDeckDraft.canonicalLocale(localeInput) else { return }
+          editingLocaleCode = canonical
+          localeInput = canonical
+          draft.defaultLocale = canonical
+          tagsText = draft.tags(localeCode: canonical).joined(separator: ", ")
+        } label: {
+          Image(systemName: "checkmark.circle.fill")
+        }
+        .accessibilityLabel(
+          String(
+            format: AppLocalization.string("deck_editor.language.accessibility_format"),
+            editingLocaleCode
+          )
+        )
+      }
+
       TextField("deck_editor.name", text: currentNameBinding, axis: .vertical)
         .textInputAutocapitalization(.sentences)
         .focused($focusedField, equals: .name)
@@ -794,7 +896,7 @@ struct DeckEditorView: View {
         .id("deck_editor.field.tags")
         .accessibilityIdentifier("deck_editor.tags")
         .onChange(of: tagsText) { newValue in
-          draft.setTags(UserDeckDraft.parseTags(newValue), for: .current)
+          draft.setTags(UserDeckDraft.parseTags(newValue), localeCode: editingLocaleCode)
         }
 
       Text("deck_editor.tags.help")
@@ -817,22 +919,16 @@ struct DeckEditorView: View {
 
   private var editingLanguageLabel: some View {
     Label(
-      AppLocalization.string(editingLanguageNameKey),
+      editingLocaleCode,
       systemImage: "character.bubble"
     )
     .font(.caption.weight(.semibold))
     .foregroundStyle(AppPalette.mutedInk)
     .accessibilityLabel(
       Text(
-        AppLocalization.format("deck_editor.language.accessibility_format",
-          AppLocalization.string(editingLanguageNameKey)
-        )
+        AppLocalization.format("deck_editor.language.accessibility_format", editingLocaleCode)
       )
     )
-  }
-
-  private var editingLanguageNameKey: String {
-    AppLanguage.current.nameKey
   }
 
   private var itemsSection: some View {
@@ -1005,7 +1101,7 @@ struct DeckEditorView: View {
     saveErrorKey = nil
     draftSaveTask?.cancel()
     guard persistDraft(draft) else { return }
-    validationSummary = draft.validationSummary(language: .current)
+    validationSummary = draft.validationSummary(localeCode: editingLocaleCode)
     guard validationSummary.isEmpty else {
       validationFocusRequest += 1
       return
@@ -1013,9 +1109,9 @@ struct DeckEditorView: View {
 
     let deck: Deck
     do {
-      deck = try draft.validatedDeck(language: .current)
+      deck = try draft.validatedDeck(localeCode: editingLocaleCode)
     } catch {
-      validationSummary = draft.validationSummary(language: .current)
+      validationSummary = draft.validationSummary(localeCode: editingLocaleCode)
       validationFocusRequest += 1
       return
     }
@@ -1041,9 +1137,9 @@ struct DeckEditorView: View {
     guard let onSaveAsCopy else { return }
     draftSaveTask?.cancel()
     guard persistDraft(draft) else { return }
-    validationSummary = draft.validationSummary(language: .current)
+    validationSummary = draft.validationSummary(localeCode: editingLocaleCode)
     guard validationSummary.isEmpty,
-      let deck = try? draft.validatedDeck(language: .current)
+      let deck = try? draft.validatedDeck(localeCode: editingLocaleCode)
     else {
       validationFocusRequest += 1
       return
