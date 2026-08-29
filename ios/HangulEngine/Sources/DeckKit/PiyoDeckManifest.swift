@@ -10,7 +10,8 @@ public enum PiyoDeckPackageLimits {
 public struct PiyoDeckManifest: Codable, Equatable, Sendable {
   public static let formatIdentifier = "piyokey.deck-package"
   public static let currentFormatVersion = 1
-  public static let currentDeckSchemaVersion = 1
+  public static let currentDeckSchemaVersion = 2
+  public static let supportedDeckSchemaVersions: Set<Int> = [1, 2]
 
   public let format: String
   public let formatVersion: Int

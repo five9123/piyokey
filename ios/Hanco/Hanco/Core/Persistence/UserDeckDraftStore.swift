@@ -70,6 +70,7 @@ struct UserDeckDraftStore {
     let baseVersion: Int
     let authorID: String
     let metadataLocalizations: [String: DeckMetadataLocalization]?
+    let defaultLocale: String?
     let name: String
     let authorNickname: String
     let type: DeckType
@@ -100,6 +101,7 @@ struct UserDeckDraftStore {
       case baseVersion = "base_version"
       case authorID = "author_id"
       case metadataLocalizations = "metadata_localizations"
+      case defaultLocale = "default_locale"
       case name
       case authorNickname = "author_nickname"
       case type, level, tags, items
@@ -301,6 +303,7 @@ extension UserDeckDraftStore.Payload {
       baseVersion: draft.baseVersion,
       authorID: draft.authorID,
       metadataLocalizations: draft.metadataLocalizations,
+      defaultLocale: draft.defaultLocale,
       name: draft.name,
       authorNickname: draft.authorNickname,
       type: draft.type,
@@ -346,6 +349,7 @@ extension UserDeckDraftStore.Payload {
       baseVersion: baseVersion,
       authorID: authorID,
       metadataLocalizations: metadataLocalizations,
+      defaultLocale: defaultLocale,
       name: name,
       authorNickname: authorNickname,
       type: type,
@@ -386,6 +390,7 @@ extension UserDeckDraft {
     baseVersion: Int,
     authorID: String,
     metadataLocalizations: [String: DeckMetadataLocalization]?,
+    defaultLocale: String?,
     name: String,
     authorNickname: String,
     type: DeckType,
@@ -399,6 +404,7 @@ extension UserDeckDraft {
     self.baseVersion = baseVersion
     self.authorID = authorID
     self.metadataLocalizations = metadataLocalizations
+    self.defaultLocale = defaultLocale
     self.name = name
     self.authorNickname = authorNickname
     self.type = type

@@ -30,7 +30,7 @@ def _manifest(deck: dict[str, object], deck_data: bytes) -> dict[str, object]:
     return {
         "format": piyodeck_tool.FORMAT_IDENTIFIER,
         "format_version": piyodeck_tool.FORMAT_VERSION,
-        "deck_schema_version": piyodeck_tool.DECK_SCHEMA_VERSION,
+        "deck_schema_version": 2 if "default_locale" in deck else 1,
         "deck": {
             "path": "deck.json",
             "media_type": "application/json",
@@ -124,6 +124,57 @@ def main() -> int:
     canonical_deck_data = piyodeck_tool.canonical_json(deck)
     canonical_manifest = _manifest(deck, canonical_deck_data)
     canonical_package = _package(canonical_manifest, canonical_deck_data)
+
+    multilingual_source_data = (VALID / "multilingual-deck.json").read_bytes()
+    multilingual_deck = piyodeck_tool.decode_strict_json(
+        multilingual_source_data,
+        "multilingual-deck.json",
+    )
+    assert isinstance(multilingual_deck, dict)
+    multilingual_deck_data = piyodeck_tool.canonical_json(multilingual_deck)
+    multilingual_manifest = _manifest(multilingual_deck, multilingual_deck_data)
+    multilingual_package = _package(multilingual_manifest, multilingual_deck_data)
+    v2_as_v1_manifest = copy.deepcopy(multilingual_manifest)
+    v2_as_v1_manifest["deck_schema_version"] = 1
+    v2_as_v1_package = _package(v2_as_v1_manifest, multilingual_deck_data)
+
+    malformed_locale_deck = copy.deepcopy(multilingual_deck)
+    malformed_locale_deck["localizations"]["fr_CA"] = malformed_locale_deck["localizations"].pop("zh-Hant")
+    for item in malformed_locale_deck["items"]:
+        item["localizations"]["fr_CA"] = item["localizations"].pop("zh-Hant")
+    malformed_locale_data = piyodeck_tool.canonical_json(malformed_locale_deck)
+    malformed_locale_package = _package(
+        _manifest(malformed_locale_deck, malformed_locale_data),
+        malformed_locale_data,
+    )
+
+    noncanonical_locale_deck = copy.deepcopy(multilingual_deck)
+    noncanonical_locale_deck["localizations"]["zh-hant"] = noncanonical_locale_deck["localizations"].pop("zh-Hant")
+    for item in noncanonical_locale_deck["items"]:
+        item["localizations"]["zh-hant"] = item["localizations"].pop("zh-Hant")
+    noncanonical_locale_data = piyodeck_tool.canonical_json(noncanonical_locale_deck)
+    noncanonical_locale_package = _package(
+        _manifest(noncanonical_locale_deck, noncanonical_locale_data),
+        noncanonical_locale_data,
+    )
+
+    incomplete_locale_deck = copy.deepcopy(multilingual_deck)
+    incomplete_locale_deck["items"][0]["localizations"].pop("zh-Hant")
+    incomplete_locale_data = piyodeck_tool.canonical_json(incomplete_locale_deck)
+    incomplete_locale_package = _package(
+        _manifest(incomplete_locale_deck, incomplete_locale_data),
+        incomplete_locale_data,
+    )
+
+    duplicate_locale_data = multilingual_deck_data.replace(
+        b'"localizations":{"ar":',
+        b'"localizations":{"ar":{"author_nickname":"duplicate","name":"duplicate","tags":["duplicate"]},"ar":',
+        1,
+    )
+    duplicate_locale_package = _package(
+        _manifest(multilingual_deck, duplicate_locale_data),
+        duplicate_locale_data,
+    )
 
     reviewable_manifest_data = (VALID / "basic-manifest.json").read_bytes()
     reviewable_manifest = piyodeck_tool.decode_strict_json(
@@ -223,6 +274,48 @@ def main() -> int:
             True,
             "accepted_noncanonical",
         ),
+        (
+            "multilingual-ar-zh-hant",
+            VALID / "multilingual.typedeck",
+            multilingual_package,
+            True,
+            "accepted_canonical",
+        ),
+        (
+            "malformed-locale",
+            INVALID / "malformed-locale.typedeck",
+            malformed_locale_package,
+            False,
+            "invalid_content",
+        ),
+        (
+            "noncanonical-locale",
+            INVALID / "noncanonical-locale.typedeck",
+            noncanonical_locale_package,
+            False,
+            "invalid_content",
+        ),
+        (
+            "duplicate-locale",
+            INVALID / "duplicate-locale.typedeck",
+            duplicate_locale_package,
+            False,
+            "invalid_json",
+        ),
+        (
+            "incomplete-locale",
+            INVALID / "incomplete-locale.typedeck",
+            incomplete_locale_package,
+            False,
+            "invalid_content",
+        ),
+        (
+            "v2-content-declared-as-v1",
+            INVALID / "v2-content-declared-as-v1.typedeck",
+            v2_as_v1_package,
+            False,
+            "invalid_content",
+        ),
         ("wrong-sha", INVALID / "wrong-sha.typedeck", wrong_sha_package, False, "sha256_mismatch"),
         (
             "unpaired-surrogate",
@@ -301,7 +394,7 @@ def main() -> int:
         _write(path, data)
 
     cases = {
-        "schema_version": 1,
+        "schema_version": 2,
         "cases": [
             _case(identifier, path, data, valid, expectation)
             for identifier, path, data, valid, expectation in case_specs

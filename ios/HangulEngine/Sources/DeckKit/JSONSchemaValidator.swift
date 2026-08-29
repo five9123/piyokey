@@ -68,7 +68,8 @@ public enum JSONSchemaValidator {
           issues.append(.init(code: "schema.required", path: "\(path).\(key)", message: "필수 필드입니다"))
         }
       }
-      if schema["additionalProperties"] as? Bool == false {
+      let additionalProperties = schema["additionalProperties"]
+      if additionalProperties as? Bool == false {
         for key in object.keys where properties[key] == nil {
           issues.append(
             .init(
@@ -76,8 +77,22 @@ public enum JSONSchemaValidator {
           )
         }
       }
+      if let propertyNames = schema["propertyNames"] as? [String: Any] {
+        for key in object.keys {
+          try validateNode(
+            key, schema: propertyNames, rootSchema: rootSchema,
+            path: "\(path).<key:\(key)>", into: &issues)
+        }
+      }
       for (key, childSchema) in properties {
         if let child = object[key] {
+          try validateNode(
+            child, schema: childSchema, rootSchema: rootSchema, path: "\(path).\(key)",
+            into: &issues)
+        }
+      }
+      if let childSchema = additionalProperties as? [String: Any] {
+        for (key, child) in object where properties[key] == nil {
           try validateNode(
             child, schema: childSchema, rootSchema: rootSchema, path: "\(path).\(key)",
             into: &issues)

@@ -21,6 +21,7 @@ SPEC.loader.exec_module(piyodeck_tool)
 
 class PiyoDeckToolTests(unittest.TestCase):
     fixture = ROOT / "shared/piyodeck/fixtures/valid/basic-deck.json"
+    multilingual_fixture = ROOT / "shared/piyodeck/fixtures/valid/multilingual-deck.json"
     package_fixture = ROOT / "shared/piyodeck/fixtures/valid/basic.typedeck"
     schema = ROOT / "shared/schema/deck.schema.json"
 
@@ -108,8 +109,8 @@ class PiyoDeckToolTests(unittest.TestCase):
         canonical = piyodeck_tool.validate_package(self.package_fixture, self.schema)
         fixture_root = ROOT / "shared/piyodeck/fixtures"
         manifest = json.loads((fixture_root / "cases.json").read_text(encoding="utf-8"))
-        self.assertEqual(1, manifest["schema_version"])
-        self.assertGreaterEqual(len(manifest["cases"]), 15)
+        self.assertEqual(2, manifest["schema_version"])
+        self.assertGreaterEqual(len(manifest["cases"]), 20)
 
         for case in manifest["cases"]:
             path = fixture_root / case["path"]
@@ -119,7 +120,10 @@ class PiyoDeckToolTests(unittest.TestCase):
                 self.assertEqual(case["sha256"], hashlib.sha256(data).hexdigest())
                 if case["valid"]:
                     imported = piyodeck_tool.validate_package(path, self.schema)
-                    self.assertEqual(canonical.deck, imported.deck)
+                    if case["id"] == "multilingual-ar-zh-hant":
+                        self.assertEqual("ar", imported.deck["default_locale"])
+                    else:
+                        self.assertEqual(canonical.deck, imported.deck)
                     continue
 
                 with self.assertRaises(piyodeck_tool.PiyoDeckToolError) as caught:
@@ -142,6 +146,8 @@ class PiyoDeckToolTests(unittest.TestCase):
             return "crc_mismatch"
         if "malformed ZIP" in message:
             return "malformed_archive"
+        if any(marker in message for marker in ("deck schema", "DeckKit semantics")):
+            return "invalid_content"
         if any(
             marker in message
             for marker in (
@@ -155,6 +161,65 @@ class PiyoDeckToolTests(unittest.TestCase):
             return "invalid_json"
         self.fail(f"unclassified PiyoDeck error: {error}")
         raise AssertionError("unreachable")
+
+    def test_v2_multilingual_pack_round_trip_and_unknown_locale_preservation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "multilingual.typedeck"
+            package = piyodeck_tool.pack(self.multilingual_fixture, output)
+            self.assertEqual(2, package.manifest["deck_schema_version"])
+            self.assertEqual({"ar", "zh-Hant"}, set(package.deck["localizations"]))
+            self.assertEqual(
+                (ROOT / "shared/piyodeck/fixtures/valid/multilingual.typedeck").read_bytes(),
+                output.read_bytes(),
+            )
+
+            unknown = json.loads(self.multilingual_fixture.read_text(encoding="utf-8"))
+            unknown["localizations"]["sl-rozaj-biske"] = unknown["localizations"]["zh-Hant"]
+            for item in unknown["items"]:
+                item["localizations"]["sl-rozaj-biske"] = item["localizations"]["zh-Hant"]
+            source = Path(directory) / "unknown.json"
+            source.write_text(json.dumps(unknown, ensure_ascii=False), encoding="utf-8")
+            unknown_output = Path(directory) / "unknown.typedeck"
+            preserved = piyodeck_tool.pack(source, unknown_output)
+            self.assertIn("sl-rozaj-biske", preserved.deck["localizations"])
+            self.assertEqual(
+                preserved.deck,
+                piyodeck_tool.validate_package(unknown_output, self.schema).deck,
+            )
+
+    def test_language_tag_validation_rejects_malformed_and_noncanonical(self):
+        for value in ("ar", "fr-CA", "zh-Hant", "sl-rozaj-biske", "x-private"):
+            with self.subTest(value=value):
+                self.assertEqual(value, piyodeck_tool.canonical_language_tag(value))
+        for value in ("fr_CA", "fr-ca", "EN", "a", "en--US", "en-u"):
+            with self.subTest(value=value):
+                canonical = piyodeck_tool.canonical_language_tag(value)
+                self.assertTrue(canonical is None or canonical != value)
+
+    def test_display_fallback_exact_base_default_english_then_legacy_base(self):
+        deck = json.loads(self.multilingual_fixture.read_text(encoding="utf-8"))
+        deck["localizations"]["fr"] = {
+            "name": "Nom français",
+            "author_nickname": "Auteur",
+            "tags": ["quotidien"],
+        }
+        deck["localizations"]["en"] = {
+            "name": "English name",
+            "author_nickname": "Author",
+            "tags": ["daily"],
+        }
+        item = deck["items"][0]
+        item["localizations"]["fr"] = {"meaning": "bonjour", "reading": "fr-reading"}
+        item["localizations"]["en"] = {"meaning": "hello", "reading": "en-reading"}
+        self.assertEqual("Nom français", piyodeck_tool.localized_deck_value(deck, "fr-CA", "name"))
+        self.assertEqual("fr-reading", piyodeck_tool.localized_item_value(deck, item, "fr-CA", "reading"))
+        self.assertEqual("كلمات كورية", piyodeck_tool.localized_deck_value(deck, "de-DE", "name"))
+
+        del deck["default_locale"]
+        deck["localizations"] = {}
+        item["localizations"] = {}
+        self.assertEqual(deck["name"], piyodeck_tool.localized_deck_value(deck, "de-DE", "name"))
+        self.assertEqual(item["meaning_ja"], piyodeck_tool.localized_item_value(deck, item, "de-DE", "meaning"))
 
     def test_inspect_and_validate_commands_report_package_metadata(self):
         with tempfile.TemporaryDirectory() as directory:

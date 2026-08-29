@@ -144,11 +144,15 @@ fun UserDeckEditorScreen(
   isWorking: Boolean,
   saveError: Boolean,
   onDraftChanged: (UserDeckDraft) -> Unit,
-  onSave: (UserDeckDraft, UserDeckLanguage) -> Unit,
+  onSave: (UserDeckDraft, String) -> Unit,
   onClose: (UserDeckDraft) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val language = currentUserDeckLanguage()
+  val appLocaleCode = currentUserDeckLanguage().code
+  var localeCode by remember(initialDraft.deckId) {
+    mutableStateOf(initialDraft.defaultLocale ?: appLocaleCode)
+  }
+  var localeInput by remember(initialDraft.deckId) { mutableStateOf(localeCode) }
   var draft by remember(initialDraft.deckId) { mutableStateOf(initialDraft) }
   var expandedItemId by remember(initialDraft.deckId) { mutableStateOf(draft.items.firstOrNull()?.id) }
   var validationMessage by remember { mutableStateOf<Int?>(null) }
@@ -181,11 +185,11 @@ fun UserDeckEditorScreen(
         Text(stringResource(R.string.deck_editor_title), fontWeight = FontWeight.Black)
         TextButton(
           onClick = {
-            val summary = draft.validationSummary(java.time.Instant.now(), language)
+            val summary = draft.validationSummary(java.time.Instant.now(), localeCode)
             if (summary.issues.isEmpty()) {
               validationMessage = null
               onDraftChanged(draft)
-              onSave(draft, language)
+              onSave(draft.copy(defaultLocale = localeCode), localeCode)
             } else {
               validationMessage = R.string.deck_editor_validation_error
               when (val field = summary.firstField) {
@@ -230,7 +234,23 @@ fun UserDeckEditorScreen(
     }
     item {
       Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(stringResource(R.string.deck_editor_language, language.code.uppercase()), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.deck_editor_language, localeCode), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+          OutlinedTextField(
+            value = localeInput,
+            onValueChange = { localeInput = it },
+            label = { Text(stringResource(R.string.deck_editor_language, "BCP 47")) },
+            modifier = Modifier.weight(1f),
+            singleLine = true,
+          )
+          OutlinedButton(onClick = {
+            UserDeckDraft.canonicalLocale(localeInput)?.let { canonical ->
+              localeCode = canonical
+              localeInput = canonical
+              draft = draft.copy(defaultLocale = canonical)
+            }
+          }) { Text(stringResource(R.string.action_ok)) }
+        }
         validationMessage?.let {
           Text(
             stringResource(it),
@@ -243,22 +263,22 @@ fun UserDeckEditorScreen(
           Text(stringResource(R.string.deck_editor_save_error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive })
         }
         OutlinedTextField(
-          value = draft.name(language),
-          onValueChange = { draft = draft.withName(it, language) },
+          value = draft.name(localeCode),
+          onValueChange = { draft = draft.withName(it, localeCode) },
           label = { Text(stringResource(R.string.deck_editor_name)) },
           modifier = Modifier.fillMaxWidth().focusRequester(nameFocus).testTag("deck-editor-name"),
           singleLine = true,
         )
         OutlinedTextField(
-          value = draft.authorNickname(language),
-          onValueChange = { draft = draft.withAuthorNickname(it, language) },
+          value = draft.authorNickname(localeCode),
+          onValueChange = { draft = draft.withAuthorNickname(it, localeCode) },
           label = { Text(stringResource(R.string.deck_editor_author)) },
           modifier = Modifier.fillMaxWidth().focusRequester(authorFocus),
           singleLine = true,
         )
         OutlinedTextField(
-          value = draft.tags(language).joinToString(", "),
-          onValueChange = { draft = draft.withTags(UserDeckDraft.parseTags(it), language) },
+          value = draft.tags(localeCode).joinToString(", "),
+          onValueChange = { draft = draft.withTags(UserDeckDraft.parseTags(it), localeCode) },
           label = { Text(stringResource(R.string.deck_editor_tags)) },
           modifier = Modifier.fillMaxWidth().focusRequester(tagsFocus),
         )
@@ -286,7 +306,7 @@ fun UserDeckEditorScreen(
       DeckEditorItem(
         index = index,
         item = item,
-        language = language,
+        localeCode = localeCode,
         expanded = expandedItemId == item.id,
         canDelete = draft.items.size > 1,
         canMoveDown = index < draft.items.lastIndex,
@@ -313,7 +333,7 @@ fun UserDeckEditorScreen(
 private fun DeckEditorItem(
   index: Int,
   item: UserDeckItemDraft,
-  language: UserDeckLanguage,
+  localeCode: String,
   expanded: Boolean,
   canDelete: Boolean,
   canMoveDown: Boolean,
@@ -353,14 +373,14 @@ private fun DeckEditorItem(
           keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.None),
         )
         OutlinedTextField(
-          value = item.reading(language),
-          onValueChange = { onChange(item.withReading(it, language)) },
+          value = item.reading(localeCode),
+          onValueChange = { onChange(item.withReading(it, localeCode)) },
           label = { Text(stringResource(R.string.deck_editor_reading)) },
           modifier = Modifier.fillMaxWidth().focusRequester(readingFocus),
         )
         OutlinedTextField(
-          value = item.meaning(language),
-          onValueChange = { onChange(item.withMeaning(it, language)) },
+          value = item.meaning(localeCode),
+          onValueChange = { onChange(item.withMeaning(it, localeCode)) },
           label = { Text(stringResource(R.string.deck_editor_meaning)) },
           modifier = Modifier.fillMaxWidth().focusRequester(meaningFocus),
         )

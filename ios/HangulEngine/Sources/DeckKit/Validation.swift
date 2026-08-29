@@ -16,8 +16,17 @@ public struct ContentValidationIssue: Equatable, Sendable, CustomStringConvertib
 }
 
 public enum DeckValidator {
-  public static func validate(_ deck: Deck) -> [ContentValidationIssue] {
+  public static func validate(_ deck: Deck, schemaVersion: Int? = nil) -> [ContentValidationIssue] {
     var issues: [ContentValidationIssue] = []
+    // A nil version validates in-memory/catalog content without pretending it
+    // is a packaged v1 document. Package readers always pass the manifest
+    // version explicitly; newly edited documents identify v2 by defaultLocale.
+    let resolvedSchemaVersion: Int?
+    if let schemaVersion {
+      resolvedSchemaVersion = schemaVersion
+    } else {
+      resolvedSchemaVersion = deck.defaultLocale == nil ? nil : 2
+    }
     validateIdentifier(deck.deckId, path: "deck_id", into: &issues)
     require(
       deck.version >= 1, code: "range", path: "version", message: "1 이상이어야 합니다", into: &issues)
@@ -34,9 +43,33 @@ public enum DeckValidator {
       path: "localizations",
       into: &issues
     )
-    let requiredItemCodes = requiredItemLocalizationCodes(
-      for: deck.localizations
-    )
+    let declaredCodes = Set(deck.localizations?.keys ?? Dictionary<String, DeckMetadataLocalization>().keys)
+    if resolvedSchemaVersion == 1 {
+      require(
+        deck.defaultLocale == nil, code: "unexpected_default_locale", path: "default_locale",
+        message: "deck schema v1에는 default_locale이 없습니다", into: &issues)
+      for code in declaredCodes where !["en", "ko"].contains(code) {
+        issues.append(
+          .init(code: "unsupported_locale", path: "localizations.\(code)", message: "deck schema v1은 en/ko만 지원합니다"))
+      }
+    } else if resolvedSchemaVersion == 2 {
+      if let defaultLocale = deck.defaultLocale {
+        require(
+          LocaleTag.isCanonical(defaultLocale), code: "invalid_locale", path: "default_locale",
+          message: "canonical BCP 47 태그여야 합니다", into: &issues)
+        require(
+          declaredCodes.contains(defaultLocale), code: "missing_default_locale",
+          path: "default_locale", message: "localizations에 선언된 키여야 합니다", into: &issues)
+      } else {
+        issues.append(
+          .init(code: "missing_default_locale", path: "default_locale", message: "deck schema v2 필수 필드입니다"))
+      }
+      require(
+        !declaredCodes.isEmpty, code: "missing_localization", path: "localizations",
+        message: "콘텐츠 로케일이 하나 이상 필요합니다", into: &issues)
+    }
+    let requiredItemCodes =
+      resolvedSchemaVersion == 2 ? declaredCodes : requiredItemLocalizationCodes(for: deck.localizations)
     require(
       deck.updatedAt >= deck.createdAt, code: "date_order", path: "updated_at",
       message: "created_at보다 빠를 수 없습니다", into: &issues)
@@ -61,6 +94,15 @@ public enum DeckValidator {
         path: "\(path).localizations",
         into: &issues
       )
+      if resolvedSchemaVersion == 2 {
+        for code in Set(item.localizations?.keys ?? Dictionary<String, DeckItemLocalization>().keys)
+        where !declaredCodes.contains(code) {
+          issues.append(
+            .init(
+              code: "undeclared_localization", path: "\(path).localizations.\(code)",
+              message: "덱 메타데이터에 선언되지 않은 콘텐츠 로케일입니다"))
+        }
+      }
       if let audio = item.audio {
         requireNonempty(audio, path: "\(path).audio", into: &issues)
       }
@@ -235,8 +277,6 @@ public enum CatalogBundleValidator {
   }
 }
 
-private let supportedContentLocalizationCodes: Set<String> = ["en", "ko", "es", "de", "fr"]
-
 /// Korean metadata is localized for Korean-language devices while its learning
 /// clues intentionally reuse the complete English meaning and romanization.
 /// Every other published metadata locale requires complete clues in that language.
@@ -366,14 +406,15 @@ private func validateLocalizationKeys<Keys: Collection>(
   path: String,
   into issues: inout [ContentValidationIssue]
 ) where Keys.Element == String {
-  for languageCode in keys where !supportedContentLocalizationCodes.contains(languageCode) {
+  for languageCode in keys where !LocaleTag.isCanonical(languageCode) {
+    let canonical = LocaleTag.canonicalize(languageCode)
     issues.append(
       .init(
-        code: "unsupported_locale",
+        code: canonical == nil ? "malformed_locale" : "noncanonical_locale",
         path: "\(path).\(languageCode)",
-        message: "지원하지 않는 콘텐츠 로케일입니다"
-      )
-    )
+        message: canonical.map { "canonical BCP 47 태그 \($0)를 사용해야 합니다" }
+          ?? "올바른 BCP 47 언어 태그여야 합니다"
+      ))
   }
 }
 

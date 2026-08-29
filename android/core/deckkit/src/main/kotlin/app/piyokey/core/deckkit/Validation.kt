@@ -11,7 +11,11 @@ data class ContentValidationIssue(
 }
 
 object DeckValidator {
-  fun validate(deck: Deck): List<ContentValidationIssue> = buildList {
+  fun validate(deck: Deck, schemaVersion: Int? = null): List<ContentValidationIssue> = buildList {
+    // A null version validates in-memory/catalog content without pretending it
+    // is a packaged v1 document. Package readers pass the manifest version;
+    // newly edited documents identify v2 through defaultLocale.
+    val resolvedSchemaVersion = schemaVersion ?: deck.defaultLocale?.let { 2 }
     validateIdentifier(deck.deckId, "deck_id")
     require(deck.version >= 1, "range", "version", "1 이상이어야 합니다")
     requireNonempty(deck.name, "name")
@@ -20,7 +24,29 @@ object DeckValidator {
     require(deck.level in 1..3, "range", "level", "1...3 범위여야 합니다")
     validateTags(deck.tags, "tags")
     validateMetadataLocalizations(deck.localizations, deck.tags.size, "localizations")
-    val requiredItemCodes = requiredItemLocalizationCodes(deck.localizations)
+    val declaredCodes = deck.localizations.orEmpty().keys
+    if (resolvedSchemaVersion == 1) {
+      require(
+        deck.defaultLocale == null,
+        "unexpected_default_locale",
+        "default_locale",
+        "deck schema v1에는 default_locale이 없습니다",
+      )
+      declaredCodes.filterNot { it in setOf("en", "ko") }.forEach { code ->
+        add(ContentValidationIssue("unsupported_locale", "localizations.$code", "deck schema v1은 en/ko만 지원합니다"))
+      }
+    } else if (resolvedSchemaVersion == 2) {
+      val defaultLocale = deck.defaultLocale
+      if (defaultLocale == null) {
+        add(ContentValidationIssue("missing_default_locale", "default_locale", "deck schema v2 필수 필드입니다"))
+      } else {
+        require(LocaleTag.isCanonical(defaultLocale), "invalid_locale", "default_locale", "canonical BCP 47 태그여야 합니다")
+        require(defaultLocale in declaredCodes, "missing_default_locale", "default_locale", "localizations에 선언된 키여야 합니다")
+      }
+      require(declaredCodes.isNotEmpty(), "missing_localization", "localizations", "콘텐츠 로케일이 하나 이상 필요합니다")
+    }
+    val requiredItemCodes =
+      if (resolvedSchemaVersion == 2) declaredCodes else requiredItemLocalizationCodes(deck.localizations)
     require(
       !deck.updatedAt.isBefore(deck.createdAt),
       "date_order",
@@ -45,6 +71,17 @@ object DeckValidator {
         requiredItemCodes,
         "$path.localizations",
       )
+      if (resolvedSchemaVersion == 2) {
+        item.localizations.orEmpty().keys.filterNot(declaredCodes::contains).forEach { code ->
+          add(
+            ContentValidationIssue(
+              "undeclared_localization",
+              "$path.localizations.$code",
+              "덱 메타데이터에 선언되지 않은 콘텐츠 로케일입니다",
+            ),
+          )
+        }
+      }
       item.audio?.let { requireNonempty(it, "$path.audio") }
     }
   }
@@ -191,8 +228,6 @@ object CatalogBundleValidator {
   }
 }
 
-private val supportedContentLocalizationCodes = setOf("en", "ko", "es", "de", "fr")
-
 private fun requiredItemLocalizationCodes(
   metadata: Map<String, DeckMetadataLocalization>?,
 ): Set<String> = metadata?.keys.orEmpty() - "ko"
@@ -304,12 +339,14 @@ private fun MutableList<ContentValidationIssue>.validateLocalizationKeys(
   keys: Collection<String>,
   path: String,
 ) {
-  keys.filterNot(supportedContentLocalizationCodes::contains).forEach { languageCode ->
+  keys.filterNot(LocaleTag::isCanonical).forEach { languageCode ->
+    val canonical = LocaleTag.canonicalize(languageCode)
     add(
       ContentValidationIssue(
-        "unsupported_locale",
+        if (canonical == null) "malformed_locale" else "noncanonical_locale",
         "$path.$languageCode",
-        "지원하지 않는 콘텐츠 로케일입니다",
+        canonical?.let { "canonical BCP 47 태그 ${it}를 사용해야 합니다" }
+          ?: "올바른 BCP 47 언어 태그여야 합니다",
       ),
     )
   }

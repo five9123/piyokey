@@ -187,6 +187,7 @@ class UserDeckDraftStore(
     put("base_version", draft.baseVersion)
     put("author_id", draft.authorId)
     put("metadata_localizations", encodeMetadataLocalizations(draft.metadataLocalizations))
+    putNullable("default_locale", draft.defaultLocale)
     put("name", draft.name)
     put("author_nickname", draft.authorNickname)
     put("type", draft.type.name.lowercase())
@@ -208,13 +209,12 @@ class UserDeckDraftStore(
   private fun decodePayload(payload: JsonObject): UserDeckDraft {
     val schema = payload.requiredInt("schema_version")
     if (schema != CURRENT_SCHEMA) throw UserDeckDraftStoreException.UnsupportedSchema(schema)
-    payload.requireExactKeys(
-      setOf(
-        "schema_version", "origin", "source_deck_id", "deck_id", "deck_created_at",
-        "base_version", "author_id", "metadata_localizations", "name", "author_nickname",
-        "type", "level", "tags", "items",
-      ),
+    val legacyKeys = setOf(
+      "schema_version", "origin", "source_deck_id", "deck_id", "deck_created_at",
+      "base_version", "author_id", "metadata_localizations", "name", "author_nickname",
+      "type", "level", "tags", "items",
     )
+    if (payload.keys != legacyKeys && payload.keys != legacyKeys + "default_locale") invalidPayload()
     val deckId = payload.requiredString("deck_id")
     val baseVersion = payload.requiredInt("base_version")
     val sourceDeckId = payload.optionalString("source_deck_id")
@@ -248,6 +248,7 @@ class UserDeckDraftStore(
       baseVersion = baseVersion,
       authorId = payload.requiredString("author_id").ifBlank { invalidPayload() },
       metadataLocalizations = decodeMetadataLocalizations(payload["metadata_localizations"]),
+      defaultLocale = payload.optionalString("default_locale"),
       name = payload.requiredString("name"),
       authorNickname = payload.requiredString("author_nickname"),
       type = when (payload.requiredString("type")) {

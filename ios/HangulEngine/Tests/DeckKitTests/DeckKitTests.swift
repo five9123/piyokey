@@ -313,7 +313,7 @@ final class DeckKitTests: XCTestCase {
     )
   }
 
-  func testLegacyContentNeverFallsBackToJapaneseForGlobalLocales() throws {
+  func testLegacyJapaneseBaseFieldsAreTheFinalCompatibilityFallback() throws {
     let data = Data(
       #"{"id":"legacy","ko":"학교","reading_ja":"ハッキョ","meaning_ja":"学校","audio":null}"#
         .utf8
@@ -322,8 +322,29 @@ final class DeckKitTests: XCTestCase {
 
     XCTAssertEqual(item.localizedMeaning(languageCode: "ja"), "学校")
     XCTAssertEqual(item.localizedReading(languageCode: "ja"), "ハッキョ")
-    XCTAssertNil(item.localizedMeaning(languageCode: "en"))
-    XCTAssertNil(item.localizedReading(languageCode: "ko"))
+    XCTAssertEqual(item.localizedMeaning(languageCode: "en"), "学校")
+    XCTAssertEqual(item.localizedReading(languageCode: "ko"), "ハッキョ")
+  }
+
+  func testArbitraryLocaleFallbackUsesExactBaseDefaultEnglishThenJapaneseBase() throws {
+    let root = try RepositoryFixtureLocator.root(from: #filePath)
+    let deck = try DeckKitJSON.decodeDeck(
+      from: Data(contentsOf: root.appendingPathComponent("shared/piyodeck/fixtures/valid/multilingual-deck.json"))
+    )
+    let item = try XCTUnwrap(deck.items.first)
+    XCTAssertEqual(deck.localizedName(languageCode: "zh-Hant"), "韓語詞卡")
+    XCTAssertEqual(deck.localizedName(languageCode: "de-DE"), "كلمات كورية")
+    XCTAssertEqual(item.localizedMeaning(languageCode: "de-DE", defaultLocale: deck.defaultLocale), "مرحبًا")
+
+    let frItem = DeckItem(
+      id: item.id, ko: item.ko, readingJa: item.readingJa, meaningJa: item.meaningJa,
+      audio: nil,
+      localizations: [
+        "fr": .init(meaning: "bonjour", reading: "fr-reading"),
+        "en": .init(meaning: "hello", reading: "en-reading"),
+      ])
+    XCTAssertEqual(frItem.localizedMeaning(languageCode: "fr-CA", defaultLocale: "en"), "bonjour")
+    XCTAssertEqual(frItem.localizedReading(languageCode: "fr-CA", defaultLocale: "en"), "fr-reading")
   }
 
   func testEnglishDeckMetadataRequiresEveryItemTranslation() {

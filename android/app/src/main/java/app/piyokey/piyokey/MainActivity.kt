@@ -971,7 +971,7 @@ private fun PiyokeyApp(
     }
   }
 
-  fun commitEditorDraft(draft: UserDeckDraft, language: UserDeckLanguage) {
+  fun commitEditorDraft(draft: UserDeckDraft, localeCode: String) {
     editorWorking = true
     editorSaveError = false
     scope.launch {
@@ -979,7 +979,7 @@ private fun PiyokeyApp(
         billingManager.requireAccess()
         val active = repository.saveUserDeckDraft(draft)
         storedDeckDraft = active
-        repository.commitUserDeckDraft(active, language)
+        repository.commitUserDeckDraft(active, localeCode)
         storedDeckDraft = null
         editorDraft = null
         tab = RootTab.PROFILE

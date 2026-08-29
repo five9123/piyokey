@@ -52,6 +52,9 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(deck.version, 1)
     XCTAssertFalse(deck.official)
     XCTAssertNil(deck.items[0].audio)
+    XCTAssertEqual(deck.defaultLocale, "ja")
+    XCTAssertEqual(deck.localizations?["ja"]?.name, "マイ単語")
+    XCTAssertEqual(deck.items[0].localizations?["ja"]?.meaning, "こんにちは")
     XCTAssertTrue(UserDeckValidator.validate(deck).isEmpty)
   }
 
@@ -138,7 +141,10 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(copied.items.map(\.id), ["item_\(secondHex)", "item_\(thirdHex)"])
     XCTAssertEqual(copied.version, 1)
     XCTAssertFalse(copied.official)
-    XCTAssertEqual(copied.items[0].localizations, source.items[0].localizations)
+    XCTAssertEqual(copied.defaultLocale, "ja")
+    XCTAssertEqual(copied.localizations?["ja"]?.name, source.name)
+    XCTAssertNil(copied.items[0].localizations?["en"])
+    XCTAssertEqual(copied.items[0].localizations?["ja"]?.meaning, source.items[0].meaningJa)
     XCTAssertTrue(copied.items.allSatisfy { $0.audio == nil })
   }
 
@@ -232,20 +238,19 @@ final class DeckEditorTests: XCTestCase {
     let original = makeUserDeck(version: 2, includesEnglishLocalization: true)
     var draft = UserDeckDraft(editing: original)
 
-    XCTAssertEqual(
-      draft.materializedDeck(language: .japanese).localizations,
-      original.localizations
-    )
-    XCTAssertEqual(
-      draft.materializedDeck(language: .japanese).items[0].localizations,
-      original.items[0].localizations
-    )
+    let migrated = draft.materializedDeck(language: .japanese)
+    XCTAssertEqual(migrated.defaultLocale, "ja")
+    XCTAssertEqual(migrated.localizations?["en"], original.localizations?["en"])
+    XCTAssertEqual(migrated.localizations?["ja"]?.name, original.name)
+    XCTAssertEqual(migrated.items[0].localizations?["en"], original.items[0].localizations?["en"])
+    XCTAssertEqual(migrated.items[0].localizations?["ja"]?.meaning, original.items[0].meaningJa)
 
     draft.addItem(uuidHexGenerator: { thirdHex })
     let withUntranslatedItem = draft.materializedDeck(language: .japanese)
 
     XCTAssertNil(withUntranslatedItem.localizations?["en"])
-    XCTAssertEqual(withUntranslatedItem.items[0].localizations, original.items[0].localizations)
+    XCTAssertNil(withUntranslatedItem.items[0].localizations?["en"])
+    XCTAssertEqual(withUntranslatedItem.items[0].localizations?["ja"]?.meaning, original.items[0].meaningJa)
   }
 
   func testTagParserAcceptsWesternAndJapaneseSeparators() {
@@ -284,6 +289,46 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(deck.items[0].localizations?["en"]?.reading, "yeohaeng")
     XCTAssertEqual(deck.items[0].localizations?["en"]?.meaning, "travel")
     XCTAssertEqual(deck.localizedName(languageCode: "en"), "My Korean Deck")
+  }
+
+  func testUnknownCanonicalLocaleSurvivesProEditMaterialization() throws {
+    let unknownLocale = "sl-rozaj-biske"
+    let source = Deck(
+      deckId: "user_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      version: 3,
+      name: "كلمات",
+      author: DeckAuthor(id: UserDeckDraft.localAuthorID, nickname: "Piyo"),
+      official: false,
+      type: .word,
+      level: 1,
+      tags: ["daily"],
+      createdAt: Date(timeIntervalSince1970: 100),
+      updatedAt: Date(timeIntervalSince1970: 200),
+      items: [
+        DeckItem(
+          id: "item_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          ko: "안녕",
+          readingJa: "annyeong",
+          meaningJa: "مرحبا",
+          audio: nil,
+          localizations: [
+            "ar": DeckItemLocalization(meaning: "مرحبا", reading: "annyeong"),
+            unknownLocale: DeckItemLocalization(meaning: "pozdrav", reading: "annyeong"),
+          ]
+        )
+      ],
+      localizations: [
+        "ar": DeckMetadataLocalization(name: "كلمات", authorNickname: "Piyo", tags: ["daily"]),
+        unknownLocale: DeckMetadataLocalization(name: "Besede", authorNickname: "Piyo", tags: ["daily"]),
+      ],
+      defaultLocale: "ar"
+    )
+
+    let edited = try UserDeckDraft(editing: source).validatedDeck(localeCode: "ar")
+
+    XCTAssertEqual(edited.defaultLocale, "ar")
+    XCTAssertEqual(edited.localizations?[unknownLocale], source.localizations?[unknownLocale])
+    XCTAssertEqual(edited.items[0].localizations?[unknownLocale], source.items[0].localizations?[unknownLocale])
   }
 
   func testEditingKoreanLocalizationPreservesJapaneseBaseAndEnglishLocalization() throws {
@@ -343,7 +388,7 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertThrowsError(try draft.validatedDeck(language: .english))
   }
 
-  func testKoreanMetadataWithoutKoreanItemsIsPreservedUsingValidatorFallbackContract() throws {
+  func testKoreanMetadataWithoutKoreanItemsIsRejectedByVersionTwoContract() {
     let original = makeKoreanMetadataWithEnglishItemsDeck()
     let draft = UserDeckDraft(editing: original)
 
@@ -351,12 +396,14 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(draft.items[0].reading(for: .korean), "")
     XCTAssertEqual(draft.items[0].meaning(for: .korean), "")
 
-    let edited = try draft.validatedDeck(language: .korean)
-
-    XCTAssertEqual(edited.localizations?["ko"], original.localizations?["ko"])
-    XCTAssertEqual(edited.localizations?["en"], original.localizations?["en"])
-    XCTAssertNil(edited.items[0].localizations?["ko"])
-    XCTAssertEqual(edited.items[0].localizations?["en"], original.items[0].localizations?["en"])
+    XCTAssertThrowsError(try draft.validatedDeck(language: .korean)) { error in
+      let validationError = error as? UserDeckDraftValidationError
+      XCTAssertTrue(
+        validationError?.issues.contains(where: {
+          $0.code == "missing_localization" && $0.path == "items[0].localizations.ko"
+        }) == true
+      )
+    }
   }
 
   func testClearingCurrentLanguageMetadataFailsInsteadOfDroppingLocalization() {
@@ -372,7 +419,7 @@ final class DeckEditorTests: XCTestCase {
     }
   }
 
-  func testJapaneseEditingUsesBaseFieldsWithoutAddingLocalization() throws {
+  func testJapaneseBaseFieldsMigrateToExplicitVersionTwoLocalization() throws {
     var generated = [firstHex, secondHex].makeIterator()
     var draft = UserDeckDraft(
       uuidHexGenerator: { generated.next()! }
@@ -389,8 +436,10 @@ final class DeckEditorTests: XCTestCase {
     XCTAssertEqual(deck.name, "私の単語")
     XCTAssertEqual(deck.items[0].readingJa, "アンニョン")
     XCTAssertEqual(deck.items[0].meaningJa, "こんにちは")
-    XCTAssertNil(deck.localizations)
-    XCTAssertNil(deck.items[0].localizations)
+    XCTAssertEqual(deck.defaultLocale, "ja")
+    XCTAssertEqual(deck.localizations?["ja"]?.name, "私の単語")
+    XCTAssertEqual(deck.items[0].localizations?["ja"]?.reading, "アンニョン")
+    XCTAssertEqual(deck.items[0].localizations?["ja"]?.meaning, "こんにちは")
   }
 
   private func makeUserDeck(

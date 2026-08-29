@@ -17,13 +17,14 @@ class UserDeckDraftStoreTest {
 
   @Test
   fun saveAndReloadRetainDraftIdentityForTheSameFlow() = withStore { root, store ->
-    val draft = UserDeckDraft.new(now) { "1".repeat(32) }
+    val draft = UserDeckDraft.new(now) { "1".repeat(32) }.copy(defaultLocale = "fr-CA")
     val first = store.save(draft, now)
     val second = store.save(draft.copy(name = "saved"), now.plusSeconds(10))
 
     assertEquals(first.draftId, second.draftId)
     assertEquals(first.createdAt, second.createdAt)
     assertEquals("saved", UserDeckDraftStore(root).load()?.draft?.name)
+    assertEquals("fr-CA", UserDeckDraftStore(root).load()?.draft?.defaultLocale)
   }
 
   @Test

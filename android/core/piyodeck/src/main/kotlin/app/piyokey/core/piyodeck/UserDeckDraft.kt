@@ -8,6 +8,7 @@ import app.piyokey.core.deckkit.DeckItemLocalization
 import app.piyokey.core.deckkit.DeckMetadataLocalization
 import app.piyokey.core.deckkit.DeckType
 import app.piyokey.core.deckkit.DeckValidator
+import app.piyokey.core.deckkit.LocaleTag
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -34,22 +35,23 @@ public data class UserDeckItemDraft(
   val meaningJa: String = "",
   val localizations: Map<String, DeckItemLocalization>? = null,
 ) {
-  public fun reading(language: UserDeckLanguage): String = when (language) {
-    UserDeckLanguage.JAPANESE -> readingJa
-    else -> localizations?.get(language.code)?.reading.orEmpty()
-  }
+  public fun reading(language: UserDeckLanguage): String = reading(language.code)
+  public fun reading(localeCode: String): String =
+    if (localeCode == "ja") readingJa else localizations?.get(localeCode)?.reading.orEmpty()
 
-  public fun meaning(language: UserDeckLanguage): String = when (language) {
-    UserDeckLanguage.JAPANESE -> meaningJa
-    else -> localizations?.get(language.code)?.meaning.orEmpty()
-  }
+  public fun meaning(language: UserDeckLanguage): String = meaning(language.code)
+  public fun meaning(localeCode: String): String =
+    if (localeCode == "ja") meaningJa else localizations?.get(localeCode)?.meaning.orEmpty()
 
   public fun withReading(value: String, language: UserDeckLanguage): UserDeckItemDraft =
-    if (language == UserDeckLanguage.JAPANESE) copy(readingJa = value) else {
-      val current = localizations?.get(language.code)
+    withReading(value, language.code)
+
+  public fun withReading(value: String, localeCode: String): UserDeckItemDraft =
+    if (localeCode == "ja") copy(readingJa = value) else {
+      val current = localizations?.get(localeCode)
       copy(
         localizations = localizations.orEmpty() + (
-          language.code to DeckItemLocalization(
+          localeCode to DeckItemLocalization(
             meaning = current?.meaning.orEmpty(),
             reading = value,
           )
@@ -58,11 +60,14 @@ public data class UserDeckItemDraft(
     }
 
   public fun withMeaning(value: String, language: UserDeckLanguage): UserDeckItemDraft =
-    if (language == UserDeckLanguage.JAPANESE) copy(meaningJa = value) else {
-      val current = localizations?.get(language.code)
+    withMeaning(value, language.code)
+
+  public fun withMeaning(value: String, localeCode: String): UserDeckItemDraft =
+    if (localeCode == "ja") copy(meaningJa = value) else {
+      val current = localizations?.get(localeCode)
       copy(
         localizations = localizations.orEmpty() + (
-          language.code to DeckItemLocalization(
+          localeCode to DeckItemLocalization(
             meaning = value,
             reading = current?.reading.orEmpty(),
           )
@@ -136,33 +141,37 @@ public data class UserDeckDraft(
   val level: Int,
   val tags: List<String>,
   val items: List<UserDeckItemDraft>,
+  val defaultLocale: String? = null,
 ) {
   public val derivedFromDeckId: String?
     get() = (origin as? UserDeckDraftOrigin.OfficialCopy)?.sourceDeckId
 
-  public fun name(language: UserDeckLanguage): String = when (language) {
-    UserDeckLanguage.JAPANESE -> name
-    else -> metadataLocalizations?.get(language.code)?.name.orEmpty()
-  }
+  public fun name(language: UserDeckLanguage): String = name(language.code)
+  public fun name(localeCode: String): String =
+    if (localeCode == "ja") name else metadataLocalizations?.get(localeCode)?.name.orEmpty()
 
-  public fun authorNickname(language: UserDeckLanguage): String = when (language) {
-    UserDeckLanguage.JAPANESE -> authorNickname
-    else -> metadataLocalizations?.get(language.code)?.authorNickname.orEmpty()
-  }
+  public fun authorNickname(language: UserDeckLanguage): String = authorNickname(language.code)
+  public fun authorNickname(localeCode: String): String =
+    if (localeCode == "ja") authorNickname else metadataLocalizations?.get(localeCode)?.authorNickname.orEmpty()
 
-  public fun tags(language: UserDeckLanguage): List<String> = when (language) {
-    UserDeckLanguage.JAPANESE -> tags
-    else -> metadataLocalizations?.get(language.code)?.tags.orEmpty()
-  }
+  public fun tags(language: UserDeckLanguage): List<String> = tags(language.code)
+  public fun tags(localeCode: String): List<String> =
+    if (localeCode == "ja") tags else metadataLocalizations?.get(localeCode)?.tags.orEmpty()
 
   public fun withName(value: String, language: UserDeckLanguage): UserDeckDraft =
-    updateMetadata(language) { it.copy(name = value) }
+    withName(value, language.code)
+  public fun withName(value: String, localeCode: String): UserDeckDraft =
+    updateMetadata(localeCode) { it.copy(name = value) }
 
   public fun withAuthorNickname(value: String, language: UserDeckLanguage): UserDeckDraft =
-    updateMetadata(language) { it.copy(authorNickname = value) }
+    withAuthorNickname(value, language.code)
+  public fun withAuthorNickname(value: String, localeCode: String): UserDeckDraft =
+    updateMetadata(localeCode) { it.copy(authorNickname = value) }
 
   public fun withTags(value: List<String>, language: UserDeckLanguage): UserDeckDraft =
-    updateMetadata(language) { it.copy(tags = value) }
+    withTags(value, language.code)
+  public fun withTags(value: List<String>, localeCode: String): UserDeckDraft =
+    updateMetadata(localeCode) { it.copy(tags = value) }
 
   public fun addItem(hexGenerator: () -> String = ::randomUuidHex): UserDeckDraft =
     if (items.size >= PiyoDeckPackageLimits.MAXIMUM_ITEM_COUNT) this else copy(
@@ -198,14 +207,29 @@ public data class UserDeckDraft(
   public fun materialize(
     now: Instant,
     language: UserDeckLanguage,
-  ): Deck {
+  ): Deck = materialize(now, language.code)
+
+  public fun materialize(now: Instant, localeCode: String): Deck {
     val canonicalNow = maxOf(now.truncatedTo(ChronoUnit.SECONDS), createdAt)
-    val displayName = name(language)
-    val displayAuthor = authorNickname(language)
-    val displayTags = tags(language)
-    val baseName = name.ifBlank { displayName }
-    val baseAuthor = authorNickname.ifBlank { displayAuthor }
-    val baseTags = tags.ifEmpty { displayTags }
+    val displayName = name(localeCode)
+    val displayAuthor = authorNickname(localeCode)
+    val displayTags = tags(localeCode)
+    val resolvedDefaultLocale = defaultLocale
+      ?: if (localeCode == "ja" || metadataLocalizations?.get(localeCode) == null) "ja" else localeCode
+    var outputMetadata = compatibleMetadataLocalizations(baseTags = tags.ifEmpty { displayTags }, localeCode)
+      .orEmpty()
+    if (localeCode == "ja" || resolvedDefaultLocale == "ja") {
+      outputMetadata = outputMetadata + (
+        UserDeckLanguage.JAPANESE.code to DeckMetadataLocalization(name, authorNickname, tags)
+      )
+    }
+    val defaultMetadata = outputMetadata[resolvedDefaultLocale]
+    val japaneseMetadata = outputMetadata[UserDeckLanguage.JAPANESE.code]
+    val baseName = japaneseMetadata?.name ?: name.ifBlank { defaultMetadata?.name ?: displayName }
+    val baseAuthor = japaneseMetadata?.authorNickname
+      ?: authorNickname.ifBlank { defaultMetadata?.authorNickname ?: displayAuthor }
+    val baseTags = japaneseMetadata?.tags ?: tags.ifEmpty { defaultMetadata?.tags ?: displayTags }
+    val declaredCodes = outputMetadata.keys
     return Deck(
       deckId = deckId,
       version = if (origin == UserDeckDraftOrigin.Editing) baseVersion + 1 else 1,
@@ -218,24 +242,40 @@ public data class UserDeckDraft(
       createdAt = createdAt,
       updatedAt = canonicalNow,
       items = items.map { item ->
+        var itemLocalizations = item.localizations.orEmpty()
+        if (localeCode == "ja" || resolvedDefaultLocale == "ja") {
+          itemLocalizations = itemLocalizations + (
+            UserDeckLanguage.JAPANESE.code to DeckItemLocalization(item.meaningJa, item.readingJa)
+          )
+        }
+        itemLocalizations = itemLocalizations.filterKeys(declaredCodes::contains)
+        val japanese = itemLocalizations[UserDeckLanguage.JAPANESE.code]
+        val fallback = itemLocalizations[resolvedDefaultLocale]
         DeckItem(
           id = item.id,
           ko = item.ko,
-          readingJa = item.readingJa.ifBlank { item.reading(language) },
-          meaningJa = item.meaningJa.ifBlank { item.meaning(language) },
+          readingJa = japanese?.reading ?: item.readingJa.ifBlank { fallback?.reading ?: item.reading(localeCode) },
+          meaningJa = japanese?.meaning ?: item.meaningJa.ifBlank { fallback?.meaning ?: item.meaning(localeCode) },
           audio = null,
-          localizations = item.localizations,
+          localizations = itemLocalizations,
         )
       },
-      localizations = compatibleMetadataLocalizations(baseTags, language),
+      localizations = outputMetadata,
+      defaultLocale = resolvedDefaultLocale,
     )
   }
 
   public fun validationSummary(now: Instant, language: UserDeckLanguage): UserDeckValidationSummary =
-    UserDeckValidationSummary(validationIssues(materialize(now, language)))
+    validationSummary(now, language.code)
+  public fun validationSummary(now: Instant, localeCode: String): UserDeckValidationSummary =
+    UserDeckValidationSummary(validationIssues(materialize(now, localeCode)))
 
   public fun validatedDeck(now: Instant, language: UserDeckLanguage): Deck {
-    val deck = materialize(now, language)
+    return validatedDeck(now, language.code)
+  }
+
+  public fun validatedDeck(now: Instant, localeCode: String): Deck {
+    val deck = materialize(now, localeCode)
     val issues = validationIssues(deck)
     if (issues.isNotEmpty()) throw UserDeckDraftValidationException(issues)
     return deck
@@ -264,27 +304,26 @@ public data class UserDeckDraft(
   }
 
   private fun updateMetadata(
-    language: UserDeckLanguage,
+    localeCode: String,
     transform: (DeckMetadataLocalization) -> DeckMetadataLocalization,
   ): UserDeckDraft {
-    if (language == UserDeckLanguage.JAPANESE) {
+    if (localeCode == "ja") {
       val value = transform(DeckMetadataLocalization(name, authorNickname, tags))
       return copy(name = value.name, authorNickname = value.authorNickname, tags = value.tags)
     }
-    val current = metadataLocalizations?.get(language.code)
+    val current = metadataLocalizations?.get(localeCode)
       ?: DeckMetadataLocalization("", "", emptyList())
-    return copy(metadataLocalizations = metadataLocalizations.orEmpty() + (language.code to transform(current)))
+    return copy(metadataLocalizations = metadataLocalizations.orEmpty() + (localeCode to transform(current)))
   }
 
   private fun compatibleMetadataLocalizations(
     baseTags: List<String>,
-    language: UserDeckLanguage,
+    localeCode: String,
   ): Map<String, DeckMetadataLocalization>? {
     val filtered = metadataLocalizations.orEmpty().filter { (code, localization) ->
-      if (language != UserDeckLanguage.JAPANESE && code == language.code) return@filter true
+      if (localeCode != "ja" && code == localeCode) return@filter true
       if (localization.name.isBlank() || localization.authorNickname.isBlank()) return@filter false
       if (localization.tags.size != baseTags.size) return@filter false
-      if (code == UserDeckLanguage.KOREAN.code) return@filter true
       items.all { item ->
         item.localizations?.get(code)?.let { it.meaning.isNotBlank() && it.reading.isNotBlank() } == true
       }
@@ -345,6 +384,7 @@ public data class UserDeckDraft(
             localizations = item.localizations,
           )
         },
+        defaultLocale = deck.defaultLocale ?: UserDeckLanguage.JAPANESE.code,
       )
     }
 
@@ -369,7 +409,11 @@ public data class UserDeckDraft(
       items = deck.items.map { item ->
         UserDeckItemDraft(item.id, item.ko, item.readingJa, item.meaningJa, item.localizations)
       },
+      defaultLocale = deck.defaultLocale ?: UserDeckLanguage.JAPANESE.code,
     )
+
+    public fun canonicalLocale(input: String): String? =
+      LocaleTag.canonicalize(input.replace('_', '-'))
 
     public fun parseTags(text: String): List<String> = text
       .split(',', '、', '\n')

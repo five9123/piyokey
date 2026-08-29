@@ -23,6 +23,7 @@
 |---|---|---|---|
 | #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | `codex/85-practice-content-expansion` / `/private/tmp/piyokey-issue85` | 최신 main 통합과 관련 양 플랫폼 회귀 완료; 사용자 승인에 따라 병합 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
+| #63 / PR #64 사용자 덱 `.typedeck` 확장자 + BCP 47 deck schema v2 후속 | Done (local source) | `codex/63-typedeck-locales` → 최신 `main` 통합 | Python·SwiftPM·iOS Pro 편집·Android DeckKit/Pro·preflight 통합 회귀 통과; origin push 및 Actions 활성화 뒤 CI·승인 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## #85 연습 챕터 5·6 스테이지 확장

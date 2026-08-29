@@ -67,7 +67,7 @@ public object PiyoDeckPackageReader {
     } catch (error: DeckKitJsonException) {
       throw PiyoDeckImportException.InvalidJson("deck.json", error.message)
     }
-    val semanticIssues = DeckValidator.validate(deck).toPiyoDeckIssues()
+    val semanticIssues = DeckValidator.validate(deck, manifest.deckSchemaVersion).toPiyoDeckIssues()
     if (semanticIssues.isNotEmpty()) {
       throw PiyoDeckImportException.InvalidUserDeck(semanticIssues)
     }
@@ -83,7 +83,7 @@ public object PiyoDeckPackageReader {
       }
     }
     root.integer("deck_schema_version")?.let { version ->
-      if (version != PiyoDeckManifest.CURRENT_DECK_SCHEMA_VERSION) {
+      if (version !in PiyoDeckManifest.SUPPORTED_DECK_SCHEMA_VERSIONS) {
         throw PiyoDeckImportException.UnsupportedDeckSchemaVersion(version)
       }
     }
@@ -105,7 +105,7 @@ public object PiyoDeckPackageReader {
     checkExactInteger(
       root["deck_schema_version"],
       "$.deck_schema_version",
-      PiyoDeckManifest.CURRENT_DECK_SCHEMA_VERSION,
+      root.integer("deck_schema_version") ?: PiyoDeckManifest.CURRENT_DECK_SCHEMA_VERSION,
       issues,
     )
     val descriptor = root["deck"] as? JsonObject
@@ -225,7 +225,7 @@ public object PiyoDeckPackageWriter {
     val manifestObject = buildJsonObject {
       put("format", PiyoDeckManifest.FORMAT_IDENTIFIER)
       put("format_version", PiyoDeckManifest.CURRENT_FORMAT_VERSION)
-      put("deck_schema_version", PiyoDeckManifest.CURRENT_DECK_SCHEMA_VERSION)
+      put("deck_schema_version", if (deck.defaultLocale == null) 1 else 2)
       put("deck", buildJsonObject {
         put("path", PiyoDeckManifest.DECK_PATH)
         put("media_type", PiyoDeckManifest.DECK_MEDIA_TYPE)

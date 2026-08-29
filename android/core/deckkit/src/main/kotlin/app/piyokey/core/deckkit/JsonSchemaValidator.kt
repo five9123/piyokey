@@ -117,7 +117,8 @@ object JsonSchemaValidator {
     required.filterNot(value::containsKey).forEach { key ->
       issues += ContentValidationIssue("schema.required", "$path.$key", "필수 필드입니다")
     }
-    if (schema.booleanOrNull("additionalProperties") == false) {
+    val additionalProperties = schema["additionalProperties"]
+    if ((additionalProperties as? JsonPrimitive)?.booleanOrNull == false) {
       (value.keys - properties.keys).sorted().forEach { key ->
         issues += ContentValidationIssue(
           "schema.additionalProperties",
@@ -126,11 +127,21 @@ object JsonSchemaValidator {
         )
       }
     }
+    (schema["propertyNames"] as? JsonObject)?.let { propertySchema ->
+      value.keys.forEach { key ->
+        validateNode(JsonPrimitive(key), propertySchema, rootSchema, "$path.<key:$key>", issues)
+      }
+    }
     properties.forEach { (key, childSchema) ->
       val child = value[key] ?: return@forEach
       val childObject = childSchema as? JsonObject
         ?: throw JsonSchemaValidationException.InvalidSchemaRoot
       validateNode(child, childObject, rootSchema, "$path.$key", issues)
+    }
+    (additionalProperties as? JsonObject)?.let { childSchema ->
+      value.filterKeys { it !in properties }.forEach { (key, child) ->
+        validateNode(child, childSchema, rootSchema, "$path.$key", issues)
+      }
     }
     validateCount(value.size, schema, path, "Properties", issues)
   }
