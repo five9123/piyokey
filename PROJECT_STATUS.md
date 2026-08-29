@@ -21,7 +21,7 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #83 최종 현황·화면 감사 | In Progress | `codex/83-final-status` / `/private/tmp/piyokey-issue83-final-status` | PRD·현황·로드맵과 최신 main 화면 캡처를 검증해 PR로 제출 |
+| #83 / PR #84 최종 현황·화면 감사 | Review | `codex/83-final-status` / `/private/tmp/piyokey-issue83-final-status` | 문서·24장 캡처·10개 UI 테스트 증빙 검토 후 병합 |
 | #81 / PR #82 홈 추천 2행 | Blocked | `codex/81-home-recommendation-rows` / `/private/tmp/piyokey-issue81` | `main`과 15파일 충돌 해결, 최신 기준 회귀·리뷰 후 병합 여부 결정 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
