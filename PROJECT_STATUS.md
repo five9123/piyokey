@@ -119,7 +119,7 @@
 ## 기존 작업 병합 점검 — 2026-08-28
 
 - #63은 스토어 미디어·지원 URL·별도 Pro 변경과 분리했다. 검증 대상 `d788a78659831188542a31208bcbe1af540129db`, 증빙 `release/evidence/d788a78659831188542a31208bcbe1af540129db.json`: Python 78개, SwiftPM 42개, iOS 문서 흐름 8개, Android 관련 단위 테스트·앱 Kotlin 컴파일, repository preflight·fixture 재생성 통과.
-- 저장소 Actions 권한 조회 결과 `enabled=false`. 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있다. 비활성화 상태의 재실행은 CI 통과 증거가 아니다. 사용자가 2026-08-28 이번 통합의 예외 병합을 승인했으며, 설정·보호 규칙은 변경하지 않았다. 이후 작업의 CI 요건은 그대로 유지한다.
+- 2026-08-28 당시 저장소 Actions 권한 조회 결과는 `enabled=false`였고 기존 CI에는 결제 실패/사용 한도 오류도 기록되어 있었다. 당시 비활성 상태의 재실행은 CI 통과 증거가 아니었으며 사용자가 그 통합에만 예외 병합을 승인했다. Actions는 이후 활성화됐고 과거 예외는 재사용하지 않으며 현재 수동 필수-CI 병합 gate를 따른다.
 - 사용자가 대화에서 iPad·물리 키보드 실기기 검증 완료를 확인했다(2026-08-28). #10/#12/#46/#17의 해당 수동 검증은 사용자 확인 완료로 반영하며, 에이전트가 새로 수행한 테스트로 기록하지 않는다. #18 → #49 → #50 및 #15는 최신 main 충돌 해결·로컬 회귀를 마치고 사용자 예외 승인에 따라 PR #70으로 main에 반영했다. 이 확인을 Android #19, 리마인더 #58의 현지 20시 수신, 결제·스토어·권리 gate 완료로 확대하지 않는다. PR #14의 최신 main 충돌을 해결했고 기존 checkpoint의 오래된 StoreKit·운영 문서는 최신 main 기준을 유지했다.
 
 ## #67 통합 검증
@@ -130,7 +130,7 @@
 - Python 88개·repository preflight, SwiftPM 43개, Android 관련 단위 66개·Debug assemble/lint·앱/연습 instrumentation 소스 컴파일을 통과했다. Android 기기 instrumentation 실행은 하지 않았다.
 - iPhone 통합 앱 단위 358개와 관련 UI 6개를 통과했다. 마지막 앱 변경 `b5ebf09`에서 단위 358개·언어/세션 UI 2개를 재검증했다. 이후 변경은 UI 테스트의 iPad 스크롤 범위 판정뿐이며 iPhone·iPad 스페인어 전환/저장 재검증을 통과했다. iPad 회전·세션 보존·접근성 큰 글자 UI 3개도 통과했다.
 - iOS 번들·Android APK에 ja/en/es 리소스가 포함됨을 확인했다. `shared/`·Swift 공용 엔진·Android DeckKit은 #66 대비 변경이 없다. 스페인어 UI 학습 뜻·읽기·덱 편집은 기존 영어를 사용한다.
-- Actions `enabled=false`이며 CI/리뷰 규칙·보호 설정을 변경하지 않았다. 사용자의 이번 요청에 대한 명시적 예외 승인으로 PR #70을 병합한다. 이 예외를 이후 PR이나 출시 gate에 확대하지 않는다. 스토어/실기기/결제/권리 gate는 별도로 남아 있다.
+- PR #70 통합 당시 Actions는 `enabled=false`였고 CI/리뷰 규칙·보호 설정을 변경하지 않았다. 사용자의 해당 요청에 대한 명시적 예외 승인으로 병합했으며 이 과거 예외를 이후 PR이나 출시 gate에 확대하지 않는다. 스토어/실기기/결제/권리 gate는 별도로 남아 있다.
 
 ## #71 프리프랙티스 제거 검증
 
@@ -140,4 +140,4 @@
 - 2026-08-29 최신 main `a678e0f`를 병합하고 새 de/fr UI 리소스에서도 제거된 진입 문구를 정리했다. repository preflight와 UI 언어 범위 8개, Android retention 단위·앱/기기 테스트 Kotlin 컴파일, iPad 커리큘럼 하단 미노출·큰 글자 접근성 UI 2개를 통과했다.
 - iPhone 관련 UI 5개 중 3개는 첫 선택 실행에서 통과했고, 2개는 simulator runner/AX 종료 뒤 각각 새 simulator에서 재실행해 통과했다. 5개 전체가 한 번에 통과한 결과로 표현하지 않는다.
 - 최신 main 통합 소스는 `f370f5e2e64b3083be497f4ebd1f00a0ce163c02`, 증빙은 `release/evidence/f370f5e2e64b3083be497f4ebd1f00a0ce163c02.json`이다.
-- Android 기기 instrumentation은 미실행. 저장소 Actions `enabled=false`와 승인 리뷰 0건을 재확인했다. 사용자가 2026-08-29 대화에서 PR #72 병합을 명시 승인했으므로 이번 PR에 한해 CI·별도 리뷰 없는 예외로 squash merge하고 Issue #71·Project를 완료 처리한다. 보호 설정은 변경하지 않으며 이 예외를 이후 PR이나 출시 gate로 확대하지 않는다. 기존 기본 작업폴더의 dirty 파일은 보존했다.
+- Android 기기 instrumentation은 미실행. PR #72 통합 당시 저장소 Actions `enabled=false`와 승인 리뷰 0건을 재확인했다. 사용자가 2026-08-29 대화에서 해당 PR 병합을 명시 승인했으므로 그 PR에 한해 CI·별도 리뷰 없는 예외로 squash merge하고 Issue #71·Project를 완료 처리했다. 보호 설정은 변경하지 않았으며 이 과거 예외를 이후 PR이나 출시 gate로 확대하지 않는다. 기존 기본 작업폴더의 dirty 파일은 보존했다.
