@@ -1629,7 +1629,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 영향 범위: iOS 추천 엔진·홈·덱 카드·ja/en/es/de/fr UI 및 보존 ko 리소스·단위/UI 테스트. Android 동등 확장은 별도 Issue로 추적한다.
 ## 2026-08-29 `.typedeck` BCP 47 콘텐츠 언어와 deck schema v2
 
-- 관련: Issue #63 후속, PRD F5.9·§8.4, 공용 schema/fixture/Python 도구, iOS·Android DeckKit과 Pro 편집기.
+- 관련: Issue #87 (Issue #63 확장자 변경의 후속), PRD F5.9·§8.4, 공용 schema/fixture/Python 도구, iOS·Android DeckKit과 Pro 편집기.
 - 결정: ZIP/container의 `format_version=1`은 유지하고, `default_locale` 및 allowlist 없는 canonical BCP 47 localization 키를 도입하는 `deck_schema_version=2`를 추가한다. 새 reader는 deck schema 1과 2를 모두 읽고, 새로 생성·편집한 문서는 2를 쓴다. `default_locale`이 없는 변경 없는 legacy model만 writer가 1로 재현한다.
 - 결정: v2 덱 metadata localization 키를 콘텐츠 언어의 완전한 선언으로 삼고 모든 항목에 각 언어의 뜻과 읽기를 요구한다. malformed·noncanonical·duplicate 키와 미선언/누락 item localization을 거부하되 알 수 없는 정상 태그는 import/edit/export에서 그대로 보존한다.
 - 결정: 표시 fallback은 exact 태그 → primary language subtag → `default_locale` → `en` → legacy 일본어 base field다. v1 일본어 base 덱을 Pro에서 편집하면 `default_locale=ja`와 `ja` localization을 합성하되 base 값을 그대로 유지한다. v2 base field는 `ja`가 있으면 일본어, 없으면 default locale을 mirror한다.

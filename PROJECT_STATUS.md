@@ -3,7 +3,7 @@
 마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 통합 기준선: PR #82, `c0666382947e13575f2d1a33728c3bf065e13540` — iOS 홈 추천 두 영역까지 반영
+최근 통합 기준선: PR #86, `77a7dd64b23f62d95862da0c2b945dfc2d90a55e` — 연습 챕터 5·6 스테이지 확장까지 반영
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `c066638`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | 최종 선택 기능을 포함한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
+| iOS 1.1 | `main` `77a7dd6`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | Issue #87 포함 최종 선택 기능을 통합한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
@@ -21,9 +21,9 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
-| #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | `codex/85-practice-content-expansion` / `/private/tmp/piyokey-issue85` | 최신 main 통합과 관련 양 플랫폼 회귀 완료; 사용자 승인에 따라 병합 |
+| #87 `.typedeck` BCP 47·deck schema v2 | In Progress | `codex/87-typedeck-bcp47` / `/private/tmp/piyokey-issue87-typedeck` | 전용 PR에서 Actions CI와 웹 Builder 호환 결과를 연결한 뒤 병합 |
+| #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue85` 보존 | 후속 작업은 최신 `main`에서 분리 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
-| #63 / PR #64 사용자 덱 `.typedeck` 확장자 + BCP 47 deck schema v2 후속 | Done (local source) | `codex/63-typedeck-locales` → 최신 `main` 통합 | Python·SwiftPM·iOS Pro 편집·Android DeckKit/Pro·preflight 통합 회귀 통과; origin push 및 Actions 활성화 뒤 CI·승인 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
 
 ## #85 연습 챕터 5·6 스테이지 확장
@@ -39,10 +39,10 @@
 
 | 구분 | 확정 결과 | 처리 |
 |---|---|---|
-| 원격 기준선 | `origin/main` `c066638`; PR #84 감사·PR #82 홈 추천 반영 | 새 작업·캡처의 유일한 소스 기준선 |
-| 열린 PR | #86 하나; 최신 main 통합·관련 회귀 완료 | 사용자 승인에 따라 병합 |
-| worktree | 총 18개; 기본 `/Users/jungminoh/Documents/hanco`만 dirty, 나머지 17개 clean | clean 보존본은 역사·검증 자료, 곧바로 삭제하지 않음 |
-| 기본 dirty worktree | 닫힌 #63 branch 위 tracked 44개·untracked 7개; 현재 main보다 오래된 기반 | release 기준이 아님. 새 branch에서 기능별 재적용·검증 전까지 보존 |
+| 원격 기준선 | `origin/main` `77a7dd6`; PR #86 연습 콘텐츠 확장까지 반영 | Issue #87 branch와 새 출시 후보의 기준선 |
+| 열린 PR | 감사 시점 없음; Issue #87 전용 branch에서 PR 준비 | PR 생성 뒤 CI·리뷰 상태는 GitHub를 기준으로 갱신 |
+| worktree | 총 19개; 기본 `/Users/jungminoh/Documents/hanco`만 dirty, 나머지 18개 clean | clean 보존본은 역사·검증 자료, 곧바로 삭제하지 않음 |
+| 기본 dirty worktree | 닫힌 #63 branch 위 tracked 44개·untracked 5개; 현재 main보다 오래된 기반 | release 기준이 아님. 새 branch에서 기능별 재적용·검증 전까지 보존 |
 | stash | 1개, 35파일·1,214삽입/155삭제; 스토어 미디어·Pro·지원 URL 계열 | apply/drop하지 않음; 복구 원본으로만 유지 |
 | dirty에서 확인된 별도 후보 | `typee.app` 링크, 흔들림 애니메이션 수정, 스토어 자산·Pro 문구 | 구현 완료로 표시하지 않고 후속 issue로 분리할 recovery queue |
 | 과거 local ahead 커밋 | 다수는 squash 통합 PR #44·#62·#70·#74·#80 등 원본 | PR이 merged이면 누락 아님; branch 삭제는 별도 정리 작업 |
