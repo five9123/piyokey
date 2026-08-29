@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "verified_commit": "e056fe6898af52984747580d55c685fc54214ae8",
+  "verified_tree": "caf29cfd200ad666400871e163b84ddabfa1968a",
+  "branch": "codex/120-ios-fallback-tests",
+  "scope": "Issue #120 iOS legacy locale fallback expectations",
+  "result": "pass",
+  "recorded_at": "2026-08-29T16:14:01.523545+00:00",
+  "checks": [
+    {
+      "name": "iOS HancoTests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests",
+      "note": ""
+    },
+    {
+      "name": "Python contract tests",
+      "status": "pass",
+      "command": "python3 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": ""
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "python3 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": []
+}

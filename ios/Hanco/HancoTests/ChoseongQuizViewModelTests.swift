@@ -105,7 +105,7 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(byWord["학교"]?.requiresMeaningHint, false)
   }
 
-  func testTypingBuilderExcludesUntranslatedItemWhenInitialsNeedDisambiguation() {
+  func testTypingBuilderUsesLegacyJapaneseBaseWhenLocalizationIsMissing() {
     let japaneseOnly = DeckItem(
       id: "company-ja-only",
       ko: "회사",
@@ -118,8 +118,12 @@ final class ChoseongQuizViewModelTests: XCTestCase {
       seed: 17
     )
 
-    XCTAssertEqual(Set(rounds.map(\.answer.id)), Set(["rest", "music"]))
-    XCTAssertTrue(rounds.allSatisfy { !$0.requiresMeaningHint })
+    let byID = Dictionary(uniqueKeysWithValues: rounds.map { ($0.answer.id, $0) })
+    XCTAssertEqual(Set(byID.keys), Set(["company-ja-only", "rest", "music"]))
+    XCTAssertEqual(byID["company-ja-only"]?.answer.appMeaning, "会社")
+    XCTAssertEqual(byID["company-ja-only"]?.requiresMeaningHint, true)
+    XCTAssertEqual(byID["rest"]?.requiresMeaningHint, true)
+    XCTAssertEqual(byID["music"]?.requiresMeaningHint, false)
   }
 
   func testRequiredDisambiguationHintCanOpenWithoutScorePenalty() {
@@ -465,7 +469,7 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(model.enteredText, "음악")
   }
 
-  func testWordMatchTypingBuilderUsesUniqueTypeableKoreanWithMeanings() {
+  func testWordMatchTypingBuilderIncludesLegacyJapaneseBaseFallback() {
     let items = [
       item("school", "학교"), item("friend", "친구"), item("love", "사랑"),
       item("school-duplicate", "학교"), item("latin", "K-POP"),
@@ -482,7 +486,8 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     let second = WordMatchTypingBuilder.rounds(items: items, limit: 5, seed: 77)
 
     XCTAssertEqual(first, second)
-    XCTAssertEqual(Set(first.map(\.answer.ko)), Set(["학교", "친구", "사랑"]))
+    XCTAssertEqual(Set(first.map(\.answer.ko)), Set(["학교", "친구", "사랑", "음악"]))
+    XCTAssertEqual(first.first { $0.answer.id == "japanese-only" }?.answer.appMeaning, "音楽")
     XCTAssertTrue(first.allSatisfy { $0.initials.isEmpty && !$0.requiresMeaningHint })
     XCTAssertEqual(
       WordMatchTypingBuilder.rounds(items: [item("only", "하나")], seed: 1).count,
@@ -490,7 +495,7 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     )
   }
 
-  func testWordMatchChoiceBuilderUsesCurrentLanguageMeaningAsPrompt() {
+  func testWordMatchChoiceBuilderUsesLocalizedThenLegacyBaseMeaningAsPrompt() {
     let items = [
       item("school", "학교"), item("friend", "친구"),
       item("love", "사랑"), item("music", "음악"),
@@ -505,8 +510,12 @@ final class ChoseongQuizViewModelTests: XCTestCase {
 
     let rounds = WordMatchQuizBuilder.rounds(items: items, seed: 88)
 
-    XCTAssertEqual(Set(rounds.map(\.answer.id)), Set(["school", "friend", "love", "music"]))
-    XCTAssertTrue(rounds.allSatisfy { $0.initials == "meaning-\($0.answer.id)" })
+    XCTAssertEqual(
+      Set(rounds.map(\.answer.id)),
+      Set(["school", "friend", "love", "music", "japanese-only"])
+    )
+    XCTAssertTrue(rounds.allSatisfy { $0.initials == ($0.answer.appMeaning ?? "") })
+    XCTAssertEqual(rounds.first { $0.answer.id == "japanese-only" }?.initials, "旅行")
   }
 
   func testCorrectAnswersAwardSpeedComboAndHintAdjustedPoints() {
