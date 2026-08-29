@@ -4,22 +4,19 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `origin/main` `2b25a7d`다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거는 통합 완료다. 업로드된 iOS `1.1 (7)`은 마지막 두 변경보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `origin/main` `60d61c9`다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거와 PR #84의 저장소·화면 감사는 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
-1. 저장소 현황·주요 화면 감사 #83
-   - branch/worktree/stash의 실제 미통합 범위를 보존 상태로 확정
-   - PRD S1~S10과 최신 main iPhone 화면 캡처를 같은 SHA에 연결
-2. 홈 추천 2행 #81 / PR #82
-   - 최신 main 충돌을 해결하고 개인화·다음 단계 2행을 재검증
-   - 병합 전까지 현재 제품 기준선과 출시 RC에서 제외
-3. 현지 20시 온보딩 리마인더 #58
+1. 홈 추천 2행 #81 / PR #82
+   - 개인화·다음 단계 각 3개와 중복 제거, iPhone 가로 스크롤·iPad 3열 구현
+   - 최신 main 통합 뒤 추천 단위·iPhone·iPad 회귀를 재검증해 병합
+2. 현지 20시 온보딩 리마인더 #58
    - 소스 구현과 iOS/Android 자동 회귀 완료
    - 실제 기기에서 권한 동의 뒤 현지 20시 알림 수신 확인 후 종료
-4. iOS 1.1 출시 후보
+3. iOS 1.1 출시 후보
    - PR #80·#72 및 최종 선택 기능을 포함한 새 build 번호로 archive/TestFlight 생성
    - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
    - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
-5. Android 1.1 출시 후보
+4. Android 1.1 출시 후보
    - Play Console·서명·권리·외부 리소스 확정
    - Issue #19 동일 signed AAB 통합 실기기 QA
 

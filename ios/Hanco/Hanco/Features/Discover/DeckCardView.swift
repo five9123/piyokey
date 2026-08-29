@@ -6,12 +6,17 @@ struct DeckCardView: View {
   var rank: Int?
   var isInstalled = false
   var updateAvailable = false
+  var compact = false
 
   var body: some View {
-    HStack(alignment: .top, spacing: 13) {
-      DeckCoverView(deck: deck, width: 88, height: 112)
+    HStack(alignment: .top, spacing: compact ? 9 : 13) {
+      DeckCoverView(
+        deck: deck,
+        width: compact ? 56 : 88,
+        height: compact ? 72 : 112
+      )
 
-      VStack(alignment: .leading, spacing: 7) {
+      VStack(alignment: .leading, spacing: compact ? 5 : 7) {
         HStack(spacing: 6) {
           if deck.official {
             Label("deck.badge.official", systemImage: "checkmark.seal.fill")
@@ -44,6 +49,7 @@ struct DeckCardView: View {
         Text(verbatim: deck.appAuthorNickname)
           .font(.caption)
           .foregroundStyle(AppPalette.mutedInk)
+          .lineLimit(1)
 
         HStack(spacing: 5) {
           ForEach(deck.appTags.prefix(2), id: \.self) { tag in
@@ -65,11 +71,13 @@ struct DeckCardView: View {
         }
         .font(.caption2.weight(.medium))
         .foregroundStyle(AppPalette.mutedInk)
+        .lineLimit(1)
+        .minimumScaleFactor(0.75)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .padding(14)
-    .frame(maxWidth: .infinity, minHeight: 146, alignment: .leading)
+    .padding(compact ? 11 : 14)
+    .frame(maxWidth: .infinity, minHeight: compact ? 124 : 146, alignment: .leading)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 10, y: 6)
     .accessibilityElement(children: .combine)
