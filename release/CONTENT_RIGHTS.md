@@ -17,7 +17,7 @@ This is the release evidence index for App Store Connect's **Content Rights** an
 ## Korean pronunciation audio
 
 - Korean prompts are first-party text.
-- 581 bundled MP3 files (5,951,040 bytes) were generated with `gTTS 2.5.4` for every fixed pronunciation target provided by the app: official decks, all game presets, curriculum/daily practice, and the built-in free-practice sample. No Korean-pronunciation CAF files remain in the bundle.
+- 582 bundled MP3 files (5,964,096 bytes) were generated with `gTTS 2.5.4` for every fixed pronunciation target provided by the app: official decks, all game presets, curriculum/daily practice, and the built-in free-practice sample. No Korean-pronunciation CAF files remain in the bundle.
 - The app does not call gTTS or send prompt text to Google at runtime. It plays the reviewed files offline; private user-deck text remains on device and uses Apple's speech synthesizer only when no matching bundled file exists.
 - gTTS itself is MIT-licensed, but its maintainers state that it uses undocumented Google Translate speech functionality and is not Google Cloud Text-to-Speech. The MIT license covers the client code, not a separate promise about Google service access or audio-output distribution.
 - No celebrity, artist, actor, cloned, or user-provided voice is used. The files speak only the first-party Korean prompts and are used only as pronunciation aids inside PIYOKEY.
@@ -43,5 +43,5 @@ This record is operational evidence, not legal advice.
 ### Version 1.1 expanded-audio review
 
 - **Date generated:** 2026-08-15 (Asia/Tokyo)
-- **Scope change:** 397 MP3 files were added or replaced and 108 legacy macOS-voice CAF files were removed, producing the 581-file set documented above.
+- **Scope change:** 398 MP3 files were added or replaced and 108 legacy macOS-voice CAF files were removed, producing the 582-file set documented above.
 - **Status:** Pending operator review and listening QA. The version 1.0 approval is retained as historical evidence and does not by itself approve this expanded asset set.

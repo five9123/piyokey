@@ -82,14 +82,14 @@ final class DeckLibraryTests: XCTestCase {
         targets.insert(item.ko)
       }
     }
-    XCTAssertEqual(targets.count, 580)
+    XCTAssertEqual(targets.count, 581)
 
     for index in 1...3 {
       targets.insert(
         AppLocalization.string("practice.sample_target_\(index)", language: .japanese)
       )
     }
-    XCTAssertEqual(targets.count, 581)
+    XCTAssertEqual(targets.count, 582)
 
     for target in targets.sorted() {
       let audioURL = try XCTUnwrap(
@@ -106,7 +106,7 @@ final class DeckLibraryTests: XCTestCase {
       at: resourceRoot.appendingPathComponent("audio", isDirectory: true),
       includingPropertiesForKeys: nil
     )
-    XCTAssertEqual(bundledAudioURLs.filter { $0.pathExtension == "mp3" }.count, 581)
+    XCTAssertEqual(bundledAudioURLs.filter { $0.pathExtension == "mp3" }.count, 582)
     XCTAssertTrue(bundledAudioURLs.allSatisfy { $0.pathExtension != "caf" })
   }
 

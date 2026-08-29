@@ -68,7 +68,18 @@ class RetentionPolicyTest {
   @Test fun curriculumHasSixChaptersAndTenToFifteenItemsPerStage() {
     assertEquals(6, CurriculumCatalog.chapters.size)
     assertTrue(CurriculumCatalog.stages.all { it.items.size in 10..15 })
-    assertEquals(7, CurriculumCatalog.stages.size)
+    assertEquals(12, CurriculumCatalog.stages.size)
+    assertEquals(
+      listOf("chapter_5_words", "chapter_5_travel_words", "chapter_5_study_work_words"),
+      CurriculumCatalog.chapters[4].stages.map(CurriculumStage::id),
+    )
+    assertEquals(
+      listOf(
+        "chapter_6_spacing", "chapter_6_sentences", "chapter_6_travel_phrases",
+        "chapter_6_daily_conversation", "chapter_6_fan_support",
+      ),
+      CurriculumCatalog.chapters[5].stages.map(CurriculumStage::id),
+    )
   }
 
   @Test fun sequentialCoreUnlocksAndChapterFiveIsFree() {

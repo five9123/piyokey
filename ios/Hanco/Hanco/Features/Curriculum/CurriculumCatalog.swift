@@ -91,7 +91,19 @@ enum CurriculumCatalog {
       5,
       stageID: "chapter_5_words",
       symbol: "text.book.closed.fill",
-      targets: ["사랑", "친구", "학교", "음식", "여행", "사진", "음악", "선물", "오늘", "응원"]
+      targets: ["사랑", "친구", "학교", "음식", "여행", "사진", "음악", "선물", "오늘", "응원"],
+      followingStages: [
+        (
+          id: "chapter_5_travel_words",
+          symbol: "airplane.circle.fill",
+          targets: ["기차", "버스", "택시", "지도", "시장", "지하철", "공항", "식당", "화장실", "관광"]
+        ),
+        (
+          id: "chapter_5_study_work_words",
+          symbol: "briefcase.fill",
+          targets: ["회사", "공부", "선생님", "학생", "도서관", "업무", "회의", "계획", "발표", "보고서"]
+        ),
+      ]
     ),
     chapter(
       6,
@@ -109,7 +121,31 @@ enum CurriculumCatalog {
             "안녕하세요", "감사합니다", "사랑해요", "만나서 반가워요", "오늘도 힘내요",
             "정말 멋있어요", "같이 가요", "사진을 찍어요", "음악을 들어요", "좋은 하루 보내요",
           ]
-        )
+        ),
+        (
+          id: "chapter_6_travel_phrases",
+          symbol: "airplane.circle.fill",
+          targets: [
+            "추천 메뉴가 뭐예요", "지하철역이 어디예요", "이거 얼마예요", "사진 찍어 주세요", "화장실이 어디예요",
+            "카드로 계산할게요", "예약했어요", "길을 잃었어요", "한 장 주세요", "매운 음식 괜찮아요",
+          ]
+        ),
+        (
+          id: "chapter_6_daily_conversation",
+          symbol: "cup.and.saucer.fill",
+          targets: [
+            "행복하게 웃어요", "오늘 하루 어땠어요", "도와줘서 고마워요", "다음에 또 봐요", "좋은 아침이에요",
+            "오늘 날씨가 좋아요", "점심 같이 먹어요", "조금 피곤해요", "지금 집에 가요", "내일 다시 만나요",
+          ]
+        ),
+        (
+          id: "chapter_6_fan_support",
+          symbol: "heart.fill",
+          targets: [
+            "건강 꼭 챙겨요", "하트 해 주세요", "웃는 모습 좋아요", "평생 응원할게요", "화면 너머로 설레요",
+            "다음 방송도 올게요", "오늘도 레전드예요", "목소리 진짜 좋아요", "와 줘서 고마워요", "오늘 착장 최고예요",
+          ]
+        ),
       ]
     ),
   ]

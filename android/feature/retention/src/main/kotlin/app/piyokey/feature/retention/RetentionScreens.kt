@@ -579,7 +579,12 @@ fun stageTitle(id: String): String = stringResource(
     "chapter_3_syllable_building" -> R.string.curriculum_stage_syllables
     "chapter_4_batchim" -> R.string.curriculum_stage_batchim
     "chapter_5_words" -> R.string.curriculum_stage_words
+    "chapter_5_travel_words" -> R.string.curriculum_stage_travel_words
+    "chapter_5_study_work_words" -> R.string.curriculum_stage_study_work_words
     "chapter_6_spacing" -> R.string.curriculum_stage_spacing
-    else -> R.string.curriculum_stage_sentences
+    "chapter_6_sentences" -> R.string.curriculum_stage_sentences
+    "chapter_6_travel_phrases" -> R.string.curriculum_stage_travel_phrases
+    "chapter_6_daily_conversation" -> R.string.curriculum_stage_daily_conversation
+    else -> R.string.curriculum_stage_fan_support
   },
 )

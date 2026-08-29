@@ -41,7 +41,7 @@ swift test
 
 ## 오프라인 목표 발음
 
-앱이 제공하는 공식 덱·게임 프리셋·커리큘럼·데일리·기본 연습의 고정 한국어 581개는 `shared/mock_catalog/audio/`의 콘텐츠 주소형 gTTS MP3를 재생한다. 앱 런타임은 네트워크 TTS를 호출하지 않으며, 사용자 덱처럼 빌드 시 알 수 없는 문구와 파일 손상 때만 `AVSpeechSynthesizer(ko-KR)`로 대체한다.
+앱이 제공하는 공식 덱·게임 프리셋·커리큘럼·데일리·기본 연습의 고정 한국어 582개는 `shared/mock_catalog/audio/`의 콘텐츠 주소형 gTTS MP3를 재생한다. 앱 런타임은 네트워크 TTS를 호출하지 않으며, 사용자 덱처럼 빌드 시 알 수 없는 문구와 파일 손상 때만 `AVSpeechSynthesizer(ko-KR)`로 대체한다.
 
 콘텐츠를 바꾼 뒤에는 카탈로그와 음원을 순서대로 갱신한다.
 
@@ -51,7 +51,7 @@ python3 -m pip install -r tools/requirements-audio.txt
 python3 tools/gen_gtts_audio.py --prune
 ```
 
-생성기는 일반 덱과 5개 게임 하위 폴더를 재귀적으로 읽고 `pronunciation_prompts.json`의 커리큘럼·기본 연습 문구를 합친다. 각 MP3를 CoreAudio로 검증한 뒤 원자 교체하며, release preflight는 정확히 581개 MP3와 legacy 발음 CAF 0개를 요구한다.
+생성기는 일반 덱과 5개 게임 하위 폴더를 재귀적으로 읽고 `pronunciation_prompts.json`의 커리큘럼·기본 연습 문구를 합친다. 각 MP3를 CoreAudio로 검증한 뒤 원자 교체하며, release preflight는 정확히 582개 MP3와 legacy 발음 CAF 0개를 요구한다.
 
 Simulator UI 테스트는 p95 표본 생성까지 검증하지만 `50ms` 합격 판정은 하지 않는다. 성능 판정은 위 실기기 절차를 따른다.
 

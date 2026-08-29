@@ -44,4 +44,9 @@
   <item quantity="one">This week %1$d/7 · %2$d-day streak</item>
   <item quantity="other">This week %1$d/7 · %2$d-day streak</item>
 </plurals>
+  <string name="curriculum_stage_travel_words">Travel words</string>
+  <string name="curriculum_stage_study_work_words">Study and work words</string>
+  <string name="curriculum_stage_travel_phrases">Travel phrases</string>
+  <string name="curriculum_stage_daily_conversation">Daily conversation</string>
+  <string name="curriculum_stage_fan_support">Fan support phrases</string>
 </resources>

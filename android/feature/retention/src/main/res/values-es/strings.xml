@@ -96,4 +96,9 @@
   <item quantity="one">Esta semana %1$d/7 · racha de %2$d día</item>
   <item quantity="other">Esta semana %1$d/7 · racha de %2$d días</item>
 </plurals>
+  <string name="curriculum_stage_travel_words">Palabras de viaje</string>
+  <string name="curriculum_stage_study_work_words">Palabras de estudio y trabajo</string>
+  <string name="curriculum_stage_travel_phrases">Frases de viaje</string>
+  <string name="curriculum_stage_daily_conversation">Conversación cotidiana</string>
+  <string name="curriculum_stage_fan_support">Frases de apoyo para fans</string>
 </resources>

@@ -21,10 +21,18 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #85 연습 챕터 5·6 스테이지 확장 | Ready for review | `codex/85-practice-content-expansion` / `/private/tmp/piyokey-issue85` | PR 생성 후 CI·리뷰 확인 |
 | #79 / PR #80 iPad 화면 밀도·스토어 이미지 | Verify | `codex/79-final-qa` / `/private/tmp/piyokey-issue79-final-qa` | 가로에서도 문제→피요·입력→키보드 순서 유지, 크기/여백 수정·mini/Pro 선택 회귀 통과. 10시장 가로 100장+ZIP 10개 검수 완료. 업로드는 Chrome `Not allowed`로 차단; PR 리뷰/CI·새 RC·스토어 등록 필요 |
 | #77 iOS 1.1 심사 제출 | Blocked | codex/77-ios11-submission / /private/tmp/piyokey-issue77-submission | Account Holder 은행·한국 세금 정보 완료 및 나머지 제출 gate 검증 (미국 Foreign Status/W-8BEN Active 확인) |
 | #75 / PR #76 iOS 1.1 (7) 배포 | Verify | main 기록 반영 완료 | TestFlight·App Store 빌드 연결 완료, 후속 심사 제출은 #77 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
+
+## #85 연습 챕터 5·6 스테이지 확장
+
+- 챕터5 단어를 일상·여행·학업/업무 3개 스테이지, 챕터6 표현을 띄어쓰기·기본·여행·일상 대화·팬 응원 5개 스테이지로 확장했다. iOS·Android는 같은 ID와 각 10개 목표를 사용하며 챕터5 이상 자유 선택 정책은 유지한다.
+- UI와 학습 뜻은 `ja/en/es/de/fr`에 추가했고 읽기는 일본어 가타카나 또는 공통 라틴 로마자를 사용한다. 한국어 UI 선택지는 복원하지 않았고, 비번들 보존 fixture와 `KoreanLearningContent`의 학습 원본만 동기화했다.
+- 신규 50개 목표 중 49개는 기존 canonical 음원을 재사용했고 `다음에 또 봐요` 1개를 `gTTS==2.5.4`, `lang=ko`, `tld=com`, 보통 속도로 생성했다. 전체 고정 음원은 582개·5,964,096바이트다.
+- Android retention 단위 테스트와 앱 Kotlin 컴파일, iOS 커리큘럼·번들 음원·5언어/한국어 UI 제외 테스트, Python 언어 범위·preflight 24개, 저장소 preflight와 50개 목표 교차 검증을 통과했다. 기기 수동 QA·스토어 제출·배포는 하지 않았다.
 
 ## #73 5언어·온보딩 main 통합 완료
 

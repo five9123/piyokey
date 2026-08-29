@@ -95,4 +95,9 @@
     <string name="home_primary_recommend_detail">Passend zu deinem Niveau und deinen Interessen</string>
     <string name="home_primary_resume_eyebrow">Mach weiter</string>
     <string name="home_primary_resume_detail">Setze deine Übung fort</string>
+  <string name="curriculum_stage_travel_words">Reisewörter</string>
+  <string name="curriculum_stage_study_work_words">Wörter für Studium und Arbeit</string>
+  <string name="curriculum_stage_travel_phrases">Reisesätze</string>
+  <string name="curriculum_stage_daily_conversation">Alltagsgespräche</string>
+  <string name="curriculum_stage_fan_support">Fan-Kommentare</string>
 </resources>

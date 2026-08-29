@@ -95,4 +95,9 @@
     <string name="home_primary_recommend_detail">Choisi selon ton niveau et tes centres d’intérêt</string>
     <string name="home_primary_resume_eyebrow">Reprends la pratique</string>
     <string name="home_primary_resume_detail">Continue à t’entraîner</string>
+  <string name="curriculum_stage_travel_words">Mots de voyage</string>
+  <string name="curriculum_stage_study_work_words">Mots des études et du travail</string>
+  <string name="curriculum_stage_travel_phrases">Phrases de voyage</string>
+  <string name="curriculum_stage_daily_conversation">Conversation quotidienne</string>
+  <string name="curriculum_stage_fan_support">Phrases de soutien des fans</string>
 </resources>
