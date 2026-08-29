@@ -6,8 +6,8 @@
 - Generator: `tools/gen_gtts_audio.py`, `gTTS==2.5.4`
 - Settings: `lang=ko`, `tld=com`, normal speed
 - Scope: every app-provided fixed Korean target in all 26 base/update catalog decks, all 15 game-preset decks, curriculum/daily content, and the free practice sample
-- Format: 581 content-addressed gTTS MP3 assets bundled without transcoding
-- Total size: 5,951,040 bytes (5.68 MiB)
+- Format: 582 content-addressed gTTS MP3 assets bundled without transcoding
+- Total size: 5,964,096 bytes (5.69 MiB)
 - Migration: 184 existing MP3 assets retained, 397 assets generated, and 108 legacy macOS `Yuna` IMA4 CAF assets removed
 - Migration command: `python3 tools/gen_gtts_audio.py --prune`
 - Full regeneration: `python3 tools/gen_gtts_audio.py --force --prune`
@@ -40,7 +40,7 @@ DECISIONS updates. `AGENTS.md` 명령 게이트 기준으로 PR/머지 전 `xcod
 
 gTTS is MIT-licensed software, but it uses undocumented Google Translate speech
 functionality and is not Google Cloud Text-to-Speech. Distribution and
-content-use rights for the expanded 581-file set require review. Keep
+content-use rights for the expanded 582-file set require review. Keep
 `content_rights_confirmed` false until those rights are confirmed; otherwise
 regenerate the same canonical assets with an approved TTS provider before App
 Store submission.

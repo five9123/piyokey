@@ -25,4 +25,9 @@
 <plurals name="retention_week_progress">
   <item quantity="other">今週 %1$d/7・%2$d日連続</item>
 </plurals>
+  <string name="curriculum_stage_travel_words">旅行の単語</string>
+  <string name="curriculum_stage_study_work_words">学習・仕事の単語</string>
+  <string name="curriculum_stage_travel_phrases">旅行フレーズ</string>
+  <string name="curriculum_stage_daily_conversation">日常会話</string>
+  <string name="curriculum_stage_fan_support">ファンの応援フレーズ</string>
 </resources>

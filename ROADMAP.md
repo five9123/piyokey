@@ -4,11 +4,11 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `origin/main` `60d61c9`다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거와 PR #84의 저장소·화면 감사는 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `origin/main` `c066638`이다. PR #74의 5언어·온보딩, PR #80의 iPad 화면, PR #72의 자유 연습 제거, PR #84의 저장소·화면 감사와 PR #82의 홈 추천 두 영역은 통합 완료다. 업로드된 iOS `1.1 (7)`은 최신 소스보다 오래되므로 최종 RC가 아니다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
-1. 홈 추천 2행 #81 / PR #82
-   - 개인화·다음 단계 각 3개와 중복 제거, iPhone 가로 스크롤·iPad 3열 구현
-   - 최신 main 통합 뒤 추천 단위·iPhone·iPad 회귀를 재검증해 병합
+1. 연습 챕터 5·6 스테이지 확장 #85 / PR #86
+   - iOS·Android 동일한 6챕터·12스테이지와 5언어 학습 콘텐츠·고정 음원 계약 적용
+   - 최신 main 통합 뒤 양 플랫폼 관련 회귀를 재검증해 병합
 2. 현지 20시 온보딩 리마인더 #58
    - 소스 구현과 iOS/Android 자동 회귀 완료
    - 실제 기기에서 권한 동의 뒤 현지 20시 알림 수신 확인 후 종료
@@ -33,7 +33,7 @@
 ## Later — 출시 기준선을 막지 않는 탐색
 
 - 자동 발음·게임 힌트 #8 및 관련 Draft PR
-- 기본 dirty worktree recovery queue: 챕터5/6 확장, `typee.app` 링크, 흔들림 애니메이션 수정, 스토어/Pro 자산을 기능별 새 issue·최신 main branch로 재적용
+- 기본 dirty worktree recovery queue: `typee.app` 링크, 흔들림 애니메이션 수정, 스토어/Pro 자산을 기능별 새 issue·최신 main branch로 재적용
 - 신규 플랫폼·추가 언어(이번 es/de/fr 확장 제외)·클라우드 동기화
 
 Later 작업은 R1.1 출시 파일이나 공용 충돌 파일을 동시에 소유하지 않는다.

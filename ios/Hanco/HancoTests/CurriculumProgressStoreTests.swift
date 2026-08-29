@@ -21,12 +21,19 @@ final class CurriculumProgressStoreTests: XCTestCase {
     rootURL = nil
   }
 
-  func testBundledCurriculumHasSixChaptersAndTenTypeableItemsPerStage() throws {
+  func testBundledCurriculumHasExpandedWordAndPhraseStagesWithTenTypeableItemsEach() throws {
     XCTAssertEqual(CurriculumCatalog.chapters.count, 6)
-    XCTAssertEqual(CurriculumCatalog.stages.count, 7)
+    XCTAssertEqual(CurriculumCatalog.stages.count, 12)
+    XCTAssertEqual(
+      CurriculumCatalog.chapters[4].stages.map(\.id),
+      ["chapter_5_words", "chapter_5_travel_words", "chapter_5_study_work_words"]
+    )
     XCTAssertEqual(
       CurriculumCatalog.chapters[5].stages.map(\.id),
-      ["chapter_6_spacing", "chapter_6_sentences"]
+      [
+        "chapter_6_spacing", "chapter_6_sentences", "chapter_6_travel_phrases",
+        "chapter_6_daily_conversation", "chapter_6_fan_support",
+      ]
     )
 
     for stage in CurriculumCatalog.stages {
