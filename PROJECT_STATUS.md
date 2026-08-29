@@ -3,7 +3,7 @@
 마지막 갱신: 2026-08-29 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
-최근 통합 기준선: PR #88, `08787c8378b46ec9635a5dac8c7522324bcaea11` — `.typedeck` BCP 47·deck schema v2까지 반영
+최근 통합 기준선: PR #90, `aa72ff5d004fc683d3b2aa3b2b1ceeb7ec2fcaf7` — PR #88 `.typedeck` BCP 47·deck schema v2와 완료 현황까지 반영
 
 이 문서는 현재 상태의 단일 현황판이다. 제품 계약은 `PRD.md`, 확정 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다. 상태가 바뀌면 과거 문장을 덧붙이지 말고 해당 표를 현재 사실로 교체한다.
 
@@ -12,7 +12,7 @@
 | 트랙 | 소스 상태 | 공개·배포 상태 | 다음 gate |
 |---|---|---|---|
 | iOS 공개판 | `1.0.2 (6)` | 2026-08-18 공개 확인; 2026-08-28 글로벌 availability 처리 시작 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `08787c8`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | 후속 설명 언어 선택 UI를 검토·통합한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
+| iOS 1.1 | `main` `aa72ff5`·앱 소스 `08787c8`; 업로드된 `1.1 (7)`은 최신 소스 이전 | build 7 TestFlight 처리·1.1 연결 완료, App Review 미제출 | 후속 설명 언어 선택 UI를 검토·통합한 새 build 번호 RC, 현지어·미디어·IAP·Paid Apps·Sandbox·Files/iCloud/AirDrop·1,000항목 gate |
 | Android 1.1 | `1.1.0 (8)` 소스 후보 | Play 미배포 | Play Console·서명·권리·Billing/Play Games와 Issue #19 동일 signed AAB 실기기 통합 QA |
 
 소스 완료는 스토어 제출 완료가 아니다. 외부 gate가 남아 있으면 `Blocked` 또는 `Verify`로 유지한다.
@@ -21,8 +21,9 @@
 
 | Issue/PR | 상태 | 소유 branch/worktree | 다음 한 단계 |
 |---|---|---|---|
+| #91 웹 `.typedeck` 완료 현황 동기화 | Done | 이 문서가 포함된 후속 PR로 `main` 반영 | 후속 작업은 최신 `main`에서 분리 |
 | #89 상태 문서 동기화 | Done | 이 문서가 포함된 후속 PR로 `main` 반영 | 후속 작업은 최신 `main`에서 분리 |
-| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Done | 구현은 `main` `08787c8` 병합 완료; `/private/tmp/piyokey-issue87-typedeck` 보존 | 웹 PR #6의 billing/지출 한도 해소 후 Release checks 재실행; 병합 뒤 나타난 미커밋 후속 선택 UI 후보는 별도 검토 |
+| #87 / PR #88 `.typedeck` BCP 47·deck schema v2 | Done | 구현은 `main` `08787c8` 병합 완료; 웹 PR #6도 merged; `/private/tmp/piyokey-issue87-typedeck` 보존 | 병합 뒤 나타난 미커밋 후속 선택 UI 후보만 별도 검토 |
 | #85 / PR #86 연습 챕터 5·6 스테이지 확장 | Done | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue85` 보존 | 후속 작업은 최신 `main`에서 분리 |
 | #77 iOS 1.1 심사 제출 | Blocked | 기록은 `main`; 보존 worktree `/private/tmp/piyokey-issue77-submission` | 새 RC를 만든 뒤 Account Holder 은행·한국 세금 정보와 나머지 제출 gate 검증 |
 | #58 / PR #62 현지 20시 리마인더 | Verify | 구현은 `main` 병합 완료; `/private/tmp/piyokey-issue-58` 보존 | 실제 기기에서 권한 동의·현지 20시 알림 수신 확인 |
@@ -33,7 +34,7 @@
 - 컨테이너 `format_version`은 1을 유지하고 콘텐츠 `deck_schema_version`을 2로 올렸다. 새 reader는 v1·v2를 모두 읽고 새 writer는 `default_locale`과 canonical BCP 47 localization key를 쓰며, malformed·duplicate·noncanonical tag를 거부하고 정상 unknown tag를 보존한다.
 - fallback은 exact tag → primary language → `default_locale` → `en` → legacy Japanese base 순서다. Python·Swift·Kotlin 공용 fixture, 플랫폼 간 writer/reader 계약과 iOS·Android Pro 모델을 동기화했다.
 - 저장소 Actions를 전체 활성화했다. Source CI의 Python 100개·fixture/preflight, SwiftPM, iOS simulator build, Android 테스트·전체 lint·debug/release APK·AAB·release manifest와 별도 발음 자산 계약이 모두 통과했다.
-- 웹 PR #6 commit `4a7c9c8`은 모바일 multilingual golden과 1,592바이트·SHA-256 `b9087f69994f4c325d208cce69cc9ff79de232945c13855e6b9a8427313615c1`로 동일하고 로컬 59개 테스트·lint·typecheck·build·감사·Vercel을 통과했다. 웹 GitHub Release checks는 코드 실행 전 billing/Actions 지출 한도로 막혀 있어 계정 조치 후 재실행이 남았다.
+- 웹 PR #6 commit `4a7c9c8`도 병합됐다. 모바일 multilingual golden과 1,592바이트·SHA-256 `b9087f69994f4c325d208cce69cc9ff79de232945c13855e6b9a8427313615c1`로 동일하며 로컬 59개 테스트·lint·typecheck·build·감사, GitHub Release `verify`, Vercel이 모두 통과했다. `production-analytics`는 PR 조건에 따라 정상 skip됐다.
 - PR 병합 직후 #87 보존 worktree에 15개·421삽입/55삭제의 설명 언어 선택 UI 후속 후보가 새로 나타났다. PR #88과 `main`에는 포함되지 않았으며 삭제·덮어쓰기·추가 커밋 없이 보존한다.
 
 ## #85 연습 챕터 5·6 스테이지 확장
@@ -49,9 +50,9 @@
 
 | 구분 | 확정 결과 | 처리 |
 |---|---|---|
-| 원격 기준선 | `origin/main` `08787c8`; PR #88 `.typedeck` BCP 47·schema v2까지 반영 | 새 출시 후보와 후속 작업의 기준선 |
-| 열린 PR | 모바일 #88 merged, 웹 #6 open; 모바일 전체 Actions 성공·웹 writer golden·Vercel 통과 | 웹 billing/지출 한도 해소 후 Release checks 재실행 |
-| worktree | 총 20개; 기본 `/Users/jungminoh/Documents/hanco`와 #87 보존 worktree가 dirty, 나머지 18개 clean | 두 dirty 작업공간을 삭제·덮어쓰기 하지 않고 후속 후보를 별도 검토 |
+| 원격 기준선 | `origin/main` `aa72ff5`; PR #88 기능과 PR #90 완료 현황까지 반영 | 새 출시 후보와 후속 작업의 기준선 |
+| `.typedeck` 연계 PR | 모바일 #88·웹 #6 모두 merged; 모바일 전체 Actions, 웹 Release `verify`·Vercel 성공 | 미커밋 후속 선택 UI 후보만 별도 검토 |
+| worktree | 총 21개; 기본 `/Users/jungminoh/Documents/hanco`와 #87 보존 worktree가 dirty, 나머지 19개 clean | 두 dirty 작업공간을 삭제·덮어쓰기 하지 않고 후속 후보를 별도 검토 |
 | 기본 dirty worktree | 닫힌 #63 branch 위 tracked 44개·untracked 5개; 현재 main보다 오래된 기반 | release 기준이 아님. 새 branch에서 기능별 재적용·검증 전까지 보존 |
 | stash | 1개, 35파일·1,214삽입/155삭제; 스토어 미디어·Pro·지원 URL 계열 | apply/drop하지 않음; 복구 원본으로만 유지 |
 | dirty에서 확인된 별도 후보 | `typee.app` 링크, 흔들림 애니메이션 수정, 스토어 자산·Pro 문구 | 구현 완료로 표시하지 않고 후속 issue로 분리할 recovery queue |
