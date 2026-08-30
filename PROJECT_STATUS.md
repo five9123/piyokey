@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| #132 일반 연습 재시작 시 마지막 카드 혼재 | Review 준비 | 재시작 후 음절 진행 상태가 첫 카드로 완전히 초기화되는 회귀 테스트를 review하고 iPhone/iPad에서 `한 번 더` 전환을 최종 확인 |
+| #132 일반 연습 재시작 시 마지막 카드 혼재 | Review / PR #135 | 재시작 후 음절 진행 상태가 첫 카드로 완전히 초기화되는 회귀 테스트를 review하고 iPad 실기기에서 `한 번 더` 전환을 최종 확인 |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
