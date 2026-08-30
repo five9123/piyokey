@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c806d4b295dda18c7c6bc9ccd7b7cee2225a4f4c",
+  "verified_tree": "a38f44facc71bced1e5e3cbe4854c1cf210f8458",
+  "branch": "claude/ios-ipados-keyboard-ime-bug-4cff7e",
+  "scope": "TYP-68 OS IME reset between game targets",
+  "result": "pass",
+  "recorded_at": "2026-08-30T17:19:23.258420+00:00",
+  "checks": [
+    {
+      "name": "hanco_osime_reset_tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -only-testing:HancoTests/OSIMEInputResetTests",
+      "note": ""
+    },
+    {
+      "name": "hanco_related_vm_suites",
+      "status": "pass",
+      "command": "xcodebuild test ... -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/PracticeSessionViewModelTests -only-testing:HancoTests/ChoseongQuizViewModelTests (104 passed, 0 failed)",
+      "note": ""
+    },
+    {
+      "name": "hanco_simulator_build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "physical_iphone_korean_os_keyboard_10_targets_5_games::OPEN",
+    "physical_ipad_korean_os_keyboard_10_targets_5_games::OPEN"
+  ]
+}
