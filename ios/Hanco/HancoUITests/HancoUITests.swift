@@ -3059,6 +3059,63 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "ipad-practice-portrait-active-ja")
   }
 
+  func testIPadPhysicalKeyboardGuideCompletionKeepsSessionFramesStable() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This physical keyboard layout gate runs on iPad-sized destinations")
+    }
+
+    let scenarios: [(orientation: UIDeviceOrientation, accessibilityType: Bool)] = [
+      (.portrait, false),
+      (.landscapeLeft, false),
+      (.portrait, true),
+    ]
+    for scenario in scenarios {
+      app.terminate()
+      XCUIDevice.shared.orientation = scenario.orientation
+      app = makeApplication(
+        resetKeyboardPreferences: true,
+        deckItemLimit: 2,
+        koreanKeyboardAvailable: true
+      )
+      if scenario.accessibilityType {
+        app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+      }
+      app.launchArguments += [
+        "-keyboard.input_mode_default", "os_ime",
+        "-keyboard.shows_physical_keyboard_guide", "YES",
+      ]
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+      startPractice()
+      if scenario.orientation == .landscapeLeft { assertLandscapeOrientation() }
+
+      let guide = element("physical_keyboard.guide")
+      let instruction = element("physical_keyboard.guide.instruction")
+      let targetCard = element("practice.target.card")
+      let compositionCard = element("practice.composition.card")
+      XCTAssertTrue(guide.waitForExistence(timeout: 5))
+      XCTAssertTrue(instruction.exists)
+      XCTAssertTrue(targetCard.exists)
+      XCTAssertTrue(compositionCard.exists)
+
+      let guideFrameBeforeCompletion = guide.frame
+      let targetMidYBeforeCompletion = targetCard.frame.midY
+      let compositionMidYBeforeCompletion = compositionCard.frame.midY
+
+      let imeField = app.textFields["os_ime.text_field"]
+      XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+      imeField.tap()
+      imeField.typeText("사랑해요")
+
+      let ready = element("physical_keyboard.guide.ready")
+      XCTAssertTrue(ready.waitForExistence(timeout: 0.5))
+      XCTAssertEqual(guide.frame.minY, guideFrameBeforeCompletion.minY, accuracy: 1)
+      XCTAssertEqual(guide.frame.height, guideFrameBeforeCompletion.height, accuracy: 1)
+      XCTAssertEqual(targetCard.frame.midY, targetMidYBeforeCompletion, accuracy: 1)
+      XCTAssertEqual(compositionCard.frame.midY, compositionMidYBeforeCompletion, accuracy: 1)
+    }
+  }
+
   func testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable() throws {
     guard max(app.frame.width, app.frame.height) >= 1_000 else {
       throw XCTSkip("This accessibility layout gate runs on iPad-sized destinations")

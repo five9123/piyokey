@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "046de19a34477fd1335c7b92a7a816a7d5d8ac8c",
+  "verified_tree": "4fdc9795a188631b769026426a460873353c66c4",
+  "branch": "codex/122-ipad-completion-layout",
+  "scope": "Issue #122 iPad practice completion layout regression",
+  "result": "pass",
+  "recorded_at": "2026-08-30T02:57:26.701595+00:00",
+  "checks": [
+    {
+      "name": "iPad portrait landscape accessibility layout",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPad Air 11-inch (M4),OS=26.5 -only-testing:HancoUITests/HancoUITests/testIPadPhysicalKeyboardGuideCompletionKeepsSessionFramesStable",
+      "note": ""
+    },
+    {
+      "name": "physical keyboard mapping",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPad Air 11-inch (M4),OS=26.5 -only-testing:HancoTests/AppSettingsTests/testPhysicalDubeolsikGuideMapsBaseShiftSpaceAndHomePositions -only-testing:HancoTests/AppSettingsTests/testPhysicalDubeolsikGuideCoversEveryBuiltInBaseAndShiftJamo",
+      "note": ""
+    },
+    {
+      "name": "iPhone compact practice regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5 -only-testing:HancoUITests/HancoUITests/testInitialJapanesePracticeScreenSnapshot -only-testing:HancoUITests/HancoUITests/testSessionSwitchesToOSIMEAndKeepsAcceptedJamoProgress",
+      "note": ""
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "iPad Split View width, Reduce Motion, and physical-device completion transition remain for manual verification"
+  ]
+}
