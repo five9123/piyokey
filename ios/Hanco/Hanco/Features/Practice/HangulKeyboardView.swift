@@ -35,6 +35,69 @@ enum BuiltInKeyboardLayout: String, CaseIterable, Equatable {
   }
 }
 
+struct KeyboardPreferenceSnapshot: Equatable {
+  let defaultInputMode: SessionInputMode
+  let builtInLayout: BuiltInKeyboardLayout
+  let showsPhysicalKeyboardGuide: Bool
+}
+
+/// The persistence boundary for keyboard choices shared by Settings and sessions.
+///
+/// `builtInKorean10Key` is a record-only input mode. The user's default stores the
+/// built-in/OS choice and the built-in layout under separate keys.
+struct KeyboardPreferenceStore {
+  private let defaults: UserDefaults
+
+  init(defaults: UserDefaults = .standard) {
+    self.defaults = defaults
+  }
+
+  var snapshot: KeyboardPreferenceSnapshot {
+    KeyboardPreferenceSnapshot(
+      defaultInputMode: resolvedDefaultInputMode,
+      builtInLayout: BuiltInKeyboardLayout.resolved(
+        from: defaults.string(forKey: KeyboardPreferenceKeys.builtInLayoutDefault)
+          ?? BuiltInKeyboardLayout.dubeolsik.rawValue
+      ),
+      showsPhysicalKeyboardGuide: defaults.bool(
+        forKey: KeyboardPreferenceKeys.showsPhysicalKeyboardGuide
+      )
+    )
+  }
+
+  func setDefaultInputMode(_ mode: SessionInputMode) {
+    let persistedMode: SessionInputMode = mode == .osIME ? .osIME : .builtIn
+    defaults.set(persistedMode.rawValue, forKey: KeyboardPreferenceKeys.inputModeDefault)
+  }
+
+  func setBuiltInLayout(_ layout: BuiltInKeyboardLayout) {
+    defaults.set(layout.rawValue, forKey: KeyboardPreferenceKeys.builtInLayoutDefault)
+  }
+
+  func setShowsPhysicalKeyboardGuide(_ isEnabled: Bool) {
+    defaults.set(isEnabled, forKey: KeyboardPreferenceKeys.showsPhysicalKeyboardGuide)
+  }
+
+  @discardableResult
+  func repairInvalidValues() -> KeyboardPreferenceSnapshot {
+    let resolved = snapshot
+    setDefaultInputMode(resolved.defaultInputMode)
+    setBuiltInLayout(resolved.builtInLayout)
+    return resolved
+  }
+
+  private var resolvedDefaultInputMode: SessionInputMode {
+    guard
+      let rawValue = defaults.string(forKey: KeyboardPreferenceKeys.inputModeDefault),
+      let mode = SessionInputMode(rawValue: rawValue),
+      mode == .builtIn || mode == .osIME
+    else {
+      return .builtIn
+    }
+    return mode
+  }
+}
+
 extension SessionInputMode {
   var resultLabelKey: LocalizedStringKey {
     switch self {

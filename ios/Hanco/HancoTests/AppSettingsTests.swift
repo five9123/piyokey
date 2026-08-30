@@ -42,6 +42,45 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(PracticePromptOrder.resolved(from: "unexpected"), .targetMeaningReading)
   }
 
+  func testKeyboardPreferencesPersistAcrossStoreInstances() throws {
+    let suiteName = "AppSettingsTests.keyboardPersistence.\(UUID().uuidString)"
+    let isolated = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defer { isolated.removePersistentDomain(forName: suiteName) }
+
+    let writer = KeyboardPreferenceStore(defaults: isolated)
+    writer.setDefaultInputMode(.osIME)
+    writer.setBuiltInLayout(.korean10Key)
+    writer.setShowsPhysicalKeyboardGuide(true)
+
+    let reloaded = KeyboardPreferenceStore(defaults: isolated).snapshot
+    XCTAssertEqual(reloaded.defaultInputMode, .osIME)
+    XCTAssertEqual(reloaded.builtInLayout, .korean10Key)
+    XCTAssertTrue(reloaded.showsPhysicalKeyboardGuide)
+  }
+
+  func testKeyboardPreferencesRepairUnknownEnumsWithoutLosingValidGuideChoice() throws {
+    let suiteName = "AppSettingsTests.keyboardRepair.\(UUID().uuidString)"
+    let isolated = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defer { isolated.removePersistentDomain(forName: suiteName) }
+    isolated.set("unknown_mode", forKey: KeyboardPreferenceKeys.inputModeDefault)
+    isolated.set("unknown_layout", forKey: KeyboardPreferenceKeys.builtInLayoutDefault)
+    isolated.set(true, forKey: KeyboardPreferenceKeys.showsPhysicalKeyboardGuide)
+
+    let repaired = KeyboardPreferenceStore(defaults: isolated).repairInvalidValues()
+
+    XCTAssertEqual(repaired.defaultInputMode, .builtIn)
+    XCTAssertEqual(repaired.builtInLayout, .dubeolsik)
+    XCTAssertTrue(repaired.showsPhysicalKeyboardGuide)
+    XCTAssertEqual(
+      isolated.string(forKey: KeyboardPreferenceKeys.inputModeDefault),
+      SessionInputMode.builtIn.rawValue
+    )
+    XCTAssertEqual(
+      isolated.string(forKey: KeyboardPreferenceKeys.builtInLayoutDefault),
+      BuiltInKeyboardLayout.dubeolsik.rawValue
+    )
+  }
+
   func testPreferredLanguageUsesSupportedDeviceLanguageAndEnglishFallback() {
     XCTAssertEqual(AppLanguage.preferred(from: ["ja-JP", "en-US"]), .japanese)
     XCTAssertEqual(AppLanguage.preferred(from: ["ko-KR", "en-US"]), .english)

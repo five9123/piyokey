@@ -83,6 +83,7 @@ struct SettingsView: View {
       )
     }
     .onAppear {
+      repairKeyboardPreferencesIfNeeded()
       TelemetryService.shared.capture(.featureViewed, properties: [.feature: "settings"])
       TelemetryService.shared.setCrashContext(feature: "settings")
     }
@@ -753,6 +754,12 @@ struct SettingsView: View {
         }
       }
     )
+  }
+
+  private func repairKeyboardPreferencesIfNeeded() {
+    let resolved = KeyboardPreferenceStore().repairInvalidValues()
+    inputModeDefault = resolved.defaultInputMode.rawValue
+    builtInLayoutDefault = resolved.builtInLayout.rawValue
   }
 
   private var reminderEnabled: Binding<Bool> {

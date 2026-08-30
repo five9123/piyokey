@@ -240,7 +240,7 @@ struct PracticeView: View {
           showsRomanHints: $showsRomanHints,
           hapticsEnabled: $hapticsEnabled,
           showsPhysicalKeyboardGuide: $showsPhysicalKeyboardGuide,
-          inputMode: $inputMode,
+          inputMode: sessionInputModeBinding,
           soundEffectsEnabled: $soundEffectsEnabled,
           typingSoundPreset: $typingSoundPreset,
           practiceShowsTarget: $practiceShowsTarget,
@@ -1079,6 +1079,16 @@ struct PracticeView: View {
       inputMode = .builtIn
       showsOSIMEUnavailable = true
     }
+  }
+
+  private var sessionInputModeBinding: Binding<SessionInputMode> {
+    Binding(
+      get: { inputMode },
+      set: { mode in
+        inputMode = mode
+        KeyboardPreferenceStore().setDefaultInputMode(mode)
+      }
+    )
   }
 
   private var curriculumStars: Int {
