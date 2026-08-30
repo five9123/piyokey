@@ -84,7 +84,7 @@ struct DeckCardView: View {
     }
     .padding(compact ? 11 : 14)
     .frame(maxWidth: .infinity, minHeight: compact ? 124 : 146, alignment: .leading)
-    .frame(height: fixedHeight, alignment: .leading)
+    .frame(height: resolvedFixedHeight, alignment: .leading)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 10, y: 6)
     .accessibilityElement(children: .combine)
@@ -93,6 +93,10 @@ struct DeckCardView: View {
 
   private var itemCountText: String {
     AppLocalization.format("deck.items.format", deck.itemCount)
+  }
+
+  private var resolvedFixedHeight: CGFloat? {
+    fixedHeight.map { max($0, compact ? 124 : 146) }
   }
 
   private var downloadText: String {

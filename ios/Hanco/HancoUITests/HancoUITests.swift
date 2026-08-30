@@ -3,7 +3,7 @@ import XCTest
 final class HancoUITests: XCTestCase {
   private var app: XCUIApplication!
 
-  // Store captures use real localized UI. All other regression tests stay Japanese.
+  // Global-suffixed tests use real localized UI. Other regression tests stay Japanese.
   private var storeCaptureLanguage: String {
     if name.contains("GlobalEN") { return "en" }
     if name.contains("GlobalKO") { return "ko" }
@@ -1193,6 +1193,11 @@ final class HancoUITests: XCTestCase {
   }
 
   func testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_XSMALL"] = "1"
+    app.launch()
+
     let recommendations = [
       ("official_topik_one", "Vocabulario esencial del TOPIK I"),
       ("official_keyboard_start", "Primeros pasos con Dubeolsik"),
@@ -1208,9 +1213,15 @@ final class HancoUITests: XCTestCase {
     }
 
     let cardHeight = recommendations[0].0.frame.height
-    XCTAssertGreaterThan(cardHeight, 0)
+    XCTAssertEqual(cardHeight, 146, accuracy: 1)
     recommendations.dropFirst().forEach { card, _ in
       XCTAssertEqual(card.frame.height, cardHeight, accuracy: 1)
+    }
+    for index in 0..<(recommendations.count - 1) {
+      XCTAssertLessThanOrEqual(
+        recommendations[index].0.frame.maxX,
+        recommendations[index + 1].0.frame.minX
+      )
     }
 
     scrollToHittable(recommendations[0].0)

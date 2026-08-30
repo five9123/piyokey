@@ -702,7 +702,8 @@ struct CurriculumMapView: View {
 
 private struct HomeRecommendationsView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
-  @ScaledMetric(relativeTo: .body) private var recommendationCardHeight: CGFloat = 146
+  @ScaledMetric(relativeTo: .body) private var compactRecommendationCardHeight: CGFloat = 124
+  @ScaledMetric(relativeTo: .body) private var regularRecommendationCardHeight: CGFloat = 146
   @EnvironmentObject private var curriculumProgress: CurriculumProgressLibrary
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
@@ -829,12 +830,19 @@ private struct HomeRecommendationsView: View {
       DeckCardView(
         deck: deck,
         compact: compact,
-        fixedHeight: recommendationCardHeight,
+        fixedHeight: recommendationCardHeight(compact: compact),
         limitsTitleToOneLine: true
       )
     }
     .buttonStyle(.plain)
     .accessibilityIdentifier(identifier)
+  }
+
+  private func recommendationCardHeight(compact: Bool) -> CGFloat {
+    if compact {
+      return max(compactRecommendationCardHeight, 124)
+    }
+    return max(regularRecommendationCardHeight, 146)
   }
 
   private struct LearningSignal {
