@@ -322,6 +322,18 @@ struct AppRootView: View {
             .font(.system(size: 1))
             .opacity(0.01)
             .accessibilityIdentifier("debug.pronunciation.synthesized_count")
+          Text(verbatim: String(audioDebugProbe.effectPlaybackStartCount))
+            .font(.system(size: 1))
+            .opacity(0.01)
+            .accessibilityIdentifier("debug.effect.playback_start_count")
+          Text(
+            verbatim: audioDebugProbe.effectSchedulingP95Milliseconds.map {
+              String(format: "%.3f", $0)
+            } ?? "—"
+          )
+          .font(.system(size: 1))
+          .opacity(0.01)
+          .accessibilityIdentifier("debug.effect.scheduling_p95")
         }
       }
     #endif

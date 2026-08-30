@@ -460,6 +460,9 @@ struct FlowGameView: View {
           candidateTargets: acidRainOSIMECandidateTargets,
           acceptedText: viewModel.enteredText,
           resetRevision: viewModel.cardRevision + inputResetRevision,
+          onInputStart: {
+            HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
+          },
           onAcceptedSequence: viewModel.synchronizeOSIME,
           onAcceptedCandidateSequence: synchronizeAcidRainOSIME,
           onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake
