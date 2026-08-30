@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-68 게임 OS 키보드 전환 IME 잔존 | Review / PR #138 | Claude review와 CI 뒤, 잠금 해제한 iPhone 16(iOS 18.6.2)·iPad Pro 11형 3세대(iPadOS 26.6)에서 5개 직접 입력 게임별 OS 한국어 키보드 10단어 연속 전환 gate 확인 |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
