@@ -2,6 +2,9 @@ import DeckKit
 import SwiftUI
 
 struct DeckCardView: View {
+  static let compactMinimumHeight: CGFloat = 124
+  static let regularMinimumHeight: CGFloat = 146
+
   let deck: CatalogDeck
   var rank: Int?
   var isInstalled = false
@@ -60,7 +63,7 @@ struct DeckCardView: View {
             Text(verbatim: "#\(tag)")
               .font(.caption2.weight(.semibold))
               .foregroundStyle(AppPalette.accent)
-              .lineLimit(1)
+              .lineLimit(limitsTitleToOneLine ? 1 : nil)
               .truncationMode(.tail)
               .padding(.horizontal, 7)
               .padding(.vertical, 4)
@@ -83,7 +86,7 @@ struct DeckCardView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding(compact ? 11 : 14)
-    .frame(maxWidth: .infinity, minHeight: compact ? 124 : 146, alignment: .leading)
+    .frame(maxWidth: .infinity, minHeight: minimumHeight, alignment: .leading)
     .frame(height: resolvedFixedHeight, alignment: .leading)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 10, y: 6)
@@ -96,7 +99,11 @@ struct DeckCardView: View {
   }
 
   private var resolvedFixedHeight: CGFloat? {
-    fixedHeight.map { max($0, compact ? 124 : 146) }
+    fixedHeight.map { max($0, minimumHeight) }
+  }
+
+  private var minimumHeight: CGFloat {
+    compact ? Self.compactMinimumHeight : Self.regularMinimumHeight
   }
 
   private var downloadText: String {
