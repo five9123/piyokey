@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c445d36d137d47fb58ad9c14afb5ceb9fc324789",
+  "verified_tree": "caba06c9485e7a1c007207397536cad6a4294481",
+  "branch": "codex/68-ios-ime-reset",
+  "scope": "TYP-68 PR #138 Claude P1/P2 follow-up: generation-scoped IME edit replay and marked composition preservation",
+  "result": "pass",
+  "recorded_at": "2026-08-30T16:34:17.172981+00:00",
+  "checks": [
+    {
+      "name": "focused iOS unit regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -only-testing:HancoTests/FlowGameViewModelTests/testAcidRainOSIMECompletesAnyMatchingVisibleCard -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgePrefersAnyCompletedVisibleWord -only-testing:HancoTests/FlowGameViewModelTests/testOSIMEResetDiscardsCommittedAndMarkedTextWithoutDroppingFocus -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldDropsDelayedPriorEventsAndAcceptsFirstNewJamo -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldAcceptsFirstJamoWhenModelRevisionAdvancesBeforeUpdate -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldAcceptsFirstJamoMatchingAbandonedMarkedText -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldStripsAbandonedMarkedPrefixAtEventBoundary -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldReplaysEditDeliveredAfterUpdateReset -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldComposesSecondEventAfterBoundaryReset -only-testing:HancoTests/FlowGameViewModelTests/testHostedOSIMEFieldKeepsBufferedCompositionMatchingPriorTarget -only-testing:HancoTests/FlowGameViewModelTests/testOSIMESynchronizationAndConfirmedMistakeUseGameScoringRules -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMESynchronizationCanAdvanceAndRewindWithoutLosingSessionState -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEPhysicalKeyboardSnapshotsDoNotDuplicateMarkedCommitOrBackspace -only-testing:HancoTests/PracticeSessionViewModelTests/testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyGoldenRecipesCoverEveryCompatibilityJamo -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyEmitsOnlyCompletedJamoIntoSharedJudge -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyBackspaceRewindsPendingStrokeBeforeHangul -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyRequiresAdvanceBetweenConsecutiveConsonantsInSameGroup -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyWrongGroupCountsOneMistakeAndResetsPendingRecipe -only-testing:HancoTests/PracticeSessionViewModelTests/testBuiltInKeyboardLayoutUnknownValueFallsBackToDubeolsik -only-testing:HancoTests/ChoseongQuizViewModelTests/testTypingOSIMESynchronizesAcceptedPrefixAndCompletion -only-testing:HancoTests/HancoSoundEngineTests/testOSIMEWarmupStartsOnlyAfterRealTextActivity",
+      "note": "22 exact selectors passed"
+    },
+    {
+      "name": "focused iOS UI regression",
+      "status": "skip",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605\" -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testSessionSwitchesToOSIMEAndKeepsAcceptedJamoProgress -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance -only-testing:HancoUITests/HancoUITests/testOSIMEHardwareStyleDeleteAndReturnKeepAcceptedPrefixAligned -only-testing:HancoUITests/HancoUITests/testAcidRainOSIMECanClearAnyVisibleFallingWord -only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace -only-testing:HancoUITests/HancoUITests/testKorean10KeyLayoutCarriesIntoFlowGame",
+      "note": "BLOCKED before test execution: CoreSimulator bundle creation failed, then repeated DebuggerLLDB.DebuggerVersionStore no-debugger-version launch failures after simulator reboot; no UI pass claimed"
+    },
+    {
+      "name": "Python tools and content contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p \"test_*.py\"",
+      "note": "103 tests passed"
+    },
+    {
+      "name": "deterministic PiyoDeck fixture generation",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/gen_piyodeck_fixtures.py",
+      "note": "completed"
+    },
+    {
+      "name": "deterministic PiyoDeck fixture diff",
+      "status": "pass",
+      "command": "git diff --exit-code -- shared/piyodeck/fixtures",
+      "note": "clean"
+    },
+    {
+      "name": "HangulEngine and DeckKit package",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "48 tests passed"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "source diff hygiene",
+      "status": "pass",
+      "command": "git diff --check 051b24c4ea405d7c5f347bcf3eaeda3170c22755..c445d36d137d47fb58ad9c14afb5ceb9fc324789",
+      "note": "clean"
+    },
+    {
+      "name": "debug code audit",
+      "status": "pass",
+      "command": "! git diff -U0 051b24c4ea405d7c5f347bcf3eaeda3170c22755..c445d36d137d47fb58ad9c14afb5ceb9fc324789 | rg \"^\\\\+.*\\\\b(print|debugPrint)\\\\(\"",
+      "note": "no added print or debugPrint"
+    },
+    {
+      "name": "unfiltered Hanco and store-capture suites",
+      "status": "skip",
+      "command": "not run",
+      "note": "AppStoreScreenshot, ScreenshotCapture, AppPreview, and unfiltered Hanco tests intentionally excluded"
+    },
+    {
+      "name": "physical iPhone Korean OS keyboard 10x5 gate",
+      "status": "skip",
+      "command": "not run",
+      "note": "OPEN; no physical-device pass claimed"
+    },
+    {
+      "name": "physical iPad Korean OS keyboard 10x5 gate",
+      "status": "skip",
+      "command": "not run",
+      "note": "OPEN; no physical-device pass claimed"
+    }
+  ],
+  "manual_gates": [
+    "OPEN: Restore a working iOS UI-test runner and rerun the six exact focused HancoUITests selectors; current local Xcode LLDB version-store launch failure occurs before app/test execution.",
+    "OPEN: On an unlocked physical iPhone, enter 10 consecutive OS Korean keyboard targets in Flow, Acid Rain, Choseong Quiz, Word Quiz, and Dictation; verify empty committed/marked state, persistent focus/keyboard, first-jamo acceptance, and unchanged progress/mistake/combo/accuracy/score.",
+    "OPEN: Repeat the same 10-target-by-five-path OS Korean keyboard validation on an unlocked physical iPad."
+  ]
+}
