@@ -140,6 +140,28 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(viewModel.feedback, .idle)
   }
 
+  func testResetRestoresFirstTargetSyllableProgressAfterLastCard() throws {
+    let viewModel = PracticeSessionViewModel(targets: ["가", "학교"])
+
+    for key in try JamoDecomposer.keySequence(for: "가") {
+      viewModel.input(key)
+    }
+    viewModel.advance()
+    for key in try JamoDecomposer.keySequence(for: "학교") {
+      viewModel.input(key)
+    }
+
+    XCTAssertEqual(viewModel.targetSyllableProgress.map(\.character), Array("학교"))
+
+    viewModel.reset()
+
+    XCTAssertEqual(viewModel.target, "가")
+    XCTAssertEqual(viewModel.targetSyllableProgress.map(\.character), Array("가"))
+    XCTAssertEqual(viewModel.targetSyllableProgress.map(\.state), [.pending])
+    XCTAssertEqual(viewModel.targetSyllableCount, 1)
+    XCTAssertEqual(viewModel.completedSyllableCount, 0)
+  }
+
   func testCompletedProblemAdvancesWithoutClearingLessonMistakes() {
     let viewModel = PracticeSessionViewModel(targets: ["가", "나"])
     viewModel.input("ㄴ")

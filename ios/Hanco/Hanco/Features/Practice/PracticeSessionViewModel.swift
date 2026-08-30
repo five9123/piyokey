@@ -257,6 +257,7 @@ final class PracticeSessionViewModel: ObservableObject {
   func reset() {
     currentTargetIndex = 0
     target = targets[0]
+    targetSyllableRanges = Self.makeTargetSyllableRanges(for: target)
     targetJamoSequence = makeJudge(for: target).expectedSequence
     acceptedKeys.removeAll(keepingCapacity: true)
     composition = CompositionState()
