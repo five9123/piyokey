@@ -24,6 +24,7 @@
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
 | #124 iPad 정타 효과음 지연 | Verify | 소스·자동 회귀 통합 후 실제 iPad의 내장 스피커·Bluetooth 출력에서 첫/연속 정타 지연과 외부 음악 혼합을 청취 확인 |
+| #126 덱 연습 종료 후 키보드 설정 초기화 | Review | PR #131 자동 검증 뒤 실제 iPadOS 기기에서 입력 모드·내장 배열·물리 키보드 가이드의 종료·재실행 유지를 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
 | #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
