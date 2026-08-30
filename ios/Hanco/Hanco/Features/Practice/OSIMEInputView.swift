@@ -246,6 +246,7 @@ struct OSIMEInputPanel: View {
   private var inputField: some View {
     IMETextField(
       text: $fieldText,
+      resetText: acceptedText,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
       isFocusSuspended: isFocusSuspended,
@@ -550,8 +551,57 @@ struct KoreanKeyboardGuideView: View {
   }
 }
 
+struct OSIMETextFieldChange: Equatable {
+  let fullText: String
+  let committedText: String
+  let markedText: String?
+}
+
+struct OSIMEInputEventGate {
+  struct Event: Equatable {
+    fileprivate let generation: UInt
+    let change: OSIMETextFieldChange
+  }
+
+  private(set) var generation: UInt = 0
+
+  mutating func reset() {
+    generation &+= 1
+  }
+
+  func capture(_ change: OSIMETextFieldChange) -> Event {
+    Event(generation: generation, change: change)
+  }
+
+  func currentChange(for event: Event) -> OSIMETextFieldChange? {
+    event.generation == generation ? event.change : nil
+  }
+}
+
+@MainActor
+enum OSIMETextFieldResetter {
+  static func reset(_ textField: UITextField, to replacementText: String) {
+    // Marked text is provisional. Remove that range before unmarking so the
+    // input system cannot commit the previous target into the replacement.
+    if let markedRange = textField.markedTextRange {
+      textField.replace(markedRange, withText: "")
+    }
+    textField.unmarkText()
+    textField.text = replacementText
+    moveCursorToEnd(of: textField)
+  }
+
+  static func moveCursorToEnd(of textField: UITextField) {
+    textField.selectedTextRange = textField.textRange(
+      from: textField.endOfDocument,
+      to: textField.endOfDocument
+    )
+  }
+}
+
 private struct IMETextField: UIViewRepresentable {
   @Binding var text: String
+  let resetText: String
   let resetRevision: Int
   let focusRevision: Int
   let isFocusSuspended: Bool
@@ -590,14 +640,16 @@ private struct IMETextField: UIViewRepresentable {
     context.coordinator.isMounted = true
     if context.coordinator.lastResetRevision != resetRevision {
       context.coordinator.lastResetRevision = resetRevision
-      // A countdown/session reset must also discard an in-flight marked range;
-      // otherwise pre-countdown composition can be committed into the new item.
+      context.coordinator.eventGate.reset()
+      context.coordinator.isApplyingReset = true
+      OSIMETextFieldResetter.reset(textField, to: resetText)
+      context.coordinator.isApplyingReset = false
+    } else if context.coordinator.pendingEventCount == 0,
+      textField.text != text,
+      textField.markedTextRange == nil
+    {
       textField.text = text
-      textField.unmarkText()
-      moveCursorToEnd(of: textField)
-    } else if textField.text != text, textField.markedTextRange == nil {
-      textField.text = text
-      moveCursorToEnd(of: textField)
+      OSIMETextFieldResetter.moveCursorToEnd(of: textField)
     }
     if context.coordinator.lastFocusSuspended != isFocusSuspended {
       context.coordinator.lastFocusSuspended = isFocusSuspended
@@ -619,7 +671,7 @@ private struct IMETextField: UIViewRepresentable {
           textField.window != nil
         else { return }
         textField.becomeFirstResponder()
-        moveCursorToEnd(of: textField)
+        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
       }
     }
   }
@@ -629,44 +681,72 @@ private struct IMETextField: UIViewRepresentable {
     textField.resignFirstResponder()
   }
 
-  private func moveCursorToEnd(of textField: UITextField) {
-    textField.selectedTextRange = textField.textRange(
-      from: textField.endOfDocument,
-      to: textField.endOfDocument
-    )
-  }
-
   final class Coordinator: NSObject, UITextFieldDelegate {
     var parent: IMETextField
     var lastResetRevision = -1
     var lastFocusRevision = -1
     var lastFocusSuspended: Bool?
     var isMounted = true
+    var isApplyingReset = false
+    var eventGate = OSIMEInputEventGate()
+    var pendingEventCount = 0
 
     init(parent: IMETextField) {
       self.parent = parent
     }
 
     @objc func textDidChange(_ textField: UITextField) {
+      guard !isApplyingReset else { return }
       let fullText = textField.text ?? ""
-      parent.text = fullText
+      let change = textChange(from: textField, fullText: fullText)
+      let event = eventGate.capture(change)
+      let resetRevision = parent.resetRevision
+      pendingEventCount += 1
 
+      // UIKit may deliver an editingChanged queued by the previous marked-text
+      // session after SwiftUI has advanced the card. Defer one main-loop turn
+      // and reject any event captured before the new reset revision.
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
+        self.pendingEventCount -= 1
+        guard self.isMounted,
+          self.parent.resetRevision == resetRevision,
+          let currentChange = self.eventGate.currentChange(for: event)
+        else { return }
+        self.parent.text = currentChange.fullText
+        self.parent.onTextChange(currentChange.committedText, currentChange.markedText)
+      }
+    }
+
+    private func textChange(from textField: UITextField, fullText: String)
+      -> OSIMETextFieldChange
+    {
       guard let markedRange = textField.markedTextRange else {
-        parent.onTextChange(fullText, nil)
-        return
+        return OSIMETextFieldChange(
+          fullText: fullText,
+          committedText: fullText,
+          markedText: nil
+        )
       }
 
       let start = textField.offset(from: textField.beginningOfDocument, to: markedRange.start)
       let length = textField.offset(from: markedRange.start, to: markedRange.end)
       let utf16 = fullText as NSString
       guard start >= 0, length >= 0, start + length <= utf16.length else {
-        parent.onTextChange(fullText, nil)
-        return
+        return OSIMETextFieldChange(
+          fullText: fullText,
+          committedText: fullText,
+          markedText: nil
+        )
       }
       let before = utf16.substring(to: start)
       let marked = utf16.substring(with: NSRange(location: start, length: length))
       let after = utf16.substring(from: start + length)
-      parent.onTextChange(before + after, marked)
+      return OSIMETextFieldChange(
+        fullText: fullText,
+        committedText: before + after,
+        markedText: marked
+      )
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -686,10 +766,7 @@ private struct IMETextField: UIViewRepresentable {
       guard textField.markedTextRange == nil,
         textField.selectedTextRange?.end != textField.endOfDocument
       else { return }
-      textField.selectedTextRange = textField.textRange(
-        from: textField.endOfDocument,
-        to: textField.endOfDocument
-      )
+      OSIMETextFieldResetter.moveCursorToEnd(of: textField)
     }
   }
 }

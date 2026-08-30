@@ -2000,7 +2000,13 @@ final class HancoUITests: XCTestCase {
       evaluatedWith: matchingChosenCard
     )
     waitForExpectations(timeout: 3)
-    XCTAssertNotEqual(element("game.score.value").label, "0")
+    let score = element("game.score.value")
+    expectation(
+      for: NSPredicate(format: "label != %@", "0"),
+      evaluatedWith: score
+    )
+    waitForExpectations(timeout: 3)
+    XCTAssertNotEqual(score.label, "0")
     attachScreenshot(named: "acid-rain-os-ime-free-target-ja")
   }
 

@@ -1,4 +1,5 @@
 import HangulEngine
+import UIKit
 import XCTest
 
 @testable import Hanco
@@ -409,6 +410,91 @@ final class FlowGameViewModelTests: XCTestCase {
       .matching(completed: true, isComposing: false)
     )
     XCTAssertEqual(selection.evaluation.acceptedSequence, Array("ㄴㅓ"))
+  }
+
+  func testOSIMEResetDiscardsCommittedAndMarkedTextWithoutDroppingFocus() throws {
+    let window = UIWindow(frame: UIScreen.main.bounds)
+    let controller = UIViewController()
+    let textField = UITextField(frame: CGRect(x: 0, y: 0, width: 200, height: 44))
+    controller.view.addSubview(textField)
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    textField.text = "가"
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    XCTAssertNotNil(textField.markedTextRange)
+
+    OSIMETextFieldResetter.reset(textField, to: "")
+
+    XCTAssertEqual(textField.text, "")
+    XCTAssertNil(textField.markedTextRange)
+    XCTAssertTrue(textField.isFirstResponder)
+    XCTAssertNotNil(textField.selectedTextRange)
+  }
+
+  func testOSIMEEventGateRejectsDelayedCommittedAndMarkedEventsAcrossReset() {
+    var gate = OSIMEInputEventGate()
+    let delayedCommitted = gate.capture(
+      OSIMETextFieldChange(fullText: "학교", committedText: "학교", markedText: nil)
+    )
+    let delayedMarked = gate.capture(
+      OSIMETextFieldChange(fullText: "학교", committedText: "학", markedText: "교")
+    )
+
+    gate.reset()
+
+    XCTAssertNil(gate.currentChange(for: delayedCommitted))
+    XCTAssertNil(gate.currentChange(for: delayedMarked))
+
+    let firstNewJamo = gate.capture(
+      OSIMETextFieldChange(fullText: "ㄴ", committedText: "", markedText: "ㄴ")
+    )
+    XCTAssertEqual(gate.currentChange(for: firstNewJamo)?.markedText, "ㄴ")
+  }
+
+  func testDelayedOSIMEEventCannotMutateNewCardScoringAndFirstJamoStillWorks() throws {
+    let model = FlowGameViewModel(targets: ["가", "나"], cardTravelDuration: 100)
+    model.start(at: Date(timeIntervalSince1970: 0))
+
+    var gate = OSIMEInputEventGate()
+    let delayedPriorTarget = gate.capture(
+      OSIMETextFieldChange(fullText: "가", committedText: "가", markedText: nil)
+    )
+    model.synchronizeOSIME(acceptedSequence: Array("ㄱㅏ"))
+    gate.reset()
+
+    let scoringAfterTransition = (
+      model.score,
+      model.combo,
+      model.mistakeCount,
+      model.accuracyPercent
+    )
+    XCTAssertNil(gate.currentChange(for: delayedPriorTarget))
+    XCTAssertEqual(model.target, "나")
+    XCTAssertEqual(model.enteredText, "")
+    XCTAssertEqual(model.score, scoringAfterTransition.0)
+    XCTAssertEqual(model.combo, scoringAfterTransition.1)
+    XCTAssertEqual(model.mistakeCount, scoringAfterTransition.2)
+    XCTAssertEqual(model.accuracyPercent, scoringAfterTransition.3)
+
+    let firstNewJamo = gate.capture(
+      OSIMETextFieldChange(fullText: "ㄴ", committedText: "", markedText: "ㄴ")
+    )
+    let currentChange = try XCTUnwrap(gate.currentChange(for: firstNewJamo))
+    let evaluation = try OSIMETextJudge.evaluate(
+      target: model.target,
+      committedText: currentChange.committedText,
+      markedText: currentChange.markedText
+    )
+    model.synchronizeOSIME(acceptedSequence: evaluation.acceptedSequence)
+
+    XCTAssertEqual(model.acceptedKeySequence, Array("ㄴ"))
+    XCTAssertEqual(model.enteredText, "ㄴ")
+    XCTAssertEqual(model.score, scoringAfterTransition.0)
+    XCTAssertEqual(model.combo, scoringAfterTransition.1)
+    XCTAssertEqual(model.mistakeCount, scoringAfterTransition.2)
+    XCTAssertEqual(model.accuracyPercent, scoringAfterTransition.3)
   }
 
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
