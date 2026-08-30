@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "verified_commit": "664807432e3c74fab398c97ec57d3882ff981f9a",
+  "verified_tree": "90fde6d12b40b70717099a01774cbb5008061153",
+  "branch": "codex/132-practice-restart-session-isolation",
+  "scope": "Issue #132 일반 연습 재시작 세션 격리 및 UI 회귀 (origin/main b9acbeb rebase)",
+  "result": "pass",
+  "recorded_at": "2026-08-30T04:44:15.510899+00:00",
+  "checks": [
+    {
+      "name": "iPhone unit and UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/PracticeSessionViewModelTests -only-testing:HancoUITests/HancoUITests/testDeckResultShowsSameTagRecommendationsAndRetriesInOneTap",
+      "note": ""
+    },
+    {
+      "name": "workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "iPadOS 26.5 simulator는 플로팅 탭바 Button/Cell automation type mismatch로 재시작 assertion 전에 중단됨; iPad 실기기에서 일반 연습 한 번 더의 시각·접근성 상태를 최종 확인"
+  ]
+}
