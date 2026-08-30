@@ -23,18 +23,22 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| #125 iPad 게임 재도전 마지막 단어 잔존 | In Progress / Draft PR #128 | iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태를 확인한 뒤 Draft 해제 판단 |
+| #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
+| #124 iPad 정타 효과음 지연 | Verify | 소스·자동 회귀 통합 후 실제 iPad의 내장 스피커·Bluetooth 출력에서 첫/연속 정타 지연과 외부 음악 혼합을 청취 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
 | #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
 | #58 현지 20시 리마인더 | Verify | iOS 실제 기기에서 권한 동의 뒤 현지 20시 수신 확인 |
+| #123 iPad 물리 키보드 영문 입력 안내 | Verify | iPad Bluetooth 1차 동작 확인 완료. 반복 영문 입력의 흔들림·색 강조 후 한국어 두벌식 전환 → 현재 문제 완료를 재확인 |
 | #8 자동 발음 재생 검토 | Verify / Later | 기존 수동 발음과 차이·재생 시점·기본값을 사용자와 확정하기 전 구현하지 않음 |
+| #122 iPad 완료 시 연습 카드 이동 | Review | PR review 뒤 iPad Split View·실기기에서 완료 전환과 Reduce Motion을 최종 확인 |
 
 ## 즉시 작업 순서
 
-1. iOS 1.1 build 9의 정확한 TestFlight 실기기 QA와 #77 외부 gate 진행.
-2. #7·#58의 iOS 실기기 gate 처리.
-3. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
+1. #124를 최신 소스로 통합한 iOS 1.1 후보에서 iPad 정타 오디오 실기기 gate 진행.
+2. iOS 1.1 build 9의 정확한 TestFlight 실기기 QA와 #77 외부 gate 진행.
+3. #7·#58의 iOS 실기기 gate 처리.
+4. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 
 ## 출시 완료 판단
 

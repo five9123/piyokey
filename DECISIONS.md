@@ -1671,3 +1671,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: Android Gradle Dependabot과 Android 전용 GitHub Actions를 중지하고 Issue #19의 기존 포트 출시 gate를 종료한다. 공용 schema 변경은 활성 Python reference, Swift와 웹 Builder 계약으로 검증하며 동결된 Kotlin reader의 동등성 유지를 새 변경의 acceptance criterion으로 두지 않는다.
 - 결정: Android를 다시 개발하려면 기존 M7 backlog의 연속 작업이나 단순 포팅으로 재개하지 않는다. 사용자가 승인한 별도 PRD·로드맵·Issue에서 사용자·범위·기술 기준·데이터 호환 전략을 처음부터 결정한다. 동결 소스 삭제 여부도 그 결정 전에는 다루지 않는다.
 - 근거: 현재 Android 결과물을 지속 보정하는 것보다 제품·아키텍처 기준을 다시 세우는 편이 필요하다는 사용자 판단을 반영하고, iOS 1.1 출시와 품질 gate에 작업·CI 비용을 집중한다.
+
+## 2026-08-30 iPad OS 키보드 정타 효과음 warm-start
+
+- 관련: Issue #124, PRD F2a·F9·F11·§12.2.
+- 결정: OS IME·물리 키보드는 시스템 타건음을 중복 재생하지 않되 최초 실제 committed/marked 입력에서 다음 정타와 오타 버퍼를 만들고 효과음 그래프를 무음으로 준비한다. 현재 콤보와 다음 콤보 버퍼를 함께 준비해 연속 입력 중 새 pitch 합성 비용도 정타 요청에 얹지 않는다.
+- 결정: 발음 종료 시 `.playback + .mixWithOthers` 효과음 정책 복원과 함께 그래프를 다시 시작한다. 실제 효과음 재생에서는 버퍼 합성을 엔진 시작 전에 끝내고, 기존 독립 feedback player pool의 즉시 stop/schedule/play 경로로 오래된 효과음을 큐에 쌓지 않는다.
+- 결정: DEBUG 오디오 probe는 효과음 재생 요청부터 `AVAudioPlayerNode.play()` 호출까지의 p95와 시작 횟수를 노출한다. 자동 회귀는 OS IME로 세 목표를 연속 완료해 모든 효과음 요청이 50ms 안에 player 시작 호출에 도달하는지 확인한다. 실제 스피커의 음향 onset, Bluetooth 지연, 외부 음악 혼합은 iPad 화면·오디오 증거가 필요한 별도 Verify gate로 유지한다.
+- 근거: 내장 키보드는 첫 타건음이 오디오 세션과 엔진을 먼저 준비하지만 OS IME는 앱 타건음을 내지 않아 첫 정타가 세션·그래프·버퍼의 cold-start 비용을 함께 부담했다. 발음 재생 뒤 pause된 그래프도 다음 정타에서 같은 비용을 반복했다.
+- 영향 범위: `HancoSoundEngine`, `OSIMEInputPanel`, 온보딩·연습·직접 입력 게임, 오디오 단위/UI 회귀, iPad 실기기 오디오 QA.

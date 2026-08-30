@@ -49,12 +49,20 @@ final class HancoUITests: XCTestCase {
     let isAppPreviewCapture = name.contains("testAppPreview")
     let isAppStoreScreenshotCapture = name.contains("testAppStoreScreenshot")
     let isMarketingCapture = isAppPreviewCapture || isAppStoreScreenshotCapture
+    let isOSIMEAudioLatencyTest = name.contains(
+      "testOSIMERapidCorrectFeedbackStartsWithoutQueueingOldSounds"
+    )
     app = makeApplication(
       resetKeyboardPreferences: !isAppPreviewCapture,
       gameDuration: isMarketingCapture ? 60 : nil,
       flowStartIndex: isMarketingCapture ? 0 : nil,
+      koreanKeyboardAvailable: isOSIMEAudioLatencyTest ? true : nil,
+      audioProbe: isOSIMEAudioLatencyTest,
       seedsAppStoreCaptureState: isAppStoreScreenshotCapture
     )
+    if isOSIMEAudioLatencyTest {
+      app.launchEnvironment["UITEST_SEED_PRACTICE_DECK"] = "1"
+    }
     if name.contains("testR11") {
       app.launchEnvironment["UITEST_DECK_MAKER_ACCESS"] =
         name.contains("ImportAndEditor") || name.contains("RestoredDraft")
@@ -907,6 +915,39 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "os-ime-session-complete-ja")
   }
 
+  func testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("r")
+
+    let warning = element("os_ime.input_source_warning")
+    XCTAssertTrue(warning.waitForExistence(timeout: 3))
+    XCTAssertTrue(app.staticTexts["英語キーボードになっています"].exists)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
+    attachScreenshot(named: "os-ime-english-source-warning-ja")
+
+    imeField.typeText("t")
+    XCTAssertTrue(warning.exists)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
+    attachScreenshot(named: "os-ime-english-source-warning-repeat-feedback-ja")
+
+    imeField.typeText("사랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
+    XCTAssertTrue(warning.waitForNonExistence(timeout: 3))
+  }
+
   func testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
@@ -965,6 +1006,49 @@ final class HancoUITests: XCTestCase {
     imeField.typeText("랑해")
     waitForValue("사랑해", on: imeField, timeout: 3)
     XCTAssertEqual(element("practice.entered_text.value").value as? String, "사랑해")
+  }
+
+  func testOSIMERapidCorrectFeedbackStartsWithoutQueueingOldSounds() {
+    let profile = app.buttons["マイページ"].firstMatch
+    XCTAssertTrue(profile.waitForExistence(timeout: 3))
+    profile.tap()
+    let deck = element("my_decks.deck.user_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+    scrollToHittable(deck)
+    deck.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    let playbackStarts = element("debug.effect.playback_start_count")
+    XCTAssertTrue(playbackStarts.waitForExistence(timeout: 3))
+    let initialPlaybackStarts = playbackStarts.label
+    imeField.tap()
+    imeField.typeText("사")
+    waitForValue("사", on: imeField, timeout: 3)
+    imeField.typeText("랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
+    waitForLabelDifferentFrom(initialPlaybackStarts, on: playbackStarts, timeout: 3)
+    let firstTargetPlaybackStarts = playbackStarts.label
+
+    imeField.typeText("안")
+    waitForValue("안", on: imeField, timeout: 3)
+    imeField.typeText("녕하세요")
+    waitForLabel("최고예요", on: element("practice.target.value"), timeout: 5)
+    waitForLabelDifferentFrom(firstTargetPlaybackStarts, on: playbackStarts, timeout: 3)
+    let secondTargetPlaybackStarts = playbackStarts.label
+
+    imeField.typeText("최")
+    waitForValue("최", on: imeField, timeout: 3)
+    imeField.typeText("고예요")
+    waitForLabelDifferentFrom(secondTargetPlaybackStarts, on: playbackStarts, timeout: 3)
+    let schedulingP95 = element("debug.effect.scheduling_p95")
+    XCTAssertTrue(schedulingP95.waitForExistence(timeout: 3))
+    let milliseconds = Double(schedulingP95.label) ?? .infinity
+    print("OSIME_EFFECT_SCHEDULING_P95_MS \(milliseconds)")
+    XCTAssertLessThanOrEqual(milliseconds, 50)
   }
 
 
@@ -2981,6 +3065,63 @@ final class HancoUITests: XCTestCase {
     XCTAssertLessThan(app.buttons["keyboard.key.ㅂ"].frame.minY - composition.frame.maxY, 100)
     XCTAssertGreaterThan(element("practice.target.card").frame.height, 240)
     attachScreenshot(named: "ipad-practice-portrait-active-ja")
+  }
+
+  func testIPadPhysicalKeyboardGuideCompletionKeepsSessionFramesStable() throws {
+    guard max(app.frame.width, app.frame.height) >= 1_000 else {
+      throw XCTSkip("This physical keyboard layout gate runs on iPad-sized destinations")
+    }
+
+    let scenarios: [(orientation: UIDeviceOrientation, accessibilityType: Bool)] = [
+      (.portrait, false),
+      (.landscapeLeft, false),
+      (.portrait, true),
+    ]
+    for scenario in scenarios {
+      app.terminate()
+      XCUIDevice.shared.orientation = scenario.orientation
+      app = makeApplication(
+        resetKeyboardPreferences: true,
+        deckItemLimit: 2,
+        koreanKeyboardAvailable: true
+      )
+      if scenario.accessibilityType {
+        app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+      }
+      app.launchArguments += [
+        "-keyboard.input_mode_default", "os_ime",
+        "-keyboard.shows_physical_keyboard_guide", "YES",
+      ]
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+      startPractice()
+      if scenario.orientation == .landscapeLeft { assertLandscapeOrientation() }
+
+      let guide = element("physical_keyboard.guide")
+      let instruction = element("physical_keyboard.guide.instruction")
+      let targetCard = element("practice.target.card")
+      let compositionCard = element("practice.composition.card")
+      XCTAssertTrue(guide.waitForExistence(timeout: 5))
+      XCTAssertTrue(instruction.exists)
+      XCTAssertTrue(targetCard.exists)
+      XCTAssertTrue(compositionCard.exists)
+
+      let guideFrameBeforeCompletion = guide.frame
+      let targetMidYBeforeCompletion = targetCard.frame.midY
+      let compositionMidYBeforeCompletion = compositionCard.frame.midY
+
+      let imeField = app.textFields["os_ime.text_field"]
+      XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+      imeField.tap()
+      imeField.typeText("사랑해요")
+
+      let ready = element("physical_keyboard.guide.ready")
+      XCTAssertTrue(ready.waitForExistence(timeout: 0.5))
+      XCTAssertEqual(guide.frame.minY, guideFrameBeforeCompletion.minY, accuracy: 1)
+      XCTAssertEqual(guide.frame.height, guideFrameBeforeCompletion.height, accuracy: 1)
+      XCTAssertEqual(targetCard.frame.midY, targetMidYBeforeCompletion, accuracy: 1)
+      XCTAssertEqual(compositionCard.frame.midY, compositionMidYBeforeCompletion, accuracy: 1)
+    }
   }
 
   func testIPadAccessibilityDynamicTypeKeepsSettingsAndPracticeReachable() throws {

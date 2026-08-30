@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "b0ea6b4cbe11c409a0cf2983945c72294a555b72",
+  "verified_tree": "82451fed48474af5098589da5216f807393ddb93",
+  "branch": "codex/123-hardware-keyboard-layout-hint",
+  "scope": "Issue #123 반복 영문 입력 피드백",
+  "result": "pass",
+  "recorded_at": "2026-08-30T03:04:59.625859+00:00",
+  "checks": [
+    {
+      "name": "HangulEngine SwiftPM",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "48 tests, 0 failures"
+    },
+    {
+      "name": "iPad 반복 영문 입력 UI 회귀",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS_Simulator,name=iPad_Pro_13-inch_M5,OS=26.5 -only-testing:HancoUITests/HancoUITests/testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean",
+      "note": "1 test, 0 failures; repeated ASCII keeps progress and mistakes unchanged and Korean resumes"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "iPad Bluetooth 키보드에서 첫 영문 입력은 안내만 표시되고 반복 영문 입력부터 안내 카드가 흔들리고 색이 강조되며, 한국어 두벌식 전환 후 같은 문제를 완료하는지 확인한다."
+  ]
+}

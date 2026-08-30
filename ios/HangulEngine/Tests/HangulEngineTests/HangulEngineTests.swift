@@ -180,6 +180,23 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(confirmed.acceptedSequence, Array("ㄱㅏ"))
   }
 
+  func testOSIMEASCIIInputDoesNotAdvanceOrBecomeAMistake() throws {
+    let initial = try OSIMETextJudge.evaluate(target: "가나", committedText: "q")
+    XCTAssertEqual(initial.status, .unsupportedASCIIInput)
+    XCTAssertEqual(initial.acceptedSequence, [])
+
+    let afterAcceptedPrefix = try OSIMETextJudge.evaluate(
+      target: "가나",
+      committedText: "가s"
+    )
+    XCTAssertEqual(afterAcceptedPrefix.status, .unsupportedASCIIInput)
+    XCTAssertEqual(afterAcceptedPrefix.acceptedSequence, Array("ㄱㅏ"))
+
+    let resumed = try OSIMETextJudge.evaluate(target: "가나", committedText: "가나")
+    XCTAssertEqual(resumed.status, .matching(completed: true, isComposing: false))
+    XCTAssertEqual(resumed.acceptedSequence, Array("ㄱㅏㄴㅏ"))
+  }
+
   func testOSIMEAllowsCorrectMarkedProgressDeletionAndRejectsExtraText() throws {
     let composing = try OSIMETextJudge.evaluate(
       target: "가나",
@@ -210,7 +227,7 @@ final class HangulEngineTests: XCTestCase {
     )
 
     let unsupported = try OSIMETextJudge.evaluate(target: "가나", committedText: "가A")
-    XCTAssertEqual(unsupported.status, .confirmedMismatch(expectedIndex: 2))
+    XCTAssertEqual(unsupported.status, .unsupportedASCIIInput)
     XCTAssertEqual(unsupported.acceptedSequence, Array("ㄱㅏ"))
   }
 

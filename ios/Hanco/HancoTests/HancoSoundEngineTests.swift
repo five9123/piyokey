@@ -205,6 +205,30 @@ final class HancoSoundEngineTests: XCTestCase {
     XCTAssertLessThanOrEqual(HancoSoundPlaybackPolicy.idleShutdownDelay, 30)
   }
 
+  func testOSIMEWarmupStartsOnlyAfterRealTextActivity() {
+    XCTAssertFalse(
+      HancoSoundWarmupPolicy.shouldPrepareForOSIMEInput(
+        committedText: "",
+        markedText: nil
+      )
+    )
+    XCTAssertTrue(
+      HancoSoundWarmupPolicy.shouldPrepareForOSIMEInput(
+        committedText: "ㄱ",
+        markedText: nil
+      )
+    )
+    XCTAssertTrue(
+      HancoSoundWarmupPolicy.shouldPrepareForOSIMEInput(
+        committedText: "",
+        markedText: "ㄱ"
+      )
+    )
+    XCTAssertEqual(HancoSoundWarmupPolicy.completionCombosToPrepare(after: -1), [0, 1])
+    XCTAssertEqual(HancoSoundWarmupPolicy.completionCombosToPrepare(after: 8), [8, 9])
+    XCTAssertEqual(HancoSoundWarmupPolicy.completionCombosToPrepare(after: 20), [20])
+  }
+
   func testCompletionPitchRisesWithComboAndCapsAtTwenty() throws {
     let base = try XCTUnwrap(
       HancoSoundPlanner.plan(for: .completion(combo: 0)).components.first
