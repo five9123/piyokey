@@ -246,6 +246,7 @@ struct OSIMEInputPanel: View {
   private var inputField: some View {
     IMETextField(
       text: $fieldText,
+      resetText: acceptedText,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
       isFocusSuspended: isFocusSuspended,
@@ -550,8 +551,22 @@ struct KoreanKeyboardGuideView: View {
   }
 }
 
-private struct IMETextField: UIViewRepresentable {
+private func moveCursorToEnd(of textField: UITextField) {
+  textField.selectedTextRange = textField.textRange(
+    from: textField.endOfDocument,
+    to: textField.endOfDocument
+  )
+}
+
+struct IMETextField: UIViewRepresentable {
   @Binding var text: String
+  /// Document to restore when `resetRevision` advances.
+  ///
+  /// This is the model's accepted text rather than `text`, because `text` is a
+  /// `@State` mirror that a reset is still in the middle of clearing. Reading
+  /// the model prop makes the reset independent of the order in which SwiftUI
+  /// runs the panel's `onChange` and this representable's `updateUIView`.
+  let resetText: String
   let resetRevision: Int
   let focusRevision: Int
   let isFocusSuspended: Bool
@@ -590,11 +605,10 @@ private struct IMETextField: UIViewRepresentable {
     context.coordinator.isMounted = true
     if context.coordinator.lastResetRevision != resetRevision {
       context.coordinator.lastResetRevision = resetRevision
-      // A countdown/session reset must also discard an in-flight marked range;
-      // otherwise pre-countdown composition can be committed into the new item.
-      textField.text = text
-      textField.unmarkText()
-      moveCursorToEnd(of: textField)
+      // A target/countdown/session reset must discard the in-flight composition
+      // in the keyboard as well as the document; otherwise the abandoned
+      // syllable is folded into the next target's first jamo.
+      context.coordinator.discardComposition(in: textField, replacingWith: resetText)
     } else if textField.text != text, textField.markedTextRange == nil {
       textField.text = text
       moveCursorToEnd(of: textField)
@@ -629,25 +643,58 @@ private struct IMETextField: UIViewRepresentable {
     textField.resignFirstResponder()
   }
 
-  private func moveCursorToEnd(of textField: UITextField) {
-    textField.selectedTextRange = textField.textRange(
-      from: textField.endOfDocument,
-      to: textField.endOfDocument
-    )
-  }
-
   final class Coordinator: NSObject, UITextFieldDelegate {
     var parent: IMETextField
     var lastResetRevision = -1
     var lastFocusRevision = -1
     var lastFocusSuspended: Bool?
     var isMounted = true
+    /// True while `discardComposition` is rewriting the document.
+    ///
+    /// The rewrite goes through `UITextInput`, so UIKit echoes it back as
+    /// `.editingChanged`. Those echoes are ours, not the user's, and must never
+    /// reach the judge or the view model.
+    private(set) var isApplyingReset = false
 
     init(parent: IMETextField) {
       self.parent = parent
     }
 
+    /// Abandons the OS IME's in-flight composition and replaces the document.
+    ///
+    /// `unmarkText()` on its own *commits* the composing syllable and leaves the
+    /// keyboard's own composition state machine untouched, so the next jamo the
+    /// user types is still combined with the abandoned one — `나` left over from
+    /// a finished word plus a fresh `ㅅ` arrives as `낫`, which the judge scores
+    /// as a typo against the new target. Deleting the marked range instead of
+    /// committing it, and bracketing the document change in `UITextInputDelegate`
+    /// callbacks, is what tells the keyboard that the document moved out from
+    /// under it and that it must start a fresh composition.
+    func discardComposition(in textField: UITextField, replacingWith replacementText: String) {
+      guard textField.markedTextRange != nil || textField.text != replacementText else {
+        moveCursorToEnd(of: textField)
+        return
+      }
+
+      isApplyingReset = true
+      defer { isApplyingReset = false }
+
+      if let markedRange = textField.markedTextRange {
+        textField.replace(markedRange, withText: "")
+      }
+      textField.unmarkText()
+
+      let inputDelegate = textField.inputDelegate
+      inputDelegate?.selectionWillChange(textField)
+      inputDelegate?.textWillChange(textField)
+      textField.text = replacementText
+      moveCursorToEnd(of: textField)
+      inputDelegate?.textDidChange(textField)
+      inputDelegate?.selectionDidChange(textField)
+    }
+
     @objc func textDidChange(_ textField: UITextField) {
+      guard !isApplyingReset else { return }
       let fullText = textField.text ?? ""
       parent.text = fullText
 
@@ -683,7 +730,8 @@ private struct IMETextField: UIViewRepresentable {
     }
 
     func textFieldDidChangeSelection(_ textField: UITextField) {
-      guard textField.markedTextRange == nil,
+      guard !isApplyingReset,
+        textField.markedTextRange == nil,
         textField.selectedTextRange?.end != textField.endOfDocument
       else { return }
       textField.selectedTextRange = textField.textRange(
