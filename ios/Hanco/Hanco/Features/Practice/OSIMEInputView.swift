@@ -668,14 +668,15 @@ struct IMETextField: UIViewRepresentable {
     private var pendingTransitionChange: OSIMETextFieldChange?
     private var suppressedResetText: String?
     private var suppressedPriorText: String?
-    private weak var textField: UITextField?
+    private var lastKnownDocumentText = ""
+    private var transitionDeliveryGeneration = 0
 
     init(parent: IMETextField) {
       self.parent = parent
     }
 
     func connect(to textField: UITextField) {
-      self.textField = textField
+      lastKnownDocumentText = textField.text ?? ""
       textField.delegate = self
       textField.addTarget(
         self,
@@ -687,20 +688,23 @@ struct IMETextField: UIViewRepresentable {
     func disconnect(from textField: UITextField) {
       textField.removeTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
       textField.delegate = nil
-      self.textField = nil
+      transitionDeliveryGeneration &+= 1
       pendingTransitionChange = nil
+      clearSuppressedChanges()
     }
 
     func applyUpdate(parent: IMETextField, to textField: UITextField) {
       self.parent = parent
-      self.textField = textField
       isMounted = true
 
+      // updateUIView owns UIKit synchronization only. Binding and model writes
+      // from a buffered transition are released after this SwiftUI transaction.
       if documentRevision != parent.resetRevision {
         beginReset(
           textField,
           revision: parent.resetRevision,
-          replacementText: parent.resetText
+          replacementText: parent.resetText,
+          priorText: lastKnownDocumentText
         )
       } else if appliedParentRevision == parent.resetRevision,
         textField.text != parent.text,
@@ -714,13 +718,16 @@ struct IMETextField: UIViewRepresentable {
       appliedParentRevision = parent.resetRevision
       guard didApplyNewParent, let pendingTransitionChange else { return }
       self.pendingTransitionChange = nil
-      clearSuppressedChanges()
-      deliver(pendingTransitionChange, from: textField)
-      resetIfModelAdvanced(after: pendingTransitionChange, in: textField)
+      scheduleBufferedDelivery(
+        pendingTransitionChange,
+        revision: parent.resetRevision,
+        from: textField
+      )
     }
 
     @objc func textDidChange(_ textField: UITextField) {
       guard !isApplyingReset else { return }
+      let priorDocumentText = lastKnownDocumentText
       let fullText = textField.text ?? ""
       let change = textChange(from: textField, fullText: fullText)
 
@@ -732,11 +739,12 @@ struct IMETextField: UIViewRepresentable {
         beginReset(
           textField,
           revision: latestRevision,
-          replacementText: parent.currentResetText()
+          replacementText: parent.currentResetText(),
+          priorText: priorDocumentText
         )
       }
 
-      if shouldSuppress(change) {
+      if shouldSuppress(change, documentTextBeforeEvent: priorDocumentText) {
         restoreResetText(in: textField)
         return
       }
@@ -745,27 +753,32 @@ struct IMETextField: UIViewRepresentable {
         // Preserve the newest text snapshot (including marked text) until the
         // representable carrying the new target has been applied.
         pendingTransitionChange = change
+        lastKnownDocumentText = textField.text ?? ""
         return
       }
 
+      transitionDeliveryGeneration &+= 1
       clearSuppressedChanges()
       deliver(change, from: textField)
       resetIfModelAdvanced(after: change, in: textField)
+      lastKnownDocumentText = textField.text ?? ""
     }
 
     private func beginReset(
       _ textField: UITextField,
       revision: OSIMEInputResetRevision,
       replacementText: String,
-      priorText: String? = nil
+      priorText: String
     ) {
+      transitionDeliveryGeneration &+= 1
+      pendingTransitionChange = nil
       documentRevision = revision
       suppressedResetText = replacementText
-      suppressedPriorText = priorText ?? textField.text
-      parent.text = replacementText
+      suppressedPriorText = priorText
       isApplyingReset = true
       OSIMETextFieldResetter.reset(textField, to: replacementText)
       isApplyingReset = false
+      lastKnownDocumentText = textField.text ?? ""
     }
 
     private func resetIfModelAdvanced(
@@ -782,7 +795,20 @@ struct IMETextField: UIViewRepresentable {
       )
     }
 
-    private func shouldSuppress(_ change: OSIMETextFieldChange) -> Bool {
+    private func shouldSuppress(
+      _ change: OSIMETextFieldChange,
+      documentTextBeforeEvent: String
+    ) -> Bool {
+      // Once a first new-target event is buffered, let a coherent follow-up
+      // composition or deletion evolve from that exact document snapshot even
+      // when its resulting text happens to equal the prior/reset text.
+      let evolvesBufferedChange = pendingTransitionChange.map {
+        documentTextBeforeEvent == $0.fullText
+          && (change.markedText != nil || change.fullText.isEmpty)
+      } ?? false
+      if evolvesBufferedChange {
+        return false
+      }
       if change.markedText == nil, change.fullText == suppressedResetText {
         return true
       }
@@ -802,6 +828,34 @@ struct IMETextField: UIViewRepresentable {
       isApplyingReset = true
       OSIMETextFieldResetter.reset(textField, to: suppressedResetText)
       isApplyingReset = false
+      lastKnownDocumentText = textField.text ?? ""
+    }
+
+    private func scheduleBufferedDelivery(
+      _ change: OSIMETextFieldChange,
+      revision: OSIMEInputResetRevision,
+      from textField: UITextField
+    ) {
+      transitionDeliveryGeneration &+= 1
+      let generation = transitionDeliveryGeneration
+      // This hop is limited to a transition event already buffered before the
+      // new representable parent arrived; ordinary keystrokes remain synchronous.
+      DispatchQueue.main.async { [weak self, weak textField] in
+        guard let self, let textField,
+          self.isMounted,
+          self.transitionDeliveryGeneration == generation,
+          self.appliedParentRevision == revision,
+          self.documentRevision == revision,
+          self.parent.resetRevision == revision,
+          self.parent.currentResetRevision() == revision,
+          textField.delegate === self
+        else { return }
+
+        self.clearSuppressedChanges()
+        self.deliver(change, from: textField)
+        self.resetIfModelAdvanced(after: change, in: textField)
+        self.lastKnownDocumentText = textField.text ?? ""
+      }
     }
 
     private func deliver(_ change: OSIMETextFieldChange, from textField: UITextField) {

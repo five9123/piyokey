@@ -443,7 +443,14 @@ final class FlowGameViewModelTests: XCTestCase {
     let model = FlowGameViewModel(targets: ["가", "나"], cardTravelDuration: 100)
     model.start(at: Date(timeIntervalSince1970: 0))
 
-    let controller = UIHostingController(rootView: OSIMEFlowFieldHarness(model: model))
+    let firstNewJamoDelivered = expectation(description: "first new-target jamo delivered")
+    let controller = UIHostingController(
+      rootView: OSIMEFlowFieldHarness(model: model) { committedText, markedText in
+        if committedText.isEmpty, markedText == "ㄴ" {
+          firstNewJamoDelivered.fulfill()
+        }
+      }
+    )
     let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
     window.rootViewController = controller
     window.makeKeyAndVisible()
@@ -503,9 +510,7 @@ final class FlowGameViewModelTests: XCTestCase {
 
     // Let the @Published card revision drive the real UIViewRepresentable
     // updateUIView call, which must release the buffered first new jamo.
-    for _ in 0..<3 {
-      await Task.yield()
-    }
+    await fulfillment(of: [firstNewJamoDelivered], timeout: 1)
 
     XCTAssertEqual(model.acceptedKeySequence, Array("ㄴ"))
     XCTAssertEqual(model.enteredText, "ㄴ")
@@ -520,6 +525,109 @@ final class FlowGameViewModelTests: XCTestCase {
     textField.sendActions(for: .editingChanged)
     XCTAssertEqual(model.acceptedKeySequence, [])
     XCTAssertEqual(model.enteredText, "")
+  }
+
+  func testHostedOSIMEFieldAcceptsFirstJamoWhenModelRevisionAdvancesBeforeUpdate() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let firstJamoDelivered = expectation(description: "externally advanced first jamo delivered")
+    let harness = OSIMEExternalRevisionHarness(source: source) { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      firstJamoDelivered.fulfill()
+    }
+    let controller = UIHostingController(rootView: harness)
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    // Advance the live model revision without rendering a new representable,
+    // then deliver exactly one UIKit editingChanged event for the next target.
+    source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+
+    XCTAssertTrue(source.deliveries.isEmpty)
+
+    // Force the real updateUIView connection path. Buffered delivery must not
+    // mutate SwiftUI state synchronously inside this update transaction.
+    controller.rootView = OSIMEExternalRevisionHarness(source: source) {
+      committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      firstJamoDelivered.fulfill()
+    }
+    controller.view.layoutIfNeeded()
+    XCTAssertTrue(source.deliveries.isEmpty)
+
+    await fulfillment(of: [firstJamoDelivered], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.count, 1)
+    XCTAssertEqual(source.deliveries.first?.0, "")
+    XCTAssertEqual(source.deliveries.first?.1, "ㄴ")
+    XCTAssertEqual(textField.text, "ㄴ")
+    XCTAssertTrue(textField.isFirstResponder)
+  }
+
+  func testHostedOSIMEFieldKeepsBufferedCompositionMatchingPriorTarget() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let repeatedTextDelivered = expectation(description: "repeated target text delivered")
+    let onDelivery: (String, String?) -> Void = { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      if source.revision.target == 0 {
+        source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+      } else if committedText.isEmpty, markedText == "가" {
+        repeatedTextDelivered.fulfill()
+      }
+    }
+    let controller = UIHostingController(
+      rootView: OSIMEExternalRevisionHarness(source: source, onDelivery: onDelivery)
+    )
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    textField.text = "가"
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.revision.target, 1)
+    XCTAssertEqual(textField.text, "")
+
+    // Two events can land before SwiftUI applies the new parent. A legitimate
+    // composition may equal the prior target text and must supersede the first
+    // buffered snapshot instead of colliding with stale-event suppression.
+    textField.setMarkedText("ㄱ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+
+    controller.rootView = OSIMEExternalRevisionHarness(
+      source: source,
+      onDelivery: onDelivery
+    )
+    controller.view.layoutIfNeeded()
+    XCTAssertEqual(source.deliveries.count, 1)
+
+    await fulfillment(of: [repeatedTextDelivered], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.count, 2)
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "가")
+    XCTAssertTrue(textField.isFirstResponder)
   }
 
   private func findTextField(in view: UIView) -> UITextField? {
@@ -926,8 +1034,17 @@ final class FlowGameViewModelTests: XCTestCase {
 @MainActor
 private struct OSIMEFlowFieldHarness: View {
   @ObservedObject var model: FlowGameViewModel
+  let onDelivery: (String, String?) -> Void
   @State private var text = ""
   @State private var isFocused = false
+
+  init(
+    model: FlowGameViewModel,
+    onDelivery: @escaping (String, String?) -> Void = { _, _ in }
+  ) {
+    self.model = model
+    self.onDelivery = onDelivery
+  }
 
   var body: some View {
     IMETextField(
@@ -960,5 +1077,36 @@ private struct OSIMEFlowFieldHarness: View {
     if case .confirmedMismatch = evaluation.status {
       model.recordConfirmedOSIMEMistake()
     }
+    onDelivery(committedText, markedText)
+  }
+}
+
+@MainActor
+private final class OSIMEExternalRevisionSource {
+  var revision = OSIMEInputResetRevision(target: 0, session: 0)
+  var resetText = ""
+  var deliveries: [(String, String?)] = []
+}
+
+@MainActor
+private struct OSIMEExternalRevisionHarness: View {
+  let source: OSIMEExternalRevisionSource
+  let onDelivery: (String, String?) -> Void
+  @State private var text = ""
+  @State private var isFocused = false
+
+  var body: some View {
+    IMETextField(
+      text: $text,
+      resetText: source.resetText,
+      resetRevision: source.revision,
+      currentResetRevision: { source.revision },
+      currentResetText: { source.resetText },
+      focusRevision: 0,
+      isFocusSuspended: false,
+      isFocused: $isFocused,
+      onReturn: {},
+      onTextChange: onDelivery
+    )
   }
 }
