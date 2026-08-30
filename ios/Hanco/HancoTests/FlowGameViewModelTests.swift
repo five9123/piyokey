@@ -462,9 +462,10 @@ final class FlowGameViewModelTests: XCTestCase {
     }
 
     let textField = try XCTUnwrap(findTextField(in: controller.view))
+    let imeTextField = try XCTUnwrap(textField as? OSIMEUITextField)
     XCTAssertTrue(textField.becomeFirstResponder())
 
-    textField.text = "가"
+    textField.insertText("가")
     textField.sendActions(for: .editingChanged)
 
     XCTAssertEqual(model.target, "나")
@@ -486,7 +487,9 @@ final class FlowGameViewModelTests: XCTestCase {
     textField.sendActions(for: .editingChanged)
     textField.text = "가"
     textField.sendActions(for: .editingChanged)
-    textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    imeTextField.performCoordinatorMutation {
+      textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    }
     textField.sendActions(for: .editingChanged)
 
     XCTAssertEqual(textField.text, "")
@@ -504,9 +507,12 @@ final class FlowGameViewModelTests: XCTestCase {
     // first jamo while updateUIView is pending.
     textField.text = "가"
     textField.sendActions(for: .editingChanged)
-    textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    imeTextField.performCoordinatorMutation {
+      textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    }
     textField.sendActions(for: .editingChanged)
-    XCTAssertEqual(textField.text, "")
+    XCTAssertEqual(textField.text, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
 
     // Let the @Published card revision drive the real UIViewRepresentable
     // updateUIView call, which must release the buffered first new jamo.
@@ -520,8 +526,7 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(model.mistakeCount, scoringAfterTransition.2)
     XCTAssertEqual(model.accuracyPercent, scoringAfterTransition.3)
 
-    textField.unmarkText()
-    textField.text = ""
+    textField.deleteBackward()
     textField.sendActions(for: .editingChanged)
     XCTAssertEqual(model.acceptedKeySequence, [])
     XCTAssertEqual(model.enteredText, "")
@@ -532,7 +537,9 @@ final class FlowGameViewModelTests: XCTestCase {
     let firstJamoDelivered = expectation(description: "externally advanced first jamo delivered")
     let harness = OSIMEExternalRevisionHarness(source: source) { committedText, markedText in
       source.deliveries.append((committedText, markedText))
-      firstJamoDelivered.fulfill()
+      if source.deliveries.count == 1 {
+        firstJamoDelivered.fulfill()
+      }
     }
     let controller = UIHostingController(rootView: harness)
     let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
@@ -556,13 +563,8 @@ final class FlowGameViewModelTests: XCTestCase {
 
     XCTAssertTrue(source.deliveries.isEmpty)
 
-    // Force the real updateUIView connection path. Buffered delivery must not
-    // mutate SwiftUI state synchronously inside this update transaction.
-    controller.rootView = OSIMEExternalRevisionHarness(source: source) {
-      committedText, markedText in
-      source.deliveries.append((committedText, markedText))
-      firstJamoDelivered.fulfill()
-    }
+    // The published revision drives the real updateUIView connection path.
+    // Buffered delivery must not mutate SwiftUI state synchronously inside it.
     controller.view.layoutIfNeeded()
     XCTAssertTrue(source.deliveries.isEmpty)
 
@@ -572,7 +574,267 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(source.deliveries.first?.0, "")
     XCTAssertEqual(source.deliveries.first?.1, "ㄴ")
     XCTAssertEqual(textField.text, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
     XCTAssertTrue(textField.isFirstResponder)
+
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.last?.1, "나")
+    XCTAssertNotNil(textField.markedTextRange)
+
+    // Simulator approximation of an IME backspace snapshot: the composition
+    // rolls back from 나 to ㄴ without converting the marked range to committed.
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.last?.1, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+  }
+
+  func testHostedOSIMEFieldAcceptsFirstJamoMatchingAbandonedMarkedText() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let matchingJamoDelivered = expectation(description: "matching new-target jamo delivered")
+    let onDelivery: (String, String?) -> Void = { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      if source.deliveries.count == 2 {
+        matchingJamoDelivered.fulfill()
+      }
+    }
+    let controller = UIHostingController(
+      rootView: OSIMEExternalRevisionHarness(source: source, onDelivery: onDelivery)
+    )
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.count, 1)
+
+    source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+    // The exact stale editingChanged callback owns the one-shot discard. It
+    // must not install a text-value suppression that survives into the next
+    // legitimate event with the same jamo.
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(textField.text, "")
+
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.count, 1)
+
+    await fulfillment(of: [matchingJamoDelivered], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.count, 2)
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+    XCTAssertTrue(textField.isFirstResponder)
+  }
+
+  func testHostedOSIMEFieldStripsAbandonedMarkedPrefixAtEventBoundary() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let newTargetJamoDelivered = expectation(description: "stripped new-target jamo delivered")
+    let onDelivery: (String, String?) -> Void = { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      if source.revision.target == 1 {
+        newTargetJamoDelivered.fulfill()
+      }
+    }
+    let controller = UIHostingController(
+      rootView: OSIMEExternalRevisionHarness(source: source, onDelivery: onDelivery)
+    )
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.last?.1, "나")
+
+    source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+    textField.setMarkedText("난", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.count, 1)
+    XCTAssertEqual(textField.text, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+
+    controller.view.layoutIfNeeded()
+    await fulfillment(of: [newTargetJamoDelivered], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.count, 2)
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+    XCTAssertTrue(textField.isFirstResponder)
+  }
+
+  func testHostedOSIMEFieldReplaysEditDeliveredAfterUpdateReset() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let rebasedJamoDelivered = expectation(description: "post-reset callback rebased")
+    let onDelivery: (String, String?) -> Void = { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      if source.deliveries.count == 2 {
+        rebasedJamoDelivered.fulfill()
+      }
+    }
+    let controller = UIHostingController(
+      rootView: OSIMEExternalRevisionHarness(source: source, onDelivery: onDelivery)
+    )
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    let imeTextField = try XCTUnwrap(textField as? OSIMEUITextField)
+    let coordinator = try XCTUnwrap(
+      textField.allTargets.compactMap { $0 as? IMETextField.Coordinator }.first
+    )
+    let editingChangedSelector = #selector(IMETextField.Coordinator.textDidChange(_:))
+    XCTAssertTrue(textField.becomeFirstResponder())
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(source.deliveries.last?.1, "나")
+
+    source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+    let editGeneration = imeTextField.resetGeneration
+    textField.removeTarget(
+      coordinator,
+      action: editingChangedSelector,
+      for: .editingChanged
+    )
+    textField.setMarkedText("난", selectedRange: NSRange(location: 1, length: 0))
+
+    // Force the opposite legal ordering: updateUIView applies the reset after
+    // the UITextInput mutation but before its delayed editingChanged callback.
+    let updateResetApplied = expectation(description: "published reset rendered")
+    // SwiftUI observes objectWillChange and schedules its representable pass;
+    // two queued main turns let that pass complete without a timed sleep.
+    DispatchQueue.main.async {
+      DispatchQueue.main.async {
+        updateResetApplied.fulfill()
+      }
+    }
+    await fulfillment(of: [updateResetApplied], timeout: 1)
+    XCTAssertNotEqual(imeTextField.resetGeneration, editGeneration)
+    XCTAssertEqual(textField.text, "")
+    XCTAssertNil(textField.markedTextRange)
+
+    textField.addTarget(
+      coordinator,
+      action: editingChangedSelector,
+      for: .editingChanged
+    )
+    // Invoke the same connected Coordinator action after restoring the target;
+    // UIKit's programmatic setMarkedText otherwise emits its action eagerly.
+    coordinator.textDidChange(imeTextField)
+    await fulfillment(of: [rebasedJamoDelivered], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.count, 2)
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "ㄴ")
+    XCTAssertEqual(textField.text, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+    XCTAssertTrue(textField.isFirstResponder)
+
+    // If another pre-reset edit is still awaiting its callback, a real edit
+    // made after the reset must replace that abandoned snapshot rather than be
+    // overwritten by it.
+    textField.removeTarget(
+      coordinator,
+      action: editingChangedSelector,
+      for: .editingChanged
+    )
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    source.revision = OSIMEInputResetRevision(target: 2, session: 0)
+    let secondEditGeneration = imeTextField.resetGeneration
+    let secondResetApplied = expectation(description: "second published reset rendered")
+    DispatchQueue.main.async {
+      DispatchQueue.main.async {
+        secondResetApplied.fulfill()
+      }
+    }
+    await fulfillment(of: [secondResetApplied], timeout: 1)
+    XCTAssertNotEqual(imeTextField.resetGeneration, secondEditGeneration)
+    XCTAssertEqual(textField.text, "")
+
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.addTarget(
+      coordinator,
+      action: editingChangedSelector,
+      for: .editingChanged
+    )
+    coordinator.textDidChange(imeTextField)
+
+    XCTAssertEqual(source.deliveries.count, 3)
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "ㄴ")
+    XCTAssertNotNil(textField.markedTextRange)
+  }
+
+  func testHostedOSIMEFieldComposesSecondEventAfterBoundaryReset() async throws {
+    let source = OSIMEExternalRevisionSource()
+    let composedDelivery = expectation(description: "two-event transition composition delivered")
+    let onDelivery: (String, String?) -> Void = { committedText, markedText in
+      source.deliveries.append((committedText, markedText))
+      if source.revision.target == 1 {
+        composedDelivery.fulfill()
+      }
+    }
+    let controller = UIHostingController(
+      rootView: OSIMEExternalRevisionHarness(source: source, onDelivery: onDelivery)
+    )
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+
+    source.revision = OSIMEInputResetRevision(target: 1, session: 0)
+    textField.setMarkedText("난", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    textField.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+
+    XCTAssertEqual(textField.text, "나")
+    XCTAssertNotNil(textField.markedTextRange)
+    controller.view.layoutIfNeeded()
+    await fulfillment(of: [composedDelivery], timeout: 1)
+
+    XCTAssertEqual(source.deliveries.last?.0, "")
+    XCTAssertEqual(source.deliveries.last?.1, "나")
+    XCTAssertNotNil(textField.markedTextRange)
   }
 
   func testHostedOSIMEFieldKeepsBufferedCompositionMatchingPriorTarget() async throws {
@@ -602,7 +864,7 @@ final class FlowGameViewModelTests: XCTestCase {
     let textField = try XCTUnwrap(findTextField(in: controller.view))
     XCTAssertTrue(textField.becomeFirstResponder())
 
-    textField.text = "가"
+    textField.insertText("가")
     textField.sendActions(for: .editingChanged)
     XCTAssertEqual(source.revision.target, 1)
     XCTAssertEqual(textField.text, "")
@@ -615,10 +877,6 @@ final class FlowGameViewModelTests: XCTestCase {
     textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
     textField.sendActions(for: .editingChanged)
 
-    controller.rootView = OSIMEExternalRevisionHarness(
-      source: source,
-      onDelivery: onDelivery
-    )
     controller.view.layoutIfNeeded()
     XCTAssertEqual(source.deliveries.count, 1)
 
@@ -1082,15 +1340,15 @@ private struct OSIMEFlowFieldHarness: View {
 }
 
 @MainActor
-private final class OSIMEExternalRevisionSource {
-  var revision = OSIMEInputResetRevision(target: 0, session: 0)
+private final class OSIMEExternalRevisionSource: ObservableObject {
+  @Published var revision = OSIMEInputResetRevision(target: 0, session: 0)
   var resetText = ""
   var deliveries: [(String, String?)] = []
 }
 
 @MainActor
 private struct OSIMEExternalRevisionHarness: View {
-  let source: OSIMEExternalRevisionSource
+  @ObservedObject var source: OSIMEExternalRevisionSource
   let onDelivery: (String, String?) -> Void
   @State private var text = ""
   @State private var isFocused = false

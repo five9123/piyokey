@@ -570,17 +570,137 @@ private struct OSIMETextFieldChange: Equatable {
   let markedText: String?
 }
 
+private func osimeTextFieldChange(from textField: UITextField) -> OSIMETextFieldChange {
+  let fullText = textField.text ?? ""
+  guard let markedRange = textField.markedTextRange else {
+    return OSIMETextFieldChange(
+      fullText: fullText,
+      committedText: fullText,
+      markedText: nil
+    )
+  }
+
+  let start = textField.offset(from: textField.beginningOfDocument, to: markedRange.start)
+  let length = textField.offset(from: markedRange.start, to: markedRange.end)
+  let utf16 = fullText as NSString
+  guard start >= 0, length >= 0, start + length <= utf16.length else {
+    return OSIMETextFieldChange(
+      fullText: fullText,
+      committedText: fullText,
+      markedText: nil
+    )
+  }
+  let before = utf16.substring(to: start)
+  let marked = utf16.substring(with: NSRange(location: start, length: length))
+  let after = utf16.substring(from: start + length)
+  return OSIMETextFieldChange(
+    fullText: fullText,
+    committedText: before + after,
+    markedText: marked
+  )
+}
+
+private struct OSIMEUserEditSnapshot {
+  let before: OSIMETextFieldChange
+  let after: OSIMETextFieldChange
+  let resetGeneration: Int
+}
+
+final class OSIMEUITextField: UITextField {
+  private var coordinatorMutationDepth = 0
+  private var userMutationDepth = 0
+  private var pendingUserEditBefore: OSIMETextFieldChange?
+  private var pendingUserEditAfter: OSIMETextFieldChange?
+  private var pendingUserEditResetGeneration = 0
+  private(set) var resetGeneration = 0
+
+  func performCoordinatorMutation(_ mutation: () -> Void) {
+    coordinatorMutationDepth += 1
+    defer { coordinatorMutationDepth -= 1 }
+    mutation()
+  }
+
+  func performCoordinatorReset(_ mutation: () -> Void) {
+    resetGeneration &+= 1
+    performCoordinatorMutation(mutation)
+  }
+
+  func noteUserEditStarting() {
+    guard coordinatorMutationDepth == 0, userMutationDepth == 0 else { return }
+    if pendingUserEditBefore != nil {
+      guard pendingUserEditResetGeneration != resetGeneration else { return }
+      // A real edit after a coordinator reset supersedes any pre-reset edit
+      // whose callback never arrived. Keep the new document boundary rather
+      // than letting an abandoned snapshot consume the first new-target key.
+      pendingUserEditAfter = nil
+    }
+    pendingUserEditBefore = osimeTextFieldChange(from: self)
+    pendingUserEditResetGeneration = resetGeneration
+  }
+
+  fileprivate func consumeUserEditSnapshot(
+    observedChange: OSIMETextFieldChange
+  ) -> OSIMEUserEditSnapshot? {
+    guard let before = pendingUserEditBefore else { return nil }
+    let snapshot = OSIMEUserEditSnapshot(
+      before: before,
+      after: pendingUserEditAfter ?? observedChange,
+      resetGeneration: pendingUserEditResetGeneration
+    )
+    pendingUserEditBefore = nil
+    pendingUserEditAfter = nil
+    return snapshot
+  }
+
+  override func insertText(_ text: String) {
+    performUserMutation { super.insertText(text) }
+  }
+
+  override func deleteBackward() {
+    performUserMutation { super.deleteBackward() }
+  }
+
+  override func setMarkedText(_ markedText: String?, selectedRange: NSRange) {
+    performUserMutation {
+      super.setMarkedText(markedText, selectedRange: selectedRange)
+    }
+  }
+
+  override func unmarkText() {
+    performUserMutation { super.unmarkText() }
+  }
+
+  private func performUserMutation(_ mutation: () -> Void) {
+    let isOutermostMutation = userMutationDepth == 0
+    let capturesUserMutation = isOutermostMutation && coordinatorMutationDepth == 0
+    noteUserEditStarting()
+    userMutationDepth += 1
+    mutation()
+    userMutationDepth -= 1
+    if capturesUserMutation, pendingUserEditBefore != nil {
+      pendingUserEditAfter = osimeTextFieldChange(from: self)
+    }
+  }
+}
+
 @MainActor
 enum OSIMETextFieldResetter {
   static func reset(_ textField: UITextField, to replacementText: String) {
-    // Marked text is provisional. Remove that range before unmarking so the
-    // input system cannot commit the previous target into the replacement.
-    if let markedRange = textField.markedTextRange {
-      textField.replace(markedRange, withText: "")
+    let resetDocument = {
+      // Marked text is provisional. Remove that range before unmarking so the
+      // input system cannot commit the previous target into the replacement.
+      if let markedRange = textField.markedTextRange {
+        textField.replace(markedRange, withText: "")
+      }
+      textField.unmarkText()
+      textField.text = replacementText
+      moveCursorToEnd(of: textField)
     }
-    textField.unmarkText()
-    textField.text = replacementText
-    moveCursorToEnd(of: textField)
+    if let imeTextField = textField as? OSIMEUITextField {
+      imeTextField.performCoordinatorReset(resetDocument)
+    } else {
+      resetDocument()
+    }
   }
 
   static func moveCursorToEnd(of textField: UITextField) {
@@ -607,8 +727,8 @@ struct IMETextField: UIViewRepresentable {
     Coordinator(parent: self)
   }
 
-  func makeUIView(context: Context) -> UITextField {
-    let textField = UITextField()
+  func makeUIView(context: Context) -> OSIMEUITextField {
+    let textField = OSIMEUITextField()
     context.coordinator.connect(to: textField)
     textField.autocorrectionType = .no
     textField.spellCheckingType = .no
@@ -624,7 +744,7 @@ struct IMETextField: UIViewRepresentable {
     return textField
   }
 
-  func updateUIView(_ textField: UITextField, context: Context) {
+  func updateUIView(_ textField: OSIMEUITextField, context: Context) {
     context.coordinator.applyUpdate(parent: self, to: textField)
     if context.coordinator.lastFocusSuspended != isFocusSuspended {
       context.coordinator.lastFocusSuspended = isFocusSuspended
@@ -651,7 +771,7 @@ struct IMETextField: UIViewRepresentable {
     }
   }
 
-  static func dismantleUIView(_ textField: UITextField, coordinator: Coordinator) {
+  static func dismantleUIView(_ textField: OSIMEUITextField, coordinator: Coordinator) {
     coordinator.isMounted = false
     coordinator.disconnect(from: textField)
     textField.resignFirstResponder()
@@ -664,19 +784,21 @@ struct IMETextField: UIViewRepresentable {
     var lastFocusRevision = -1
     var lastFocusSuspended: Bool?
     var isMounted = true
-    private var isApplyingReset = false
     private var pendingTransitionChange: OSIMETextFieldChange?
-    private var suppressedResetText: String?
-    private var suppressedPriorText: String?
-    private var lastKnownDocumentText = ""
+    private var pendingResetBindingRevision: OSIMEInputResetRevision?
+    private var documentChange = OSIMETextFieldChange(
+      fullText: "",
+      committedText: "",
+      markedText: nil
+    )
     private var transitionDeliveryGeneration = 0
 
     init(parent: IMETextField) {
       self.parent = parent
     }
 
-    func connect(to textField: UITextField) {
-      lastKnownDocumentText = textField.text ?? ""
+    func connect(to textField: OSIMEUITextField) {
+      documentChange = osimeTextFieldChange(from: textField)
       textField.delegate = self
       textField.addTarget(
         self,
@@ -685,15 +807,15 @@ struct IMETextField: UIViewRepresentable {
       )
     }
 
-    func disconnect(from textField: UITextField) {
+    func disconnect(from textField: OSIMEUITextField) {
       textField.removeTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
       textField.delegate = nil
       transitionDeliveryGeneration &+= 1
       pendingTransitionChange = nil
-      clearSuppressedChanges()
+      pendingResetBindingRevision = nil
     }
 
-    func applyUpdate(parent: IMETextField, to textField: UITextField) {
+    func applyUpdate(parent: IMETextField, to textField: OSIMEUITextField) {
       self.parent = parent
       isMounted = true
 
@@ -703,138 +825,142 @@ struct IMETextField: UIViewRepresentable {
         beginReset(
           textField,
           revision: parent.resetRevision,
-          replacementText: parent.resetText,
-          priorText: lastKnownDocumentText
+          replacementText: parent.resetText
         )
+        pendingResetBindingRevision = parent.resetRevision
       } else if appliedParentRevision == parent.resetRevision,
+        pendingResetBindingRevision == nil,
         textField.text != parent.text,
         textField.markedTextRange == nil
       {
-        textField.text = parent.text
-        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
+        applyDocumentChange(
+          OSIMETextFieldChange(
+            fullText: parent.text,
+            committedText: parent.text,
+            markedText: nil
+          ),
+          to: textField
+        )
       }
 
       let didApplyNewParent = appliedParentRevision != parent.resetRevision
       appliedParentRevision = parent.resetRevision
-      guard didApplyNewParent, let pendingTransitionChange else { return }
-      self.pendingTransitionChange = nil
-      scheduleBufferedDelivery(
-        pendingTransitionChange,
-        revision: parent.resetRevision,
-        from: textField
-      )
+      guard didApplyNewParent else { return }
+      if let pendingTransitionChange {
+        self.pendingTransitionChange = nil
+        pendingResetBindingRevision = nil
+        scheduleBufferedDelivery(
+          pendingTransitionChange,
+          revision: parent.resetRevision,
+          from: textField
+        )
+      } else if pendingResetBindingRevision == parent.resetRevision {
+        scheduleResetBindingSynchronization(
+          text: parent.resetText,
+          revision: parent.resetRevision,
+          from: textField
+        )
+      }
     }
 
-    @objc func textDidChange(_ textField: UITextField) {
-      guard !isApplyingReset else { return }
-      let priorDocumentText = lastKnownDocumentText
-      let fullText = textField.text ?? ""
-      let change = textChange(from: textField, fullText: fullText)
+    @objc func textDidChange(_ textField: OSIMEUITextField) {
+      let observedChange = osimeTextFieldChange(from: textField)
+      let userEditSnapshot = textField.consumeUserEditSnapshot(
+        observedChange: observedChange
+      )
 
       // The model can publish its next target before SwiftUI calls updateUIView.
       // Read that revision directly at the UIKit event boundary so an old
       // representable value cannot accept input for the new target.
       let latestRevision = parent.currentResetRevision()
-      if documentRevision != latestRevision {
-        beginReset(
-          textField,
-          revision: latestRevision,
-          replacementText: parent.currentResetText(),
-          priorText: priorDocumentText
-        )
-      }
-
-      if shouldSuppress(change, documentTextBeforeEvent: priorDocumentText) {
-        restoreResetText(in: textField)
-        return
+      let editCrossedReset = userEditSnapshot.map {
+        $0.resetGeneration != textField.resetGeneration
+      } ?? false
+      var change = userEditSnapshot?.after ?? observedChange
+      if documentRevision != latestRevision || editCrossedReset {
+        let latestResetText = parent.currentResetText()
+        let transitionChange = userEditSnapshot.flatMap {
+          rebaseTransitionChange(
+            from: $0.before,
+            to: $0.after,
+            resetText: latestResetText
+          )
+        }
+        if documentRevision != latestRevision {
+          beginReset(
+            textField,
+            revision: latestRevision,
+            replacementText: latestResetText
+          )
+        }
+        // This callback is outside updateUIView, so clear the stale local
+        // binding now while the rebased edit remains buffered for the new
+        // representable parent.
+        parent.text = latestResetText
+        guard let transitionChange else { return }
+        change = transitionChange
+        applyDocumentChange(change, to: textField)
+      } else {
+        // Keyboard edits pass through OSIMEUITextField before editingChanged.
+        // A callback without that provenance is a delayed reset/stale event;
+        // restore the last legitimate marked/committed document and drop it.
+        guard userEditSnapshot != nil else {
+          applyDocumentChange(documentChange, to: textField)
+          return
+        }
+        documentChange = change
       }
 
       guard appliedParentRevision == latestRevision else {
         // Preserve the newest text snapshot (including marked text) until the
-        // representable carrying the new target has been applied.
+        // representable carrying the new target has been applied. Because the
+        // rebased marked document stays live in UIKit, a second event includes
+        // the first instead of overwriting it with an unrelated snapshot.
         pendingTransitionChange = change
-        lastKnownDocumentText = textField.text ?? ""
         return
       }
 
       transitionDeliveryGeneration &+= 1
-      clearSuppressedChanges()
+      pendingResetBindingRevision = nil
       deliver(change, from: textField)
       resetIfModelAdvanced(after: change, in: textField)
-      lastKnownDocumentText = textField.text ?? ""
     }
 
     private func beginReset(
-      _ textField: UITextField,
+      _ textField: OSIMEUITextField,
       revision: OSIMEInputResetRevision,
-      replacementText: String,
-      priorText: String
+      replacementText: String
     ) {
       transitionDeliveryGeneration &+= 1
       pendingTransitionChange = nil
+      pendingResetBindingRevision = nil
       documentRevision = revision
-      suppressedResetText = replacementText
-      suppressedPriorText = priorText
-      isApplyingReset = true
       OSIMETextFieldResetter.reset(textField, to: replacementText)
-      isApplyingReset = false
-      lastKnownDocumentText = textField.text ?? ""
+      documentChange = OSIMETextFieldChange(
+        fullText: replacementText,
+        committedText: replacementText,
+        markedText: nil
+      )
     }
 
     private func resetIfModelAdvanced(
       after change: OSIMETextFieldChange,
-      in textField: UITextField
+      in textField: OSIMEUITextField
     ) {
       let revisionAfterDelivery = parent.currentResetRevision()
       guard documentRevision != revisionAfterDelivery else { return }
       beginReset(
         textField,
         revision: revisionAfterDelivery,
-        replacementText: parent.currentResetText(),
-        priorText: change.fullText
+        replacementText: parent.currentResetText()
       )
-    }
-
-    private func shouldSuppress(
-      _ change: OSIMETextFieldChange,
-      documentTextBeforeEvent: String
-    ) -> Bool {
-      // Once a first new-target event is buffered, let a coherent follow-up
-      // composition or deletion evolve from that exact document snapshot even
-      // when its resulting text happens to equal the prior/reset text.
-      let evolvesBufferedChange = pendingTransitionChange.map {
-        documentTextBeforeEvent == $0.fullText
-          && (change.markedText != nil || change.fullText.isEmpty)
-      } ?? false
-      if evolvesBufferedChange {
-        return false
-      }
-      if change.markedText == nil, change.fullText == suppressedResetText {
-        return true
-      }
-      if change.fullText == suppressedPriorText {
-        return true
-      }
-      return false
-    }
-
-    private func clearSuppressedChanges() {
-      suppressedResetText = nil
-      suppressedPriorText = nil
-    }
-
-    private func restoreResetText(in textField: UITextField) {
-      guard let suppressedResetText, textField.text != suppressedResetText else { return }
-      isApplyingReset = true
-      OSIMETextFieldResetter.reset(textField, to: suppressedResetText)
-      isApplyingReset = false
-      lastKnownDocumentText = textField.text ?? ""
+      parent.text = parent.currentResetText()
     }
 
     private func scheduleBufferedDelivery(
       _ change: OSIMETextFieldChange,
       revision: OSIMEInputResetRevision,
-      from textField: UITextField
+      from textField: OSIMEUITextField
     ) {
       transitionDeliveryGeneration &+= 1
       let generation = transitionDeliveryGeneration
@@ -851,51 +977,112 @@ struct IMETextField: UIViewRepresentable {
           textField.delegate === self
         else { return }
 
-        self.clearSuppressedChanges()
         self.deliver(change, from: textField)
         self.resetIfModelAdvanced(after: change, in: textField)
-        self.lastKnownDocumentText = textField.text ?? ""
       }
     }
 
-    private func deliver(_ change: OSIMETextFieldChange, from textField: UITextField) {
+    private func scheduleResetBindingSynchronization(
+      text: String,
+      revision: OSIMEInputResetRevision,
+      from textField: OSIMEUITextField
+    ) {
+      transitionDeliveryGeneration &+= 1
+      let generation = transitionDeliveryGeneration
+      // A reset observed by updateUIView may leave the representable's local
+      // binding one render behind. Clear it after the update transaction so a
+      // later SwiftUI pass cannot restore the abandoned document.
+      DispatchQueue.main.async { [weak self, weak textField] in
+        guard let self, let textField,
+          self.isMounted,
+          self.transitionDeliveryGeneration == generation,
+          self.pendingResetBindingRevision == revision,
+          self.appliedParentRevision == revision,
+          self.documentRevision == revision,
+          self.parent.resetRevision == revision,
+          self.parent.currentResetRevision() == revision,
+          textField.delegate === self
+        else { return }
+
+        self.pendingResetBindingRevision = nil
+        self.parent.text = text
+      }
+    }
+
+    private func deliver(_ change: OSIMETextFieldChange, from textField: OSIMEUITextField) {
+      applyDocumentChange(change, to: textField)
       parent.text = change.fullText
       parent.onTextChange(change.committedText, change.markedText)
-      if textField.text != change.fullText, textField.markedTextRange == nil {
-        textField.text = change.fullText
-        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
-      }
     }
 
-    private func textChange(from textField: UITextField, fullText: String)
-      -> OSIMETextFieldChange
-    {
-      guard let markedRange = textField.markedTextRange else {
-        return OSIMETextFieldChange(
-          fullText: fullText,
-          committedText: fullText,
-          markedText: nil
-        )
+    private func applyDocumentChange(
+      _ change: OSIMETextFieldChange,
+      to textField: OSIMEUITextField
+    ) {
+      guard osimeTextFieldChange(from: textField) != change else {
+        documentChange = change
+        return
       }
+      textField.performCoordinatorMutation {
+        textField.unmarkText()
+        textField.text = change.committedText
+        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
+        if let markedText = change.markedText {
+          textField.setMarkedText(
+            markedText,
+            selectedRange: NSRange(location: (markedText as NSString).length, length: 0)
+          )
+        } else if textField.text != change.fullText {
+          textField.text = change.fullText
+          OSIMETextFieldResetter.moveCursorToEnd(of: textField)
+        }
+      }
+      documentChange = change
+    }
 
-      let start = textField.offset(from: textField.beginningOfDocument, to: markedRange.start)
-      let length = textField.offset(from: markedRange.start, to: markedRange.end)
-      let utf16 = fullText as NSString
-      guard start >= 0, length >= 0, start + length <= utf16.length else {
+    private func rebaseTransitionChange(
+      from prior: OSIMETextFieldChange,
+      to observed: OSIMETextFieldChange,
+      resetText: String
+    ) -> OSIMETextFieldChange? {
+      let priorKeys = keySequence(for: prior.fullText)
+      let observedKeys = keySequence(for: observed.fullText)
+      guard let priorKeys, let observedKeys,
+        observedKeys.starts(with: priorKeys)
+      else { return nil }
+
+      let newKeys = observedKeys.dropFirst(priorKeys.count)
+      guard !newKeys.isEmpty else { return nil }
+      let newText = HangulComposer.compose(newKeys).text
+      guard !newText.isEmpty else { return nil }
+
+      if observed.markedText != nil {
         return OSIMETextFieldChange(
-          fullText: fullText,
-          committedText: fullText,
-          markedText: nil
+          fullText: resetText + newText,
+          committedText: resetText,
+          markedText: newText
         )
       }
-      let before = utf16.substring(to: start)
-      let marked = utf16.substring(with: NSRange(location: start, length: length))
-      let after = utf16.substring(from: start + length)
       return OSIMETextFieldChange(
-        fullText: fullText,
-        committedText: before + after,
-        markedText: marked
+        fullText: resetText + newText,
+        committedText: resetText + newText,
+        markedText: nil
       )
+    }
+
+    private func keySequence(for text: String) -> [Character]? {
+      text.isEmpty ? [] : try? JamoDecomposer.keySequence(for: text)
+    }
+
+    func textField(
+      _ textField: UITextField,
+      shouldChangeCharactersIn range: NSRange,
+      replacementString string: String
+    ) -> Bool {
+      // Some UIKit keyboard paths announce an edit through the delegate
+      // without calling one of OSIMEUITextField's UITextInput overrides first.
+      (textField as? OSIMEUITextField)?.noteUserEditStarting()
+      return true
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
