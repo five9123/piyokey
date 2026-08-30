@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a9d5ae5ec74a6389182aa3d2a4a8e07ddec0162c",
+  "verified_tree": "cb0204342da97019a55b67850f26738047ff3ac8",
+  "branch": "codex/132-practice-restart-session-isolation",
+  "scope": "Issue #132 iPhone/iPad 일반 연습 재시작 세션 격리; iPhone 재시작 직후 단일 첫 카드·빈 입력·초기 진행도·시각 캡처",
+  "result": "pass",
+  "recorded_at": "2026-08-30T07:37:37.560923+00:00",
+  "checks": [
+    {
+      "name": "iPhone 17 retry UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoUITests/HancoUITests/testDeckResultShowsSameTagRecommendationsAndRetriesInOneTap",
+      "note": "회사→학교 완료 후 한 번 더에서 회사 단일 target, 0/2 음절, 빈 입력, 0/5 자모와 screenshot attachment 확인"
+    },
+    {
+      "name": "workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "iPhone·iPad 실기기에서 내장/OS 입력, 빠른/반복 탭, 세로/가로 및 VoiceOver 최종 확인"
+  ]
+}

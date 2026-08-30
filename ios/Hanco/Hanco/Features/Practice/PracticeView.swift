@@ -612,7 +612,6 @@ struct PracticeView: View {
     case .target:
       if practiceShowsTarget {
         TargetSyllableProgressView(
-          target: viewModel.target,
           units: viewModel.targetSyllableProgress,
           fontScale: fontScale * adaptiveMetrics.learningScale
         )
@@ -1454,9 +1453,12 @@ private struct TargetSyllableProgressView: View {
   private static let syllableWidth: CGFloat = 42
   private static let whitespaceWidth: CGFloat = 28
 
-  let target: String
   let units: [TargetSyllableProgress]
   let fontScale: CGFloat
+
+  private var displayedTarget: String {
+    String(units.map(\.character))
+  }
 
   private var completedCount: Int {
     units.filter { $0.isHangul && $0.state == .completed }.count
@@ -1506,7 +1508,7 @@ private struct TargetSyllableProgressView: View {
     }
     .frame(height: 54 * fontScale)
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(Text(verbatim: target))
+    .accessibilityLabel(Text(verbatim: displayedTarget))
     .accessibilityValue(Text(verbatim: accessibilityProgress))
     .accessibilityIdentifier("practice.target.value")
   }
