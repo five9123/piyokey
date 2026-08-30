@@ -741,7 +741,17 @@ struct PracticeView: View {
     OSIMEInputPanel(
       target: viewModel.target,
       acceptedText: viewModel.enteredText,
-      resetRevision: inputResetRevision,
+      resetRevision: OSIMEInputResetRevision(
+        target: viewModel.currentTargetIndex,
+        session: inputResetRevision
+      ),
+      currentResetRevision: {
+        OSIMEInputResetRevision(
+          target: viewModel.currentTargetIndex,
+          session: inputResetRevision
+        )
+      },
+      currentAcceptedText: { viewModel.enteredText },
       onInputStart: {
         HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: mascotCombo)
       },

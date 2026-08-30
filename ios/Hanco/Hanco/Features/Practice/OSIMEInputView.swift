@@ -73,7 +73,9 @@ struct OSIMEInputPanel: View {
   let target: String
   let candidateTargets: [String]
   let acceptedText: String
-  let resetRevision: Int
+  let resetRevision: OSIMEInputResetRevision
+  let currentResetRevision: () -> OSIMEInputResetRevision
+  let currentAcceptedText: () -> String
   let onInputStart: () -> Void
   let onAcceptedSequence: ([Character]) -> Void
   let onAcceptedCandidateSequence: ((String, [Character]) -> Void)?
@@ -94,7 +96,9 @@ struct OSIMEInputPanel: View {
     target: String,
     candidateTargets: [String] = [],
     acceptedText: String,
-    resetRevision: Int,
+    resetRevision: OSIMEInputResetRevision,
+    currentResetRevision: @escaping () -> OSIMEInputResetRevision,
+    currentAcceptedText: @escaping () -> String,
     onInputStart: @escaping () -> Void = {},
     onAcceptedSequence: @escaping ([Character]) -> Void,
     onAcceptedCandidateSequence: ((String, [Character]) -> Void)? = nil,
@@ -107,6 +111,8 @@ struct OSIMEInputPanel: View {
     self.candidateTargets = candidateTargets
     self.acceptedText = acceptedText
     self.resetRevision = resetRevision
+    self.currentResetRevision = currentResetRevision
+    self.currentAcceptedText = currentAcceptedText
     self.onInputStart = onInputStart
     self.onAcceptedSequence = onAcceptedSequence
     self.onAcceptedCandidateSequence = onAcceptedCandidateSequence
@@ -248,6 +254,8 @@ struct OSIMEInputPanel: View {
       text: $fieldText,
       resetText: acceptedText,
       resetRevision: resetRevision,
+      currentResetRevision: currentResetRevision,
+      currentResetText: currentAcceptedText,
       focusRevision: focusRevision,
       isFocusSuspended: isFocusSuspended,
       isFocused: $isFieldFocused,
@@ -551,31 +559,15 @@ struct KoreanKeyboardGuideView: View {
   }
 }
 
-struct OSIMETextFieldChange: Equatable {
+struct OSIMEInputResetRevision: Equatable {
+  let target: Int
+  let session: Int
+}
+
+private struct OSIMETextFieldChange: Equatable {
   let fullText: String
   let committedText: String
   let markedText: String?
-}
-
-struct OSIMEInputEventGate {
-  struct Event: Equatable {
-    fileprivate let generation: UInt
-    let change: OSIMETextFieldChange
-  }
-
-  private(set) var generation: UInt = 0
-
-  mutating func reset() {
-    generation &+= 1
-  }
-
-  func capture(_ change: OSIMETextFieldChange) -> Event {
-    Event(generation: generation, change: change)
-  }
-
-  func currentChange(for event: Event) -> OSIMETextFieldChange? {
-    event.generation == generation ? event.change : nil
-  }
 }
 
 @MainActor
@@ -599,10 +591,12 @@ enum OSIMETextFieldResetter {
   }
 }
 
-private struct IMETextField: UIViewRepresentable {
+struct IMETextField: UIViewRepresentable {
   @Binding var text: String
   let resetText: String
-  let resetRevision: Int
+  let resetRevision: OSIMEInputResetRevision
+  let currentResetRevision: () -> OSIMEInputResetRevision
+  let currentResetText: () -> String
   let focusRevision: Int
   let isFocusSuspended: Bool
   @Binding var isFocused: Bool
@@ -615,12 +609,7 @@ private struct IMETextField: UIViewRepresentable {
 
   func makeUIView(context: Context) -> UITextField {
     let textField = UITextField()
-    textField.delegate = context.coordinator
-    textField.addTarget(
-      context.coordinator,
-      action: #selector(Coordinator.textDidChange(_:)),
-      for: .editingChanged
-    )
+    context.coordinator.connect(to: textField)
     textField.autocorrectionType = .no
     textField.spellCheckingType = .no
     textField.smartInsertDeleteType = .no
@@ -636,21 +625,7 @@ private struct IMETextField: UIViewRepresentable {
   }
 
   func updateUIView(_ textField: UITextField, context: Context) {
-    context.coordinator.parent = self
-    context.coordinator.isMounted = true
-    if context.coordinator.lastResetRevision != resetRevision {
-      context.coordinator.lastResetRevision = resetRevision
-      context.coordinator.eventGate.reset()
-      context.coordinator.isApplyingReset = true
-      OSIMETextFieldResetter.reset(textField, to: resetText)
-      context.coordinator.isApplyingReset = false
-    } else if context.coordinator.pendingEventCount == 0,
-      textField.text != text,
-      textField.markedTextRange == nil
-    {
-      textField.text = text
-      OSIMETextFieldResetter.moveCursorToEnd(of: textField)
-    }
+    context.coordinator.applyUpdate(parent: self, to: textField)
     if context.coordinator.lastFocusSuspended != isFocusSuspended {
       context.coordinator.lastFocusSuspended = isFocusSuspended
       if isFocusSuspended {
@@ -678,43 +653,163 @@ private struct IMETextField: UIViewRepresentable {
 
   static func dismantleUIView(_ textField: UITextField, coordinator: Coordinator) {
     coordinator.isMounted = false
+    coordinator.disconnect(from: textField)
     textField.resignFirstResponder()
   }
 
   final class Coordinator: NSObject, UITextFieldDelegate {
     var parent: IMETextField
-    var lastResetRevision = -1
+    private var documentRevision: OSIMEInputResetRevision?
+    private var appliedParentRevision: OSIMEInputResetRevision?
     var lastFocusRevision = -1
     var lastFocusSuspended: Bool?
     var isMounted = true
-    var isApplyingReset = false
-    var eventGate = OSIMEInputEventGate()
-    var pendingEventCount = 0
+    private var isApplyingReset = false
+    private var pendingTransitionChange: OSIMETextFieldChange?
+    private var suppressedResetText: String?
+    private var suppressedPriorText: String?
+    private weak var textField: UITextField?
 
     init(parent: IMETextField) {
       self.parent = parent
+    }
+
+    func connect(to textField: UITextField) {
+      self.textField = textField
+      textField.delegate = self
+      textField.addTarget(
+        self,
+        action: #selector(textDidChange(_:)),
+        for: .editingChanged
+      )
+    }
+
+    func disconnect(from textField: UITextField) {
+      textField.removeTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+      textField.delegate = nil
+      self.textField = nil
+      pendingTransitionChange = nil
+    }
+
+    func applyUpdate(parent: IMETextField, to textField: UITextField) {
+      self.parent = parent
+      self.textField = textField
+      isMounted = true
+
+      if documentRevision != parent.resetRevision {
+        beginReset(
+          textField,
+          revision: parent.resetRevision,
+          replacementText: parent.resetText
+        )
+      } else if appliedParentRevision == parent.resetRevision,
+        textField.text != parent.text,
+        textField.markedTextRange == nil
+      {
+        textField.text = parent.text
+        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
+      }
+
+      let didApplyNewParent = appliedParentRevision != parent.resetRevision
+      appliedParentRevision = parent.resetRevision
+      guard didApplyNewParent, let pendingTransitionChange else { return }
+      self.pendingTransitionChange = nil
+      clearSuppressedChanges()
+      deliver(pendingTransitionChange, from: textField)
+      resetIfModelAdvanced(after: pendingTransitionChange, in: textField)
     }
 
     @objc func textDidChange(_ textField: UITextField) {
       guard !isApplyingReset else { return }
       let fullText = textField.text ?? ""
       let change = textChange(from: textField, fullText: fullText)
-      let event = eventGate.capture(change)
-      let resetRevision = parent.resetRevision
-      pendingEventCount += 1
 
-      // UIKit may deliver an editingChanged queued by the previous marked-text
-      // session after SwiftUI has advanced the card. Defer one main-loop turn
-      // and reject any event captured before the new reset revision.
-      DispatchQueue.main.async { [weak self] in
-        guard let self else { return }
-        self.pendingEventCount -= 1
-        guard self.isMounted,
-          self.parent.resetRevision == resetRevision,
-          let currentChange = self.eventGate.currentChange(for: event)
-        else { return }
-        self.parent.text = currentChange.fullText
-        self.parent.onTextChange(currentChange.committedText, currentChange.markedText)
+      // The model can publish its next target before SwiftUI calls updateUIView.
+      // Read that revision directly at the UIKit event boundary so an old
+      // representable value cannot accept input for the new target.
+      let latestRevision = parent.currentResetRevision()
+      if documentRevision != latestRevision {
+        beginReset(
+          textField,
+          revision: latestRevision,
+          replacementText: parent.currentResetText()
+        )
+      }
+
+      if shouldSuppress(change) {
+        restoreResetText(in: textField)
+        return
+      }
+
+      guard appliedParentRevision == latestRevision else {
+        // Preserve the newest text snapshot (including marked text) until the
+        // representable carrying the new target has been applied.
+        pendingTransitionChange = change
+        return
+      }
+
+      clearSuppressedChanges()
+      deliver(change, from: textField)
+      resetIfModelAdvanced(after: change, in: textField)
+    }
+
+    private func beginReset(
+      _ textField: UITextField,
+      revision: OSIMEInputResetRevision,
+      replacementText: String,
+      priorText: String? = nil
+    ) {
+      documentRevision = revision
+      suppressedResetText = replacementText
+      suppressedPriorText = priorText ?? textField.text
+      parent.text = replacementText
+      isApplyingReset = true
+      OSIMETextFieldResetter.reset(textField, to: replacementText)
+      isApplyingReset = false
+    }
+
+    private func resetIfModelAdvanced(
+      after change: OSIMETextFieldChange,
+      in textField: UITextField
+    ) {
+      let revisionAfterDelivery = parent.currentResetRevision()
+      guard documentRevision != revisionAfterDelivery else { return }
+      beginReset(
+        textField,
+        revision: revisionAfterDelivery,
+        replacementText: parent.currentResetText(),
+        priorText: change.fullText
+      )
+    }
+
+    private func shouldSuppress(_ change: OSIMETextFieldChange) -> Bool {
+      if change.markedText == nil, change.fullText == suppressedResetText {
+        return true
+      }
+      if change.fullText == suppressedPriorText {
+        return true
+      }
+      return false
+    }
+
+    private func clearSuppressedChanges() {
+      suppressedResetText = nil
+      suppressedPriorText = nil
+    }
+
+    private func restoreResetText(in textField: UITextField) {
+      guard let suppressedResetText, textField.text != suppressedResetText else { return }
+      isApplyingReset = true
+      OSIMETextFieldResetter.reset(textField, to: suppressedResetText)
+      isApplyingReset = false
+    }
+
+    private func deliver(_ change: OSIMETextFieldChange, from textField: UITextField) {
+      parent.text = change.fullText
+      parent.onTextChange(change.committedText, change.markedText)
+      if textField.text != change.fullText, textField.markedTextRange == nil {
+        textField.text = change.fullText
+        OSIMETextFieldResetter.moveCursorToEnd(of: textField)
       }
     }
 

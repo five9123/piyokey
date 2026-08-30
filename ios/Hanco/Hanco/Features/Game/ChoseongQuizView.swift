@@ -2120,7 +2120,17 @@ struct ChoseongTypingView: View {
         OSIMEInputPanel(
           target: viewModel.currentRound.answer.ko,
           acceptedText: viewModel.enteredText,
-          resetRevision: viewModel.roundRevision + inputResetRevision,
+          resetRevision: OSIMEInputResetRevision(
+            target: viewModel.roundRevision,
+            session: inputResetRevision
+          ),
+          currentResetRevision: {
+            OSIMEInputResetRevision(
+              target: viewModel.roundRevision,
+              session: inputResetRevision
+            )
+          },
+          currentAcceptedText: { viewModel.enteredText },
           onInputStart: {
             HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
           },

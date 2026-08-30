@@ -489,7 +489,12 @@ struct OnboardingView: View {
             OSIMEInputPanel(
               target: lesson.target,
               acceptedText: lesson.enteredText,
-              resetRevision: 0,
+              // Onboarding owns one fixed "가" target, so target revision zero is intentional.
+              resetRevision: OSIMEInputResetRevision(target: 0, session: 0),
+              currentResetRevision: {
+                OSIMEInputResetRevision(target: 0, session: 0)
+              },
+              currentAcceptedText: { lesson.enteredText },
               onInputStart: {
                 HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: 0)
               },

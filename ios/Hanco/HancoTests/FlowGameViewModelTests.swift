@@ -1,4 +1,5 @@
 import HangulEngine
+import SwiftUI
 import UIKit
 import XCTest
 
@@ -413,12 +414,17 @@ final class FlowGameViewModelTests: XCTestCase {
   }
 
   func testOSIMEResetDiscardsCommittedAndMarkedTextWithoutDroppingFocus() throws {
-    let window = UIWindow(frame: UIScreen.main.bounds)
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
     let controller = UIViewController()
     let textField = UITextField(frame: CGRect(x: 0, y: 0, width: 200, height: 44))
     controller.view.addSubview(textField)
     window.rootViewController = controller
     window.makeKeyAndVisible()
+    defer {
+      textField.resignFirstResponder()
+      window.isHidden = true
+      window.rootViewController = nil
+    }
     XCTAssertTrue(textField.becomeFirstResponder())
 
     textField.text = "가"
@@ -433,36 +439,32 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertNotNil(textField.selectedTextRange)
   }
 
-  func testOSIMEEventGateRejectsDelayedCommittedAndMarkedEventsAcrossReset() {
-    var gate = OSIMEInputEventGate()
-    let delayedCommitted = gate.capture(
-      OSIMETextFieldChange(fullText: "학교", committedText: "학교", markedText: nil)
-    )
-    let delayedMarked = gate.capture(
-      OSIMETextFieldChange(fullText: "학교", committedText: "학", markedText: "교")
-    )
-
-    gate.reset()
-
-    XCTAssertNil(gate.currentChange(for: delayedCommitted))
-    XCTAssertNil(gate.currentChange(for: delayedMarked))
-
-    let firstNewJamo = gate.capture(
-      OSIMETextFieldChange(fullText: "ㄴ", committedText: "", markedText: "ㄴ")
-    )
-    XCTAssertEqual(gate.currentChange(for: firstNewJamo)?.markedText, "ㄴ")
-  }
-
-  func testDelayedOSIMEEventCannotMutateNewCardScoringAndFirstJamoStillWorks() throws {
+  func testHostedOSIMEFieldDropsDelayedPriorEventsAndAcceptsFirstNewJamo() async throws {
     let model = FlowGameViewModel(targets: ["가", "나"], cardTravelDuration: 100)
     model.start(at: Date(timeIntervalSince1970: 0))
 
-    var gate = OSIMEInputEventGate()
-    let delayedPriorTarget = gate.capture(
-      OSIMETextFieldChange(fullText: "가", committedText: "가", markedText: nil)
-    )
-    model.synchronizeOSIME(acceptedSequence: Array("ㄱㅏ"))
-    gate.reset()
+    let controller = UIHostingController(rootView: OSIMEFlowFieldHarness(model: model))
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 640))
+    window.rootViewController = controller
+    window.makeKeyAndVisible()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.endEditing(true)
+      window.isHidden = true
+      window.rootViewController = nil
+    }
+
+    let textField = try XCTUnwrap(findTextField(in: controller.view))
+    XCTAssertTrue(textField.becomeFirstResponder())
+
+    textField.text = "가"
+    textField.sendActions(for: .editingChanged)
+
+    XCTAssertEqual(model.target, "나")
+    XCTAssertEqual(model.enteredText, "")
+    XCTAssertEqual(textField.text, "")
+    XCTAssertNil(textField.markedTextRange)
+    XCTAssertTrue(textField.isFirstResponder)
 
     let scoringAfterTransition = (
       model.score,
@@ -470,31 +472,61 @@ final class FlowGameViewModelTests: XCTestCase {
       model.mistakeCount,
       model.accuracyPercent
     )
-    XCTAssertNil(gate.currentChange(for: delayedPriorTarget))
-    XCTAssertEqual(model.target, "나")
-    XCTAssertEqual(model.enteredText, "")
+
+    // Exercise both callbacks that can arrive after the coordinator reset but
+    // before SwiftUI applies the representable for the new target.
+    textField.text = ""
+    textField.sendActions(for: .editingChanged)
+    textField.text = "가"
+    textField.sendActions(for: .editingChanged)
+    textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+
+    XCTAssertEqual(textField.text, "")
+    XCTAssertNil(textField.markedTextRange)
     XCTAssertEqual(model.score, scoringAfterTransition.0)
     XCTAssertEqual(model.combo, scoringAfterTransition.1)
     XCTAssertEqual(model.mistakeCount, scoringAfterTransition.2)
     XCTAssertEqual(model.accuracyPercent, scoringAfterTransition.3)
 
-    let firstNewJamo = gate.capture(
-      OSIMETextFieldChange(fullText: "ㄴ", committedText: "", markedText: "ㄴ")
-    )
-    let currentChange = try XCTUnwrap(gate.currentChange(for: firstNewJamo))
-    let evaluation = try OSIMETextJudge.evaluate(
-      target: model.target,
-      committedText: currentChange.committedText,
-      markedText: currentChange.markedText
-    )
-    model.synchronizeOSIME(acceptedSequence: evaluation.acceptedSequence)
+    textField.setMarkedText("ㄴ", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(model.acceptedKeySequence, [])
+
+    // A still-later prior-generation callback must not replace the buffered
+    // first jamo while updateUIView is pending.
+    textField.text = "가"
+    textField.sendActions(for: .editingChanged)
+    textField.setMarkedText("가", selectedRange: NSRange(location: 1, length: 0))
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(textField.text, "")
+
+    // Let the @Published card revision drive the real UIViewRepresentable
+    // updateUIView call, which must release the buffered first new jamo.
+    for _ in 0..<3 {
+      await Task.yield()
+    }
 
     XCTAssertEqual(model.acceptedKeySequence, Array("ㄴ"))
     XCTAssertEqual(model.enteredText, "ㄴ")
+    XCTAssertTrue(textField.isFirstResponder)
     XCTAssertEqual(model.score, scoringAfterTransition.0)
     XCTAssertEqual(model.combo, scoringAfterTransition.1)
     XCTAssertEqual(model.mistakeCount, scoringAfterTransition.2)
     XCTAssertEqual(model.accuracyPercent, scoringAfterTransition.3)
+
+    textField.unmarkText()
+    textField.text = ""
+    textField.sendActions(for: .editingChanged)
+    XCTAssertEqual(model.acceptedKeySequence, [])
+    XCTAssertEqual(model.enteredText, "")
+  }
+
+  private func findTextField(in view: UIView) -> UITextField? {
+    if let textField = view as? UITextField {
+      return textField
+    }
+    return view.subviews.lazy.compactMap { self.findTextField(in: $0) }.first
   }
 
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
@@ -887,6 +919,46 @@ final class FlowGameViewModelTests: XCTestCase {
   private func type(_ sequence: String, into model: FlowGameViewModel) {
     for key in sequence {
       model.input(key)
+    }
+  }
+}
+
+@MainActor
+private struct OSIMEFlowFieldHarness: View {
+  @ObservedObject var model: FlowGameViewModel
+  @State private var text = ""
+  @State private var isFocused = false
+
+  var body: some View {
+    IMETextField(
+      text: $text,
+      resetText: model.enteredText,
+      resetRevision: currentRevision,
+      currentResetRevision: { currentRevision },
+      currentResetText: { model.enteredText },
+      focusRevision: 0,
+      isFocusSuspended: false,
+      isFocused: $isFocused,
+      onReturn: {},
+      onTextChange: handleTextChange(committedText:markedText:)
+    )
+  }
+
+  private var currentRevision: OSIMEInputResetRevision {
+    OSIMEInputResetRevision(target: model.cardRevision, session: 0)
+  }
+
+  private func handleTextChange(committedText: String, markedText: String?) {
+    guard
+      let evaluation = try? OSIMETextJudge.evaluate(
+        target: model.target,
+        committedText: committedText,
+        markedText: markedText
+      )
+    else { return }
+    model.synchronizeOSIME(acceptedSequence: evaluation.acceptedSequence)
+    if case .confirmedMismatch = evaluation.status {
+      model.recordConfirmedOSIMEMistake()
     }
   }
 }

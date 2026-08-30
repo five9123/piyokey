@@ -2005,6 +2005,7 @@ final class HancoUITests: XCTestCase {
       for: NSPredicate(format: "label != %@", "0"),
       evaluatedWith: score
     )
+    // Card removal animates before the accessibility score snapshot settles.
     waitForExpectations(timeout: 3)
     XCTAssertNotEqual(score.label, "0")
     attachScreenshot(named: "acid-rain-os-ime-free-target-ja")
