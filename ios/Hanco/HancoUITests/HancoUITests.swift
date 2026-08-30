@@ -1364,7 +1364,7 @@ final class HancoUITests: XCTestCase {
     app.terminate()
     app = makeApplication(
       resetKeyboardPreferences: true,
-      deckItemLimit: 1,
+      deckItemLimit: 2,
       resultAnimationScale: 4
     )
     app.launch()
@@ -1384,6 +1384,10 @@ final class HancoUITests: XCTestCase {
 
     XCTAssertEqual(element("practice.target.value").label, "회사")
     for key in Array("ㅎㅗㅣㅅㅏ") {
+      app.buttons["keyboard.key.\(key)"].tap()
+    }
+    waitForLabel("학교", on: element("practice.target.value"), timeout: 3)
+    for key in Array("ㅎㅏㄱㄱㅛ") {
       app.buttons["keyboard.key.\(key)"].tap()
     }
     XCTAssertTrue(element("practice.result.screen").waitForExistence(timeout: 5))
