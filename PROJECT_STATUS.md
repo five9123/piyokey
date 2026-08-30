@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | #124 iPad 정타 효과음 지연 | Verify | 소스·자동 회귀 통합 후 실제 iPad의 내장 스피커·Bluetooth 출력에서 첫/연속 정타 지연과 외부 음악 혼합을 청취 확인 |
 | #126 덱 연습 종료 후 키보드 설정 초기화 | Verify | PR #131 자동 검증 뒤 실제 iPadOS 기기에서 입력 모드·내장 배열·물리 키보드 가이드의 종료·재실행 유지를 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |

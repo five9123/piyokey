@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "1aa675ec8fa1017e0a0e166acb2d83558ee9a5fa",
+  "verified_tree": "945484ecdf444d094dcbe04842607a8d7c98ec2b",
+  "branch": "codex/125-game-restart-reset",
+  "scope": "Issue #125 iOS 게임 재도전 상태 초기화 회귀",
+  "result": "pass",
+  "recorded_at": "2026-08-30T02:55:29.577400+00:00",
+  "checks": [
+    {
+      "name": "관련 reducer 단위 테스트",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/ChoseongQuizViewModelTests",
+      "note": ""
+    },
+    {
+      "name": "iOS 전체 단위 회귀",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests",
+      "note": ""
+    },
+    {
+      "name": "저장소 preflight",
+      "status": "pass",
+      "command": "python3 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "결과→재도전→카운트다운 UI test는 iOS 26.5 simulator의 UIAccessibilityLoaderWebShared 중복/kAXError -25218로 제품 assertion 전에 실패했다. 정상 simulator 또는 iPad 실기기에서 이전 마지막 단어가 시각·VoiceOver 트리에 없고 새 첫 문제만 표시되는지 재확인한다."
+  ]
+}

@@ -1292,6 +1292,13 @@ final class ChoseongTypingViewModel: ObservableObject {
     rounds replacementRounds: [ChoseongTypingRound]? = nil,
     at date: Date = Date()
   ) {
+    prepareRestart(rounds: replacementRounds)
+    start(at: date)
+  }
+
+  /// Resets every run-owned value before a retry countdown becomes visible.
+  /// The next run remains non-interactive until the view calls `start(at:)`.
+  func prepareRestart(rounds replacementRounds: [ChoseongTypingRound]? = nil) {
     if let replacementRounds {
       precondition(!replacementRounds.isEmpty, "Choseong typing requires at least one round")
       rounds = replacementRounds
@@ -1309,9 +1316,9 @@ final class ChoseongTypingViewModel: ObservableObject {
     questionStartedAt = 0
     feedbackRevision = 0
     roundRevision &+= 1
-    phase = .running
+    phase = .ready
     resetCurrentRound()
-    lastActiveDate = date
+    lastActiveDate = nil
   }
 
   private var isRoundComplete: Bool {
@@ -1508,7 +1515,6 @@ struct ChoseongTypingView: View {
   @State private var countdownValue: Int?
   @State private var countdownAction: RecallTypingCountdownAction?
   @State private var countdownTask: Task<Void, Never>?
-  @State private var pendingRestartRounds: [ChoseongTypingRound]?
   @State private var didCaptureAnalyticsStart = false
   @State private var didCaptureAnalyticsCompletion = false
   @State private var didCaptureAnalyticsAbandonment = false
@@ -1584,6 +1590,8 @@ struct ChoseongTypingView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(gameBackground.ignoresSafeArea())
+    .opacity(countdownAction == nil ? 1 : 0)
+    .accessibilityHidden(countdownAction != nil)
     .navigationTitle("")
     .navigationBarTitleDisplayMode(.inline)
     .navigationBarBackButtonHidden(true)
@@ -1691,6 +1699,7 @@ struct ChoseongTypingView: View {
       }
       .font(.system(size: 1))
       .opacity(0.01)
+      .accessibilityHidden(countdownAction != nil)
     }
     .overlay {
       if let countdownValue {
@@ -2317,7 +2326,6 @@ struct ChoseongTypingView: View {
   }
 
   private func retry() {
-    showsResult = false
     recordOutcome = nil
     didPersistCurrentRun = false
     sessionReviewItems.removeAll(keepingCapacity: true)
@@ -2332,11 +2340,12 @@ struct ChoseongTypingView: View {
     let nextRounds = randomizedPresetRounds()
     if mode.requiresCountdown {
       targetSpeechSynthesizer.stop()
-      pendingRestartRounds = nextRounds
+      viewModel.prepareRestart(rounds: nextRounds)
       startCountdown(for: .restart)
     } else {
       viewModel.restart(rounds: nextRounds)
     }
+    showsResult = false
     captureAnalyticsStartIfNeeded()
   }
 
@@ -2514,10 +2523,13 @@ struct ChoseongTypingView: View {
     countdownTask?.cancel()
     countdownAction = action
     let values = reduceMotion ? [1] : [3, 2, 1]
+    countdownValue = values[0]
     countdownTask = Task { @MainActor in
-      for value in values {
+      for (index, value) in values.enumerated() {
         guard !Task.isCancelled else { return }
-        withAnimation(.easeOut(duration: 0.18)) { countdownValue = value }
+        if index > 0 {
+          withAnimation(.easeOut(duration: 0.18)) { countdownValue = value }
+        }
         do {
           try await Task.sleep(nanoseconds: countdownStepNanoseconds)
         } catch {
@@ -2525,10 +2537,10 @@ struct ChoseongTypingView: View {
         }
       }
       guard !Task.isCancelled, scenePhase == .active else { return }
+      completeCountdown(action)
       countdownValue = nil
       countdownAction = nil
       countdownTask = nil
-      completeCountdown(action)
     }
   }
 
@@ -2539,8 +2551,7 @@ struct ChoseongTypingView: View {
     case .resume:
       viewModel.resume()
     case .restart:
-      viewModel.restart(rounds: pendingRestartRounds)
-      pendingRestartRounds = nil
+      viewModel.start()
     }
     if action == .start || action == .restart {
       deckLibrary.markPlayed(deck.deckId)

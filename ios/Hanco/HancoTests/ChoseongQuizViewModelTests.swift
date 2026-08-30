@@ -469,6 +469,47 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(model.enteredText, "음악")
   }
 
+  func testTypingPrepareRestartClearsFinishedRunBeforeCountdownAndStartsReplacement() {
+    let origin = Date(timeIntervalSince1970: 9_700)
+    let model = typingModel()
+    model.start(at: origin)
+    for key in Array("ㅎㅏㄱㄱㅛ") {
+      _ = model.input(key, at: origin.addingTimeInterval(2))
+    }
+    model.advance(at: origin.addingTimeInterval(3))
+    XCTAssertEqual(model.phase, .finished)
+    XCTAssertEqual(model.enteredText, "학교")
+
+    let replacement = ChoseongTypingRound(
+      answer: item("music", "음악"),
+      initials: "ㅇㅇ",
+      requiresMeaningHint: false
+    )
+    model.prepareRestart(rounds: [replacement])
+
+    XCTAssertEqual(model.phase, .ready)
+    XCTAssertEqual(model.currentRound, replacement)
+    XCTAssertEqual(model.questionNumber, 1)
+    XCTAssertEqual(model.score, 0)
+    XCTAssertEqual(model.combo, 0)
+    XCTAssertEqual(model.maxCombo, 0)
+    XCTAssertEqual(model.mistakeCount, 0)
+    XCTAssertEqual(model.completedItemCount, 0)
+    XCTAssertEqual(model.enteredText, "")
+    XCTAssertEqual(model.nextExpectedKey, "ㅇ")
+    XCTAssertNil(model.input("ㅎ", at: origin.addingTimeInterval(4)))
+
+    model.start(at: origin.addingTimeInterval(5))
+    var completion: ChoseongTypingInputOutcome?
+    for key in Array("ㅇㅡㅁㅇㅏㄱ") {
+      completion = model.input(key, at: origin.addingTimeInterval(6))
+    }
+    guard case .completed(let result) = completion else {
+      return XCTFail("The replacement first round must start after the countdown")
+    }
+    XCTAssertEqual(result.answer.id, "music")
+  }
+
   func testWordMatchTypingBuilderIncludesLegacyJapaneseBaseFallback() {
     let items = [
       item("school", "학교"), item("friend", "친구"), item("love", "사랑"),

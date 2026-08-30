@@ -2139,6 +2139,7 @@ final class HancoUITests: XCTestCase {
   func testDictationUsesAudioOnlyPromptAndCompletesTypedAnswer() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, deckItemLimit: 1)
+    app.launchEnvironment["UITEST_GAME_COUNTDOWN_STEP_SECONDS"] = "0.5"
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
@@ -2208,8 +2209,15 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["書き取り完了！"].exists)
     XCTAssertTrue(element("game.result.input_mode").exists)
     app.buttons["game.result.retry"].tap()
+    let retryCountdown = element("dictation.countdown")
+    XCTAssertTrue(retryCountdown.waitForExistence(timeout: 3))
+    XCTAssertFalse(element("dictation.play.screen").exists)
+    XCTAssertFalse(element("dictation.typing.value").exists)
+    XCTAssertFalse(app.staticTexts["회사"].exists)
     XCTAssertTrue(element("dictation.play.screen").waitForExistence(timeout: 5))
     XCTAssertEqual(element("dictation.question.value").label, "1/1")
+    XCTAssertEqual(element("dictation.score.value").label, "0")
+    XCTAssertEqual(element("dictation.typing.value").value as? String, "…")
   }
 
   func testM4SuccessFlowCompletesFlawlessCardAndRevealsResult() {
