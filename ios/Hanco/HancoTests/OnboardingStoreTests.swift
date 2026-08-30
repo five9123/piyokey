@@ -68,17 +68,19 @@ final class OnboardingStoreTests: XCTestCase {
     }
   }
 
-  func testResetAlsoClearsCompletedMainAppTour() {
+  func testResetAlsoClearsCompletedMainAppTourAndNotificationRequest() {
     let defaults = makeDefaults()
     defer { clear(defaults) }
     let store = OnboardingStore(defaults: defaults)
     defaults.set(true, forKey: OnboardingStore.appTourCompletedKey)
     defaults.set(true, forKey: OnboardingStore.homeLearningStartedKey)
+    defaults.set(true, forKey: OnboardingStore.notificationPermissionRequestedKey)
 
     store.reset()
 
     XCTAssertFalse(defaults.bool(forKey: OnboardingStore.appTourCompletedKey))
     XCTAssertFalse(defaults.bool(forKey: OnboardingStore.homeLearningStartedKey))
+    XCTAssertFalse(defaults.bool(forKey: OnboardingStore.notificationPermissionRequestedKey))
   }
 
   func testExistingCompletedAndInFlightSnapshotsKeepTheirStepWithoutLevel() throws {

@@ -74,12 +74,7 @@ struct SettingsView: View {
     }
     .sheet(isPresented: $showsPrivacyChoices) {
       PrivacyConsentView(
-        initialAnalyticsEnabled: anonymousAnalyticsEnabled,
-        initialDiagnosticsEnabled: crashDiagnosticsEnabled,
-        onSave: applyPrivacyChoices,
-        onContinueWithoutSharing: {
-          applyPrivacyChoices(analytics: false, diagnostics: false)
-        }
+        onDecision: applyPrivacyDecision
       )
     }
     .onAppear {
@@ -806,101 +801,42 @@ struct SettingsView: View {
     }
   }
 
-  private func applyPrivacyChoices(analytics: Bool, diagnostics: Bool) {
-    anonymousAnalyticsEnabled = analytics
-    crashDiagnosticsEnabled = diagnostics
+  private func applyPrivacyDecision(_ decision: PrivacyConsentDecision) {
+    anonymousAnalyticsEnabled = decision.analyticsEnabled
+    crashDiagnosticsEnabled = decision.diagnosticsEnabled
     privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
     TelemetryService.shared.updateConsent(
-      productAnalytics: analytics,
-      crashDiagnostics: diagnostics
+      productAnalytics: decision.analyticsEnabled,
+      crashDiagnostics: decision.diagnosticsEnabled
     )
   }
 }
 
+enum PrivacyConsentDecision: Equatable {
+  case participate
+  case continueWithoutSharing
+
+  var analyticsEnabled: Bool { self == .participate }
+  var diagnosticsEnabled: Bool { self == .participate }
+}
+
 struct PrivacyConsentView: View {
   @Environment(\.dismiss) private var dismiss
-  @State private var analyticsEnabled: Bool
-  @State private var diagnosticsEnabled: Bool
-
-  let onSave: (_ analytics: Bool, _ diagnostics: Bool) -> Void
-  let onContinueWithoutSharing: () -> Void
-
-  init(
-    initialAnalyticsEnabled: Bool,
-    initialDiagnosticsEnabled: Bool,
-    onSave: @escaping (_ analytics: Bool, _ diagnostics: Bool) -> Void,
-    onContinueWithoutSharing: @escaping () -> Void
-  ) {
-    _analyticsEnabled = State(initialValue: initialAnalyticsEnabled)
-    _diagnosticsEnabled = State(initialValue: initialDiagnosticsEnabled)
-    self.onSave = onSave
-    self.onContinueWithoutSharing = onContinueWithoutSharing
-  }
+  let onDecision: (PrivacyConsentDecision) -> Void
 
   var body: some View {
     NavigationStack {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 18) {
-          privacyHeader
-          consentOption(
-            title: "settings.anonymous_analytics",
-            detail: "privacy_consent.analytics_detail",
-            systemImage: "chart.bar.xaxis",
-            isOn: $analyticsEnabled,
-            identifier: "privacy_consent.analytics"
-          )
-          consentOption(
-            title: "settings.crash_diagnostics",
-            detail: "privacy_consent.diagnostics_detail",
-            systemImage: "stethoscope",
-            isOn: $diagnosticsEnabled,
-            identifier: "privacy_consent.diagnostics"
-          )
+      ViewThatFits(in: .vertical) {
+        privacyContent(compact: false)
+          .padding(20)
 
-          Text("privacy_consent.excluded_data")
-            .font(.footnote)
-            .foregroundStyle(AppPalette.mutedInk)
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppPalette.accentSoft.opacity(0.35), in: RoundedRectangle(cornerRadius: 16))
-
-          Link(destination: AppReleaseLinks.privacyPolicy) {
-            Label("settings.privacy_policy", systemImage: "arrow.up.right")
-              .font(.subheadline.weight(.semibold))
-              .frame(minHeight: 44)
-          }
-          .accessibilityIdentifier("privacy_consent.privacy_policy")
-
-          VStack(spacing: 10) {
-            Button {
-              onSave(analyticsEnabled, diagnosticsEnabled)
-              dismiss()
-            } label: {
-              Text("privacy_consent.save")
-                .font(.headline.weight(.bold))
-                .frame(maxWidth: .infinity, minHeight: 50)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(AppPalette.accent)
-            .accessibilityIdentifier("privacy_consent.save")
-
-            Button {
-              analyticsEnabled = false
-              diagnosticsEnabled = false
-              onContinueWithoutSharing()
-              dismiss()
-            } label: {
-              Text("privacy_consent.continue_without_sharing")
-                .font(.subheadline.weight(.semibold))
-                .frame(maxWidth: .infinity, minHeight: 44)
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(AppPalette.mutedInk)
-            .accessibilityIdentifier("privacy_consent.continue_without_sharing")
-          }
+        ScrollView {
+          privacyContent(compact: true)
+            .padding(16)
         }
-        .padding(20)
+        .accessibilityIdentifier("privacy_consent.scroll")
       }
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
       .background(
         LinearGradient(
           colors: [AppPalette.backgroundTop, AppPalette.backgroundBottom],
@@ -916,10 +852,79 @@ struct PrivacyConsentView: View {
     .accessibilityIdentifier("privacy_consent.screen")
   }
 
+  private func privacyContent(compact: Bool) -> some View {
+    VStack(alignment: .leading, spacing: compact ? 12 : 16) {
+      privacyHeader
+
+      VStack(spacing: 10) {
+        informationRow(
+          title: "privacy_consent.usage_title",
+          detail: "privacy_consent.usage_detail",
+          systemImage: "chart.bar.xaxis",
+          identifier: "privacy_consent.usage_information"
+        )
+        informationRow(
+          title: "privacy_consent.error_title",
+          detail: "privacy_consent.error_detail",
+          systemImage: "stethoscope",
+          identifier: "privacy_consent.error_information"
+        )
+      }
+
+      Text("privacy_consent.excluded_data")
+        .font(.footnote.weight(.semibold))
+        .foregroundStyle(AppPalette.ink)
+        .padding(compact ? 11 : 13)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppPalette.accentSoft.opacity(0.35), in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityIdentifier("privacy_consent.excluded_data")
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text("privacy_consent.settings_note")
+          .font(.footnote)
+          .foregroundStyle(AppPalette.mutedInk)
+        Link(destination: AppReleaseLinks.privacyPolicy) {
+          Label("settings.privacy_policy", systemImage: "arrow.up.right")
+            .font(.subheadline.weight(.semibold))
+            .frame(minHeight: 40)
+        }
+        .accessibilityIdentifier("privacy_consent.privacy_policy")
+      }
+
+      VStack(spacing: 8) {
+        Button {
+          onDecision(.participate)
+          dismiss()
+        } label: {
+          Text("privacy_consent.participate_and_continue")
+            .font(.headline.weight(.bold))
+            .frame(maxWidth: .infinity, minHeight: 48)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(AppPalette.accent)
+        .accessibilityIdentifier("privacy_consent.participate_and_continue")
+
+        Button {
+          onDecision(.continueWithoutSharing)
+          dismiss()
+        } label: {
+          Text("privacy_consent.continue_without_sharing")
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity, minHeight: 42)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(AppPalette.mutedInk)
+        .accessibilityIdentifier("privacy_consent.continue_without_sharing")
+      }
+    }
+    .frame(maxWidth: 680, alignment: .leading)
+    .frame(maxWidth: .infinity)
+  }
+
   private var privacyHeader: some View {
-    VStack(alignment: .leading, spacing: 10) {
+    VStack(alignment: .leading, spacing: 7) {
       Image(systemName: "hand.raised.fill")
-        .font(.system(size: 34, weight: .bold))
+        .font(.system(size: 30, weight: .bold))
         .foregroundStyle(AppPalette.accent)
         .accessibilityHidden(true)
       Text("privacy_consent.title")
@@ -928,40 +933,36 @@ struct PrivacyConsentView: View {
       Text("privacy_consent.introduction")
         .font(.body)
         .foregroundStyle(AppPalette.mutedInk)
-      Text("privacy_consent.optional_note")
-        .font(.footnote.weight(.semibold))
-        .foregroundStyle(AppPalette.ink)
     }
   }
 
-  private func consentOption(
+  private func informationRow(
     title: LocalizedStringKey,
     detail: LocalizedStringKey,
     systemImage: String,
-    isOn: Binding<Bool>,
     identifier: String
   ) -> some View {
-    Toggle(isOn: isOn) {
-      HStack(alignment: .top, spacing: 12) {
-        Image(systemName: systemImage)
-          .font(.system(size: 18, weight: .semibold))
-          .foregroundStyle(AppPalette.accent)
-          .frame(width: 34, height: 34)
-          .background(AppPalette.accentSoft.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
-          .accessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 4) {
-          Text(title)
-            .font(.headline)
-            .foregroundStyle(AppPalette.ink)
-          Text(detail)
-            .font(.footnote)
-            .foregroundStyle(AppPalette.mutedInk)
-        }
+    HStack(spacing: 12) {
+      Image(systemName: systemImage)
+        .font(.headline.weight(.bold))
+        .foregroundStyle(AppPalette.accent)
+        .frame(width: 26)
+        .accessibilityHidden(true)
+      VStack(alignment: .leading, spacing: 2) {
+        Text(title)
+          .font(.subheadline.weight(.bold))
+          .foregroundStyle(AppPalette.ink)
+        Text(detail)
+          .font(.footnote)
+          .foregroundStyle(AppPalette.mutedInk)
       }
+      Spacer(minLength: 0)
     }
-    .tint(AppPalette.accent)
-    .padding(16)
-    .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    .padding(.horizontal, 14)
+    .padding(.vertical, 10)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 16))
+    .accessibilityElement(children: .combine)
     .accessibilityIdentifier(identifier)
   }
 }

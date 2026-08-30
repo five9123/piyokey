@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-30 JST
+마지막 갱신: 2026-08-31 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-71 iOS 온보딩 개인정보 문구 | In Progress | 두 버튼 동의 흐름·6개 언어·집중 회귀와 CI 증빙을 완료한 뒤 PR review로 이동 |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | TYP-68 게임 OS 키보드 전환 후 IME 입력 잔존 | Review / PR #139 (#138 대체) | PR review·병합 후 iPhone·iPad 실기기에서 OS 한국어 키보드(두벌식·천지인)로 5개 직접 입력 게임 연속 10단어 전환 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
@@ -35,9 +36,10 @@
 
 ## 즉시 작업 순서
 
-1. iOS 1.1 build 9의 정확한 TestFlight 실기기 QA와 #77 외부 gate 진행.
-2. #7·#58의 iOS 실기기 gate 처리.
-3. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
+1. TYP-71 개인정보 안내 prerequisite를 review·병합한 뒤 iOS 1.1 후보 기준선을 다시 확정.
+2. iOS 1.1 build 9의 정확한 TestFlight 실기기 QA와 #77 외부 gate 진행.
+3. #7·#58의 iOS 실기기 gate 처리.
+4. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 
 ## 출시 완료 판단
 

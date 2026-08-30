@@ -19,7 +19,7 @@ The first launch contains a short introduction followed by three guided hatch mi
 
 The app includes six games: Flow, Word Rain, Initials Quiz, Word Quiz, Dictation, and Korean Spacing. The first five offer bundled 100-word sets organized by Korean typing difficulty (Beginner, Intermediate, and Advanced). Korean Spacing uses original bundled passages and does not require a deck.
 
-Daily reminders are off by default. Notification permission is requested only after the reviewer explicitly enables reminders. Game Center is optional. Saving a result image requests add-only Photos permission only after the reviewer chooses the save action.
+At the end of first-run onboarding, notification permission is requested once for the optional local 20:00 daily reminder. Denying permission continues without a reminder and does not block the app. Existing users keep their reminder choice, and the reminder can be changed in Settings. Game Center is optional. Saving a result image requests add-only Photos permission only after the reviewer chooses the save action.
 
 Korean pronunciation uses bundled pre-generated audio and falls back to the device's ko-KR speech synthesizer if an asset is unavailable. The app never records microphone audio.
 
@@ -29,7 +29,7 @@ Version 1.1 also recognizes `.typedeck` local document files. Validation and pre
 
 Personal decks are not public user-generated content: PIYOKEY has no upload service, public user catalog, search/indexing, social feed, comments, messaging, moderation service, or remote write API. The only network catalog remains first-party, static, and read-only. There is no advertising or cross-company tracking.
 
-After onboarding, the hatch missions, and the app tour, an idle Home screen presents one privacy-choice notice. Both anonymous usage analytics and crash diagnostics are off by default and can be enabled independently. Reviewers may tap **Continue without sharing** and retain access to every lesson, game, local deck feature, and purchased feature. The same choices and the privacy-policy link remain available in Settings. PIYOKEY sends no typed text, answers, searches, user-deck names or content, contact information, advertising ID, recordings, or session replay. Product events use PostHog Cloud EU with IP geolocation disabled; native crash diagnostics use Firebase Crashlytics only when separately enabled.
+After the one-time notification request, first-run onboarding presents one privacy-choice notice before Home. The notice has no toggles: **Participate and continue** enables both anonymous usage analytics and crash diagnostics, while **Continue without sharing** keeps both disabled. Reviewers who decline retain access to every lesson, game, local deck feature, and purchased feature. Settings keeps independent analytics and diagnostics toggles plus a review action that reopens the same notice and privacy-policy link. Existing choices are preserved. PIYOKEY sends no typed text, answers, searches, user-deck names or content, contact information, advertising ID, recordings, or session replay, and it does not request App Tracking Transparency permission. Product events use PostHog Cloud EU with IP geolocation disabled; native crash diagnostics use Firebase Crashlytics only after consent.
 
 Privacy policy: https://typee.app/privacy
 

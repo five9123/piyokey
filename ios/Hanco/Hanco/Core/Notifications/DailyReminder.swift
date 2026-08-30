@@ -220,4 +220,36 @@ final class DailyReminderLibrary: ObservableObject {
     }
     store.save(preference)
   }
+
+  static func appRootDefault() -> DailyReminderLibrary {
+    #if DEBUG
+      if let rawResult = ProcessInfo.processInfo.environment[
+        "UITEST_ONBOARDING_NOTIFICATION_RESULT"
+      ] {
+        return DailyReminderLibrary(
+          scheduler: UITestDailyReminderScheduler(
+            result: rawResult == "scheduled" ? .scheduled : .denied
+          )
+        )
+      }
+    #endif
+    return DailyReminderLibrary()
+  }
 }
+
+#if DEBUG
+  @MainActor
+  private final class UITestDailyReminderScheduler: DailyReminderScheduling {
+    private let result: DailyReminderScheduleResult
+
+    init(result: DailyReminderScheduleResult) {
+      self.result = result
+    }
+
+    func schedule(hour: Int, minute: Int) async -> DailyReminderScheduleResult {
+      result
+    }
+
+    func cancel() {}
+  }
+#endif

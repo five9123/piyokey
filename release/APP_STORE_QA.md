@@ -29,7 +29,7 @@
 - [ ] `python3 tools/release_preflight.py --strict` 성공
 - [ ] 공개 개인정보처리방침이 PostHog Cloud EU·Firebase Crashlytics·보존/삭제·철회 절차를 설명하고 앱 내/스토어 URL과 일치
 - [ ] App Privacy를 Data Collected=Yes, Tracking=No 및 7개 데이터 유형으로 갱신하고 `PrivacyInfo.xcprivacy`와 대조
-- [ ] 새 설치에서 최초 안내의 두 선택이 기본 OFF이고, 거부·분리 동의·재실행 유지·설정 철회·세션 중 미노출을 ja/en/es/de/fr로 확인
+- [ ] 새 설치에서 앱 투어 → OS 알림 권한 1회 → 두 버튼 개인정보 안내 1회 → 홈 순서를 확인하고, 참여=분석·진단 모두 ON / 비공유=모두 OFF, 재실행 미노출, 설정 독립 토글·같은 재검토 안내·철회, 세션 중 미노출을 ja/en/es/de/fr로 확인
 - [ ] PostHog 수신 이벤트에서 `$geoip_disable=true`와 위치/IP 속성 미보관을 확인
 
 ## 0. 과거 릴리스 후보 — 1.0.2 (6)

@@ -12,6 +12,19 @@ from tools import release_preflight
 ROOT = Path(__file__).resolve().parents[2]
 RESOURCES = ROOT / "ios/Hanco/Hanco/Resources"
 UI_LOCALES = {"ja", "en", "es", "de", "fr"}
+PRIVACY_MODAL_KEYS = {
+    "privacy_consent.navigation_title",
+    "privacy_consent.title",
+    "privacy_consent.introduction",
+    "privacy_consent.usage_title",
+    "privacy_consent.usage_detail",
+    "privacy_consent.error_title",
+    "privacy_consent.error_detail",
+    "privacy_consent.excluded_data",
+    "privacy_consent.settings_note",
+    "privacy_consent.participate_and_continue",
+    "privacy_consent.continue_without_sharing",
+}
 LEARNING_KEY = re.compile(
     r"(curriculum\..*\.(reading|meaning|item_meaning)|"
     r"practice\.sample_target_[1-3](\.(reading|meaning))?|"
@@ -72,6 +85,28 @@ class UILanguageScopeTests(unittest.TestCase):
                     self.assertTrue(all(item.text and item.text.strip() for item in candidate_array))
                     for source, target in zip(original, candidate_array):
                         self.assertEqual(tokens.findall(source.text), tokens.findall(target.text))
+
+    def test_privacy_modal_copy_is_synced_and_provider_neutral_in_all_six_sources(self):
+        for locale in UI_LOCALES | {"ko"}:
+            values = release_preflight.parse_strings(
+                RESOURCES / f"{locale}.lproj/Localizable.strings"
+            )
+            self.assertTrue(PRIVACY_MODAL_KEYS.issubset(values), locale)
+            modal_copy = " ".join(values[key] for key in PRIVACY_MODAL_KEYS)
+            self.assertTrue(all(values[key].strip() for key in PRIVACY_MODAL_KEYS), locale)
+            for provider_term in ("posthog", "firebase", "crashlytics", "cloud"):
+                self.assertNotIn(provider_term, modal_copy.lower(), locale)
+
+        korean = release_preflight.parse_strings(
+            RESOURCES / "ko.lproj/Localizable.strings"
+        )
+        self.assertEqual(korean["privacy_consent.title"], "피요키 개선에 참여할까요?")
+        self.assertEqual(
+            korean["privacy_consent.participate_and_continue"], "참여하고 계속"
+        )
+        self.assertEqual(
+            korean["privacy_consent.continue_without_sharing"], "공유하지 않고 계속"
+        )
 
     def test_shared_korean_content_schema_remains_supported(self):
         import json

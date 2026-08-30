@@ -151,7 +151,7 @@ Choose **Yes, data is collected from this app** and **Tracking: No**. Collection
 
 Do not declare typed/composing text, answers, searches, deck/item identifiers, user-deck names or contents, names, email addresses, advertising identifiers, recordings, session replay, or location. Product events go only to PostHog Cloud EU with IP geolocation disabled; native crash diagnostics go to Firebase Crashlytics. Firebase Analytics and advertising SDKs are not included.
 
-Before submitting, publish `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the Privacy URL and confirm the live page no longer says that the app has no analytics SDK or device identifiers. Verify that the first-launch choice notice and Settings withdrawal controls match the submitted build. Local learning state and `.typedeck` documents remain on device. StoreKit purchase processing, optional Game Center processing, and user-initiated support mail are separate platform/user actions described by the privacy policy.
+Before submitting, publish `release/PRIVACY_POLICY_ANALYTICS_DRAFT.md` at the Privacy URL and confirm the live page no longer says that the app has no analytics SDK or device identifiers. Verify that the first-launch two-button notice (participate enables both categories; continue without sharing disables both) and the independent Settings withdrawal controls match the submitted build. The app does not request ATT permission or use IDFA. Local learning state and `.typedeck` documents remain on device. StoreKit purchase processing, optional Game Center processing, and user-initiated support mail are separate platform/user actions described by the privacy policy.
 
 ## Age rating
 

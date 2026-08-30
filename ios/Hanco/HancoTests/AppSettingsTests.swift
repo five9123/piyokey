@@ -354,6 +354,18 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertFalse(isolated.bool(forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled))
   }
 
+  func testPrivacyTwoButtonDecisionsMapToBothStoredChoices() {
+    XCTAssertEqual(PrivacyNoticePolicy.currentVersion, 1)
+    XCTAssertTrue(PrivacyConsentDecision.participate.analyticsEnabled)
+    XCTAssertTrue(PrivacyConsentDecision.participate.diagnosticsEnabled)
+    XCTAssertFalse(PrivacyConsentDecision.continueWithoutSharing.analyticsEnabled)
+    XCTAssertFalse(PrivacyConsentDecision.continueWithoutSharing.diagnosticsEnabled)
+  }
+
+  func testAppDoesNotDeclareTrackingPermission() {
+    XCTAssertNil(Bundle.main.object(forInfoDictionaryKey: "NSUserTrackingUsageDescription"))
+  }
+
   func testAnalyticsAppOpenTrackerCapturesOncePerForegroundAfterConsent() {
     var tracker = AnalyticsAppOpenTracker(analyticsEnabled: false)
 

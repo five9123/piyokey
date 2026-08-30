@@ -47,6 +47,16 @@ struct HancoApp: App {
         // Shadow those values so fresh-install tests start before any celebration.
         UserDefaults.standard.set(0, forKey: MascotCompanionLibrary.celebratedStageKey)
       }
+      if ProcessInfo.processInfo.environment["UITEST_SEED_PRIVACY_CHOICES_ENABLED"] == "1" {
+        UserDefaults.standard.set(
+          true,
+          forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+        )
+        UserDefaults.standard.set(
+          true,
+          forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled
+        )
+      }
       if ProcessInfo.processInfo.environment["UITEST_SEED_APP_STORE_CAPTURE"] == "1" {
         seedAppStoreCaptureState()
       }
