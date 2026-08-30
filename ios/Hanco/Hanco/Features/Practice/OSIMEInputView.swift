@@ -68,6 +68,7 @@ struct SessionInputModeControl: View {
 
 struct OSIMEInputPanel: View {
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   let target: String
   let candidateTargets: [String]
@@ -84,6 +85,10 @@ struct OSIMEInputPanel: View {
   @State private var fieldText = ""
   @State private var focusRevision = 0
   @State private var isFieldFocused = false
+  @State private var showsInputSourceWarning = false
+  @State private var inputSourceWarningFeedbackRevision = 0
+  @State private var inputSourceWarningShakeStep: CGFloat = 0
+  @State private var isInputSourceWarningEmphasized = false
 
   init(
     target: String,
@@ -112,7 +117,7 @@ struct OSIMEInputPanel: View {
   }
 
   var body: some View {
-    Group {
+    ZStack(alignment: .top) {
       if showsChrome {
         visibleInputPanel
       } else if showsFocusRecovery {
@@ -122,13 +127,28 @@ struct OSIMEInputPanel: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .contentShape(Rectangle())
       }
+
+      if showsInputSourceWarning {
+        OSIMEInputSourceBanner(isEmphasized: isInputSourceWarningEmphasized)
+          .padding(.horizontal, 12)
+          .padding(.top, 10)
+          .transition(.move(edge: .top).combined(with: .opacity))
+          .modifier(
+            OSIMEInputSourceWarningShakeEffect(
+              animatableData: inputSourceWarningShakeStep
+            )
+          )
+          .allowsHitTesting(false)
+      }
     }
+    .animation(.easeOut(duration: 0.18), value: showsInputSourceWarning)
     .onAppear {
       fieldText = acceptedText
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: resetRevision) { _ in
       fieldText = acceptedText
+      showsInputSourceWarning = false
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
@@ -137,6 +157,17 @@ struct OSIMEInputPanel: View {
     }
     .onChange(of: isFocusSuspended) { suspended in
       if !suspended { requestFocus() }
+    }
+    .task(id: inputSourceWarningFeedbackRevision) {
+      guard inputSourceWarningFeedbackRevision > 0 else { return }
+      withAnimation(.easeOut(duration: 0.1)) {
+        isInputSourceWarningEmphasized = true
+      }
+      try? await Task.sleep(nanoseconds: 420_000_000)
+      guard !Task.isCancelled else { return }
+      withAnimation(.easeOut(duration: 0.18)) {
+        isInputSourceWarningEmphasized = false
+      }
     }
   }
 
@@ -245,8 +276,15 @@ struct OSIMEInputPanel: View {
         markedText: markedText
       )
     {
-      onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
-      if case .confirmedMismatch = selection.evaluation.status {
+      switch selection.evaluation.status {
+      case .matching, .composingMismatch:
+        dismissInputSourceWarning()
+        onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
+      case .unsupportedASCIIInput:
+        handleUnsupportedASCIIInput(acceptedSequence: selection.evaluation.acceptedSequence)
+      case .confirmedMismatch:
+        dismissInputSourceWarning()
+        onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
         onConfirmedMismatch()
         fieldText = HangulComposer.compose(selection.evaluation.acceptedSequence).text
       }
@@ -263,12 +301,85 @@ struct OSIMEInputPanel: View {
 
     switch evaluation.status {
     case .matching, .composingMismatch:
+      dismissInputSourceWarning()
       onAcceptedSequence(evaluation.acceptedSequence)
+    case .unsupportedASCIIInput:
+      handleUnsupportedASCIIInput(acceptedSequence: evaluation.acceptedSequence)
     case .confirmedMismatch:
+      dismissInputSourceWarning()
       onAcceptedSequence(evaluation.acceptedSequence)
       onConfirmedMismatch()
       fieldText = HangulComposer.compose(evaluation.acceptedSequence).text
     }
+  }
+
+  private func handleUnsupportedASCIIInput(acceptedSequence: [Character]) {
+    let shouldEmphasizeWarning = showsInputSourceWarning
+    showsInputSourceWarning = true
+    fieldText = HangulComposer.compose(acceptedSequence).text
+
+    guard shouldEmphasizeWarning else { return }
+    inputSourceWarningFeedbackRevision &+= 1
+    if !reduceMotion {
+      withAnimation(.linear(duration: 0.3)) {
+        inputSourceWarningShakeStep += 1
+      }
+    }
+  }
+
+  private func dismissInputSourceWarning() {
+    showsInputSourceWarning = false
+    isInputSourceWarningEmphasized = false
+  }
+}
+
+struct OSIMEInputSourceBanner: View {
+  let isEmphasized: Bool
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Image(systemName: "globe")
+        .font(.headline.weight(.bold))
+        .foregroundStyle(Color.orange)
+      VStack(alignment: .leading, spacing: 2) {
+        Text("os_ime.input_source_warning.title")
+          .font(.subheadline.weight(.bold))
+          .foregroundStyle(AppPalette.ink)
+        Text("os_ime.input_source_warning.detail")
+          .font(.caption)
+          .foregroundStyle(AppPalette.mutedInk)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+      Spacer(minLength: 0)
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 11)
+    .background(
+      Color.orange.opacity(isEmphasized ? 0.34 : 0.16),
+      in: RoundedRectangle(cornerRadius: 15)
+    )
+    .overlay {
+      RoundedRectangle(cornerRadius: 15)
+        .stroke(
+          Color.orange.opacity(isEmphasized ? 0.9 : 0.45),
+          lineWidth: isEmphasized ? 2.5 : 1
+        )
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityIdentifier("os_ime.input_source_warning")
+  }
+}
+
+private struct OSIMEInputSourceWarningShakeEffect: GeometryEffect {
+  var animatableData: CGFloat
+
+  func effectValue(size: CGSize) -> ProjectionTransform {
+    ProjectionTransform(
+      CGAffineTransform(
+        translationX: 9 * sin(animatableData * .pi * 6),
+        y: 0
+      )
+    )
   }
 }
 

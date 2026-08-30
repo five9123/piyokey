@@ -108,6 +108,8 @@
 "os_ime.input.live_badge" = "実戦モード";
 "os_ime.input.hint" = "入力欄をタップし、地球儀キーから韓国語を選んでください。変換中の揺れはミスに数えません。";
 "os_ime.input.accessibility_label" = "OS韓国語キーボード入力欄";
+"os_ime.input_source_warning.title" = "英語キーボードになっています";
+"os_ime.input_source_warning.detail" = "地球儀キーまたはControl＋Spaceで韓国語2ボル式に切り替えてください。";
 "acid_rain.os_ime.any_word_hint" = "表示中の単語は、どれから入力してもOK";
 "os_ime.unavailable.session_message" = "韓国語キーボードが見つかりません。セッション終了後、キーボード設定の案内を確認してください。";
 "os_ime.guide.title" = "韓国語キーボードを追加しよう";

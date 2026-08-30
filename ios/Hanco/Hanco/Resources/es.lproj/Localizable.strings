@@ -104,6 +104,8 @@
 "os_ime.input.live_badge" = "Modo real";
 "os_ime.input.hint" = "Toca el campo y elige coreano con la tecla del globo. Los cambios durante la composición no cuentan como errores.";
 "os_ime.input.accessibility_label" = "Campo de entrada del teclado coreano del sistema";
+"os_ime.input_source_warning.title" = "El teclado está en inglés";
+"os_ime.input_source_warning.detail" = "Cambia a coreano de dos conjuntos con la tecla del globo o Control-Espacio.";
 "acid_rain.os_ime.any_word_hint" = "Escribe cualquier palabra que aparezca en pantalla";
 "os_ime.unavailable.session_message" = "No se ha encontrado un teclado coreano. Consulta la guía al terminar esta sesión.";
 "os_ime.guide.title" = "Añadir un teclado coreano";

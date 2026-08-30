@@ -108,6 +108,8 @@
 "os_ime.input.live_badge" = "실전 모드";
 "os_ime.input.hint" = "입력란을 탭한 뒤 지구본 키에서 한국어를 선택하세요. 조합 중의 변화는 오타로 세지 않아요.";
 "os_ime.input.accessibility_label" = "OS 한국어 키보드 입력란";
+"os_ime.input_source_warning.title" = "현재 영어 키보드로 설정되어 있어요";
+"os_ime.input_source_warning.detail" = "지구본 키 또는 Control-Space로 한국어 두벌식으로 전환해 주세요.";
 "acid_rain.os_ime.any_word_hint" = "화면에 보이는 단어는 무엇이든 입력해요";
 "os_ime.unavailable.session_message" = "한국어 키보드를 찾을 수 없어요. 세션이 끝나면 키보드 설정 안내를 확인하세요.";
 "os_ime.guide.title" = "한국어 키보드를 추가해요";
