@@ -7,6 +7,8 @@ struct DeckCardView: View {
   var isInstalled = false
   var updateAvailable = false
   var compact = false
+  var fixedHeight: CGFloat?
+  var limitsTitleToOneLine = false
 
   var body: some View {
     HStack(alignment: .top, spacing: compact ? 9 : 13) {
@@ -44,7 +46,9 @@ struct DeckCardView: View {
         Text(verbatim: deck.appName)
           .font(.system(.headline, design: .rounded, weight: .bold))
           .foregroundStyle(AppPalette.ink)
-          .lineLimit(2)
+          .lineLimit(limitsTitleToOneLine ? 1 : 2)
+          .truncationMode(.tail)
+          .accessibilityLabel(Text(verbatim: deck.appName))
 
         Text(verbatim: deck.appAuthorNickname)
           .font(.caption)
@@ -56,6 +60,8 @@ struct DeckCardView: View {
             Text(verbatim: "#\(tag)")
               .font(.caption2.weight(.semibold))
               .foregroundStyle(AppPalette.accent)
+              .lineLimit(1)
+              .truncationMode(.tail)
               .padding(.horizontal, 7)
               .padding(.vertical, 4)
               .background(AppPalette.accentSoft.opacity(0.48), in: Capsule())
@@ -78,6 +84,7 @@ struct DeckCardView: View {
     }
     .padding(compact ? 11 : 14)
     .frame(maxWidth: .infinity, minHeight: compact ? 124 : 146, alignment: .leading)
+    .frame(height: fixedHeight, alignment: .leading)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 10, y: 6)
     .accessibilityElement(children: .combine)

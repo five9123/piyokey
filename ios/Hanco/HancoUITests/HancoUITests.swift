@@ -1192,6 +1192,34 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["TOPIK I 基本単語"].exists)
   }
 
+  func testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES() {
+    let recommendations = [
+      ("official_topik_one", "Vocabulario esencial del TOPIK I"),
+      ("official_keyboard_start", "Primeros pasos con Dubeolsik"),
+      ("official_trending_korean", "Jerga y tendencias coreanas"),
+    ].map { deckID, title in
+      (element("home.recommendation.\(deckID)"), title)
+    }
+
+    XCTAssertTrue(element("home.recommendations.personal").waitForExistence(timeout: 5))
+    recommendations.forEach { card, title in
+      XCTAssertTrue(card.waitForExistence(timeout: 3))
+      XCTAssertTrue(card.label.contains(title), "Accessibility label must contain the full title")
+    }
+
+    let cardHeight = recommendations[0].0.frame.height
+    XCTAssertGreaterThan(cardHeight, 0)
+    recommendations.dropFirst().forEach { card, _ in
+      XCTAssertEqual(card.frame.height, cardHeight, accuracy: 1)
+    }
+
+    scrollToHittable(recommendations[0].0)
+    attachScreenshot(named: "home-recommendations-fixed-height-es")
+    recommendations[0].0.tap()
+    XCTAssertTrue(app.navigationBars["Detalles del mazo"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts[recommendations[0].1].exists)
+  }
+
   func testContentTabsExceptDiscoverOfferSettingsFromTheTopBar() {
     let contentTabs = ["ホーム", "練習", "ゲーム", "マイページ"]
     XCTAssertFalse(app.tabBars.buttons["設定"].exists)
