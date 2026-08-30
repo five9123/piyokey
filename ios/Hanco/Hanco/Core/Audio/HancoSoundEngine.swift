@@ -108,6 +108,24 @@ enum HancoSoundPlaybackPolicy {
   }
 }
 
+enum HancoSoundWarmupPolicy {
+  /// OS IME does not play the app-owned typing click. Prepare the feedback
+  /// engine after real text activity so the first accepted word does not pay
+  /// the audio-session and engine cold-start cost.
+  static func shouldPrepareForOSIMEInput(
+    committedText: String,
+    markedText: String?
+  ) -> Bool {
+    !committedText.isEmpty || !(markedText ?? "").isEmpty
+  }
+
+  static func completionCombosToPrepare(after currentCombo: Int) -> [Int] {
+    let current = min(max(currentCombo, 0), 20)
+    let next = min(current + 1, 20)
+    return current == next ? [current] : [current, next]
+  }
+}
+
 enum SoundWaveform: Equatable {
   case sine
   case triangle
@@ -379,6 +397,10 @@ enum HancoAudioSessionPolicy {
     @Published private(set) var pronunciationPlaybackExplicitBundledCount = 0
     @Published private(set) var pronunciationPlaybackCanonicalBundledCount = 0
     @Published private(set) var pronunciationPlaybackSynthesizedFallbackCount = 0
+    @Published private(set) var effectPlaybackStartCount = 0
+    @Published private(set) var effectSchedulingP95Milliseconds: Double?
+
+    private var effectSchedulingSamples: [Double] = []
 
     private init() {}
 
@@ -395,6 +417,17 @@ enum HancoAudioSessionPolicy {
       case .synthesized:
         pronunciationPlaybackSynthesizedFallbackCount += 1
       }
+    }
+
+    func recordEffectPlaybackStart(requestedAt: TimeInterval, startedAt: TimeInterval) {
+      effectPlaybackStartCount += 1
+      effectSchedulingSamples.append(max(0, startedAt - requestedAt) * 1_000)
+      if effectSchedulingSamples.count > 120 {
+        effectSchedulingSamples.removeFirst(effectSchedulingSamples.count - 120)
+      }
+      let sorted = effectSchedulingSamples.sorted()
+      let percentileIndex = max(0, Int(ceil(Double(sorted.count) * 0.95)) - 1)
+      effectSchedulingP95Milliseconds = sorted[percentileIndex]
     }
   }
 #endif
@@ -717,16 +750,48 @@ final class HancoSoundEngine {
   }
 
   func play(_ event: HancoSoundEvent) {
+    #if DEBUG
+      let requestedAt = ProcessInfo.processInfo.systemUptime
+    #endif
     audioQueue.async { [weak self] in
       guard let self, self.isEnabled else { return }
       do {
         self.cancelIdleShutdown()
-        guard try self.startIfNeeded() else { return }
+        guard !HancoAudioSessionController.shared.isPronunciationPlaybackActive else {
+          return
+        }
         let buffer = self.buffer(for: event)
+        guard try self.startIfNeeded() else { return }
         let player = self.player(for: HancoSoundPlaybackPolicy.lane(for: event))
         player.stop()
         player.scheduleBuffer(buffer, at: nil, options: [])
         player.play()
+        #if DEBUG
+          let startedAt = ProcessInfo.processInfo.systemUptime
+          Task { @MainActor in
+            HancoAudioDebugProbe.shared.recordEffectPlaybackStart(
+              requestedAt: requestedAt,
+              startedAt: startedAt
+            )
+          }
+        #endif
+        self.scheduleIdleShutdown()
+      } catch {
+        self.recoverFromStartFailure()
+      }
+    }
+  }
+
+  func prepareForInputFeedback(currentCombo: Int) {
+    audioQueue.async { [weak self] in
+      guard let self, self.isEnabled else { return }
+      do {
+        self.cancelIdleShutdown()
+        for combo in HancoSoundWarmupPolicy.completionCombosToPrepare(after: currentCombo) {
+          _ = self.buffer(for: .completion(combo: combo))
+        }
+        _ = self.buffer(for: .mistake)
+        guard try self.startIfNeeded() else { return }
         self.scheduleIdleShutdown()
       } catch {
         self.recoverFromStartFailure()
@@ -770,7 +835,13 @@ final class HancoSoundEngine {
 
       case .pronunciationEnded:
         if self.isEnabled {
-          self.scheduleIdleShutdown()
+          do {
+            if try self.startIfNeeded() {
+              self.scheduleIdleShutdown()
+            }
+          } catch {
+            self.recoverFromStartFailure()
+          }
         } else {
           HancoAudioSessionController.shared.deactivateSoundEffectsIfPossible()
         }

@@ -490,6 +490,9 @@ struct OnboardingView: View {
               target: lesson.target,
               acceptedText: lesson.enteredText,
               resetRevision: 0,
+              onInputStart: {
+                HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: 0)
+              },
               onAcceptedSequence: lesson.synchronizeOSIME,
               onConfirmedMismatch: lesson.recordConfirmedOSIMEMistake,
               showsChrome: false,

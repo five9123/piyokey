@@ -743,6 +743,9 @@ struct PracticeView: View {
       target: viewModel.target,
       acceptedText: viewModel.enteredText,
       resetRevision: inputResetRevision,
+      onInputStart: {
+        HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: mascotCombo)
+      },
       onAcceptedSequence: viewModel.synchronizeOSIME,
       onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
       showsChrome: false,

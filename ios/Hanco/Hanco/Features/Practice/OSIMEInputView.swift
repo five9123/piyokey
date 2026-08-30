@@ -73,6 +73,7 @@ struct OSIMEInputPanel: View {
   let candidateTargets: [String]
   let acceptedText: String
   let resetRevision: Int
+  let onInputStart: () -> Void
   let onAcceptedSequence: ([Character]) -> Void
   let onAcceptedCandidateSequence: ((String, [Character]) -> Void)?
   let onConfirmedMismatch: () -> Void
@@ -89,6 +90,7 @@ struct OSIMEInputPanel: View {
     candidateTargets: [String] = [],
     acceptedText: String,
     resetRevision: Int,
+    onInputStart: @escaping () -> Void = {},
     onAcceptedSequence: @escaping ([Character]) -> Void,
     onAcceptedCandidateSequence: ((String, [Character]) -> Void)? = nil,
     onConfirmedMismatch: @escaping () -> Void,
@@ -100,6 +102,7 @@ struct OSIMEInputPanel: View {
     self.candidateTargets = candidateTargets
     self.acceptedText = acceptedText
     self.resetRevision = resetRevision
+    self.onInputStart = onInputStart
     self.onAcceptedSequence = onAcceptedSequence
     self.onAcceptedCandidateSequence = onAcceptedCandidateSequence
     self.onConfirmedMismatch = onConfirmedMismatch
@@ -226,6 +229,13 @@ struct OSIMEInputPanel: View {
   }
 
   private func evaluate(committedText: String, markedText: String?) {
+    if HancoSoundWarmupPolicy.shouldPrepareForOSIMEInput(
+      committedText: committedText,
+      markedText: markedText
+    ) {
+      onInputStart()
+    }
+
     if !candidateTargets.isEmpty,
       let onAcceptedCandidateSequence,
       let selection = OSIMECandidateTextJudge.evaluate(
