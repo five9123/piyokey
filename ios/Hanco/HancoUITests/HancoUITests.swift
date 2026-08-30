@@ -844,6 +844,66 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.switches["settings.sound"].exists)
   }
 
+  func testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true
+    )
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    let layoutPicker = element("settings.builtin_keyboard_layout")
+    scrollToHittable(layoutPicker)
+    layoutPicker.tap()
+    app.buttons["韓国語10キー（天地人式）"].tap()
+
+    let physicalGuide = app.switches["settings.physical_keyboard_guide"]
+    scrollToHittable(physicalGuide)
+    physicalGuide.tap()
+    XCTAssertEqual(physicalGuide.value as? String, "1")
+    app.buttons["settings.done"].tap()
+
+    startPractice()
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["input_mode.os_ime"].tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+
+    XCUIDevice.shared.press(.home)
+    app.activate()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 5))
+    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+    openSettings()
+    let persistedLayout = element("settings.builtin_keyboard_layout")
+    scrollToHittable(persistedLayout)
+    let persistedOSMode = app.buttons["input_mode.os_ime"]
+    scrollToHittable(persistedOSMode)
+    XCTAssertTrue(persistedOSMode.isSelected)
+    let persistedPhysicalGuide = app.switches["settings.physical_keyboard_guide"]
+    scrollToHittable(persistedPhysicalGuide)
+    XCTAssertEqual(persistedPhysicalGuide.value as? String, "1")
+
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      koreanKeyboardAvailable: true
+    )
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["input_mode.builtin"].tap()
+    XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+  }
+
   func testSoundSettingAndPresetPersistAcrossRelaunch() {
     openSettings()
     let sound = app.switches["settings.sound"]
