@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "verified_commit": "987541b373e484d5901899da0f62f0a0f9f16a2e",
+  "verified_tree": "569d60786947479ce3a83e4b56e771207377e940",
+  "branch": "codex/71-onboarding-privacy-copy",
+  "scope": "TYP-71 iOS onboarding notification and two-button privacy consent",
+  "result": "pass",
+  "recorded_at": "2026-08-30T18:32:20.729771+00:00",
+  "checks": [
+    {
+      "name": "Swift focused unit tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/AppSettingsTests/testPrivacyManifestDeclaresOptionalUnlinkedTelemetryWithoutTracking -only-testing:HancoTests/AppSettingsTests/testTelemetryConsentsAreIndependentAndDefaultOff -only-testing:HancoTests/AppSettingsTests/testPrivacyTwoButtonDecisionsMapToBothStoredChoices -only-testing:HancoTests/AppSettingsTests/testAppDoesNotDeclareTrackingPermission -only-testing:HancoTests/AppSettingsTests/testAnalyticsAppOpenTrackerCapturesOncePerForegroundAfterConsent -only-testing:HancoTests/AppSettingsTests/testPrivacyNoticeAppearsOnlyAfterOnboardingOutsideSessionsAndOncePerVersion -only-testing:HancoTests/OnboardingStoreTests/testResetAlsoClearsCompletedMainAppTourAndNotificationRequest -only-testing:HancoTests/RetentionStoreTests/testReminderScheduleUsesFloatingLocalTimeAndDeniedAuthorizationKeepsToggleOff -only-testing:HancoTests/RetentionStoreTests/testOnboardingConsentEnablesLocalWorkdayEndWithoutAnotherSettingStep",
+      "note": ""
+    },
+    {
+      "name": "Onboarding handoff UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testOnboardingSelectsLevelBeforeFirstInputAndRoutesToForcedHatchMissions",
+      "note": ""
+    },
+    {
+      "name": "Privacy consent iPhone UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testPrivacyParticipateEnablesBothChoicesAndNoticeIsShownOnce -only-testing:HancoUITests/HancoUITests/testPrivacyContinueWithoutSharingDisablesBothAndRevisitReusesButtons -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad",
+      "note": ""
+    },
+    {
+      "name": "Privacy consent iPad layout UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad",
+      "note": ""
+    },
+    {
+      "name": "Six-language privacy copy",
+      "status": "pass",
+      "command": "python3.12 -m unittest tools.tests.test_ui_language_scope.UILanguageScopeTests.test_privacy_modal_copy_is_synced_and_provider_neutral_in_all_six_sources",
+      "note": ""
+    },
+    {
+      "name": "Analytics generated contract",
+      "status": "pass",
+      "command": "python3.12 tools/gen_analytics_contract.py --check",
+      "note": ""
+    },
+    {
+      "name": "Analytics contract tests",
+      "status": "pass",
+      "command": "python3.12 -m unittest tools.tests.test_analytics_contract",
+      "note": ""
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Whitespace validation",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Physical-device OS notification prompt and production telemetry transport verification remain release QA; archive, upload, and App Store Connect were explicitly out of scope."
+  ]
+}
