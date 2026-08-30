@@ -929,6 +929,12 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
     attachScreenshot(named: "os-ime-english-source-warning-ja")
 
+    imeField.typeText("t")
+    XCTAssertTrue(warning.exists)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
+    attachScreenshot(named: "os-ime-english-source-warning-repeat-feedback-ja")
+
     imeField.typeText("사랑해요")
     waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
     XCTAssertTrue(warning.waitForNonExistence(timeout: 3))
