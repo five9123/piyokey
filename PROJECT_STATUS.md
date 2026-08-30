@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-29 JST
+마지막 갱신: 2026-08-30 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -27,6 +27,7 @@
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
 | #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
 | #58 현지 20시 리마인더 | Verify | iOS 실제 기기에서 권한 동의 뒤 현지 20시 수신 확인 |
+| #123 iPad 물리 키보드 영문 입력 안내 | Verify | 소스·자동 회귀 완료 후 iPad Bluetooth 키보드에서 영문 안내 → 한국어 두벌식 전환 → 현재 문제 완료를 확인 |
 | #8 자동 발음 재생 검토 | Verify / Later | 기존 수동 발음과 차이·재생 시점·기본값을 사용자와 확정하기 전 구현하지 않음 |
 
 ## 즉시 작업 순서

@@ -108,6 +108,8 @@
 "os_ime.input.live_badge" = "Real-world mode";
 "os_ime.input.hint" = "Tap the field and choose Korean with the globe key. Changes during composition are not counted as mistakes.";
 "os_ime.input.accessibility_label" = "OS Korean keyboard input field";
+"os_ime.input_source_warning.title" = "Your keyboard is set to English";
+"os_ime.input_source_warning.detail" = "Switch to Korean Dubeolsik with the Globe key or Control-Space.";
 "acid_rain.os_ime.any_word_hint" = "Type any word currently on screen";
 "os_ime.unavailable.session_message" = "No Korean keyboard was found. Check the setup guide after this session.";
 "os_ime.guide.title" = "Add a Korean keyboard";

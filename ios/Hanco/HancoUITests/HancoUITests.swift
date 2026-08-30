@@ -907,6 +907,33 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "os-ime-session-complete-ja")
   }
 
+  func testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["OSキーボード"].tap()
+
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.tap()
+    imeField.typeText("r")
+
+    let warning = element("os_ime.input_source_warning")
+    XCTAssertTrue(warning.waitForExistence(timeout: 3))
+    XCTAssertTrue(app.staticTexts["英語キーボードになっています"].exists)
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
+    attachScreenshot(named: "os-ime-english-source-warning-ja")
+
+    imeField.typeText("사랑해요")
+    waitForLabel("안녕하세요", on: element("practice.target.value"), timeout: 5)
+    XCTAssertTrue(warning.waitForNonExistence(timeout: 3))
+  }
+
   func testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)

@@ -3,6 +3,8 @@ public enum OSIMETextJudgeStatus: Equatable, Sendable {
   case matching(completed: Bool, isComposing: Bool)
   /// Only the marked (unconfirmed) portion differs, so no mistake is recorded.
   case composingMismatch
+  /// An ASCII key arrived from a non-Korean input source and must not affect the session.
+  case unsupportedASCIIInput
   /// Confirmed text differs from the target and counts as one mistake.
   case confirmedMismatch(expectedIndex: Int)
 }
@@ -30,6 +32,24 @@ public enum OSIMETextJudge {
     markedText: String? = nil
   ) throws -> OSIMETextEvaluation {
     let expected = try JamoDecomposer.keySequence(for: target)
+    if containsUnsupportedASCII(in: committedText) || containsUnsupportedASCII(in: markedText ?? "") {
+      let validPrefix = longestDecomposablePrefix(of: committedText)
+      if validPrefix.count >= expected.count,
+        Array(validPrefix.prefix(expected.count)) == expected
+      {
+        return OSIMETextEvaluation(
+          status: .matching(completed: true, isComposing: false),
+          acceptedSequence: expected
+        )
+      }
+      let acceptedCount = mismatchIndex(candidate: validPrefix, expected: expected)
+        ?? min(validPrefix.count, expected.count)
+      return OSIMETextEvaluation(
+        status: .unsupportedASCIIInput,
+        acceptedSequence: Array(expected.prefix(acceptedCount))
+      )
+    }
+
     guard let committed = try? keySequenceAllowingEmpty(for: committedText) else {
       let validPrefix = longestDecomposablePrefix(of: committedText)
       if validPrefix.count >= expected.count,
@@ -91,6 +111,12 @@ public enum OSIMETextJudge {
 
   private static func keySequenceAllowingEmpty(for text: String) throws -> [Character] {
     text.isEmpty ? [] : try JamoDecomposer.keySequence(for: text)
+  }
+
+  private static func containsUnsupportedASCII(in text: String) -> Bool {
+    text.unicodeScalars.contains { scalar in
+      scalar.isASCII && scalar.value != 0x20
+    }
   }
 
   private static func mismatchIndex(

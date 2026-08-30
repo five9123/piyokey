@@ -103,6 +103,8 @@
 "os_ime.input.live_badge" = "Mode réel";
 "os_ime.input.hint" = "Touche le champ et choisis le coréen avec la touche globe. Les modifications pendant la composition ne comptent pas comme des erreurs.";
 "os_ime.input.accessibility_label" = "Champ de saisie du clavier coréen du système";
+"os_ime.input_source_warning.title" = "Le clavier est réglé sur l’anglais";
+"os_ime.input_source_warning.detail" = "Passe au coréen Dubeolsik avec la touche globe ou Contrôle-Espace.";
 "acid_rain.os_ime.any_word_hint" = "Saisis n’importe quel mot affiché à l’écran";
 "os_ime.unavailable.session_message" = "Aucun clavier coréen détecté. Consulte le guide après cette session.";
 "os_ime.guide.title" = "Ajouter un clavier coréen";

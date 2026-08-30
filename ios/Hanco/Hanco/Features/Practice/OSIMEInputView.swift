@@ -83,6 +83,7 @@ struct OSIMEInputPanel: View {
   @State private var fieldText = ""
   @State private var focusRevision = 0
   @State private var isFieldFocused = false
+  @State private var showsInputSourceWarning = false
 
   init(
     target: String,
@@ -109,7 +110,7 @@ struct OSIMEInputPanel: View {
   }
 
   var body: some View {
-    Group {
+    ZStack(alignment: .top) {
       if showsChrome {
         visibleInputPanel
       } else if showsFocusRecovery {
@@ -119,13 +120,23 @@ struct OSIMEInputPanel: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .contentShape(Rectangle())
       }
+
+      if showsInputSourceWarning {
+        OSIMEInputSourceBanner()
+          .padding(.horizontal, 12)
+          .padding(.top, 10)
+          .transition(.move(edge: .top).combined(with: .opacity))
+          .allowsHitTesting(false)
+      }
     }
+    .animation(.easeOut(duration: 0.18), value: showsInputSourceWarning)
     .onAppear {
       fieldText = acceptedText
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: resetRevision) { _ in
       fieldText = acceptedText
+      showsInputSourceWarning = false
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
@@ -235,8 +246,16 @@ struct OSIMEInputPanel: View {
         markedText: markedText
       )
     {
-      onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
-      if case .confirmedMismatch = selection.evaluation.status {
+      switch selection.evaluation.status {
+      case .matching, .composingMismatch:
+        showsInputSourceWarning = false
+        onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
+      case .unsupportedASCIIInput:
+        showsInputSourceWarning = true
+        fieldText = HangulComposer.compose(selection.evaluation.acceptedSequence).text
+      case .confirmedMismatch:
+        showsInputSourceWarning = false
+        onAcceptedCandidateSequence(selection.target, selection.evaluation.acceptedSequence)
         onConfirmedMismatch()
         fieldText = HangulComposer.compose(selection.evaluation.acceptedSequence).text
       }
@@ -253,12 +272,46 @@ struct OSIMEInputPanel: View {
 
     switch evaluation.status {
     case .matching, .composingMismatch:
+      showsInputSourceWarning = false
       onAcceptedSequence(evaluation.acceptedSequence)
+    case .unsupportedASCIIInput:
+      showsInputSourceWarning = true
+      fieldText = HangulComposer.compose(evaluation.acceptedSequence).text
     case .confirmedMismatch:
+      showsInputSourceWarning = false
       onAcceptedSequence(evaluation.acceptedSequence)
       onConfirmedMismatch()
       fieldText = HangulComposer.compose(evaluation.acceptedSequence).text
     }
+  }
+}
+
+struct OSIMEInputSourceBanner: View {
+  var body: some View {
+    HStack(spacing: 10) {
+      Image(systemName: "globe")
+        .font(.headline.weight(.bold))
+        .foregroundStyle(Color.orange)
+      VStack(alignment: .leading, spacing: 2) {
+        Text("os_ime.input_source_warning.title")
+          .font(.subheadline.weight(.bold))
+          .foregroundStyle(AppPalette.ink)
+        Text("os_ime.input_source_warning.detail")
+          .font(.caption)
+          .foregroundStyle(AppPalette.mutedInk)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+      Spacer(minLength: 0)
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 11)
+    .background(Color.orange.opacity(0.16), in: RoundedRectangle(cornerRadius: 15))
+    .overlay {
+      RoundedRectangle(cornerRadius: 15)
+        .stroke(Color.orange.opacity(0.45), lineWidth: 1)
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityIdentifier("os_ime.input_source_warning")
   }
 }
 

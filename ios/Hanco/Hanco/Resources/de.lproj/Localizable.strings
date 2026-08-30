@@ -103,6 +103,8 @@
 "os_ime.input.live_badge" = "Alltagsmodus";
 "os_ime.input.hint" = "Tippe auf das Feld und wähle Koreanisch mit der Globustaste. Änderungen beim Silbenaufbau zählen nicht als Fehler.";
 "os_ime.input.accessibility_label" = "Eingabefeld für die koreanische Systemtastatur";
+"os_ime.input_source_warning.title" = "Deine Tastatur ist auf Englisch eingestellt";
+"os_ime.input_source_warning.detail" = "Wechsle mit der Globus-Taste oder Strg-Leertaste zu Koreanisch (Dubeolsik).";
 "acid_rain.os_ime.any_word_hint" = "Tippe ein beliebiges Wort auf dem Bildschirm";
 "os_ime.unavailable.session_message" = "Keine koreanische Tastatur gefunden. Sieh dir nach dieser Sitzung die Anleitung an.";
 "os_ime.guide.title" = "Koreanische Tastatur hinzufügen";
