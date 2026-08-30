@@ -435,6 +435,13 @@ enum PhysicalDubeolsikLayout {
 struct PhysicalKeyboardGuideView: View {
   let nextExpectedKey: Character?
 
+  private static let reservedTarget = PhysicalKeyboardTarget(
+    key: nil,
+    expected: " ",
+    requiresShift: false,
+    shiftHand: nil
+  )
+
   private var target: PhysicalKeyboardTarget? {
     PhysicalDubeolsikLayout.target(for: nextExpectedKey)
   }
@@ -487,42 +494,58 @@ struct PhysicalKeyboardGuideView: View {
     .accessibilityIdentifier("physical_keyboard.guide")
   }
 
-  @ViewBuilder
   private var guideHeader: some View {
-    if let target {
-      let hand = AppLocalization.string(target.hand.localizationKey)
-      let finger = AppLocalization.string(target.finger.localizationKey)
-      VStack(spacing: 2) {
-        Text(
-          AppLocalization.format("physical_keyboard.next_key_format",
-            String(target.expected),
-            target.key.map { String($0.latin) } ?? AppLocalization.string("physical_keyboard.space")
-          )
-        )
-        .font(.caption.weight(.bold))
-        .foregroundStyle(AppPalette.ink)
+    ZStack {
+      guideInstruction(target ?? Self.reservedTarget)
+        .opacity(target == nil ? 0 : 1)
+        .accessibilityHidden(target == nil)
 
-        Text(
-          target.requiresShift
-            ? AppLocalization.format("physical_keyboard.shift_finger_format",
-              AppLocalization.string((target.shiftHand ?? .both).localizationKey),
-              hand,
-              finger
-            )
-            : AppLocalization.format("physical_keyboard.finger_format",
-              hand,
-              finger
-            )
-        )
-        .font(.caption2.weight(.semibold))
-        .foregroundStyle(AppPalette.secondary)
-      }
-      .accessibilityIdentifier("physical_keyboard.guide.instruction")
-    } else {
       Text("physical_keyboard.ready")
         .font(.caption.weight(.bold))
         .foregroundStyle(AppPalette.mutedInk)
+        .multilineTextAlignment(.center)
+        .lineLimit(2)
+        .minimumScaleFactor(0.7)
+        .opacity(target == nil ? 1 : 0)
+        .accessibilityHidden(target != nil)
+        .accessibilityIdentifier("physical_keyboard.guide.ready")
     }
+    .frame(maxWidth: .infinity)
+  }
+
+  private func guideInstruction(_ target: PhysicalKeyboardTarget) -> some View {
+    let hand = AppLocalization.string(target.hand.localizationKey)
+    let finger = AppLocalization.string(target.finger.localizationKey)
+    return VStack(spacing: 2) {
+      Text(
+        AppLocalization.format("physical_keyboard.next_key_format",
+          String(target.expected),
+          target.key.map { String($0.latin) } ?? AppLocalization.string("physical_keyboard.space")
+        )
+      )
+      .font(.caption.weight(.bold))
+      .foregroundStyle(AppPalette.ink)
+      .lineLimit(1)
+      .minimumScaleFactor(0.7)
+
+      Text(
+        target.requiresShift
+          ? AppLocalization.format("physical_keyboard.shift_finger_format",
+            AppLocalization.string((target.shiftHand ?? .both).localizationKey),
+            hand,
+            finger
+          )
+          : AppLocalization.format("physical_keyboard.finger_format",
+            hand,
+            finger
+          )
+      )
+      .font(.caption2.weight(.semibold))
+      .foregroundStyle(AppPalette.secondary)
+      .lineLimit(1)
+      .minimumScaleFactor(0.7)
+    }
+    .accessibilityIdentifier("physical_keyboard.guide.instruction")
   }
 
   private func physicalRow(
