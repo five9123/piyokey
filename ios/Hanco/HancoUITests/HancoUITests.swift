@@ -1408,9 +1408,15 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "practice-result-recommendations-ja")
 
     retry.tap()
-    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
-    XCTAssertEqual(element("practice.target.value").label, "회사")
+    let restartedTargets = app.descendants(matching: .any)
+      .matching(identifier: "practice.target.value")
+    XCTAssertTrue(restartedTargets.firstMatch.waitForExistence(timeout: 5))
+    XCTAssertEqual(restartedTargets.count, 1)
+    XCTAssertEqual(restartedTargets.firstMatch.label, "회사")
+    XCTAssertEqual(restartedTargets.firstMatch.value as? String, "0 / 2 音節完了")
     XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
+    XCTAssertEqual(element("practice.jamo_progress.value").value as? String, "0 / 5")
+    attachScreenshot(named: "practice-retry-first-card-iphone-ja")
   }
 
   func testDoneExitsPracticeAndGameResultsEvenDuringReveal() {
