@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "20da603d57c996861655392b581171f94973abed",
+  "verified_tree": "44d3fad4339faaf08cb52a26aa5a0ce39acb3c1e",
+  "branch": "codex/126-deck-keyboard-settings-persistence",
+  "scope": "Issue #126 rebased iOS deck keyboard preference persistence",
+  "result": "pass",
+  "recorded_at": "2026-08-30T03:57:40.949562+00:00",
+  "checks": [
+    {
+      "name": "AppSettings unit",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -parallel-testing-enabled NO -only-testing:HancoTests/AppSettingsTests",
+      "note": ""
+    },
+    {
+      "name": "deck practice UI background exit relaunch",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": ""
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "실제 iPadOS 기기 확인은 Issue #126 Verify에서 수행한다"
+  ]
+}
