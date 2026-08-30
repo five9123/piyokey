@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "verified_commit": "5442f5cf2cb00bb001c01a7134fcb86b92018e45",
+  "verified_tree": "08e5806d429cfcb990f7ca6359ae1ab0e9374d0b",
+  "branch": "codex/66-ios-home-deck-card-height",
+  "scope": "TYP-66 iOS home recommendation fixed height including xSmall Dynamic Type",
+  "result": "pass",
+  "recorded_at": "2026-08-30T10:47:30.300192+00:00",
+  "checks": [
+    {
+      "name": "focused unit and UI regression",
+      "status": "pass",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 16\" -only-testing:HancoTests/RecommendationEngineTests -only-testing:HancoUITests/HancoUITests/testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES -only-testing:HancoUITests/HancoUITests/testHomeRecommendationsOpenDeckDetail -only-testing:HancoUITests/HancoUITests/testFirstHomeRecommendsUntilDeckPracticeStartsAndThenResumesAfterRelaunch",
+      "note": "8 recommendation unit tests and 3 home UI tests passed; the different-length scenario runs at xSmall Dynamic Type and asserts a 146pt floor plus non-overlap"
+    },
+    {
+      "name": "diff hygiene",
+      "status": "pass",
+      "command": "git diff --check 5442f5c^ 5442f5c",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "PASS: inspected the iPhone 16 xSmall Spanish home screenshot; cards retain their backgrounds, one-line ellipsis, equal height, and do not overlap the next section"
+  ]
+}

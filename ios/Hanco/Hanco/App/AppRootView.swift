@@ -531,6 +531,8 @@ extension View {
     #if DEBUG
       if ProcessInfo.processInfo.environment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] == "1" {
         dynamicTypeSize(.accessibility5)
+      } else if ProcessInfo.processInfo.environment["UITEST_DYNAMIC_TYPE_XSMALL"] == "1" {
+        dynamicTypeSize(.xSmall)
       } else {
         self
       }

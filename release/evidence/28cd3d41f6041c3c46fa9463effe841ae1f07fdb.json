@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "28cd3d41f6041c3c46fa9463effe841ae1f07fdb",
+  "verified_tree": "14db6205d7b5aad60c75a6d6f4be1a6871501bc2",
+  "branch": "codex/66-ios-home-deck-card-height",
+  "scope": "TYP-66 iOS home recommendation fixed height across compact Dynamic Type sizes",
+  "result": "pass",
+  "recorded_at": "2026-08-30T11:12:16.439801+00:00",
+  "checks": [
+    {
+      "name": "focused unit and home UI regression",
+      "status": "pass",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 16\" -only-testing:HancoTests/RecommendationEngineTests -only-testing:HancoUITests/HancoUITests/testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES -only-testing:HancoUITests/HancoUITests/testHomeRecommendationsOpenDeckDetail -only-testing:HancoUITests/HancoUITests/testFirstHomeRecommendsUntilDeckPracticeStartsAndThenResumesAfterRelaunch",
+      "note": "8 recommendation unit tests and 3 home UI tests passed"
+    },
+    {
+      "name": "accessibility fixed-height UI regression",
+      "status": "pass",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 16\" -only-testing:HancoUITests/HancoUITests/testHomeRecommendationCardsScaleFixedHeightAtAccessibilitySizeGlobalES",
+      "note": "cards scaled above the 146pt floor and remained equal height"
+    },
+    {
+      "name": "iPad destination scope guard",
+      "status": "pass",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPad Pro 13-inch (M5)\" -only-testing:HancoUITests/HancoUITests/testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES",
+      "note": "test skipped as an explicitly iPhone-scoped regression with zero failures"
+    },
+    {
+      "name": "diff hygiene",
+      "status": "pass",
+      "command": "git diff --check 28cd3d4^ 28cd3d4",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "PASS: inspected iPhone 16 xSmall and accessibility5 Spanish home screenshots; equal card bounds, one-line ellipsis, contained content, and separation from the next section confirmed"
+  ]
+}

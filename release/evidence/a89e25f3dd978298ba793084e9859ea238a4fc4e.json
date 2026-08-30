@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a89e25f3dd978298ba793084e9859ea238a4fc4e",
+  "verified_tree": "4e9dc2b7415dc7e29370c32ccbb7e38343f24148",
+  "branch": "codex/66-ios-home-deck-card-height",
+  "scope": "TYP-66 iOS home recommended deck card layout",
+  "result": "pass",
+  "recorded_at": "2026-08-30T10:28:00.962822+00:00",
+  "checks": [
+    {
+      "name": "focused unit and UI regression",
+      "status": "pass",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 16\" -only-testing:HancoTests/RecommendationEngineTests -only-testing:HancoUITests/HancoUITests/testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES -only-testing:HancoUITests/HancoUITests/testHomeRecommendationsOpenDeckDetail -only-testing:HancoUITests/HancoUITests/testFirstHomeRecommendsUntilDeckPracticeStartsAndThenResumesAfterRelaunch",
+      "note": "8 recommendation unit tests and 3 home UI tests passed"
+    },
+    {
+      "name": "diff hygiene",
+      "status": "pass",
+      "command": "git diff --check a89e25f^ a89e25f",
+      "note": ""
+    },
+    {
+      "name": "full simulator suite",
+      "status": "skip",
+      "command": "cd ios/Hanco && xcodebuild test -project Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 16\"",
+      "note": "Ran exactly as required; encountered an out-of-scope Acid Rain content assertion failure, then stopped during store capture scenarios at user request. Acid Rain and store capture are excluded from the TYP-66 scope verdict."
+    }
+  ],
+  "manual_gates": [
+    "PASS: visually inspected the iPhone 16 Spanish home recommendation screenshot; fixed card bounds, one-line title/tag truncation, and non-overlap confirmed"
+  ]
+}

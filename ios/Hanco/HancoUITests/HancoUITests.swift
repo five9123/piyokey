@@ -2,8 +2,9 @@ import XCTest
 
 final class HancoUITests: XCTestCase {
   private var app: XCUIApplication!
+  private let regularRecommendationCardMinimumHeight: CGFloat = 146
 
-  // Store captures use real localized UI. All other regression tests stay Japanese.
+  // Global-suffixed tests use real localized UI. Other regression tests stay Japanese.
   private var storeCaptureLanguage: String {
     if name.contains("GlobalEN") { return "en" }
     if name.contains("GlobalKO") { return "ko" }
@@ -1190,6 +1191,80 @@ final class HancoUITests: XCTestCase {
 
     XCTAssertTrue(app.navigationBars["デッキ詳細"].waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["TOPIK I 基本単語"].exists)
+  }
+
+  func testHomeRecommendationCardsKeepFixedHeightWithDifferentContentLengthsGlobalES() throws {
+    try requireCompactPhoneDestination()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_XSMALL"] = "1"
+    app.launch()
+
+    let recommendations = spanishHomeRecommendationCards()
+
+    XCTAssertTrue(element("home.recommendations.personal").waitForExistence(timeout: 5))
+    recommendations.forEach { card, title in
+      XCTAssertTrue(card.waitForExistence(timeout: 3))
+      XCTAssertTrue(card.label.contains(title), "Accessibility label must contain the full title")
+    }
+
+    let cardHeight = recommendations[0].0.frame.height
+    XCTAssertEqual(cardHeight, regularRecommendationCardMinimumHeight, accuracy: 1)
+    recommendations.dropFirst().forEach { card, _ in
+      XCTAssertEqual(card.frame.height, cardHeight, accuracy: 1)
+    }
+    let nextStepSection = element("home.recommendations.next_step")
+    XCTAssertTrue(nextStepSection.waitForExistence(timeout: 3))
+    XCTAssertLessThanOrEqual(recommendations[0].0.frame.maxY, nextStepSection.frame.minY)
+
+    scrollToHittable(recommendations[0].0)
+    attachScreenshot(named: "home-recommendations-fixed-height-es")
+    recommendations[0].0.tap()
+    XCTAssertTrue(app.navigationBars["Detalles del mazo"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts[recommendations[0].1].exists)
+  }
+
+  func testHomeRecommendationCardsScaleFixedHeightAtAccessibilitySizeGlobalES() throws {
+    try requireCompactPhoneDestination()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+    app.launch()
+
+    let recommendations = spanishHomeRecommendationCards()
+    XCTAssertTrue(element("home.recommendations.personal").waitForExistence(timeout: 5))
+    recommendations.forEach { card, title in
+      XCTAssertTrue(card.waitForExistence(timeout: 3))
+      XCTAssertTrue(card.label.contains(title), "Accessibility label must contain the full title")
+    }
+
+    let cardHeight = recommendations[0].0.frame.height
+    XCTAssertGreaterThan(cardHeight, regularRecommendationCardMinimumHeight)
+    recommendations.dropFirst().forEach { card, _ in
+      XCTAssertEqual(card.frame.height, cardHeight, accuracy: 1)
+    }
+    let visibleFrame = app.frame.insetBy(dx: 8, dy: 12)
+    for _ in 0..<12 where !visibleFrame.intersects(recommendations[0].0.frame) {
+      scrollVisibleSurface(.up)
+    }
+    XCTAssertTrue(visibleFrame.intersects(recommendations[0].0.frame))
+    attachScreenshot(named: "home-recommendations-accessibility-fixed-height-es")
+  }
+
+  private func spanishHomeRecommendationCards() -> [(XCUIElement, String)] {
+    [
+      ("official_topik_one", "Vocabulario esencial del TOPIK I"),
+      ("official_keyboard_start", "Primeros pasos con Dubeolsik"),
+      ("official_trending_korean", "Jerga y tendencias coreanas"),
+    ].map { deckID, title in
+      (element("home.recommendation.\(deckID)"), title)
+    }
+  }
+
+  private func requireCompactPhoneDestination() throws {
+    guard max(app.frame.width, app.frame.height) < 1_000 else {
+      throw XCTSkip("This fixed-height recommendation regression runs on iPhone destinations")
+    }
   }
 
   func testContentTabsExceptDiscoverOfferSettingsFromTheTopBar() {
