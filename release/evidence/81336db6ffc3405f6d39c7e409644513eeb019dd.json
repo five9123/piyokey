@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "verified_commit": "81336db6ffc3405f6d39c7e409644513eeb019dd",
+  "verified_tree": "f54b2d2e91d75d3a2830dfc77e9c921d24b82eb0",
+  "branch": "codex/124-correct-sound-latency",
+  "scope": "Issue #124 iPad OS keyboard correct-sound latency",
+  "result": "pass",
+  "recorded_at": "2026-08-30T03:01:56.956222+00:00",
+  "checks": [
+    {
+      "name": "audio-unit",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416 -only-testing:HancoTests/HancoSoundEngineTests",
+      "note": ""
+    },
+    {
+      "name": "ipad-os-ime-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416 -only-testing:HancoUITests/HancoUITests/testOSIMERapidCorrectFeedbackStartsWithoutQueueingOldSounds",
+      "note": ""
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "실제 iPad 내장 스피커와 Bluetooth 출력의 음향 onset 및 외부 음악 mixWithOthers 청취는 Issue #124 Verify에서 수행"
+  ]
+}
