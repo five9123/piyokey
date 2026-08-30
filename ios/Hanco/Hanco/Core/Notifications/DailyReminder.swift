@@ -24,6 +24,10 @@ struct DailyReminderSettingsStore {
     self.defaults = defaults
   }
 
+  var hasStoredEnabledPreference: Bool {
+    defaults.object(forKey: Self.enabledKey) != nil
+  }
+
   func load() -> DailyReminderPreference {
     DailyReminderPreference(
       isEnabled: defaults.bool(forKey: Self.enabledKey),
@@ -140,6 +144,10 @@ final class DailyReminderLibrary: ObservableObject {
   private let scheduler: DailyReminderScheduling
   private var schedulingTask: Task<Void, Never>?
 
+  var hasStoredEnabledPreference: Bool {
+    store.hasStoredEnabledPreference
+  }
+
   init(
     store: DailyReminderSettingsStore = DailyReminderSettingsStore(),
     scheduler: DailyReminderScheduling? = nil
@@ -220,4 +228,36 @@ final class DailyReminderLibrary: ObservableObject {
     }
     store.save(preference)
   }
+
+  static func appRootDefault() -> DailyReminderLibrary {
+    #if DEBUG
+      if let rawResult = ProcessInfo.processInfo.environment[
+        "UITEST_ONBOARDING_NOTIFICATION_RESULT"
+      ] {
+        return DailyReminderLibrary(
+          scheduler: UITestDailyReminderScheduler(
+            result: rawResult == "scheduled" ? .scheduled : .denied
+          )
+        )
+      }
+    #endif
+    return DailyReminderLibrary()
+  }
 }
+
+#if DEBUG
+  @MainActor
+  private final class UITestDailyReminderScheduler: DailyReminderScheduling {
+    private let result: DailyReminderScheduleResult
+
+    init(result: DailyReminderScheduleResult) {
+      self.result = result
+    }
+
+    func schedule(hour: Int, minute: Int) async -> DailyReminderScheduleResult {
+      result
+    }
+
+    func cancel() {}
+  }
+#endif

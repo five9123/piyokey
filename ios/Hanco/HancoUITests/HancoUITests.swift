@@ -2735,8 +2735,8 @@ final class HancoUITests: XCTestCase {
     app.buttons["keyboard.key.ㅏ"].tap()
 
     XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
-    XCTAssertTrue(app.staticTexts["退勤後の20:00に毎日お知らせ"].exists)
-    XCTAssertTrue(app.buttons["通知を受け取ってミッション開始"].exists)
+    XCTAssertFalse(app.buttons["onboarding.reminder.allow"].exists)
+    XCTAssertTrue(app.buttons["ふかミッションへ"].exists)
 
     let finish = app.buttons["onboarding.finish"]
     scrollToHittable(finish)
@@ -3504,46 +3504,138 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.tabBars.buttons["연습"].exists)
   }
 
-  func testPrivacyChoicesAreOptionalIndependentAndShownOncePerNoticeVersion() {
+  func testPrivacyParticipateEnablesBothChoicesAndNoticeIsShownOnce() {
     app.terminate()
     app = makeApplication(
       resetKeyboardPreferences: true,
-      showsPrivacyConsent: true
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "scheduled"
     )
     app.launch()
 
     XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    let analytics = app.switches["privacy_consent.analytics"]
-    let diagnostics = app.switches["privacy_consent.diagnostics"]
-    XCTAssertEqual(analytics.value as? String, "0")
-    XCTAssertEqual(diagnostics.value as? String, "0")
+    XCTAssertFalse(app.switches["privacy_consent.analytics"].exists)
+    XCTAssertFalse(app.switches["privacy_consent.diagnostics"].exists)
+    XCTAssertTrue(element("privacy_consent.usage_information").exists)
+    XCTAssertTrue(element("privacy_consent.error_information").exists)
+    XCTAssertTrue(element("privacy_consent.excluded_data").exists)
+    XCTAssertTrue(element("privacy_consent.privacy_policy").isHittable)
+    XCTAssertFalse(app.staticTexts["PostHog Cloud EU"].exists)
+    XCTAssertFalse(app.staticTexts["Firebase Crashlytics"].exists)
     XCTAssertTrue(app.buttons["privacy_consent.continue_without_sharing"].isHittable)
-    analytics.tap()
-    XCTAssertEqual(analytics.value as? String, "1")
-    XCTAssertEqual(diagnostics.value as? String, "0")
-    app.buttons["privacy_consent.save"].tap()
+    app.buttons["privacy_consent.participate_and_continue"].tap()
 
-    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-    XCTAssertFalse(element("privacy_consent.screen").exists)
-
-    app.terminate()
-    app = makeApplication(
-      resetKeyboardPreferences: false,
-      showsPrivacyConsent: true
-    )
-    app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("privacy_consent.screen").exists)
 
     openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "1")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "1")
+    app.buttons["settings.done"].tap()
+
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "scheduled"
+    )
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+  }
+
+  func testPrivacyContinueWithoutSharingDisablesBothAndRevisitReusesButtons() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "denied"
+    )
+    app.launchEnvironment["UITEST_SEED_PRIVACY_CHOICES_ENABLED"] = "1"
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "0")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "0")
+    scrollToHittable(analytics)
+    analytics.tap()
+    XCTAssertEqual(analytics.value as? String, "1")
+    XCTAssertEqual(diagnostics.value as? String, "0")
+
     let review = app.buttons["settings.review_privacy_choices"]
     scrollToHittable(review)
     review.tap()
     XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    XCTAssertEqual(app.switches["privacy_consent.analytics"].value as? String, "1")
-    XCTAssertEqual(app.switches["privacy_consent.diagnostics"].value as? String, "0")
-    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertFalse(app.switches["privacy_consent.analytics"].exists)
+    XCTAssertFalse(app.switches["privacy_consent.diagnostics"].exists)
+    app.buttons["privacy_consent.participate_and_continue"].tap()
     XCTAssertTrue(element("settings.screen").waitForExistence(timeout: 5))
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "1")
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "1")
+  }
+
+  func testLegacyUpgradePreservesDisabledReminderAndContinuesPrivacyFlow() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "scheduled",
+      seedsLegacyDisabledReminder: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    let reminder = app.switches["retention.reminder.toggle"]
+    scrollToHittable(reminder)
+    XCTAssertEqual(reminder.value as? String, "0")
+  }
+
+  func testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad() {
+    let isIPad = max(app.frame.width, app.frame.height) >= 1_000
+    app.terminate()
+    if isIPad {
+      XCUIDevice.shared.orientation = .landscapeLeft
+    }
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "denied"
+    )
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(app.scrollViews["privacy_consent.scroll"].exists)
+    for identifier in [
+      "privacy_consent.usage_information",
+      "privacy_consent.error_information",
+      "privacy_consent.excluded_data",
+      "privacy_consent.privacy_policy",
+      "privacy_consent.participate_and_continue",
+      "privacy_consent.continue_without_sharing",
+    ] {
+      let item = element(identifier)
+      XCTAssertTrue(item.exists, identifier)
+      XCTAssertGreaterThanOrEqual(item.frame.minY, app.frame.minY, identifier)
+      XCTAssertLessThanOrEqual(item.frame.maxY, app.frame.maxY, identifier)
+    }
   }
 
   func testSettingsExposePublicPrivacySupportAndContentFeedbackLinks() {
@@ -3599,6 +3691,8 @@ final class HancoUITests: XCTestCase {
     respectsOnboardingState: Bool = false,
     forcesAppTour: Bool = false,
     showsPrivacyConsent: Bool = false,
+    onboardingNotificationResult: String = "denied",
+    seedsLegacyDisabledReminder: Bool = false,
     practiceAutoSpeaks: Bool? = nil,
     audioProbe: Bool = false,
     seedsAppStoreCaptureState: Bool = false,
@@ -3640,6 +3734,11 @@ final class HancoUITests: XCTestCase {
       application.launchArguments += [
         "-onboarding.app_tour.completed", "YES",
       ]
+      application.launchEnvironment["UITEST_ONBOARDING_NOTIFICATION_RESULT"] =
+        onboardingNotificationResult
+      if seedsLegacyDisabledReminder {
+        application.launchEnvironment["UITEST_SEED_LEGACY_REMINDER_DISABLED"] = "1"
+      }
     } else {
       application.launchArguments += [
         "-settings.privacy_notice_version", "1",

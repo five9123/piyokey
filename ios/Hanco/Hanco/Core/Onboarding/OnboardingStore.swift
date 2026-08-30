@@ -126,6 +126,8 @@ struct OnboardingStore {
   static let stateCorruptKey = "onboarding.state.corrupt"
   static let appTourCompletedKey = "onboarding.app_tour.completed"
   static let homeLearningStartedKey = "onboarding.home_learning_started"
+  static let notificationPermissionRequestedKey =
+    "onboarding.notification_permission_requested"
   private static let currentSchemaVersion = 1
 
   private let defaults: UserDefaults
@@ -194,6 +196,7 @@ struct OnboardingStore {
     defaults.removeObject(forKey: Self.stateCorruptKey)
     defaults.removeObject(forKey: Self.appTourCompletedKey)
     defaults.removeObject(forKey: Self.homeLearningStartedKey)
+    defaults.removeObject(forKey: Self.notificationPermissionRequestedKey)
   }
 }
 

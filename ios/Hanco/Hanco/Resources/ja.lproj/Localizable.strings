@@ -261,13 +261,15 @@
 "settings.analytics_privacy_note" = "入力した文字、ユーザーデッキの内容、氏名やメールアドレスは送信しません。どちらも初期設定はオフです。";
 "settings.review_privacy_choices" = "データ共有の説明と選択を確認";
 "privacy_consent.navigation_title" = "プライバシーの選択";
-"privacy_consent.title" = "ピヨキーの改善に協力しますか？";
-"privacy_consent.introduction" = "共有する情報を項目ごとに選べます。どちらも、選択を保存するまではオフです。";
-"privacy_consent.optional_note" = "共有しなくても、レッスン・ゲーム・購入済み機能をすべて利用できます。設定からいつでも変更できます。";
-"privacy_consent.analytics_detail" = "PostHog Cloud EUへ、よく使われる機能、セッションの完了状況、アプリのバージョン、ランダムなアプリ識別子を送信します。広告や他社サービスをまたぐ追跡には使いません。";
-"privacy_consent.diagnostics_detail" = "Firebase Crashlyticsへ、クラッシュログ、発生時のアプリ状態、端末・OS情報、ランダムなインストール識別子を送信します。";
-"privacy_consent.excluded_data" = "入力した文字、回答、検索語、ユーザーデッキの名前・内容、氏名、メールアドレス、広告ID、録音、セッションリプレイは送信しません。";
-"privacy_consent.save" = "選択を保存";
+"privacy_consent.title" = "ピヨキーの改善に参加しますか？";
+"privacy_consent.introduction" = "利用情報とエラー情報を匿名で送り、アプリの改善に役立てます。";
+"privacy_consent.usage_title" = "利用情報";
+"privacy_consent.usage_detail" = "使った機能";
+"privacy_consent.error_title" = "エラー情報";
+"privacy_consent.error_detail" = "アプリが停止した原因";
+"privacy_consent.excluded_data" = "入力した文字、名前、メールアドレスは送りません。";
+"privacy_consent.settings_note" = "設定からいつでも個別に変更できます。";
+"privacy_consent.participate_and_continue" = "参加して続ける";
 "privacy_consent.continue_without_sharing" = "共有せずに続ける";
 "settings.support" = "サポート";
 "content_feedback.settings.title" = "デッキの提案・内容の報告";
@@ -899,10 +901,6 @@
 "onboarding.bulk.download" = "3つをまとめてダウンロード";
 "onboarding.bulk.complete" = "3つを追加しました";
 "onboarding.bulk.failed" = "一部を追加できませんでした。アプリ内からもう一度試せます。";
-"onboarding.reminder.title" = "退勤後の20:00に毎日お知らせ";
-"onboarding.reminder.detail" = "通知を許可するだけで、端末の現地時刻20:00に自動設定します。時刻はあとから変更できます。";
-"onboarding.reminder.allow_and_begin" = "通知を受け取ってミッション開始";
-"onboarding.reminder.not_now" = "通知なしで始める";
 "onboarding.finish" = "ピヨキーを始める";
 
 "app.name" = "ピヨキー";

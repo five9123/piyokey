@@ -262,12 +262,14 @@
 "settings.review_privacy_choices" = "Review data-sharing choices";
 "privacy_consent.navigation_title" = "Privacy choices";
 "privacy_consent.title" = "Help improve typee?";
-"privacy_consent.introduction" = "Choose each type of information you want to share. Both stay off until you save your choices.";
-"privacy_consent.optional_note" = "You can use every lesson, game, and purchased feature without sharing. Change your choices anytime in Settings.";
-"privacy_consent.analytics_detail" = "Send PostHog Cloud EU the features used, session completion, app version, and a random app identifier. This is not used for ads or tracking across other companies' services.";
-"privacy_consent.diagnostics_detail" = "Send Firebase Crashlytics crash logs, relevant app state, device and OS information, and a random installation identifier.";
-"privacy_consent.excluded_data" = "Typed text, answers, searches, user-deck names or content, names, email addresses, advertising IDs, recordings, and session replay are never sent.";
-"privacy_consent.save" = "Save choices";
+"privacy_consent.introduction" = "Send anonymous usage and error information to help us improve the app.";
+"privacy_consent.usage_title" = "Usage information";
+"privacy_consent.usage_detail" = "Features you use";
+"privacy_consent.error_title" = "Error information";
+"privacy_consent.error_detail" = "What caused the app to stop";
+"privacy_consent.excluded_data" = "We don't send what you type, your name, or your email.";
+"privacy_consent.settings_note" = "Change each choice anytime in Settings.";
+"privacy_consent.participate_and_continue" = "Participate and continue";
 "privacy_consent.continue_without_sharing" = "Continue without sharing";
 "settings.support" = "Support";
 "content_feedback.settings.title" = "Deck suggestions and reports";
@@ -899,10 +901,6 @@
 "onboarding.bulk.download" = "Download all three";
 "onboarding.bulk.complete" = "All three added";
 "onboarding.bulk.failed" = "Some decks couldn't be added. You can try again in the app.";
-"onboarding.reminder.title" = "A daily reminder after work at 20:00";
-"onboarding.reminder.detail" = "Just allow notifications and we'll schedule it automatically for 20:00 in your device's local time. You can change the time later.";
-"onboarding.reminder.allow_and_begin" = "Allow reminders and begin";
-"onboarding.reminder.not_now" = "Begin without reminders";
 "onboarding.finish" = "Start typee";
 
 "app.name" = "typee";

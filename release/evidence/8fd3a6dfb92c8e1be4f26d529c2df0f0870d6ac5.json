@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "verified_commit": "8fd3a6dfb92c8e1be4f26d529c2df0f0870d6ac5",
+  "verified_tree": "d5dca08986c67864dbac0653372b24d450a43235",
+  "branch": "codex/71-onboarding-privacy-copy",
+  "scope": "TYP-71 iOS onboarding privacy consent with 1.0.2 reminder preservation",
+  "result": "pass",
+  "recorded_at": "2026-08-30T18:52:02.435061+00:00",
+  "checks": [
+    {
+      "name": "Swift focused unit tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/AppSettingsTests/testPrivacyManifestDeclaresOptionalUnlinkedTelemetryWithoutTracking -only-testing:HancoTests/AppSettingsTests/testTelemetryConsentsAreIndependentAndDefaultOff -only-testing:HancoTests/AppSettingsTests/testPrivacyTwoButtonDecisionsMapToBothStoredChoices -only-testing:HancoTests/AppSettingsTests/testAppDoesNotDeclareTrackingPermission -only-testing:HancoTests/AppSettingsTests/testAnalyticsAppOpenTrackerCapturesOncePerForegroundAfterConsent -only-testing:HancoTests/AppSettingsTests/testPrivacyNoticeAppearsOnlyAfterOnboardingOutsideSessionsAndOncePerVersion -only-testing:HancoTests/OnboardingStoreTests/testResetAlsoClearsCompletedMainAppTourAndNotificationRequest -only-testing:HancoTests/RetentionStoreTests/testReminderDefaultsToLocalWorkdayEndAndPersistsCustomTime -only-testing:HancoTests/RetentionStoreTests/testExplicitlyDisabledLegacyReminderIsDistinguishableFromFreshInstall -only-testing:HancoTests/RetentionStoreTests/testReminderScheduleUsesFloatingLocalTimeAndDeniedAuthorizationKeepsToggleOff -only-testing:HancoTests/RetentionStoreTests/testOnboardingConsentEnablesLocalWorkdayEndWithoutAnotherSettingStep",
+      "note": ""
+    },
+    {
+      "name": "Onboarding handoff iPhone SE UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.5' -only-testing:HancoUITests/HancoUITests/testOnboardingSelectsLevelBeforeFirstInputAndRoutesToForcedHatchMissions",
+      "note": ""
+    },
+    {
+      "name": "Privacy and legacy upgrade iPhone SE UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.5' -only-testing:HancoUITests/HancoUITests/testPrivacyParticipateEnablesBothChoicesAndNoticeIsShownOnce -only-testing:HancoUITests/HancoUITests/testPrivacyContinueWithoutSharingDisablesBothAndRevisitReusesButtons -only-testing:HancoUITests/HancoUITests/testLegacyUpgradePreservesDisabledReminderAndContinuesPrivacyFlow -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad",
+      "note": ""
+    },
+    {
+      "name": "Privacy consent iPad layout UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad",
+      "note": ""
+    },
+    {
+      "name": "Six-language privacy copy",
+      "status": "pass",
+      "command": "python3.12 -m unittest tools.tests.test_ui_language_scope.UILanguageScopeTests.test_privacy_modal_copy_is_synced_and_provider_neutral_in_all_six_sources",
+      "note": ""
+    },
+    {
+      "name": "Dead onboarding reminder copy removed",
+      "status": "pass",
+      "command": "if rg -n '^\"onboarding\\.reminder\\.' ios/Hanco/Hanco/Resources/{ko,ja,en,es,de,fr}.lproj/Localizable.strings; then exit 1; fi",
+      "note": ""
+    },
+    {
+      "name": "Analytics generated contract",
+      "status": "pass",
+      "command": "python3.12 tools/gen_analytics_contract.py --check",
+      "note": ""
+    },
+    {
+      "name": "Analytics contract tests",
+      "status": "pass",
+      "command": "python3.12 -m unittest tools.tests.test_analytics_contract",
+      "note": ""
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Whitespace validation",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Physical-device OS notification prompt and production telemetry transport verification remain release QA; archive, upload, App Store Connect, Android, and TYP-43 release work were explicitly out of scope."
+  ]
+}

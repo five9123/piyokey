@@ -61,8 +61,10 @@ class AnalyticsContractTests(unittest.TestCase):
         prd = (ROOT / "PRD.md").read_text(encoding="utf-8")
         analytics = (ROOT / "docs/ANALYTICS.md").read_text(encoding="utf-8")
         self.assertIn("고지 버전", prd)
+        self.assertIn("Participate and continue", analytics)
         self.assertIn("Continue without sharing", analytics)
-        self.assertIn("Both switches must still be off", analytics)
+        self.assertIn("Settings keeps the two independent toggles", analytics)
+        self.assertIn("PrivacyNoticePolicy.currentVersion` at 1", analytics)
 
 
 if __name__ == "__main__":

@@ -106,7 +106,7 @@ struct AppRootView: View {
   @StateObject private var reviewDeck = ReviewDeckLibrary()
   @StateObject private var curriculumProgress = CurriculumProgressLibrary()
   @StateObject private var retention = RetentionLibrary()
-  @StateObject private var dailyReminder = DailyReminderLibrary()
+  @StateObject private var dailyReminder: DailyReminderLibrary
   @StateObject private var onboarding = OnboardingLibrary()
   @StateObject private var mascotCompanion = MascotCompanionLibrary()
   @StateObject private var gameCenter = GameCenterService()
@@ -120,6 +120,8 @@ struct AppRootView: View {
   @AppStorage(SettingsPreferenceKeys.language) private var language =
     AppLanguage.preferred.rawValue
   @AppStorage(OnboardingStore.appTourCompletedKey) private var appTourCompleted = false
+  @AppStorage(OnboardingStore.notificationPermissionRequestedKey)
+  private var onboardingNotificationPermissionRequested = false
   @AppStorage(SettingsPreferenceKeys.anonymousAnalyticsEnabled)
   private var anonymousAnalyticsEnabled = false
   @AppStorage(SettingsPreferenceKeys.crashDiagnosticsEnabled)
@@ -129,10 +131,12 @@ struct AppRootView: View {
   @State private var selectedTab: AppTab = .home
   @State private var showsSettings = false
   @State private var showsPrivacyConsent = false
+  @State private var onboardingNotificationRequestIsInFlight = false
   @State private var hatchGateIsActive: Bool?
   @State private var appTourStep: AppTourStep?
 
   init() {
+    _dailyReminder = StateObject(wrappedValue: DailyReminderLibrary.appRootDefault())
     #if DEBUG
       if let rawAccess = ProcessInfo.processInfo.environment["UITEST_DECK_MAKER_ACCESS"] {
         _deckMakerPurchaseStore = StateObject(
@@ -210,12 +214,7 @@ struct AppRootView: View {
     }
     .sheet(isPresented: $showsPrivacyConsent) {
       PrivacyConsentView(
-        initialAnalyticsEnabled: anonymousAnalyticsEnabled,
-        initialDiagnosticsEnabled: crashDiagnosticsEnabled,
-        onSave: applyPrivacyChoices,
-        onContinueWithoutSharing: {
-          applyPrivacyChoices(analytics: false, diagnostics: false)
-        }
+        onDecision: applyPrivacyDecision
       )
       .hancoAdaptiveLayout()
       .environment(
@@ -246,10 +245,27 @@ struct AppRootView: View {
         appTourStep = .home
       }
     }
-    .task(id: shouldPresentPrivacyConsent) {
-      guard shouldPresentPrivacyConsent else { return }
-      await Task.yield()
-      guard !Task.isCancelled, shouldPresentPrivacyConsent else { return }
+    .task(id: shouldStartOnboardingPrivacyFlow) {
+      guard shouldStartOnboardingPrivacyFlow else { return }
+      guard !onboardingNotificationPermissionRequested else {
+        showsPrivacyConsent = true
+        return
+      }
+      guard !dailyReminder.hasStoredEnabledPreference else {
+        onboardingNotificationPermissionRequested = true
+        showsPrivacyConsent = true
+        return
+      }
+      guard !onboardingNotificationRequestIsInFlight else { return }
+      onboardingNotificationRequestIsInFlight = true
+      _ = await dailyReminder.enableFromOnboarding()
+      guard !Task.isCancelled else {
+        onboardingNotificationRequestIsInFlight = false
+        return
+      }
+      onboardingNotificationPermissionRequested = true
+      onboardingNotificationRequestIsInFlight = false
+      guard shouldStartOnboardingPrivacyFlow else { return }
       showsPrivacyConsent = true
     }
     .onAppear {
@@ -379,7 +395,7 @@ struct AppRootView: View {
       && appTourStep == nil
   }
 
-  private var shouldPresentPrivacyConsent: Bool {
+  private var shouldStartOnboardingPrivacyFlow: Bool {
     PrivacyNoticePolicy.shouldPresent(
       reviewedVersion: privacyNoticeVersion,
       onboardingCompleted: !onboarding.shouldPresent && !shouldPresentHatchGate,
@@ -388,15 +404,15 @@ struct AppRootView: View {
     )
   }
 
-  private func applyPrivacyChoices(analytics: Bool, diagnostics: Bool) {
-    anonymousAnalyticsEnabled = analytics
-    crashDiagnosticsEnabled = diagnostics
+  private func applyPrivacyDecision(_ decision: PrivacyConsentDecision) {
+    anonymousAnalyticsEnabled = decision.analyticsEnabled
+    crashDiagnosticsEnabled = decision.diagnosticsEnabled
     privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
     TelemetryService.shared.updateConsent(
-      productAnalytics: analytics,
-      crashDiagnostics: diagnostics
+      productAnalytics: decision.analyticsEnabled,
+      crashDiagnostics: decision.diagnosticsEnabled
     )
-    if analytics {
+    if decision.analyticsEnabled {
       TelemetryService.shared.capture(
         .featureViewed,
         properties: [.feature: selectedTab.analyticsValue]
