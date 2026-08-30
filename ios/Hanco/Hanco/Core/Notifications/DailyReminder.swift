@@ -24,6 +24,10 @@ struct DailyReminderSettingsStore {
     self.defaults = defaults
   }
 
+  var hasStoredEnabledPreference: Bool {
+    defaults.object(forKey: Self.enabledKey) != nil
+  }
+
   func load() -> DailyReminderPreference {
     DailyReminderPreference(
       isEnabled: defaults.bool(forKey: Self.enabledKey),
@@ -139,6 +143,10 @@ final class DailyReminderLibrary: ObservableObject {
   private let store: DailyReminderSettingsStore
   private let scheduler: DailyReminderScheduling
   private var schedulingTask: Task<Void, Never>?
+
+  var hasStoredEnabledPreference: Bool {
+    store.hasStoredEnabledPreference
+  }
 
   init(
     store: DailyReminderSettingsStore = DailyReminderSettingsStore(),

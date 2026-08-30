@@ -872,10 +872,6 @@
 "onboarding.bulk.download" = "Télécharger les trois";
 "onboarding.bulk.complete" = "Les trois ont été ajoutés";
 "onboarding.bulk.failed" = "Certains paquets n’ont pas pu être ajoutés. Tu pourras réessayer dans l’application.";
-"onboarding.reminder.title" = "Un rappel quotidien après le travail à 20 h";
-"onboarding.reminder.detail" = "Autorise les notifications et nous programmerons le rappel à 20 h, heure locale. Tu pourras changer l’heure ensuite.";
-"onboarding.reminder.allow_and_begin" = "Autoriser les rappels et commencer";
-"onboarding.reminder.not_now" = "Commencer sans rappels";
 "onboarding.finish" = "Lancer typee";
 "app.name" = "typee";
 "app.logo.accessibility_label" = "Poussin typee et logo de touche hangeul";

@@ -57,6 +57,9 @@ struct HancoApp: App {
           forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled
         )
       }
+      if ProcessInfo.processInfo.environment["UITEST_SEED_LEGACY_REMINDER_DISABLED"] == "1" {
+        UserDefaults.standard.set(false, forKey: DailyReminderSettingsStore.enabledKey)
+      }
       if ProcessInfo.processInfo.environment["UITEST_SEED_APP_STORE_CAPTURE"] == "1" {
         seedAppStoreCaptureState()
       }

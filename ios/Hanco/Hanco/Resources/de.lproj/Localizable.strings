@@ -872,10 +872,6 @@
 "onboarding.bulk.download" = "Alle drei herunterladen";
 "onboarding.bulk.complete" = "Alle drei hinzugefügt";
 "onboarding.bulk.failed" = "Einige Decks konnten nicht hinzugefügt werden. Versuche es später in der App erneut.";
-"onboarding.reminder.title" = "Tägliche Erinnerung nach der Arbeit um 20 Uhr";
-"onboarding.reminder.detail" = "Erlaube Mitteilungen, dann erinnern wir dich automatisch um 20 Uhr Ortszeit. Die Uhrzeit kannst du später ändern.";
-"onboarding.reminder.allow_and_begin" = "Erinnerungen erlauben und starten";
-"onboarding.reminder.not_now" = "Ohne Erinnerungen starten";
 "onboarding.finish" = "typee starten";
 "app.name" = "typee";
 "app.logo.accessibility_label" = "typee-Küken und Hangul-Tastenlogo";

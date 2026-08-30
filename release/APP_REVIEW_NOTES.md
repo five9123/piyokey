@@ -19,7 +19,7 @@ The first launch contains a short introduction followed by three guided hatch mi
 
 The app includes six games: Flow, Word Rain, Initials Quiz, Word Quiz, Dictation, and Korean Spacing. The first five offer bundled 100-word sets organized by Korean typing difficulty (Beginner, Intermediate, and Advanced). Korean Spacing uses original bundled passages and does not require a deck.
 
-At the end of first-run onboarding, notification permission is requested once for the optional local 20:00 daily reminder. Denying permission continues without a reminder and does not block the app. Existing users keep their reminder choice, and the reminder can be changed in Settings. Game Center is optional. Saving a result image requests add-only Photos permission only after the reviewer chooses the save action.
+At the end of first-run onboarding, notification permission is requested once for the optional local 20:00 daily reminder. Denying permission continues without a reminder and does not block the app. Upgrading users with an existing reminder preference keep either their enabled or disabled value without another onboarding request; the reminder can be changed in Settings. Game Center is optional. Saving a result image requests add-only Photos permission only after the reviewer chooses the save action.
 
 Korean pronunciation uses bundled pre-generated audio and falls back to the device's ko-KR speech synthesizer if an asset is unavailable. The app never records microphone audio.
 

@@ -2735,7 +2735,7 @@ final class HancoUITests: XCTestCase {
     app.buttons["keyboard.key.ㅏ"].tap()
 
     XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
-    XCTAssertFalse(app.staticTexts["退勤後の20:00に毎日お知らせ"].exists)
+    XCTAssertFalse(app.buttons["onboarding.reminder.allow"].exists)
     XCTAssertTrue(app.buttons["ふかミッションへ"].exists)
 
     let finish = app.buttons["onboarding.finish"]
@@ -3588,6 +3588,26 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(diagnostics.value as? String, "1")
   }
 
+  func testLegacyUpgradePreservesDisabledReminderAndContinuesPrivacyFlow() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      showsPrivacyConsent: true,
+      onboardingNotificationResult: "scheduled",
+      seedsLegacyDisabledReminder: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    let reminder = app.switches["retention.reminder.toggle"]
+    scrollToHittable(reminder)
+    XCTAssertEqual(reminder.value as? String, "0")
+  }
+
   func testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad() {
     let isIPad = max(app.frame.width, app.frame.height) >= 1_000
     app.terminate()
@@ -3672,6 +3692,7 @@ final class HancoUITests: XCTestCase {
     forcesAppTour: Bool = false,
     showsPrivacyConsent: Bool = false,
     onboardingNotificationResult: String = "denied",
+    seedsLegacyDisabledReminder: Bool = false,
     practiceAutoSpeaks: Bool? = nil,
     audioProbe: Bool = false,
     seedsAppStoreCaptureState: Bool = false,
@@ -3715,6 +3736,9 @@ final class HancoUITests: XCTestCase {
       ]
       application.launchEnvironment["UITEST_ONBOARDING_NOTIFICATION_RESULT"] =
         onboardingNotificationResult
+      if seedsLegacyDisabledReminder {
+        application.launchEnvironment["UITEST_SEED_LEGACY_REMINDER_DISABLED"] = "1"
+      }
     } else {
       application.launchArguments += [
         "-settings.privacy_notice_version", "1",

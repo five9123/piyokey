@@ -359,16 +359,27 @@ final class RetentionStoreTests: XCTestCase {
 
   func testReminderDefaultsToLocalWorkdayEndAndPersistsCustomTime() {
     let settings = DailyReminderSettingsStore(defaults: defaults)
+    XCTAssertFalse(settings.hasStoredEnabledPreference)
     XCTAssertEqual(
       settings.load(),
       DailyReminderPreference(isEnabled: false, hour: 20, minute: 0)
     )
 
     settings.save(DailyReminderPreference(isEnabled: true, hour: 21, minute: 30))
+    XCTAssertTrue(settings.hasStoredEnabledPreference)
     XCTAssertEqual(
       settings.load(),
       DailyReminderPreference(isEnabled: true, hour: 21, minute: 30)
     )
+  }
+
+  func testExplicitlyDisabledLegacyReminderIsDistinguishableFromFreshInstall() {
+    let settings = DailyReminderSettingsStore(defaults: defaults)
+
+    defaults.set(false, forKey: DailyReminderSettingsStore.enabledKey)
+
+    XCTAssertTrue(settings.hasStoredEnabledPreference)
+    XCTAssertFalse(settings.load().isEnabled)
   }
 
   func testReminderScheduleUsesFloatingLocalTimeAndDeniedAuthorizationKeepsToggleOff() async {

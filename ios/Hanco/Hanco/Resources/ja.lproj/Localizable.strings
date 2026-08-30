@@ -901,10 +901,6 @@
 "onboarding.bulk.download" = "3つをまとめてダウンロード";
 "onboarding.bulk.complete" = "3つを追加しました";
 "onboarding.bulk.failed" = "一部を追加できませんでした。アプリ内からもう一度試せます。";
-"onboarding.reminder.title" = "退勤後の20:00に毎日お知らせ";
-"onboarding.reminder.detail" = "通知を許可するだけで、端末の現地時刻20:00に自動設定します。時刻はあとから変更できます。";
-"onboarding.reminder.allow_and_begin" = "通知を受け取ってミッション開始";
-"onboarding.reminder.not_now" = "通知なしで始める";
 "onboarding.finish" = "ピヨキーを始める";
 
 "app.name" = "ピヨキー";

@@ -850,10 +850,6 @@
 "onboarding.bulk.download" = "Descargar los tres";
 "onboarding.bulk.complete" = "Los tres añadidos";
 "onboarding.bulk.failed" = "No se han podido añadir algunos mazos. Puedes intentarlo de nuevo en la app.";
-"onboarding.reminder.title" = "Un recordatorio diario a las 20:00";
-"onboarding.reminder.detail" = "Permite las notificaciones y lo programaremos automáticamente a las 20:00, según la hora local del dispositivo. Puedes cambiar la hora después.";
-"onboarding.reminder.allow_and_begin" = "Permitir recordatorios y empezar";
-"onboarding.reminder.not_now" = "Empezar sin recordatorios";
 "onboarding.finish" = "Empezar con typee";
 "app.name" = "typee";
 "app.logo.accessibility_label" = "Logo del pollito typee con una tecla hangul";

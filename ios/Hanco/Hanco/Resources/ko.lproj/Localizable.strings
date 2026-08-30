@@ -903,10 +903,6 @@
 "onboarding.bulk.download" = "세 개 모두 다운로드";
 "onboarding.bulk.complete" = "세 개 모두 추가됨";
 "onboarding.bulk.failed" = "일부 덱을 추가하지 못했어요. 앱에서 다시 시도할 수 있어요.";
-"onboarding.reminder.title" = "퇴근 후 20:00에 매일 알림";
-"onboarding.reminder.detail" = "알림만 허용하면 기기 현지 시각 20:00로 자동 설정해요. 시간은 나중에 바꿀 수 있어요.";
-"onboarding.reminder.allow_and_begin" = "알림 받고 미션 시작";
-"onboarding.reminder.not_now" = "알림 없이 시작";
 "onboarding.finish" = "typee 시작";
 
 "app.name" = "typee";

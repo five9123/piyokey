@@ -251,6 +251,11 @@ struct AppRootView: View {
         showsPrivacyConsent = true
         return
       }
+      guard !dailyReminder.hasStoredEnabledPreference else {
+        onboardingNotificationPermissionRequested = true
+        showsPrivacyConsent = true
+        return
+      }
       guard !onboardingNotificationRequestIsInFlight else { return }
       onboardingNotificationRequestIsInFlight = true
       _ = await dailyReminder.enableFromOnboarding()

@@ -901,10 +901,6 @@
 "onboarding.bulk.download" = "Download all three";
 "onboarding.bulk.complete" = "All three added";
 "onboarding.bulk.failed" = "Some decks couldn't be added. You can try again in the app.";
-"onboarding.reminder.title" = "A daily reminder after work at 20:00";
-"onboarding.reminder.detail" = "Just allow notifications and we'll schedule it automatically for 20:00 in your device's local time. You can change the time later.";
-"onboarding.reminder.allow_and_begin" = "Allow reminders and begin";
-"onboarding.reminder.not_now" = "Begin without reminders";
 "onboarding.finish" = "Start typee";
 
 "app.name" = "typee";
