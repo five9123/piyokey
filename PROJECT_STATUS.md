@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-29 JST
+마지막 갱신: 2026-08-30 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| #125 iPad 게임 재도전 마지막 단어 잔존 | In Progress / Draft PR #128 | iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태를 확인한 뒤 Draft 해제 판단 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8을 RC로 사용하지 않고 최신 `main`의 build 9로 대체 |
 | #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
