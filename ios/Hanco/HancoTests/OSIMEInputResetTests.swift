@@ -12,7 +12,10 @@ final class OSIMEInputResetTests: XCTestCase {
   private final class HarnessModel: ObservableObject {
     @Published var resetRevision = 0
     @Published var acceptedText = ""
+    @Published var isFocused = false
+    @Published var targets = ["고기"]
     var receivedChanges: [(committed: String, marked: String?)] = []
+    var onTextChange: ((String, String?) -> Void)?
   }
 
   private struct Harness: View {
@@ -23,13 +26,16 @@ final class OSIMEInputResetTests: XCTestCase {
       IMETextField(
         text: $fieldText,
         resetText: model.acceptedText,
+        targets: model.targets,
         resetRevision: model.resetRevision,
         focusRevision: 1,
         isFocusSuspended: false,
-        isFocused: .constant(false),
+        isFocused: $model.isFocused,
         onReturn: {},
+        onFocusRecovery: {},
         onTextChange: { committed, marked in
           model.receivedChanges.append((committed, marked))
+          model.onTextChange?(committed, marked)
         }
       )
       .frame(width: 280, height: 44)
@@ -78,9 +84,10 @@ final class OSIMEInputResetTests: XCTestCase {
     return try XCTUnwrap(search(host.view), "hosted IMETextField not found")
   }
 
-  private func advanceTarget(acceptedText: String = "") {
+  private func advanceTarget(acceptedText: String = "", targets: [String]? = nil) {
     model.receivedChanges.removeAll()
     model.acceptedText = acceptedText
+    if let targets { model.targets = targets }
     model.resetRevision += 1
     pumpRunLoop()
   }
@@ -133,6 +140,7 @@ final class OSIMEInputResetTests: XCTestCase {
     advanceTarget()
 
     XCTAssertTrue(field.isFirstResponder)
+    XCTAssertTrue(model.isFocused)
   }
 
   func testResetRestoresNonEmptyAcceptedText() throws {
@@ -171,14 +179,154 @@ final class OSIMEInputResetTests: XCTestCase {
     XCTAssertEqual(last.committed + (last.marked ?? ""), "ㅅ")
   }
 
-  func testTenConsecutiveTargetTransitionsStartEmpty() throws {
+  func testResetIsDeferredOutsideReentrantEditingChanged() throws {
+    let field = try findTextField()
+    field.becomeFirstResponder()
+    pumpRunLoop()
+
+    model.onTextChange = { [weak model] committed, _ in
+      guard committed == "좋다", let model else { return }
+      model.acceptedText = ""
+      model.resetRevision += 1
+    }
+
+    field.text = "좋다"
+    field.sendActions(for: .editingChanged)
+
+    // The editing callback may advance the target, but must not mutate the
+    // UITextInput until that callback has returned to the main runloop.
+    XCTAssertEqual(field.text, "좋다")
+
+    pumpRunLoop()
+
+    XCTAssertEqual(field.text, "")
+    XCTAssertTrue(field.isFirstResponder)
+  }
+
+  func testPriorWordMinusLastJamoRewriteIsDiscardedWithoutJudgeEvent() throws {
+    let field = try findTextField()
+    field.becomeFirstResponder()
+    pumpRunLoop()
+
+    field.text = "좋다"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+    advanceTarget()
+
+    // ㅈㅗㅎㄷ: the build-10 failure rewrites this previous-target prefix
+    // after the field has already been cleared for 고기.
+    field.text = "좋ㄷ"
+    field.sendActions(for: .editingChanged)
+
+    XCTAssertTrue(model.receivedChanges.isEmpty)
+    pumpRunLoop()
+    XCTAssertEqual(field.text, "")
+    XCTAssertTrue(model.receivedChanges.isEmpty)
+  }
+
+  func testFirstValidNewTargetInputIsPreservedAfterStaleRewrite() throws {
+    let field = try findTextField()
+    field.becomeFirstResponder()
+    pumpRunLoop()
+
+    field.text = "좋다"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+    advanceTarget()
+
+    field.text = "좋ㄷ"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+    XCTAssertTrue(model.receivedChanges.isEmpty)
+
+    field.text = "ㄱ"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+
+    XCTAssertEqual(model.receivedChanges.count, 1)
+    XCTAssertEqual(model.receivedChanges[0].committed, "ㄱ")
+    XCTAssertNil(model.receivedChanges[0].marked)
+  }
+
+  func testRestartWindowSuppressesEditingAndSelectionEchoes() throws {
+    var receivedChanges: [(String, String?)] = []
+    let parent = IMETextField(
+      text: .constant(""),
+      resetText: "",
+      targets: ["고기"],
+      resetRevision: 1,
+      focusRevision: 1,
+      isFocusSuspended: false,
+      isFocused: .constant(false),
+      onReturn: {},
+      onFocusRecovery: {},
+      onTextChange: { receivedChanges.append(($0, $1)) }
+    )
+    let coordinator = IMETextField.Coordinator(parent: parent)
+    let field = UITextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
+    host.view.addSubview(field)
+    field.text = "좋다"
+    field.selectedTextRange = field.textRange(
+      from: field.beginningOfDocument,
+      to: field.beginningOfDocument
+    )
+
+    coordinator.scheduleSessionReset(in: field, replacingWith: "", revision: 1)
+    XCTAssertTrue(coordinator.hasPendingReset)
+
+    coordinator.textDidChange(field)
+    coordinator.textFieldDidChangeSelection(field)
+
+    XCTAssertTrue(receivedChanges.isEmpty)
+    XCTAssertEqual(
+      field.offset(from: field.beginningOfDocument, to: field.selectedTextRange!.start),
+      0
+    )
+
+    pumpRunLoop()
+    XCTAssertEqual(field.text, "")
+  }
+
+  func testFiveDirectInputGamePathsDiscardPriorTargetRewriteAndAcceptFirstJamo() throws {
+    let field = try findTextField()
+    field.becomeFirstResponder()
+    pumpRunLoop()
+
+    let paths: [(name: String, target: String, firstJamo: String)] = [
+      ("flow", "고기", "ㄱ"),
+      ("acid_rain", "산성비", "ㅅ"),
+      ("choseong", "초성", "ㅊ"),
+      ("word_match", "단어", "ㄷ"),
+      ("dictation", "받아쓰기", "ㅂ"),
+    ]
+
+    for path in paths {
+      field.text = "좋다"
+      field.sendActions(for: .editingChanged)
+      pumpRunLoop()
+      advanceTarget(targets: [path.target])
+
+      field.text = "좋ㄷ"
+      field.sendActions(for: .editingChanged)
+      pumpRunLoop()
+      XCTAssertTrue(model.receivedChanges.isEmpty, path.name)
+
+      field.text = path.firstJamo
+      field.sendActions(for: .editingChanged)
+      pumpRunLoop()
+      XCTAssertEqual(model.receivedChanges.last?.committed, path.firstJamo, path.name)
+      XCTAssertTrue(field.isFirstResponder, path.name)
+    }
+  }
+
+  func testTenConsecutiveTargetTransitionsDiscardStaleRewritesAndPreserveFirstInput() throws {
     let field = try findTextField()
     field.becomeFirstResponder()
     pumpRunLoop()
 
     for _ in 0..<10 {
-      field.insertText("가")
-      field.setMarkedText("나", selectedRange: NSRange(location: 1, length: 0))
+      field.text = "좋다"
+      field.sendActions(for: .editingChanged)
       pumpRunLoop()
 
       advanceTarget()
@@ -186,6 +334,18 @@ final class OSIMEInputResetTests: XCTestCase {
       XCTAssertEqual(field.text, "")
       XCTAssertNil(field.markedTextRange)
       XCTAssertTrue(model.receivedChanges.isEmpty)
+      XCTAssertTrue(field.isFirstResponder)
+
+      field.text = "좋ㄷ"
+      field.sendActions(for: .editingChanged)
+      pumpRunLoop()
+      XCTAssertEqual(field.text, "")
+      XCTAssertTrue(model.receivedChanges.isEmpty)
+
+      field.text = "ㄱ"
+      field.sendActions(for: .editingChanged)
+      pumpRunLoop()
+      XCTAssertEqual(model.receivedChanges.last?.committed, "ㄱ")
       XCTAssertTrue(field.isFirstResponder)
     }
   }

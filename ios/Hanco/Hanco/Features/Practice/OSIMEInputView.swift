@@ -247,11 +247,13 @@ struct OSIMEInputPanel: View {
     IMETextField(
       text: $fieldText,
       resetText: acceptedText,
+      targets: candidateTargets.isEmpty ? [target] : candidateTargets,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
       isFocusSuspended: isFocusSuspended,
       isFocused: $isFieldFocused,
       onReturn: requestFocus,
+      onFocusRecovery: requestFocus,
       onTextChange: evaluate(committedText:markedText:)
     )
   }
@@ -567,11 +569,15 @@ struct IMETextField: UIViewRepresentable {
   /// the model prop makes the reset independent of the order in which SwiftUI
   /// runs the panel's `onChange` and this representable's `updateUIView`.
   let resetText: String
+  /// Current target documents used only to avoid mistaking a legitimate first
+  /// post-reset prefix for an abandoned previous-target snapshot.
+  let targets: [String]
   let resetRevision: Int
   let focusRevision: Int
   let isFocusSuspended: Bool
   @Binding var isFocused: Bool
   let onReturn: () -> Void
+  let onFocusRecovery: () -> Void
   let onTextChange: (String, String?) -> Void
 
   func makeCoordinator() -> Coordinator {
@@ -605,11 +611,15 @@ struct IMETextField: UIViewRepresentable {
     context.coordinator.isMounted = true
     if context.coordinator.lastResetRevision != resetRevision {
       context.coordinator.lastResetRevision = resetRevision
-      // A target/countdown/session reset must discard the in-flight composition
-      // in the keyboard as well as the document; otherwise the abandoned
-      // syllable is folded into the next target's first jamo.
-      context.coordinator.discardComposition(in: textField, replacingWith: resetText)
-    } else if textField.text != text, textField.markedTextRange == nil {
+      context.coordinator.scheduleSessionReset(
+        in: textField,
+        replacingWith: resetText,
+        revision: resetRevision
+      )
+    } else if !context.coordinator.hasPendingReset,
+      textField.text != text,
+      textField.markedTextRange == nil
+    {
       textField.text = text
       moveCursorToEnd(of: textField)
     }
@@ -649,7 +659,13 @@ struct IMETextField: UIViewRepresentable {
     var lastFocusRevision = -1
     var lastFocusSuspended: Bool?
     var isMounted = true
-    /// True while `discardComposition` is rewriting the document.
+    private(set) var hasPendingReset = false
+    private var resetGeneration = 0
+    private var resetDocument = ""
+    private var observedDocuments: Set<String> = []
+    private var staleDocuments: Set<String> = []
+    private var isAwaitingPostResetInput = false
+    /// True while a deferred reset is rewriting the document.
     ///
     /// The rewrite goes through `UITextInput`, so UIKit echoes it back as
     /// `.editingChanged`. Those echoes are ours, not the user's, and must never
@@ -658,27 +674,57 @@ struct IMETextField: UIViewRepresentable {
 
     init(parent: IMETextField) {
       self.parent = parent
+      lastResetRevision = parent.resetRevision
     }
 
-    /// Abandons the OS IME's in-flight composition and replaces the document.
-    ///
-    /// `unmarkText()` on its own *commits* the composing syllable and leaves the
-    /// keyboard's own composition state machine untouched, so the next jamo the
-    /// user types is still combined with the abandoned one — `나` left over from
-    /// a finished word plus a fresh `ㅅ` arrives as `낫`, which the judge scores
-    /// as a typo against the new target. Deleting the marked range instead of
-    /// committing it, and bracketing the document change in `UITextInputDelegate`
-    /// callbacks, is what tells the keyboard that the document moved out from
-    /// under it and that it must start a fresh composition.
-    func discardComposition(in textField: UITextField, replacingWith replacementText: String) {
-      guard textField.markedTextRange != nil || textField.text != replacementText else {
-        moveCursorToEnd(of: textField)
-        return
+    /// Defers composition disposal until UIKit has returned from the keyboard's
+    /// current editing callback. Rewriting a `UITextInput` synchronously from
+    /// that callback can clear the field while leaving the Korean keyboard's
+    /// private composition buffer alive.
+    func scheduleSessionReset(
+      in textField: UITextField,
+      replacingWith replacementText: String,
+      revision: Int,
+      preservingStaleDocuments: Bool = false
+    ) {
+      resetGeneration &+= 1
+      let generation = resetGeneration
+      hasPendingReset = true
+      resetDocument = replacementText
+
+      if !preservingStaleDocuments {
+        staleDocuments = observedDocuments
+        staleDocuments.formUnion(Self.compositionSnapshots(for: textField.text ?? ""))
+        staleDocuments.remove(replacementText)
+        observedDocuments.removeAll()
+        isAwaitingPostResetInput = true
       }
 
-      isApplyingReset = true
-      defer { isApplyingReset = false }
+      DispatchQueue.main.async { [weak self, weak textField] in
+        guard let self, let textField,
+          self.isMounted,
+          self.resetGeneration == generation,
+          self.lastResetRevision == revision
+        else { return }
+        self.performSessionReset(in: textField, replacingWith: replacementText)
+      }
+    }
 
+    private func performSessionReset(
+      in textField: UITextField,
+      replacingWith replacementText: String
+    ) {
+      let shouldRestartSession = textField.isFirstResponder && !parent.isFocusSuspended
+
+      isApplyingReset = true
+      defer {
+        isApplyingReset = false
+        hasPendingReset = false
+      }
+
+      if shouldRestartSession {
+        textField.resignFirstResponder()
+      }
       if let markedRange = textField.markedTextRange {
         textField.replace(markedRange, withText: "")
       }
@@ -688,14 +734,58 @@ struct IMETextField: UIViewRepresentable {
       inputDelegate?.selectionWillChange(textField)
       inputDelegate?.textWillChange(textField)
       textField.text = replacementText
+      parent.text = replacementText
       moveCursorToEnd(of: textField)
       inputDelegate?.textDidChange(textField)
       inputDelegate?.selectionDidChange(textField)
+
+      if shouldRestartSession, isMounted, textField.window != nil {
+        textField.becomeFirstResponder()
+        moveCursorToEnd(of: textField)
+
+        let generation = resetGeneration
+        DispatchQueue.main.async { [weak self, weak textField] in
+          guard let self, let textField,
+            self.isMounted,
+            self.resetGeneration == generation,
+            !self.parent.isFocusSuspended,
+            textField.window != nil,
+            !textField.isFirstResponder
+          else { return }
+          // The panel advances focusRevision here so SwiftUI's existing focus
+          // path retries a failed responder restart.
+          self.parent.onFocusRecovery()
+        }
+      }
     }
 
     @objc func textDidChange(_ textField: UITextField) {
-      guard !isApplyingReset else { return }
+      guard !isApplyingReset, !hasPendingReset else { return }
       let fullText = textField.text ?? ""
+
+      if isAwaitingPostResetInput {
+        if fullText == resetDocument {
+          return
+        }
+        if containsPriorTargetMaterial(in: fullText),
+          !isValidPostResetDocument(fullText)
+        {
+          // A keyboard may publish the abandoned previous-word snapshot after
+          // the deferred reset. Never expose it to the judge. Clean it on a
+          // later runloop as well, so this callback remains read-only.
+          scheduleSessionReset(
+            in: textField,
+            replacingWith: resetDocument,
+            revision: lastResetRevision,
+            preservingStaleDocuments: true
+          )
+          return
+        }
+        isAwaitingPostResetInput = false
+        staleDocuments.removeAll()
+      }
+
+      observedDocuments.insert(fullText)
       parent.text = fullText
 
       guard let markedRange = textField.markedTextRange else {
@@ -716,6 +806,45 @@ struct IMETextField: UIViewRepresentable {
       parent.onTextChange(before + after, marked)
     }
 
+    private func containsPriorTargetMaterial(in text: String) -> Bool {
+      staleDocuments.contains { stale in
+        guard stale != resetDocument,
+          let sequence = try? JamoDecomposer.keySequence(for: stale),
+          sequence.count >= 2
+        else { return false }
+        return text.contains(stale)
+      }
+    }
+
+    private func isValidPostResetDocument(_ text: String) -> Bool {
+      parent.targets.contains { target in
+        guard let evaluation = try? OSIMETextJudge.evaluate(
+          target: target,
+          committedText: text
+        ) else { return false }
+        switch evaluation.status {
+        case .matching, .composingMismatch:
+          return true
+        case .unsupportedASCIIInput, .confirmedMismatch:
+          return false
+        }
+      }
+    }
+
+    private static func compositionSnapshots(for text: String) -> Set<String> {
+      guard !text.isEmpty else { return [] }
+      var snapshots: Set<String> = [text]
+      for count in 1...text.count {
+        snapshots.insert(String(text.prefix(count)))
+      }
+      if let sequence = try? JamoDecomposer.keySequence(for: text) {
+        for count in 1...sequence.count {
+          snapshots.insert(HangulComposer.compose(Array(sequence.prefix(count))).text)
+        }
+      }
+      return snapshots
+    }
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
       parent.onReturn()
       return false
@@ -731,6 +860,7 @@ struct IMETextField: UIViewRepresentable {
 
     func textFieldDidChangeSelection(_ textField: UITextField) {
       guard !isApplyingReset,
+        !hasPendingReset,
         textField.markedTextRange == nil,
         textField.selectedTextRange?.end != textField.endOfDocument
       else { return }
