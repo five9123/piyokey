@@ -477,6 +477,8 @@ final class PracticeSessionViewModelTests: XCTestCase {
       let committed: String
       let marked: String?
       let expectedScalars: [UInt32]
+      let expectedStatus: OSIMETextJudgeStatus
+      let expectedAcceptedSequence: [Character]
     }
 
     // TYP-73's iPhone probe observed the Korean 10-Key replacement path as
@@ -487,37 +489,49 @@ final class PracticeSessionViewModelTests: XCTestCase {
         label: "grouped consonant precursor",
         committed: "",
         marked: "ㄴ",
-        expectedScalars: [0x3134]
+        expectedScalars: [0x3134],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
       ),
       Snapshot(
         label: "target consonant",
         committed: "",
         marked: "ㄹ",
-        expectedScalars: [0x3139]
+        expectedScalars: [0x3139],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹ")
       ),
       Snapshot(
         label: "cheonjiin dot",
         committed: "",
         marked: "ㄹㆍ",
-        expectedScalars: [0x3139, 0x318D]
+        expectedScalars: [0x3139, 0x318D],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
       ),
       Snapshot(
         label: "intermediate eo",
         committed: "",
         marked: "러",
-        expectedScalars: [0xB7EC]
+        expectedScalars: [0xB7EC],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
       ),
       Snapshot(
         label: "marked final syllable",
         committed: "",
         marked: "레",
-        expectedScalars: [0xB808]
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹㅔ")
       ),
       Snapshot(
         label: "committed final syllable",
         committed: "레",
         marked: nil,
-        expectedScalars: [0xB808]
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: false),
+        expectedAcceptedSequence: Array("ㄹㅔ")
       ),
     ]
 
@@ -532,7 +546,12 @@ final class PracticeSessionViewModelTests: XCTestCase {
         committedText: snapshot.committed,
         markedText: snapshot.marked
       )
-      XCTAssertNotEqual(evaluation.status, .unsupportedASCIIInput, snapshot.label)
+      XCTAssertEqual(evaluation.status, snapshot.expectedStatus, snapshot.label)
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.expectedAcceptedSequence,
+        snapshot.label
+      )
     }
   }
 
