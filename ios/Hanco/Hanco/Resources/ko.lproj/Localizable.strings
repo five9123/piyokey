@@ -58,11 +58,9 @@
 "practice.setup.subtitle" = "빛나는 키를 따라 세 문제를 연습해요";
 "practice.setup.settings_title" = "키보드 설정";
 "practice.setup.key_guide" = "키 가이드";
-"practice.setup.key_guide_detail" = "다음에 누를 키를 빛나게 표시해요";
 "practice.setup.roman_hints" = "영문 키 힌트";
 "practice.setup.roman_hints_detail" = "키에 QWERTY 글자를 표시해요";
 "practice.setup.haptics" = "햅틱 피드백";
-"practice.setup.haptics_detail" = "키를 누를 때 가볍게 진동해요";
 "practice.setup.sound" = "효과음";
 "practice.setup.sound_detail" = "무음 모드에서도 키 입력·정답·오타음을 재생해요";
 "practice.setup.sound_preset" = "키 입력음";
@@ -70,8 +68,7 @@
 "practice.setup.sound_system_detail" = "무음 모드에서도 들리는 짧은 클릭음이에요.";
 "practice.setup.sound_mechanical" = "기계식";
 "practice.setup.sound_soft" = "부드럽게";
-"practice.setup.input_mode" = "기본 입력 모드";
-"practice.setup.input_mode_detail" = "단어·문장 연습과 게임에서 사용할 키보드";
+"practice.setup.input_mode" = "입력 모드";
 "practice.setup.start" = "연습 시작";
 "practice.setup.session_note" = "연습 중에도 입력 모드를 바꿀 수 있어요. 내장 키보드 배열은 세션을 시작할 때 고정돼요.";
 
@@ -84,11 +81,9 @@
 "keyboard.backspace" = "자모 하나 지우기";
 "keyboard.space" = "스페이스";
 "keyboard.accessibility_label" = "한국어 키보드";
-"keyboard.layout.title" = "내장 키보드 배열";
-"keyboard.layout.detail" = "챕터 5+, 자유 연습, 덱 연습에서 사용하며 세션 시작 시 고정돼요.";
-"keyboard.layout.dubeolsik" = "두벌식(기본)";
-"keyboard.layout.korean_10key" = "한국어 10키(천지인식)";
-"keyboard.layout.korean_10key_help" = "자음은 묶인 키를 반복해서 누르고, 같은 묶음이 이어지면 →로 구분해요. 모음은 빛나는 순서대로 ㅣ·ㆍ·ㅡ를 조합해요.";
+"keyboard.layout.title" = "배열";
+"keyboard.layout.dubeolsik" = "두벌식";
+"keyboard.layout.korean_10key" = "천지인(10키)";
 "keyboard.10key.accessibility_label" = "한국어 10키 천지인식 키보드";
 "keyboard.10key.vertical" = "세로획 ㅣ";
 "keyboard.10key.dot" = "천지인 점";
@@ -233,7 +228,6 @@
 "settings.practice_display.learning" = "학습";
 "settings.practice_display.focus" = "집중";
 "settings.practice_target" = "목표 단어 표시";
-"settings.practice_target_detail" = "입력할 한국어를 크게 표시해요";
 "settings.practice_meaning" = "뜻";
 "settings.practice_meaning_detail" = "덱에 뜻이 있으면 표시해요";
 "settings.practice_reading" = "로마자 읽기";
@@ -241,14 +235,11 @@
 "settings.practice_order" = "표시 순서";
 "settings.practice_order_detail" = "목표·뜻·읽기의 순서를 선택해요";
 "settings.practice_jamo" = "자모 표시";
-"settings.practice_jamo_detail" = "분리된 자음·모음과 진행률을 표시해요";
 "settings.practice_composition" = "입력 중 키 표시";
 "settings.practice_composition_detail" = "조합 중인 글자와 입력 내용을 표시해요";
 "settings.practice_auto_speak" = "문제 자동 발음";
 "settings.practice_auto_speak_detail" = "새 문제를 한국어로 자동 재생해요";
 "settings.practice_mascot" = "피요 응원 표시";
-"settings.practice_mascot_detail" = "연습 중 캐릭터 표시를 바꿔요";
-"settings.game_display" = "게임 표시";
 "settings.choseong_meaning" = "초성 게임 뜻 표시";
 "settings.choseong_meaning_detail" = "문제마다 뜻을 기본으로 보여줘요";
 "settings.app_information" = "앱 정보";
@@ -259,7 +250,9 @@
 "settings.crash_diagnostics" = "크래시 진단";
 "settings.crash_diagnostics_detail" = "크래시와 앱 멈춤 진단 정보를 공유합니다.";
 "settings.analytics_privacy_note" = "입력한 글자, 사용자 덱 내용, 이름과 이메일은 전송하지 않습니다. 두 옵션 모두 기본값은 꺼짐입니다.";
-"settings.review_privacy_choices" = "데이터 공유 안내와 선택 확인";
+"settings.version_format" = "버전 %@ (%@)";
+"settings.version_copy_hint" = "버전과 빌드 번호를 복사합니다";
+"settings.version_copied" = "복사됨";
 "privacy_consent.navigation_title" = "개인정보 선택";
 "privacy_consent.title" = "피요키 개선에 참여할까요?";
 "privacy_consent.introduction" = "사용 정보와 오류 정보를 익명으로 보내 앱을 더 좋게 만들어요.";
@@ -763,11 +756,7 @@
 "my_page.insights.less_than_minute" = "1분 미만";
 "my_page.insights.minutes_format" = "%d분";
 "my_page.insights.change_format" = "이전 기간 대비 %@";
-"my_page.actions.title" = "설정 및 꾸미기";
-"my_page.app_settings" = "앱 설정";
-"my_page.app_settings_detail" = "화면·알림·키보드·사운드 설정";
 "my_page.piyo_settings" = "피요 설정";
-"my_page.piyo_settings_detail" = "이름·성장·아이템 변경";
 "my_page.decks.title" = "내 덱";
 "my_page.decks.count_format" = "%d개";
 "my_decks.empty.title" = "아직 덱이 없어요";

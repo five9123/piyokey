@@ -290,9 +290,9 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("my_page.profile").exists)
     XCTAssertTrue(element("my_page.growth").exists)
     XCTAssertTrue(element("my_page.insights").exists)
-    let settings = app.buttons["my_page.settings"]
-    scrollToHittable(settings)
-    settings.tap()
+    XCTAssertFalse(element("my_page.settings").exists)
+    XCTAssertFalse(element("my_page.piyo_settings_row").exists)
+    app.buttons["root.settings"].tap()
     XCTAssertTrue(element("settings.screen").waitForExistence(timeout: 3))
     app.buttons["settings.done"].tap()
 
@@ -858,7 +858,17 @@ final class HancoUITests: XCTestCase {
     let layoutPicker = element("settings.builtin_keyboard_layout")
     scrollToHittable(layoutPicker)
     layoutPicker.tap()
-    app.buttons["韓国語10キー（天地人式）"].tap()
+    app.buttons["天地人（10キー）"].tap()
+
+    let osMode = app.buttons["input_mode.os_ime"]
+    scrollToHittable(osMode, direction: .down)
+    osMode.tap()
+    XCTAssertTrue(osMode.isSelected)
+    XCTAssertFalse(layoutPicker.isEnabled)
+    let builtInMode = app.buttons["input_mode.builtin"]
+    builtInMode.tap()
+    XCTAssertTrue(builtInMode.isSelected)
+    XCTAssertTrue(layoutPicker.isEnabled)
 
     let physicalGuide = app.switches["settings.physical_keyboard_guide"]
     scrollToHittable(physicalGuide)
@@ -3325,9 +3335,9 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(settingsScreen.descendants(matching: .any)["mascot.current"].exists)
     XCTAssertFalse(settingsScreen.staticTexts["自分に合わせて調整"].exists)
     let immediatelyAvailableSound = app.switches["settings.sound"]
-    XCTAssertTrue(immediatelyAvailableSound.waitForExistence(timeout: 3))
+    scrollToHittable(immediatelyAvailableSound)
     XCTAssertTrue(immediatelyAvailableSound.isHittable)
-    XCTAssertTrue(element("settings.font_scale").waitForExistence(timeout: 3))
+    scrollToHittable(element("settings.font_scale"), direction: .down)
     let largeFont = app.buttons["大"]
     scrollToHittable(largeFont)
     largeFont.tap()
@@ -3350,28 +3360,28 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "settings-direct-content-en")
 
     let keyGuide = app.switches["settings.key_guide"]
-    scrollToHittable(keyGuide)
-    keyGuide.tap()
+    scrollToHittable(keyGuide, direction: .down)
+    XCTAssertEqual(keyGuide.value as? String, "1")
+    setSwitch(keyGuide, to: "0")
     let romanHints = app.switches["settings.roman_hints"]
     scrollToHittable(romanHints)
-    romanHints.tap()
+    XCTAssertEqual(romanHints.value as? String, "1")
+    setSwitch(romanHints, to: "0")
     let haptics = app.switches["settings.haptics"]
     scrollToHittable(haptics)
-    haptics.tap()
-    waitForValue("0", on: haptics, timeout: 3)
+    setSwitch(haptics, to: "0")
 
     let osKeyboard = app.buttons["input_mode.os_ime"]
-    scrollToHittable(osKeyboard)
+    scrollToHittable(osKeyboard, direction: .down)
     osKeyboard.tap()
     XCTAssertTrue(osKeyboard.isSelected)
 
     let softSound = app.buttons["Soft"]
-    scrollToHittable(softSound, direction: .down)
+    scrollToHittable(softSound)
     softSound.tap()
     let sound = app.switches["settings.sound"]
     scrollToHittable(sound)
-    sound.tap()
-    XCTAssertEqual(sound.value as? String, "0")
+    setSwitch(sound, to: "0")
 
     app.terminate()
     app = makeApplication(
@@ -3391,7 +3401,7 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(persistedChoseongMeaning)
     XCTAssertEqual(persistedChoseongMeaning.value as? String, "0")
     let persistedKeyGuide = app.switches["settings.key_guide"]
-    scrollToHittable(persistedKeyGuide)
+    scrollToHittable(persistedKeyGuide, direction: .down)
     XCTAssertEqual(persistedKeyGuide.value as? String, "0")
     let persistedRomanHints = app.switches["settings.roman_hints"]
     scrollToHittable(persistedRomanHints)
@@ -3400,7 +3410,7 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(persistedHaptics)
     XCTAssertEqual(persistedHaptics.value as? String, "0")
     let persistedOSKeyboard = app.buttons["input_mode.os_ime"]
-    scrollToHittable(persistedOSKeyboard)
+    scrollToHittable(persistedOSKeyboard, direction: .down)
     XCTAssertTrue(persistedOSKeyboard.isSelected)
     let persistedSound = app.switches["settings.sound"]
     scrollToHittable(persistedSound, direction: .down)
@@ -3548,44 +3558,152 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("privacy_consent.screen").exists)
   }
 
-  func testPrivacyContinueWithoutSharingDisablesBothAndRevisitReusesButtons() {
+  func testSettingsHierarchyVersionAndPrivacyCleanup() {
     app.terminate()
     app = makeApplication(
       resetKeyboardPreferences: true,
-      showsPrivacyConsent: true,
-      onboardingNotificationResult: "denied"
+      koreanKeyboardAvailable: true
     )
-    app.launchEnvironment["UITEST_SEED_PRIVACY_CHOICES_ENABLED"] = "1"
     app.launch()
-
-    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    app.buttons["privacy_consent.continue_without_sharing"].tap()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
     openSettings()
-    let analytics = app.switches["settings.anonymous_analytics"]
-    scrollToHittable(analytics)
-    XCTAssertEqual(analytics.value as? String, "0")
-    let diagnostics = app.switches["settings.crash_diagnostics"]
-    scrollToHittable(diagnostics)
-    XCTAssertEqual(diagnostics.value as? String, "0")
-    scrollToHittable(analytics)
-    analytics.tap()
-    XCTAssertEqual(analytics.value as? String, "1")
-    XCTAssertEqual(diagnostics.value as? String, "0")
+    let sectionIdentifiers = element("settings.screen").descendants(matching: .any)
+      .allElementsBoundByIndex.map(\.identifier).filter { $0.hasPrefix("settings.section.") }
+      .reduce(into: [String]()) { identifiers, identifier in
+        if !identifiers.contains(identifier) { identifiers.append(identifier) }
+      }
+    XCTAssertEqual(
+      sectionIdentifiers,
+      [
+        "settings.section.display",
+        "settings.section.keyboard",
+        "settings.section.sound",
+        "settings.section.practice_display",
+        "settings.section.reminder",
+        "settings.section.mascot",
+        "settings.section.privacy",
+        "settings.section.app_information",
+      ]
+    )
+    XCTAssertFalse(app.staticTexts["ゲーム表示"].exists)
+    XCTAssertFalse(element("settings.review_privacy_choices").exists)
+    attachScreenshot(named: "typ75-iphone-se-settings-top-ja")
 
-    let review = app.buttons["settings.review_privacy_choices"]
-    scrollToHittable(review)
-    review.tap()
-    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    XCTAssertFalse(app.switches["privacy_consent.analytics"].exists)
-    XCTAssertFalse(app.switches["privacy_consent.diagnostics"].exists)
-    app.buttons["privacy_consent.participate_and_continue"].tap()
-    XCTAssertTrue(element("settings.screen").waitForExistence(timeout: 5))
-    scrollToHittable(analytics)
-    XCTAssertEqual(analytics.value as? String, "1")
-    scrollToHittable(diagnostics)
-    XCTAssertEqual(diagnostics.value as? String, "1")
+    let layout = element("settings.builtin_keyboard_layout")
+    scrollToHittable(layout)
+    layout.tap()
+    app.buttons["天地人（10キー）"].tap()
+    let osMode = app.buttons["input_mode.os_ime"]
+    osMode.tap()
+    XCTAssertTrue(osMode.isSelected)
+    XCTAssertFalse(layout.isEnabled)
+    attachScreenshot(named: "typ75-iphone-se-settings-keyboard-os-mode-ja")
+    app.buttons["input_mode.builtin"].tap()
+    XCTAssertTrue(layout.isEnabled)
+    layout.tap()
+    XCTAssertTrue(app.buttons["天地人（10キー）"].isSelected)
+    app.buttons["天地人（10キー）"].tap()
+
+    let soundSection = element("settings.section.sound")
+    scrollToHittable(soundSection)
+    attachScreenshot(named: "typ75-iphone-se-settings-sound-ja")
+
+    let choseongMeaning = app.switches["settings.choseong_meaning"]
+    scrollToHittable(choseongMeaning)
+    XCTAssertGreaterThan(
+      choseongMeaning.frame.minY,
+      app.switches["settings.practice_composition"].frame.minY
+    )
+    attachScreenshot(named: "typ75-iphone-se-settings-middle-ja")
+
+    let mascotSection = element("settings.section.mascot")
+    scrollToHittable(mascotSection)
+    attachScreenshot(named: "typ75-iphone-se-settings-reminder-piyo-ja")
+
+    let privacyPolicy = element("settings.privacy_policy")
+    scrollToHittable(privacyPolicy)
+    XCTAssertTrue(privacyPolicy.isHittable)
+    XCTAssertFalse(element("settings.review_privacy_choices").exists)
+
+    let version = element("settings.version")
+    scrollToHittable(version)
+    assertJapaneseRuntimeVersion(version)
+    version.tap()
+    waitForValue("コピーしました", on: version, timeout: 3)
+    waitForEmptyValue(on: version, timeout: 3)
+    version.tap()
+    waitForValue("コピーしました", on: version, timeout: 3)
+    attachScreenshot(named: "typ75-iphone-se-settings-bottom-ja")
+  }
+
+  func testMyPageKeepsGearAndClosetWithoutDuplicateSettingsCard() {
+    app.tabBars.buttons["マイページ"].tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["root.settings"].isHittable)
+    let closet = app.buttons["my_page.piyo_settings"]
+    scrollToHittable(closet)
+    XCTAssertTrue(closet.isHittable)
+    XCTAssertFalse(element("my_page.settings").exists)
+    XCTAssertFalse(element("my_page.piyo_settings_row").exists)
+    XCTAssertFalse(app.staticTexts["設定・カスタマイズ"].exists)
+    attachScreenshot(named: "typ75-iphone-se-my-page-top-ja")
+
+    closet.tap()
+    XCTAssertTrue(element("closet.preview").waitForExistence(timeout: 3))
+  }
+
+  func testIPadSettingsAndMyPageLandscapeSmokeTYP75() {
+    app.terminate()
+    XCUIDevice.shared.orientation = .landscapeLeft
+    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app.launch()
+    XCTAssertGreaterThan(app.frame.width, app.frame.height)
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    XCTAssertGreaterThan(app.frame.width, app.frame.height)
+    XCTAssertTrue(element("settings.section.display").exists)
+    XCTAssertTrue(element("settings.section.keyboard").exists)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-top-ja")
+    let layout = element("settings.builtin_keyboard_layout")
+    scrollToHittable(layout)
+    app.buttons["input_mode.os_ime"].tap()
+    XCTAssertFalse(layout.isEnabled)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-keyboard-os-mode-ja")
+    app.buttons["input_mode.builtin"].tap()
+    let soundSection = element("settings.section.sound")
+    scrollToHittable(soundSection)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-sound-ja")
+    let choseongMeaning = app.switches["settings.choseong_meaning"]
+    scrollToHittable(choseongMeaning)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-typing-display-ja")
+    let mascotSection = element("settings.section.mascot")
+    scrollToHittable(mascotSection)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-reminder-piyo-ja")
+    let version = element("settings.version")
+    scrollToHittable(version)
+    XCTAssertTrue(element("settings.privacy_policy").exists)
+    XCTAssertTrue(version.isHittable)
+    assertJapaneseRuntimeVersion(version)
+    attachScreenshot(named: "typ75-ipad-landscape-settings-bottom-ja")
+    app.buttons["settings.done"].tap()
+
+    let myPageTab = app.buttons["マイページ"].firstMatch
+    XCTAssertTrue(myPageTab.waitForExistence(timeout: 3))
+    let nextPage = app.buttons["次のページ"].firstMatch
+    if nextPage.exists, myPageTab.frame.maxX > nextPage.frame.minX {
+      nextPage.tap()
+    }
+    myPageTab.tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["root.settings"].isHittable)
+    let closet = app.buttons["my_page.piyo_settings"]
+    scrollToHittable(closet)
+    XCTAssertTrue(closet.isHittable)
+    XCTAssertFalse(element("my_page.settings").exists)
+    XCTAssertFalse(element("my_page.piyo_settings_row").exists)
+    attachScreenshot(named: "typ75-ipad-landscape-my-page-top-ja")
   }
 
   func testLegacyUpgradePreservesDisabledReminderAndContinuesPrivacyFlow() {
@@ -3783,6 +3901,11 @@ final class HancoUITests: XCTestCase {
     if seedsFutureCurriculumSchema {
       application.launchEnvironment["UITEST_SEED_FUTURE_CURRICULUM_SCHEMA"] = "1"
     }
+    if name.contains("testSettingsHierarchyVersionAndPrivacyCleanup")
+      || name.contains("testIPadSettingsAndMyPageLandscapeSmokeTYP75")
+    {
+      application.launchEnvironment["UITEST_VERSION_PROBE"] = "1"
+    }
     return application
   }
 
@@ -3927,9 +4050,35 @@ final class HancoUITests: XCTestCase {
     }
     XCTAssertTrue(target.waitForExistence(timeout: 3), app.debugDescription)
     for _ in 0..<maximumSwipes where !isFullyVisible(target) {
-      scrollVisibleSurface(direction)
+      let visibleFrame = app.frame.insetBy(dx: 8, dy: 12)
+      let nextDirection: ScrollDirection
+      if target.frame.minY < visibleFrame.minY {
+        nextDirection = .down
+      } else if target.frame.maxY > visibleFrame.maxY {
+        nextDirection = .up
+      } else {
+        nextDirection = direction
+      }
+      scrollVisibleSurfaceToward(nextDirection)
     }
     XCTAssertTrue(isFullyVisible(target), app.debugDescription)
+  }
+
+  private func scrollVisibleSurfaceToward(_ direction: ScrollDirection) {
+    let visibleScrollView = app.scrollViews.allElementsBoundByIndex.first {
+      $0.exists && $0.isHittable
+    }
+    let surface: XCUIElement
+    if let visibleScrollView {
+      surface = visibleScrollView
+    } else {
+      surface = app
+    }
+    let startY = direction == .up ? 0.60 : 0.42
+    let endY = direction == .up ? 0.42 : 0.60
+    let start = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: startY))
+    let end = surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: endY))
+    start.press(forDuration: 0.05, thenDragTo: end)
   }
 
   private func scrollVisibleSurface(_ direction: ScrollDirection) {
@@ -4052,12 +4201,82 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.buttons["app_tour.skip"].exists)
   }
 
+  private func assertJapaneseRuntimeVersion(
+    _ versionElement: XCUIElement,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let runtimeProbe = element("debug.settings.version")
+    guard runtimeProbe.waitForExistence(timeout: 3), let runtimeValue = runtimeProbe.value as? String else {
+      XCTFail("Missing runtime version test probe", file: file, line: line)
+      return
+    }
+    let components = runtimeValue.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
+    guard components.count == 2, !components[0].isEmpty, !components[1].isEmpty else {
+      XCTFail("Invalid runtime version test value: \(runtimeValue)", file: file, line: line)
+      return
+    }
+    XCTAssertEqual(
+      versionElement.label,
+      "バージョン \(components[0]) (\(components[1]))",
+      file: file,
+      line: line
+    )
+    XCTAssertTrue(
+      (versionElement.value as? String ?? "").isEmpty,
+      "Version row should not repeat runtime components in VoiceOver",
+      file: file,
+      line: line
+    )
+  }
+
+  private func waitForEmptyValue(on element: XCUIElement, timeout: TimeInterval) {
+    let expectation = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "value == nil OR value == ''"),
+      object: element
+    )
+    XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+  }
+
   private func waitForValue(_ value: String, on element: XCUIElement, timeout: TimeInterval) {
     let expectation = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "value == %@", value),
       object: element
     )
     XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+  }
+
+  private func setSwitch(_ element: XCUIElement, to value: String) {
+    guard element.value as? String != value else { return }
+    for _ in 0..<4 where isObscuredByNavigationBar(element) {
+      scrollVisibleSurfaceToward(.down)
+    }
+    XCTAssertFalse(isObscuredByNavigationBar(element), app.debugDescription)
+    element.tap()
+    if waitUntilValue(value, on: element, timeout: 1.5) { return }
+    element.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+    waitForValue(value, on: element, timeout: 3)
+  }
+
+  private func isObscuredByNavigationBar(_ element: XCUIElement) -> Bool {
+    let navigationBottom = app.navigationBars.allElementsBoundByIndex
+      .filter { $0.exists && $0.isHittable }
+      .map(\.frame.maxY)
+      .max() ?? app.frame.minY
+    return element.frame.minY < navigationBottom + 8
+  }
+
+  private func waitUntilValue(
+    _ value: String,
+    on element: XCUIElement,
+    timeout: TimeInterval
+  ) -> Bool {
+    let deadline = Date().addingTimeInterval(timeout)
+    repeat {
+      if element.value as? String == value { return true }
+      Thread.sleep(forTimeInterval: 0.1)
+    } while Date() < deadline
+    return false
   }
 
   private func waitForValueContaining(

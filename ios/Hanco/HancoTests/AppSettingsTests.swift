@@ -48,14 +48,19 @@ final class AppSettingsTests: XCTestCase {
     defer { isolated.removePersistentDomain(forName: suiteName) }
 
     let writer = KeyboardPreferenceStore(defaults: isolated)
-    writer.setDefaultInputMode(.osIME)
     writer.setBuiltInLayout(.korean10Key)
+    writer.setDefaultInputMode(.osIME)
     writer.setShowsPhysicalKeyboardGuide(true)
 
-    let reloaded = KeyboardPreferenceStore(defaults: isolated).snapshot
-    XCTAssertEqual(reloaded.defaultInputMode, .osIME)
-    XCTAssertEqual(reloaded.builtInLayout, .korean10Key)
-    XCTAssertTrue(reloaded.showsPhysicalKeyboardGuide)
+    let osModeSnapshot = KeyboardPreferenceStore(defaults: isolated).snapshot
+    XCTAssertEqual(osModeSnapshot.defaultInputMode, .osIME)
+    XCTAssertEqual(osModeSnapshot.builtInLayout, .korean10Key)
+    XCTAssertTrue(osModeSnapshot.showsPhysicalKeyboardGuide)
+
+    writer.setDefaultInputMode(.builtIn)
+    let restoredBuiltInSnapshot = KeyboardPreferenceStore(defaults: isolated).snapshot
+    XCTAssertEqual(restoredBuiltInSnapshot.defaultInputMode, .builtIn)
+    XCTAssertEqual(restoredBuiltInSnapshot.builtInLayout, .korean10Key)
   }
 
   func testKeyboardPreferencesRepairUnknownEnumsWithoutLosingValidGuideChoice() throws {

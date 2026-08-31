@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
@@ -45,7 +46,8 @@ struct SettingsView: View {
 
   @State private var showsKoreanKeyboardGuide = false
   @State private var showsMascotCloset = false
-  @State private var showsPrivacyChoices = false
+  @State private var didCopyVersion = false
+  @State private var versionCopyResetTask: Task<Void, Never>?
 
   let createsNavigationStack: Bool
   let showsCloseButton: Bool
@@ -71,11 +73,6 @@ struct SettingsView: View {
     }
     .sheet(isPresented: $showsMascotCloset) {
       MascotClosetView()
-    }
-    .sheet(isPresented: $showsPrivacyChoices) {
-      PrivacyConsentView(
-        onDecision: applyPrivacyDecision
-      )
     }
     .onAppear {
       repairKeyboardPreferencesIfNeeded()
@@ -150,12 +147,11 @@ struct SettingsView: View {
   private var settingsContent: some View {
     ScrollView {
       VStack(spacing: 18) {
-        soundSection
         displaySection
-        practiceDisplaySection
-        gameDisplaySection
-        reminderSection
         keyboardSection
+        soundSection
+        practiceDisplaySection
+        reminderSection
         mascotSection
         privacySection
         appInformationSection
@@ -175,7 +171,12 @@ struct SettingsView: View {
     .accessibilityIdentifier("settings.screen")
     .overlay(alignment: .topLeading) {
       #if DEBUG
-        DynamicTypeDebugProbe()
+        VStack(spacing: 0) {
+          DynamicTypeDebugProbe()
+          if ProcessInfo.processInfo.environment["UITEST_VERSION_PROBE"] == "1" {
+            VersionDebugProbe(value: runtimeVersionTestValue)
+          }
+        }
       #endif
     }
     .navigationTitle(Text("settings.navigation_title"))
@@ -191,7 +192,11 @@ struct SettingsView: View {
   }
 
   private var displaySection: some View {
-    settingsCard(title: "settings.display", systemImage: "textformat.size") {
+    settingsCard(
+      title: "settings.display",
+      systemImage: "textformat.size",
+      identifier: "settings.section.display"
+    ) {
       settingPicker(
         title: "settings.font_size",
         selection: $fontScale,
@@ -276,14 +281,28 @@ struct SettingsView: View {
   }
 
   private var keyboardSection: some View {
-    settingsCard(title: "settings.keyboard", systemImage: "keyboard") {
+    settingsCard(
+      title: "settings.keyboard",
+      systemImage: "keyboard",
+      identifier: "settings.section.keyboard"
+    ) {
+      VStack(alignment: .leading, spacing: 8) {
+        Text("practice.setup.input_mode")
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(AppPalette.ink)
+        SessionInputModeControl(
+          selection: defaultInputModeBinding,
+          onUnavailableOSIME: { showsKoreanKeyboardGuide = true }
+        )
+      }
+      .padding(.vertical, 7)
+
+      Divider().opacity(0.5)
+
       VStack(alignment: .leading, spacing: 8) {
         Text("keyboard.layout.title")
           .font(.subheadline.weight(.semibold))
           .foregroundStyle(AppPalette.ink)
-        Text("keyboard.layout.detail")
-          .font(.caption)
-          .foregroundStyle(AppPalette.mutedInk)
         Picker("keyboard.layout.title", selection: $builtInLayoutDefault) {
           Text("keyboard.layout.dubeolsik")
             .tag(BuiltInKeyboardLayout.dubeolsik.rawValue)
@@ -292,19 +311,16 @@ struct SettingsView: View {
         }
         .pickerStyle(.menu)
         .accessibilityIdentifier("settings.builtin_keyboard_layout")
-        if BuiltInKeyboardLayout.resolved(from: builtInLayoutDefault) == .korean10Key {
-          Text("keyboard.layout.korean_10key_help")
-            .font(.caption2)
-            .foregroundStyle(AppPalette.mutedInk)
-        }
       }
+      .padding(.leading, 44)
       .padding(.vertical, 7)
+      .disabled(defaultInputModeBinding.wrappedValue == .osIME)
+      .opacity(defaultInputModeBinding.wrappedValue == .osIME ? 0.45 : 1)
 
       Divider().opacity(0.5)
 
       settingToggle(
         title: "practice.setup.key_guide",
-        detail: "practice.setup.key_guide_detail",
         systemImage: "lightbulb.fill",
         isOn: $showsKeyGuide,
         identifier: "settings.key_guide"
@@ -320,25 +336,10 @@ struct SettingsView: View {
       Divider().opacity(0.5)
       settingToggle(
         title: "practice.setup.haptics",
-        detail: "practice.setup.haptics_detail",
         systemImage: "hand.tap.fill",
         isOn: $hapticsEnabled,
         identifier: "settings.haptics"
       )
-      Divider().opacity(0.5)
-      VStack(alignment: .leading, spacing: 8) {
-        Text("practice.setup.input_mode")
-          .font(.subheadline.weight(.semibold))
-          .foregroundStyle(AppPalette.ink)
-        Text("practice.setup.input_mode_detail")
-          .font(.caption)
-          .foregroundStyle(AppPalette.mutedInk)
-        SessionInputModeControl(
-          selection: defaultInputModeBinding,
-          onUnavailableOSIME: { showsKoreanKeyboardGuide = true }
-        )
-      }
-      .padding(.vertical, 7)
       Divider().opacity(0.5)
       settingToggle(
         title: "physical_keyboard.show_guide",
@@ -351,7 +352,11 @@ struct SettingsView: View {
   }
 
   private var practiceDisplaySection: some View {
-    settingsCard(title: "settings.practice_display", systemImage: "rectangle.3.group.fill") {
+    settingsCard(
+      title: "settings.practice_display",
+      systemImage: "rectangle.3.group.fill",
+      identifier: "settings.section.practice_display"
+    ) {
       settingPicker(
         title: "settings.practice_display_preset",
         selection: $practiceDisplayPreset,
@@ -366,7 +371,6 @@ struct SettingsView: View {
       Divider().opacity(0.5)
       settingToggle(
         title: "settings.practice_target",
-        detail: "settings.practice_target_detail",
         systemImage: "textformat",
         isOn: $practiceShowsTarget,
         identifier: "settings.practice_target"
@@ -390,7 +394,6 @@ struct SettingsView: View {
       Divider().opacity(0.5)
       settingToggle(
         title: "settings.practice_jamo",
-        detail: "settings.practice_jamo_detail",
         systemImage: "square.grid.3x1.below.line.grid.1x2",
         isOn: $practiceShowsJamo,
         identifier: "settings.practice_jamo"
@@ -406,7 +409,6 @@ struct SettingsView: View {
       Divider().opacity(0.5)
       settingToggle(
         title: "settings.practice_mascot",
-        detail: "settings.practice_mascot_detail",
         systemImage: "bird.fill",
         isOn: $practiceShowsMascot,
         identifier: "settings.practice_mascot"
@@ -418,6 +420,14 @@ struct SettingsView: View {
         systemImage: "character.cursor.ibeam",
         isOn: $practiceShowsComposition,
         identifier: "settings.practice_composition"
+      )
+      Divider().opacity(0.5)
+      settingToggle(
+        title: "settings.choseong_meaning",
+        detail: "settings.choseong_meaning_detail",
+        systemImage: "character.book.closed.fill",
+        isOn: $choseongShowsMeaning,
+        identifier: "settings.choseong_meaning"
       )
     }
   }
@@ -442,20 +452,12 @@ struct SettingsView: View {
     .padding(.vertical, 7)
   }
 
-  private var gameDisplaySection: some View {
-    settingsCard(title: "settings.game_display", systemImage: "gamecontroller.fill") {
-      settingToggle(
-        title: "settings.choseong_meaning",
-        detail: "settings.choseong_meaning_detail",
-        systemImage: "character.book.closed.fill",
-        isOn: $choseongShowsMeaning,
-        identifier: "settings.choseong_meaning"
-      )
-    }
-  }
-
   private var reminderSection: some View {
-    settingsCard(title: "retention.reminder.title", systemImage: "bell.badge.fill") {
+    settingsCard(
+      title: "retention.reminder.title",
+      systemImage: "bell.badge.fill",
+      identifier: "settings.section.reminder"
+    ) {
       Toggle(isOn: reminderEnabled) {
         Text("retention.reminder.detail")
           .font(.subheadline.weight(.semibold))
@@ -504,7 +506,11 @@ struct SettingsView: View {
   }
 
   private var soundSection: some View {
-    settingsCard(title: "settings.sound", systemImage: "speaker.wave.2.fill") {
+    settingsCard(
+      title: "settings.sound",
+      systemImage: "speaker.wave.2.fill",
+      identifier: "settings.section.sound"
+    ) {
       settingToggle(
         title: "practice.setup.sound",
         detail: "practice.setup.sound_detail",
@@ -533,7 +539,11 @@ struct SettingsView: View {
   }
 
   private var mascotSection: some View {
-    settingsCard(title: "settings.mascot", systemImage: "bird.fill") {
+    settingsCard(
+      title: "settings.mascot",
+      systemImage: "bird.fill",
+      identifier: "settings.section.mascot"
+    ) {
       Button {
         showsMascotCloset = true
       } label: {
@@ -563,7 +573,11 @@ struct SettingsView: View {
   }
 
   private var privacySection: some View {
-    settingsCard(title: "settings.privacy", systemImage: "hand.raised.fill") {
+    settingsCard(
+      title: "settings.privacy",
+      systemImage: "hand.raised.fill",
+      identifier: "settings.section.privacy"
+    ) {
       settingToggle(
         title: "settings.anonymous_analytics",
         detail: "settings.anonymous_analytics_detail",
@@ -583,34 +597,23 @@ struct SettingsView: View {
         .font(.caption)
         .foregroundStyle(AppPalette.mutedInk)
         .padding(.top, 4)
-      Button {
-        showsPrivacyChoices = true
-      } label: {
-        HStack(spacing: 10) {
-          Image(systemName: "checklist")
-          Text("settings.review_privacy_choices")
-          Spacer()
-          Image(systemName: "chevron.right")
-            .font(.caption.weight(.bold))
-        }
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(AppPalette.accent)
-        .frame(minHeight: 44)
-        .contentShape(Rectangle())
-      }
-      .buttonStyle(.plain)
-      .accessibilityIdentifier("settings.review_privacy_choices")
-    }
-  }
-
-  private var appInformationSection: some View {
-    settingsCard(title: "settings.app_information", systemImage: "info.circle.fill") {
+      Divider().opacity(0.5)
       legalLink(
         title: "settings.privacy_policy",
         systemImage: "hand.raised.fill",
         destination: AppReleaseLinks.privacyPolicy,
         identifier: "settings.privacy_policy"
       )
+    }
+  }
+
+  private var appInformationSection: some View {
+    settingsCard(
+      title: "settings.app_information",
+      systemImage: "info.circle.fill",
+      identifier: "settings.section.app_information"
+    ) {
+      versionRow
       Divider().opacity(0.5)
       contentFeedbackLink(
         title: "content_feedback.settings.title",
@@ -625,6 +628,76 @@ struct SettingsView: View {
         destination: AppReleaseLinks.support,
         identifier: "settings.support"
       )
+    }
+  }
+
+  private var versionRow: some View {
+    Button(action: copyVersion) {
+      HStack(spacing: 12) {
+        Image(systemName: "doc.on.doc.fill")
+          .font(.system(size: 17, weight: .semibold))
+          .foregroundStyle(AppPalette.accent)
+          .frame(width: 32, height: 32)
+          .background(AppPalette.accentSoft.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+        VStack(alignment: .leading, spacing: 2) {
+          Text(verbatim: runtimeVersionDisplay)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(AppPalette.ink)
+          if didCopyVersion {
+            Text("settings.version_copied")
+              .font(.caption)
+              .foregroundStyle(AppPalette.accent)
+          }
+        }
+        Spacer()
+      }
+      .padding(.vertical, 7)
+      .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel(Text(verbatim: runtimeVersionDisplay))
+    .accessibilityHint(Text("settings.version_copy_hint"))
+    .accessibilityValue(
+      didCopyVersion
+        ? Text("settings.version_copied")
+        : Text(verbatim: "")
+    )
+    .accessibilityIdentifier("settings.version")
+  }
+
+  private var runtimeVersionComponents: (marketing: String, build: String) {
+    let marketingVersion = Bundle.main.object(
+      forInfoDictionaryKey: "CFBundleShortVersionString"
+    ) as? String ?? ""
+    let buildVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+    return (marketingVersion, buildVersion)
+  }
+
+  private var runtimeVersionDisplay: String {
+    let version = runtimeVersionComponents
+    return AppLocalization.format("settings.version_format", version.marketing, version.build)
+  }
+
+  private var runtimeVersionTestValue: String {
+    let version = runtimeVersionComponents
+    return "\(version.marketing),\(version.build)"
+  }
+
+  private func copyVersion() {
+    versionCopyResetTask?.cancel()
+    UIPasteboard.general.string = runtimeVersionDisplay
+    didCopyVersion = true
+    UIAccessibility.post(
+      notification: .announcement,
+      argument: AppLocalization.string("settings.version_copied")
+    )
+    versionCopyResetTask = Task { @MainActor in
+      do {
+        try await Task.sleep(nanoseconds: 1_500_000_000)
+      } catch {
+        return
+      }
+      didCopyVersion = false
     }
   }
 
@@ -679,6 +752,7 @@ struct SettingsView: View {
   private func settingsCard<Content: View>(
     title: LocalizedStringKey,
     systemImage: String,
+    identifier: String,
     @ViewBuilder content: () -> Content
   ) -> some View {
     VStack(alignment: .leading, spacing: 5) {
@@ -686,6 +760,7 @@ struct SettingsView: View {
         .font(.headline.weight(.heavy))
         .foregroundStyle(AppPalette.ink)
         .padding(.bottom, 7)
+        .accessibilityIdentifier(identifier)
       content()
     }
     .padding(18)
@@ -694,7 +769,7 @@ struct SettingsView: View {
 
   private func settingToggle(
     title: LocalizedStringKey,
-    detail: LocalizedStringKey,
+    detail: LocalizedStringKey? = nil,
     systemImage: String,
     isOn: Binding<Bool>,
     identifier: String
@@ -706,13 +781,15 @@ struct SettingsView: View {
           .foregroundStyle(AppPalette.accent)
           .frame(width: 32, height: 32)
           .background(AppPalette.accentSoft.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: detail == nil ? 0 : 2) {
           Text(title)
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(AppPalette.ink)
-          Text(detail)
-            .font(.caption)
-            .foregroundStyle(AppPalette.mutedInk)
+          if let detail {
+            Text(detail)
+              .font(.caption)
+              .foregroundStyle(AppPalette.mutedInk)
+          }
         }
       }
     }
@@ -801,15 +878,6 @@ struct SettingsView: View {
     }
   }
 
-  private func applyPrivacyDecision(_ decision: PrivacyConsentDecision) {
-    anonymousAnalyticsEnabled = decision.analyticsEnabled
-    crashDiagnosticsEnabled = decision.diagnosticsEnabled
-    privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
-    TelemetryService.shared.updateConsent(
-      productAnalytics: decision.analyticsEnabled,
-      crashDiagnostics: decision.diagnosticsEnabled
-    )
-  }
 }
 
 enum PrivacyConsentDecision: Equatable {
@@ -980,6 +1048,19 @@ struct PrivacyConsentView: View {
           Text(verbatim: dynamicTypeSize.isAccessibilitySize ? "accessibility" : "standard")
         )
         .accessibilityIdentifier("debug.dynamic_type")
+    }
+  }
+
+  private struct VersionDebugProbe: View {
+    let value: String
+
+    var body: some View {
+      Text(verbatim: " ")
+        .font(.system(size: 1))
+        .opacity(0.01)
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(Text(verbatim: value))
+        .accessibilityIdentifier("debug.settings.version")
     }
   }
 #endif

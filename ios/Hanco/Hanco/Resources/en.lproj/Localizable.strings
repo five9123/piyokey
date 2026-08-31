@@ -58,11 +58,9 @@
 "practice.setup.subtitle" = "Follow the highlighted keys through three targets";
 "practice.setup.settings_title" = "Keyboard settings";
 "practice.setup.key_guide" = "Key guide";
-"practice.setup.key_guide_detail" = "Highlight the next key to press";
 "practice.setup.roman_hints" = "Roman key hints";
 "practice.setup.roman_hints_detail" = "Show QWERTY letters on the keys";
 "practice.setup.haptics" = "Haptic feedback";
-"practice.setup.haptics_detail" = "Give a light tap when a key is pressed";
 "practice.setup.sound" = "Sound effects";
 "practice.setup.sound_detail" = "Play keys, answers, and mistakes even in Silent Mode";
 "practice.setup.sound_preset" = "Key sound";
@@ -70,8 +68,7 @@
 "practice.setup.sound_system_detail" = "A short click that also plays in Silent Mode.";
 "practice.setup.sound_mechanical" = "Mechanical";
 "practice.setup.sound_soft" = "Soft";
-"practice.setup.input_mode" = "Default input mode";
-"practice.setup.input_mode_detail" = "Keyboard used for word, sentence, and game sessions";
+"practice.setup.input_mode" = "Input mode";
 "practice.setup.start" = "Start practice";
 "practice.setup.session_note" = "You can switch input mode during practice. The built-in layout is fixed when the session starts.";
 
@@ -84,11 +81,9 @@
 "keyboard.backspace" = "Delete one jamo";
 "keyboard.space" = "Space";
 "keyboard.accessibility_label" = "Korean keyboard";
-"keyboard.layout.title" = "Built-in keyboard layout";
-"keyboard.layout.detail" = "Used in Chapter 5+ and deck practice. The layout is fixed when a session starts.";
-"keyboard.layout.dubeolsik" = "2-Set (default)";
-"keyboard.layout.korean_10key" = "Korean 10-Key";
-"keyboard.layout.korean_10key_help" = "Repeat a grouped consonant key, use → between consecutive consonants in the same group, or combine ㅣ, ㆍ, and ㅡ in the highlighted order.";
+"keyboard.layout.title" = "Layout";
+"keyboard.layout.dubeolsik" = "2-Set";
+"keyboard.layout.korean_10key" = "Cheonjiin (10-key)";
 "keyboard.10key.accessibility_label" = "Korean 10-Key, Cheonjiin style";
 "keyboard.10key.vertical" = "Vertical stroke, ㅣ";
 "keyboard.10key.dot" = "Dot, Cheonjiin dot";
@@ -210,7 +205,7 @@
 "home.navigation_title" = "Home";
 "settings.navigation_title" = "Settings";
 "settings.done" = "Done";
-"settings.display" = "Display";
+"settings.display" = "Screen";
 "settings.keyboard" = "Keyboard";
 "settings.sound" = "Sound";
 "settings.font_size" = "Text size";
@@ -233,7 +228,6 @@
 "settings.practice_display.learning" = "Learning";
 "settings.practice_display.focus" = "Focus";
 "settings.practice_target" = "Show target";
-"settings.practice_target_detail" = "Show the Korean target in large text";
 "settings.practice_meaning" = "Meaning";
 "settings.practice_meaning_detail" = "Show meanings when the deck includes them";
 "settings.practice_reading" = "Romanization";
@@ -241,14 +235,11 @@
 "settings.practice_order" = "Display order";
 "settings.practice_order_detail" = "Choose the order of the target, meaning, and reading";
 "settings.practice_jamo" = "Show jamo";
-"settings.practice_jamo_detail" = "Show decomposed consonants, vowels, and progress";
 "settings.practice_composition" = "Show current input";
 "settings.practice_composition_detail" = "Show the composing character and entered text";
 "settings.practice_auto_speak" = "Speak targets automatically";
 "settings.practice_auto_speak_detail" = "Play each new target in Korean";
 "settings.practice_mascot" = "Show Piyo cheering";
-"settings.practice_mascot_detail" = "Show or hide the character during practice";
-"settings.game_display" = "Game display";
 "settings.choseong_meaning" = "Initials game meaning";
 "settings.choseong_meaning_detail" = "Show the meaning for every question";
 "settings.app_information" = "App information";
@@ -259,7 +250,9 @@
 "settings.crash_diagnostics" = "Crash diagnostics";
 "settings.crash_diagnostics_detail" = "Share diagnostics for crashes and app hangs.";
 "settings.analytics_privacy_note" = "Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.";
-"settings.review_privacy_choices" = "Review data-sharing choices";
+"settings.version_format" = "Version %@ (%@)";
+"settings.version_copy_hint" = "Copies this version and build number";
+"settings.version_copied" = "Copied";
 "privacy_consent.navigation_title" = "Privacy choices";
 "privacy_consent.title" = "Help improve typee?";
 "privacy_consent.introduction" = "Send anonymous usage and error information to help us improve the app.";
@@ -761,11 +754,7 @@
 "my_page.insights.less_than_minute" = "Under 1 min";
 "my_page.insights.minutes_format" = "%d min";
 "my_page.insights.change_format" = "%@ vs previous";
-"my_page.actions.title" = "Settings & customization";
-"my_page.app_settings" = "App settings";
-"my_page.app_settings_detail" = "Display, reminders, keyboard, and sound";
 "my_page.piyo_settings" = "Piyo settings";
-"my_page.piyo_settings_detail" = "Change the name, growth, and items";
 "my_page.decks.title" = "My decks";
 "my_page.decks.count_format" = "%d decks";
 "my_decks.empty.title" = "No decks yet";
