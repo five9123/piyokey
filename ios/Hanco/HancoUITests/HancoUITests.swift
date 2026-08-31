@@ -3362,17 +3362,14 @@ final class HancoUITests: XCTestCase {
     let keyGuide = app.switches["settings.key_guide"]
     scrollToHittable(keyGuide, direction: .down)
     XCTAssertEqual(keyGuide.value as? String, "1")
-    keyGuide.tap()
-    waitForValue("0", on: keyGuide, timeout: 3)
+    setSwitch(keyGuide, to: "0")
     let romanHints = app.switches["settings.roman_hints"]
     scrollToHittable(romanHints)
     XCTAssertEqual(romanHints.value as? String, "1")
-    romanHints.tap()
-    waitForValue("0", on: romanHints, timeout: 3)
+    setSwitch(romanHints, to: "0")
     let haptics = app.switches["settings.haptics"]
     scrollToHittable(haptics)
-    haptics.tap()
-    waitForValue("0", on: haptics, timeout: 3)
+    setSwitch(haptics, to: "0")
 
     let osKeyboard = app.buttons["input_mode.os_ime"]
     scrollToHittable(osKeyboard, direction: .down)
@@ -3384,8 +3381,7 @@ final class HancoUITests: XCTestCase {
     softSound.tap()
     let sound = app.switches["settings.sound"]
     scrollToHittable(sound)
-    sound.tap()
-    XCTAssertEqual(sound.value as? String, "0")
+    setSwitch(sound, to: "0")
 
     app.terminate()
     app = makeApplication(
@@ -4248,6 +4244,27 @@ final class HancoUITests: XCTestCase {
       object: element
     )
     XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+  }
+
+  private func setSwitch(_ element: XCUIElement, to value: String) {
+    guard element.value as? String != value else { return }
+    element.tap()
+    if waitUntilValue(value, on: element, timeout: 1.5) { return }
+    element.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+    waitForValue(value, on: element, timeout: 3)
+  }
+
+  private func waitUntilValue(
+    _ value: String,
+    on element: XCUIElement,
+    timeout: TimeInterval
+  ) -> Bool {
+    let deadline = Date().addingTimeInterval(timeout)
+    repeat {
+      if element.value as? String == value { return true }
+      Thread.sleep(forTimeInterval: 0.1)
+    } while Date() < deadline
+    return false
   }
 
   private func waitForValueContaining(
