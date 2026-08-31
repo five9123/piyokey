@@ -36,7 +36,7 @@
 
 ## 즉시 작업 순서
 
-1. TYP-71 PR #140 병합 완료(`17fb367`). 이 기준선에서 build 10 archive·TestFlight 업로드.
+1. build 10 (main `abb8d24`) App Store Connect 업로드 완료(2026-08-31 21:39 KST). ASC processing·TestFlight 노출 확인 후 `release/IOS_1_1_BUILD_10.md`에 Apple build ID 기록.
 2. iOS 1.1 build 10의 정확한 TestFlight 실기기 QA와 #77 외부 gate 진행.
 3. #7·#58의 iOS 실기기 gate 처리.
 4. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
