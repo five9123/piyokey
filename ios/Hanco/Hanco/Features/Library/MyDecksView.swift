@@ -94,7 +94,6 @@ private struct DeckDeletionFailure: Identifiable {
 
 struct MyPageView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
-  @Environment(\.openRootSettings) private var openSettings
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
@@ -315,7 +314,6 @@ struct MyPageView: View {
           .frame(maxWidth: .infinity, alignment: .top)
 
           VStack(spacing: 16) {
-            settingsCard
             learningInsightsCard
           }
           .frame(maxWidth: .infinity, alignment: .top)
@@ -329,7 +327,6 @@ struct MyPageView: View {
           .appTourTarget(.myPageProfile)
         growthRecordCard
         learningInsightsCard
-        settingsCard
         deckLibrarySection
       }
     }
@@ -353,6 +350,7 @@ struct MyPageView: View {
           Text("my_page.profile_eyebrow")
             .font(.caption.weight(.black))
             .foregroundStyle(AppPalette.accent)
+            .accessibilityIdentifier("my_page.profile")
           Text(verbatim: companion.displayName)
             .font(.system(.title2, design: .rounded, weight: .heavy))
             .foregroundStyle(AppPalette.ink)
@@ -383,7 +381,6 @@ struct MyPageView: View {
     .padding(18)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 12, y: 7)
-    .accessibilityIdentifier("my_page.profile")
   }
 
   private var growthRecordCard: some View {
@@ -426,37 +423,6 @@ struct MyPageView: View {
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     .shadow(color: AppPalette.keyShadow, radius: 9, y: 5)
     .accessibilityIdentifier("my_page.growth")
-  }
-
-  private var settingsCard: some View {
-    VStack(alignment: .leading, spacing: 5) {
-      Label("my_page.actions.title", systemImage: "slider.horizontal.3")
-        .font(.headline.weight(.heavy))
-        .foregroundStyle(AppPalette.ink)
-        .padding(.bottom, 7)
-
-      settingsRow(
-        title: "my_page.app_settings",
-        detail: "my_page.app_settings_detail",
-        systemImage: "gearshape.fill",
-        identifier: "my_page.settings",
-        action: openSettings
-      )
-
-      Divider().opacity(0.5)
-
-      settingsRow(
-        title: "my_page.piyo_settings",
-        detail: "my_page.piyo_settings_detail",
-        systemImage: "bird.fill",
-        identifier: "my_page.piyo_settings_row"
-      ) {
-        showsMascotCloset = true
-      }
-    }
-    .padding(18)
-    .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-    .shadow(color: AppPalette.keyShadow, radius: 9, y: 5)
   }
 
   private var learningInsightsCard: some View {
@@ -1032,40 +998,6 @@ struct MyPageView: View {
     .padding(11)
     .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
     .background(AppPalette.backgroundBottom.opacity(0.68), in: RoundedRectangle(cornerRadius: 16))
-  }
-
-  private func settingsRow(
-    title: LocalizedStringKey,
-    detail: LocalizedStringKey,
-    systemImage: String,
-    identifier: String,
-    action: @escaping () -> Void
-  ) -> some View {
-    Button(action: action) {
-      HStack(spacing: 12) {
-        Image(systemName: systemImage)
-          .font(.system(size: 17, weight: .semibold))
-          .foregroundStyle(AppPalette.accent)
-          .frame(width: 34, height: 34)
-          .background(AppPalette.accentSoft.opacity(0.5), in: RoundedRectangle(cornerRadius: 11))
-        VStack(alignment: .leading, spacing: 2) {
-          Text(title)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(AppPalette.ink)
-          Text(detail)
-            .font(.caption)
-            .foregroundStyle(AppPalette.mutedInk)
-        }
-        Spacer()
-        Image(systemName: "chevron.right")
-          .font(.caption.weight(.bold))
-          .foregroundStyle(AppPalette.mutedInk)
-      }
-      .padding(.vertical, 8)
-      .contentShape(Rectangle())
-    }
-    .buttonStyle(.plain)
-    .accessibilityIdentifier(identifier)
   }
 
   private var sortedDecks: [Deck] {
