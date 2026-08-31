@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "verified_commit": "78d8fbaa816a6a84188a336d925f20660d46ae02",
+  "verified_tree": "5c90a1e4a5faf30d2c7f06347d24d28a54f778d2",
+  "branch": "codex/73-ios-ime-composition-reset",
+  "scope": "TYP-73 iOS/iPadOS Korean IME composition reset B implementation and build 11 source candidate",
+  "result": "pass",
+  "recorded_at": "2026-08-31T15:15:48.871554+00:00",
+  "checks": [
+    {
+      "name": "focused-ios-tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/OSIMEInputResetTests plus seven required exact behavior selectors",
+      "note": "22 selected tests passed; no UI or store-capture tests executed"
+    },
+    {
+      "name": "python-contract-tests",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "104 tests passed"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "GitHub focused CI and Claude advisory re-review remain pending.",
+    "Exact build 11 archive, App Store Connect upload, processing, and TestFlight installation remain pending until review and merge on clean origin/main.",
+    "Physical iPhone and iPad x Dubeolsik and Cheonjiin x Practice plus five direct-input games x 10-word gate remains pending; include 좋다→고기, 아침→좋다, 대형, and 쇼파.",
+    "TYP-43 remains blocked until the exact build 11 physical gate passes."
+  ]
+}

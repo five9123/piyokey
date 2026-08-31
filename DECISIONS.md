@@ -1689,3 +1689,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 분석·진단 SDK는 설치 상태를 유지하지만 동의 전 수집을 시작하지 않는다. ATT 권한을 요청하거나 IDFA를 사용하지 않는다. 공급자와 처리 상세는 개인정보처리방침 및 심사 문서에 유지한다.
 - 근거: 첫 실행의 선택 부담과 공급자 중심 문구를 줄이면서 명시적 참여/거부를 보장하고, 설정에서는 사용자가 수집 범주를 세밀하게 바꿀 수 있게 하기 위함이다. 고지 버전을 유지해 문구·상호작용 변경만으로 기존 사용자의 결정을 다시 묻지 않는다.
 - 영향 범위: iOS `AppRootView`·온보딩 리마인더·개인정보/설정 UI, ja/en/es/de/fr 및 보존 ko 문구, 집중 단위/UI 회귀, 분석·App Review 문서. Android와 TYP-43 아카이브·제출 산출물은 변경하지 않는다.
+
+## 2026-08-31 iOS 한국어 IME 전환 리셋 B안
+
+- 관련: TYP-73, iOS 1.1 build 10 회귀, `iOS/iPadOS 1.1 Global Release`.
+- 결정: iOS 1.1은 `UITextField`/`UITextInput` 브리지를 유지한다. `resetRevision` 변경 시 `updateUIView`나 `.editingChanged` callback 안에서 문서를 동기 변경하지 않고 다음 main runloop에 reset을 예약한다. 그 turn에서 `resignFirstResponder()` → 문서·marked composition 폐기 → `becomeFirstResponder()`로 입력 세션을 재시작하며 실패 시 기존 `focusRevision` 요청 경로로 복구한다.
+- 결정: reset pending·적용 구간의 `.editingChanged`와 selection echo를 모두 차단한다. 재시작 뒤 payload가 새 target의 유효 prefix가 아니면서 이전 target snapshot 또는 자모-prefix material을 포함하면 judge에 전달하지 않고 다시 deferred reset한다. 첫 정상 새-target payload는 suppression 없이 보존한다.
+- 근거: 실기기 probe에서 두벌식과 천지인 모두 자모 append가 아니라 `deleteBackward`와 조합 음절 치환을 보냈다. UIKeyInput-only CJK 동작은 공식 계약이 아니며, 외부 사례도 callback 내부 mutation과 delegate bracket만으로는 한국어 조합 buffer를 안정적으로 초기화하지 못하고 focus cycle이 필요함을 뒷받침한다. 외부 사례는 설계 지원 근거이며 저장소 회귀 테스트와 실기기 gate를 대체하지 않는다.
+- 출시 gate: 후속 build 11에서 Practice와 흐름·산성비·초성·단어 맞추기·받아쓰기, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인한다. 천지인 `대형`·`쇼파`, `좋다 → 고기`, `아침 → 좋다`, 첫 자모·콤보·정확도·점수·first responder 유지가 포함된다. 이 gate 전 TYP-43을 재개하거나 TYP-73을 Done으로 처리하지 않는다.
+- 범위: iOS/iPadOS 입력 bridge와 focused 회귀만 변경한다. Android, App Store 제출, TYP-70 test-plan 분리는 제외한다.

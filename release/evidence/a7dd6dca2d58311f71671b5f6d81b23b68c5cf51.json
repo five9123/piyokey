@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a7dd6dca2d58311f71671b5f6d81b23b68c5cf51",
+  "verified_tree": "5943d3e1b0ab3584769f1ad059e65f1008edeeaa",
+  "branch": "codex/73-ios-ime-composition-reset",
+  "scope": "TYP-73 iOS/iPadOS Korean IME composition reset B implementation",
+  "result": "pass",
+  "recorded_at": "2026-08-31T14:47:58.649579+00:00",
+  "checks": [
+    {
+      "name": "focused-ios-tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/OSIMEInputResetTests -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMESynchronizationCanAdvanceAndRewindWithoutLosingSessionState -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEPhysicalKeyboardSnapshotsDoNotDuplicateMarkedCommitOrBackspace -only-testing:HancoTests/PracticeSessionViewModelTests/testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition -only-testing:HancoTests/FlowGameViewModelTests/testAcidRainOSIMECompletesAnyMatchingVisibleCard -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgePrefersAnyCompletedVisibleWord -only-testing:HancoTests/FlowGameViewModelTests/testOSIMESynchronizationAndConfirmedMistakeUseGameScoringRules -only-testing:HancoTests/ChoseongQuizViewModelTests/testTypingOSIMESynchronizesAcceptedPrefixAndCompletion",
+      "note": "19 selected tests passed; no UI or store-capture tests executed"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "GitHub focused CI and Claude advisory review remain pending.",
+    "Exact build 11 archive, App Store Connect upload, processing, and TestFlight installation remain pending until review and merge on clean origin/main.",
+    "Physical iPhone and iPad x Dubeolsik and Cheonjiin x Practice plus five direct-input games x 10-word gate remains pending; include 좋다→고기, 아침→좋다, 대형, and 쇼파.",
+    "TYP-43 remains blocked until the exact build 11 physical gate passes."
+  ]
+}
