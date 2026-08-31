@@ -757,7 +757,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 영향 범위: `TargetSpeechSynthesizer`, `HancoSoundEngine`, Swift 6 빌드 경고, TTS·효과음·외부 음악 실기기 게이트
 
 ## 2026-07-22 무음 모드에서도 재생되는 CC0 기본 타건음
-- 결정: 게임형 학습의 청각 피드백을 기본 경험으로 보고 타건음·정오답·콤보 등 효과음을 기본 ON인 `.playback` + `.mixWithOthers`로 전환한다. 무음 모드에서도 재생하지만 외부 음악은 중단하지 않으며, 설정 화면의 사운드 카드를 최상단으로 옮겨 진입 직후 1탭으로 OFF할 수 있게 한다. 명시적으로 저장된 OFF는 재실행 후에도 유지한다.
+- 결정: 게임형 학습의 청각 피드백을 기본 경험으로 보고 타건음·정오답·콤보 등 효과음을 기본 ON인 `.playback` + `.mixWithOthers`로 전환한다. 무음 모드에서도 재생하지만 외부 음악은 중단하지 않으며 명시적으로 저장된 OFF는 재실행 후에도 유지한다. 당시 사운드 카드를 최상단에 두었던 위치 계약은 2026-09-01 TYP-75 Settings 섹션 순서 결정에서 대체한다.
 - 결정: 2026-07-21의 `아이폰 표준 입력 클릭` 결정은 기본 타건음 재생 경로에 한해 대체한다. `UIDevice.playInputClick()`은 무음 모드를 따르므로 제거하고, Freesound의 `Basic Mouse Click UI`(Philip_Berger, CC0)를 기본 프리셋에 사용한다. 공식 HQ MP3의 918 유효 프레임만 디코딩해 19.125ms·48kHz·mono Float32 PCM CAF로 번들하며, 파일 누락·손상 시 기존 원본 합성음으로 대체한다.
 - 결정: 원본 페이지·CC0 링크·입출력 SHA-256·변환 방식을 `Resources/Sounds/README.md`에 기록하고, 출시 사전 검사에서 번들 포함 여부와 CAF 체크섬을 고정한다. 발음 재생 중에는 효과음을 억제하고 종료 뒤 효과음용 `.playback` 기본 모드로 복원한다.
 - 근거: 시스템 입력 클릭은 iOS 기본 키보드와 같지만 사용자의 무음 모드에서는 재생되지 않아 게임의 핵심 피드백을 보장할 수 없다. 독립 제작된 19ms CC0 클릭은 짧은 타건감을 유지하면서 무음 정책·권리·오프라인 재생을 앱이 일관되게 통제할 수 있다.
@@ -1453,7 +1453,7 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 ## 2026-08-27 iOS 한국어 10키(천지인식) 연습 우선 지원
 
 - 관련: Issue #11, PRD F2·F2a·F3, §6.3, §7.2, §13 M6.
-- 결정: 제품 명칭은 ko=`한국어 10키(천지인식)`, ja=`韓国語10キー（天地人式）`, en=`Korean 10-Key`로 고정하고 Apple 한국어 10키의 3×4 `ㅣ·ㆍ·ㅡ`, 묶음 자음, `→` 진행 키와 별도 스페이스 바를 사용한다. `→`는 같은 묶음 자음이 다음 자모로 이어질 때 경계를 확정한다. 두벌식은 기본값으로 유지하며 OS 키보드 모드와 별도인 내장 배열 설정으로 제공한다.
+- 결정: 내장 배열 표시 명칭은 de=`2-Set`/`Cheonjiin (10 Tasten)`, en=`2-Set`/`Cheonjiin (10-key)`, es=`2-Set`/`Cheonjiin (10 teclas)`, fr=`2-Set`/`Cheonjiin (10 touches)`, ja=`2ボル式`/`天地人（10キー）`, ko=`두벌식`/`천지인(10키)`로 현지화하고 Apple 한국어 10키의 3×4 `ㅣ·ㆍ·ㅡ`, 묶음 자음, `→` 진행 키와 별도 스페이스 바를 사용한다. `→`는 같은 묶음 자음이 다음 자모로 이어질 때 경계를 확정한다. 두벌식은 기본값으로 유지하며 OS 키보드 모드와 별도인 내장 배열 설정으로 제공한다. 이 명칭은 2026-09-01 TYP-75 결정에서 이전 ko/ja/en 고정 명칭을 대체했다.
 - 결정: 1단계 범위는 iOS 챕터5+, 자유 연습, 덱 연습이다. 챕터1~4와 온보딩 자판 학습은 두벌식으로 고정하고 게임은 후속 2단계에서 같은 인터프리터·기록 분리·리더보드 제외를 함께 연결한다. 세션 시작 뒤에는 내장 배열을 바꾸지 않는다.
 - 결정: 순수 `Korean10KeyInterpreter`는 목표의 다음 자모에 대한 golden recipe를 따라 미확정 raw 획만 보유하고, recipe가 완성되면 표준 호환 자모 하나를 기존 HangulEngine과 자모 판정기에 전달한다. 미완성 획은 오타가 아니며 프리뷰에 표시한다. 잘못된 물리 키는 오타 1회로 기록하고 pending recipe를 초기화한다.
 - 결정: Backspace는 미확정 recipe의 마지막 raw 획을 먼저 되감고 pending이 비었을 때 기존 HangulEngine Backspace로 전달한다. 자음 19개·모음 21개·스페이스 recipe, 복합 모음·된소리·띄어쓰기 목표, 오입력·Backspace를 단위 회귀로 고정한다.
@@ -1697,3 +1697,21 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 독립 `게임 표시` 섹션은 삭제하고 초성 맞추기 뜻 토글을 `타이핑 표시` 하단에 둔다. 기본 ON, 저장 키, OFF 시 문제 카드 뜻 워드박스를 숨기고 플레이 중 힌트로만 여는 동작은 유지한다.
 - 근거: 최초 명시적 참여·거부와 설정에서의 세밀한 철회 기능은 유지하면서 반복 모달과 공급자 중심 UI를 제거하고, 관련 표시 설정을 한 섹션에 모아 실제 승인된 iOS/iPadOS 1.1 정보 구조와 제품 계약을 일치시키기 위함이다.
 - 영향 범위: PRD F10, iOS/iPadOS `SettingsView`, 개인정보·타이핑 표시 현지화, App Review Notes, focused settings UI 회귀. Android는 동결 범위로 변경하지 않는다.
+
+## 2026-08-31 iOS 한국어 IME 전환 리셋 B안
+
+- 관련: TYP-73, iOS 1.1 build 10 회귀, `iOS/iPadOS 1.1 Global Release`.
+- 결정: iOS 1.1은 `UITextField`/`UITextInput` 브리지를 유지한다. `resetRevision` 변경 시 `updateUIView`나 `.editingChanged` callback 안에서 문서를 동기 변경하지 않고 다음 main runloop에 reset을 예약한다. 그 turn에서 `resignFirstResponder()` → 문서·marked composition 폐기 → `becomeFirstResponder()`로 입력 세션을 재시작하며 실패 시 기존 `focusRevision` 요청 경로로 복구한다.
+- 결정: reset pending·적용 구간의 `.editingChanged`와 selection echo를 모두 차단한다. 재시작 뒤 payload가 새 target의 유효 prefix가 아니면서 이전 target snapshot 또는 자모-prefix material을 포함하면 judge에 전달하지 않고 다시 deferred reset한다. 첫 정상 새-target payload는 suppression 없이 보존한다.
+- 근거: 실기기 probe에서 두벌식과 천지인 모두 자모 append가 아니라 `deleteBackward`와 조합 음절 치환을 보냈다. UIKeyInput-only CJK 동작은 공식 계약이 아니며, 외부 사례도 callback 내부 mutation과 delegate bracket만으로는 한국어 조합 buffer를 안정적으로 초기화하지 못하고 focus cycle이 필요함을 뒷받침한다. 외부 사례는 설계 지원 근거이며 저장소 회귀 테스트와 실기기 gate를 대체하지 않는다.
+- 출시 gate: 후속 build 11에서 Practice와 흐름·산성비·초성·단어 맞추기·받아쓰기, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인한다. 천지인 `대형`·`쇼파`, `좋다 → 고기`, `아침 → 좋다`, 첫 자모·콤보·정확도·점수·first responder 유지가 포함된다. 이 gate 전 TYP-43을 재개하거나 TYP-73을 Done으로 처리하지 않는다.
+- 범위: iOS/iPadOS 입력 bridge와 focused 회귀만 변경한다. Android, App Store 제출, TYP-70 test-plan 분리는 제외한다.
+
+## 2026-09-01 TYP-75 Settings 섹션·내장 배열 명칭·링크 위치 동기화
+
+- 관련: TYP-75, PRD v6.17·F2·F10, PR #146.
+- 결정: Settings 섹션 순서를 `화면 → 키보드 → 사운드 → 타이핑 표시 → 연습 알림 → 피요 → 개인정보 → 앱 정보`로 고정하고, 효과음은 기본 ON 상태를 유지하되 최상단·진입 직후 1탭 위치 계약은 폐기한다.
+- 결정: 내장 배열 표시는 de=`2-Set`/`Cheonjiin (10 Tasten)`, en=`2-Set`/`Cheonjiin (10-key)`, es=`2-Set`/`Cheonjiin (10 teclas)`, fr=`2-Set`/`Cheonjiin (10 touches)`, ja=`2ボル式`/`天地人（10キー）`, ko=`두벌식`/`천지인(10키)`로 현지화하며, 2026-08-27의 ko/ja/en 고정 명칭을 대체한다.
+- 결정: 개인정보처리방침 링크는 개인정보 섹션에만 두고 앱 정보에는 런타임 버전·빌드, 덱 제안/내용 제보, 일반 지원을 둔다.
+- 근거: 승인된 실제 정보 구조와 6개 언어 UI를 공식 제품 계약에 그대로 반영해 사운드·배열 명칭·처리방침 링크를 이전 위치나 문구로 되돌리는 회귀를 막기 위함이다.
+- 영향 범위: PRD F2·F10, iOS/iPadOS Settings 정보 구조와 de/en/es/fr/ja/ko 표시 명칭, focused settings UI 회귀. Android는 동결 범위로 변경하지 않는다.

@@ -153,15 +153,15 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_build_10_uploaded_processing_pending",
+    "record_status": "version_1_1_build_11_source_candidate_pending_review_not_uploaded",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
     "marketing_version": "1.1",
-    "build_number": "10",
+    "build_number": "11",
     "currently_linked_build_number": "7",
-    "latest_uploaded_superseded_build_number": "9",
+    "latest_uploaded_superseded_build_number": "10",
     "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
     "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
     "localized_media": {
@@ -270,7 +270,7 @@
       "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
     },
     "qa_gates": {
-      "release_archive_validated": true,
+      "release_archive_validated": false,
       "full_unit_and_ui_regression": false,
       "testflight_clean_install_smoke": false,
       "korean_os_ime_device_check": false,

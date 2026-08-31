@@ -3632,10 +3632,10 @@ final class HancoUITests: XCTestCase {
 
     let version = element("settings.version")
     scrollToHittable(version)
-    let runtimeVersionValue = assertJapaneseRuntimeVersion(version)
+    assertJapaneseRuntimeVersion(version)
     version.tap()
     waitForValue("コピーしました", on: version, timeout: 3)
-    waitForValue(runtimeVersionValue, on: version, timeout: 3)
+    waitForEmptyValue(on: version, timeout: 3)
     version.tap()
     waitForValue("コピーしました", on: version, timeout: 3)
     attachScreenshot(named: "typ75-iphone-se-settings-bottom-ja")
@@ -3904,6 +3904,11 @@ final class HancoUITests: XCTestCase {
     }
     if seedsFutureCurriculumSchema {
       application.launchEnvironment["UITEST_SEED_FUTURE_CURRICULUM_SCHEMA"] = "1"
+    }
+    if name.contains("testSettingsHierarchyVersionAndPrivacyCleanup")
+      || name.contains("testIPadSettingsAndMyPageLandscapeSmokeTYP75")
+    {
+      application.launchEnvironment["UITEST_VERSION_PROBE"] = "1"
     }
     return application
   }
@@ -4200,28 +4205,41 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.buttons["app_tour.skip"].exists)
   }
 
-  @discardableResult
   private func assertJapaneseRuntimeVersion(
-    _ element: XCUIElement,
+    _ versionElement: XCUIElement,
     file: StaticString = #filePath,
     line: UInt = #line
-  ) -> String {
-    guard let runtimeValue = element.value as? String else {
-      XCTFail("Missing runtime version accessibility value", file: file, line: line)
-      return ""
+  ) {
+    let runtimeProbe = element("debug.settings.version")
+    guard runtimeProbe.waitForExistence(timeout: 3), let runtimeValue = runtimeProbe.value as? String else {
+      XCTFail("Missing runtime version test probe", file: file, line: line)
+      return
     }
     let components = runtimeValue.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
     guard components.count == 2, !components[0].isEmpty, !components[1].isEmpty else {
-      XCTFail("Invalid runtime version accessibility value: \(runtimeValue)", file: file, line: line)
-      return runtimeValue
+      XCTFail("Invalid runtime version test value: \(runtimeValue)", file: file, line: line)
+      return
     }
     XCTAssertEqual(
-      element.label,
+      versionElement.label,
       "バージョン \(components[0]) (\(components[1]))",
       file: file,
       line: line
     )
-    return runtimeValue
+    XCTAssertTrue(
+      (versionElement.value as? String ?? "").isEmpty,
+      "Version row should not repeat runtime components in VoiceOver",
+      file: file,
+      line: line
+    )
+  }
+
+  private func waitForEmptyValue(on element: XCUIElement, timeout: TimeInterval) {
+    let expectation = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "value == nil OR value == ''"),
+      object: element
+    )
+    XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
   }
 
   private func waitForValue(_ value: String, on element: XCUIElement, timeout: TimeInterval) {

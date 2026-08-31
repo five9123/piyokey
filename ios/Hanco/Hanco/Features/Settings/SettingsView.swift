@@ -171,7 +171,12 @@ struct SettingsView: View {
     .accessibilityIdentifier("settings.screen")
     .overlay(alignment: .topLeading) {
       #if DEBUG
-        DynamicTypeDebugProbe()
+        VStack(spacing: 0) {
+          DynamicTypeDebugProbe()
+          if ProcessInfo.processInfo.environment["UITEST_VERSION_PROBE"] == "1" {
+            VersionDebugProbe(value: runtimeVersionTestValue)
+          }
+        }
       #endif
     }
     .navigationTitle(Text("settings.navigation_title"))
@@ -655,7 +660,7 @@ struct SettingsView: View {
     .accessibilityValue(
       didCopyVersion
         ? Text("settings.version_copied")
-        : Text(verbatim: runtimeVersionAccessibilityValue)
+        : Text(verbatim: "")
     )
     .accessibilityIdentifier("settings.version")
   }
@@ -673,7 +678,7 @@ struct SettingsView: View {
     return AppLocalization.format("settings.version_format", version.marketing, version.build)
   }
 
-  private var runtimeVersionAccessibilityValue: String {
+  private var runtimeVersionTestValue: String {
     let version = runtimeVersionComponents
     return "\(version.marketing),\(version.build)"
   }
@@ -1043,6 +1048,19 @@ struct PrivacyConsentView: View {
           Text(verbatim: dynamicTypeSize.isAccessibilitySize ? "accessibility" : "standard")
         )
         .accessibilityIdentifier("debug.dynamic_type")
+    }
+  }
+
+  private struct VersionDebugProbe: View {
+    let value: String
+
+    var body: some View {
+      Text(verbatim: " ")
+        .font(.system(size: 1))
+        .opacity(0.01)
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(Text(verbatim: value))
+        .accessibilityIdentifier("debug.settings.version")
     }
   }
 #endif
