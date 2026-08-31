@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-08-31 JST
+마지막 갱신: 2026-09-01 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | In Progress / build 11 source | B안(다음 runloop reset·responder session restart·stale payload suppression) focused 검증과 review 후 merge. 이후 정확한 build 11에서 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하고 천지인 `대형`·`쇼파`를 포함 |
+| TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | In Review / PR #145 / build 11 source | B안(다음 runloop reset·responder session restart·stale payload suppression) focused CI·review 후 merge. 이후 정확한 build 11에서 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하고 천지인 `대형`·`쇼파`를 포함 |
 | TYP-71 iOS 온보딩 개인정보 문구 | Merged / PR #140 → main `17fb367` | build 10 TestFlight에서 iPhone·iPad 온보딩(알림 권한 1회 → 두 버튼 안내) 실기기 smoke |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | TYP-68 게임 OS 키보드 전환 후 IME 입력 잔존 | Review / PR #139 (#138 대체) | PR review·병합 후 iPhone·iPad 실기기에서 OS 한국어 키보드(두벌식·천지인)로 5개 직접 입력 게임 연속 10단어 전환 확인 |
