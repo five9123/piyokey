@@ -57,7 +57,7 @@
 - [x] 최종 Bundle ID `app.piyokey.Piyokey` 확정
 - [x] App Store Connect App ID `6794853985` 및 명시적 Bundle ID 등록
 - [x] 소스 마케팅 버전·빌드 번호 `1.1 (10)` 확인
-- [ ] build 10 Release archive·Apple Distribution IPA 로컬 서명 검증 (`release/IOS_1_1_BUILD_10.md`)
+- [x] build 10 Release archive·Apple Distribution IPA 로컬 서명 검증 (`release/IOS_1_1_BUILD_10.md`)
 
 자동 점검:
 
