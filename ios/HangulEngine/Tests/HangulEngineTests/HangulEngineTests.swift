@@ -197,6 +197,92 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(resumed.acceptedSequence, Array("ㄱㅏㄴㅏ"))
   }
 
+  func testOSIMETextJudgeReplaysCheonjiinMarkedAndCommittedSnapshots() throws {
+    struct Snapshot {
+      let committed: String
+      let marked: String?
+      let expectedScalars: [UInt32]
+      let expectedStatus: OSIMETextJudgeStatus
+      let expectedAcceptedSequence: [Character]
+    }
+
+    let snapshots = [
+      Snapshot(
+        committed: "",
+        marked: "ㄴ",
+        expectedScalars: [0x3134],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        committed: "",
+        marked: "ㄹ",
+        expectedScalars: [0x3139],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹ")
+      ),
+      Snapshot(
+        committed: "",
+        marked: "ㄹㆍ",
+        expectedScalars: [0x3139, 0x318D],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        committed: "",
+        marked: "러",
+        expectedScalars: [0xB7EC],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        committed: "",
+        marked: "레",
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹㅔ")
+      ),
+      Snapshot(
+        committed: "레",
+        marked: nil,
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: false),
+        expectedAcceptedSequence: Array("ㄹㅔ")
+      ),
+    ]
+
+    for snapshot in snapshots {
+      XCTAssertEqual(
+        (snapshot.committed + (snapshot.marked ?? "")).unicodeScalars.map(\.value),
+        snapshot.expectedScalars
+      )
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: "레전드",
+        committedText: snapshot.committed,
+        markedText: snapshot.marked
+      )
+      XCTAssertEqual(evaluation.status, snapshot.expectedStatus)
+      XCTAssertEqual(evaluation.acceptedSequence, snapshot.expectedAcceptedSequence)
+    }
+  }
+
+  func testOSIMETextJudgeIgnoresUnconfirmedASCIIWhileCommittedEnglishStillWarns() throws {
+    let markedIntermediate = try OSIMETextJudge.evaluate(
+      target: "레전드",
+      committedText: "",
+      markedText: "1"
+    )
+    XCTAssertEqual(markedIntermediate.status, .composingMismatch)
+    XCTAssertEqual(markedIntermediate.acceptedSequence, [])
+
+    let committedEnglish = try OSIMETextJudge.evaluate(
+      target: "레전드",
+      committedText: "q"
+    )
+    XCTAssertEqual(committedEnglish.status, .unsupportedASCIIInput)
+    XCTAssertEqual(committedEnglish.acceptedSequence, [])
+  }
+
   func testOSIMEAllowsCorrectMarkedProgressDeletionAndRejectsExtraText() throws {
     let composing = try OSIMETextJudge.evaluate(
       target: "가나",

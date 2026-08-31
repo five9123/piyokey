@@ -469,6 +469,109 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(model.mistakeCount, 0)
   }
 
+  func testOSIMETextJudgeReplaysCheonjiinMarkedAndCommittedSnapshotsWithoutASCIIWarning()
+    throws
+  {
+    struct Snapshot {
+      let label: String
+      let committed: String
+      let marked: String?
+      let expectedScalars: [UInt32]
+      let expectedStatus: OSIMETextJudgeStatus
+      let expectedAcceptedSequence: [Character]
+    }
+
+    // TYP-73's iPhone probe observed the Korean 10-Key replacement path as
+    // ㄴ -> ㄹ -> ㄹㆍ -> 러 -> 레. UITextField may expose the in-flight
+    // document as marked text before delivering the final committed syllable.
+    let snapshots = [
+      Snapshot(
+        label: "grouped consonant precursor",
+        committed: "",
+        marked: "ㄴ",
+        expectedScalars: [0x3134],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        label: "target consonant",
+        committed: "",
+        marked: "ㄹ",
+        expectedScalars: [0x3139],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹ")
+      ),
+      Snapshot(
+        label: "cheonjiin dot",
+        committed: "",
+        marked: "ㄹㆍ",
+        expectedScalars: [0x3139, 0x318D],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        label: "intermediate eo",
+        committed: "",
+        marked: "러",
+        expectedScalars: [0xB7EC],
+        expectedStatus: .composingMismatch,
+        expectedAcceptedSequence: []
+      ),
+      Snapshot(
+        label: "marked final syllable",
+        committed: "",
+        marked: "레",
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: true),
+        expectedAcceptedSequence: Array("ㄹㅔ")
+      ),
+      Snapshot(
+        label: "committed final syllable",
+        committed: "레",
+        marked: nil,
+        expectedScalars: [0xB808],
+        expectedStatus: .matching(completed: false, isComposing: false),
+        expectedAcceptedSequence: Array("ㄹㅔ")
+      ),
+    ]
+
+    for snapshot in snapshots {
+      XCTAssertEqual(
+        (snapshot.committed + (snapshot.marked ?? "")).unicodeScalars.map(\.value),
+        snapshot.expectedScalars,
+        snapshot.label
+      )
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: "레전드",
+        committedText: snapshot.committed,
+        markedText: snapshot.marked
+      )
+      XCTAssertEqual(evaluation.status, snapshot.expectedStatus, snapshot.label)
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.expectedAcceptedSequence,
+        snapshot.label
+      )
+    }
+  }
+
+  func testOSIMETextJudgeIgnoresUnconfirmedASCIIWhileCommittedEnglishStillWarns() throws {
+    let markedIntermediate = try OSIMETextJudge.evaluate(
+      target: "레전드",
+      committedText: "",
+      markedText: "1"
+    )
+    XCTAssertEqual(markedIntermediate.status, .composingMismatch)
+    XCTAssertEqual(markedIntermediate.acceptedSequence, [])
+
+    let committedEnglish = try OSIMETextJudge.evaluate(
+      target: "레전드",
+      committedText: "q"
+    )
+    XCTAssertEqual(committedEnglish.status, .unsupportedASCIIInput)
+    XCTAssertEqual(committedEnglish.acceptedSequence, [])
+  }
+
   func testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition() {
     let model = PracticeSessionViewModel(target: "가")
 

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "verified_commit": "7d3f8d15723ff16ee1a2db85efa82051378b20cb",
+  "verified_tree": "01a202110da20eedfee487581c54e38e5f19faf4",
+  "branch": "codex/77-cheonjiin-ascii-guard",
+  "scope": "TYP-77 OS Cheonjiin ASCII guard; Linear Project iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-08-31T22:37:02.932361+00:00",
+  "checks": [
+    {
+      "name": "HancoTests OSIMETextJudge focused",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMETextJudgeReplaysCheonjiinMarkedAndCommittedSnapshotsWithoutASCIIWarning -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMETextJudgeIgnoresUnconfirmedASCIIWhileCommittedEnglishStillWarns",
+      "note": ""
+    },
+    {
+      "name": "HangulEngine OS IME focused",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test --filter OSIME",
+      "note": ""
+    },
+    {
+      "name": "Python contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": ""
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "Deterministic fixture and diff",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/gen_piyodeck_fixtures.py && git diff --check && git status --short",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "gate:device: iPhone and iPad Practice lesson completed with OS Cheonjiin and zero English-keyboard warning banners",
+    "gate:device: all five direct-input games run with OS Cheonjiin for at least five words each, with zero blocks, false mistakes, or combo resets",
+    "gate:device: exact post-merge TestFlight build verified on iPhone and iPad; simulator/unit evidence does not satisfy this gate"
+  ]
+}

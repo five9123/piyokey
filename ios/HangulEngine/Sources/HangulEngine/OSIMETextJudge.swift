@@ -32,7 +32,10 @@ public enum OSIMETextJudge {
     markedText: String? = nil
   ) throws -> OSIMETextEvaluation {
     let expected = try JamoDecomposer.keySequence(for: target)
-    if containsUnsupportedASCII(in: committedText) || containsUnsupportedASCII(in: markedText ?? "") {
+    // Marked text is an unconfirmed IME implementation detail. Korean 10-Key
+    // can expose transient material there while replacing the active syllable,
+    // so only committed ASCII is evidence of a non-Korean input source.
+    if containsUnsupportedASCII(in: committedText) {
       let validPrefix = longestDecomposablePrefix(of: committedText)
       if validPrefix.count >= expected.count,
         Array(validPrefix.prefix(expected.count)) == expected

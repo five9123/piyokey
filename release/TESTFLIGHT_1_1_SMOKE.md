@@ -25,6 +25,8 @@
 ## 실기기·결제 필수 검증
 
 - [ ] 한국어 OS IME 조합·확정·삭제·붙여넣기와 물리 키보드 입력을 확인한다.
+- [ ] TYP-77 최종 QA 필수 `gate:device` row 13을 2단계로 수행한다. (1) 측정: 이 TYP-77 worktree에서 `stash@{0}` (`TYP-77 row-13 DEBUG IMETextField probe`)을 적용한 Xcode `Hanco` Debug physical-device build로 OS 천지인 `ㄹㆍㅣㅣ → 레` 전 콜백의 committed/marked 문자와 U+ 코드포인트를 기록한다. (2) 정확한 RC/TestFlight build: 코드포인트 측정 없이 같은 입력의 영어 키보드 경고 배너 0회만 별도로 재확인한다.
+- [ ] ja UI의 OS 키보드를 일본어 로마자 입력으로 두고 marked Latin 조합 → kana 확정 시 경고·오타 시점을 기록한 뒤, 한국어 키보드로 전환해 현재 문제를 완료한다.
 - [ ] 고정 한국어 MP3 발음, 무음 모드, 연속 탭, 외부 음악 혼합, 백그라운드 중단을 확인한다.
 - [ ] Game Center Live 계약·인증 취소/재시도·단일 대시보드·점수 제출 및 사용자 덱 제외를 확인한다.
 - [ ] 게임 60fps와 iPhone 12 성능 gate를 측정한다.
