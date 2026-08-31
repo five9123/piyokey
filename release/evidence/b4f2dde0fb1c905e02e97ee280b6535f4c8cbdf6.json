@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "verified_commit": "b4f2dde0fb1c905e02e97ee280b6535f4c8cbdf6",
+  "verified_tree": "0ea468eb74de96d43b779ce6b65908d260b8292e",
+  "branch": "codex/77-cheonjiin-ascii-guard",
+  "scope": "TYP-77 defensive marked-text ASCII guard hardening on merged origin/main 662135fc138c2946522d334fc0ecce5ee9a752b1; exact banner trigger unresolved; Linear Project iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-08-31T23:27:31.603950+00:00",
+  "checks": [
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor 662135fc138c2946522d334fc0ecce5ee9a752b1 HEAD",
+      "note": "requested main SHA is an ancestor of the verified merged tree via merge commit b73b34a7c28777143d822dee0f2af93437111320"
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "passed on the clean merged tree"
+    },
+    {
+      "name": "Repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "passed on the clean merged tree"
+    },
+    {
+      "name": "HangulEngine full package suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "50 tests passed with zero failures"
+    },
+    {
+      "name": "iOS simulator Debug build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Debug -destination platform=iOS Simulator,name=iPhone 17,OS=26.5",
+      "note": "BUILD SUCCEEDED; build only, no UI or capture tests invoked"
+    },
+    {
+      "name": "Diff whitespace",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": "passed on the clean verified commit"
+    },
+    {
+      "name": "Named local row-13 probe stash",
+      "status": "pass",
+      "command": "git stash list --format=%gd%x09%s",
+      "note": "stash@{0} is TYP-77 row-13 DEBUG IMETextField probe and remains outside the PR tree"
+    }
+  ],
+  "manual_gates": [
+    "gate:device final QA: row-13 physical-iPhone IMETextField measurement must record committedText, markedText, and U+ codepoints for ㄹ ㆍ ㅣ ㅣ -> 레; exact triggering character/state remains unverified; this is not a pre-merge or build 11 archive gate",
+    "gate:device final QA: iPhone and iPad Practice lesson completed with OS Cheonjiin and zero English-keyboard warning banners",
+    "gate:device final QA: all five direct-input games run with OS Cheonjiin for at least five words each, with zero blocks, false mistakes, or combo resets",
+    "gate:device final QA: ja-locale Japanese romaji marked-Latin to kana behavior checked for warning and mistake timing",
+    "gate:device final QA: exact post-merge TestFlight build verified on iPhone and iPad; simulator and unit evidence do not satisfy this gate"
+  ]
+}
