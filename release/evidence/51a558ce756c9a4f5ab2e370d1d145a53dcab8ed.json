@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "verified_commit": "51a558ce756c9a4f5ab2e370d1d145a53dcab8ed",
+  "verified_tree": "15c004c98c0081fde8527acb7ca0ff60c9a516a8",
+  "branch": "codex/43-ios-1-1-release",
+  "scope": "TYP-43 iOS/iPadOS 1.1 build 9 RC archive and upload attempt",
+  "result": "fail",
+  "recorded_at": "2026-08-30T17:54:52.170049+00:00",
+  "checks": [
+    {
+      "name": "workspace_source",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict --require-origin-main",
+      "note": "HEAD and origin/main were 51a558ce756c9a4f5ab2e370d1d145a53dcab8ed"
+    },
+    {
+      "name": "repository_preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "release_preflight_strict",
+      "status": "fail",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py --strict",
+      "note": "38 external and manual release gates remain open"
+    },
+    {
+      "name": "hanco_unit_target",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests",
+      "note": "386 passed, 0 failed, 0 skipped"
+    },
+    {
+      "name": "typ68_reset_selectors",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/OSIMEInputResetTests",
+      "note": "7 passed including ten consecutive target transitions"
+    },
+    {
+      "name": "typ68_ui_selector",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoUITests/HancoUITests/testAcidRainOSIMECanClearAnyVisibleFallingWord",
+      "note": "1 passed; no store capture selector used"
+    },
+    {
+      "name": "archive",
+      "status": "pass",
+      "command": "xcodebuild archive -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination generic/platform=iOS -archivePath PIYOKEY-1.1-9.xcarchive -allowProvisioningUpdates CURRENT_PROJECT_VERSION=9",
+      "note": "ARCHIVE SUCCEEDED; final archive tree SHA-256 cde6f6c25a577b89cd2958912b839cf0395fd64dd5b36d95365bb15ae79ddcf8"
+    },
+    {
+      "name": "distribution_export",
+      "status": "pass",
+      "command": "xcodebuild -exportArchive -archivePath PIYOKEY-1.1-9.xcarchive -exportPath export -exportOptionsPlist release/ExportOptions.plist -allowProvisioningUpdates",
+      "note": "IPA SHA-256 33fa2a26dc5394280803a03a7911ba46de51dfdea962abfeafca120735f46df9; Apple Distribution team X44BQNTAH9; get-task-allow false"
+    },
+    {
+      "name": "app_store_upload",
+      "status": "fail",
+      "command": "xcodebuild -exportArchive -archivePath PIYOKEY-1.1-9.xcarchive -exportOptionsPlist release/ExportOptionsUpload.plist -allowProvisioningUpdates",
+      "note": "App Store Connect rejected duplicate bundle version 9, error ID c64dc4a9-a755-4cc1-9f8d-b24eb9878997; no new upload succeeded"
+    }
+  ],
+  "manual_gates": [
+    "App Store Connect browser authentication was unavailable, so existing build 9 processing/source identity, version association, account, IAP, build 7 and build 8 live state were not re-read.",
+    "TYP-68 physical iPhone/iPad Dubeolsik and Cheonjiin five direct-input games for ten consecutive words remains incomplete.",
+    "IAP, media, native-language review, account, content rights, privacy, Game Center, reminder, performance, regional and storefront gates remain incomplete; do not Add for Review, submit, auto-release, or mark Linear Done."
+  ]
+}
