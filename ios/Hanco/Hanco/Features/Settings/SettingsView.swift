@@ -47,6 +47,7 @@ struct SettingsView: View {
   @State private var showsKoreanKeyboardGuide = false
   @State private var showsMascotCloset = false
   @State private var didCopyVersion = false
+  @State private var versionCopyResetTask: Task<Void, Never>?
 
   let createsNavigationStack: Bool
   let showsCloseButton: Bool
@@ -651,25 +652,48 @@ struct SettingsView: View {
     .buttonStyle(.plain)
     .accessibilityLabel(Text(verbatim: runtimeVersionDisplay))
     .accessibilityHint(Text("settings.version_copy_hint"))
-    .accessibilityValue(didCopyVersion ? Text("settings.version_copied") : Text(verbatim: ""))
+    .accessibilityValue(
+      didCopyVersion
+        ? Text("settings.version_copied")
+        : Text(verbatim: runtimeVersionAccessibilityValue)
+    )
     .accessibilityIdentifier("settings.version")
   }
 
-  private var runtimeVersionDisplay: String {
+  private var runtimeVersionComponents: (marketing: String, build: String) {
     let marketingVersion = Bundle.main.object(
       forInfoDictionaryKey: "CFBundleShortVersionString"
     ) as? String ?? ""
     let buildVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
-    return AppLocalization.format("settings.version_format", marketingVersion, buildVersion)
+    return (marketingVersion, buildVersion)
+  }
+
+  private var runtimeVersionDisplay: String {
+    let version = runtimeVersionComponents
+    return AppLocalization.format("settings.version_format", version.marketing, version.build)
+  }
+
+  private var runtimeVersionAccessibilityValue: String {
+    let version = runtimeVersionComponents
+    return "\(version.marketing),\(version.build)"
   }
 
   private func copyVersion() {
+    versionCopyResetTask?.cancel()
     UIPasteboard.general.string = runtimeVersionDisplay
     didCopyVersion = true
     UIAccessibility.post(
       notification: .announcement,
       argument: AppLocalization.string("settings.version_copied")
     )
+    versionCopyResetTask = Task { @MainActor in
+      do {
+        try await Task.sleep(nanoseconds: 1_500_000_000)
+      } catch {
+        return
+      }
+      didCopyVersion = false
+    }
   }
 
   private func legalLink(

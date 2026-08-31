@@ -3361,10 +3361,14 @@ final class HancoUITests: XCTestCase {
 
     let keyGuide = app.switches["settings.key_guide"]
     scrollToHittable(keyGuide, direction: .down)
+    XCTAssertEqual(keyGuide.value as? String, "1")
     keyGuide.tap()
+    waitForValue("0", on: keyGuide, timeout: 3)
     let romanHints = app.switches["settings.roman_hints"]
     scrollToHittable(romanHints)
+    XCTAssertEqual(romanHints.value as? String, "1")
     romanHints.tap()
+    waitForValue("0", on: romanHints, timeout: 3)
     let haptics = app.switches["settings.haptics"]
     scrollToHittable(haptics)
     haptics.tap()
@@ -3628,7 +3632,10 @@ final class HancoUITests: XCTestCase {
 
     let version = element("settings.version")
     scrollToHittable(version)
-    XCTAssertEqual(version.label, "バージョン 1.1 (10)")
+    let runtimeVersionValue = assertJapaneseRuntimeVersion(version)
+    version.tap()
+    waitForValue("コピーしました", on: version, timeout: 3)
+    waitForValue(runtimeVersionValue, on: version, timeout: 3)
     version.tap()
     waitForValue("コピーしました", on: version, timeout: 3)
     attachScreenshot(named: "typ75-iphone-se-settings-bottom-ja")
@@ -3682,7 +3689,7 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(version)
     XCTAssertTrue(element("settings.privacy_policy").exists)
     XCTAssertTrue(version.isHittable)
-    XCTAssertEqual(version.label, "バージョン 1.1 (10)")
+    assertJapaneseRuntimeVersion(version)
     attachScreenshot(named: "typ75-ipad-landscape-settings-bottom-ja")
     app.buttons["settings.done"].tap()
 
@@ -4191,6 +4198,30 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(nextButton.exists)
     XCTAssertTrue(nextButton.isHittable)
     XCTAssertTrue(app.buttons["app_tour.skip"].exists)
+  }
+
+  @discardableResult
+  private func assertJapaneseRuntimeVersion(
+    _ element: XCUIElement,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) -> String {
+    guard let runtimeValue = element.value as? String else {
+      XCTFail("Missing runtime version accessibility value", file: file, line: line)
+      return ""
+    }
+    let components = runtimeValue.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
+    guard components.count == 2, !components[0].isEmpty, !components[1].isEmpty else {
+      XCTFail("Invalid runtime version accessibility value: \(runtimeValue)", file: file, line: line)
+      return runtimeValue
+    }
+    XCTAssertEqual(
+      element.label,
+      "バージョン \(components[0]) (\(components[1]))",
+      file: file,
+      line: line
+    )
+    return runtimeValue
   }
 
   private func waitForValue(_ value: String, on element: XCUIElement, timeout: TimeInterval) {
