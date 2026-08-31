@@ -17,13 +17,13 @@
 | iOS 1.1 | `main` `662135f`에 TYP-73 OS IME 세션 리셋과 TYP-75 Settings·MyPage 정리가 병합됨. TYP-77 PR #147은 marked ASCII 방어 보강이며 실기기 `IMETextField` 천지인 원인은 아직 미확정 | TYP-77 review·merge와 build 11 archive는 row 13 선행 측정 없이 진행 가능. row 13의 committed/marked U+ 코드포인트 측정은 정확한 build의 필수 최종 `gate:device`로 유지 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
-| CI·병합 | GitHub Actions 활성. 경로별 Python·Swift·iOS workflow와 주간/수동 iOS 회귀를 분리. Android는 CI·Dependabot 범위에서 제외. GitHub-owned action만 허용하고 action SHA pinning·Dependabot alerts/security updates를 적용. private 저장소의 현재 요금제에서는 branch protection/ruleset 사용 불가 | 적용 경로의 모든 표시 PR check 성공 후에만 squash merge하고 정기 회귀 실패 시 출시 gate를 닫는 수동 fail-closed gate 유지 |
+| CI·병합 | GitHub Actions 비활성(사용자 승인 A안, 2026-09-01). TYP-77 PR #147에 한해 `docs/WORKFLOW.md`의 영구 규칙을 바꾸지 않는 사용자 1회 예외로 local-evidence merge gate 적용 | 한시 merge gate = exact-head `review:passed` + local verification evidence + current `origin/main` merged-tree validation + manual fail-closed gates. 다른 PR에는 이 예외를 재사용하지 않음 |
 
 ## 열린 작업
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-77 OS 천지인 ASCII guard 오판 | In Review / PR #147 / `codex/77-cheonjiin-ascii-guard` | PR은 marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening으로 유지. iPhone row 13 코드포인트·committed/marked 관측, Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
+| TYP-77 OS 천지인 ASCII guard 오판 | In Progress / PR #147 / `codex/77-cheonjiin-ascii-guard` | PR은 marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening으로 유지. iPhone row 13 코드포인트·committed/marked 관측, Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
 | TYP-71 iOS 온보딩 개인정보 문구 | Merged / PR #140 → main `17fb367` | build 10 TestFlight에서 iPhone·iPad 온보딩(알림 권한 1회 → 두 버튼 안내) 실기기 smoke |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
