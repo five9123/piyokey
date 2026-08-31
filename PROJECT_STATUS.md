@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-77 OS 천지인 ASCII guard 오판 | In Review / `codex/77-cheonjiin-ascii-guard` | marked 조합 중 문자는 영어 입력 경고의 근거로 사용하지 않도록 focused unit review. 실기기 Practice 배너 0회, 5개 직접 입력 게임×5단어, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
+| TYP-77 OS 천지인 ASCII guard 오판 | In Review / PR #147 / `codex/77-cheonjiin-ascii-guard` | marked 조합 중 문자는 영어 입력 경고의 근거로 사용하지 않도록 focused unit review. 실기기 Practice 배너 0회, 5개 직접 입력 게임×5단어, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 / `main` `43d65b3` | 정확한 후속 build에서 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하고 천지인 `대형`·`쇼파`를 포함 |
 | TYP-71 iOS 온보딩 개인정보 문구 | Merged / PR #140 → main `17fb367` | build 10 TestFlight에서 iPhone·iPad 온보딩(알림 권한 1회 → 두 버튼 안내) 실기기 smoke |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
