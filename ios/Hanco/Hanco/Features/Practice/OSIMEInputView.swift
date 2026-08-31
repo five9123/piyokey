@@ -710,7 +710,7 @@ struct IMETextField: UIViewRepresentable {
       }
     }
 
-    private func performSessionReset(
+    func performSessionReset(
       in textField: UITextField,
       replacingWith replacementText: String
     ) {
@@ -740,8 +740,16 @@ struct IMETextField: UIViewRepresentable {
       inputDelegate?.selectionDidChange(textField)
 
       if shouldRestartSession, isMounted, textField.window != nil {
-        textField.becomeFirstResponder()
+        let restartSucceeded = textField.becomeFirstResponder()
         moveCursorToEnd(of: textField)
+
+        if !restartSucceeded {
+          // We are already on the deferred reset turn, outside the keyboard
+          // callback. Advance the panel's focus revision immediately so its
+          // normal async focus path can retry on the next turn.
+          parent.onFocusRecovery()
+          return
+        }
 
         let generation = resetGeneration
         DispatchQueue.main.async { [weak self, weak textField] in
@@ -807,12 +815,22 @@ struct IMETextField: UIViewRepresentable {
     }
 
     private func containsPriorTargetMaterial(in text: String) -> Bool {
-      staleDocuments.contains { stale in
+      let candidateMaterial: Substring
+      if !resetDocument.isEmpty, text.hasPrefix(resetDocument) {
+        // A restored accepted prefix belongs to the new session. Only inspect
+        // what the keyboard appended after it; otherwise a shared syllable in
+        // the old and restored documents can silently swallow the first real
+        // mismatch.
+        candidateMaterial = text.dropFirst(resetDocument.count)
+      } else {
+        candidateMaterial = text[...]
+      }
+      return staleDocuments.contains { stale in
         guard stale != resetDocument,
           let sequence = try? JamoDecomposer.keySequence(for: stale),
           sequence.count >= 2
         else { return false }
-        return text.contains(stale)
+        return candidateMaterial.contains(stale)
       }
     }
 

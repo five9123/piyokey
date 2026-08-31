@@ -9,6 +9,23 @@ import XCTest
 /// field focused, and deliver no stale `onTextChange` event to the judge.
 @MainActor
 final class OSIMEInputResetTests: XCTestCase {
+  private final class RestartProbeTextField: UITextField {
+    var allowsBecomeFirstResponder = true
+    private(set) var becomeCallCount = 0
+    private(set) var resignCallCount = 0
+
+    override func becomeFirstResponder() -> Bool {
+      becomeCallCount += 1
+      guard allowsBecomeFirstResponder else { return false }
+      return super.becomeFirstResponder()
+    }
+
+    override func resignFirstResponder() -> Bool {
+      resignCallCount += 1
+      return super.resignFirstResponder()
+    }
+  }
+
   private final class HarnessModel: ObservableObject {
     @Published var resetRevision = 0
     @Published var acceptedText = ""
@@ -157,6 +174,101 @@ final class OSIMEInputResetTests: XCTestCase {
     XCTAssertEqual(field.text, "소")
     XCTAssertNil(field.markedTextRange)
     XCTAssertTrue(model.receivedChanges.isEmpty)
+  }
+
+  func testRestoredPrefixDoesNotSuppressFirstConfirmedMismatch() throws {
+    let field = try findTextField()
+    field.becomeFirstResponder()
+    pumpRunLoop()
+
+    field.text = "가나다"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+
+    advanceTarget(acceptedText: "가나", targets: ["고기"])
+    XCTAssertEqual(field.text, "가나")
+
+    // The restored prefix overlaps the prior document. The user's new ㄴ is
+    // still a real committed mismatch and must reach the judge exactly once.
+    field.text = "가나ㄴ"
+    field.sendActions(for: .editingChanged)
+    pumpRunLoop()
+
+    XCTAssertEqual(model.receivedChanges.count, 1)
+    XCTAssertEqual(model.receivedChanges[0].committed, "가나ㄴ")
+    XCTAssertNil(model.receivedChanges[0].marked)
+  }
+
+  func testFailedResponderRestartRequestsFocusRevisionRecovery() {
+    var recoveryCount = 0
+    let parent = IMETextField(
+      text: .constant(""),
+      resetText: "",
+      targets: ["고기"],
+      resetRevision: 1,
+      focusRevision: 1,
+      isFocusSuspended: false,
+      isFocused: .constant(false),
+      onReturn: {},
+      onFocusRecovery: { recoveryCount += 1 },
+      onTextChange: { _, _ in }
+    )
+    let coordinator = IMETextField.Coordinator(parent: parent)
+    let field = RestartProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
+    window.addSubview(field)
+    XCTAssertTrue(field.becomeFirstResponder())
+    XCTAssertTrue(field.isFirstResponder)
+
+    field.allowsBecomeFirstResponder = false
+    // Other tests cover the DispatchQueue boundary. Invoke its body directly
+    // here so no unrelated hosted responder can race this fallback assertion.
+    coordinator.performSessionReset(in: field, replacingWith: "")
+
+    XCTAssertEqual(recoveryCount, 1)
+    XCTAssertFalse(field.isFirstResponder)
+    XCTAssertGreaterThanOrEqual(field.resignCallCount, 1)
+  }
+
+  func testSuspendedFocusResetDoesNotCycleResponderSession() {
+    let activeParent = IMETextField(
+      text: .constant(""),
+      resetText: "",
+      targets: ["고기"],
+      resetRevision: 1,
+      focusRevision: 1,
+      isFocusSuspended: false,
+      isFocused: .constant(false),
+      onReturn: {},
+      onFocusRecovery: {},
+      onTextChange: { _, _ in }
+    )
+    let coordinator = IMETextField.Coordinator(parent: activeParent)
+    let field = RestartProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
+    window.addSubview(field)
+    XCTAssertTrue(field.becomeFirstResponder())
+    XCTAssertTrue(field.isFirstResponder)
+
+    coordinator.parent = IMETextField(
+      text: .constant(""),
+      resetText: "",
+      targets: ["고기"],
+      resetRevision: 1,
+      focusRevision: 1,
+      isFocusSuspended: true,
+      isFocused: .constant(false),
+      onReturn: {},
+      onFocusRecovery: {},
+      onTextChange: { _, _ in }
+    )
+    let becomeCalls = field.becomeCallCount
+    let resignCalls = field.resignCallCount
+    field.text = "좋다"
+
+    coordinator.performSessionReset(in: field, replacingWith: "")
+
+    XCTAssertEqual(field.text, "")
+    XCTAssertEqual(field.becomeCallCount, becomeCalls)
+    XCTAssertEqual(field.resignCallCount, resignCalls)
   }
 
   func testFirstJamoAfterResetIsDeliveredCleanly() throws {
