@@ -4248,10 +4248,22 @@ final class HancoUITests: XCTestCase {
 
   private func setSwitch(_ element: XCUIElement, to value: String) {
     guard element.value as? String != value else { return }
+    for _ in 0..<4 where isObscuredByNavigationBar(element) {
+      scrollVisibleSurfaceToward(.down)
+    }
+    XCTAssertFalse(isObscuredByNavigationBar(element), app.debugDescription)
     element.tap()
     if waitUntilValue(value, on: element, timeout: 1.5) { return }
     element.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
     waitForValue(value, on: element, timeout: 3)
+  }
+
+  private func isObscuredByNavigationBar(_ element: XCUIElement) -> Bool {
+    let navigationBottom = app.navigationBars.allElementsBoundByIndex
+      .filter { $0.exists && $0.isHittable }
+      .map(\.frame.maxY)
+      .max() ?? app.frame.minY
+    return element.frame.minY < navigationBottom + 8
   }
 
   private func waitUntilValue(
