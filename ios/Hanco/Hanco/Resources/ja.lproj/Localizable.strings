@@ -58,11 +58,9 @@
 "practice.setup.subtitle" = "光るキーを追いながら、3つのお題を練習します";
 "practice.setup.settings_title" = "キーボード設定";
 "practice.setup.key_guide" = "キーガイド";
-"practice.setup.key_guide_detail" = "次に押すキーを光らせる";
 "practice.setup.roman_hints" = "ローマ字ヒント";
 "practice.setup.roman_hints_detail" = "キーにQWERTYの文字を表示する";
 "practice.setup.haptics" = "触覚フィードバック";
-"practice.setup.haptics_detail" = "キーを押した瞬間に軽く振動する";
 "practice.setup.sound" = "効果音";
 "practice.setup.sound_detail" = "消音モードでもキー入力・正解・ミスを音で知らせる";
 "practice.setup.sound_preset" = "キー入力音";
@@ -70,8 +68,7 @@
 "practice.setup.sound_system_detail" = "消音モードでも鳴る短いクリック音です";
 "practice.setup.sound_mechanical" = "メカニカル";
 "practice.setup.sound_soft" = "ソフト";
-"practice.setup.input_mode" = "入力モードの初期設定";
-"practice.setup.input_mode_detail" = "単語・文章の練習とゲームで使うキーボード";
+"practice.setup.input_mode" = "入力モード";
 "practice.setup.start" = "練習を始める";
 "practice.setup.session_note" = "入力モードは練習中にも切り替えられます。内蔵キーボードの配列は開始時に固定されます。";
 
@@ -84,11 +81,9 @@
 "keyboard.backspace" = "一文字戻す";
 "keyboard.space" = "スペース";
 "keyboard.accessibility_label" = "韓国語キーボード";
-"keyboard.layout.title" = "内蔵キーボードの配列";
-"keyboard.layout.detail" = "チャプター5以降・デッキ練習で使います。セッション開始時に固定されます。";
-"keyboard.layout.dubeolsik" = "2ボル式（標準）";
-"keyboard.layout.korean_10key" = "韓国語10キー（天地人式）";
-"keyboard.layout.korean_10key_help" = "子音は同じグループキーを繰り返しタップします。同じグループが続くときは→で区切り、母音はㅣ・ㆍ・ㅡを光る順に組み合わせます。";
+"keyboard.layout.title" = "配列";
+"keyboard.layout.dubeolsik" = "2ボル式";
+"keyboard.layout.korean_10key" = "天地人（10キー）";
 "keyboard.10key.accessibility_label" = "韓国語10キー、天地人式";
 "keyboard.10key.vertical" = "縦線、ㅣ";
 "keyboard.10key.dot" = "点、天地人の点";
@@ -233,7 +228,6 @@
 "settings.practice_display.learning" = "学習";
 "settings.practice_display.focus" = "集中";
 "settings.practice_target" = "お題を表示";
-"settings.practice_target_detail" = "入力する韓国語を大きく表示";
 "settings.practice_meaning" = "日本語の意味";
 "settings.practice_meaning_detail" = "デッキに意味があるとき表示";
 "settings.practice_reading" = "日本語式の読み方";
@@ -241,14 +235,11 @@
 "settings.practice_order" = "表示する順番";
 "settings.practice_order_detail" = "お題・意味・読み方の並びを選べます";
 "settings.practice_jamo" = "字母を表示";
-"settings.practice_jamo_detail" = "分解した子音・母音と進み具合を表示";
 "settings.practice_composition" = "入力中のキーを表示";
 "settings.practice_composition_detail" = "組み立て中の文字と入力内容を表示";
 "settings.practice_auto_speak" = "お題を自動で読む";
 "settings.practice_auto_speak_detail" = "新しい問題を韓国語で自動再生";
 "settings.practice_mascot" = "ピヨの応援を表示";
-"settings.practice_mascot_detail" = "練習中のキャラクター表示を切り替え";
-"settings.game_display" = "ゲーム表示";
 "settings.choseong_meaning" = "初声ゲームの意味";
 "settings.choseong_meaning_detail" = "問題ごとに日本語の意味を表示";
 "settings.app_information" = "アプリ情報";
@@ -259,7 +250,9 @@
 "settings.crash_diagnostics" = "クラッシュ診断";
 "settings.crash_diagnostics_detail" = "クラッシュや動作停止の診断情報を共有します。";
 "settings.analytics_privacy_note" = "入力した文字、ユーザーデッキの内容、氏名やメールアドレスは送信しません。どちらも初期設定はオフです。";
-"settings.review_privacy_choices" = "データ共有の説明と選択を確認";
+"settings.version_format" = "バージョン %@ (%@)";
+"settings.version_copy_hint" = "バージョンとビルド番号をコピーします";
+"settings.version_copied" = "コピーしました";
 "privacy_consent.navigation_title" = "プライバシーの選択";
 "privacy_consent.title" = "ピヨキーの改善に参加しますか？";
 "privacy_consent.introduction" = "利用情報とエラー情報を匿名で送り、アプリの改善に役立てます。";
@@ -761,11 +754,7 @@
 "my_page.insights.less_than_minute" = "1分未満";
 "my_page.insights.minutes_format" = "%d分";
 "my_page.insights.change_format" = "前期間比 %@";
-"my_page.actions.title" = "設定・カスタマイズ";
-"my_page.app_settings" = "アプリ設定";
-"my_page.app_settings_detail" = "表示・通知・キーボード・サウンド";
 "my_page.piyo_settings" = "ピヨの設定";
-"my_page.piyo_settings_detail" = "なまえ・成長・アイテムを変更";
 "my_page.decks.title" = "マイデッキ";
 "my_page.decks.count_format" = "%d個";
 "my_decks.empty.title" = "まだデッキがありません";

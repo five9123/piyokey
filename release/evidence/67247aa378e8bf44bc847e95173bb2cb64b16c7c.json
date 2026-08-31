@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "verified_commit": "67247aa378e8bf44bc847e95173bb2cb64b16c7c",
+  "verified_tree": "b365da6ff095f0e19687021dd4187baf7b594895",
+  "branch": "codex/75-settings-cleanup",
+  "scope": "TYP-75 Claude review fixes for Settings and MyPage cleanup; iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-08-31T21:24:50.211411+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "focused AppSettings unit tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89 -only-testing:HancoTests/AppSettingsTests/testKeyboardPreferencesPersistAcrossStoreInstances -only-testing:HancoTests/AppSettingsTests/testAllLanguageResourcesHaveIdenticalKeysAndFormatArguments -only-testing:HancoTests/AppSettingsTests/testR11SafetyStringsAreTranslatedAndFormatCleanly",
+      "note": ""
+    },
+    {
+      "name": "Settings hierarchy runtime version repeat-copy and privacy cleanup UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89 -only-testing:HancoUITests/HancoUITests/testSettingsHierarchyVersionAndPrivacyCleanup",
+      "note": "Runtime CFBundle version assertion and two copy-feedback taps passed on iPhone SE portrait."
+    },
+    {
+      "name": "F10 settings UI persistence",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89 -only-testing:HancoUITests/HancoUITests/testF10SettingsApplyImmediatelyAndPersistAcrossRelaunch",
+      "note": "Key-guide and roman-hint transitions are explicitly awaited before relaunch."
+    },
+    {
+      "name": "remaining focused iPhone SE UI selectors",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89 -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch -only-testing:HancoUITests/HancoUITests/testMyPageShowsGrowthSettingsAndRoutesEmptyDecksToDiscover -only-testing:HancoUITests/HancoUITests/testSettingsExposePublicPrivacySupportAndContentFeedbackLinks -only-testing:HancoUITests/HancoUITests/testMyPageKeepsGearAndClosetWithoutDuplicateSettingsCard",
+      "note": ""
+    },
+    {
+      "name": "iPad landscape Settings and MyPage UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416 -only-testing:HancoUITests/HancoUITests/testIPadSettingsAndMyPageLandscapeSmokeTYP75",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "PR whitespace validation",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Required CI and Claude re-review remain open on PR #146.",
+    "Merge and Build 11 coordination remain open until both TYP-73 and TYP-75 merge.",
+    "Full regression, physical-device smoke, store capture, archive/upload/deployment, account, rights, App Review, and App Store release gates remain open."
+  ]
+}
