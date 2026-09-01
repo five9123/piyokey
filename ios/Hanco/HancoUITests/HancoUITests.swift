@@ -2005,7 +2005,7 @@ final class HancoUITests: XCTestCase {
     relaunchForGameOSIME(koreanKeyboardAvailable: true)
     startBundledGame(mode: "flow", screen: "game.play.screen")
 
-    let recovery = element("os_ime.input.recovery")
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
     XCTAssertTrue(recovery.waitForExistence(timeout: 3))
     recovery.tap()
     let imeField = app.textFields["os_ime.text_field"]
@@ -2054,7 +2054,8 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("acid_rain.play.screen").waitForExistence(timeout: 5))
     XCTAssertTrue(element("acid_rain.os_ime.free_input_status").exists)
     XCTAssertFalse(element("os_ime.input.chrome").exists)
-    XCTAssertTrue(element("os_ime.input.recovery").waitForExistence(timeout: 3))
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
+    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
 
     let fallingCards = app.descendants(matching: .any).matching(
       identifier: "acid_rain.falling_card"
@@ -2072,7 +2073,7 @@ final class HancoUITests: XCTestCase {
     ).firstMatch
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
-    element("os_ime.input.recovery").tap()
+    recovery.tap()
     imeField.typeText(freelyChosenWord)
 
     expectation(
@@ -4098,7 +4099,7 @@ final class HancoUITests: XCTestCase {
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
     XCTAssertFalse(element("os_ime.input.chrome").exists)
-    let recovery = element("os_ime.input.recovery")
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
     XCTAssertTrue(recovery.waitForExistence(timeout: 3))
 
     recovery.tap()
