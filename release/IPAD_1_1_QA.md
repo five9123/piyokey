@@ -66,7 +66,14 @@ swiftc tools/generate_app_store_marketing_screenshots.swift -o <renderer>
 python3 tools/build_ipad_store_assets.py --capture <촬영-폴더> --output <새-출력-폴더> --renderer <renderer> --capture-source-ref <촬영-SHA>
 ```
 
+`<촬영-폴더>/capture-source.json`에는 `app_source_commit`, `marketing_version`,
+`build_number` 필수 키를 기록한다. 도구는 app source가 `--capture-source-ref`와 같은지
+검증하고, version/build를 manifest 및 검토용 gallery의 캡처 기준 문구에 사용한다.
+
 Pillow 사용. 촬영 언어별 실제 가로 비율과 출처를 검증한다. 같은 Pro에서 방향 테스트/촬영을 동시에 실행하지 않는다.
+기본 명령은 기존처럼 모든 스토어 로케일을 생성한다. TYP-78의 일본어 10장만 만들 때는
+명시적으로 `--locale ja --issue-ref TYP-78`을 추가한다. 기본 issue 79는 이 문서의 GitHub #79
+all-locale 계약을 보존하며, 단일 locale 옵션은 정확히 하나의 일치 로케일이 없으면 실패한다.
 
 ## 스토어 등록·출시 전 남은 항목
 

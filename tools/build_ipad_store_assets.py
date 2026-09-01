@@ -29,19 +29,50 @@ def select_attachment(entries, scene, language):
     return matches[0]["exportedFileName"]
 
 
-def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str):
+def select_locales(locales, requested_locale=None):
+    if requested_locale is None:
+        return locales
+    matches = [locale for locale in locales if locale["locale"] == requested_locale]
+    if len(matches) != 1:
+        raise ValueError(f"Expected exactly one requested locale: {requested_locale}")
+    return matches
+
+
+def describe_capture(capture_commit, capture_build):
+    description = f"source commit {capture_commit}"
+    if capture_build:
+        version = capture_build.get("marketing_version")
+        build_number = capture_build.get("build_number")
+        if version and build_number:
+            description += f", app {version} build {build_number}"
+    return description
+
+
+def issue_metadata(issue, issue_ref):
+    if issue_ref is not None:
+        if not issue_ref.strip():
+            raise ValueError("issue_ref must not be empty")
+        return {"issue_ref": issue_ref}
+    return {"issue": issue}
+
+
+def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str,
+          requested_locale: str | None = None, issue: int = 79,
+          issue_ref: str | None = None):
     from PIL import Image, ImageDraw
 
     capture_commit = subprocess.check_output(["git", "rev-parse", "--verify", capture_source_ref + "^{commit}"], cwd=ROOT, text=True).strip()
     capture_build = json.loads((capture / "capture-source.json").read_text()) if (capture / "capture-source.json").exists() else None
     if capture_build and capture_build["app_source_commit"] != capture_commit:
         raise ValueError("Capture source ref does not match the recorded app build")
+    capture_description = describe_capture(capture_commit, capture_build)
     copy = json.loads((ROOT / "release/store-assets/localizations.json").read_text())
+    locales = select_locales(copy["locales"], requested_locale)
     output.mkdir(parents=True, exist_ok=False)
     # The renderer resolves source/output paths against the repository.
     output.relative_to(ROOT)
     source_manifest = []
-    for language in copy["app_ui_languages"]:
+    for language in dict.fromkeys(locale["ui"] for locale in locales):
         folder = capture / language
         if json.loads((folder / "timing.json").read_text())["test_exit_code"] != 0:
             raise ValueError(f"Capture failed: {language}")
@@ -60,7 +91,7 @@ def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str):
 
     outputs = []
     sections = []
-    for locale in copy["locales"]:
+    for locale in locales:
         code, language = locale["locale"], locale["ui"]
         folder = output / code
         folder.mkdir()
@@ -84,6 +115,7 @@ def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str):
                         raise ValueError(f"Invalid store PNG: {path}: {image.size}, {image.mode}")
                     image.verify()
                 outputs.append({"file": str(path.relative_to(output)), "sha256": sha(path),
+                                "locale": code, "device_class": "iPad 13-inch",
                                 "size": expected, "ui": language, "orientation": "landscape"})
         contact = Image.new("RGB", (1800, 1920), "#faf6f9")
         draw = ImageDraw.Draw(contact)
@@ -97,23 +129,39 @@ def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str):
         pics = "".join(f'<a href="{code}/screenshots/{s["output"]}"><img loading="lazy" src="{code}/screenshots/{s["output"]}" alt="{html.escape(s["title"])}"></a>' for s in specs)
         sections.append(f'<section id="{code}"><h2>{html.escape(locale["market"])} · {code}</h2><p>실제 UI: {language} · 13인치 가로 PNG 10장 · 2752×2064</p><div class="grid">{pics}</div></section>')
         print(f"{code}: 10 landscape, dimensions/RGB/decode verified", flush=True)
-    save(output / "manifest.json", {"issue": 79, "uploaded": False, "store_slot": "iPad 13-inch",
+    note = ("Single-locale iPad 13-inch capture; not uploaded. Final native-language review remains required."
+            if requested_locale else
+            f"Local iPad screenshots captured from {capture_description}; not uploaded. Final RC and native-language review remain required.")
+    manifest = {"uploaded": False, "store_slot": "iPad 13-inch",
         "source_commit": capture_commit,
         "capture_build": capture_build,
         "candidate_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "candidate_app_changes_since_capture": subprocess.check_output(
             ["git", "diff", "--name-only", capture_commit, "HEAD", "--", "ios/Hanco/Hanco"], cwd=ROOT, text=True).splitlines(),
         "source_diff_sha256": hashlib.sha256(subprocess.check_output(["git", "diff", "--", "ios"], cwd=ROOT)).hexdigest(),
-        "note": "Local iPad improvements; not the uploaded TestFlight build 7. Final RC and native-language review remain required.",
-        "primary_count": 100, "alternate_count": 0, "orientation": "landscape", "sources": source_manifest, "images": outputs})
-    output.joinpath("index.html").write_text('''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>typee · iPad App Store</title><style>body{margin:0;background:#faf6f9;color:#30253d;font:16px/1.6 system-ui}header,main{max-width:1560px;margin:auto;padding:28px}h1{font-size:40px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}img{width:100%;border-radius:12px;box-shadow:0 4px 24px #30253d15}section{padding:24px 0 42px;border-top:1px solid #e4d8df}a{color:#b62967}.note{padding:20px;background:white;border-radius:16px}@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}</style><header><h1>typee / ピヨキー · iPad</h1><div class="note">수정한 실제 iPad 앱 화면으로 제작한 검토용 세트입니다. 스토어 미업로드, 기존 TestFlight 빌드 7과 다릅니다. 모든 언어의 기본 스크린샷 10장이 가로 규격입니다. 최종 RC 일치·현지어 검수·기기 QA는 별도입니다.</div></header><main>''' + "".join(sections) + "</main></html>")
+        "note": note,
+        "primary_count": len(outputs), "alternate_count": 0, "orientation": "landscape", "sources": source_manifest, "images": outputs}
+    manifest.update(issue_metadata(issue, issue_ref))
+    save(output / "manifest.json", manifest)
+    gallery_note = ("선택한 단일 스토어 로케일의 기본 스크린샷 10장이 가로 규격입니다."
+                    if requested_locale else "모든 언어의 기본 스크린샷 10장이 가로 규격입니다.")
+    output.joinpath("index.html").write_text('''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>typee · iPad App Store</title><style>body{margin:0;background:#faf6f9;color:#30253d;font:16px/1.6 system-ui}header,main{max-width:1560px;margin:auto;padding:28px}h1{font-size:40px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}img{width:100%;border-radius:12px;box-shadow:0 4px 24px #30253d15}section{padding:24px 0 42px;border-top:1px solid #e4d8df}a{color:#b62967}.note{padding:20px;background:white;border-radius:16px}@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}</style><header><h1>typee / ピヨキー · iPad</h1><div class="note">수정한 실제 iPad 앱 화면으로 제작한 검토용 세트입니다. 캡처 기준: ''' + html.escape(capture_description) + '''. 스토어 미업로드. ''' + gallery_note + ''' 최종 RC 일치·현지어 검수·기기 QA는 별도입니다.</div></header><main>''' + "".join(sections) + "</main></html>")
 
 
-if __name__ == "__main__":
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--capture", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--renderer", required=True, type=Path)
     parser.add_argument("--capture-source-ref", required=True, help="App source used to build the captured simulator app (not necessarily current HEAD)")
-    args = parser.parse_args()
-    build(args.capture.resolve(), args.output.resolve(), args.renderer.resolve(), args.capture_source_ref)
+    parser.add_argument("--locale", help="Explicitly render exactly one App Store locale; omit for all locales")
+    issue = parser.add_mutually_exclusive_group()
+    issue.add_argument("--issue", type=int, default=79, help="GitHub issue number; defaults to the existing all-locale #79 contract")
+    issue.add_argument("--issue-ref", help="Explicit non-GitHub tracker reference, for example TYP-78")
+    return parser.parse_args(argv)
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    build(args.capture.resolve(), args.output.resolve(), args.renderer.resolve(), args.capture_source_ref,
+          args.locale, args.issue, args.issue_ref)
