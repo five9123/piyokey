@@ -313,7 +313,102 @@ final class DeckKitTests: XCTestCase {
     )
   }
 
-  func testLegacyJapaneseBaseFieldsAreTheFinalCompatibilityFallback() throws {
+  func testJapaneseRequestsPreferLegacyBaseBeforeUniversalEnglishFallback() {
+    let date = Date(timeIntervalSince1970: 100)
+    let itemLocalizations: [String: DeckItemLocalization] = [
+      "en": .init(meaning: "to go", reading: "gada"),
+      "es": .init(meaning: "ir", reading: "gada"),
+      "de": .init(meaning: "gehen", reading: "gada"),
+      "fr": .init(meaning: "aller", reading: "gada"),
+    ]
+    let metadataLocalizations: [String: DeckMetadataLocalization] = [
+      "en": .init(name: "Daily Korean", authorNickname: "typee Official", tags: ["Daily"]),
+      "es": .init(name: "Coreano diario", authorNickname: "typee Oficial", tags: ["Diario"]),
+      "de": .init(name: "Alltagskoreanisch", authorNickname: "typee Offiziell", tags: ["Alltag"]),
+      "fr": .init(name: "Coréen quotidien", authorNickname: "typee Officiel", tags: ["Quotidien"]),
+    ]
+    let item = DeckItem(
+      id: "go", ko: "가다", readingJa: "カダ", meaningJa: "行く", audio: nil,
+      localizations: itemLocalizations
+    )
+    let deck = Deck(
+      deckId: "official_daily",
+      version: 1,
+      name: "毎日韓国語",
+      author: .init(id: "official_hanco", nickname: "ピヨキー 公式"),
+      official: true,
+      type: .word,
+      level: 1,
+      tags: ["日常"],
+      createdAt: date,
+      updatedAt: date,
+      items: [item],
+      localizations: metadataLocalizations
+    )
+    let preview = CatalogPreviewItem(
+      ko: item.ko,
+      meaningJa: item.meaningJa,
+      localizations: itemLocalizations.mapValues {
+        CatalogPreviewItemLocalization(meaning: $0.meaning)
+      }
+    )
+    let catalogDeck = CatalogDeck(
+      deckId: deck.deckId,
+      version: deck.version,
+      name: deck.name,
+      authorNickname: deck.author.nickname,
+      official: true,
+      featured: true,
+      type: deck.type,
+      level: deck.level,
+      tags: deck.tags,
+      itemCount: 1,
+      sizeBytes: 1,
+      downloadsTotal: 0,
+      downloads7d: 0,
+      createdAt: date,
+      previewItems: [preview],
+      fileUrl: "decks/official_daily.json",
+      localizations: metadataLocalizations
+    )
+
+    for languageCode in ["ja", "ja-JP"] {
+      XCTAssertEqual(item.localizedMeaning(languageCode: languageCode), "行く")
+      XCTAssertEqual(item.localizedReading(languageCode: languageCode), "カダ")
+      XCTAssertEqual(deck.localizedName(languageCode: languageCode), "毎日韓国語")
+      XCTAssertEqual(deck.localizedAuthorNickname(languageCode: languageCode), "ピヨキー 公式")
+      XCTAssertEqual(deck.localizedTags(languageCode: languageCode), ["日常"])
+      XCTAssertEqual(catalogDeck.localizedName(languageCode: languageCode), "毎日韓国語")
+      XCTAssertEqual(catalogDeck.localizedAuthorNickname(languageCode: languageCode), "ピヨキー 公式")
+      XCTAssertEqual(catalogDeck.localizedTags(languageCode: languageCode), ["日常"])
+      XCTAssertEqual(preview.localizedMeaning(languageCode: languageCode), "行く")
+    }
+
+    XCTAssertEqual(item.localizedMeaning(languageCode: "en"), "to go")
+    XCTAssertEqual(item.localizedReading(languageCode: "en"), "gada")
+  }
+
+  func testJapaneseExactAndBaseLocalizationsPrecedeLegacyBase() {
+    let item = DeckItem(
+      id: "go",
+      ko: "가다",
+      readingJa: "カダ",
+      meaningJa: "行く",
+      audio: nil,
+      localizations: [
+        "ja": .init(meaning: "進む", reading: "カダ・共通"),
+        "ja-JP": .init(meaning: "向かう", reading: "カダ・日本"),
+        "en": .init(meaning: "to go", reading: "gada"),
+      ]
+    )
+
+    XCTAssertEqual(item.localizedMeaning(languageCode: "ja-JP"), "向かう")
+    XCTAssertEqual(item.localizedReading(languageCode: "ja-JP"), "カダ・日本")
+    XCTAssertEqual(item.localizedMeaning(languageCode: "ja-Hira"), "進む")
+    XCTAssertEqual(item.localizedReading(languageCode: "ja-Hira"), "カダ・共通")
+  }
+
+  func testLegacyJapaneseBaseFieldsAreUsedOnlyForJapaneseRequests() throws {
     let data = Data(
       #"{"id":"legacy","ko":"학교","reading_ja":"ハッキョ","meaning_ja":"学校","audio":null}"#
         .utf8
@@ -322,11 +417,38 @@ final class DeckKitTests: XCTestCase {
 
     XCTAssertEqual(item.localizedMeaning(languageCode: "ja"), "学校")
     XCTAssertEqual(item.localizedReading(languageCode: "ja"), "ハッキョ")
-    XCTAssertEqual(item.localizedMeaning(languageCode: "en"), "学校")
-    XCTAssertEqual(item.localizedReading(languageCode: "ko"), "ハッキョ")
+    XCTAssertEqual(item.localizedMeaning(languageCode: "ja-JP"), "学校")
+    XCTAssertEqual(item.localizedReading(languageCode: "ja-JP"), "ハッキョ")
+    for languageCode in ["en", "es-MX", "de-AT", "fr-CA", "zh-Hant", "ko"] {
+      XCTAssertNil(item.localizedMeaning(languageCode: languageCode), languageCode)
+      XCTAssertNil(item.localizedReading(languageCode: languageCode), languageCode)
+    }
+
+    let date = Date(timeIntervalSince1970: 100)
+    let deck = Deck(
+      deckId: "legacy",
+      version: 1,
+      name: "学校",
+      author: .init(id: "legacy", nickname: "日本語作者"),
+      official: false,
+      type: .word,
+      level: 1,
+      tags: ["日本語"],
+      createdAt: date,
+      updatedAt: date,
+      items: [item]
+    )
+    XCTAssertEqual(deck.localizedName(languageCode: "ja-JP"), "学校")
+    XCTAssertEqual(deck.localizedAuthorNickname(languageCode: "ja"), "日本語作者")
+    XCTAssertEqual(deck.localizedTags(languageCode: "ja"), ["日本語"])
+    for languageCode in ["en", "es-MX", "de-AT", "fr-CA", "zh-Hant", "ko"] {
+      XCTAssertNil(deck.localizedName(languageCode: languageCode), languageCode)
+      XCTAssertNil(deck.localizedAuthorNickname(languageCode: languageCode), languageCode)
+      XCTAssertNil(deck.localizedTags(languageCode: languageCode), languageCode)
+    }
   }
 
-  func testArbitraryLocaleFallbackUsesExactBaseDefaultEnglishThenJapaneseBase() throws {
+  func testArbitraryLocaleFallbackUsesExactBaseDefaultEnglishWithoutJapaneseBase() throws {
     let root = try RepositoryFixtureLocator.root(from: #filePath)
     let deck = try DeckKitJSON.decodeDeck(
       from: Data(contentsOf: root.appendingPathComponent("shared/piyodeck/fixtures/valid/multilingual-deck.json"))

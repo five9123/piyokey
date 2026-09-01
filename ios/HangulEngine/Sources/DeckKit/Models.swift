@@ -67,20 +67,35 @@ public struct DeckItem: Codable, Equatable, Sendable {
   }
 
   public func localizedMeaning(languageCode: String, defaultLocale: String? = nil) -> String? {
-    localizedValue(languageCode: languageCode, defaultLocale: defaultLocale, keyPath: \.meaning)
-      ?? meaningJa
+    localizedValue(
+      languageCode: languageCode,
+      defaultLocale: defaultLocale,
+      japaneseBase: meaningJa,
+      keyPath: \.meaning
+    )
   }
 
   public func localizedReading(languageCode: String, defaultLocale: String? = nil) -> String? {
-    localizedValue(languageCode: languageCode, defaultLocale: defaultLocale, keyPath: \.reading)
-      ?? readingJa
+    localizedValue(
+      languageCode: languageCode,
+      defaultLocale: defaultLocale,
+      japaneseBase: readingJa,
+      keyPath: \.reading
+    )
   }
 
   private func localizedValue(
     languageCode: String,
     defaultLocale: String?,
+    japaneseBase: String,
     keyPath: KeyPath<DeckItemLocalization, String>
   ) -> String? {
+    if LocaleTag.isJapanese(languageCode) {
+      for code in LocaleTag.requestedCandidates(languageCode) {
+        if let value = localizations?[code]?[keyPath: keyPath] { return value }
+      }
+      return japaneseBase
+    }
     for code in LocaleTag.lookupCandidates(requested: languageCode, defaultLocale: defaultLocale) {
       if let value = localizations?[code]?[keyPath: keyPath] { return value }
     }
@@ -140,24 +155,38 @@ public struct Deck: Codable, Equatable, Sendable {
   }
 
   public func localizedName(languageCode: String) -> String? {
-    metadataLocalization(languageCode: languageCode)?.name ?? name
+    metadataValue(languageCode: languageCode, japaneseBase: name, keyPath: \.name)
   }
 
   public func localizedAuthorNickname(languageCode: String) -> String? {
-    metadataLocalization(languageCode: languageCode)?.authorNickname ?? author.nickname
+    metadataValue(
+      languageCode: languageCode,
+      japaneseBase: author.nickname,
+      keyPath: \.authorNickname
+    )
   }
 
   public func localizedTags(languageCode: String) -> [String]? {
-    metadataLocalization(languageCode: languageCode)?.tags ?? tags
+    metadataValue(languageCode: languageCode, japaneseBase: tags, keyPath: \.tags)
   }
 
   public func hasLocalization(languageCode: String) -> Bool {
     localizedName(languageCode: languageCode) != nil
   }
 
-  private func metadataLocalization(languageCode: String) -> DeckMetadataLocalization? {
+  private func metadataValue<Value>(
+    languageCode: String,
+    japaneseBase: Value,
+    keyPath: KeyPath<DeckMetadataLocalization, Value>
+  ) -> Value? {
+    if LocaleTag.isJapanese(languageCode) {
+      for code in LocaleTag.requestedCandidates(languageCode) {
+        if let value = localizations?[code]?[keyPath: keyPath] { return value }
+      }
+      return japaneseBase
+    }
     for code in LocaleTag.lookupCandidates(requested: languageCode, defaultLocale: defaultLocale) {
-      if let value = localizations?[code] { return value }
+      if let value = localizations?[code]?[keyPath: keyPath] { return value }
     }
     return nil
   }
@@ -187,9 +216,11 @@ public struct CatalogPreviewItem: Codable, Equatable, Sendable {
   }
 
   public func localizedMeaning(languageCode: String) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    guard code != "ja" else { return meaningJa }
-    return localizations?[code]?.meaning ?? localizations?["en"]?.meaning
+    for code in LocaleTag.requestedCandidates(languageCode) {
+      if let value = localizations?[code]?.meaning { return value }
+    }
+    if LocaleTag.isJapanese(languageCode) { return meaningJa }
+    return localizations?["en"]?.meaning
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -264,32 +295,35 @@ public struct CatalogDeck: Codable, Equatable, Sendable {
   }
 
   public func localizedName(languageCode: String) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return name }
-    return metadataLocalization(languageCode: code)?.name
+    metadataValue(languageCode: languageCode, japaneseBase: name, keyPath: \.name)
   }
 
   public func localizedAuthorNickname(languageCode: String) -> String? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return authorNickname }
-    return metadataLocalization(languageCode: code)?.authorNickname
+    metadataValue(
+      languageCode: languageCode,
+      japaneseBase: authorNickname,
+      keyPath: \.authorNickname
+    )
   }
 
   public func localizedTags(languageCode: String) -> [String]? {
-    let code = normalizedLanguageCode(languageCode)
-    if code == "ja" { return tags }
-    return metadataLocalization(languageCode: code)?.tags
+    metadataValue(languageCode: languageCode, japaneseBase: tags, keyPath: \.tags)
   }
 
   public func hasLocalization(languageCode: String) -> Bool {
-    let code = normalizedLanguageCode(languageCode)
-    return code == "ja" || localizations?[code] != nil || localizations?["en"] != nil
+    localizedName(languageCode: languageCode) != nil
   }
 
-  private func metadataLocalization(languageCode: String) -> DeckMetadataLocalization? {
-    let code = normalizedLanguageCode(languageCode)
-    guard code != "ja" else { return nil }
-    return localizations?[code] ?? localizations?["en"]
+  private func metadataValue<Value>(
+    languageCode: String,
+    japaneseBase: Value,
+    keyPath: KeyPath<DeckMetadataLocalization, Value>
+  ) -> Value? {
+    for code in LocaleTag.requestedCandidates(languageCode) {
+      if let value = localizations?[code]?[keyPath: keyPath] { return value }
+    }
+    if LocaleTag.isJapanese(languageCode) { return japaneseBase }
+    return localizations?["en"]?[keyPath: keyPath]
   }
 
   public var trendingRatio: Double {

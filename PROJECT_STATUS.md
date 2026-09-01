@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-86 일본어 콘텐츠 현지화 fallback | In Review / PR #151 / `codex/86-japanese-localization-fallback` | Swift·Python·focused Hanco 소스 회귀 뒤 Claude review와 merge gate를 진행한다. 후속 TestFlight build에서 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad의 덱·7개 게임/연습 화면을 스크린샷으로 확인하기 전에는 Done 처리하지 않음 |
 | TYP-84 게임 OS IME 입력 chrome | In Review / PR #153 / `codex/84-game-os-ime-chrome` | focused iPhone·iPad 회귀와 source-SHA evidence 뒤 Claude review. TestFlight build 12의 iPhone·iPad 실기기 확인 전 Done 금지 |
 | TYP-82 OS 한국어 키보드 단어 전환 flicker | In Progress / `codex/82-ios-keyboard-flicker` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | deferred reset과 stale 조합 격리는 유지하고 reset의 resign/become cycle을 제거한다. focused source 회귀 뒤 PR review·merge하며 build 12 TestFlight iPhone·iPad × 두벌식·천지인 실기기 증빙, full HancoTests, CI·계정·권리·스토어 gate는 열어 둔다 |
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |

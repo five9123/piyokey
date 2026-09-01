@@ -89,14 +89,23 @@ public enum LocaleTag {
 
   public static func isCanonical(_ value: String) -> Bool { canonicalize(value) == value }
 
-  public static func lookupCandidates(requested: String, defaultLocale: String?) -> [String] {
-    var result: [String] = []
-    if let exact = canonicalize(requested.replacingOccurrences(of: "_", with: "-")) {
-      result.append(exact)
-      if let separator = exact.firstIndex(of: "-") {
-        result.append(String(exact[..<separator]))
-      }
+  public static func requestedCandidates(_ requested: String) -> [String] {
+    guard let exact = canonicalize(requested.replacingOccurrences(of: "_", with: "-")) else {
+      return []
     }
+    var result = [exact]
+    if let separator = exact.firstIndex(of: "-") {
+      result.append(String(exact[..<separator]))
+    }
+    return result
+  }
+
+  public static func isJapanese(_ requested: String) -> Bool {
+    requestedCandidates(requested).last == "ja"
+  }
+
+  public static func lookupCandidates(requested: String, defaultLocale: String?) -> [String] {
+    var result = requestedCandidates(requested)
     if let defaultLocale { result.append(defaultLocale) }
     result.append("en")
     var seen = Set<String>()

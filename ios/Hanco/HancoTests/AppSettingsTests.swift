@@ -1,3 +1,4 @@
+import DeckKit
 import Foundation
 import XCTest
 
@@ -156,6 +157,30 @@ final class AppSettingsTests: XCTestCase {
     XCTAssertEqual(item.appMeaning, item.localizedMeaning(languageCode: "en"))
     XCTAssertEqual(item.appReading, item.localizedReading(languageCode: "en"))
     XCTAssertEqual(AppLocalization.string("settings.navigation_title"), "Settings")
+  }
+
+  func testJapaneseAppContentUsesLegacyBaseBeforeEnglishLocalization() {
+    defaults.set("ja", forKey: SettingsPreferenceKeys.language)
+    let localizations: [String: DeckItemLocalization] = [
+      "en": .init(meaning: "to go", reading: "gada"),
+      "es": .init(meaning: "ir", reading: "gada"),
+      "de": .init(meaning: "gehen", reading: "gada"),
+      "fr": .init(meaning: "aller", reading: "gada"),
+    ]
+    let item = DeckItem(
+      id: "go",
+      ko: "가다",
+      readingJa: "カダ",
+      meaningJa: "行く",
+      audio: nil,
+      localizations: localizations
+    )
+
+    XCTAssertEqual(AppLanguage.current, .japanese)
+    XCTAssertEqual(item.appMeaning, "行く")
+    XCTAssertEqual(item.appReading, "カダ")
+    XCTAssertEqual(item.localizedMeaning(languageCode: "en"), "to go")
+    XCTAssertEqual(item.localizedReading(languageCode: "en"), "gada")
   }
 
   func testSpanishUIUsesSpanishLearningContentAndEditorLanguage() {

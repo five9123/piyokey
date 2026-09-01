@@ -761,7 +761,7 @@ my-topik-deck.typedeck
 - `ko`는 공백 포함 10자 이하이고 §6 조합 엔진으로 입력 가능해야 한다. deck schema v1은 배포된 계약대로 `default_locale` 없이 일본어 base field와 선택적 `en`·`ko` localizations를 사용한다.
 - deck schema v2는 루트 `default_locale`을 필수로 두고 덱과 항목의 `localizations` 키에 allowlist 없는 canonical BCP 47 태그를 허용한다. malformed·noncanonical·중복 태그는 거부한다. 덱 metadata localization 키가 콘텐츠 언어 집합이며 모든 항목은 선언된 각 언어의 nonempty `meaning`과 `reading`을 가져야 한다. 항목에만 있는 미선언 언어도 거부한다.
 - 공용 v2 reader·writer·model은 공식 다국어 카탈로그와 기존 파일 호환을 위해 여러 콘텐츠 언어를 계속 지원한다. 모바일 제품 계층에서 새로 만들거나 편집 저장하는 사용자 덱만 metadata localization과 `default_locale`이 같은 단일 발견용 덱 언어 태그여야 한다. 이 key는 wire 호환 매핑이며 뜻·발음이 그 언어로 번역됐다는 구조적 선언이 아니다. 기존 다국어 사용자 파일은 읽기와 변경 없는 내보내기를 허용하되 편집 저장 전 한 콘텐츠 묶음을 명시적으로 선택하며, 선택된 값과 알 수 없는 정상 태그를 손실 없이 보존한다.
-- 표시 값은 정확한 요청 태그(`fr-CA`) → 기본 언어 subtag(`fr`) → `default_locale` → `en` → 기존 일본어 base field 순서로 조회한다. v2 base field는 `ja`가 선언되면 일본어를, 아니면 default locale 값을 mirror한다. v1 일본어 base field를 편집·재내보낼 때는 `ja`를 명시적으로 선언하고 원래 base 값을 보존한다.
+- 표시 값은 일본어 요청에서 정확한 요청 태그(`ja-JP`) → 기본 언어 subtag(`ja`) → 기존 일본어 base field 순서로 조회하고, 그 밖의 요청은 정확한 요청 태그(`fr-CA`) → 기본 언어 subtag(`fr`) → `default_locale` → `en` 순서로 조회한다. 일본어 외 앱 언어에서는 기존 일본어 base field를 fallback으로 사용하지 않는다. v2 base field는 `ja`가 선언되면 일본어를, 아니면 default locale 값을 mirror한다. v1 일본어 base field를 편집·재내보낼 때는 `ja`를 명시적으로 선언하고 원래 base 값을 보존한다.
 - v1 item의 `audio`는 반드시 `null`이다. 절대/상대 URL, package 내부 경로를 넣어도 거부한다. 미정의 필드와 JSON 중복 키, 유효하지 않은 Unicode, BOM과 비 UTF-8 데이터도 거부한다.
 - 공식 exporter는 안정된 키 순서·RFC 3339 UTC 날짜·줄바꿈 없는 JSON을 사용해 같은 모델을 다시 내보낼 때 같은 `deck.json` bytes와 SHA가 되게 한다. importer는 키 순서와 허용 공백 차이는 받아들이되 manifest의 raw bytes hash를 그대로 검증한다.
 
