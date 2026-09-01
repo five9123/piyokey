@@ -48,8 +48,17 @@ def describe_capture(capture_commit, capture_build):
     return description
 
 
+def issue_metadata(issue, issue_ref):
+    if issue_ref is not None:
+        if not issue_ref.strip():
+            raise ValueError("issue_ref must not be empty")
+        return {"issue_ref": issue_ref}
+    return {"issue": issue}
+
+
 def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str,
-          requested_locale: str | None = None, issue: int = 79):
+          requested_locale: str | None = None, issue: int = 79,
+          issue_ref: str | None = None):
     from PIL import Image, ImageDraw
 
     capture_commit = subprocess.check_output(["git", "rev-parse", "--verify", capture_source_ref + "^{commit}"], cwd=ROOT, text=True).strip()
@@ -123,7 +132,7 @@ def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str,
     note = ("Single-locale iPad 13-inch capture; not uploaded. Final native-language review remains required."
             if requested_locale else
             f"Local iPad screenshots captured from {capture_description}; not uploaded. Final RC and native-language review remain required.")
-    save(output / "manifest.json", {"issue": issue, "uploaded": False, "store_slot": "iPad 13-inch",
+    manifest = {"uploaded": False, "store_slot": "iPad 13-inch",
         "source_commit": capture_commit,
         "capture_build": capture_build,
         "candidate_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
@@ -131,7 +140,9 @@ def build(capture: Path, output: Path, renderer: Path, capture_source_ref: str,
             ["git", "diff", "--name-only", capture_commit, "HEAD", "--", "ios/Hanco/Hanco"], cwd=ROOT, text=True).splitlines(),
         "source_diff_sha256": hashlib.sha256(subprocess.check_output(["git", "diff", "--", "ios"], cwd=ROOT)).hexdigest(),
         "note": note,
-        "primary_count": len(outputs), "alternate_count": 0, "orientation": "landscape", "sources": source_manifest, "images": outputs})
+        "primary_count": len(outputs), "alternate_count": 0, "orientation": "landscape", "sources": source_manifest, "images": outputs}
+    manifest.update(issue_metadata(issue, issue_ref))
+    save(output / "manifest.json", manifest)
     gallery_note = ("선택한 단일 스토어 로케일의 기본 스크린샷 10장이 가로 규격입니다."
                     if requested_locale else "모든 언어의 기본 스크린샷 10장이 가로 규격입니다.")
     output.joinpath("index.html").write_text('''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>typee · iPad App Store</title><style>body{margin:0;background:#faf6f9;color:#30253d;font:16px/1.6 system-ui}header,main{max-width:1560px;margin:auto;padding:28px}h1{font-size:40px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}img{width:100%;border-radius:12px;box-shadow:0 4px 24px #30253d15}section{padding:24px 0 42px;border-top:1px solid #e4d8df}a{color:#b62967}.note{padding:20px;background:white;border-radius:16px}@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}</style><header><h1>typee / ピヨキー · iPad</h1><div class="note">수정한 실제 iPad 앱 화면으로 제작한 검토용 세트입니다. 캡처 기준: ''' + html.escape(capture_description) + '''. 스토어 미업로드. ''' + gallery_note + ''' 최종 RC 일치·현지어 검수·기기 QA는 별도입니다.</div></header><main>''' + "".join(sections) + "</main></html>")
@@ -144,11 +155,13 @@ def parse_args(argv=None):
     parser.add_argument("--renderer", required=True, type=Path)
     parser.add_argument("--capture-source-ref", required=True, help="App source used to build the captured simulator app (not necessarily current HEAD)")
     parser.add_argument("--locale", help="Explicitly render exactly one App Store locale; omit for all locales")
-    parser.add_argument("--issue", type=int, default=79)
+    issue = parser.add_mutually_exclusive_group()
+    issue.add_argument("--issue", type=int, default=79, help="GitHub issue number; defaults to the existing all-locale #79 contract")
+    issue.add_argument("--issue-ref", help="Explicit non-GitHub tracker reference, for example TYP-78")
     return parser.parse_args(argv)
 
 
 if __name__ == "__main__":
     args = parse_args()
     build(args.capture.resolve(), args.output.resolve(), args.renderer.resolve(), args.capture_source_ref,
-          args.locale, args.issue)
+          args.locale, args.issue, args.issue_ref)

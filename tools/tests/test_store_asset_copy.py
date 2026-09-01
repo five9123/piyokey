@@ -22,15 +22,20 @@ class StoreAssetCopyTests(unittest.TestCase):
             select_attachment([good], "flow", "ja")
 
     def test_ipad_locale_selection_defaults_to_all_and_explicitly_selects_one(self):
-        from tools.build_ipad_store_assets import build, describe_capture, parse_args, select_locales
+        from tools.build_ipad_store_assets import build, describe_capture, issue_metadata, parse_args, select_locales
         self.assertIs(select_locales(self.data["locales"]), self.data["locales"])
         self.assertEqual([x["locale"] for x in select_locales(self.data["locales"], "ja")], ["ja"])
         self.assertEqual(inspect.signature(build).parameters["issue"].default, 79)
         required = ["--capture", "capture", "--output", "output", "--renderer", "renderer",
                     "--capture-source-ref", "source"]
-        self.assertEqual(parse_args(required).issue, 79)
-        typ78 = parse_args(required + ["--locale", "ja", "--issue", "78"])
-        self.assertEqual((typ78.locale, typ78.issue), ("ja", 78))
+        default = parse_args(required)
+        self.assertEqual((default.issue, default.issue_ref), (79, None))
+        self.assertEqual(issue_metadata(default.issue, default.issue_ref), {"issue": 79})
+        typ78 = parse_args(required + ["--locale", "ja", "--issue-ref", "TYP-78"])
+        self.assertEqual((typ78.locale, typ78.issue_ref), ("ja", "TYP-78"))
+        self.assertEqual(issue_metadata(typ78.issue, typ78.issue_ref), {"issue_ref": "TYP-78"})
+        with self.assertRaises(ValueError):
+            issue_metadata(79, "")
         self.assertEqual(
             describe_capture("abc123", {"marketing_version": "1.1", "build_number": "11"}),
             "source commit abc123, app 1.1 build 11",
@@ -41,9 +46,12 @@ class StoreAssetCopyTests(unittest.TestCase):
         self.assertEqual(manifest["delivery"]["artifact_id"], "typ-78-store-media-20260901")
         self.assertEqual(manifest["delivery"]["manifest"], "delivery/manifest.json")
         self.assertNotIn("/Users/", json.dumps(manifest))
+        self.assertIn("capture_generated_at", manifest)
+        self.assertNotIn("generated_at", manifest)
         self.assertEqual(manifest["capture_build_executable"], "Hanco.app/Hanco")
         self.assertIn("capture_build_executable_sha256", manifest)
         self.assertNotIn("capture_executable_sha256", manifest)
+        self.assertIn("release-assets upload", manifest["open_gates"])
 
     def test_ipad_locale_selection_rejects_missing_or_duplicate(self):
         from tools.build_ipad_store_assets import select_locales
