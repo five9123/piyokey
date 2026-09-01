@@ -2125,7 +2125,9 @@ struct ChoseongTypingView: View {
             HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
           },
           onAcceptedSequence: synchronizeOSIME,
-          onConfirmedMismatch: recordOSIMEMistake
+          onConfirmedMismatch: recordOSIMEMistake,
+          showsChrome: false,
+          showsFocusRecovery: true
         )
       } else {
         if builtInKeyboardLayout == .korean10Key {
