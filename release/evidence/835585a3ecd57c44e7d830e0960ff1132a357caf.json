@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "verified_commit": "835585a3ecd57c44e7d830e0960ff1132a357caf",
+  "verified_tree": "2fb5dccb083ecf7a93874566bcee13af5387485d",
+  "branch": "codex/82-ios-keyboard-flicker",
+  "scope": "TYP-82 full HancoTests unit regression for Linear Project iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-09-01T16:10:47.207373+00:00",
+  "checks": [
+    {
+      "name": "full-hanco-unit-target",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests -resultBundlePath /tmp/typ82-hancotests.hOujXJ/HancoTests.xcresult",
+      "note": "399/399 passed; 0 failed; 0 skipped; result bundle contains only Unit test bundle HancoTests; no HancoUITests or UI runner executed"
+    }
+  ],
+  "manual_gates": [
+    "GitHub Actions/CI remains disabled and unverified.",
+    "Current evidence-only PR head requires fresh exact-head Claude review and maintainer approval before merge.",
+    "Build 12 TestFlight deployment and physical iPhone+iPad Dubeolsik/Cheonjiin recordings/screenshots remain open.",
+    "Account, content-rights, release-signing, and App Store gates remain open."
+  ]
+}
