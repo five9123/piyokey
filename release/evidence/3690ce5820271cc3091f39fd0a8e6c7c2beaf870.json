@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "verified_commit": "3690ce5820271cc3091f39fd0a8e6c7c2beaf870",
+  "verified_tree": "5f720a503a668d034b68e4c27fc0fa268435c06b",
+  "branch": "codex/86-japanese-localization-fallback",
+  "scope": "TYP-86 Japanese localization fallback",
+  "result": "pass",
+  "recorded_at": "2026-09-01T16:34:16.461514+00:00",
+  "checks": [
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "swift-package",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "52 tests passed"
+    },
+    {
+      "name": "python-reference",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_piyodeck_tool",
+      "note": "14 tests passed"
+    },
+    {
+      "name": "hanco-focused",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -only-testing:HancoTests/AppSettingsTests/testLegacyKoreanUIUsesExistingEnglishCluesWithoutChangingKoreanTarget -only-testing:HancoTests/AppSettingsTests/testSpanishUIUsesSpanishLearningContentAndEditorLanguage -only-testing:HancoTests/AppSettingsTests/testGermanAndFrenchDeviceRegionsAndLearningClues -only-testing:HancoTests/AppSettingsTests/testJapaneseAppContentUsesLegacyBaseBeforeEnglishLocalization -only-testing:HancoTests/ChoseongQuizViewModelTests/testTypingBuilderDoesNotUseLegacyJapaneseBaseForEnglishMeaningDisambiguation -only-testing:HancoTests/ChoseongQuizViewModelTests/testWordMatchTypingBuilderExcludesLegacyJapaneseBaseForEnglishUI -only-testing:HancoTests/ChoseongQuizViewModelTests/testWordMatchChoiceBuilderExcludesLegacyJapaneseBaseForEnglishUI -only-testing:HancoTests/ReviewDeckStoreTests/testLegacyReviewSnapshotWithoutLocalizationsUsesJapaneseBaseFallback",
+      "note": "8 tests passed"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Unfiltered Hanco scheme/full HancoTests regression not run: ordinary-issue governance reserves it for a milestone or release candidate.",
+    "TestFlight build and physical ja/en/es/de/fr deck-practice, lesson, and game sample matrix remain open.",
+    "Physical iPhone and iPad Japanese deck list/detail plus practice, lesson, flow, acid rain, choseong, word match, and dictation screenshot evidence remains open.",
+    "Claude exact-head review, maintainer approval, merge, signing, account, rights, store, and deployment gates remain open."
+  ]
+}
