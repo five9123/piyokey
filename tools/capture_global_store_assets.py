@@ -16,7 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def completed_test_run(derived_data: Path) -> Path:
     test_runs = list((derived_data / "Build/Products").glob("Hanco_*.xctestrun"))
     if len(test_runs) != 1:
-        raise ValueError("Expected one completed build-for-testing in derived data")
+        raise ValueError(
+            f"Expected one completed build-for-testing in {derived_data}: found {len(test_runs)}"
+        )
     return test_runs[0]
 
 

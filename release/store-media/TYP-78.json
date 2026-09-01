@@ -6,10 +6,12 @@
   "marketing_version": "1.1",
   "build_number": "11",
   "bundle_id": "app.piyokey.Piyokey",
-  "capture_executable_sha256": "e568b079819de91ad24d3110e8cb635e4aa95628cfb2bc5baa4db6a45ceef854",
+  "capture_build_executable": "Hanco.app/Hanco",
+  "capture_build_executable_sha256": "e568b079819de91ad24d3110e8cb635e4aa95628cfb2bc5baa4db6a45ceef854",
   "delivery": {
-    "path": "/Users/jungminoh/Documents/hanco/outputs/typ-78-store-media-20260901/delivery",
-    "manifest": "manifest.json",
+    "storage_status": "local_only_pending_release_assets",
+    "artifact_id": "typ-78-store-media-20260901",
+    "manifest": "delivery/manifest.json",
     "manifest_sha256": "904b3d8182522523a0702552f7a31172af37b081fb7f281aa515366f873287fa"
   },
   "sets": [

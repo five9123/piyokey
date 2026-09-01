@@ -22,10 +22,28 @@ class StoreAssetCopyTests(unittest.TestCase):
             select_attachment([good], "flow", "ja")
 
     def test_ipad_locale_selection_defaults_to_all_and_explicitly_selects_one(self):
-        from tools.build_ipad_store_assets import build, select_locales
+        from tools.build_ipad_store_assets import build, describe_capture, parse_args, select_locales
         self.assertIs(select_locales(self.data["locales"]), self.data["locales"])
         self.assertEqual([x["locale"] for x in select_locales(self.data["locales"], "ja")], ["ja"])
-        self.assertEqual(inspect.signature(build).parameters["issue"].default, 78)
+        self.assertEqual(inspect.signature(build).parameters["issue"].default, 79)
+        required = ["--capture", "capture", "--output", "output", "--renderer", "renderer",
+                    "--capture-source-ref", "source"]
+        self.assertEqual(parse_args(required).issue, 79)
+        typ78 = parse_args(required + ["--locale", "ja", "--issue", "78"])
+        self.assertEqual((typ78.locale, typ78.issue), ("ja", 78))
+        self.assertEqual(
+            describe_capture("abc123", {"marketing_version": "1.1", "build_number": "11"}),
+            "source commit abc123, app 1.1 build 11",
+        )
+        root = Path(__file__).resolve().parents[2]
+        manifest = json.loads((root / "release/store-media/TYP-78.json").read_text())
+        self.assertEqual(manifest["delivery"]["storage_status"], "local_only_pending_release_assets")
+        self.assertEqual(manifest["delivery"]["artifact_id"], "typ-78-store-media-20260901")
+        self.assertEqual(manifest["delivery"]["manifest"], "delivery/manifest.json")
+        self.assertNotIn("/Users/", json.dumps(manifest))
+        self.assertEqual(manifest["capture_build_executable"], "Hanco.app/Hanco")
+        self.assertIn("capture_build_executable_sha256", manifest)
+        self.assertNotIn("capture_executable_sha256", manifest)
 
     def test_ipad_locale_selection_rejects_missing_or_duplicate(self):
         from tools.build_ipad_store_assets import select_locales
@@ -39,12 +57,18 @@ class StoreAssetCopyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             products = Path(temporary) / "Build/Products"
             products.mkdir(parents=True)
+            with self.assertRaises(ValueError) as missing:
+                completed_test_run(Path(temporary))
+            self.assertIn(temporary, str(missing.exception))
+            self.assertIn("found 0", str(missing.exception))
             run = products / "Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun"
             run.touch()
             self.assertEqual(completed_test_run(Path(temporary)), run)
             (products / "Hanco_second.xctestrun").touch()
-            with self.assertRaises(ValueError):
+            with self.assertRaises(ValueError) as duplicate:
                 completed_test_run(Path(temporary))
+            self.assertIn(temporary, str(duplicate.exception))
+            self.assertIn("found 2", str(duplicate.exception))
 
     def test_ten_distinct_store_locales(self):
         self.assertEqual({x["locale"] for x in self.data["locales"]},
