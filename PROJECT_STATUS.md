@@ -14,10 +14,10 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `d89f691`에 TYP-73·75·77과 Actions-off local evidence 정책이 병합됨. TYP-83은 OS 천지인의 committed 복합모음·raw stroke 중간 상태 판정을 보강하는 review 준비 단계 | TYP-83 focused source review 뒤 정확한 후속 TestFlight에서 iPhone·iPad practice/game 회귀를 확인. iPhone row-13 측정 완료, iPad 측정은 `gate:device` OPEN |
+| iOS 1.1 | `main` `2ef04ed`에 TYP-82 OS IME 단어 전환과 TYP-84 직접 입력 게임 chrome 수정이 병합됨. TYP-83은 OS 천지인의 committed 복합모음·raw stroke·자음 순환 중간 상태 판정을 보강하는 review 준비 단계 | TYP-83 focused source review 뒤 정확한 후속 TestFlight에서 iPhone·iPad practice/game 회귀를 확인. iPhone row-13 측정 완료, iPad 측정과 full HancoTests는 OPEN |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
-| CI·병합 | GitHub Actions 비활성(사용자 승인 A안, 2026-09-01). TYP-79가 모든 PR의 기본 local-evidence merge gate를 문서화 | current `origin/main` merged-tree의 clean implementation SHA focused 검증 + evidence-only commit + exact-head `review:passed` + maintainer 수동 fail-closed 승인 |
+| CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
 
 ## 열린 작업
 
@@ -27,6 +27,8 @@
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
 | TYP-77 OS 천지인 ASCII guard 오판 | Merged / PR #147 → main `e6d714d` | marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening 병합 완료. Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
+| TYP-84 게임 OS IME 입력 chrome | Merged / PR #153 → main `2ef04ed` | TestFlight build 12의 iPhone·iPad 실기기 확인 전 Done 금지 |
+| TYP-82 OS 한국어 키보드 단어 전환 flicker | Merged / PR #150 → main `b2079c3` | build 12 TestFlight의 iPhone·iPad × 두벌식·천지인 실기기 증빙과 full HancoTests는 OPEN |
 | TYP-71 iOS 온보딩 개인정보 문구 | Merged / PR #140 → main `17fb367` | build 10 TestFlight에서 iPhone·iPad 온보딩(알림 권한 1회 → 두 버튼 안내) 실기기 smoke |
 | #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
 | TYP-68 게임 OS 키보드 전환 후 IME 입력 잔존 | Review / PR #139 (#138 대체) | PR review·병합 후 iPhone·iPad 실기기에서 OS 한국어 키보드(두벌식·천지인)로 5개 직접 입력 게임 연속 10단어 전환 확인 |

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "verified_commit": "086e5f0302cb742f761751329650bf5a5292fa56",
+  "verified_tree": "2a4cf82602df66ee19748560cc5d348647f7e718",
+  "branch": "codex/82-ios-keyboard-flicker",
+  "scope": "TYP-82 iOS OS IME responder-continuous reset; Linear Project iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-09-01T16:00:05.870526+00:00",
+  "checks": [
+    {
+      "name": "focused-ios",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -only-testing:HancoTests/OSIMEInputResetTests -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMESynchronizationCanAdvanceAndRewindWithoutLosingSessionState -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEPhysicalKeyboardSnapshotsDoNotDuplicateMarkedCommitOrBackspace -only-testing:HancoTests/PracticeSessionViewModelTests/testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition -only-testing:HancoTests/FlowGameViewModelTests/testOSIMESynchronizationAndConfirmedMistakeUseGameScoringRules -only-testing:HancoTests/FlowGameViewModelTests/testAcidRainOSIMECompletesAnyMatchingVisibleCard -only-testing:HancoTests/ChoseongQuizViewModelTests/testTypingOSIMESynchronizesAcceptedPrefixAndCompletion",
+      "note": "21 selected tests passed; no HancoUITests executed"
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p \"test_*.py\"",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Unfiltered HancoTests is intentionally not run under TYP-82 governance and remains an open full-regression gate.",
+    "Build 12 TestFlight physical iPhone and iPad recordings/screenshots are required for Dubeolsik and Cheonjiin across deck practice, lesson practice, and direct-input games including short-word course, each over 10 consecutive words.",
+    "CI is repository-disabled; exact-head Claude review, maintainer fail-closed approval, merge, archive/distribution signing, account, content rights, IAP, store, and external-service gates remain open."
+  ]
+}

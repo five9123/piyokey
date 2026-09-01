@@ -1715,3 +1715,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 개인정보처리방침 링크는 개인정보 섹션에만 두고 앱 정보에는 런타임 버전·빌드, 덱 제안/내용 제보, 일반 지원을 둔다.
 - 근거: 승인된 실제 정보 구조와 6개 언어 UI를 공식 제품 계약에 그대로 반영해 사운드·배열 명칭·처리방침 링크를 이전 위치나 문구로 되돌리는 회귀를 막기 위함이다.
 - 영향 범위: PRD F2·F10, iOS/iPadOS Settings 정보 구조와 de/en/es/fr/ja/ko 표시 명칭, focused settings UI 회귀. Android는 동결 범위로 변경하지 않는다.
+
+## 2026-09-02 TYP-82 iOS 한국어 IME responder 연속 reset
+
+- 관련: TYP-82, TYP-73, Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`), iOS 1.1 build 11 실기기 회귀.
+- 결정: `resetRevision` 변경의 다음 main runloop deferred reset과 reset 적용 중 callback suppression은 유지한다. reset은 first responder를 resign/become하지 않고, 활성 `UITextInputDelegate`의 selection/text will/did change bracket 안에서 marked range 삭제·`unmarkText()`·허용된 문서 복원을 수행한다. 이 결정은 2026-08-31 TYP-73 B안의 responder cycle 부분만 대체한다.
+- 결정: reset 뒤 키보드가 내보내는 이전 target snapshot과 자모-prefix material은 기존 stale-document quarantine으로 judge에 전달하지 않고 다시 deferred reset한다. 첫 정상 새 target payload는 보존하며 동기 reset, UIKeyInput-only responder, TYP-77 ASCII guard는 변경하지 않는다.
+- 근거: build 11에서 단어 전환마다 resign/become이 OS 키보드를 실제로 내렸다 올려 TYP-73의 first responder 유지 계약을 위반했다. responder를 유지한 delegate-bracket rewrite와 stale payload 격리를 결합하면 표시 keyboard session을 끊지 않고 앱 문서·marked composition을 새 target 경계로 초기화할 수 있다.
+- 출시 gate: build 12 TestFlight에서 연습·레슨·직접 입력 게임(짧은 단어 포함)을 iPhone·iPad × 두벌식·천지인 × 연속 10단어로 검증한다. keyboard redisplay 0회, 이전 자모 0회, 첫 자모 즉시 정타, 콤보·정확도·점수 보존의 화면 증빙이 필요하며 focused 자동 테스트·PR만으로 Done 처리하지 않는다. full HancoTests, CI, merge, 계정, 권리, store gate도 별도로 유지한다.
+- 영향 범위: iOS/iPadOS `OSIMEInputView` reset bridge, `OSIMEInputResetTests`, TYP-73/TYP-82 focused 회귀. Android와 App Store 제출은 제외한다.
