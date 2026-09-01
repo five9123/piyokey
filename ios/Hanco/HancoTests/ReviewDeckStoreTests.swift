@@ -139,8 +139,10 @@ final class ReviewDeckStoreTests: XCTestCase {
 
     let loaded = try XCTUnwrap(store.loadSnapshot().activeItems.first)
     XCTAssertNil(loaded.localizations)
-    XCTAssertEqual(loaded.deckItem.localizedMeaning(languageCode: "en"), "会社")
-    XCTAssertEqual(loaded.deckItem.localizedReading(languageCode: "en"), "フェサ")
+    XCTAssertNil(loaded.deckItem.localizedMeaning(languageCode: "en"))
+    XCTAssertNil(loaded.deckItem.localizedReading(languageCode: "en"))
+    XCTAssertEqual(loaded.deckItem.localizedMeaning(languageCode: "ja"), "会社")
+    XCTAssertEqual(loaded.deckItem.localizedReading(languageCode: "ja-JP"), "フェサ")
     XCTAssertEqual(loaded.missCount, 2)
     XCTAssertEqual(loaded.consecutivePerfect, 1)
   }
