@@ -9,14 +9,12 @@ import XCTest
 /// field focused, and deliver no stale `onTextChange` event to the judge.
 @MainActor
 final class OSIMEInputResetTests: XCTestCase {
-  private final class RestartProbeTextField: UITextField {
-    var allowsBecomeFirstResponder = true
+  private final class ResponderProbeTextField: UITextField {
     private(set) var becomeCallCount = 0
     private(set) var resignCallCount = 0
 
     override func becomeFirstResponder() -> Bool {
       becomeCallCount += 1
-      guard allowsBecomeFirstResponder else { return false }
       return super.becomeFirstResponder()
     }
 
@@ -199,7 +197,7 @@ final class OSIMEInputResetTests: XCTestCase {
     XCTAssertNil(model.receivedChanges[0].marked)
   }
 
-  func testFailedResponderRestartRequestsFocusRevisionRecovery() {
+  func testResetNeverCallsResignFirstResponder() {
     var recoveryCount = 0
     let parent = IMETextField(
       text: .constant(""),
@@ -214,19 +212,23 @@ final class OSIMEInputResetTests: XCTestCase {
       onTextChange: { _, _ in }
     )
     let coordinator = IMETextField.Coordinator(parent: parent)
-    let field = RestartProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
+    let field = ResponderProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
     window.addSubview(field)
     XCTAssertTrue(field.becomeFirstResponder())
     XCTAssertTrue(field.isFirstResponder)
 
-    field.allowsBecomeFirstResponder = false
-    // Other tests cover the DispatchQueue boundary. Invoke its body directly
-    // here so no unrelated hosted responder can race this fallback assertion.
+    field.setMarkedText("좋", selectedRange: NSRange(location: 1, length: 0))
+    let becomeCalls = field.becomeCallCount
+    let resignCalls = field.resignCallCount
+
     coordinator.performSessionReset(in: field, replacingWith: "")
 
-    XCTAssertEqual(recoveryCount, 1)
-    XCTAssertFalse(field.isFirstResponder)
-    XCTAssertGreaterThanOrEqual(field.resignCallCount, 1)
+    XCTAssertEqual(field.text, "")
+    XCTAssertNil(field.markedTextRange)
+    XCTAssertTrue(field.isFirstResponder)
+    XCTAssertEqual(field.resignCallCount, resignCalls)
+    XCTAssertEqual(field.becomeCallCount, becomeCalls)
+    XCTAssertEqual(recoveryCount, 0)
   }
 
   func testSuspendedFocusResetDoesNotCycleResponderSession() {
@@ -243,7 +245,7 @@ final class OSIMEInputResetTests: XCTestCase {
       onTextChange: { _, _ in }
     )
     let coordinator = IMETextField.Coordinator(parent: activeParent)
-    let field = RestartProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
+    let field = ResponderProbeTextField(frame: CGRect(x: 0, y: 0, width: 280, height: 44))
     window.addSubview(field)
     XCTAssertTrue(field.becomeFirstResponder())
     XCTAssertTrue(field.isFirstResponder)
