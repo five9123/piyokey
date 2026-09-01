@@ -714,57 +714,31 @@ struct IMETextField: UIViewRepresentable {
       in textField: UITextField,
       replacingWith replacementText: String
     ) {
-      let shouldRestartSession = textField.isFirstResponder && !parent.isFocusSuspended
-
       isApplyingReset = true
       defer {
         isApplyingReset = false
         hasPendingReset = false
       }
 
-      if shouldRestartSession {
-        textField.resignFirstResponder()
-      }
+      // Keep the responder session alive while discarding UIKit's marked
+      // document. Cycling first responder makes the system keyboard visibly
+      // disappear and reappear at every target transition. The delegate
+      // bracket tells the active input method about the programmatic rewrite;
+      // stale snapshots published afterward are still quarantined by
+      // `isAwaitingPostResetInput` below.
+      let inputDelegate = textField.inputDelegate
+      inputDelegate?.selectionWillChange(textField)
+      inputDelegate?.textWillChange(textField)
       if let markedRange = textField.markedTextRange {
         textField.replace(markedRange, withText: "")
       }
       textField.unmarkText()
 
-      let inputDelegate = textField.inputDelegate
-      inputDelegate?.selectionWillChange(textField)
-      inputDelegate?.textWillChange(textField)
       textField.text = replacementText
       parent.text = replacementText
       moveCursorToEnd(of: textField)
       inputDelegate?.textDidChange(textField)
       inputDelegate?.selectionDidChange(textField)
-
-      if shouldRestartSession, isMounted, textField.window != nil {
-        let restartSucceeded = textField.becomeFirstResponder()
-        moveCursorToEnd(of: textField)
-
-        if !restartSucceeded {
-          // We are already on the deferred reset turn, outside the keyboard
-          // callback. Advance the panel's focus revision immediately so its
-          // normal async focus path can retry on the next turn.
-          parent.onFocusRecovery()
-          return
-        }
-
-        let generation = resetGeneration
-        DispatchQueue.main.async { [weak self, weak textField] in
-          guard let self, let textField,
-            self.isMounted,
-            self.resetGeneration == generation,
-            !self.parent.isFocusSuspended,
-            textField.window != nil,
-            !textField.isFirstResponder
-          else { return }
-          // The panel advances focusRevision here so SwiftUI's existing focus
-          // path retries a failed responder restart.
-          self.parent.onFocusRecovery()
-        }
-      }
     }
 
     @objc func textDidChange(_ textField: UITextField) {
