@@ -34,16 +34,17 @@ iOS/iPadOS만 현재 제품 개발·출시 범위다. `android/`는 과거 포�
 GitHub Actions는 저장소 수준에서 비활성 상태다. 모든 PR은 다음 기본 수동
 fail-closed gate를 통과한 뒤에만 squash merge한다.
 
-1. 현재 PR head와 정확히 일치하는 Claude 리뷰가 `review:passed`여야 한다. 리뷰 뒤
-   head가 바뀌면 이전 결과를 재사용하지 않고 새 head를 다시 검토한다.
-2. 변경 영향에 맞춘 focused 로컬 검증을 clean commit에서 실행하고, 실제 명령·결과·
-   검증 SHA·미실행 gate를 `release/evidence/<검증 SHA>.json`과 PR 본문에 연결한다.
-3. `git fetch --prune origin` 뒤 최신 `origin/main`을 작업 branch에 병합하고 그
-   merged tree에서 영향 검증을 확인한다. `origin/main`이 다시 전진하면 병합·검증·
-   리뷰를 새 head 기준으로 반복한다.
-4. 알려진 실패, 설명 없는 미실행 검증, 해결되지 않은 review finding이 하나라도
-   있으면 병합하지 않는다. maintainer가 위 조건을 확인해 PR에 수동 승인을 기록한
-   뒤에만 병합한다.
+1. `git fetch --prune origin` 뒤 최신 `origin/main`을 작업 branch에 병합한다.
+2. 변경 영향에 맞춘 focused 로컬 검증을 그 merged tree의 clean implementation
+   commit에서 실행하고, 실제 명령·결과·검증 SHA·미실행 gate를
+   `release/evidence/<검증 SHA>.json`과 PR 본문에 연결한다.
+3. merge와 evidence commit까지 포함한 현재 PR head를 Claude가 검토해
+   `review:passed`를 기록해야 한다. reviewer는 evidence의 검증 SHA가 head의
+   ancestor인지 확인하며, 리뷰 뒤 head가 바뀌면 새 head를 다시 검토한다.
+4. 병합 직전 `origin/main`이 전진하지 않았는지 다시 확인한다. 전진했다면 1단계부터
+   반복한다. 알려진 실패, 설명 없는 미실행 검증, 해결되지 않은 review finding이
+   하나라도 있으면 병합하지 않는다. maintainer가 위 조건을 확인해 PR에 수동 승인을
+   기록한 뒤에만 병합한다.
 
 과거 PR의 승인이나 evidence는 재사용하지 않는다. 로컬 검증·리뷰·수동 병합 승인은
 실기기, 계정, 콘텐츠 권리, IAP, 스토어, 외부 서비스와 release signing gate를
