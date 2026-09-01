@@ -411,6 +411,26 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(selection.evaluation.acceptedSequence, Array("ㄴㅓ"))
   }
 
+  func testOSIMECandidateJudgeKeepsReachableCheonjiinCommittedVowelViable() throws {
+    for committed in ["ㄷㆍ", "되"] {
+      let selection = try XCTUnwrap(
+        OSIMECandidateTextJudge.evaluate(
+          targets: ["뒤", "돼지"],
+          preferredTarget: "뒤",
+          committedText: committed
+        )
+      )
+
+      XCTAssertEqual(selection.target, "돼지", committed)
+      XCTAssertEqual(selection.evaluation.status, .composingMismatch, committed)
+      XCTAssertEqual(
+        selection.evaluation.acceptedSequence,
+        committed == "ㄷㆍ" ? Array("ㄷ") : Array("ㄷㅗ"),
+        committed
+      )
+    }
+  }
+
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
     let origin = Date(timeIntervalSince1970: 300)
     let model = FlowGameViewModel(

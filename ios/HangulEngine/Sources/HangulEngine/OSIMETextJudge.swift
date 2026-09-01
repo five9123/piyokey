@@ -63,6 +63,15 @@ public enum OSIMETextJudge {
           acceptedSequence: expected
         )
       }
+      if Korean10KeyRecipe.committedDocumentEndsInReachableRawVowelPrefix(
+        target: target,
+        committedText: committedText
+      ) {
+        return OSIMETextEvaluation(
+          status: .composingMismatch,
+          acceptedSequence: validPrefix
+        )
+      }
       let mismatch = mismatchIndex(candidate: validPrefix, expected: expected) ?? validPrefix.count
       return OSIMETextEvaluation(
         status: .confirmedMismatch(expectedIndex: mismatch),
@@ -106,9 +115,20 @@ public enum OSIMETextJudge {
       )
     }
 
+    let acceptedPrefix = Array(expected.prefix(committedMismatch))
+    if Korean10KeyRecipe.committedDocumentEndsInReachableIntermediate(
+      target: target,
+      committedText: committedText
+    ) {
+      return OSIMETextEvaluation(
+        status: .composingMismatch,
+        acceptedSequence: acceptedPrefix
+      )
+    }
+
     return OSIMETextEvaluation(
       status: .confirmedMismatch(expectedIndex: committedMismatch),
-      acceptedSequence: Array(expected.prefix(committedMismatch))
+      acceptedSequence: acceptedPrefix
     )
   }
 

@@ -583,6 +583,36 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(model.feedback, .incorrect(expected: "ㄱ"))
   }
 
+  func testOSIMEReachableCheonjiinCommittedVowelsDoNotCountMistakesOrRollback() throws {
+    let model = PracticeSessionViewModel(targets: ["돼지"])
+
+    let snapshots = [
+      (committed: "ㄷㆍ", acceptedText: "ㄷ"),
+      (committed: "도", acceptedText: "도"),
+      (committed: "되", acceptedText: "도"),
+      (committed: "돠", acceptedText: "도"),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: model.target,
+        committedText: snapshot.committed
+      )
+      model.synchronizeOSIME(acceptedSequence: evaluation.acceptedSequence)
+      if case .confirmedMismatch = evaluation.status {
+        XCTFail("reachable snapshot would trigger rollback: \(snapshot.committed)")
+      }
+      XCTAssertEqual(model.enteredText, snapshot.acceptedText, snapshot.committed)
+      XCTAssertEqual(model.mistakeCount, 0, snapshot.committed)
+    }
+
+    let completed = try OSIMETextJudge.evaluate(target: "돼지", committedText: "돼지")
+    model.synchronizeOSIME(acceptedSequence: completed.acceptedSequence)
+    XCTAssertTrue(model.isComplete)
+    XCTAssertEqual(model.enteredText, "돼지")
+    XCTAssertEqual(model.mistakeCount, 0)
+  }
+
   func testKoreanKeyboardAvailabilityMatchesOnlyKoreanLanguageModes() {
     XCTAssertTrue(
       KoreanKeyboardAvailability.containsKorean(languages: ["ja-JP", "ko-KR", "en-US"])

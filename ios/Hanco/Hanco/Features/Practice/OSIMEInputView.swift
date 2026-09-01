@@ -1,4 +1,5 @@
 import HangulEngine
+import os
 import SwiftUI
 import UIKit
 
@@ -560,6 +561,154 @@ private func moveCursorToEnd(of textField: UITextField) {
   )
 }
 
+#if DEBUG
+  enum TYP83IMEProbeLaunch {
+    static let environmentKey = "TYP83_IME_PROBE"
+
+    static var isEnabled: Bool {
+      shouldShow(environment: ProcessInfo.processInfo.environment)
+    }
+
+    static func shouldShow(environment: [String: String]) -> Bool {
+      environment[environmentKey] == "1"
+    }
+  }
+
+  struct TYP83IMEProbeSequence: Equatable {
+    static let targets = ["돼", "과", "웨", "의"]
+
+    private(set) var targetIndex = 0
+
+    var currentTarget: String? {
+      guard Self.targets.indices.contains(targetIndex) else { return nil }
+      return Self.targets[targetIndex]
+    }
+
+    var isComplete: Bool {
+      currentTarget == nil
+    }
+
+    mutating func advance(ifMatching text: String) -> Bool {
+      guard text == currentTarget else { return false }
+      targetIndex += 1
+      return true
+    }
+
+    mutating func restart() {
+      targetIndex = 0
+    }
+  }
+
+  struct TYP83IMEProbeView: View {
+    @State private var sequence = TYP83IMEProbeSequence()
+    @State private var acceptedText = ""
+    @State private var resetRevision = 0
+
+    var body: some View {
+      ZStack {
+        AppPalette.backgroundTop.ignoresSafeArea()
+
+        VStack(spacing: 20) {
+          Text(verbatim: "TYP-83 · IMETextField row 13")
+            .font(.headline.monospaced())
+            .foregroundStyle(AppPalette.ink)
+
+          if let target = sequence.currentTarget {
+            Text(verbatim: "Target \(sequence.targetIndex + 1)/\(TYP83IMEProbeSequence.targets.count)")
+              .font(.subheadline.monospaced())
+              .foregroundStyle(AppPalette.mutedInk)
+
+            Text(verbatim: target)
+              .font(.system(size: 72, weight: .bold, design: .rounded))
+              .foregroundStyle(AppPalette.accent)
+              .accessibilityIdentifier("typ83.ime_probe.target")
+
+            Text(verbatim: "Use the iOS Korean 10-key keyboard")
+              .font(.callout)
+              .foregroundStyle(AppPalette.mutedInk)
+
+            OSIMEInputPanel(
+              target: target,
+              acceptedText: acceptedText,
+              resetRevision: resetRevision,
+              onAcceptedSequence: accept,
+              onConfirmedMismatch: {}
+            )
+            .frame(maxWidth: 520)
+          } else {
+            Image(systemName: "checkmark.circle.fill")
+              .font(.system(size: 64))
+              .foregroundStyle(AppPalette.secondary)
+            Text(verbatim: "Capture complete")
+              .font(.title2.bold())
+              .foregroundStyle(AppPalette.ink)
+            Button("Restart", action: restart)
+              .buttonStyle(.borderedProminent)
+          }
+        }
+        .padding(24)
+      }
+      .accessibilityIdentifier("typ83.ime_probe.screen")
+    }
+
+    private func accept(_ acceptedSequence: [Character]) {
+      let composed = HangulComposer.compose(acceptedSequence).text
+      acceptedText = composed
+      guard sequence.advance(ifMatching: composed) else { return }
+
+      DispatchQueue.main.async {
+        acceptedText = ""
+        resetRevision &+= 1
+      }
+    }
+
+    private func restart() {
+      sequence.restart()
+      acceptedText = ""
+      resetRevision &+= 1
+    }
+  }
+
+  /// Opt-in physical-device probe for TYP-83 AC 1.
+  ///
+  /// Set the `TYP83_IME_PROBE=1` launch environment variable in a Debug run,
+  /// then copy the `TYP-83 row 13` log lines for the iPhone and iPad runs. The
+  /// format matches the existing TYP-73 row-13 committed/marked record.
+  enum IMETextFieldRow13Probe {
+    static let environmentKey = TYP83IMEProbeLaunch.environmentKey
+    private static let logger = Logger(
+      subsystem: Bundle.main.bundleIdentifier ?? "app.piyokey.Piyokey",
+      category: "TYP-83 IMETextField row 13"
+    )
+
+    static var isEnabled: Bool {
+      ProcessInfo.processInfo.environment[environmentKey] == "1"
+    }
+
+    static func header(device: UIDevice = .current, target: String) -> String {
+      "Device: \(device.name) [\(device.model)]\n"
+        + "OS: \(device.systemName) \(device.systemVersion)\n"
+        + "Mode: IMETextField\n"
+        + "Target: \(target)"
+    }
+
+    static func snapshot(step: Int, committed: String, marked: String?) -> String {
+      "\(step) committed=\(render(committed)) marked=\(render(marked))"
+    }
+
+    static func record(_ line: String) {
+      logger.notice("TYP-83 row 13\n\(line, privacy: .public)")
+    }
+
+    private static func render(_ text: String?) -> String {
+      guard let text, !text.isEmpty else { return "∅" }
+      let scalars = text.unicodeScalars.map { String(format: "U+%04X", $0.value) }
+        .joined(separator: " ")
+      return "\(scalars) \"\(text)\""
+    }
+  }
+#endif
+
 struct IMETextField: UIViewRepresentable {
   @Binding var text: String
   /// Document to restore when `resetRevision` advances.
@@ -665,6 +814,11 @@ struct IMETextField: UIViewRepresentable {
     private var observedDocuments: Set<String> = []
     private var staleDocuments: Set<String> = []
     private var isAwaitingPostResetInput = false
+    #if DEBUG
+      private var row13ProbeRevision = -1
+      private var row13ProbeTarget = ""
+      private var row13ProbeStep = 0
+    #endif
     /// True while a deferred reset is rewriting the document.
     ///
     /// The rewrite goes through `UITextInput`, so UIKit echoes it back as
@@ -797,6 +951,7 @@ struct IMETextField: UIViewRepresentable {
       parent.text = fullText
 
       guard let markedRange = textField.markedTextRange else {
+        recordRow13Probe(committed: fullText, marked: nil)
         parent.onTextChange(fullText, nil)
         return
       }
@@ -805,13 +960,39 @@ struct IMETextField: UIViewRepresentable {
       let length = textField.offset(from: markedRange.start, to: markedRange.end)
       let utf16 = fullText as NSString
       guard start >= 0, length >= 0, start + length <= utf16.length else {
+        recordRow13Probe(committed: fullText, marked: nil)
         parent.onTextChange(fullText, nil)
         return
       }
       let before = utf16.substring(to: start)
       let marked = utf16.substring(with: NSRange(location: start, length: length))
       let after = utf16.substring(from: start + length)
-      parent.onTextChange(before + after, marked)
+      let committed = before + after
+      recordRow13Probe(committed: committed, marked: marked)
+      parent.onTextChange(committed, marked)
+    }
+
+    private func recordRow13Probe(committed: String, marked: String?) {
+      #if DEBUG
+        guard IMETextFieldRow13Probe.isEnabled else { return }
+        let target = parent.targets.joined(separator: " | ")
+        if row13ProbeRevision != parent.resetRevision || row13ProbeTarget != target {
+          row13ProbeRevision = parent.resetRevision
+          row13ProbeTarget = target
+          row13ProbeStep = 0
+          IMETextFieldRow13Probe.record(
+            IMETextFieldRow13Probe.header(target: target)
+          )
+        }
+        row13ProbeStep += 1
+        IMETextFieldRow13Probe.record(
+          IMETextFieldRow13Probe.snapshot(
+            step: row13ProbeStep,
+            committed: committed,
+            marked: marked
+          )
+        )
+      #endif
     }
 
     private func containsPriorTargetMaterial(in text: String) -> Bool {
