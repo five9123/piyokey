@@ -2081,7 +2081,7 @@ final class HancoUITests: XCTestCase {
       evaluatedWith: matchingChosenCard
     )
     waitForExpectations(timeout: 3)
-    XCTAssertNotEqual(element("game.score.value").label, "0")
+    waitForLabelDifferentFrom("0", on: element("game.score.value"), timeout: 3)
     attachScreenshot(named: "acid-rain-os-ime-free-target-ja")
   }
 
