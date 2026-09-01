@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-84 게임 OS IME 입력 chrome | In Review / PR #153 / `codex/84-game-os-ime-chrome` | focused iPhone·iPad 회귀와 source-SHA evidence 뒤 Claude review. TestFlight build 12의 iPhone·iPad 실기기 확인 전 Done 금지 |
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
 | TYP-77 OS 천지인 ASCII guard 오판 | In Progress / PR #147 / `codex/77-cheonjiin-ascii-guard` | PR은 marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening으로 유지. iPhone row 13 코드포인트·committed/marked 관측, Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
