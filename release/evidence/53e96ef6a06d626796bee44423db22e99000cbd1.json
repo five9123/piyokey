@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "53e96ef6a06d626796bee44423db22e99000cbd1",
+  "verified_tree": "75be6c63dcc3b9b933b6806c3e0c4e6dda2f9e55",
+  "branch": "codex/78-store-media",
+  "scope": "TYP-78 release capture: Japanese iPad 13-inch screenshots (10) and Japanese iPhone App Previews (3)",
+  "result": "pass",
+  "recorded_at": "2026-09-01T04:09:54.641220+00:00",
+  "checks": [
+    {
+      "name": "python-tools-full",
+      "status": "pass",
+      "command": "/Users/jungminoh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/Users/jungminoh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict-workspace-doctor",
+      "status": "pass",
+      "command": "/Users/jungminoh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 tools/workspace_doctor.py --strict",
+      "note": "Issue 78 ownership and clean worktree verified"
+    },
+    {
+      "name": "ipad-ja-capture",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -xctestrun <TYP-78 DerivedData xctestrun> -destination platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416 -only-testing:HancoUITests/HancoUITests/testAppStoreScreenshotGlobalJA",
+      "note": "1 test, 0 failures; 189.593 seconds; 10 attachments"
+    },
+    {
+      "name": "iphone-ja-preview-capture",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -xctestrun <TYP-78 DerivedData xctestrun> -destination platform=iOS Simulator,id=00608B21-6BB5-4F22-BDD2-9A4F67DA4C59 -only-testing:HancoUITests/HancoUITests/testAppStoreScreenshotGlobalJA",
+      "note": "1 test, 0 failures; 180.993 seconds; raw video and six markers"
+    },
+    {
+      "name": "external-delivery-integrity",
+      "status": "pass",
+      "command": "verify each manifest sha256 and exact file counts",
+      "note": "10 PNG + 3 MP4; manifest sha256 904b3d8182522523a0702552f7a31172af37b081fb7f281aa515366f873287fa"
+    }
+  ],
+  "manual_gates": [
+    "External delivery contact sheets visually reviewed; all 13 files and manifest remained immutable during final testing.",
+    "Existing build 11 Xcode distribution and SecurityAgent keychain waiting session remained untouched.",
+    "No App Store Connect upload, review submission, approval, cancellation, replacement, or release was performed."
+  ]
+}
