@@ -1,0 +1,60 @@
+{
+  "issue": "TYP-78",
+  "status": "local_capture_verified_not_uploaded",
+  "generated_at": "2026-09-01T13:03:18+09:00",
+  "source_commit": "e6d714d5feac5151935c6e396e440af468d8dbdc",
+  "marketing_version": "1.1",
+  "build_number": "11",
+  "bundle_id": "app.piyokey.Piyokey",
+  "capture_executable_sha256": "e568b079819de91ad24d3110e8cb635e4aa95628cfb2bc5baa4db6a45ceef854",
+  "delivery": {
+    "path": "/Users/jungminoh/Documents/hanco/outputs/typ-78-store-media-20260901/delivery",
+    "manifest": "manifest.json",
+    "manifest_sha256": "904b3d8182522523a0702552f7a31172af37b081fb7f281aa515366f873287fa"
+  },
+  "sets": [
+    {
+      "type": "screenshots",
+      "locale": "ja",
+      "device_class": "iPad 13-inch",
+      "count": 10,
+      "pixel_size": [2752, 2064],
+      "format": "RGB PNG",
+      "orientation": "landscape"
+    },
+    {
+      "type": "app_previews",
+      "locale": "ja",
+      "device_class": "iPhone 6.9-inch",
+      "count": 3,
+      "pixel_size": [886, 1920],
+      "format": "H.264 30fps, stereo AAC 48kHz",
+      "duration_seconds": [17.067, 16.367, 15.667]
+    }
+  ],
+  "capture_tests": {
+    "selector": "HancoUITests/HancoUITests/testAppStoreScreenshotGlobalJA",
+    "ipad_13_inch": {"tests": 1, "failures": 0, "duration_seconds": 189.593},
+    "iphone_6_9_inch": {"tests": 1, "failures": 0, "duration_seconds": 180.993}
+  },
+  "verification": {
+    "file_counts": "pass",
+    "checksums": "pass",
+    "screenshot_dimensions_rgb_decode": "pass",
+    "preview_duration_dimensions_codecs_full_decode_monotonic_pts": "pass",
+    "contact_sheet_visual_review": "pass"
+  },
+  "external_actions": {
+    "app_store_connect_uploaded": false,
+    "submitted_for_review": false,
+    "released": false,
+    "existing_build_11_xcode_securityagent_session": "untouched"
+  },
+  "open_gates": [
+    "native Japanese review",
+    "App Store Connect upload and save",
+    "App Store Connect re-query with zero missing slots",
+    "App Review submission",
+    "public release"
+  ]
+}

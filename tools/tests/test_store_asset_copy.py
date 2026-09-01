@@ -1,4 +1,6 @@
+import inspect
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -18,6 +20,31 @@ class StoreAssetCopyTests(unittest.TestCase):
                 select_attachment(entries, "flow", "en")
         with self.assertRaises(ValueError):
             select_attachment([good], "flow", "ja")
+
+    def test_ipad_locale_selection_defaults_to_all_and_explicitly_selects_one(self):
+        from tools.build_ipad_store_assets import build, select_locales
+        self.assertIs(select_locales(self.data["locales"]), self.data["locales"])
+        self.assertEqual([x["locale"] for x in select_locales(self.data["locales"], "ja")], ["ja"])
+        self.assertEqual(inspect.signature(build).parameters["issue"].default, 78)
+
+    def test_ipad_locale_selection_rejects_missing_or_duplicate(self):
+        from tools.build_ipad_store_assets import select_locales
+        with self.assertRaises(ValueError):
+            select_locales(self.data["locales"], "missing")
+        with self.assertRaises(ValueError):
+            select_locales([{"locale": "ja"}, {"locale": "ja"}], "ja")
+
+    def test_capture_uses_one_completed_xctestrun(self):
+        from tools.capture_global_store_assets import completed_test_run
+        with tempfile.TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build/Products"
+            products.mkdir(parents=True)
+            run = products / "Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun"
+            run.touch()
+            self.assertEqual(completed_test_run(Path(temporary)), run)
+            (products / "Hanco_second.xctestrun").touch()
+            with self.assertRaises(ValueError):
+                completed_test_run(Path(temporary))
 
     def test_ten_distinct_store_locales(self):
         self.assertEqual({x["locale"] for x in self.data["locales"]},
