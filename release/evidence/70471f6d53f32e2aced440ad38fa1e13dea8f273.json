@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "verified_commit": "70471f6d53f32e2aced440ad38fa1e13dea8f273",
+  "verified_tree": "e40adc685f1921352baa92a14faa9a1f1600694c",
+  "branch": "codex/84-game-os-ime-chrome",
+  "scope": "TYP-84 iOS/iPadOS game OS IME hidden chrome focused verification",
+  "result": "pass",
+  "recorded_at": "2026-09-01T18:14:33.956163+00:00",
+  "checks": [
+    {
+      "name": "Focused model behavior (iPhone 17 / iOS 26.5)",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/FlowGameViewModelTests/testAcidRainOSIMECompletesAnyMatchingVisibleCard -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgePrefersAnyCompletedVisibleWord -only-testing:HancoTests/ChoseongQuizViewModelTests/testTypingOSIMESynchronizesAcceptedPrefixAndCompletion",
+      "note": ""
+    },
+    {
+      "name": "Focused UI behavior (iPhone 17 / iOS 26.5)",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEHideChromeAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEHideChromeAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testGameOSIMEEnglishInputWarningRemainsVisible -only-testing:HancoUITests/HancoUITests/testGameOSIMEUnavailableBannerRemainsVisible -only-testing:HancoUITests/HancoUITests/testAcidRainOSIMECanClearAnyVisibleFallingWord",
+      "note": ""
+    },
+    {
+      "name": "Focused layout/recovery evidence (iPad Pro 13-inch (M5) / iOS 26.5)",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEHideChromeAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEHideChromeAndKeepRecovery",
+      "note": ""
+    },
+    {
+      "name": "Repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Full HancoTests/HancoUITests regression not run; dispatcher focused-test policy controls TYP-84.",
+    "GitHub Actions are disabled and were not run.",
+    "TestFlight build 12 physical iPhone and iPad confirmation remains open.",
+    "Device, account, content-rights, IAP, App Store, and release-signing gates remain open."
+  ]
+}

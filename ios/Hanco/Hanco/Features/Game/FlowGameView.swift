@@ -465,7 +465,9 @@ struct FlowGameView: View {
           },
           onAcceptedSequence: viewModel.synchronizeOSIME,
           onAcceptedCandidateSequence: synchronizeAcidRainOSIME,
-          onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake
+          onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
+          showsChrome: false,
+          showsFocusRecovery: true
         )
       } else {
         if builtInKeyboardLayout == .korean10Key {
