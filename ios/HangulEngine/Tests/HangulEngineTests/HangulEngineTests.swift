@@ -291,6 +291,75 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(arbitraryJamo.acceptedSequence, Array("ㄷ"))
   }
 
+  func testOSIMEStandaloneDotFirstVowelPrefixesRemainCompositionInProgress() throws {
+    let snapshots = [
+      (target: "ㅓ", committed: "ㆍ"),
+      (target: "ㅗ", committed: "ㆍ"),
+      (target: "ㅔ", committed: "ㆍ"),
+      (target: "ㅔ", committed: "ㆍㅣ"),
+      (target: "ㅕ", committed: "ㆍ"),
+      (target: "ㅕ", committed: "ㆍㆍ"),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        [],
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+
+    let wrongStroke = try OSIMETextJudge.evaluate(target: "ㅗ", committedText: "ㆍㅣ")
+    XCTAssertEqual(wrongStroke.status, .confirmedMismatch(expectedIndex: 0))
+    XCTAssertEqual(wrongStroke.acceptedSequence, [])
+  }
+
+  func testOSIMECheonjiinConsonantCyclesRemainCompositionInProgress() throws {
+    let snapshots: [(target: String, committed: String, accepted: [Character])] = [
+      ("ㄹ", "ㄴ", []),
+      ("하", "ㅅ", []),
+      ("대형", "대ㅅ", Array("ㄷㅐ")),
+      ("대형", "댓", Array("ㄷㅐ")),
+      ("달", "단", Array("ㄷㅏ")),
+      ("밤", "방", Array("ㅂㅏ")),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.accepted,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+
+    let unrelatedCycle = try OSIMETextJudge.evaluate(target: "하", committedText: "ㅈ")
+    XCTAssertEqual(unrelatedCycle.status, .confirmedMismatch(expectedIndex: 0))
+
+    let completedTypo = try OSIMETextJudge.evaluate(target: "대형", committedText: "대성")
+    XCTAssertEqual(completedTypo.status, .confirmedMismatch(expectedIndex: 2))
+
+    let wrongFinal = try OSIMETextJudge.evaluate(target: "달", committedText: "담")
+    XCTAssertEqual(wrongFinal.status, .confirmedMismatch(expectedIndex: 2))
+  }
+
   func testOSIMECheonjiinRepresentativeVowelsCompleteWithoutWeakeningRealTypos() throws {
     let representativeTargets = [
       "과자", "돼지", "회사", "원", "웨딩", "귀", "의사", "대형", "세계", "얘", "예",
@@ -328,6 +397,10 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateVowel("ㅏ", toward: "ㅐ"))
     XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateVowel("ㅟ", toward: "ㅙ"))
     XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateVowel("ㅙ", toward: "ㅙ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateConsonant("ㄴ", toward: "ㄹ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅅ", toward: "ㅎ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅈ", toward: "ㅎ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅎ", toward: "ㅎ"))
   }
 
   func testOSIMEASCIIInputDoesNotAdvanceOrBecomeAMistake() throws {

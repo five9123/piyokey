@@ -431,6 +431,22 @@ final class FlowGameViewModelTests: XCTestCase {
     }
   }
 
+  func testOSIMECandidateJudgeKeepsReachableCheonjiinConsonantCycleViable() throws {
+    for committed in ["대ㅅ", "댓"] {
+      let selection = try XCTUnwrap(
+        OSIMECandidateTextJudge.evaluate(
+          targets: ["대자", "대형"],
+          preferredTarget: "대자",
+          committedText: committed
+        )
+      )
+
+      XCTAssertEqual(selection.target, "대형", committed)
+      XCTAssertEqual(selection.evaluation.status, .composingMismatch, committed)
+      XCTAssertEqual(selection.evaluation.acceptedSequence, Array("ㄷㅐ"), committed)
+    }
+  }
+
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
     let origin = Date(timeIntervalSince1970: 300)
     let model = FlowGameViewModel(

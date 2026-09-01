@@ -119,6 +119,9 @@ public enum OSIMETextJudge {
     if Korean10KeyRecipe.committedDocumentEndsInReachableIntermediate(
       target: target,
       committedText: committedText
+    ) || Korean10KeyRecipe.committedDocumentEndsInReachableConsonantCycle(
+      target: target,
+      committedText: committedText
     ) {
       return OSIMETextEvaluation(
         status: .composingMismatch,
