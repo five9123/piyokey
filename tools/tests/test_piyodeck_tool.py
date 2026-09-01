@@ -196,7 +196,7 @@ class PiyoDeckToolTests(unittest.TestCase):
                 canonical = piyodeck_tool.canonical_language_tag(value)
                 self.assertTrue(canonical is None or canonical != value)
 
-    def test_display_fallback_exact_base_default_english_then_legacy_base(self):
+    def test_display_fallback_keeps_legacy_base_japanese_only(self):
         deck = json.loads(self.multilingual_fixture.read_text(encoding="utf-8"))
         deck["localizations"]["fr"] = {
             "name": "Nom français",
@@ -214,12 +214,30 @@ class PiyoDeckToolTests(unittest.TestCase):
         self.assertEqual("Nom français", piyodeck_tool.localized_deck_value(deck, "fr-CA", "name"))
         self.assertEqual("fr-reading", piyodeck_tool.localized_item_value(deck, item, "fr-CA", "reading"))
         self.assertEqual("كلمات كورية", piyodeck_tool.localized_deck_value(deck, "de-DE", "name"))
+        for language in ("ja", "ja-JP"):
+            self.assertEqual(deck["name"], piyodeck_tool.localized_deck_value(deck, language, "name"))
+            self.assertEqual(
+                deck["author"]["nickname"],
+                piyodeck_tool.localized_deck_value(deck, language, "author_nickname"),
+            )
+            self.assertEqual(deck["tags"], piyodeck_tool.localized_deck_value(deck, language, "tags"))
+            self.assertEqual(
+                item["meaning_ja"],
+                piyodeck_tool.localized_item_value(deck, item, language, "meaning"),
+            )
+            self.assertEqual(
+                item["reading_ja"],
+                piyodeck_tool.localized_item_value(deck, item, language, "reading"),
+            )
 
         del deck["default_locale"]
         deck["localizations"] = {}
         item["localizations"] = {}
-        self.assertEqual(deck["name"], piyodeck_tool.localized_deck_value(deck, "de-DE", "name"))
-        self.assertEqual(item["meaning_ja"], piyodeck_tool.localized_item_value(deck, item, "de-DE", "meaning"))
+        for language in ("en", "es-MX", "de-AT", "fr-CA", "zh-Hant", "ko"):
+            self.assertIsNone(piyodeck_tool.localized_deck_value(deck, language, "name"))
+            self.assertIsNone(
+                piyodeck_tool.localized_item_value(deck, item, language, "meaning")
+            )
 
     def test_inspect_and_validate_commands_report_package_metadata(self):
         with tempfile.TemporaryDirectory() as directory:

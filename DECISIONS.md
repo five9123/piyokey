@@ -12,6 +12,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 
 ---
 
+## 2026-09-02 일본어 콘텐츠의 legacy base 우선 fallback 복구
+- 결정: 덱 항목과 덱·카탈로그 메타데이터의 일본어 요청은 exact/base `ja` localization 뒤에 기존 `meaning_ja`·`reading_ja`·base metadata를 사용하고, 영어 universal fallback보다 먼저 종료한다. 일본어가 아닌 요청은 exact/base → `default_locale` → 영어 순서를 유지하되 일본어 legacy base로는 fallback하지 않는다.
+- 근거: 공식 덱은 일본어를 기존 base 필드에, en/es/de/fr를 `localizations`에 보존하므로 공통 영어 후보를 먼저 조회하면 일본어 UI에 영어 뜻·로마자가 표시된다. 반대로 비일본어 요청에 legacy base를 최종 대체값으로 쓰면 번역 누락 시 일본어가 노출되어 글로벌 UI 계약을 위반한다.
+- 관련 PRD 섹션: F5, F6, §8.1, §8.2, §8.4
+- 영향 범위: Swift DeckKit `DeckItem`·`Deck`·`CatalogDeck`·catalog preview, Python `.typedeck` reference reader, iOS 앱 콘텐츠 조회 회귀 테스트
+
 ## 2026-07-25 부화 미션을 하나의 연속 결과 흐름으로 구성
 - 결정: 첫 3개 부화 미션은 결과 화면의 재도전 CTA를 제거하고 `다음 미션으로`를 주 CTA로 제공한다. 이 CTA는 미션 맵으로 되돌아가지 않고 동일 네비게이션 흐름 안에서 다음 스테이지를 즉시 재생성한다. 마지막 미션은 동일 자리의 `피요와 함께 시작` CTA로 게이트를 해제한다.
 - 근거: 결과 화면을 유지하면서도 `한번 더`와 미션 맵의 추가 탭을 없애 부화 목표까지의 단일 행동을 명확히 하기 위함이다.

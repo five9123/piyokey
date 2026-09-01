@@ -730,9 +730,7 @@ def _locale_key_issues(localizations: Any, path: str) -> list[str]:
     return issues
 
 
-def locale_lookup_candidates(requested: str, default_locale: str | None) -> list[str]:
-    """Return localization keys in the normative display fallback order."""
-
+def requested_locale_candidates(requested: str) -> list[str]:
     normalized_requested = canonical_language_tag(requested.replace("_", "-"))
     candidates: list[str] = []
     if normalized_requested:
@@ -740,6 +738,18 @@ def locale_lookup_candidates(requested: str, default_locale: str | None) -> list
         base = normalized_requested.split("-", 1)[0]
         if base != normalized_requested:
             candidates.append(base)
+    return candidates
+
+
+def is_japanese_locale(requested: str) -> bool:
+    candidates = requested_locale_candidates(requested)
+    return bool(candidates) and candidates[-1] == "ja"
+
+
+def locale_lookup_candidates(requested: str, default_locale: str | None) -> list[str]:
+    """Return non-Japanese localization keys in the normative fallback order."""
+
+    candidates = requested_locale_candidates(requested)
     if default_locale:
         candidates.append(default_locale)
     candidates.append("en")
@@ -747,14 +757,21 @@ def locale_lookup_candidates(requested: str, default_locale: str | None) -> list
 
 
 def localized_deck_value(deck: dict[str, Any], requested: str, field: str) -> Any:
-    """Resolve localized deck metadata, ending at the legacy Japanese base field."""
+    """Resolve deck metadata without leaking the Japanese base into other locales."""
 
     localizations = deck.get("localizations")
     if isinstance(localizations, dict):
-        for candidate in locale_lookup_candidates(requested, deck.get("default_locale")):
+        candidates = (
+            requested_locale_candidates(requested)
+            if is_japanese_locale(requested)
+            else locale_lookup_candidates(requested, deck.get("default_locale"))
+        )
+        for candidate in candidates:
             localization = localizations.get(candidate)
             if isinstance(localization, dict) and field in localization:
                 return localization[field]
+    if not is_japanese_locale(requested):
+        return None
     if field == "author_nickname":
         author = deck.get("author")
         return author.get("nickname") if isinstance(author, dict) else None
@@ -764,15 +781,20 @@ def localized_deck_value(deck: dict[str, Any], requested: str, field: str) -> An
 def localized_item_value(
     deck: dict[str, Any], item: dict[str, Any], requested: str, field: str
 ) -> Any:
-    """Resolve an item clue, ending at the legacy ``*_ja`` base field."""
+    """Resolve an item clue, using legacy ``*_ja`` only for Japanese requests."""
 
     localizations = item.get("localizations")
     if isinstance(localizations, dict):
-        for candidate in locale_lookup_candidates(requested, deck.get("default_locale")):
+        candidates = (
+            requested_locale_candidates(requested)
+            if is_japanese_locale(requested)
+            else locale_lookup_candidates(requested, deck.get("default_locale"))
+        )
+        for candidate in candidates:
             localization = localizations.get(candidate)
             if isinstance(localization, dict) and field in localization:
                 return localization[field]
-    return item.get(f"{field}_ja")
+    return item.get(f"{field}_ja") if is_japanese_locale(requested) else None
 
 
 def _parse_datetime(value: Any) -> datetime | None:
