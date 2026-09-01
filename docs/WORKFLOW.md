@@ -89,41 +89,67 @@ PR로 병렬화할 수 있습니다.
 
 저장소는 private이며 현재 GitHub 요금제에서는 branch protection과 ruleset API가
 제공되지 않는다. GitHub Pro 도입 또는 공개 전환을 사용자 승인 없이 수행하지
-않는다. 기술적 보호를 사용할 수 있을 때까지 다음 수동 fail-closed gate를 모든
+않는다. GitHub Actions도 저장소 수준에서 비활성 상태이며 기존 workflow 정의는 향후
+재사용을 위해 보존만 한다. Actions check의 부재나 과거 성공은 현재 PR의 통과 신호가
+아니다. 기술적 보호를 사용할 수 있을 때까지 다음 기본 수동 fail-closed gate를 모든
 PR에 적용한다.
 
 1. `main`에 직접 push하거나 force push하지 않는다.
-2. PR에 표시된 check가 pending 또는 in progress인 동안 병합하지 않는다.
-3. 적용되는 모든 check가 성공해야 하며 failure·cancelled·timed out·설명 없는
-   skipped 결과는 병합을 막는다.
-4. 성공 확인 뒤 head commit이 바뀌면 새 결과를 다시 기다린다.
-5. 조건을 확인한 뒤 squash merge한다.
+2. `git fetch --prune origin`으로 최신 기준선을 가져와 `origin/main`을 작업 branch에
+   병합한다.
+3. 담당자는 변경 영향에 맞춘 focused 로컬 검증을 그 merged tree의 clean
+   implementation commit에서 실제로 실행한다. 명령·결과·검증 SHA·미실행 gate를
+   `release/evidence/<검증 SHA>.json`에 기록하고, evidence-only commit과 PR 본문에서
+   검증 대상 SHA를 연결한다. 알려진 실패나 설명 없는 미실행 항목은 병합을 막는다.
+4. Claude 리뷰가 merge와 evidence commit까지 포함한 현재 PR head의 전체 diff를
+   검토해 `review:passed`를 기록해야 한다. reviewer는 evidence의 검증 SHA가 head의
+   ancestor이고 evidence-only commit이 해당 evidence JSON 외 파일을 바꾸지 않았는지
+   확인한다. 리뷰 뒤 commit이 추가되거나 head가 바뀌면 이전 결과는 무효이며 새
+   exact head를 다시 검토한다.
+5. 병합 직전 다시 fetch해 `origin/main`이 전진하지 않았고 head의 ancestor인지
+   확인한다. 전진했다면 2단계부터 반복한다. 해결되지 않은 review finding과 열린
+   source gate가 없음을 maintainer가 확인하고 PR에 수동 fail-closed 승인을 기록한
+   뒤 squash merge한다.
 
-예외는 해당 PR에 기록된 사용자의 명시적 승인이 있을 때만 한 번 적용한다. 과거
-예외를 재사용하지 않고 실기기·스토어·계정·서명 gate를 면제하지 않는다. GitHub
-Pro가 승인되면 이 계약을 required status checks, conversation 해결, force push와
-삭제 금지, PR 전용 변경 규칙으로 기술적으로 강제한다. Release와 store 제출은
-일반 개발 권한과 분리된 별도 책임자가 수행한다.
+외부에서 별도로 실행된 check가 있으면 pending·failure·cancelled·timed out·설명 없는
+skipped 결과를 무시하거나 로컬 evidence로 덮지 않는다. 과거 PR의 승인·리뷰·evidence를
+재사용하지 않으며, 예외는 해당 PR에 기록된 사용자의 명시적 1회 승인으로만 허용한다.
+TYP-77 PR #147의 Actions-OFF 예외 기록은 이 기본 정책 이전의 역사적 승인이고 다른
+PR의 승인이 아니다.
 
-### CI 적용 범위
+리뷰와 소스 검증은 실기기, 계정, 콘텐츠 권리, IAP, 스토어 심사·콘솔, 외부 서비스,
+archive·distribution signing gate를 면제하지 않는다. Release와 store 제출은 일반
+개발 권한과 분리된 별도 책임자가 수행한다. GitHub Pro가 승인되면 이 계약을 required
+status checks, conversation 해결, force push와 삭제 금지, PR 전용 변경 규칙으로
+기술적으로 강제한다.
 
-PR check는 변경 경로에 따라 다음처럼 선택된다. 경로 필터로 표시되지 않은 workflow는
-성공으로 간주하는 check가 아니라 해당 PR에 적용되지 않는 check다.
+### 로컬 검증 적용 범위
 
-| 변경 경로 | 적용 workflow |
+Actions 비활성 기간에는 변경 경로별 workflow 대신 아래 focused 로컬 검증을
+evidence에 기록한다. 표는 최소 범위이며 실제 diff가 소비자 계약을 넓히면 검증도
+넓힌다. 문서 전용 행은 변경 파일 전부가 Markdown일 때만 적용하며, Markdown 파일이
+`release/**`, `ios/**`, `shared/**` 같은 다른 경로 행과 겹치면 더 넓은 해당 행의
+검증을 적용한다.
+
+| 변경 경로 | 최소 focused 로컬 검증 |
 |---|---|
-| `docs/**`, `README.md`, `PROJECT_STATUS.md`, `ROADMAP.md`만 | 없음; 문서 review와 수동 병합 gate |
+| 문서 전용(`**/*.md`) | `git diff --check`, 문서 review와 직접 참조 정책 일관성 |
 | `release/**` | Python tools/content/release contracts |
 | `ios/Hanco/**` | Python contracts + iOS simulator build |
 | `ios/HangulEngine/**` | Python contracts + Swift contracts + iOS simulator build |
 | `android/**` | 없음; Android 포트는 참고용 동결 |
 | `shared/**` | Python + Swift + iOS |
-| `.github/workflows/**` | Python contracts + 수정한 플랫폼 workflow 자체 |
+| `.github/workflows/**` | Python contracts + `git diff --check -- .github/workflows`; 실행 가능한 로컬 workflow validator가 없으면 미실행 gate와 이유를 evidence에 기록하고 Actions를 켜지 않음 |
 
-주 1회 `Scheduled iOS regression`은 iOS unit test를 실행하며
-`workflow_dispatch`로도 시작할 수 있다. 정기 회귀가 실패하거나 완료되지
-않으면 release candidate를 승인하지 않는다. Dependabot PR도 자동 병합하지 않고
-위 경로 범위와 동일한 fail-closed 판정을 적용한다.
+`release/evidence/*.json`을 추가·삭제·교체하되 그 밖의 파일을 바꾸지 않는
+evidence-only commit은 `release/**` 행의 새 검증을 다시 요구하지 않는다. reviewer는
+이 파일 제한을 확인하며 다른 파일이 함께 바뀌면 이 예외를 적용하지 않는다.
+
+비활성 상태에서는 주 1회 `Scheduled iOS regression`과 `workflow_dispatch`도
+실행되지 않는다. release candidate 승인 전 정확한 최신 `origin/main` tree에서 해당
+iOS unit regression을 로컬로 실행해 SHA evidence를 남긴다. Dependabot PR도 자동
+병합하지 않고 위 범위와 동일한 exact-head review·로컬 evidence·merged-tree·수동
+승인 gate를 적용한다.
 
 실기기 설치, TestFlight·Play 배포, archive 또는 distribution bundle 생성 전에는
 배포하는 파일 트리가 원격 기준선과 같은지 fail-closed로 확인합니다.
@@ -136,3 +162,10 @@ python3 tools/workspace_doctor.py --strict --require-origin-main
 이 검사는 commit SHA가 아니라 저장소 전체 파일 tree를 비교하므로, merge commit처럼
 SHA가 달라도 전체 tree가 같은 경우만 허용합니다. 증빙·문서만 추가했더라도
 `origin/main`에 병합되기 전에는 실패하며, 실패한 작업공간에서는 배포하지 않습니다.
+
+## 개정 기록
+
+- 2026-09-01, TYP-79: GitHub Actions 비활성 상태의 한시 예외를 기본
+  exact-head review·focused local evidence·최신 `origin/main` merged-tree 검증·수동
+  fail-closed 승인 정책으로 전환했다. PR #147의 1회 예외 기록은 역사적 근거로만
+  유지하며 실기기·계정·권리·IAP·스토어·서명 gate는 변경하지 않았다.
