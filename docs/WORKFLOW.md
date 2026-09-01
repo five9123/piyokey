@@ -98,14 +98,14 @@ PR에 적용한다.
 2. `git fetch --prune origin`으로 최신 기준선을 가져와 `origin/main`을 작업 branch에
    병합한다.
 3. 담당자는 변경 영향에 맞춘 focused 로컬 검증을 그 merged tree의 clean
-   implementation commit에서
-   실제로 실행한다. 명령·결과·검증 SHA·미실행 gate를
+   implementation commit에서 실제로 실행한다. 명령·결과·검증 SHA·미실행 gate를
    `release/evidence/<검증 SHA>.json`에 기록하고, evidence-only commit과 PR 본문에서
    검증 대상 SHA를 연결한다. 알려진 실패나 설명 없는 미실행 항목은 병합을 막는다.
 4. Claude 리뷰가 merge와 evidence commit까지 포함한 현재 PR head의 전체 diff를
    검토해 `review:passed`를 기록해야 한다. reviewer는 evidence의 검증 SHA가 head의
-   ancestor인지 확인한다. 리뷰 뒤 commit이 추가되거나 head가 바뀌면 이전 결과는
-   무효이며 새 exact head를 다시 검토한다.
+   ancestor이고 evidence-only commit이 해당 evidence JSON 외 파일을 바꾸지 않았는지
+   확인한다. 리뷰 뒤 commit이 추가되거나 head가 바뀌면 이전 결과는 무효이며 새
+   exact head를 다시 검토한다.
 5. 병합 직전 다시 fetch해 `origin/main`이 전진하지 않았고 head의 ancestor인지
    확인한다. 전진했다면 2단계부터 반복한다. 해결되지 않은 review finding과 열린
    source gate가 없음을 maintainer가 확인하고 PR에 수동 fail-closed 승인을 기록한
@@ -131,13 +131,16 @@ evidence에 기록한다. 표는 최소 범위이며 실제 diff가 소비자 �
 
 | 변경 경로 | 최소 focused 로컬 검증 |
 |---|---|
-| 문서 전용(`*.md`, `docs/**`) | `git diff --check`, 문서 review와 직접 참조 정책 일관성 |
+| 문서 전용(`**/*.md`) | `git diff --check`, 문서 review와 직접 참조 정책 일관성 |
 | `release/**` | Python tools/content/release contracts |
 | `ios/Hanco/**` | Python contracts + iOS simulator build |
 | `ios/HangulEngine/**` | Python contracts + Swift contracts + iOS simulator build |
 | `android/**` | 없음; Android 포트는 참고용 동결 |
 | `shared/**` | Python + Swift + iOS |
 | `.github/workflows/**` | Python contracts + `git diff --check -- .github/workflows`; 실행 가능한 로컬 workflow validator가 없으면 미실행 gate와 이유를 evidence에 기록하고 Actions를 켜지 않음 |
+
+`release/evidence/*.json`만 추가하는 evidence-only commit은 `release/**` 행의 새
+검증을 다시 요구하지 않는다. 다른 파일이 함께 바뀌면 이 예외를 적용하지 않는다.
 
 비활성 상태에서는 주 1회 `Scheduled iOS regression`과 `workflow_dispatch`도
 실행되지 않는다. release candidate 승인 전 정확한 최신 `origin/main` tree에서 해당

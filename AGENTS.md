@@ -40,7 +40,8 @@ fail-closed gate를 통과한 뒤에만 squash merge한다.
    `release/evidence/<검증 SHA>.json`과 PR 본문에 연결한다.
 3. merge와 evidence commit까지 포함한 현재 PR head를 Claude가 검토해
    `review:passed`를 기록해야 한다. reviewer는 evidence의 검증 SHA가 head의
-   ancestor인지 확인하며, 리뷰 뒤 head가 바뀌면 새 head를 다시 검토한다.
+   ancestor이고 evidence-only commit이 해당 JSON 외 파일을 바꾸지 않았는지
+   확인한다. 리뷰 뒤 head가 바뀌면 새 head를 다시 검토한다.
 4. 병합 직전 `origin/main`이 전진하지 않았는지 다시 확인한다. 전진했다면 1단계부터
    반복한다. 알려진 실패, 설명 없는 미실행 검증, 해결되지 않은 review finding이
    하나라도 있으면 병합하지 않는다. maintainer가 위 조건을 확인해 PR에 수동 승인을
