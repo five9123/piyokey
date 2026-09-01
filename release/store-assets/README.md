@@ -46,6 +46,8 @@ Python 3.11 이상과 Pillow, Xcode가 필요하다. 현재 Mac의 번들 Python
 1. 저장소 소유권·상태를 점검하고 iOS simulator용 `build-for-testing`을 실행한다. `artifacts/store-localization/DerivedData`를 사용하며 iPhone 17 Pro Max, iOS 26.5, 병렬 테스트 OFF로 고정한다. 다른 작업의 미커밋 변경을 reset하지 않는다.
 2. `xcrun simctl status_bar <device-id> override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100`으로 촬영용 상태 표시줄을 정돈한다.
 3. `python3 tools/capture_global_store_assets.py --languages ja en es de fr --output artifacts/store-localization/capture-language-expansion`을 실행한다. 원본 덮어쓰기를 막으므로 재촬영은 새 output 디렉터리를 사용한다. 테스트는 `testAppStoreScreenshotGlobalJA/EN/ES/DE/FR`이며 각 언어에서 핵심 화면 8장, 10키와 Pro 편집기를 촬영한다. Pro entitlement는 DEBUG 테스트 설정이며 실제 결제 성공 증거가 아니다. 출석 상태도 일관된 가상 학습 이력으로 시드한다.
+   영상·스크린샷 모드 모두 `--derived-data <build-for-testing 경로>`를 동일하게 사용하며,
+   그 경로에 `.xctestrun`이 정확히 하나 없으면 캡처를 시작하지 않는다.
 4. 다음 Swift 도구를 각각 `swiftc`로 컴파일한다.
 
 ```sh

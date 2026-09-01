@@ -13,7 +13,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def capture(language: str, device: str, output: Path) -> None:
+def completed_test_run(derived_data: Path) -> Path:
+    test_runs = list((derived_data / "Build/Products").glob("Hanco_*.xctestrun"))
+    if len(test_runs) != 1:
+        raise ValueError(
+            f"Expected one completed build-for-testing in {derived_data}: found {len(test_runs)}"
+        )
+    return test_runs[0]
+
+
+def capture(language: str, device: str, output: Path, derived_data: Path) -> None:
+    test_run = completed_test_run(derived_data)
     folder = output / language
     folder.mkdir(parents=True, exist_ok=False)
     recording = subprocess.Popen(
@@ -30,9 +40,8 @@ def capture(language: str, device: str, output: Path) -> None:
             raise RuntimeError("Simulator recording did not start")
         recording_epoch = time.time()
         command = [
-            "xcodebuild", "test-without-building", "-project", "ios/Hanco/Hanco.xcodeproj",
-            "-scheme", "Hanco", "-destination", f"platform=iOS Simulator,id={device}",
-            "-derivedDataPath", str(ROOT / "artifacts/store-localization/DerivedData"),
+            "xcodebuild", "test-without-building", "-xctestrun", str(test_run),
+            "-destination", f"platform=iOS Simulator,id={device}",
             "-parallel-testing-enabled", "NO", "-resultBundlePath", str(folder / "capture.xcresult"),
             f"-only-testing:HancoUITests/HancoUITests/testAppStoreScreenshotGlobal{language.upper()}",
         ]
@@ -63,13 +72,11 @@ def capture(language: str, device: str, output: Path) -> None:
 
 
 def capture_screenshots(language: str, device: str, output: Path, derived_data: Path) -> None:
+    test_run = completed_test_run(derived_data)
     folder = output / language
     folder.mkdir(parents=True, exist_ok=False)
-    test_runs = list((derived_data / "Build/Products").glob("Hanco_*.xctestrun"))
-    if len(test_runs) != 1:
-        raise ValueError("Expected one completed build-for-testing in derived data")
     command = [
-        "xcodebuild", "test-without-building", "-xctestrun", str(test_runs[0]),
+        "xcodebuild", "test-without-building", "-xctestrun", str(test_run),
         "-destination", f"platform=iOS Simulator,id={device}",
         "-parallel-testing-enabled", "NO",
         "-resultBundlePath", str(folder / "capture.xcresult"),
@@ -98,7 +105,7 @@ def main() -> None:
         if args.screenshots_only:
             capture_screenshots(language, args.device, args.output.resolve(), args.derived_data.resolve())
         else:
-            capture(language, args.device, args.output.resolve())
+            capture(language, args.device, args.output.resolve(), args.derived_data.resolve())
 
 
 if __name__ == "__main__":
