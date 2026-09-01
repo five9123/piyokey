@@ -1962,6 +1962,74 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("game.result.input_mode").exists)
   }
 
+  func testFlowAndAcidRainOSIMEHideChromeAndKeepRecovery() {
+    relaunchForGameOSIME(koreanKeyboardAvailable: true)
+
+    startBundledGame(mode: "flow", screen: "game.play.screen")
+    assertHiddenGameOSIMEChromeAndRecovery(screenshot: "flow-os-ime-hidden-chrome")
+    returnToGameHub()
+
+    startBundledGame(mode: "acid_rain", screen: "acid_rain.play.screen")
+    XCTAssertTrue(element("acid_rain.os_ime.free_input_status").waitForExistence(timeout: 3))
+    assertHiddenGameOSIMEChromeAndRecovery(screenshot: "acid-rain-os-ime-hidden-chrome")
+  }
+
+  func testRecallTypingGamesOSIMEHideChromeAndKeepRecovery() {
+    relaunchForGameOSIME(koreanKeyboardAvailable: true)
+
+    let games = [
+      (
+        mode: "choseong",
+        screen: "choseong.play.screen",
+        screenshot: "choseong-os-ime-hidden-chrome"
+      ),
+      (
+        mode: "word_match",
+        screen: "word_match.play.screen",
+        screenshot: "word-match-os-ime-hidden-chrome"
+      ),
+      (
+        mode: "dictation",
+        screen: "dictation.play.screen",
+        screenshot: "dictation-os-ime-hidden-chrome"
+      ),
+    ]
+    for (index, game) in games.enumerated() {
+      startBundledGame(mode: game.mode, screen: game.screen)
+      assertHiddenGameOSIMEChromeAndRecovery(screenshot: game.screenshot)
+      if index < games.count - 1 { returnToGameHub() }
+    }
+  }
+
+  func testGameOSIMEEnglishInputWarningRemainsVisible() {
+    relaunchForGameOSIME(koreanKeyboardAvailable: true)
+    startBundledGame(mode: "flow", screen: "game.play.screen")
+
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
+    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
+    recovery.tap()
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    imeField.typeText("r")
+
+    XCTAssertTrue(element("os_ime.input_source_warning").waitForExistence(timeout: 3))
+    XCTAssertFalse(element("os_ime.input.chrome").exists)
+    XCTAssertTrue(recovery.exists)
+    XCTAssertEqual(element("game.score.value").label, "0")
+    attachScreenshot(named: "game-os-ime-english-warning-hidden-chrome")
+  }
+
+  func testGameOSIMEUnavailableBannerRemainsVisible() {
+    relaunchForGameOSIME(koreanKeyboardAvailable: false)
+    startBundledGame(mode: "flow", screen: "game.play.screen")
+
+    XCTAssertTrue(element("os_ime.unavailable.banner").waitForExistence(timeout: 3))
+    XCTAssertFalse(element("os_ime.input.chrome").exists)
+    XCTAssertFalse(element("os_ime.input.recovery").exists)
+    XCTAssertTrue(app.buttons["keyboard.key.ㅂ"].exists)
+    attachScreenshot(named: "game-os-ime-unavailable-banner")
+  }
+
   func testAcidRainOSIMECanClearAnyVisibleFallingWord() {
     app.terminate()
     app = makeApplication(
@@ -1985,6 +2053,9 @@ final class HancoUITests: XCTestCase {
     element("game.acid_rain.preset.beginner").tap()
     XCTAssertTrue(element("acid_rain.play.screen").waitForExistence(timeout: 5))
     XCTAssertTrue(element("acid_rain.os_ime.free_input_status").exists)
+    XCTAssertFalse(element("os_ime.input.chrome").exists)
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
+    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
 
     let fallingCards = app.descendants(matching: .any).matching(
       identifier: "acid_rain.falling_card"
@@ -2000,9 +2071,9 @@ final class HancoUITests: XCTestCase {
     let matchingChosenCard = fallingCards.matching(
       NSPredicate(format: "label == %@", freelyChosenWord)
     ).firstMatch
-    let imeField = app.textFields["os_ime.input.chrome"]
+    let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
-    imeField.tap()
+    recovery.tap()
     imeField.typeText(freelyChosenWord)
 
     expectation(
@@ -2010,7 +2081,7 @@ final class HancoUITests: XCTestCase {
       evaluatedWith: matchingChosenCard
     )
     waitForExpectations(timeout: 3)
-    XCTAssertNotEqual(element("game.score.value").label, "0")
+    waitForLabelDifferentFrom("0", on: element("game.score.value"), timeout: 3)
     attachScreenshot(named: "acid-rain-os-ime-free-target-ja")
   }
 
@@ -3998,6 +4069,46 @@ final class HancoUITests: XCTestCase {
       XCTAssertTrue(keyButton.exists, "Missing keyboard key \(key)")
       keyButton.tap()
     }
+  }
+
+  private func relaunchForGameOSIME(koreanKeyboardAvailable: Bool) {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      gameDuration: 60,
+      koreanKeyboardAvailable: koreanKeyboardAvailable
+    )
+    app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+  }
+
+  private func startBundledGame(mode: String, screen: String) {
+    if !element("game.selection.screen").exists {
+      let gameTab = app.buttons["ゲーム"].firstMatch
+      XCTAssertTrue(gameTab.waitForExistence(timeout: 3))
+      gameTab.tap()
+    }
+    let modeButton = app.buttons["game.mode.\(mode)"]
+    scrollToHittable(modeButton)
+    modeButton.tap()
+    XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+    element("game.\(mode).preset.beginner").tap()
+    XCTAssertTrue(element(screen).waitForExistence(timeout: 5))
+  }
+
+  private func assertHiddenGameOSIMEChromeAndRecovery(screenshot: String) {
+    let imeField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    XCTAssertFalse(element("os_ime.input.chrome").exists)
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
+    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
+
+    recovery.tap()
+    imeField.typeText("ㄱ")
+    XCTAssertTrue(imeField.exists)
+    XCTAssertFalse(element("os_ime.input.chrome").exists)
+    attachScreenshot(named: screenshot)
   }
 
   private func returnToGameHub() {
