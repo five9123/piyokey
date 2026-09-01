@@ -127,7 +127,9 @@ status checks, conversation 해결, force push와 삭제 금지, PR 전용 변�
 
 Actions 비활성 기간에는 변경 경로별 workflow 대신 아래 focused 로컬 검증을
 evidence에 기록한다. 표는 최소 범위이며 실제 diff가 소비자 계약을 넓히면 검증도
-넓힌다.
+넓힌다. 문서 전용 행은 변경 파일 전부가 Markdown일 때만 적용하며, Markdown 파일이
+`release/**`, `ios/**`, `shared/**` 같은 다른 경로 행과 겹치면 더 넓은 해당 행의
+검증을 적용한다.
 
 | 변경 경로 | 최소 focused 로컬 검증 |
 |---|---|
@@ -139,8 +141,9 @@ evidence에 기록한다. 표는 최소 범위이며 실제 diff가 소비자 �
 | `shared/**` | Python + Swift + iOS |
 | `.github/workflows/**` | Python contracts + `git diff --check -- .github/workflows`; 실행 가능한 로컬 workflow validator가 없으면 미실행 gate와 이유를 evidence에 기록하고 Actions를 켜지 않음 |
 
-`release/evidence/*.json`만 추가하는 evidence-only commit은 `release/**` 행의 새
-검증을 다시 요구하지 않는다. 다른 파일이 함께 바뀌면 이 예외를 적용하지 않는다.
+`release/evidence/*.json`을 추가·삭제·교체하되 그 밖의 파일을 바꾸지 않는
+evidence-only commit은 `release/**` 행의 새 검증을 다시 요구하지 않는다. reviewer는
+이 파일 제한을 확인하며 다른 파일이 함께 바뀌면 이 예외를 적용하지 않는다.
 
 비활성 상태에서는 주 1회 `Scheduled iOS regression`과 `workflow_dispatch`도
 실행되지 않는다. release candidate 승인 전 정확한 최신 `origin/main` tree에서 해당
