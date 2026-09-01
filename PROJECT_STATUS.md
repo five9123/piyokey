@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-01 JST
+마지막 갱신: 2026-09-02 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-86 일본어 콘텐츠 현지화 fallback | In Review / PR #151 / `codex/86-japanese-localization-fallback` | Swift·Python·focused Hanco 소스 회귀 뒤 Claude review와 merge gate를 진행한다. 후속 TestFlight build에서 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad의 덱·7개 게임/연습 화면을 스크린샷으로 확인하기 전에는 Done 처리하지 않음 |
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
 | TYP-77 OS 천지인 ASCII guard 오판 | In Progress / PR #147 / `codex/77-cheonjiin-ascii-guard` | PR은 marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening으로 유지. iPhone row 13 코드포인트·committed/marked 관측, Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
