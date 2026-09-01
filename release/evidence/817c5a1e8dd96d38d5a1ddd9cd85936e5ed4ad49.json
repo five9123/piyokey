@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "verified_commit": "817c5a1e8dd96d38d5a1ddd9cd85936e5ed4ad49",
+  "verified_tree": "81034739a8a4b10ccd958a293726ec44a0c5db36",
+  "branch": "codex/83-cheonjiin-compound-vowels",
+  "scope": "TYP-83 iOS/iPadOS OS Cheonjiin committed compound-vowel judging",
+  "result": "pass",
+  "recorded_at": "2026-09-01T17:00:50.121993+00:00",
+  "checks": [
+    {
+      "name": "hangulengine-package",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "54 tests passed; HangulEngine, DeckKit, and package tests"
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "hanco-focused-os-ime",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMESynchronizationCanAdvanceAndRewindWithoutLosingSessionState -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEPhysicalKeyboardSnapshotsDoNotDuplicateMarkedCommitOrBackspace -only-testing:HancoTests/PracticeSessionViewModelTests/testConfirmedOSIMEMistakeCountsOnceWithoutPollutingComposition -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyGoldenRecipesCoverEveryCompatibilityJamo -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyEmitsOnlyCompletedJamoIntoSharedJudge -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEReachableCheonjiinCommittedVowelsDoNotCountMistakesOrRollback -only-testing:HancoTests/FlowGameViewModelTests/testAcidRainOSIMECompletesAnyMatchingVisibleCard -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgePrefersAnyCompletedVisibleWord -only-testing:HancoTests/FlowGameViewModelTests/testOSIMESynchronizationAndConfirmedMistakeUseGameScoringRules -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgeKeepsReachableCheonjiinCommittedVowelViable -only-testing:HancoTests/OSIMEInputResetTests/testTYP83Row13ProbeFormatsCommittedAndMarkedSnapshots -only-testing:HancoTests/OSIMEInputResetTests/testTYP83ProbeLaunchIsStrictlyEnvironmentGated -only-testing:HancoTests/OSIMEInputResetTests/testTYP83ProbeAdvancesThroughExactTargetSequence",
+      "note": "13 selected tests passed on iPhone 17 iOS 26.5 simulator"
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "clean tree; owner, Python 3.12.13, contracts, origin and gh auth passed"
+    }
+  ],
+  "manual_gates": [
+    "iPad physical IMETextField row-13 logs for 돼·과·웨·의 remain OPEN",
+    "Post-fix iPhone and iPad OS Cheonjiin Practice, lesson, Flow, Dictation, and representative-vowel device acceptance remain OPEN",
+    "The ordinary-issue governance prohibition leaves the unfiltered Hanco scheme / whole HancoTests regression OPEN",
+    "Claude exact-head review, CI/manual merge approval, deployment, TestFlight, account, rights, and store gates remain OPEN; do not mark Done"
+  ]
+}
