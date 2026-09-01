@@ -4085,7 +4085,9 @@ final class HancoUITests: XCTestCase {
 
   private func startBundledGame(mode: String, screen: String) {
     if !element("game.selection.screen").exists {
-      app.tabBars.buttons["ゲーム"].tap()
+      let gameTab = app.buttons["ゲーム"].firstMatch
+      XCTAssertTrue(gameTab.waitForExistence(timeout: 3))
+      gameTab.tap()
     }
     let modeButton = app.buttons["game.mode.\(mode)"]
     scrollToHittable(modeButton)
