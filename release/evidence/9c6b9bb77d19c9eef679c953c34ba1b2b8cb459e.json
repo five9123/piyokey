@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "9c6b9bb77d19c9eef679c953c34ba1b2b8cb459e",
+  "verified_tree": "006623fd4246a3dc485b44000b34bbafd03baa34",
+  "branch": "codex/89-settings-information-architecture",
+  "scope": "TYP-89 iOS/iPadOS Settings information architecture and built-in layout picker",
+  "result": "pass",
+  "recorded_at": "2026-09-02T16:20:06.937021+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "iPhone 17 simulator build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -quiet",
+      "note": ""
+    },
+    {
+      "name": "focused Settings UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -quiet -resultBundlePath /tmp/typ89-final.uLAmOO/settings.xcresult -only-testing:HancoUITests/HancoUITests/testSettingsHierarchyVersionAndPrivacyCleanup -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Only the two named Settings UI tests ran; 2 passed, 0 failed."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "iPhone screenshot visual QA",
+      "status": "pass",
+      "command": "xcrun xcresulttool export attachments --path /tmp/typ89-final.uLAmOO/settings.xcresult --output-path /tmp/typ89-final-attachments",
+      "note": "Top-of-Settings iPhone screenshot visually inspected; Keyboard and segmented layout control precede Sound."
+    }
+  ],
+  "manual_gates": [
+    "Build 13 TestFlight verification on a physical iPhone remains open.",
+    "Claude exact-head review and maintainer manual merge approval remain open.",
+    "iPad/physical-device, account, content-rights, IAP, store, archive, signing, and release gates remain open; no full-suite or store screenshot tests were run for this focused change."
+  ]
+}
