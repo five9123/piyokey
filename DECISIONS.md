@@ -1740,3 +1740,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 실기기 gate: iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight gate는 OPEN이다. 두벌식 실기기 회귀에서는 `달` 목표에 `단`, `하` 목표에 `ㅅ` 같은 cycle-도달 가능 오타가 즉시 미기록되는 동작이 체감상 수용 가능한지 함께 확인하며, 통과 전 TYP-83을 Done 처리하지 않는다.
 - 근거: iPhone IMETextField 로그에서 천지인 조합 단계가 marked가 아닌 committed 문서로 전달됐고, 그 상태를 즉시 rollback하면 목표 자체가 도달 불가능해진다. 동시에 현황판은 수동 fail-closed gate의 단일 기준이므로 병합 순서가 서로 모순되는 중복 상태를 만들면 이후 review·release 판단을 오도한다.
 - 영향 범위: 기존 `OSIMETextJudge`·`Korean10KeyRecipe` 판정 계약, `PROJECT_STATUS.md` 병합 정리 규칙, TYP-83 실기기 회귀와 release gate. 이번 기록은 문서 정리이며 제품·테스트 코드와 Android를 변경하지 않는다.
+
+## 2026-09-03 TYP-89 Settings 정보구조와 내장 배열 선택 시인성
+
+- 관련: TYP-89, PRD v6.18·F10, iOS/iPadOS 1.1 build 13.
+- 결정: Settings 섹션은 `키보드 → 사운드 → 타이핑 표시 → 화면(언어·텍스트 표시) → 연습 알림 → 피요 → 개인정보 → 앱 정보` 순서로 둔다. 이 결정은 2026-09-01 TYP-75의 섹션 순서만 대체하며 각 섹션의 내용과 저장 계약은 유지한다.
+- 결정: 내장 두벌식/천지인 배열 선택은 키보드 카드의 첫 항목에 두 선택지를 동시에 노출하는 segmented control로 표시한다. 기존 `keyboard.layout.*` 현지화 키, `keyboard.builtin_layout_default` 저장 키, `settings.builtin_keyboard_layout` 접근성 identifier와 OS 키보드 모드에서 비활성화되는 동작은 변경하지 않는다.
+- 근거: 자판 선택을 설정 진입 직후 찾을 수 있게 하고 메뉴를 먼저 열어야만 대안을 확인할 수 있던 탐색 비용을 줄이면서, 이미 사용 중인 설정 카드·segmented control 시각 언어와 자동화 계약을 재사용하기 위함이다.
+- 영향 범위: iOS/iPadOS `SettingsView`, focused Settings UI 회귀, PRD F10. localization·Android·TYP-90의 iPhone 키보드 가이드 노출 정책은 변경하지 않는다.

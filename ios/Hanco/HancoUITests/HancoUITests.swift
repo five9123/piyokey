@@ -857,8 +857,10 @@ final class HancoUITests: XCTestCase {
     openSettings()
     let layoutPicker = element("settings.builtin_keyboard_layout")
     scrollToHittable(layoutPicker)
-    layoutPicker.tap()
-    app.buttons["天地人（10キー）"].tap()
+    let tenKeyLayout = layoutPicker.buttons["天地人（10キー）"]
+    XCTAssertTrue(tenKeyLayout.isHittable)
+    tenKeyLayout.tap()
+    XCTAssertTrue(tenKeyLayout.isSelected)
 
     let osMode = app.buttons["input_mode.os_ime"]
     scrollToHittable(osMode, direction: .down)
@@ -3647,10 +3649,10 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(
       sectionIdentifiers,
       [
-        "settings.section.display",
         "settings.section.keyboard",
         "settings.section.sound",
         "settings.section.practice_display",
+        "settings.section.display",
         "settings.section.reminder",
         "settings.section.mascot",
         "settings.section.privacy",
@@ -3663,8 +3665,14 @@ final class HancoUITests: XCTestCase {
 
     let layout = element("settings.builtin_keyboard_layout")
     scrollToHittable(layout)
-    layout.tap()
-    app.buttons["天地人（10キー）"].tap()
+    let dubeolsikLayout = layout.buttons["2ボル式"]
+    let tenKeyLayout = layout.buttons["天地人（10キー）"]
+    XCTAssertTrue(dubeolsikLayout.isHittable)
+    XCTAssertTrue(tenKeyLayout.isHittable)
+    XCTAssertTrue(dubeolsikLayout.isSelected)
+    XCTAssertLessThan(layout.frame.minY, app.buttons["input_mode.builtin"].frame.minY)
+    tenKeyLayout.tap()
+    XCTAssertTrue(tenKeyLayout.isSelected)
     let osMode = app.buttons["input_mode.os_ime"]
     osMode.tap()
     XCTAssertTrue(osMode.isSelected)
@@ -3672,9 +3680,7 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "typ75-iphone-se-settings-keyboard-os-mode-ja")
     app.buttons["input_mode.builtin"].tap()
     XCTAssertTrue(layout.isEnabled)
-    layout.tap()
-    XCTAssertTrue(app.buttons["天地人（10キー）"].isSelected)
-    app.buttons["天地人（10キー）"].tap()
+    XCTAssertTrue(tenKeyLayout.isSelected)
 
     let soundSection = element("settings.section.sound")
     scrollToHittable(soundSection)

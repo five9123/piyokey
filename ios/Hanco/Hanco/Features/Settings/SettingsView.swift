@@ -147,10 +147,10 @@ struct SettingsView: View {
   private var settingsContent: some View {
     ScrollView {
       VStack(spacing: 18) {
-        displaySection
         keyboardSection
         soundSection
         practiceDisplaySection
+        displaySection
         reminderSection
         mascotSection
         privacySection
@@ -286,6 +286,21 @@ struct SettingsView: View {
       systemImage: "keyboard",
       identifier: "settings.section.keyboard"
     ) {
+      settingPicker(
+        title: "keyboard.layout.title",
+        selection: $builtInLayoutDefault,
+        identifier: "settings.builtin_keyboard_layout"
+      ) {
+        Text("keyboard.layout.dubeolsik")
+          .tag(BuiltInKeyboardLayout.dubeolsik.rawValue)
+        Text("keyboard.layout.korean_10key")
+          .tag(BuiltInKeyboardLayout.korean10Key.rawValue)
+      }
+      .disabled(defaultInputModeBinding.wrappedValue == .osIME)
+      .opacity(defaultInputModeBinding.wrappedValue == .osIME ? 0.45 : 1)
+
+      Divider().opacity(0.5)
+
       VStack(alignment: .leading, spacing: 8) {
         Text("practice.setup.input_mode")
           .font(.subheadline.weight(.semibold))
@@ -296,26 +311,6 @@ struct SettingsView: View {
         )
       }
       .padding(.vertical, 7)
-
-      Divider().opacity(0.5)
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("keyboard.layout.title")
-          .font(.subheadline.weight(.semibold))
-          .foregroundStyle(AppPalette.ink)
-        Picker("keyboard.layout.title", selection: $builtInLayoutDefault) {
-          Text("keyboard.layout.dubeolsik")
-            .tag(BuiltInKeyboardLayout.dubeolsik.rawValue)
-          Text("keyboard.layout.korean_10key")
-            .tag(BuiltInKeyboardLayout.korean10Key.rawValue)
-        }
-        .pickerStyle(.menu)
-        .accessibilityIdentifier("settings.builtin_keyboard_layout")
-      }
-      .padding(.leading, 44)
-      .padding(.vertical, 7)
-      .disabled(defaultInputModeBinding.wrappedValue == .osIME)
-      .opacity(defaultInputModeBinding.wrappedValue == .osIME ? 0.45 : 1)
 
       Divider().opacity(0.5)
 
