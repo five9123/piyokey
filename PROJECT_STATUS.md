@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `2ef04ed`에 TYP-82 OS IME 단어 전환과 TYP-84 직접 입력 게임 chrome 수정이 병합됨. TYP-83은 OS 천지인의 committed 복합모음·raw stroke·자음 순환 중간 상태 판정을 보강하는 review 준비 단계 | TYP-83 focused source review 뒤 정확한 후속 TestFlight에서 iPhone·iPad practice/game 회귀를 확인. iPhone row-13 측정 완료, iPad 측정과 full HancoTests는 OPEN |
+| iOS 1.1 | `main` `f46336c`에 TYP-82 OS IME 단어 전환, TYP-84 직접 입력 게임 chrome, TYP-86 일본어 콘텐츠 fallback 수정이 병합됨. TYP-83은 PR #152 In Review이며 build 12의 후속 TestFlight·실기기 gate가 남아 있음 | TYP-83 exact-head review 뒤 최신 `main` 기반 build 12에서 iPhone·iPad practice/lesson/game 회귀를 확인. iPhone row-13 측정 완료, iPad row-13·post-fix 실기기·full HancoTests·release gate는 OPEN |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,10 +23,8 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-83 OS 천지인 복합모음 committed 중간 상태 | Review 준비 / `codex/83-cheonjiin-compound-vowels` | iPhone 15 Pro row-13 원문(`돼`·`과`·`웨`·`의`) 완료. focused source 검증·Claude review 뒤 iPad row-13과 후속 TestFlight의 iPhone·iPad practice/game 전수는 `gate:device` OPEN |
-| TYP-86 일본어 콘텐츠 현지화 fallback | In Review / PR #151 / `codex/86-japanese-localization-fallback` | Swift·Python·focused Hanco 소스 회귀 뒤 Claude review와 merge gate를 진행한다. 후속 TestFlight build에서 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad의 덱·7개 게임/연습 화면을 스크린샷으로 확인하기 전에는 Done 처리하지 않음 |
-| TYP-84 게임 OS IME 입력 chrome | In Review / PR #153 / `codex/84-game-os-ime-chrome` | focused iPhone·iPad 회귀와 source-SHA evidence 뒤 Claude review. TestFlight build 12의 iPhone·iPad 실기기 확인 전 Done 금지 |
-| TYP-82 OS 한국어 키보드 단어 전환 flicker | In Progress / `codex/82-ios-keyboard-flicker` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | deferred reset과 stale 조합 격리는 유지하고 reset의 resign/become cycle을 제거한다. focused source 회귀 뒤 PR review·merge하며 build 12 TestFlight iPhone·iPad × 두벌식·천지인 실기기 증빙, full HancoTests, CI·계정·권리·스토어 gate는 열어 둔다 |
+| TYP-83 OS 천지인 복합모음 committed 중간 상태 | In Review / PR #152 / `codex/83-cheonjiin-compound-vowels` | iPhone 15 Pro row-13 원문(`돼`·`과`·`웨`·`의`) 완료. exact-head review 뒤 iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight·release gate는 OPEN |
+| TYP-86 일본어 콘텐츠 현지화 fallback | Merged / PR #151 → main `f46336c` | 후속 TestFlight build의 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad 덱·7개 게임/연습 화면 증빙, full HancoTests·계정·권리·store/release gate는 OPEN |
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
 | TYP-77 OS 천지인 ASCII guard 오판 | Merged / PR #147 → main `e6d714d` | marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening 병합 완료. Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
 | TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
