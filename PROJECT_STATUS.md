@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-02 JST
+마지막 갱신: 2026-09-03 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `f46336c`에 TYP-82 OS IME 단어 전환, TYP-84 직접 입력 게임 chrome, TYP-86 일본어 콘텐츠 fallback 수정이 병합됨. TYP-83은 PR #152 In Review이며 build 12의 후속 TestFlight·실기기 gate가 남아 있음 | TYP-83 exact-head review 뒤 최신 `main` 기반 build 12에서 iPhone·iPad practice/lesson/game 회귀를 확인. iPhone row-13 측정 완료, iPad row-13·post-fix 실기기·full HancoTests·release gate는 OPEN |
+| iOS 1.1 | `main` `0ed4777`에 TYP-82 OS IME 단어 전환, TYP-84 직접 입력 게임 chrome, TYP-86 일본어 콘텐츠 fallback, TYP-83 OS 천지인 committed 중간 상태 수정이 병합됨. TestFlight 1.1 (12)는 Complete·설치 상태로 TYP-81 smoke에 사용 중이며 재아카이브·재업로드·재설치하지 않음 | TYP-88 PR #154의 exact-head review·수동 병합 뒤 별도 build 13에서 iPhone·iPad OS 10키 corpus를 검증. standalone Debug probe 입력 요청은 종료됐고, build 12 snapshot·dangling 실측과 post-fix 실기기·release gate는 OPEN |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,7 +23,8 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-83 OS 천지인 복합모음 committed 중간 상태 | In Review / PR #152 / `codex/83-cheonjiin-compound-vowels` | iPhone 15 Pro row-13 원문(`돼`·`과`·`웨`·`의`) 완료. exact-head review 뒤 iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight·release gate는 OPEN |
+| TYP-88 OS 10키 받침 경계 중간 상태 | In Review / PR #154 / `codex/88-os-10key-batchim-boundary` | Class A/B와 정확한 동일-key 경계 순환 Class C, Unicode scalar별 dot 확장 Class D 및 negative matrix를 exact source SHA에서 검증하고 review 진행. DEBUG-only probe는 진단 자산으로 유지하지만 standalone 입력 요청은 종료됐으며, build 12 snapshot·dangling 관찰과 정확한 build 13 iPhone·iPad corpus·TYP-81 로그는 OPEN |
+| TYP-83 OS 천지인 복합모음 committed 중간 상태 | Merged / PR #152 → main `0ed4777` | iPhone 15 Pro row-13 원문(`돼`·`과`·`웨`·`의`) 완료. iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight·release gate는 OPEN |
 | TYP-86 일본어 콘텐츠 현지화 fallback | Merged / PR #151 → main `f46336c` | 후속 TestFlight build의 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad 덱·7개 게임/연습 화면 증빙, full HancoTests·계정·권리·store/release gate는 OPEN |
 | TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
 | TYP-77 OS 천지인 ASCII guard 오판 | Merged / PR #147 → main `e6d714d` | marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening 병합 완료. Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |

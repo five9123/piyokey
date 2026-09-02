@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "verified_commit": "40ea63371d3794a285c06a027c12dfccec48edce",
+  "verified_tree": "722f6ff0d8a8bd47f16e9838fd3d532c7a0424ff",
+  "branch": "codex/88-os-10key-batchim-boundary",
+  "scope": "TYP-88 iOS/iPadOS OS Korean 10-key batchim-boundary judge and focused regressions",
+  "result": "pass",
+  "recorded_at": "2026-09-02T13:52:45.815105+00:00",
+  "checks": [
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "hangul-engine",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "61 tests passed"
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "focused-hanco-tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEBatchimBoundaryIntermediatesDoNotCountMistakesOrRollback -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgeKeepsBatchimBoundaryIntermediateViable -only-testing:HancoTests/OSIMEInputResetTests/testTYP83ProbeLaunchIsStrictlyEnvironmentGated -only-testing:HancoTests/OSIMEInputResetTests/testTYP88ProbeUsesExactBoundaryAndRegressionCorpus -only-testing:HancoTests/OSIMEInputResetTests/testTYP83Row13ProbeFormatsCommittedAndMarkedSnapshots",
+      "note": "5 tests passed; no HancoUITests or capture tests run"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Python 3.12.13"
+    }
+  ],
+  "manual_gates": [
+    "Build 12 exact committed/marked snapshots, dangling-form observation, and vowel-driven re-splitting remain OPEN for a separately scheduled Apple-device Debug probe; the installed TestFlight 1.1 (12) app was not overwritten, archived, uploaded, or reinstalled",
+    "Exact build 13 iPhone+iPad OS Korean 10-key corpus and probe-log attachment to TYP-81 remain OPEN for the named device owners",
+    "Unfiltered full HancoTests/HancoUITests and all AppStoreScreenshot/ScreenshotCapture/AppPreview/store-capture tests were not run under the trusted TYP-88 focused-selector governance; the wider release regression remains OPEN",
+    "GitHub Actions are disabled; exact-head Claude review and maintainer manual fail-closed approval remain required before merge",
+    "Merge, deployment, archive/signing, account, rights, IAP, TestFlight, device, and store gates remain OPEN and are not satisfied by this source evidence"
+  ]
+}

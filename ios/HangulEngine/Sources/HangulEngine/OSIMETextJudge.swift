@@ -116,10 +116,27 @@ public enum OSIMETextJudge {
     }
 
     let acceptedPrefix = Array(expected.prefix(committedMismatch))
+    if let stableBoundary = Korean10KeyRecipe
+      .acceptedSequenceForUnconfirmedSameRecipeBoundaryCycle(
+        target: target,
+        committedText: committedText
+      )
+    {
+      return OSIMETextEvaluation(
+        status: .composingMismatch,
+        acceptedSequence: stableBoundary
+      )
+    }
     if Korean10KeyRecipe.committedDocumentEndsInReachableIntermediate(
       target: target,
       committedText: committedText
     ) || Korean10KeyRecipe.committedDocumentEndsInReachableConsonantCycle(
+      target: target,
+      committedText: committedText
+    ) || Korean10KeyRecipe.committedDocumentEndsInReachableClosedSyllableBoundary(
+      target: target,
+      committedText: committedText
+    ) || Korean10KeyRecipe.committedDocumentEndsInReachableComplexTrailingAssembly(
       target: target,
       committedText: committedText
     ) {
