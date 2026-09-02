@@ -104,17 +104,20 @@ public enum Korean10KeyRecipe {
         let targetRecipe = recipes[target.medial]
       else { continue }
 
-      let rawStrokes: ArraySlice<Character>
+      var rawScalars = String(active).unicodeScalars.map(\.value)
       if let leading = target.leading {
-        guard active.count >= 2, active.first == leading else { continue }
-        rawStrokes = active.dropFirst()
+        guard let leadingScalar = String(leading).unicodeScalars.first?.value,
+          rawScalars.first == leadingScalar
+        else { continue }
+        rawScalars.removeFirst()
       } else {
-        guard !active.isEmpty else { continue }
-        rawStrokes = active
+        guard !rawScalars.isEmpty else { continue }
       }
-      guard rawStrokes.allSatisfy({ rawVowelKey[$0] != nil }) else { continue }
+      guard !rawScalars.isEmpty else { continue }
+      let expandedStrokes = rawScalars.compactMap { rawVowelKeysByScalar[$0] }
+      guard expandedStrokes.count == rawScalars.count else { continue }
 
-      let rawRecipe = rawStrokes.compactMap { rawVowelKey[$0] }
+      let rawRecipe = expandedStrokes.flatMap { $0 }
       if rawRecipe.count < targetRecipe.count, targetRecipe.starts(with: rawRecipe) {
         return true
       }
@@ -177,6 +180,120 @@ public enum Korean10KeyRecipe {
     return isReachableIntermediateConsonant(candidateTrailing, toward: nextTargetLeading)
   }
 
+  /// Recognizes a closed-syllable boundary where the next onset's tap-cycle
+  /// precursor temporarily combines with the preceding syllable's original
+  /// final. For example, `일해` may expose `잀` while `ㅅ` cycles toward `ㅎ`.
+  /// The candidate compound final must split back to that exact original final
+  /// and a real prefix of the exact next target onset recipe.
+  static func committedDocumentEndsInReachableClosedSyllableBoundary(
+    target: String,
+    committedText: String
+  ) -> Bool {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    let nextTargetIndex = committedCharacters.count
+    guard nextTargetIndex > 0, nextTargetIndex < targetCharacters.count,
+      let candidateCharacter = committedCharacters.last,
+      committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(nextTargetIndex - 1)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let previousTarget = syllableComponents(of: targetCharacters[nextTargetIndex - 1]),
+      candidate.leading == previousTarget.leading,
+      candidate.medial == previousTarget.medial,
+      let originalTrailing = previousTarget.trailing,
+      let candidateTrailing = candidate.trailing,
+      let candidatePair = HangulTables.splitTrailing[candidateTrailing],
+      candidatePair.first == originalTrailing,
+      let nextTargetLeading = leadingConsonant(of: targetCharacters[nextTargetIndex])
+    else { return false }
+
+    return isReachableIntermediateConsonant(
+      candidatePair.second,
+      toward: nextTargetLeading
+    )
+  }
+
+  /// Preserves the already-correct closed syllable while Apple's Korean
+  /// 10-key keyboard is still cycling the same physical key instead of
+  /// starting the next onset. For `학교`, consecutive ㄱ-key taps may expose
+  /// `핰` or `핚`; those are unconfirmed boundary states, not a request for the
+  /// app to synthesize `학ㄱ` or otherwise invent a syllable boundary.
+  ///
+  /// The exception is limited to an exact target boundary where the original
+  /// final and the next onset have identical recipes. The temporary final must
+  /// be another member of that same single-key consonant cycle.
+  static func acceptedSequenceForUnconfirmedSameRecipeBoundaryCycle(
+    target: String,
+    committedText: String
+  ) -> [Character]? {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    let nextTargetIndex = committedCharacters.count
+    guard nextTargetIndex > 0, nextTargetIndex < targetCharacters.count,
+      let candidateCharacter = committedCharacters.last,
+      committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(nextTargetIndex - 1)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let previousTarget = syllableComponents(of: targetCharacters[nextTargetIndex - 1]),
+      candidate.leading == previousTarget.leading,
+      candidate.medial == previousTarget.medial,
+      let originalTrailing = previousTarget.trailing,
+      let candidateTrailing = candidate.trailing,
+      candidateTrailing != originalTrailing,
+      let nextTargetLeading = leadingConsonant(of: targetCharacters[nextTargetIndex]),
+      let originalRecipe = recipes[originalTrailing],
+      let nextRecipe = recipes[nextTargetLeading],
+      originalRecipe == nextRecipe,
+      let sharedKey = originalRecipe.first,
+      originalRecipe.allSatisfy({ $0 == sharedKey }),
+      let candidateRecipe = recipes[candidateTrailing],
+      !candidateRecipe.isEmpty,
+      candidateRecipe.allSatisfy({ $0 == sharedKey })
+    else { return nil }
+
+    let stableTarget = String(targetCharacters.prefix(nextTargetIndex))
+    return try? JamoDecomposer.keySequence(for: stableTarget)
+  }
+
+  /// Recognizes only target-derived intermediate states while assembling a
+  /// complex final. A simple candidate may be a recipe prefix of the target's
+  /// first component (`단` -> `닭`), or a compound candidate may contain the
+  /// exact first component plus a prefix of the second (`앐` -> `앓`).
+  static func committedDocumentEndsInReachableComplexTrailingAssembly(
+    target: String,
+    committedText: String
+  ) -> Bool {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    guard let candidateCharacter = committedCharacters.last,
+      committedCharacters.count <= targetCharacters.count
+    else { return false }
+
+    let targetIndex = committedCharacters.count - 1
+    guard committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(targetIndex)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let target = syllableComponents(of: targetCharacters[targetIndex]),
+      candidate.leading == target.leading,
+      candidate.medial == target.medial,
+      let candidateTrailing = candidate.trailing,
+      let targetTrailing = target.trailing,
+      let targetPair = HangulTables.splitTrailing[targetTrailing]
+    else { return false }
+
+    if HangulTables.splitTrailing[candidateTrailing] == nil {
+      return isReachableIntermediateConsonant(
+        candidateTrailing,
+        toward: targetPair.first
+      )
+    }
+
+    guard let candidatePair = HangulTables.splitTrailing[candidateTrailing],
+      candidatePair.first == targetPair.first
+    else { return false }
+    return isReachableIntermediateConsonant(
+      candidatePair.second,
+      toward: targetPair.second
+    )
+  }
+
   private struct SyllableComponents {
     let leading: Character?
     let medial: Character
@@ -215,10 +332,12 @@ public enum Korean10KeyRecipe {
 
   private static let vowelJamo = Set(HangulTables.medial)
   private static let consonantJamo = Set(HangulTables.leading)
-  private static let rawVowelKey: [Character: Korean10KeyKey] = [
-    "ㅣ": .vertical,
-    "ㆍ": .dot,
-    "ㅡ": .horizontal,
+  private static let rawVowelKeysByScalar: [UInt32: [Korean10KeyKey]] = [
+    0x3163: [.vertical],
+    0x3161: [.horizontal],
+    0x318D: [.dot],
+    0x119E: [.dot],
+    0x11A2: [.dot, .dot],
   ]
 
   // Golden recipe contract approved for the Apple Korean 10-Key layout in

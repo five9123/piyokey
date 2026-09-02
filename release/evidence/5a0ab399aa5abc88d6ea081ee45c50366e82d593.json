@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "verified_commit": "5a0ab399aa5abc88d6ea081ee45c50366e82d593",
+  "verified_tree": "d18d93b703846f604405111f2a16e6df16c81a18",
+  "branch": "codex/88-os-10key-batchim-boundary",
+  "scope": "TYP-88 iOS/iPadOS OS Korean 10-key Class A-D judge, DEBUG diagnostic probe, and full permitted regressions",
+  "result": "pass",
+  "recorded_at": "2026-09-02T15:41:56.479297+00:00",
+  "checks": [
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "origin-main-base",
+      "status": "pass",
+      "command": "git rev-list --left-right --count origin/main...HEAD",
+      "note": "0 behind, 5 ahead after git fetch --prune origin"
+    },
+    {
+      "name": "hangul-engine",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "65 tests passed"
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "hanco-tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -only-testing:HancoTests/AppSettingsTests -only-testing:HancoTests/CatalogNetworkingTests -only-testing:HancoTests/ChoseongQuizViewModelTests -only-testing:HancoTests/CurriculumProgressStoreTests -only-testing:HancoTests/DeckEditorTests -only-testing:HancoTests/DeckLibraryTests -only-testing:HancoTests/DeckMakerPurchaseStoreTests -only-testing:HancoTests/DiscoverViewModelTests -only-testing:HancoTests/FlowGameRankTuningTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/HancoSoundEngineTests -only-testing:HancoTests/MascotGrowthSystemTests -only-testing:HancoTests/OSIMEInputResetTests -only-testing:HancoTests/OnboardingStoreTests -only-testing:HancoTests/PiyoDeckDocumentFlowTests -only-testing:HancoTests/PracticeSessionViewModelTests -only-testing:HancoTests/RecommendationEngineTests -only-testing:HancoTests/RetentionStoreTests -only-testing:HancoTests/ReviewDeckStoreTests -only-testing:HancoTests/SessionResultRevealTimelineTests -only-testing:HancoTests/SessionShareCardTests -only-testing:HancoTests/SpacingGameEngineTests -only-testing:HancoTests/SpacingGameViewModelTests -only-testing:HancoTests/UserDeckDraftStoreTests",
+      "note": "414 tests passed across 26 explicit suite selectors; HancoUITests and store/marketing capture tests were not run"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Python 3.12.13; clean worktree"
+    }
+  ],
+  "manual_gates": [
+    "Standalone DEBUG probe input was omitted by the final product decision (Buzz cb3fc899, 8c1a594e); the DEBUG-only diagnostic asset remains, no Apple-device log was collected, and this omission is not claimed as production validation",
+    "TestFlight 1.1 (12) was not archived, uploaded, reinstalled, overwritten, or otherwise operated; build 12 remains installed for the ongoing TYP-81 smoke",
+    "Exact build 13 iPhone+iPad OS Korean 10-key corpus and required probe-log attachment to TYP-81 remain OPEN for the named device owners",
+    "HancoUITests and all AppStoreScreenshot, ScreenshotCapture, AppPreview, and store/marketing capture tests were not run because they are outside TYP-88 scope",
+    "GitHub Actions are disabled; exact-head Claude review and maintainer manual fail-closed approval remain required before merge",
+    "Merge, deployment, archive/signing, account, rights, IAP, TestFlight, device, and store gates remain OPEN and are not satisfied by this source evidence"
+  ]
+}
