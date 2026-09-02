@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "ff4375abd6e62c17f1db265a966c5f36db2114a6",
+  "verified_tree": "f57b7246a5931d23eeb063a9ff15b00599ca0cf0",
+  "branch": "codex/89-settings-information-architecture",
+  "scope": "TYP-89 merged-tree Settings information architecture and built-in layout picker",
+  "result": "pass",
+  "recorded_at": "2026-09-02T16:43:03.358190+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "iPhone 17 simulator build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -quiet",
+      "note": ""
+    },
+    {
+      "name": "focused Settings UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -quiet -resultBundlePath /tmp/typ89-merged.K1rPyR/settings.xcresult -only-testing:HancoUITests/HancoUITests/testSettingsHierarchyVersionAndPrivacyCleanup -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Only the same two named Settings UI tests ran on the merged tree; 2 passed, 0 failed."
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was 93eef4690378c9a8cf7a1c4b6e85772434932104."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Build 13 TestFlight verification on physical iPhone and iPad remains open.",
+    "Claude exact-head review and maintainer manual merge approval remain open.",
+    "Account, content-rights, IAP, store, archive, signing, and release gates remain open; no unfiltered Hanco scheme, full HancoUITests target, or store screenshot/capture tests were run."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "eade71b47fa4fb7e6af0c6ba22a6259de974a381",
+  "verified_tree": "d65def29ec527157b293301087bd4ca5cfdcd621",
+  "branch": "codex/89-settings-information-architecture",
+  "scope": "TYP-89 post-merge Settings information architecture and segmented-picker UI tests",
+  "result": "pass",
+  "recorded_at": "2026-09-02T16:51:57.746936+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "iPhone 17 simulator build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -quiet",
+      "note": ""
+    },
+    {
+      "name": "exact focused UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -quiet -resultBundlePath /tmp/typ89-eade71b.GVA3ud/settings.xcresult -only-testing:HancoUITests/HancoUITests/testSettingsHierarchyVersionAndPrivacyCleanup -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch -only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace",
+      "note": "The same two required Settings selectors plus the directly affected ten-key practice selector ran; exactly 3 passed, 0 failed."
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was 93eef4690378c9a8cf7a1c4b6e85772434932104."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Build 13 TestFlight verification on physical iPhone and iPad remains open.",
+    "Claude exact-head review and maintainer manual merge approval remain open.",
+    "Account, content-rights, IAP, store, archive, signing, and release gates remain open; no unfiltered Hanco scheme, full HancoUITests target, or store screenshot/capture tests were run."
+  ]
+}
