@@ -177,6 +177,79 @@ public enum Korean10KeyRecipe {
     return isReachableIntermediateConsonant(candidateTrailing, toward: nextTargetLeading)
   }
 
+  /// Recognizes a closed-syllable boundary where the next onset's tap-cycle
+  /// precursor temporarily combines with the preceding syllable's original
+  /// final. For example, `일해` may expose `잀` while `ㅅ` cycles toward `ㅎ`.
+  /// The candidate compound final must split back to that exact original final
+  /// and a real prefix of the exact next target onset recipe.
+  static func committedDocumentEndsInReachableClosedSyllableBoundary(
+    target: String,
+    committedText: String
+  ) -> Bool {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    let nextTargetIndex = committedCharacters.count
+    guard nextTargetIndex > 0, nextTargetIndex < targetCharacters.count,
+      let candidateCharacter = committedCharacters.last,
+      committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(nextTargetIndex - 1)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let previousTarget = syllableComponents(of: targetCharacters[nextTargetIndex - 1]),
+      candidate.leading == previousTarget.leading,
+      candidate.medial == previousTarget.medial,
+      let originalTrailing = previousTarget.trailing,
+      let candidateTrailing = candidate.trailing,
+      let candidatePair = HangulTables.splitTrailing[candidateTrailing],
+      candidatePair.first == originalTrailing,
+      let nextTargetLeading = leadingConsonant(of: targetCharacters[nextTargetIndex])
+    else { return false }
+
+    return isReachableIntermediateConsonant(
+      candidatePair.second,
+      toward: nextTargetLeading
+    )
+  }
+
+  /// Recognizes only target-derived intermediate states while assembling a
+  /// complex final. A simple candidate may be a recipe prefix of the target's
+  /// first component (`단` -> `닭`), or a compound candidate may contain the
+  /// exact first component plus a prefix of the second (`앐` -> `앓`).
+  static func committedDocumentEndsInReachableComplexTrailingAssembly(
+    target: String,
+    committedText: String
+  ) -> Bool {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    guard let candidateCharacter = committedCharacters.last,
+      committedCharacters.count <= targetCharacters.count
+    else { return false }
+
+    let targetIndex = committedCharacters.count - 1
+    guard committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(targetIndex)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let target = syllableComponents(of: targetCharacters[targetIndex]),
+      candidate.leading == target.leading,
+      candidate.medial == target.medial,
+      let candidateTrailing = candidate.trailing,
+      let targetTrailing = target.trailing,
+      let targetPair = HangulTables.splitTrailing[targetTrailing]
+    else { return false }
+
+    if HangulTables.splitTrailing[candidateTrailing] == nil {
+      return isReachableIntermediateConsonant(
+        candidateTrailing,
+        toward: targetPair.first
+      )
+    }
+
+    guard let candidatePair = HangulTables.splitTrailing[candidateTrailing],
+      candidatePair.first == targetPair.first
+    else { return false }
+    return isReachableIntermediateConsonant(
+      candidatePair.second,
+      toward: targetPair.second
+    )
+  }
+
   private struct SyllableComponents {
     let leading: Character?
     let medial: Character

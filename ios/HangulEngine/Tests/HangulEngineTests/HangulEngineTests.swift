@@ -360,6 +360,93 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(wrongFinal.status, .confirmedMismatch(expectedIndex: 2))
   }
 
+  func testOSIMEClosedBatchimBoundariesFollowOnlyTheNextOnsetRecipe() throws {
+    let snapshots: [(target: String, committed: String, accepted: [Character])] = [
+      ("일해", "잀", Array("ㅇㅣㄹ")),
+      ("말해", "맔", Array("ㅁㅏㄹ")),
+      ("말했다", "맔", Array("ㅁㅏㄹ")),
+      ("급해", "긊", Array("ㄱㅡㅂ")),
+      ("입학", "잆", Array("ㅇㅣㅂ")),
+      ("번째", "벉", Array("ㅂㅓㄴ")),
+      ("각하", "갃", Array("ㄱㅏㄱ")),
+    ]
+
+    for snapshot in snapshots {
+      let intermediate = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(intermediate.status, .composingMismatch, snapshot.target)
+      XCTAssertEqual(intermediate.acceptedSequence, snapshot.accepted, snapshot.target)
+
+      let completed = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.target
+      )
+      XCTAssertEqual(
+        completed.status,
+        .matching(completed: true, isComposing: false),
+        snapshot.target
+      )
+    }
+  }
+
+  func testOSIMEComplexBatchimAssemblyUsesOnlyExactTargetComponents() throws {
+    let snapshots: [(target: String, committed: String, accepted: [Character])] = [
+      ("읽어", "인", Array("ㅇㅣ")),
+      ("닭", "단", Array("ㄷㅏ")),
+      ("삶", "산", Array("ㅅㅏ")),
+      ("앓다", "안", Array("ㅇㅏ")),
+      ("앓다", "앐", Array("ㅇㅏㄹ")),
+      ("읊다", "은", Array("ㅇㅡ")),
+      ("읊다", "읇", Array("ㅇㅡㄹ")),
+    ]
+
+    for snapshot in snapshots {
+      let intermediate = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(intermediate.status, .composingMismatch, snapshot.target)
+      XCTAssertEqual(intermediate.acceptedSequence, snapshot.accepted, snapshot.target)
+    }
+
+    for target in ["읽어", "닭", "삶", "많이", "앓다", "읊다"] {
+      let completed = try OSIMETextJudge.evaluate(target: target, committedText: target)
+      XCTAssertEqual(
+        completed.status,
+        .matching(completed: true, isComposing: false),
+        target
+      )
+    }
+  }
+
+  func testOSIMEBatchimBoundaryNegativeMatrixRemainsConfirmed() throws {
+    let snapshots: [(target: String, committed: String, mismatch: Int)] = [
+      ("일해", "읽", 3),
+      ("급해", "긁", 2),
+      ("닭", "닮", 3),
+      ("앓다", "앎", 3),
+      ("읊다", "읅", 3),
+      ("삶", "살ㅇ", 3),
+      ("많이", "만ㅅ", 3),
+      ("읽어", "읽아", 5),
+      ("일해", "일개", 3),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .confirmedMismatch(expectedIndex: snapshot.mismatch),
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+  }
+
   func testOSIMECheonjiinRepresentativeVowelsCompleteWithoutWeakeningRealTypos() throws {
     let representativeTargets = [
       "과자", "돼지", "회사", "원", "웨딩", "귀", "의사", "대형", "세계", "얘", "예",

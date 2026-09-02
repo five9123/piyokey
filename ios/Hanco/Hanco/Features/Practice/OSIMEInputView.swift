@@ -564,24 +564,39 @@ private func moveCursorToEnd(of textField: UITextField) {
 #if DEBUG
   enum TYP83IMEProbeLaunch {
     static let environmentKey = "TYP83_IME_PROBE"
+    static let typ88EnvironmentKey = "TYP88_IME_PROBE"
 
     static var isEnabled: Bool {
       shouldShow(environment: ProcessInfo.processInfo.environment)
     }
 
     static func shouldShow(environment: [String: String]) -> Bool {
-      environment[environmentKey] == "1"
+      environment[environmentKey] == "1" || environment[typ88EnvironmentKey] == "1"
+    }
+
+    static func usesTYP88Corpus(environment: [String: String]) -> Bool {
+      environment[typ88EnvironmentKey] == "1"
     }
   }
 
   struct TYP83IMEProbeSequence: Equatable {
     static let targets = ["돼", "과", "웨", "의"]
+    static let typ88Targets = [
+      "일해", "말해", "말했다", "급해", "입학", "번째", "각하",
+      "읽어", "닭", "삶", "많이", "앓다", "읊다",
+      "앉아", "없다", "못해", "위키백과", "돼", "과", "웨", "의",
+    ]
 
+    let activeTargets: [String]
     private(set) var targetIndex = 0
 
+    init(targets: [String] = Self.targets) {
+      activeTargets = targets
+    }
+
     var currentTarget: String? {
-      guard Self.targets.indices.contains(targetIndex) else { return nil }
-      return Self.targets[targetIndex]
+      guard activeTargets.indices.contains(targetIndex) else { return nil }
+      return activeTargets[targetIndex]
     }
 
     var isComplete: Bool {
@@ -600,21 +615,34 @@ private func moveCursorToEnd(of textField: UITextField) {
   }
 
   struct TYP83IMEProbeView: View {
-    @State private var sequence = TYP83IMEProbeSequence()
+    @State private var sequence: TYP83IMEProbeSequence
     @State private var acceptedText = ""
     @State private var resetRevision = 0
+    private let issueLabel: String
+
+    init(environment: [String: String] = ProcessInfo.processInfo.environment) {
+      let usesTYP88Corpus = TYP83IMEProbeLaunch.usesTYP88Corpus(environment: environment)
+      _sequence = State(
+        initialValue: TYP83IMEProbeSequence(
+          targets: usesTYP88Corpus
+            ? TYP83IMEProbeSequence.typ88Targets
+            : TYP83IMEProbeSequence.targets
+        )
+      )
+      issueLabel = usesTYP88Corpus ? "TYP-88" : "TYP-83"
+    }
 
     var body: some View {
       ZStack {
         AppPalette.backgroundTop.ignoresSafeArea()
 
         VStack(spacing: 20) {
-          Text(verbatim: "TYP-83 · IMETextField row 13")
+          Text(verbatim: "\(issueLabel) · IMETextField row 13")
             .font(.headline.monospaced())
             .foregroundStyle(AppPalette.ink)
 
           if let target = sequence.currentTarget {
-            Text(verbatim: "Target \(sequence.targetIndex + 1)/\(TYP83IMEProbeSequence.targets.count)")
+            Text(verbatim: "Target \(sequence.targetIndex + 1)/\(sequence.activeTargets.count)")
               .font(.subheadline.monospaced())
               .foregroundStyle(AppPalette.mutedInk)
 
@@ -669,20 +697,21 @@ private func moveCursorToEnd(of textField: UITextField) {
     }
   }
 
-  /// Opt-in physical-device probe for TYP-83 AC 1.
+  /// Opt-in physical-device probe for TYP-83 and TYP-88.
   ///
-  /// Set the `TYP83_IME_PROBE=1` launch environment variable in a Debug run,
-  /// then copy the `TYP-83 row 13` log lines for the iPhone and iPad runs. The
-  /// format matches the existing TYP-73 row-13 committed/marked record.
+  /// Set exactly one of `TYP83_IME_PROBE=1` or `TYP88_IME_PROBE=1` in a Debug
+  /// run, then copy the matching row-13 log lines for the scheduled iPhone and
+  /// iPad runs. Release/TestFlight builds cannot enable this surface.
   enum IMETextFieldRow13Probe {
     static let environmentKey = TYP83IMEProbeLaunch.environmentKey
+    static let typ88EnvironmentKey = TYP83IMEProbeLaunch.typ88EnvironmentKey
     private static let logger = Logger(
       subsystem: Bundle.main.bundleIdentifier ?? "app.piyokey.Piyokey",
-      category: "TYP-83 IMETextField row 13"
+      category: "OS IMETextField row 13"
     )
 
     static var isEnabled: Bool {
-      ProcessInfo.processInfo.environment[environmentKey] == "1"
+      TYP83IMEProbeLaunch.shouldShow(environment: ProcessInfo.processInfo.environment)
     }
 
     static func header(device: UIDevice = .current, target: String) -> String {
@@ -697,7 +726,10 @@ private func moveCursorToEnd(of textField: UITextField) {
     }
 
     static func record(_ line: String) {
-      logger.notice("TYP-83 row 13\n\(line, privacy: .public)")
+      let issue = TYP83IMEProbeLaunch.usesTYP88Corpus(
+        environment: ProcessInfo.processInfo.environment
+      ) ? "TYP-88" : "TYP-83"
+      logger.notice("\(issue, privacy: .public) row 13\n\(line, privacy: .public)")
     }
 
     private static func render(_ text: String?) -> String {

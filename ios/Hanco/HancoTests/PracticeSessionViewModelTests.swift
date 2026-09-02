@@ -650,6 +650,30 @@ final class PracticeSessionViewModelTests: XCTestCase {
     }
   }
 
+  func testOSIMEBatchimBoundaryIntermediatesDoNotCountMistakesOrRollback() throws {
+    let snapshots = [
+      (target: "일해", committed: "잀", acceptedText: "일"),
+      (target: "급해", committed: "긊", acceptedText: "급"),
+      (target: "번째", committed: "벉", acceptedText: "번"),
+      (target: "앓다", committed: "앐", acceptedText: "알"),
+      (target: "읊다", committed: "읇", acceptedText: "을"),
+    ]
+
+    for snapshot in snapshots {
+      let model = PracticeSessionViewModel(target: snapshot.target)
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+
+      model.synchronizeOSIME(acceptedSequence: evaluation.acceptedSequence)
+
+      XCTAssertEqual(evaluation.status, .composingMismatch, snapshot.target)
+      XCTAssertEqual(model.enteredText, snapshot.acceptedText, snapshot.target)
+      XCTAssertEqual(model.mistakeCount, 0, snapshot.target)
+    }
+  }
+
   func testKoreanKeyboardAvailabilityMatchesOnlyKoreanLanguageModes() {
     XCTAssertTrue(
       KoreanKeyboardAvailability.containsKorean(languages: ["ja-JP", "ko-KR", "en-US"])

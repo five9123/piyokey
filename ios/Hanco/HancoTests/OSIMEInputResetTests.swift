@@ -116,6 +116,15 @@ final class OSIMEInputResetTests: XCTestCase {
       XCTAssertTrue(
         TYP83IMEProbeLaunch.shouldShow(environment: ["TYP83_IME_PROBE": "1"])
       )
+      XCTAssertTrue(
+        TYP83IMEProbeLaunch.shouldShow(environment: ["TYP88_IME_PROBE": "1"])
+      )
+      XCTAssertFalse(
+        TYP83IMEProbeLaunch.usesTYP88Corpus(environment: ["TYP83_IME_PROBE": "1"])
+      )
+      XCTAssertTrue(
+        TYP83IMEProbeLaunch.usesTYP88Corpus(environment: ["TYP88_IME_PROBE": "1"])
+      )
     }
 
     func testTYP83ProbeAdvancesThroughExactTargetSequence() {
@@ -133,8 +142,27 @@ final class OSIMEInputResetTests: XCTestCase {
       XCTAssertEqual(sequence.currentTarget, "돼")
     }
 
+    func testTYP88ProbeUsesExactBoundaryAndRegressionCorpus() {
+      XCTAssertEqual(
+        TYP83IMEProbeSequence.typ88Targets,
+        [
+          "일해", "말해", "말했다", "급해", "입학", "번째", "각하",
+          "읽어", "닭", "삶", "많이", "앓다", "읊다",
+          "앉아", "없다", "못해", "위키백과", "돼", "과", "웨", "의",
+        ]
+      )
+
+      var sequence = TYP83IMEProbeSequence(targets: TYP83IMEProbeSequence.typ88Targets)
+      for target in TYP83IMEProbeSequence.typ88Targets {
+        XCTAssertEqual(sequence.currentTarget, target)
+        XCTAssertTrue(sequence.advance(ifMatching: target))
+      }
+      XCTAssertTrue(sequence.isComplete)
+    }
+
     func testTYP83Row13ProbeFormatsCommittedAndMarkedSnapshots() {
       XCTAssertEqual(IMETextFieldRow13Probe.environmentKey, "TYP83_IME_PROBE")
+      XCTAssertEqual(IMETextFieldRow13Probe.typ88EnvironmentKey, "TYP88_IME_PROBE")
       XCTAssertEqual(
         IMETextFieldRow13Probe.snapshot(step: 1, committed: "", marked: "되"),
         "1 committed=∅ marked=U+B418 \"되\""

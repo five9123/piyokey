@@ -447,6 +447,30 @@ final class FlowGameViewModelTests: XCTestCase {
     }
   }
 
+  func testOSIMECandidateJudgeKeepsBatchimBoundaryIntermediateViable() throws {
+    let boundary = try XCTUnwrap(
+      OSIMECandidateTextJudge.evaluate(
+        targets: ["일개", "일해"],
+        preferredTarget: "일개",
+        committedText: "잀"
+      )
+    )
+    XCTAssertEqual(boundary.target, "일해")
+    XCTAssertEqual(boundary.evaluation.status, .composingMismatch)
+    XCTAssertEqual(boundary.evaluation.acceptedSequence, Array("ㅇㅣㄹ"))
+
+    let complexFinal = try XCTUnwrap(
+      OSIMECandidateTextJudge.evaluate(
+        targets: ["읅", "읊다"],
+        preferredTarget: "읅",
+        committedText: "읇"
+      )
+    )
+    XCTAssertEqual(complexFinal.target, "읊다")
+    XCTAssertEqual(complexFinal.evaluation.status, .composingMismatch)
+    XCTAssertEqual(complexFinal.evaluation.acceptedSequence, Array("ㅇㅡㄹ"))
+  }
+
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
     let origin = Date(timeIntervalSince1970: 300)
     let model = FlowGameViewModel(

@@ -122,6 +122,12 @@ public enum OSIMETextJudge {
     ) || Korean10KeyRecipe.committedDocumentEndsInReachableConsonantCycle(
       target: target,
       committedText: committedText
+    ) || Korean10KeyRecipe.committedDocumentEndsInReachableClosedSyllableBoundary(
+      target: target,
+      committedText: committedText
+    ) || Korean10KeyRecipe.committedDocumentEndsInReachableComplexTrailingAssembly(
+      target: target,
+      committedText: committedText
     ) {
       return OSIMETextEvaluation(
         status: .composingMismatch,
