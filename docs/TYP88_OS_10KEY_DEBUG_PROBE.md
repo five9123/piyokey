@@ -37,4 +37,3 @@
   원문 step과 기기·OS를 TYP-81에 첨부한 뒤 별도 구현 판단을 받는다.
 - iPhone과 iPad 로그는 구분해 TYP-81에 첨부한다. Debug probe 결과는 정확한 build 13
   TestFlight의 전체 corpus 실기기 통과를 대신하지 않는다.
-
