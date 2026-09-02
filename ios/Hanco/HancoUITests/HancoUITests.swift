@@ -147,8 +147,9 @@ final class HancoUITests: XCTestCase {
     openSettings()
     let layoutPicker = element("settings.builtin_keyboard_layout")
     scrollToHittable(layoutPicker)
-    layoutPicker.tap()
-    app.buttons["韓国語10キー（天地人式）"].tap()
+    let tenKeyLayout = layoutPicker.buttons["天地人（10キー）"]
+    XCTAssertTrue(tenKeyLayout.isHittable)
+    tenKeyLayout.tap()
     app.buttons["settings.done"].tap()
     startPractice()
 
