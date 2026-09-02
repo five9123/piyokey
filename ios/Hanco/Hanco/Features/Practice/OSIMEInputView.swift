@@ -585,6 +585,48 @@ private func moveCursorToEnd(of textField: UITextField) {
       "일해", "말해", "말했다", "급해", "입학", "번째", "각하",
       "읽어", "닭", "삶", "많이", "앓다", "읊다",
       "앉아", "없다", "못해", "위키백과", "돼", "과", "웨", "의",
+      "학교", "요", "여자", "예", "교", "며칠", "표", "효",
+    ]
+
+    static let typ88Cases: [TYP88IMEProbeCase] = [
+      TYP88IMEProbeCase(
+        id: "class-c-school-separator-free-cycle",
+        target: "학교",
+        instruction:
+          "No separator: type 학, then keep tapping ㄱ until 학 → 핰 → 핚 → 학 is captured. Do not invent a boundary; tap Continue after one full cycle.",
+        advanceRule: .manual
+      ),
+    ] + typ88Targets.map { target in
+      TYP88IMEProbeCase(
+        id: target == "학교" ? "class-c-school-confirmed-boundary" : "target-\(target)",
+        target: target,
+        instruction: target == "학교"
+          ? "Type 학, confirm the boundary with timeout or the right-arrow key, then type ㄱ → 교."
+          : "Type the target exactly with the iOS Korean 10-key keyboard.",
+        advanceRule: .exactMatch
+      )
+    } + [
+      TYP88IMEProbeCase(
+        id: "class-d-negative-yo-wrong-vertical",
+        target: "요",
+        instruction:
+          "Negative raw strokes: type ㅇ, dot, dot, then vertical (ㅣ), not horizontal (ㅡ). Capture every scalar, then tap Continue.",
+        advanceRule: .manual
+      ),
+      TYP88IMEProbeCase(
+        id: "class-d-negative-yeo-wrong-horizontal",
+        target: "여",
+        instruction:
+          "Negative raw strokes: type ㅇ, dot, dot, then horizontal (ㅡ), not vertical (ㅣ). Capture every scalar, then tap Continue.",
+        advanceRule: .manual
+      ),
+      TYP88IMEProbeCase(
+        id: "class-d-negative-gyo-wrong-vertical",
+        target: "교",
+        instruction:
+          "Negative raw strokes: type ㄱ, dot, dot, then vertical (ㅣ), not horizontal (ㅡ). Capture every scalar, then tap Continue.",
+        advanceRule: .manual
+      ),
     ]
 
     let activeTargets: [String]
@@ -614,14 +656,32 @@ private func moveCursorToEnd(of textField: UITextField) {
     }
   }
 
+  struct TYP88IMEProbeCase: Equatable {
+    enum AdvanceRule: Equatable {
+      case exactMatch
+      case manual
+    }
+
+    let id: String
+    let target: String
+    let instruction: String
+    let advanceRule: AdvanceRule
+
+    var logLabel: String {
+      "\(id) | Target: \(target)"
+    }
+  }
+
   struct TYP83IMEProbeView: View {
     @State private var sequence: TYP83IMEProbeSequence
+    @State private var typ88CaseIndex = 0
     @State private var acceptedText = ""
     @State private var resetRevision = 0
     private let issueLabel: String
+    private let usesTYP88Corpus: Bool
 
     init(environment: [String: String] = ProcessInfo.processInfo.environment) {
-      let usesTYP88Corpus = TYP83IMEProbeLaunch.usesTYP88Corpus(environment: environment)
+      usesTYP88Corpus = TYP83IMEProbeLaunch.usesTYP88Corpus(environment: environment)
       _sequence = State(
         initialValue: TYP83IMEProbeSequence(
           targets: usesTYP88Corpus
@@ -641,8 +701,8 @@ private func moveCursorToEnd(of textField: UITextField) {
             .font(.headline.monospaced())
             .foregroundStyle(AppPalette.ink)
 
-          if let target = sequence.currentTarget {
-            Text(verbatim: "Target \(sequence.targetIndex + 1)/\(sequence.activeTargets.count)")
+          if let target = currentTarget {
+            Text(verbatim: "Target \(currentIndex + 1)/\(caseCount)")
               .font(.subheadline.monospaced())
               .foregroundStyle(AppPalette.mutedInk)
 
@@ -651,18 +711,29 @@ private func moveCursorToEnd(of textField: UITextField) {
               .foregroundStyle(AppPalette.accent)
               .accessibilityIdentifier("typ83.ime_probe.target")
 
-            Text(verbatim: "Use the iOS Korean 10-key keyboard")
+            Text(verbatim: currentInstruction)
               .font(.callout)
               .foregroundStyle(AppPalette.mutedInk)
+              .multilineTextAlignment(.center)
 
-            OSIMEInputPanel(
-              target: target,
-              acceptedText: acceptedText,
-              resetRevision: resetRevision,
-              onAcceptedSequence: accept,
-              onConfirmedMismatch: {}
-            )
-            .frame(maxWidth: 520)
+            if usesTYP88Corpus, let probeCase = currentTYP88Case {
+              typ88RawInput(probeCase)
+                .frame(maxWidth: 520)
+
+              if probeCase.advanceRule == .manual {
+                Button("Captured; continue", action: advanceManualCase)
+                  .buttonStyle(.borderedProminent)
+              }
+            } else {
+              OSIMEInputPanel(
+                target: target,
+                acceptedText: acceptedText,
+                resetRevision: resetRevision,
+                onAcceptedSequence: accept,
+                onConfirmedMismatch: {}
+              )
+              .frame(maxWidth: 520)
+            }
           } else {
             Image(systemName: "checkmark.circle.fill")
               .font(.system(size: 64))
@@ -679,6 +750,63 @@ private func moveCursorToEnd(of textField: UITextField) {
       .accessibilityIdentifier("typ83.ime_probe.screen")
     }
 
+    private var currentTYP88Case: TYP88IMEProbeCase? {
+      guard TYP83IMEProbeSequence.typ88Cases.indices.contains(typ88CaseIndex) else { return nil }
+      return TYP83IMEProbeSequence.typ88Cases[typ88CaseIndex]
+    }
+
+    private var currentTarget: String? {
+      usesTYP88Corpus ? currentTYP88Case?.target : sequence.currentTarget
+    }
+
+    private var currentIndex: Int {
+      usesTYP88Corpus ? typ88CaseIndex : sequence.targetIndex
+    }
+
+    private var caseCount: Int {
+      usesTYP88Corpus ? TYP83IMEProbeSequence.typ88Cases.count : sequence.activeTargets.count
+    }
+
+    private var currentInstruction: String {
+      currentTYP88Case?.instruction ?? "Use the iOS Korean 10-key keyboard"
+    }
+
+    @ViewBuilder
+    private func typ88RawInput(_ probeCase: TYP88IMEProbeCase) -> some View {
+      VStack(spacing: 8) {
+        ZStack {
+          Text(verbatim: acceptedText.isEmpty ? "Tap and type" : acceptedText)
+            .font(.title3.monospaced())
+            .foregroundStyle(acceptedText.isEmpty ? AppPalette.mutedInk : AppPalette.ink)
+            .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+            .padding(.horizontal, 14)
+
+          IMETextField(
+            text: $acceptedText,
+            resetText: "",
+            targets: [probeCase.target],
+            resetRevision: resetRevision,
+            focusRevision: resetRevision,
+            isFocusSuspended: false,
+            isFocused: .constant(true),
+            onReturn: {},
+            onFocusRecovery: {},
+            onTextChange: captureRaw(committedText:markedText:),
+            probeTargetLabel: probeCase.logLabel
+          )
+        }
+        .background(AppPalette.backgroundTop, in: RoundedRectangle(cornerRadius: 14))
+        .overlay {
+          RoundedRectangle(cornerRadius: 14)
+            .stroke(AppPalette.accent.opacity(0.42), lineWidth: 1.5)
+        }
+
+        Text(verbatim: "Raw capture: no judge rollback or mistake accounting")
+          .font(.caption2.monospaced())
+          .foregroundStyle(AppPalette.mutedInk)
+      }
+    }
+
     private func accept(_ acceptedSequence: [Character]) {
       let composed = HangulComposer.compose(acceptedSequence).text
       acceptedText = composed
@@ -690,8 +818,32 @@ private func moveCursorToEnd(of textField: UITextField) {
       }
     }
 
+    private func captureRaw(committedText: String, markedText: String?) {
+      guard let probeCase = currentTYP88Case else { return }
+      let document = committedText + (markedText ?? "")
+      acceptedText = document
+      guard probeCase.advanceRule == .exactMatch, document == probeCase.target else { return }
+      advanceTYP88Case(reason: "exact-match")
+    }
+
+    private func advanceManualCase() {
+      guard currentTYP88Case?.advanceRule == .manual else { return }
+      advanceTYP88Case(reason: "manual-capture-complete")
+    }
+
+    private func advanceTYP88Case(reason: String) {
+      guard let probeCase = currentTYP88Case else { return }
+      IMETextFieldRow13Probe.record("Scenario complete: \(probeCase.id) [\(reason)]")
+      typ88CaseIndex += 1
+      DispatchQueue.main.async {
+        acceptedText = ""
+        resetRevision &+= 1
+      }
+    }
+
     private func restart() {
       sequence.restart()
+      typ88CaseIndex = 0
       acceptedText = ""
       resetRevision &+= 1
     }
@@ -760,6 +912,7 @@ struct IMETextField: UIViewRepresentable {
   let onReturn: () -> Void
   let onFocusRecovery: () -> Void
   let onTextChange: (String, String?) -> Void
+  var probeTargetLabel: String? = nil
 
   func makeCoordinator() -> Coordinator {
     Coordinator(parent: self)
@@ -981,7 +1134,7 @@ struct IMETextField: UIViewRepresentable {
     private func recordRow13Probe(committed: String, marked: String?) {
       #if DEBUG
         guard IMETextFieldRow13Probe.isEnabled else { return }
-        let target = parent.targets.joined(separator: " | ")
+        let target = parent.probeTargetLabel ?? parent.targets.joined(separator: " | ")
         if row13ProbeRevision != parent.resetRevision || row13ProbeTarget != target {
           row13ProbeRevision = parent.resetRevision
           row13ProbeTarget = target

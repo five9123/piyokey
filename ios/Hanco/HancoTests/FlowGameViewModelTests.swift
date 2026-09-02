@@ -471,6 +471,32 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(complexFinal.evaluation.acceptedSequence, Array("ㅇㅡㄹ"))
   }
 
+  func testOSIMECandidateJudgeKeepsClassCAndDIntermediatesViable() throws {
+    for committed in ["핰", "핚"] {
+      let selection = try XCTUnwrap(
+        OSIMECandidateTextJudge.evaluate(
+          targets: ["학코", "학교"],
+          preferredTarget: "학코",
+          committedText: committed
+        )
+      )
+      XCTAssertEqual(selection.target, "학교", committed)
+      XCTAssertEqual(selection.evaluation.status, .composingMismatch, committed)
+      XCTAssertEqual(selection.evaluation.acceptedSequence, Array("ㅎㅏㄱ"), committed)
+    }
+
+    let doubleDot = try XCTUnwrap(
+      OSIMECandidateTextJudge.evaluate(
+        targets: ["어", "요"],
+        preferredTarget: "어",
+        committedText: "ㅇ\u{11A2}"
+      )
+    )
+    XCTAssertEqual(doubleDot.target, "요")
+    XCTAssertEqual(doubleDot.evaluation.status, .composingMismatch)
+    XCTAssertEqual(doubleDot.evaluation.acceptedSequence, Array("ㅇ"))
+  }
+
   func testConcurrentAcidRainEndsWhenThreeSeparateCardsReachTheFloor() {
     let origin = Date(timeIntervalSince1970: 300)
     let model = FlowGameViewModel(

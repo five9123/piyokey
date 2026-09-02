@@ -149,6 +149,7 @@ final class OSIMEInputResetTests: XCTestCase {
           "일해", "말해", "말했다", "급해", "입학", "번째", "각하",
           "읽어", "닭", "삶", "많이", "앓다", "읊다",
           "앉아", "없다", "못해", "위키백과", "돼", "과", "웨", "의",
+          "학교", "요", "여자", "예", "교", "며칠", "표", "효",
         ]
       )
 
@@ -158,6 +159,30 @@ final class OSIMEInputResetTests: XCTestCase {
         XCTAssertTrue(sequence.advance(ifMatching: target))
       }
       XCTAssertTrue(sequence.isComplete)
+    }
+
+    func testTYP88ProbeSeparatesSchoolBoundaryPathsAndNegativeRawStrokes() {
+      let cases = TYP83IMEProbeSequence.typ88Cases
+      XCTAssertEqual(cases.first?.id, "class-c-school-separator-free-cycle")
+      XCTAssertEqual(cases.first?.target, "학교")
+      XCTAssertEqual(cases.first?.advanceRule, .manual)
+
+      let confirmedBoundary = cases.first { $0.id == "class-c-school-confirmed-boundary" }
+      XCTAssertEqual(confirmedBoundary?.target, "학교")
+      XCTAssertEqual(confirmedBoundary?.advanceRule, .exactMatch)
+      XCTAssertTrue(confirmedBoundary?.instruction.contains("timeout or the right-arrow") == true)
+
+      let negativeCases = cases.filter { $0.id.hasPrefix("class-d-negative-") }
+      XCTAssertEqual(
+        negativeCases.map(\.id),
+        [
+          "class-d-negative-yo-wrong-vertical",
+          "class-d-negative-yeo-wrong-horizontal",
+          "class-d-negative-gyo-wrong-vertical",
+        ]
+      )
+      XCTAssertTrue(negativeCases.allSatisfy { $0.advanceRule == .manual })
+      XCTAssertTrue(negativeCases.allSatisfy { $0.instruction.contains("dot, dot") })
     }
 
     func testTYP83Row13ProbeFormatsCommittedAndMarkedSnapshots() {

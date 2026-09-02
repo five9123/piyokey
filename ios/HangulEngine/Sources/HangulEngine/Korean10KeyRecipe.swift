@@ -104,17 +104,20 @@ public enum Korean10KeyRecipe {
         let targetRecipe = recipes[target.medial]
       else { continue }
 
-      let rawStrokes: ArraySlice<Character>
+      var rawScalars = String(active).unicodeScalars.map(\.value)
       if let leading = target.leading {
-        guard active.count >= 2, active.first == leading else { continue }
-        rawStrokes = active.dropFirst()
+        guard let leadingScalar = String(leading).unicodeScalars.first?.value,
+          rawScalars.first == leadingScalar
+        else { continue }
+        rawScalars.removeFirst()
       } else {
-        guard !active.isEmpty else { continue }
-        rawStrokes = active
+        guard !rawScalars.isEmpty else { continue }
       }
-      guard rawStrokes.allSatisfy({ rawVowelKey[$0] != nil }) else { continue }
+      guard !rawScalars.isEmpty else { continue }
+      let expandedStrokes = rawScalars.compactMap { rawVowelKeysByScalar[$0] }
+      guard expandedStrokes.count == rawScalars.count else { continue }
 
-      let rawRecipe = rawStrokes.compactMap { rawVowelKey[$0] }
+      let rawRecipe = expandedStrokes.flatMap { $0 }
       if rawRecipe.count < targetRecipe.count, targetRecipe.starts(with: rawRecipe) {
         return true
       }
@@ -209,6 +212,47 @@ public enum Korean10KeyRecipe {
     )
   }
 
+  /// Preserves the already-correct closed syllable while Apple's Korean
+  /// 10-key keyboard is still cycling the same physical key instead of
+  /// starting the next onset. For `학교`, consecutive ㄱ-key taps may expose
+  /// `핰` or `핚`; those are unconfirmed boundary states, not a request for the
+  /// app to synthesize `학ㄱ` or otherwise invent a syllable boundary.
+  ///
+  /// The exception is limited to an exact target boundary where the original
+  /// final and the next onset have identical recipes. The temporary final must
+  /// be another member of that same single-key consonant cycle.
+  static func acceptedSequenceForUnconfirmedSameRecipeBoundaryCycle(
+    target: String,
+    committedText: String
+  ) -> [Character]? {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    let nextTargetIndex = committedCharacters.count
+    guard nextTargetIndex > 0, nextTargetIndex < targetCharacters.count,
+      let candidateCharacter = committedCharacters.last,
+      committedCharacters.dropLast().elementsEqual(targetCharacters.prefix(nextTargetIndex - 1)),
+      let candidate = syllableComponents(of: candidateCharacter),
+      let previousTarget = syllableComponents(of: targetCharacters[nextTargetIndex - 1]),
+      candidate.leading == previousTarget.leading,
+      candidate.medial == previousTarget.medial,
+      let originalTrailing = previousTarget.trailing,
+      let candidateTrailing = candidate.trailing,
+      candidateTrailing != originalTrailing,
+      let nextTargetLeading = leadingConsonant(of: targetCharacters[nextTargetIndex]),
+      let originalRecipe = recipes[originalTrailing],
+      let nextRecipe = recipes[nextTargetLeading],
+      originalRecipe == nextRecipe,
+      let sharedKey = originalRecipe.first,
+      originalRecipe.allSatisfy({ $0 == sharedKey }),
+      let candidateRecipe = recipes[candidateTrailing],
+      !candidateRecipe.isEmpty,
+      candidateRecipe.allSatisfy({ $0 == sharedKey })
+    else { return nil }
+
+    let stableTarget = String(targetCharacters.prefix(nextTargetIndex))
+    return try? JamoDecomposer.keySequence(for: stableTarget)
+  }
+
   /// Recognizes only target-derived intermediate states while assembling a
   /// complex final. A simple candidate may be a recipe prefix of the target's
   /// first component (`단` -> `닭`), or a compound candidate may contain the
@@ -288,10 +332,12 @@ public enum Korean10KeyRecipe {
 
   private static let vowelJamo = Set(HangulTables.medial)
   private static let consonantJamo = Set(HangulTables.leading)
-  private static let rawVowelKey: [Character: Korean10KeyKey] = [
-    "ㅣ": .vertical,
-    "ㆍ": .dot,
-    "ㅡ": .horizontal,
+  private static let rawVowelKeysByScalar: [UInt32: [Korean10KeyKey]] = [
+    0x3163: [.vertical],
+    0x3161: [.horizontal],
+    0x318D: [.dot],
+    0x119E: [.dot],
+    0x11A2: [.dot, .dot],
   ]
 
   // Golden recipe contract approved for the Apple Korean 10-Key layout in
