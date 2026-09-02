@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a89f6cebe9e493d162048e3426f980482843c3c3",
+  "verified_tree": "c8c2b2ec202328d57cbde7d4a1fa73c41ef465b7",
+  "branch": "codex/90-ipad-key-guide-policy",
+  "scope": "TYP-90 merged-tree iPad-only keyboard input guide policy",
+  "result": "pass",
+  "recorded_at": "2026-09-02T22:54:11.996232+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "focused input-guide policy unit tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,name=iPhone\\ 17\\ Pro,OS=26.5 -only-testing:HancoTests/PracticeSessionViewModelTests/testKeyboardInputGuidePolicyIsIPadOnlyAndIgnoresLegacyIPhonePreference -only-testing:HancoTests/PracticeSessionViewModelTests/testKeyboardOptionsApplyDevicePolicyAndAllowIPadGraduationMode",
+      "note": "Only the two named unit methods ran; 2 passed, 0 failed."
+    },
+    {
+      "name": "focused TYP-90 iPhone UI policy",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,name=iPhone\\ 17\\ Pro,OS=26.5 -only-testing:HancoUITests/HancoUITests/testTYP90InputGuidePolicyAcrossSettingsDeckLessonAndGames",
+      "note": "The named selector passed after a simulator-only Busy preflight launch failure was cleared by rebooting that simulator; the failed attempt executed no test. The successful retry covered Settings, deck practice, curriculum lesson, Flow, and Acid Rain with a legacy ON preference."
+    },
+    {
+      "name": "focused TYP-90 iPad UI policy",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,name=iPad\\ Air\\ 11-inch\\ \\(M4\\),OS=26.5 -only-testing:HancoUITests/HancoUITests/testTYP90InputGuidePolicyAcrossSettingsDeckLessonAndGames",
+      "note": "The single named selector passed and covered Settings, deck practice, curriculum lesson, Flow, and Acid Rain while preserving the guide and TYP-89 segmented layout control."
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was 18d1521b4764a752956f5c32b8b7329cedcc797c from PR #155."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "Android frozen scope",
+      "status": "pass",
+      "command": "git diff --quiet origin/main...HEAD -- android",
+      "note": "No Android path changed."
+    }
+  ],
+  "manual_gates": [
+    "Build 13 verification on physical iPhone and physical iPad remains open; only iOS 26.5 simulators were exercised.",
+    "Build 13 archive, TestFlight upload/install, and TestFlight device verification remain open.",
+    "Claude exact-head review and maintainer manual merge approval remain open.",
+    "Full Hanco tests, account, content-rights, IAP, store, signing, performance, and release gates remain open; no unfiltered Hanco scheme, whole HancoUITests target, or store screenshot/capture test ran."
+  ]
+}
