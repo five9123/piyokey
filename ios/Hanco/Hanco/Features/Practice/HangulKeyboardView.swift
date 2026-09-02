@@ -276,10 +276,41 @@ enum Korean10KeyGeometry {
   }
 }
 
+enum KeyboardInputGuidePolicy {
+  static var isAvailableOnCurrentDevice: Bool {
+    isAvailable(on: UIDevice.current.userInterfaceIdiom)
+  }
+
+  static func isAvailable(on interfaceIdiom: UIUserInterfaceIdiom) -> Bool {
+    interfaceIdiom == .pad
+  }
+
+  static func resolvedPreference(
+    _ storedPreference: Bool,
+    on interfaceIdiom: UIUserInterfaceIdiom
+  ) -> Bool {
+    storedPreference && isAvailable(on: interfaceIdiom)
+  }
+}
+
 struct HangulKeyboardOptions: Equatable {
-  var showsKeyGuide = true
-  var showsRomanHints = true
-  var hapticsEnabled = true
+  var showsKeyGuide: Bool
+  var showsRomanHints: Bool
+  var hapticsEnabled: Bool
+
+  init(
+    showsKeyGuide: Bool = true,
+    showsRomanHints: Bool = true,
+    hapticsEnabled: Bool = true,
+    interfaceIdiom: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom
+  ) {
+    self.showsKeyGuide = KeyboardInputGuidePolicy.resolvedPreference(
+      showsKeyGuide,
+      on: interfaceIdiom
+    )
+    self.showsRomanHints = showsRomanHints
+    self.hapticsEnabled = hapticsEnabled
+  }
 }
 
 enum HangulKeyboardGeometry {
@@ -1127,6 +1158,7 @@ private struct Keycap: View {
     .accessibilityValue(Text(verbatim: romanHint ?? ""))
     .accessibilityIdentifier(accessibilityIdentifier)
     .accessibilityAddTraits(.isButton)
+    .accessibilityAddTraits(highlighted ? .isSelected : [])
     .accessibilityAction {
       onActivate(keyAction)
     }
