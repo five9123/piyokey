@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "verified_commit": "e5549841df398c98060a683f911aea188913ac33",
+  "verified_tree": "31b862a56101736731d1334721c91d168d4bab36",
+  "branch": "codex/83-cheonjiin-compound-vowels",
+  "scope": "TYP-83 exact-head documentation reconciliation after Claude review",
+  "result": "pass",
+  "recorded_at": "2026-09-02T01:27:38.469167+00:00",
+  "checks": [
+    {
+      "name": "documentation-scope",
+      "status": "pass",
+      "command": "git diff 4d1f9be..HEAD changes only DECISIONS.md and PROJECT_STATUS.md",
+      "note": "2 Markdown files only"
+    },
+    {
+      "name": "code-tree-unchanged",
+      "status": "pass",
+      "command": "git diff --quiet 3954897 HEAD -- ios shared tools web android and identical ios tree object",
+      "note": "product and test code identical to verified implementation 3954897"
+    },
+    {
+      "name": "status-consistency",
+      "status": "pass",
+      "command": "one canonical PROJECT_STATUS row each for TYP-82, TYP-83, TYP-84, TYP-86; merged/current states and f46336c baseline asserted; no conflict markers",
+      "note": "PASS"
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "PASS"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "clean tree; owner, Python 3.12.13, contracts, origin and gh auth passed"
+    },
+    {
+      "name": "swift-package",
+      "status": "skip",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "not rerun for docs-only diff; code tree identical to 3954897 whose separate evidence records 58/58"
+    },
+    {
+      "name": "python-contracts",
+      "status": "skip",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "not rerun for docs-only diff; code tree identical to 3954897 whose separate evidence records 107/107"
+    },
+    {
+      "name": "hanco-focused",
+      "status": "skip",
+      "command": "xcodebuild focused selectors",
+      "note": "not rerun for docs-only diff; code tree identical to 3954897 whose separate evidence records 24/24"
+    }
+  ],
+  "manual_gates": [
+    "iPad physical IMETextField row-13 logs for 돼·과·웨·의 remain OPEN",
+    "Post-fix iPhone and iPad OS Cheonjiin Practice, lesson, Flow, Dictation, representative-vowel, consonant-cycle, and Dubeolsik trade-off device acceptance remain OPEN",
+    "The ordinary-issue governance prohibition leaves the unfiltered Hanco scheme / whole HancoTests regression OPEN",
+    "Claude exact-head re-review, inactive CI/manual merge approval, deployment, TestFlight/build 12, account, rights, and store/release gates remain OPEN; do not mark Done or merge"
+  ]
+}
