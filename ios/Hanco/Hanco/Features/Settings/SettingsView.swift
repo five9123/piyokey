@@ -314,13 +314,15 @@ struct SettingsView: View {
 
       Divider().opacity(0.5)
 
-      settingToggle(
-        title: "practice.setup.key_guide",
-        systemImage: "lightbulb.fill",
-        isOn: $showsKeyGuide,
-        identifier: "settings.key_guide"
-      )
-      Divider().opacity(0.5)
+      if KeyboardInputGuidePolicy.isAvailableOnCurrentDevice {
+        settingToggle(
+          title: "practice.setup.key_guide",
+          systemImage: "lightbulb.fill",
+          isOn: $showsKeyGuide,
+          identifier: "settings.key_guide"
+        )
+        Divider().opacity(0.5)
+      }
       settingToggle(
         title: "practice.setup.roman_hints",
         detail: "practice.setup.roman_hints_detail",

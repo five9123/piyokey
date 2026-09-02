@@ -775,7 +775,10 @@ final class HancoUITests: XCTestCase {
     let settings = app.buttons["practice.session_settings"]
     XCTAssertTrue(settings.waitForExistence(timeout: 3))
     settings.tap()
-    XCTAssertTrue(element("practice.session_settings.key_guide").waitForExistence(timeout: 3))
+    XCTAssertEqual(
+      element("practice.session_settings.key_guide").exists,
+      isIPadDestination
+    )
     XCTAssertTrue(element("practice.session_settings.roman_hints").exists)
     XCTAssertTrue(element("practice.session_settings.haptics").exists)
     let displaySettings = app.buttons["practice.session_settings.display"]
@@ -833,8 +836,11 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("settings.sound_preset").isEnabled)
     attachScreenshot(named: "practice-common-settings-ja")
 
-    scrollToHittable(app.switches["settings.key_guide"])
-    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+    scrollToHittable(app.switches["settings.roman_hints"])
+    XCTAssertEqual(app.switches["settings.key_guide"].exists, isIPadDestination)
+    if isIPadDestination {
+      XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+    }
     XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
     XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
 
@@ -916,6 +922,60 @@ final class HancoUITests: XCTestCase {
     app.buttons["practice.session_settings"].tap()
     app.buttons["input_mode.builtin"].tap()
     XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
+  }
+
+  func testTYP90InputGuidePolicyAcrossSettingsDeckLessonAndGames() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      gameDuration: 60,
+      flowStartIndex: 0
+    )
+    // Simulate a previously enabled preference. The iPhone policy must ignore it.
+    app.launchArguments += ["-keyboard.shows_key_guide", "YES"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+    openSettings()
+    let layoutPicker = element("settings.builtin_keyboard_layout")
+    XCTAssertTrue(layoutPicker.waitForExistence(timeout: 3))
+    XCTAssertTrue(layoutPicker.buttons["2ボル式"].isSelected)
+    let romanHints = app.switches["settings.roman_hints"]
+    scrollToHittable(romanHints)
+    XCTAssertEqual(app.switches["settings.key_guide"].exists, isIPadDestination)
+    if isIPadDestination {
+      XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+    }
+    app.buttons["settings.done"].tap()
+
+    startPractice()
+    assertTYP90GuideState(context: "deck practice")
+    app.buttons["practice.session_settings"].tap()
+    XCTAssertEqual(
+      element("practice.session_settings.key_guide").exists,
+      isIPadDestination
+    )
+    app.buttons["practice.session_settings.close"].tap()
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+
+    openPracticeTab()
+    let firstStage = element("curriculum.stage.chapter_1_basic_consonants")
+    scrollToHittable(firstStage)
+    firstStage.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    assertTYP90GuideState(context: "curriculum lesson")
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
+    XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+
+    startBundledGame(mode: "flow", screen: "game.play.screen")
+    XCTAssertFalse(element("game.target.value").label.isEmpty)
+    assertTYP90GuideState(context: "flow game")
+    returnToGameHub()
+
+    startBundledGame(mode: "acid_rain", screen: "acid_rain.play.screen")
+    XCTAssertFalse(element("acid_rain.target.value").label.isEmpty)
+    assertTYP90GuideState(context: "acid-rain game")
   }
 
   func testSoundSettingAndPresetPersistAcrossRelaunch() {
@@ -3433,12 +3493,14 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(choseongMeaning.value as? String, "0")
     attachScreenshot(named: "settings-direct-content-en")
 
-    let keyGuide = app.switches["settings.key_guide"]
-    scrollToHittable(keyGuide, direction: .down)
-    XCTAssertEqual(keyGuide.value as? String, "1")
-    setSwitch(keyGuide, to: "0")
     let romanHints = app.switches["settings.roman_hints"]
     scrollToHittable(romanHints)
+    let keyGuide = app.switches["settings.key_guide"]
+    XCTAssertEqual(keyGuide.exists, isIPadDestination)
+    if isIPadDestination {
+      XCTAssertEqual(keyGuide.value as? String, "1")
+      setSwitch(keyGuide, to: "0")
+    }
     XCTAssertEqual(romanHints.value as? String, "1")
     setSwitch(romanHints, to: "0")
     let haptics = app.switches["settings.haptics"]
@@ -3474,11 +3536,13 @@ final class HancoUITests: XCTestCase {
     let persistedChoseongMeaning = app.switches["settings.choseong_meaning"]
     scrollToHittable(persistedChoseongMeaning)
     XCTAssertEqual(persistedChoseongMeaning.value as? String, "0")
-    let persistedKeyGuide = app.switches["settings.key_guide"]
-    scrollToHittable(persistedKeyGuide, direction: .down)
-    XCTAssertEqual(persistedKeyGuide.value as? String, "0")
     let persistedRomanHints = app.switches["settings.roman_hints"]
     scrollToHittable(persistedRomanHints)
+    let persistedKeyGuide = app.switches["settings.key_guide"]
+    XCTAssertEqual(persistedKeyGuide.exists, isIPadDestination)
+    if isIPadDestination {
+      XCTAssertEqual(persistedKeyGuide.value as? String, "0")
+    }
     XCTAssertEqual(persistedRomanHints.value as? String, "0")
     let persistedHaptics = app.switches["settings.haptics"]
     scrollToHittable(persistedHaptics)
@@ -4042,6 +4106,34 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(practice.waitForExistence(timeout: 3))
     practice.tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
+  }
+
+  private var isIPadDestination: Bool {
+    max(app.frame.width, app.frame.height) >= 1_000
+  }
+
+  private func assertTYP90GuideState(
+    context: String,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let keyboardKeys = app.buttons.matching(
+      NSPredicate(format: "identifier BEGINSWITH %@", "keyboard.key.")
+    )
+    XCTAssertTrue(
+      keyboardKeys.firstMatch.waitForExistence(timeout: 5),
+      context,
+      file: file,
+      line: line
+    )
+    let selectedKeyCount = keyboardKeys.allElementsBoundByIndex.filter(\.isSelected).count
+    XCTAssertEqual(
+      selectedKeyCount,
+      isIPadDestination ? 1 : 0,
+      context,
+      file: file,
+      line: line
+    )
   }
 
   private func adaptiveWidthClass(for width: CGFloat) -> String {

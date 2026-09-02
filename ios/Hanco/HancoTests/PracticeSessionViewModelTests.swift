@@ -342,16 +342,31 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertFalse(viewModel.shouldAnimateSyllableJoin)
   }
 
-  func testKeyboardOptionsDefaultOnAndAllowGraduationMode() {
-    let defaults = HangulKeyboardOptions()
-    XCTAssertTrue(defaults.showsKeyGuide)
-    XCTAssertTrue(defaults.showsRomanHints)
-    XCTAssertTrue(defaults.hapticsEnabled)
+  func testKeyboardInputGuidePolicyIsIPadOnlyAndIgnoresLegacyIPhonePreference() {
+    XCTAssertTrue(KeyboardInputGuidePolicy.isAvailable(on: .pad))
+    XCTAssertFalse(KeyboardInputGuidePolicy.isAvailable(on: .phone))
+    XCTAssertTrue(KeyboardInputGuidePolicy.resolvedPreference(true, on: .pad))
+    XCTAssertFalse(KeyboardInputGuidePolicy.resolvedPreference(false, on: .pad))
+    XCTAssertFalse(KeyboardInputGuidePolicy.resolvedPreference(true, on: .phone))
+  }
+
+  func testKeyboardOptionsApplyDevicePolicyAndAllowIPadGraduationMode() {
+    let iPadDefaults = HangulKeyboardOptions(interfaceIdiom: .pad)
+    XCTAssertTrue(iPadDefaults.showsKeyGuide)
+    XCTAssertTrue(iPadDefaults.showsRomanHints)
+    XCTAssertTrue(iPadDefaults.hapticsEnabled)
+
+    let legacyIPhonePreference = HangulKeyboardOptions(
+      showsKeyGuide: true,
+      interfaceIdiom: .phone
+    )
+    XCTAssertFalse(legacyIPhonePreference.showsKeyGuide)
 
     let graduationMode = HangulKeyboardOptions(
       showsKeyGuide: false,
       showsRomanHints: false,
-      hapticsEnabled: false
+      hapticsEnabled: false,
+      interfaceIdiom: .pad
     )
     XCTAssertFalse(graduationMode.showsKeyGuide)
     XCTAssertFalse(graduationMode.showsRomanHints)

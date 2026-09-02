@@ -1651,10 +1651,12 @@ struct SessionSettingsOverlay: View {
           }
 
           settingsSection(title: "settings.keyboard") {
-            Toggle(isOn: $showsKeyGuide) {
-              Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
+            if KeyboardInputGuidePolicy.isAvailableOnCurrentDevice {
+              Toggle(isOn: $showsKeyGuide) {
+                Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
+              }
+              .accessibilityIdentifier("practice.session_settings.key_guide")
             }
-            .accessibilityIdentifier("practice.session_settings.key_guide")
 
             Toggle(isOn: $showsRomanHints) {
               Label("practice.setup.roman_hints", systemImage: "character.book.closed.fill")

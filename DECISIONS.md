@@ -1748,3 +1748,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 내장 두벌식/천지인 배열 선택은 키보드 카드의 첫 항목에 두 선택지를 동시에 노출하는 segmented control로 표시한다. 기존 `keyboard.layout.*` 현지화 키, `keyboard.builtin_layout_default` 저장 키, `settings.builtin_keyboard_layout` 접근성 identifier와 OS 키보드 모드에서 비활성화되는 동작은 변경하지 않는다.
 - 근거: 자판 선택을 설정 진입 직후 찾을 수 있게 하고 메뉴를 먼저 열어야만 대안을 확인할 수 있던 탐색 비용을 줄이면서, 이미 사용 중인 설정 카드·segmented control 시각 언어와 자동화 계약을 재사용하기 위함이다.
 - 영향 범위: iOS/iPadOS `SettingsView`, focused Settings UI 회귀, PRD F10. localization·Android·TYP-90의 iPhone 키보드 가이드 노출 정책은 변경하지 않는다.
+
+## 2026-09-03 TYP-90 iPad 전용 다음 키 가이드
+
+- 관련: TYP-90, PRD v6.19·F2·F10, iOS/iPadOS 1.1 build 13.
+- 결정: 다음 입력 키를 강조하는 가이드는 iPad에서만 제공한다. iPhone에서는 `keyboard.shows_key_guide`가 과거에 true로 저장됐더라도 렌더링 경계에서 무시하며, 덱 연습·커리큘럼 레슨·흐름·산성비와 같은 `HangulKeyboardOptions` 소비자가 가이드를 다시 노출할 수 없게 한다. 저장 키는 데이터 파괴 없이 유지해 iPad의 기존 기본 ON·사용자 OFF 선택을 보존한다.
+- 결정: 전역 Settings와 연습 세션 설정의 다음 키 가이드 토글도 iPad에서만 표시한다. TYP-89가 확정한 `키보드 → 사운드 → 타이핑 표시 → 화면 → 연습 알림 → 피요 → 개인정보 → 앱 정보` 순서, 키보드 카드 첫 항목의 segmented 두벌식/천지인 선택, 기존 저장·현지화·접근성 identifier와 OS 모드 비활성화 동작은 변경하지 않는다.
+- 검증 gate: 동일한 focused UI selector를 iPhone·iPad simulator에서 실행해 Settings, 덱 연습, 커리큘럼 레슨, 흐름, 산성비를 확인한다. simulator 결과는 build 13의 실제 iPhone·iPad 및 TestFlight 검증을 대체하지 않으며 그 gate 전에는 TYP-90이나 1.1 출시를 Done으로 처리하지 않는다.
+- 근거: iPhone의 제한된 화면에서는 정답 키 강조를 제거해 자가 회상을 우선하되, 더 큰 iPad에서 사용 중인 학습 보조와 명시적 졸업 모드를 회귀 없이 유지하기 위함이다.
+- 영향 범위: iOS/iPadOS 내장 키보드 옵션 정책, `SettingsView`, 연습 세션 설정, focused 단위/UI 회귀, PRD F2·F10. Android와 localization은 변경하지 않는다.
