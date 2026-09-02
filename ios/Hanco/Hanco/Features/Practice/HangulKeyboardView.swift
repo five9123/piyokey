@@ -1,5 +1,8 @@
+import HangulEngine
 import SwiftUI
 import UIKit
+
+typealias Korean10KeyKey = HangulEngine.Korean10KeyKey
 
 enum KeyboardPreferenceKeys {
   static let showsKeyGuide = "keyboard.shows_key_guide"
@@ -116,20 +119,7 @@ extension SessionInputMode {
   }
 }
 
-enum Korean10KeyKey: String, CaseIterable, Hashable {
-  case vertical
-  case dot
-  case horizontal
-  case giyeok
-  case nieun
-  case digeut
-  case bieup
-  case siot
-  case jieut
-  case ieung
-  case next
-  case space
-
+extension Korean10KeyKey {
   var displayText: String {
     switch self {
     case .vertical: "ㅣ"
@@ -253,12 +243,12 @@ struct Korean10KeyInterpreter: Equatable {
   }
 
   static func recipe(for jamo: Character) -> [Korean10KeyKey]? {
-    recipes[jamo]
+    Korean10KeyRecipe.recipe(for: jamo)
   }
 
   private static func display(for keys: [Korean10KeyKey]) -> String? {
     guard !keys.isEmpty else { return nil }
-    if let exact = recipes.first(where: { $0.value == keys })?.key {
+    if let exact = Korean10KeyRecipe.jamo(forExactRecipe: keys) {
       return String(exact)
     }
     return keys.map(\.displayText).joined()
@@ -273,40 +263,6 @@ struct Korean10KeyInterpreter: Equatable {
     .giyeok, .nieun, .digeut, .bieup, .siot, .jieut, .ieung,
   ]
 
-  // Golden recipe contract approved for the Apple Korean 10-Key layout in
-  // Issue #11. Grouped consonants cycle in label order and then to the tense
-  // consonant; vowels retain the visible ㅣ·ㅡ stroke order.
-  private static let recipes: [Character: [Korean10KeyKey]] = [
-    "ㄱ": [.giyeok], "ㅋ": [.giyeok, .giyeok],
-    "ㄲ": [.giyeok, .giyeok, .giyeok],
-    "ㄴ": [.nieun], "ㄹ": [.nieun, .nieun],
-    "ㄷ": [.digeut], "ㅌ": [.digeut, .digeut],
-    "ㄸ": [.digeut, .digeut, .digeut],
-    "ㅂ": [.bieup], "ㅍ": [.bieup, .bieup],
-    "ㅃ": [.bieup, .bieup, .bieup],
-    "ㅅ": [.siot], "ㅎ": [.siot, .siot],
-    "ㅆ": [.siot, .siot, .siot],
-    "ㅈ": [.jieut], "ㅊ": [.jieut, .jieut],
-    "ㅉ": [.jieut, .jieut, .jieut],
-    "ㅇ": [.ieung], "ㅁ": [.ieung, .ieung],
-    "ㅣ": [.vertical], "ㅡ": [.horizontal],
-    "ㅏ": [.vertical, .dot], "ㅑ": [.vertical, .dot, .dot],
-    "ㅓ": [.dot, .vertical], "ㅕ": [.dot, .dot, .vertical],
-    "ㅗ": [.dot, .horizontal], "ㅛ": [.dot, .dot, .horizontal],
-    "ㅜ": [.horizontal, .dot], "ㅠ": [.horizontal, .dot, .dot],
-    "ㅐ": [.vertical, .dot, .vertical],
-    "ㅒ": [.vertical, .dot, .dot, .vertical],
-    "ㅔ": [.dot, .vertical, .vertical],
-    "ㅖ": [.dot, .dot, .vertical, .vertical],
-    "ㅘ": [.dot, .horizontal, .vertical, .dot],
-    "ㅙ": [.dot, .horizontal, .vertical, .dot, .vertical],
-    "ㅚ": [.dot, .horizontal, .vertical],
-    "ㅝ": [.horizontal, .dot, .dot, .vertical],
-    "ㅞ": [.horizontal, .dot, .dot, .vertical, .vertical],
-    "ㅟ": [.horizontal, .dot, .vertical],
-    "ㅢ": [.horizontal, .vertical],
-    " ": [.space],
-  ]
 }
 
 enum Korean10KeyGeometry {

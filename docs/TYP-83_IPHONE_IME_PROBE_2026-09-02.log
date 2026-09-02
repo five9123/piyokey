@@ -1,0 +1,99 @@
+TYP-83 iPhone OS Cheonjiin IMETextField row-13 evidence
+
+Device: iPhone 15 Pro JM
+Hardware: iPhone 15 Pro (iPhone16,1)
+CoreDevice ID: DE770B66-ECC1-53AC-AEF9-B7E9A25F7F95
+UDID: 00008130-001E6CD414BA001C
+OS: iOS 26.6.1 (23G83)
+Mode: IMETextField
+Keyboard: OS Korean 10-key (visually verified)
+Bundle: app.piyokey.Piyokey 1.1 (11), Debug
+Source HEAD: d89f69164900c6d756075d20961825d96729f2fa
+Source tree: e9fbf8678012780affb71b1eddd7ee4843535a1f plus uncommitted TYP-83 diff
+Capture channel: macOS Console, physical device iPhone 15 Pro JM,
+  filter `TYP-83 row 13`
+
+The entries below were copied verbatim from the filtered physical-device Console.
+The probe's UIDevice header reports the privacy-preserving name `iPhone`; the exact
+CoreDevice identity above was recorded independently before build/install/launch.
+
+Fresh complete four-target sequence
+===================================
+
+default	01:46:09.072334+0900	Hanco	TYP-83 row 13
+Device: iPhone [iPhone]
+OS: iOS 26.6.1
+Mode: IMETextField
+Target: 돼
+default	01:46:09.072367+0900	Hanco	TYP-83 row 13
+1 committed=U+3137 "ㄷ" marked=∅
+default	01:46:09.640532+0900	Hanco	TYP-83 row 13
+2 committed=U+3137 U+318D "ㄷㆍ" marked=∅
+default	01:46:11.427531+0900	Hanco	TYP-83 row 13
+3 committed=∅ marked=∅
+default	01:46:11.908644+0900	Hanco	TYP-83 row 13
+4 committed=U+3137 "ㄷ" marked=∅
+default	01:46:12.392699+0900	Hanco	TYP-83 row 13
+5 committed=U+B3C4 "도" marked=∅
+default	01:46:13.126450+0900	Hanco	TYP-83 row 13
+6 committed=U+B418 "되" marked=∅
+default	01:46:13.355998+0900	Hanco	TYP-83 row 13
+7 committed=U+B3E0 "돠" marked=∅
+default	01:46:13.526953+0900	Hanco	TYP-83 row 13
+8 committed=U+B3FC "돼" marked=∅
+default	01:46:15.020355+0900	Hanco	TYP-83 row 13
+Device: iPhone [iPhone]
+OS: iOS 26.6.1
+Mode: IMETextField
+Target: 과
+default	01:46:15.020411+0900	Hanco	TYP-83 row 13
+1 committed=U+3131 "ㄱ" marked=∅
+default	01:46:16.485173+0900	Hanco	TYP-83 row 13
+2 committed=U+ACE0 "고" marked=∅
+default	01:46:17.203600+0900	Hanco	TYP-83 row 13
+3 committed=U+AD34 "괴" marked=∅
+default	01:46:17.371042+0900	Hanco	TYP-83 row 13
+4 committed=U+ACFC "과" marked=∅
+default	01:46:18.590241+0900	Hanco	TYP-83 row 13
+Device: iPhone [iPhone]
+OS: iOS 26.6.1
+Mode: IMETextField
+Target: 웨
+default	01:46:18.590305+0900	Hanco	TYP-83 row 13
+1 committed=U+3147 "ㅇ" marked=∅
+default	01:46:20.392530+0900	Hanco	TYP-83 row 13
+2 committed=U+C6B0 "우" marked=∅
+default	01:46:23.403253+0900	Hanco	TYP-83 row 13
+3 committed=U+C6CC "워" marked=∅
+default	01:46:24.456911+0900	Hanco	TYP-83 row 13
+4 committed=U+C6E8 "웨" marked=∅
+default	01:46:25.629394+0900	Hanco	TYP-83 row 13
+Device: iPhone [iPhone]
+OS: iOS 26.6.1
+Mode: IMETextField
+Target: 의
+default	01:46:25.629462+0900	Hanco	TYP-83 row 13
+1 committed=U+3147 "ㅇ" marked=∅
+default	01:46:26.062648+0900	Hanco	TYP-83 row 13
+2 committed=U+C73C "으" marked=∅
+default	01:46:26.363451+0900	Hanco	TYP-83 row 13
+3 committed=U+C758 "의" marked=∅
+
+Minimum-repeat confirmation: 돼
+=============================
+
+default	01:46:29.486335+0900	Hanco	TYP-83 row 13
+Device: iPhone [iPhone]
+OS: iOS 26.6.1
+Mode: IMETextField
+Target: 돼
+default	01:46:29.486351+0900	Hanco	TYP-83 row 13
+1 committed=U+3137 "ㄷ" marked=∅
+default	01:46:30.038763+0900	Hanco	TYP-83 row 13
+2 committed=U+B3C4 "도" marked=∅
+default	01:46:30.839167+0900	Hanco	TYP-83 row 13
+3 committed=U+B418 "되" marked=∅
+default	01:46:31.039858+0900	Hanco	TYP-83 row 13
+4 committed=U+B3E0 "돠" marked=∅
+default	01:46:31.188108+0900	Hanco	TYP-83 row 13
+5 committed=U+B3FC "돼" marked=∅

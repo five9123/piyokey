@@ -1730,3 +1730,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: build 11에서 단어 전환마다 resign/become이 OS 키보드를 실제로 내렸다 올려 TYP-73의 first responder 유지 계약을 위반했다. responder를 유지한 delegate-bracket rewrite와 stale payload 격리를 결합하면 표시 keyboard session을 끊지 않고 앱 문서·marked composition을 새 target 경계로 초기화할 수 있다.
 - 출시 gate: build 12 TestFlight에서 연습·레슨·직접 입력 게임(짧은 단어 포함)을 iPhone·iPad × 두벌식·천지인 × 연속 10단어로 검증한다. keyboard redisplay 0회, 이전 자모 0회, 첫 자모 즉시 정타, 콤보·정확도·점수 보존의 화면 증빙이 필요하며 focused 자동 테스트·PR만으로 Done 처리하지 않는다. full HancoTests, CI, merge, 계정, 권리, store gate도 별도로 유지한다.
 - 영향 범위: iOS/iPadOS `OSIMEInputView` reset bridge, `OSIMEInputResetTests`, TYP-73/TYP-82 focused 회귀. Android와 App Store 제출은 제외한다.
+
+## 2026-09-02 TYP-83 OS 천지인 committed 중간 상태 예외와 병합 현황 정리
+
+- 관련: TYP-83, PR #152, PRD F2a·§6, 2026-07-19 `F2a OS IME 텍스트 diff 판정 경계`, Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`).
+- 결정: marked range가 없는 확정 텍스트의 불일치를 오타로 기록하는 기존 경계에, 목표의 천지인 recipe로 도달 가능한 committed 마지막 활성 음절·raw 획·자음 순환 상태는 `.composingMismatch`로 보류하는 예외를 둔다. 예외 앞의 문서는 목표와 정확히 일치해야 하고 recipe 접두가 아니거나 목표를 지나 계속된 확정 불일치는 기존대로 `.confirmedMismatch`다.
+- 결정: OS가 활성 키보드 배열을 판정기에 노출하지 않으므로 두벌식 입력의 `되`·`단`·`ㅅ`처럼 천지인 중간 상태와 같은 확정 오타는 마지막 활성 상태에서 즉시 기록하지 않는 trade-off를 수용한다. 목표 진행은 승인하지 않고 이후 입력으로 불일치가 확정되면 오타로 판정한다. 이 결정은 2026-07-19 F2a 판정 경계에 이 예외만 추가하며 완료 우선·ASCII guard·marked text 계약은 바꾸지 않는다.
+- 결정: `PROJECT_STATUS.md` 병합 충돌을 해소할 때는 이슈당 canonical 행을 하나만 유지한다. 동일 이슈의 `Merged` 행과 오래된 `In Progress`·`In Review` 행이 함께 있으면 병합 SHA가 있는 `Merged` 행을 남기고, 기준선 요약은 fetch한 최신 `origin/main`을 사용한다. 중복 행을 제거해도 device·TestFlight·full HancoTests·계정·권리·store/release 같은 미완료 gate는 canonical 행과 기준선 요약에 계속 명시한다.
+- 실기기 gate: iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight gate는 OPEN이다. 두벌식 실기기 회귀에서는 `달` 목표에 `단`, `하` 목표에 `ㅅ` 같은 cycle-도달 가능 오타가 즉시 미기록되는 동작이 체감상 수용 가능한지 함께 확인하며, 통과 전 TYP-83을 Done 처리하지 않는다.
+- 근거: iPhone IMETextField 로그에서 천지인 조합 단계가 marked가 아닌 committed 문서로 전달됐고, 그 상태를 즉시 rollback하면 목표 자체가 도달 불가능해진다. 동시에 현황판은 수동 fail-closed gate의 단일 기준이므로 병합 순서가 서로 모순되는 중복 상태를 만들면 이후 review·release 판단을 오도한다.
+- 영향 범위: 기존 `OSIMETextJudge`·`Korean10KeyRecipe` 판정 계약, `PROJECT_STATUS.md` 병합 정리 규칙, TYP-83 실기기 회귀와 release gate. 이번 기록은 문서 정리이며 제품·테스트 코드와 Android를 변경하지 않는다.

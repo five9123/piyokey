@@ -107,6 +107,45 @@ final class OSIMEInputResetTests: XCTestCase {
     pumpRunLoop()
   }
 
+  #if DEBUG
+    func testTYP83ProbeLaunchIsStrictlyEnvironmentGated() {
+      XCTAssertFalse(TYP83IMEProbeLaunch.shouldShow(environment: [:]))
+      XCTAssertFalse(
+        TYP83IMEProbeLaunch.shouldShow(environment: ["TYP83_IME_PROBE": "0"])
+      )
+      XCTAssertTrue(
+        TYP83IMEProbeLaunch.shouldShow(environment: ["TYP83_IME_PROBE": "1"])
+      )
+    }
+
+    func testTYP83ProbeAdvancesThroughExactTargetSequence() {
+      var sequence = TYP83IMEProbeSequence()
+      XCTAssertEqual(TYP83IMEProbeSequence.targets, ["돼", "과", "웨", "의"])
+
+      for target in TYP83IMEProbeSequence.targets {
+        XCTAssertEqual(sequence.currentTarget, target)
+        XCTAssertFalse(sequence.advance(ifMatching: "wrong"))
+        XCTAssertTrue(sequence.advance(ifMatching: target))
+      }
+
+      XCTAssertTrue(sequence.isComplete)
+      sequence.restart()
+      XCTAssertEqual(sequence.currentTarget, "돼")
+    }
+
+    func testTYP83Row13ProbeFormatsCommittedAndMarkedSnapshots() {
+      XCTAssertEqual(IMETextFieldRow13Probe.environmentKey, "TYP83_IME_PROBE")
+      XCTAssertEqual(
+        IMETextFieldRow13Probe.snapshot(step: 1, committed: "", marked: "되"),
+        "1 committed=∅ marked=U+B418 \"되\""
+      )
+      XCTAssertEqual(
+        IMETextFieldRow13Probe.snapshot(step: 2, committed: "돠", marked: nil),
+        "2 committed=U+B3E0 \"돠\" marked=∅"
+      )
+    }
+  #endif
+
   func testResetDiscardsMarkedCompositionWithoutCommittingIt() throws {
     let field = try findTextField()
     field.becomeFirstResponder()

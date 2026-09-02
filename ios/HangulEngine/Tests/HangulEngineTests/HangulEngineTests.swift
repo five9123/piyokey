@@ -180,6 +180,229 @@ final class HangulEngineTests: XCTestCase {
     XCTAssertEqual(confirmed.acceptedSequence, Array("ㄱㅏ"))
   }
 
+  func testOSIMEReachableCheonjiinCommittedVowelsRemainCompositionInProgress() throws {
+    struct Snapshot {
+      let target: String
+      let committed: String
+      let acceptedSequence: [Character]
+    }
+
+    let snapshots = [
+      Snapshot(target: "돼지", committed: "되", acceptedSequence: Array("ㄷㅗ")),
+      Snapshot(target: "돼지", committed: "돠", acceptedSequence: Array("ㄷㅗ")),
+      Snapshot(target: "과자", committed: "괴", acceptedSequence: Array("ㄱㅗ")),
+      Snapshot(target: "웨딩", committed: "워", acceptedSequence: Array("ㅇㅜ")),
+      Snapshot(target: "대형", committed: "다", acceptedSequence: Array("ㄷ")),
+      Snapshot(target: "세계", committed: "서", acceptedSequence: Array("ㅅ")),
+      Snapshot(target: "얘", committed: "야", acceptedSequence: Array("ㅇ")),
+      Snapshot(target: "예", committed: "여", acceptedSequence: Array("ㅇ")),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(evaluation.status, .composingMismatch, snapshot.target)
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.acceptedSequence,
+        snapshot.target
+      )
+    }
+  }
+
+  func testOSIMEMeasuredCommittedCheonjiinStrokePrefixDoesNotRollback() throws {
+    struct Snapshot {
+      let committed: String
+      let status: OSIMETextJudgeStatus
+      let acceptedSequence: [Character]
+    }
+
+    let allTapSnapshots = [
+      Snapshot(
+        committed: "ㄷ",
+        status: .matching(completed: false, isComposing: false),
+        acceptedSequence: Array("ㄷ")
+      ),
+      Snapshot(
+        committed: "ㄷㆍ",
+        status: .composingMismatch,
+        acceptedSequence: Array("ㄷ")
+      ),
+      Snapshot(
+        committed: "도",
+        status: .matching(completed: false, isComposing: false),
+        acceptedSequence: Array("ㄷㅗ")
+      ),
+      Snapshot(
+        committed: "되",
+        status: .composingMismatch,
+        acceptedSequence: Array("ㄷㅗ")
+      ),
+      Snapshot(
+        committed: "돠",
+        status: .composingMismatch,
+        acceptedSequence: Array("ㄷㅗ")
+      ),
+      Snapshot(
+        committed: "돼",
+        status: .matching(completed: true, isComposing: false),
+        acceptedSequence: Array("ㄷㅗㅐ")
+      ),
+    ]
+
+    for snapshot in allTapSnapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: "돼",
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(evaluation.status, snapshot.status, snapshot.committed)
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.acceptedSequence,
+        snapshot.committed
+      )
+      if case .confirmedMismatch = evaluation.status {
+        XCTFail("reachable all-tap snapshot would cause a rollback: \(snapshot.committed)")
+      }
+    }
+
+    for committed in ["ㄷ", "도", "돠", "돼"] {
+      let evaluation = try OSIMETextJudge.evaluate(target: "돼", committedText: committed)
+      if case .confirmedMismatch = evaluation.status {
+        XCTFail("reachable shortcut snapshot would cause a rollback: \(committed)")
+      }
+    }
+
+    let afterAcceptedWordPrefix = try OSIMETextJudge.evaluate(
+      target: "줘도 돼",
+      committedText: "줘도 ㄷㆍ"
+    )
+    XCTAssertEqual(afterAcceptedWordPrefix.status, .composingMismatch)
+    XCTAssertEqual(afterAcceptedWordPrefix.acceptedSequence, Array("ㅈㅜㅓㄷㅗ ㄷ"))
+
+    let unreachableDot = try OSIMETextJudge.evaluate(target: "뒤", committedText: "ㄷㆍ")
+    XCTAssertEqual(unreachableDot.status, .confirmedMismatch(expectedIndex: 1))
+    XCTAssertEqual(unreachableDot.acceptedSequence, Array("ㄷ"))
+
+    let arbitraryJamo = try OSIMETextJudge.evaluate(target: "돼", committedText: "ㄷㆍㄱ")
+    XCTAssertEqual(arbitraryJamo.status, .confirmedMismatch(expectedIndex: 1))
+    XCTAssertEqual(arbitraryJamo.acceptedSequence, Array("ㄷ"))
+  }
+
+  func testOSIMEStandaloneDotFirstVowelPrefixesRemainCompositionInProgress() throws {
+    let snapshots = [
+      (target: "ㅓ", committed: "ㆍ"),
+      (target: "ㅗ", committed: "ㆍ"),
+      (target: "ㅔ", committed: "ㆍ"),
+      (target: "ㅔ", committed: "ㆍㅣ"),
+      (target: "ㅕ", committed: "ㆍ"),
+      (target: "ㅕ", committed: "ㆍㆍ"),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        [],
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+
+    let wrongStroke = try OSIMETextJudge.evaluate(target: "ㅗ", committedText: "ㆍㅣ")
+    XCTAssertEqual(wrongStroke.status, .confirmedMismatch(expectedIndex: 0))
+    XCTAssertEqual(wrongStroke.acceptedSequence, [])
+  }
+
+  func testOSIMECheonjiinConsonantCyclesRemainCompositionInProgress() throws {
+    let snapshots: [(target: String, committed: String, accepted: [Character])] = [
+      ("ㄹ", "ㄴ", []),
+      ("하", "ㅅ", []),
+      ("대형", "대ㅅ", Array("ㄷㅐ")),
+      ("대형", "댓", Array("ㄷㅐ")),
+      ("달", "단", Array("ㄷㅏ")),
+      ("밤", "방", Array("ㅂㅏ")),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        snapshot.accepted,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+
+    let unrelatedCycle = try OSIMETextJudge.evaluate(target: "하", committedText: "ㅈ")
+    XCTAssertEqual(unrelatedCycle.status, .confirmedMismatch(expectedIndex: 0))
+
+    let completedTypo = try OSIMETextJudge.evaluate(target: "대형", committedText: "대성")
+    XCTAssertEqual(completedTypo.status, .confirmedMismatch(expectedIndex: 2))
+
+    let wrongFinal = try OSIMETextJudge.evaluate(target: "달", committedText: "담")
+    XCTAssertEqual(wrongFinal.status, .confirmedMismatch(expectedIndex: 2))
+  }
+
+  func testOSIMECheonjiinRepresentativeVowelsCompleteWithoutWeakeningRealTypos() throws {
+    let representativeTargets = [
+      "과자", "돼지", "회사", "원", "웨딩", "귀", "의사", "대형", "세계", "얘", "예",
+    ]
+
+    for target in representativeTargets {
+      let evaluation = try OSIMETextJudge.evaluate(target: target, committedText: target)
+      XCTAssertEqual(
+        evaluation.status,
+        .matching(completed: true, isComposing: false),
+        target
+      )
+    }
+
+    let dubeolsikTypo = try OSIMETextJudge.evaluate(target: "돼지", committedText: "뒤")
+    XCTAssertEqual(dubeolsikTypo.status, .confirmedMismatch(expectedIndex: 1))
+    XCTAssertEqual(dubeolsikTypo.acceptedSequence, Array("ㄷ"))
+
+    let wrongTrailing = try OSIMETextJudge.evaluate(target: "과자", committedText: "괸")
+    XCTAssertEqual(wrongTrailing.status, .confirmedMismatch(expectedIndex: 2))
+    XCTAssertEqual(wrongTrailing.acceptedSequence, Array("ㄱㅗ"))
+  }
+
+  func testKorean10KeyRecipesExposeOnlyTargetReachableIntermediateVowels() throws {
+    XCTAssertEqual(Korean10KeyRecipe.recipe(for: "ㅙ"), [
+      .dot, .horizontal, .vertical, .dot, .vertical,
+    ])
+    XCTAssertEqual(
+      Korean10KeyRecipe.jamo(forExactRecipe: [.horizontal, .dot, .dot, .vertical]),
+      "ㅝ"
+    )
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateVowel("ㅚ", toward: "ㅙ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateVowel("ㅘ", toward: "ㅙ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateVowel("ㅝ", toward: "ㅞ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateVowel("ㅏ", toward: "ㅐ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateVowel("ㅟ", toward: "ㅙ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateVowel("ㅙ", toward: "ㅙ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateConsonant("ㄴ", toward: "ㄹ"))
+    XCTAssertTrue(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅅ", toward: "ㅎ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅈ", toward: "ㅎ"))
+    XCTAssertFalse(Korean10KeyRecipe.isReachableIntermediateConsonant("ㅎ", toward: "ㅎ"))
+  }
+
   func testOSIMEASCIIInputDoesNotAdvanceOrBecomeAMistake() throws {
     let initial = try OSIMETextJudge.evaluate(target: "가나", committedText: "q")
     XCTAssertEqual(initial.status, .unsupportedASCIIInput)

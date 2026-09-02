@@ -85,20 +85,32 @@ struct HancoApp: App {
 
   var body: some Scene {
     WindowGroup {
-      AppRootView()
-        .onChange(of: scenePhase) { phase in
-          switch phase {
-          case .active:
-            TelemetryService.shared.sceneDidBecomeActive()
-          case .background:
-            TelemetryService.shared.sceneDidEnterBackground()
-          case .inactive:
-            break
-          @unknown default:
-            break
-          }
+      #if DEBUG
+        if TYP83IMEProbeLaunch.isEnabled {
+          TYP83IMEProbeView()
+        } else {
+          appRoot
         }
+      #else
+        appRoot
+      #endif
     }
+  }
+
+  private var appRoot: some View {
+    AppRootView()
+      .onChange(of: scenePhase) { phase in
+        switch phase {
+        case .active:
+          TelemetryService.shared.sceneDidBecomeActive()
+        case .background:
+          TelemetryService.shared.sceneDidEnterBackground()
+        case .inactive:
+          break
+        @unknown default:
+          break
+        }
+      }
   }
 }
 
