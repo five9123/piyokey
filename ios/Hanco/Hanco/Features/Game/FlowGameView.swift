@@ -151,14 +151,21 @@ struct FlowGameView: View {
       VStack(spacing: 12) {
         gameLane
         inputStatus
+          .overlay {
+            if overlaysHiddenOSIMEInput {
+              osIMEInputPanel
+            }
+          }
       }
       .frame(maxHeight: .infinity)
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
       .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
 
-      inputArea
-        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+      if !overlaysHiddenOSIMEInput {
+        inputArea
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(gameBackground.ignoresSafeArea())
@@ -455,20 +462,7 @@ struct FlowGameView: View {
       }
 
       if inputMode == .osIME {
-        OSIMEInputPanel(
-          target: viewModel.target,
-          candidateTargets: acidRainOSIMECandidateTargets,
-          acceptedText: viewModel.enteredText,
-          resetRevision: viewModel.cardRevision + inputResetRevision,
-          onInputStart: {
-            HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
-          },
-          onAcceptedSequence: viewModel.synchronizeOSIME,
-          onAcceptedCandidateSequence: synchronizeAcidRainOSIME,
-          onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
-          showsChrome: false,
-          showsFocusRecovery: true
-        )
+        osIMEInputPanel
       } else {
         if builtInKeyboardLayout == .korean10Key {
           Korean10KeyKeyboardView(
@@ -503,6 +497,28 @@ struct FlowGameView: View {
         }
       }
     }
+  }
+
+  private var overlaysHiddenOSIMEInput: Bool {
+    inputMode == .osIME
+      && !OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true)
+  }
+
+  private var osIMEInputPanel: some View {
+    OSIMEInputPanel(
+      target: viewModel.target,
+      candidateTargets: acidRainOSIMECandidateTargets,
+      acceptedText: viewModel.enteredText,
+      resetRevision: viewModel.cardRevision + inputResetRevision,
+      onInputStart: {
+        HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
+      },
+      onAcceptedSequence: viewModel.synchronizeOSIME,
+      onAcceptedCandidateSequence: synchronizeAcidRainOSIME,
+      onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
+      showsChrome: false,
+      showsFocusRecovery: true
+    )
   }
 
   private func inputKorean10Key(_ key: Korean10KeyKey) {
