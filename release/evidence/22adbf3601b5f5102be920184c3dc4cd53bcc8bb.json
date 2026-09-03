@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "22adbf3601b5f5102be920184c3dc4cd53bcc8bb",
+  "verified_tree": "06ac318c10aeed929928ff348460156f3dc9275e",
+  "branch": "codex/95-tenkey-judge",
+  "scope": "TYP-95 OS ten-key dangling complex batchim and eoyo completion regression",
+  "result": "pass",
+  "recorded_at": "2026-09-03T15:35:11.191795+00:00",
+  "checks": [
+    {
+      "name": "HangulEngine package",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed with 0 failures"
+    },
+    {
+      "name": "Python contracts",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "107 tests passed"
+    },
+    {
+      "name": "focused app regressions",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEBatchimBoundaryIntermediatesDoNotCountMistakesOrRollback -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEWordPrefixDoubleDotStateCanCompleteEoyoWithoutRollback -only-testing:HancoTests/FlowGameViewModelTests/testOSIMECandidateJudgeKeepsDanglingComplexBatchimPrefixViable",
+      "note": "3 tests passed with 0 failures"
+    },
+    {
+      "name": "iOS simulator build",
+      "status": "pass",
+      "command": "xcodebuild build -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO",
+      "note": ""
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was fe05bd2cfae7fa7dc7690a0cd5593964f12c7df3"
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Claude exact-head review and maintainer manual merge approval remain open.",
+    "Build 16 TestFlight smoke on physical iPhone and iPad remains open for 괜찮아, 찮아, 않아, 많이, 삶, 어요, 와요, 해요, 좋아요 and negative typo cases.",
+    "The 어요 raw double-dot path required no production-code change because the existing Class D judge already accepts the modeled state; exact physical-device event shape remains an open gate.",
+    "Account, content-rights, IAP, store, archive, signing, and release gates remain open."
+  ]
+}
