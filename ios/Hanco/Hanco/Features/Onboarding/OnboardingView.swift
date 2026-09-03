@@ -466,7 +466,12 @@ struct OnboardingView: View {
           .padding(.bottom, 10)
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
-
+        .overlay {
+          if usesDeviceKeyboard,
+             !OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true) {
+            onboardingOSIMEInputPanel
+          }
+        }
         .opacity(lesson.enteredText.isEmpty ? 0.48 : 1)
         .animation(.easeOut(duration: 0.2), value: lesson.enteredText.isEmpty)
 
@@ -483,27 +488,18 @@ struct OnboardingView: View {
         }
 
         if usesDeviceKeyboard {
-          VStack(spacing: 7) {
-            OSIMEInputPanel(
-              target: lesson.target,
-              acceptedText: lesson.enteredText,
-              resetRevision: 0,
-              onInputStart: {
-                HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: 0)
-              },
-              onAcceptedSequence: lesson.synchronizeOSIME,
-              onConfirmedMismatch: lesson.recordConfirmedOSIMEMistake,
-              showsChrome: false,
-              showsFocusRecovery: true
-            )
-            .padding(.horizontal, 10)
+          if OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true) {
+            VStack(spacing: 7) {
+              onboardingOSIMEInputPanel
+                .padding(.horizontal, 10)
 
-            if PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
-              PhysicalKeyboardGuideView(nextExpectedKey: lesson.nextExpectedKey)
-                .padding(.horizontal, 8)
+              if PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
+                PhysicalKeyboardGuideView(nextExpectedKey: lesson.nextExpectedKey)
+                  .padding(.horizontal, 8)
+              }
             }
+            .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
           }
-          .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
         } else {
           HangulKeyboardView(
             nextExpectedKey: lesson.nextExpectedKey,
@@ -515,6 +511,21 @@ struct OnboardingView: View {
         }
       }
     }
+  }
+
+  private var onboardingOSIMEInputPanel: some View {
+    OSIMEInputPanel(
+      target: lesson.target,
+      acceptedText: lesson.enteredText,
+      resetRevision: 0,
+      onInputStart: {
+        HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: 0)
+      },
+      onAcceptedSequence: lesson.synchronizeOSIME,
+      onConfirmedMismatch: lesson.recordConfirmedOSIMEMistake,
+      showsChrome: false,
+      showsFocusRecovery: true
+    )
   }
 
   private var hatchMissionHandoff: some View {

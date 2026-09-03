@@ -177,7 +177,8 @@ struct PracticeView: View {
             if practiceShowsMascot || practiceShowsComposition {
               compositionCard(minHeight: expandsSessionCards
                 ? max(0, viewport.size.height - sessionCardSpacing - sessionVerticalPadding * 2) * 0.45 : 0)
-            } else if inputMode == .osIME, allowsOSKeyboard {
+            } else if inputMode == .osIME, allowsOSKeyboard,
+                      !overlaysHiddenOSIMEInput {
               osIMEInputPanel(showsFocusRecovery: true)
                 .padding(.horizontal, 14)
             }
@@ -188,6 +189,11 @@ struct PracticeView: View {
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
         .scrollDismissesKeyboard(.never)
+        .overlay {
+          if overlaysHiddenOSIMEInput {
+            osIMEInputPanel(showsFocusRecovery: false)
+          }
+        }
       }
 
       inputArea
@@ -530,7 +536,14 @@ struct PracticeView: View {
   }
 
   private var expandsSessionCards: Bool {
-    adaptiveMetrics.isExpanded && (!usesLandscapeCards || adaptiveMetrics.availableHeight >= 800)
+    overlaysHiddenOSIMEInput
+      || (adaptiveMetrics.isExpanded && (!usesLandscapeCards || adaptiveMetrics.availableHeight >= 800))
+  }
+
+  private var overlaysHiddenOSIMEInput: Bool {
+    inputMode == .osIME
+      && allowsOSKeyboard
+      && !OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true)
   }
 
   private var speakTargetButton: some View {
@@ -727,7 +740,8 @@ struct PracticeView: View {
           .allowsHitTesting(false)
           .accessibilityIdentifier("practice.composition_card")
 
-        if inputMode == .osIME, allowsOSKeyboard {
+        if inputMode == .osIME, allowsOSKeyboard,
+           !overlaysHiddenOSIMEInput {
           osIMEInputPanel(showsFocusRecovery: false)
         }
       }
