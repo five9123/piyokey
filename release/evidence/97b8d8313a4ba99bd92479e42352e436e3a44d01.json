@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "verified_commit": "97b8d8313a4ba99bd92479e42352e436e3a44d01",
+  "verified_tree": "62bd9f0038933aa0e178c35e93479ef4f678f653",
+  "branch": "codex/93-session-settings-information-architecture",
+  "scope": "TYP-93 session settings information architecture and TYP-92 device-policy regression",
+  "result": "pass",
+  "recorded_at": "2026-09-03T10:32:19.391552+00:00",
+  "checks": [
+    {
+      "name": "iPhone focused UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=F8A971DA-8A7C-407B-994B-5AEF4770CEC6' -derivedDataPath /tmp/typ93-iphone-derived -resultBundlePath /tmp/typ93-iphone.xcresult -only-testing:HancoUITests/HancoUITests/testTYP93SessionSettingsMatchGlobalOrderAndPreserveTYP92DevicePolicy",
+      "note": "1 selected test passed, 0 failures."
+    },
+    {
+      "name": "iPad focused UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416' -derivedDataPath /tmp/typ93-ipad-derived -resultBundlePath /tmp/typ93-ipad.xcresult -only-testing:HancoUITests/HancoUITests/testTYP93SessionSettingsMatchGlobalOrderAndPreserveTYP92DevicePolicy",
+      "note": "1 selected test passed, 0 failures."
+    },
+    {
+      "name": "Python contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests",
+      "note": "107 tests passed."
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was 855bf27aac42d7eb93846a41e56e8760bceee27f."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Build 14 TestFlight and physical iPhone deck-play and curriculum-practice session settings verification remain open; TYP-93 must not move to Done before these pass.",
+    "Exact-head Claude review, maintainer manual approval, and merge remain open.",
+    "Archive, distribution signing, account, content-rights, IAP, store, and release gates remain open; no build 14 archive was created.",
+    "Per issue scope, no unfiltered Hanco scheme, full HancoTests or HancoUITests target, AppStoreScreenshot, ScreenshotCapture, or AppPreview tests were run."
+  ]
+}
