@@ -1757,3 +1757,13 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: 동일한 focused UI selector를 iPhone·iPad simulator에서 실행해 Settings, 덱 연습, 커리큘럼 레슨, 흐름, 산성비를 확인한다. simulator 결과는 build 13의 실제 iPhone·iPad 및 TestFlight 검증을 대체하지 않으며 그 gate 전에는 TYP-90이나 1.1 출시를 Done으로 처리하지 않는다.
 - 근거: iPhone의 제한된 화면에서는 정답 키 강조를 제거해 자가 회상을 우선하되, 더 큰 iPad에서 사용 중인 학습 보조와 명시적 졸업 모드를 회귀 없이 유지하기 위함이다.
 - 영향 범위: iOS/iPadOS 내장 키보드 옵션 정책, `SettingsView`, 연습 세션 설정, focused 단위/UI 회귀, PRD F2·F10. Android와 localization은 변경하지 않는다.
+
+## 2026-09-03 TYP-92 iPhone 입력 보조 UI 정정
+
+- 관련: TYP-92, TYP-90 최신 정정 코멘트 `c3d1132c-367e-4dab-ae6a-16b4927e8027`, PRD v6.20·F2·F2a·F10, iOS/iPadOS 1.1 build 14.
+- 결정: 2026-09-03 TYP-90의 iPad 전용 다음 키 가이드 결정을 철회한다. `keyboard.shows_key_guide`에 기기별 정책을 적용하지 않고 iPhone과 iPad 모두에서 기존 기본 ON·사용자 저장값·전역 및 세션 토글·키캡 강조를 복구한다.
+- 결정: `OSIMEInputPanel`은 호출자가 compact 포커스 복구를 요청해도 iPhone에서는 그 시각 UI를 렌더하지 않는다. 투명한 `IMETextField`가 전체 할당 영역을 계속 채워 탭 입력을 받고, 기존 `onAppear`·target reset·scene active·Return 포커스 복구는 유지한다. iPad는 기존 compact 복구 UI와 같은 입력·포커스 동작을 유지한다.
+- 결정: `PhysicalKeyboardGuideView`는 component 렌더 경계에서 iPhone을 차단해 덱 연습·커리큘럼 레슨·온보딩의 저장값 및 자동 ON과 무관하게 화면 공간을 차지하지 않는다. 전역 Settings와 세션 설정의 `keyboard.shows_physical_keyboard_guide` 토글도 iPhone에서 숨기고 iPad에는 기존대로 제공한다. TYP-89 Settings 순서, 내장 배열 선택, TYP-88 텐키 판정은 변경하지 않는다.
+- 검증 gate: 정책 단위 테스트와 explicit iPhone·iPad focused UI selector에서 다음 키 토글/키캡 강조, `OSIMEInputPanel` compact 표시 정책·탭 입력·foreground 포커스 복구, Settings·덱 연습·커리큘럼 레슨·온보딩의 물리 참조 배열 정책을 확인한다. simulator 결과는 build 14 TestFlight의 실제 iPhone·iPad 검증을 대체하지 않으며 그 전에는 TYP-92·TYP-90 또는 1.1 출시를 Done으로 처리하지 않는다. ordinary issue 범위를 넘겨 실수로 실행한 전체 `HancoTests` target 결과는 검증 evidence로 사용하지 않는다.
+- 근거: 사용자 이미지 대조로 원본 게임 영역은 compact `OSIMEInputPanel`, 최신 비게임 영역은 덱·레슨 연습의 `PhysicalKeyboardGuideView`로 각각 확인됐다. responder와 저장 마이그레이션을 건드리지 않고 component 시각 경계만 기기별로 선택해야 iPhone 화면 공간을 회수하면서 TYP-82의 연속 포커스 계약과 iPad 동작을 보존할 수 있다.
+- 영향 범위: iOS/iPadOS `OSIMEInputPanel`·`PhysicalKeyboardGuideView` component 경계, 내장 키보드 옵션·Settings·세션 설정, focused 단위/UI 회귀, PRD F2·F2a·F10. Android·텐키 판정·다른 설정·localization은 변경하지 않는다.

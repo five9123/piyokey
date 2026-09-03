@@ -498,8 +498,10 @@ struct OnboardingView: View {
             )
             .padding(.horizontal, 10)
 
-            PhysicalKeyboardGuideView(nextExpectedKey: lesson.nextExpectedKey)
-              .padding(.horizontal, 8)
+            if PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
+              PhysicalKeyboardGuideView(nextExpectedKey: lesson.nextExpectedKey)
+                .padding(.horizontal, 8)
+            }
           }
           .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
         } else {

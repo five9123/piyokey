@@ -276,41 +276,10 @@ enum Korean10KeyGeometry {
   }
 }
 
-enum KeyboardInputGuidePolicy {
-  static var isAvailableOnCurrentDevice: Bool {
-    isAvailable(on: UIDevice.current.userInterfaceIdiom)
-  }
-
-  static func isAvailable(on interfaceIdiom: UIUserInterfaceIdiom) -> Bool {
-    interfaceIdiom == .pad
-  }
-
-  static func resolvedPreference(
-    _ storedPreference: Bool,
-    on interfaceIdiom: UIUserInterfaceIdiom
-  ) -> Bool {
-    storedPreference && isAvailable(on: interfaceIdiom)
-  }
-}
-
 struct HangulKeyboardOptions: Equatable {
-  var showsKeyGuide: Bool
-  var showsRomanHints: Bool
-  var hapticsEnabled: Bool
-
-  init(
-    showsKeyGuide: Bool = true,
-    showsRomanHints: Bool = true,
-    hapticsEnabled: Bool = true,
-    interfaceIdiom: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom
-  ) {
-    self.showsKeyGuide = KeyboardInputGuidePolicy.resolvedPreference(
-      showsKeyGuide,
-      on: interfaceIdiom
-    )
-    self.showsRomanHints = showsRomanHints
-    self.hapticsEnabled = hapticsEnabled
-  }
+  var showsKeyGuide = true
+  var showsRomanHints = true
+  var hapticsEnabled = true
 }
 
 enum HangulKeyboardGeometry {
@@ -482,6 +451,16 @@ enum PhysicalDubeolsikLayout {
   }
 }
 
+enum PhysicalKeyboardGuidePolicy {
+  static var isVisibleOnCurrentDevice: Bool {
+    isVisible(on: UIDevice.current.userInterfaceIdiom)
+  }
+
+  static func isVisible(on interfaceIdiom: UIUserInterfaceIdiom) -> Bool {
+    interfaceIdiom == .pad
+  }
+}
+
 struct PhysicalKeyboardGuideView: View {
   let nextExpectedKey: Character?
 
@@ -496,52 +475,55 @@ struct PhysicalKeyboardGuideView: View {
     PhysicalDubeolsikLayout.target(for: nextExpectedKey)
   }
 
+  @ViewBuilder
   var body: some View {
-    VStack(spacing: 8) {
-      guideHeader
+    if PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
+      VStack(spacing: 8) {
+        guideHeader
 
-      VStack(spacing: 6) {
-        physicalRow(PhysicalDubeolsikLayout.rows[0], leadingInset: 0, trailingInset: 0)
-        physicalRow(PhysicalDubeolsikLayout.rows[1], leadingInset: 14, trailingInset: 14)
-        HStack(spacing: 5) {
-          utilityKey(
-            title: "⇧",
-            identifier: "physical_keyboard.shift.left",
-            highlighted: target?.shiftHand == .left
-          )
-          physicalKeys(PhysicalDubeolsikLayout.rows[2])
-          utilityKey(
-            title: "⇧",
-            identifier: "physical_keyboard.shift.right",
-            highlighted: target?.shiftHand == .right
-          )
-        }
+        VStack(spacing: 6) {
+          physicalRow(PhysicalDubeolsikLayout.rows[0], leadingInset: 0, trailingInset: 0)
+          physicalRow(PhysicalDubeolsikLayout.rows[1], leadingInset: 14, trailingInset: 14)
+          HStack(spacing: 5) {
+            utilityKey(
+              title: "⇧",
+              identifier: "physical_keyboard.shift.left",
+              highlighted: target?.shiftHand == .left
+            )
+            physicalKeys(PhysicalDubeolsikLayout.rows[2])
+            utilityKey(
+              title: "⇧",
+              identifier: "physical_keyboard.shift.right",
+              highlighted: target?.shiftHand == .right
+            )
+          }
 
-        HStack(spacing: 7) {
-          utilityKey(
-            title: AppLocalization.string("physical_keyboard.space"),
-            identifier: "physical_keyboard.space",
-            highlighted: target?.expected == " ",
-            width: 210
-          )
-          utilityKey(
-            title: "⌫",
-            identifier: "physical_keyboard.backspace",
-            highlighted: false,
-            width: 58
-          )
+          HStack(spacing: 7) {
+            utilityKey(
+              title: AppLocalization.string("physical_keyboard.space"),
+              identifier: "physical_keyboard.space",
+              highlighted: target?.expected == " ",
+              width: 210
+            )
+            utilityKey(
+              title: "⌫",
+              identifier: "physical_keyboard.backspace",
+              highlighted: false,
+              width: 58
+            )
+          }
         }
       }
+      .padding(.horizontal, 10)
+      .padding(.vertical, 9)
+      .background(AppPalette.card.opacity(0.96), in: RoundedRectangle(cornerRadius: 18))
+      .overlay {
+        RoundedRectangle(cornerRadius: 18)
+          .stroke(AppPalette.keyShadow.opacity(0.8), lineWidth: 1)
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityIdentifier("physical_keyboard.guide")
     }
-    .padding(.horizontal, 10)
-    .padding(.vertical, 9)
-    .background(AppPalette.card.opacity(0.96), in: RoundedRectangle(cornerRadius: 18))
-    .overlay {
-      RoundedRectangle(cornerRadius: 18)
-        .stroke(AppPalette.keyShadow.opacity(0.8), lineWidth: 1)
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityIdentifier("physical_keyboard.guide")
   }
 
   private var guideHeader: some View {
