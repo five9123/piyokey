@@ -314,15 +314,13 @@ struct SettingsView: View {
 
       Divider().opacity(0.5)
 
-      if KeyboardInputGuidePolicy.isAvailableOnCurrentDevice {
-        settingToggle(
-          title: "practice.setup.key_guide",
-          systemImage: "lightbulb.fill",
-          isOn: $showsKeyGuide,
-          identifier: "settings.key_guide"
-        )
-        Divider().opacity(0.5)
-      }
+      settingToggle(
+        title: "practice.setup.key_guide",
+        systemImage: "lightbulb.fill",
+        isOn: $showsKeyGuide,
+        identifier: "settings.key_guide"
+      )
+      Divider().opacity(0.5)
       settingToggle(
         title: "practice.setup.roman_hints",
         detail: "practice.setup.roman_hints_detail",
@@ -337,14 +335,16 @@ struct SettingsView: View {
         isOn: $hapticsEnabled,
         identifier: "settings.haptics"
       )
-      Divider().opacity(0.5)
-      settingToggle(
-        title: "physical_keyboard.show_guide",
-        detail: "physical_keyboard.show_guide_detail",
-        systemImage: "keyboard.badge.ellipsis",
-        isOn: $showsPhysicalKeyboardGuide,
-        identifier: "settings.physical_keyboard_guide"
-      )
+      if PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
+        Divider().opacity(0.5)
+        settingToggle(
+          title: "physical_keyboard.show_guide",
+          detail: "physical_keyboard.show_guide_detail",
+          systemImage: "keyboard.badge.ellipsis",
+          isOn: $showsPhysicalKeyboardGuide,
+          identifier: "settings.physical_keyboard_guide"
+        )
+      }
     }
   }
 

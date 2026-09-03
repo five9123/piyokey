@@ -342,35 +342,31 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertFalse(viewModel.shouldAnimateSyllableJoin)
   }
 
-  func testKeyboardInputGuidePolicyIsIPadOnlyAndIgnoresLegacyIPhonePreference() {
-    XCTAssertTrue(KeyboardInputGuidePolicy.isAvailable(on: .pad))
-    XCTAssertFalse(KeyboardInputGuidePolicy.isAvailable(on: .phone))
-    XCTAssertTrue(KeyboardInputGuidePolicy.resolvedPreference(true, on: .pad))
-    XCTAssertFalse(KeyboardInputGuidePolicy.resolvedPreference(false, on: .pad))
-    XCTAssertFalse(KeyboardInputGuidePolicy.resolvedPreference(true, on: .phone))
-  }
-
-  func testKeyboardOptionsApplyDevicePolicyAndAllowIPadGraduationMode() {
-    let iPadDefaults = HangulKeyboardOptions(interfaceIdiom: .pad)
-    XCTAssertTrue(iPadDefaults.showsKeyGuide)
-    XCTAssertTrue(iPadDefaults.showsRomanHints)
-    XCTAssertTrue(iPadDefaults.hapticsEnabled)
-
-    let legacyIPhonePreference = HangulKeyboardOptions(
-      showsKeyGuide: true,
-      interfaceIdiom: .phone
-    )
-    XCTAssertFalse(legacyIPhonePreference.showsKeyGuide)
+  func testKeyboardOptionsDefaultOnForEveryDeviceAndAllowGraduationMode() {
+    let defaults = HangulKeyboardOptions()
+    XCTAssertTrue(defaults.showsKeyGuide)
+    XCTAssertTrue(defaults.showsRomanHints)
+    XCTAssertTrue(defaults.hapticsEnabled)
 
     let graduationMode = HangulKeyboardOptions(
       showsKeyGuide: false,
       showsRomanHints: false,
-      hapticsEnabled: false,
-      interfaceIdiom: .pad
+      hapticsEnabled: false
     )
     XCTAssertFalse(graduationMode.showsKeyGuide)
     XCTAssertFalse(graduationMode.showsRomanHints)
     XCTAssertFalse(graduationMode.hapticsEnabled)
+  }
+
+  func testOSIMEInputPanelPolicyKeepsRequestedRecoveryChromeIPadOnly() {
+    XCTAssertTrue(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true, on: .pad))
+    XCTAssertFalse(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true, on: .phone))
+    XCTAssertFalse(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: false, on: .pad))
+  }
+
+  func testPhysicalKeyboardGuidePolicyIsIPadOnly() {
+    XCTAssertTrue(PhysicalKeyboardGuidePolicy.isVisible(on: .pad))
+    XCTAssertFalse(PhysicalKeyboardGuidePolicy.isVisible(on: .phone))
   }
 
   func testCompositionAnimationMetadataCoversCompoundVowelAndCarryover() {

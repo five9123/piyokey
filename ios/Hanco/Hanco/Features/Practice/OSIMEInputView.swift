@@ -18,6 +18,15 @@ enum KoreanKeyboardAvailability {
   }
 }
 
+enum OSIMEInputPanelPolicy {
+  static func showsVisibleFocusRecovery(
+    requested: Bool,
+    on interfaceIdiom: UIUserInterfaceIdiom
+  ) -> Bool {
+    requested && interfaceIdiom == .pad
+  }
+}
+
 struct SessionInputModeControl: View {
   @Binding var selection: SessionInputMode
   let onUnavailableOSIME: () -> Void
@@ -121,7 +130,10 @@ struct OSIMEInputPanel: View {
     ZStack(alignment: .top) {
       if showsChrome {
         visibleInputPanel
-      } else if showsFocusRecovery {
+      } else if OSIMEInputPanelPolicy.showsVisibleFocusRecovery(
+        requested: showsFocusRecovery,
+        on: UIDevice.current.userInterfaceIdiom
+      ) {
         compactInputPanel
       } else {
         inputField

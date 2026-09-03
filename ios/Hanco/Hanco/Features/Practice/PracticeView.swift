@@ -436,7 +436,8 @@ struct PracticeView: View {
             onBackspace: viewModel.backspace
           )
         }
-      } else if showsPhysicalKeyboardGuide {
+      } else if showsPhysicalKeyboardGuide,
+                PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
         PhysicalKeyboardGuideView(nextExpectedKey: viewModel.nextExpectedKey)
           .padding(.horizontal, 8)
           .padding(.bottom, 6)
@@ -1651,12 +1652,10 @@ struct SessionSettingsOverlay: View {
           }
 
           settingsSection(title: "settings.keyboard") {
-            if KeyboardInputGuidePolicy.isAvailableOnCurrentDevice {
-              Toggle(isOn: $showsKeyGuide) {
-                Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
-              }
-              .accessibilityIdentifier("practice.session_settings.key_guide")
+            Toggle(isOn: $showsKeyGuide) {
+              Label("practice.setup.key_guide", systemImage: "lightbulb.fill")
             }
+            .accessibilityIdentifier("practice.session_settings.key_guide")
 
             Toggle(isOn: $showsRomanHints) {
               Label("practice.setup.roman_hints", systemImage: "character.book.closed.fill")
@@ -1674,7 +1673,8 @@ struct SessionSettingsOverlay: View {
                 onUnavailableOSIME: onUnavailableOSIME
               )
 
-              if inputMode == .osIME {
+              if inputMode == .osIME,
+                 PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice {
                 Toggle("physical_keyboard.show_guide", isOn: $showsPhysicalKeyboardGuide)
                   .accessibilityIdentifier("practice.session_settings.physical_keyboard_guide")
               }

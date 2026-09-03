@@ -775,10 +775,7 @@ final class HancoUITests: XCTestCase {
     let settings = app.buttons["practice.session_settings"]
     XCTAssertTrue(settings.waitForExistence(timeout: 3))
     settings.tap()
-    XCTAssertEqual(
-      element("practice.session_settings.key_guide").exists,
-      isIPadDestination
-    )
+    XCTAssertTrue(element("practice.session_settings.key_guide").waitForExistence(timeout: 3))
     XCTAssertTrue(element("practice.session_settings.roman_hints").exists)
     XCTAssertTrue(element("practice.session_settings.haptics").exists)
     let displaySettings = app.buttons["practice.session_settings.display"]
@@ -836,11 +833,8 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("settings.sound_preset").isEnabled)
     attachScreenshot(named: "practice-common-settings-ja")
 
-    scrollToHittable(app.switches["settings.roman_hints"])
-    XCTAssertEqual(app.switches["settings.key_guide"].exists, isIPadDestination)
-    if isIPadDestination {
-      XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
-    }
+    scrollToHittable(app.switches["settings.key_guide"])
+    XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
     XCTAssertEqual(app.switches["settings.roman_hints"].value as? String, "1")
     XCTAssertEqual(app.switches["settings.haptics"].value as? String, "1")
 
@@ -880,9 +874,13 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(layoutPicker.isEnabled)
 
     let physicalGuide = app.switches["settings.physical_keyboard_guide"]
-    scrollToHittable(physicalGuide)
-    physicalGuide.tap()
-    XCTAssertEqual(physicalGuide.value as? String, "1")
+    if isIPadDestination {
+      scrollToHittable(physicalGuide)
+      physicalGuide.tap()
+      XCTAssertEqual(physicalGuide.value as? String, "1")
+    } else {
+      XCTAssertFalse(physicalGuide.exists)
+    }
     app.buttons["settings.done"].tap()
 
     startPractice()
@@ -890,12 +888,19 @@ final class HancoUITests: XCTestCase {
     app.buttons["practice.session_settings"].tap()
     app.buttons["input_mode.os_ime"].tap()
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
-    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+    app.buttons["practice.session_settings"].tap()
+    XCTAssertEqual(
+      element("practice.session_settings.physical_keyboard_guide").exists,
+      isIPadDestination
+    )
+    app.buttons["practice.session_settings.close"].tap()
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
 
     XCUIDevice.shared.press(.home)
     app.activate()
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 5))
-    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
 
     app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
     XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
@@ -906,8 +911,12 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(persistedOSMode)
     XCTAssertTrue(persistedOSMode.isSelected)
     let persistedPhysicalGuide = app.switches["settings.physical_keyboard_guide"]
-    scrollToHittable(persistedPhysicalGuide)
-    XCTAssertEqual(persistedPhysicalGuide.value as? String, "1")
+    if isIPadDestination {
+      scrollToHittable(persistedPhysicalGuide)
+      XCTAssertEqual(persistedPhysicalGuide.value as? String, "1")
+    } else {
+      XCTAssertFalse(persistedPhysicalGuide.exists)
+    }
 
     app.terminate()
     app = makeApplication(
@@ -918,21 +927,25 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
-    XCTAssertTrue(element("physical_keyboard.guide").waitForExistence(timeout: 3))
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
     app.buttons["practice.session_settings"].tap()
     app.buttons["input_mode.builtin"].tap()
     XCTAssertTrue(app.buttons["keyboard.10key.vertical"].waitForExistence(timeout: 5))
   }
 
-  func testTYP90InputGuidePolicyAcrossSettingsDeckLessonAndGames() {
+  func testTYP92RestoresKeyGuideAcrossSettingsDeckLessonAndGames() {
     app.terminate()
     app = makeApplication(
       resetKeyboardPreferences: true,
       gameDuration: 60,
-      flowStartIndex: 0
+      flowStartIndex: 0,
+      koreanKeyboardAvailable: true
     )
-    // Simulate a previously enabled preference. The iPhone policy must ignore it.
-    app.launchArguments += ["-keyboard.shows_key_guide", "YES"]
+    // Simulate the default enabled preference on both iPhone and iPad.
+    app.launchArguments += [
+      "-keyboard.shows_key_guide", "YES",
+      "-keyboard.shows_physical_keyboard_guide", "YES",
+    ]
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
@@ -940,22 +953,33 @@ final class HancoUITests: XCTestCase {
     let layoutPicker = element("settings.builtin_keyboard_layout")
     XCTAssertTrue(layoutPicker.waitForExistence(timeout: 3))
     XCTAssertTrue(layoutPicker.buttons["2ボル式"].isSelected)
-    let romanHints = app.switches["settings.roman_hints"]
-    scrollToHittable(romanHints)
-    XCTAssertEqual(app.switches["settings.key_guide"].exists, isIPadDestination)
+    let keyGuide = app.switches["settings.key_guide"]
+    scrollToHittable(keyGuide)
+    XCTAssertEqual(keyGuide.value as? String, "1")
+    let physicalGuide = app.switches["settings.physical_keyboard_guide"]
+    XCTAssertEqual(physicalGuide.exists, isIPadDestination)
     if isIPadDestination {
-      XCTAssertEqual(app.switches["settings.key_guide"].value as? String, "1")
+      XCTAssertEqual(physicalGuide.value as? String, "1")
     }
     app.buttons["settings.done"].tap()
 
     startPractice()
-    assertTYP90GuideState(context: "deck practice")
+    assertKeyboardKeyGuideVisible(context: "deck practice")
+    app.buttons["practice.session_settings"].tap()
+    XCTAssertTrue(element("practice.session_settings.key_guide").waitForExistence(timeout: 3))
+    app.buttons["input_mode.os_ime"].tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
     app.buttons["practice.session_settings"].tap()
     XCTAssertEqual(
-      element("practice.session_settings.key_guide").exists,
+      element("practice.session_settings.physical_keyboard_guide").exists,
       isIPadDestination
     )
     app.buttons["practice.session_settings.close"].tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["input_mode.builtin"].tap()
     app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
     XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
 
@@ -964,18 +988,32 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(firstStage)
     firstStage.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
-    assertTYP90GuideState(context: "curriculum lesson")
+    assertKeyboardKeyGuideVisible(context: "curriculum lesson")
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["input_mode.os_ime"].tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    app.buttons["practice.session_settings"].tap()
+    XCTAssertEqual(
+      element("practice.session_settings.physical_keyboard_guide").exists,
+      isIPadDestination
+    )
+    app.buttons["practice.session_settings.close"].tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
+    app.buttons["practice.session_settings"].tap()
+    app.buttons["input_mode.builtin"].tap()
     app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
     XCTAssertTrue(element("curriculum.map.screen").waitForExistence(timeout: 5))
 
     startBundledGame(mode: "flow", screen: "game.play.screen")
     XCTAssertFalse(element("game.target.value").label.isEmpty)
-    assertTYP90GuideState(context: "flow game")
+    assertKeyboardKeyGuideVisible(context: "flow game")
     returnToGameHub()
 
     startBundledGame(mode: "acid_rain", screen: "acid_rain.play.screen")
     XCTAssertFalse(element("acid_rain.target.value").label.isEmpty)
-    assertTYP90GuideState(context: "acid-rain game")
+    assertKeyboardKeyGuideVisible(context: "acid-rain game")
   }
 
   func testSoundSettingAndPresetPersistAcrossRelaunch() {
@@ -1097,9 +1135,12 @@ final class HancoUITests: XCTestCase {
     app.buttons["OSキーボード"].tap()
 
     XCTAssertFalse(element("practice.composition_card").exists)
-    XCTAssertTrue(element("os_ime.input.recovery").waitForExistence(timeout: 3))
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    XCTAssertEqual(
+      app.staticTexts["os_ime.input.recovery"].firstMatch.exists,
+      isIPadDestination
+    )
     imeField.tap()
     imeField.typeText("사")
     waitForValue("사", on: imeField, timeout: 3)
@@ -2025,19 +2066,22 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("game.result.input_mode").exists)
   }
 
-  func testFlowAndAcidRainOSIMEHideChromeAndKeepRecovery() {
+  func testFlowAndAcidRainOSIMEApplyDevicePanelPolicyAndKeepRecovery() {
     relaunchForGameOSIME(koreanKeyboardAvailable: true)
 
     startBundledGame(mode: "flow", screen: "game.play.screen")
-    assertHiddenGameOSIMEChromeAndRecovery(screenshot: "flow-os-ime-hidden-chrome")
+    assertGameOSIMEPanelPolicyAndRecovery(
+      screenshot: "flow-os-ime-device-panel-policy",
+      verifiesForegroundRecovery: true
+    )
     returnToGameHub()
 
     startBundledGame(mode: "acid_rain", screen: "acid_rain.play.screen")
     XCTAssertTrue(element("acid_rain.os_ime.free_input_status").waitForExistence(timeout: 3))
-    assertHiddenGameOSIMEChromeAndRecovery(screenshot: "acid-rain-os-ime-hidden-chrome")
+    assertGameOSIMEPanelPolicyAndRecovery(screenshot: "acid-rain-os-ime-device-panel-policy")
   }
 
-  func testRecallTypingGamesOSIMEHideChromeAndKeepRecovery() {
+  func testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery() {
     relaunchForGameOSIME(koreanKeyboardAvailable: true)
 
     let games = [
@@ -2059,7 +2103,7 @@ final class HancoUITests: XCTestCase {
     ]
     for (index, game) in games.enumerated() {
       startBundledGame(mode: game.mode, screen: game.screen)
-      assertHiddenGameOSIMEChromeAndRecovery(screenshot: game.screenshot)
+      assertGameOSIMEPanelPolicyAndRecovery(screenshot: game.screenshot)
       if index < games.count - 1 { returnToGameHub() }
     }
   }
@@ -2068,16 +2112,16 @@ final class HancoUITests: XCTestCase {
     relaunchForGameOSIME(koreanKeyboardAvailable: true)
     startBundledGame(mode: "flow", screen: "game.play.screen")
 
-    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
-    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
-    recovery.tap()
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
+    XCTAssertEqual(recovery.exists, isIPadDestination)
+    (isIPadDestination ? recovery : imeField).tap()
     imeField.typeText("r")
 
     XCTAssertTrue(element("os_ime.input_source_warning").waitForExistence(timeout: 3))
     XCTAssertFalse(element("os_ime.input.chrome").exists)
-    XCTAssertTrue(recovery.exists)
+    XCTAssertEqual(recovery.exists, isIPadDestination)
     XCTAssertEqual(element("game.score.value").label, "0")
     attachScreenshot(named: "game-os-ime-english-warning-hidden-chrome")
   }
@@ -2118,7 +2162,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("acid_rain.os_ime.free_input_status").exists)
     XCTAssertFalse(element("os_ime.input.chrome").exists)
     let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
-    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
+    XCTAssertEqual(recovery.exists, isIPadDestination)
 
     let fallingCards = app.descendants(matching: .any).matching(
       identifier: "acid_rain.falling_card"
@@ -2136,7 +2180,7 @@ final class HancoUITests: XCTestCase {
     ).firstMatch
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
-    recovery.tap()
+    (isIPadDestination ? recovery : imeField).tap()
     imeField.typeText(freelyChosenWord)
 
     expectation(
@@ -2961,7 +3005,12 @@ final class HancoUITests: XCTestCase {
     app.buttons["onboarding.input_device.hardware"].tap()  // Interaction 5
 
     XCTAssertTrue(element("onboarding.lesson.target.value").waitForExistence(timeout: 3))
-    XCTAssertTrue(element("physical_keyboard.key.R").waitForExistence(timeout: 3))
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertEqual(element("physical_keyboard.key.R").exists, isIPadDestination)
+    XCTAssertEqual(
+      app.staticTexts["os_ime.input.recovery"].firstMatch.exists,
+      isIPadDestination
+    )
     let firstInput = app.textFields["os_ime.text_field"]
     XCTAssertTrue(firstInput.waitForExistence(timeout: 3))
     firstInput.typeText("가")  // Interaction 6: first real input
@@ -2977,7 +3026,8 @@ final class HancoUITests: XCTestCase {
     firstMission.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
-    XCTAssertTrue(element("physical_keyboard.key.R").exists)
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertEqual(element("physical_keyboard.key.R").exists, isIPadDestination)
     XCTAssertFalse(element("keyboard.view").exists)
   }
 
@@ -3493,14 +3543,12 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(choseongMeaning.value as? String, "0")
     attachScreenshot(named: "settings-direct-content-en")
 
+    let keyGuide = app.switches["settings.key_guide"]
+    scrollToHittable(keyGuide, direction: .down)
+    XCTAssertEqual(keyGuide.value as? String, "1")
+    setSwitch(keyGuide, to: "0")
     let romanHints = app.switches["settings.roman_hints"]
     scrollToHittable(romanHints)
-    let keyGuide = app.switches["settings.key_guide"]
-    XCTAssertEqual(keyGuide.exists, isIPadDestination)
-    if isIPadDestination {
-      XCTAssertEqual(keyGuide.value as? String, "1")
-      setSwitch(keyGuide, to: "0")
-    }
     XCTAssertEqual(romanHints.value as? String, "1")
     setSwitch(romanHints, to: "0")
     let haptics = app.switches["settings.haptics"]
@@ -3536,13 +3584,11 @@ final class HancoUITests: XCTestCase {
     let persistedChoseongMeaning = app.switches["settings.choseong_meaning"]
     scrollToHittable(persistedChoseongMeaning)
     XCTAssertEqual(persistedChoseongMeaning.value as? String, "0")
+    let persistedKeyGuide = app.switches["settings.key_guide"]
+    scrollToHittable(persistedKeyGuide, direction: .down)
+    XCTAssertEqual(persistedKeyGuide.value as? String, "0")
     let persistedRomanHints = app.switches["settings.roman_hints"]
     scrollToHittable(persistedRomanHints)
-    let persistedKeyGuide = app.switches["settings.key_guide"]
-    XCTAssertEqual(persistedKeyGuide.exists, isIPadDestination)
-    if isIPadDestination {
-      XCTAssertEqual(persistedKeyGuide.value as? String, "0")
-    }
     XCTAssertEqual(persistedRomanHints.value as? String, "0")
     let persistedHaptics = app.switches["settings.haptics"]
     scrollToHittable(persistedHaptics)
@@ -4112,7 +4158,7 @@ final class HancoUITests: XCTestCase {
     max(app.frame.width, app.frame.height) >= 1_000
   }
 
-  private func assertTYP90GuideState(
+  private func assertKeyboardKeyGuideVisible(
     context: String,
     file: StaticString = #filePath,
     line: UInt = #line
@@ -4129,7 +4175,7 @@ final class HancoUITests: XCTestCase {
     let selectedKeyCount = keyboardKeys.allElementsBoundByIndex.filter(\.isSelected).count
     XCTAssertEqual(
       selectedKeyCount,
-      isIPadDestination ? 1 : 0,
+      1,
       context,
       file: file,
       line: line
@@ -4196,17 +4242,33 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element(screen).waitForExistence(timeout: 5))
   }
 
-  private func assertHiddenGameOSIMEChromeAndRecovery(screenshot: String) {
+  private func assertGameOSIMEPanelPolicyAndRecovery(
+    screenshot: String,
+    verifiesForegroundRecovery: Bool = false
+  ) {
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
     XCTAssertFalse(element("os_ime.input.chrome").exists)
     let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
-    XCTAssertTrue(recovery.waitForExistence(timeout: 3))
+    XCTAssertEqual(recovery.exists, isIPadDestination)
 
-    recovery.tap()
+    (isIPadDestination ? recovery : imeField).tap()
     imeField.typeText("ㄱ")
     XCTAssertTrue(imeField.exists)
     XCTAssertFalse(element("os_ime.input.chrome").exists)
+
+    if verifiesForegroundRecovery {
+      XCUIDevice.shared.press(.home)
+      app.activate()
+      let restoredField = app.textFields["os_ime.text_field"]
+      XCTAssertTrue(restoredField.waitForExistence(timeout: 5))
+      restoredField.typeText("ㅏ")
+      XCTAssertTrue(restoredField.exists)
+      XCTAssertEqual(
+        app.staticTexts["os_ime.input.recovery"].firstMatch.exists,
+        isIPadDestination
+      )
+    }
     attachScreenshot(named: screenshot)
   }
 
