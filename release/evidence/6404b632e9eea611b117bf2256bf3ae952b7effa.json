@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "6404b632e9eea611b117bf2256bf3ae952b7effa",
+  "verified_tree": "b01b7d89d2270b2f009d68488d86403a94d909ac",
+  "branch": "codex/94-game-layout-expansion",
+  "scope": "TYP-94 iPhone hidden-guide game/session layout expansion",
+  "result": "pass",
+  "recorded_at": "2026-09-03T15:06:52.081251+00:00",
+  "checks": [
+    {
+      "name": "Latest origin/main merged",
+      "status": "pass",
+      "command": "git fetch --prune origin && git merge --no-edit origin/main",
+      "note": "origin/main fe05bd2cfae7fa7dc7690a0cd5593964f12c7df3 already up to date"
+    },
+    {
+      "name": "Workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "All strict worktree and repository checks passed"
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository preflight passed"
+    },
+    {
+      "name": "HangulEngine full package suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "65 tests passed"
+    },
+    {
+      "name": "OSIME device policy focused unit",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,id=F8A971DA-8A7C-407B-994B-5AEF4770CEC6\" -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEInputPanelPolicyKeepsRequestedRecoveryChromeIPadOnly",
+      "note": "1 test passed"
+    },
+    {
+      "name": "iPhone hidden-guide UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,id=F8A971DA-8A7C-407B-994B-5AEF4770CEC6\" -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission -only-testing:HancoUITests/HancoUITests/testTYP92RestoresKeyGuideAcrossSettingsDeckLessonAndGames",
+      "note": "4 tests passed on iPhone 17 Pro iOS 26.5; visual attachments reviewed"
+    },
+    {
+      "name": "iPad preservation UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416\" -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission -only-testing:HancoUITests/HancoUITests/testTYP92RestoresKeyGuideAcrossSettingsDeckLessonAndGames",
+      "note": "4 tests passed on iPad Pro 13-inch M5 iOS 26.5; visual attachments reviewed"
+    },
+    {
+      "name": "Diff integrity and scope self-review",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD && git diff --name-only origin/main...HEAD",
+      "note": "No unresolved findings; no Android changes"
+    }
+  ],
+  "manual_gates": [
+    "Build 16 TestFlight distribution and validation remains OPEN",
+    "Physical iPhone and iPad layout/focus verification remains OPEN",
+    "Maintainer manual approval and squash merge remain OPEN",
+    "Release signing, store, account, content-rights, and external service gates remain OPEN"
+  ]
+}
