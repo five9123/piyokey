@@ -1026,6 +1026,10 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
     XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
     XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
+    assertPhoneContentReachesKeyboard(
+      app.otherElements["practice.composition.card"].firstMatch,
+      context: "deck practice"
+    )
     app.buttons["practice.session_settings"].tap()
     app.buttons["input_mode.builtin"].tap()
     app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
@@ -1049,6 +1053,10 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
     XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
     XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
+    assertPhoneContentReachesKeyboard(
+      app.otherElements["practice.composition.card"].firstMatch,
+      context: "curriculum lesson"
+    )
     app.buttons["practice.session_settings"].tap()
     app.buttons["input_mode.builtin"].tap()
     app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
@@ -2120,13 +2128,17 @@ final class HancoUITests: XCTestCase {
     startBundledGame(mode: "flow", screen: "game.play.screen")
     assertGameOSIMEPanelPolicyAndRecovery(
       screenshot: "flow-os-ime-device-panel-policy",
+      bottomContent: element("game.feedback.status"),
       verifiesForegroundRecovery: true
     )
     returnToGameHub()
 
     startBundledGame(mode: "acid_rain", screen: "acid_rain.play.screen")
     XCTAssertTrue(element("acid_rain.os_ime.free_input_status").waitForExistence(timeout: 3))
-    assertGameOSIMEPanelPolicyAndRecovery(screenshot: "acid-rain-os-ime-device-panel-policy")
+    assertGameOSIMEPanelPolicyAndRecovery(
+      screenshot: "acid-rain-os-ime-device-panel-policy",
+      bottomContent: element("acid_rain.os_ime.free_input_status")
+    )
   }
 
   func testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery() {
@@ -2151,7 +2163,10 @@ final class HancoUITests: XCTestCase {
     ]
     for (index, game) in games.enumerated() {
       startBundledGame(mode: game.mode, screen: game.screen)
-      assertGameOSIMEPanelPolicyAndRecovery(screenshot: game.screenshot)
+      assertGameOSIMEPanelPolicyAndRecovery(
+        screenshot: game.screenshot,
+        bottomContent: app.staticTexts["\(game.mode).typing.feedback"].firstMatch
+      )
       if index < games.count - 1 { returnToGameHub() }
     }
   }
@@ -3061,6 +3076,10 @@ final class HancoUITests: XCTestCase {
     )
     let firstInput = app.textFields["os_ime.text_field"]
     XCTAssertTrue(firstInput.waitForExistence(timeout: 3))
+    assertPhoneContentReachesKeyboard(
+      app.staticTexts["onboarding.lesson.coachmark"].firstMatch,
+      context: "onboarding first input"
+    )
     firstInput.typeText("가")  // Interaction 6: first real input
 
     XCTAssertTrue(element("onboarding.hatch.handoff.screen").waitForExistence(timeout: 3))
@@ -4329,6 +4348,7 @@ final class HancoUITests: XCTestCase {
 
   private func assertGameOSIMEPanelPolicyAndRecovery(
     screenshot: String,
+    bottomContent: XCUIElement,
     verifiesForegroundRecovery: Bool = false
   ) {
     let imeField = app.textFields["os_ime.text_field"]
@@ -4336,6 +4356,10 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("os_ime.input.chrome").exists)
     let recovery = app.staticTexts["os_ime.input.recovery"].firstMatch
     XCTAssertEqual(recovery.exists, isIPadDestination)
+    assertPhoneContentReachesKeyboard(
+      bottomContent,
+      context: screenshot
+    )
 
     (isIPadDestination ? recovery : imeField).tap()
     imeField.typeText("ㄱ")
@@ -4355,6 +4379,19 @@ final class HancoUITests: XCTestCase {
       )
     }
     attachScreenshot(named: screenshot)
+  }
+
+  private func assertPhoneContentReachesKeyboard(
+    _ bottomContent: XCUIElement,
+    context: String
+  ) {
+    guard !isIPadDestination else { return }
+    XCTAssertTrue(bottomContent.waitForExistence(timeout: 3), context)
+    let keyboard = app.keyboards.firstMatch
+    XCTAssertTrue(keyboard.waitForExistence(timeout: 3), context)
+    let verticalGap = keyboard.frame.minY - bottomContent.frame.maxY
+    XCTAssertGreaterThanOrEqual(verticalGap, -1, context)
+    XCTAssertLessThanOrEqual(verticalGap, 80, context)
   }
 
   private func returnToGameHub() {

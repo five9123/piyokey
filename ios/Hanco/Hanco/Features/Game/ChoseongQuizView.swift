@@ -1566,6 +1566,11 @@ struct ChoseongTypingView: View {
                 .frame(minHeight: expandsSessionCards ? max(0, viewport.size.height - 28) * 0.55 : 0)
               typingCard
                 .frame(minHeight: expandsSessionCards ? max(0, viewport.size.height - 28) * 0.45 : 0)
+                .overlay {
+                  if overlaysHiddenOSIMEInput {
+                    osIMEInputPanel
+                  }
+                }
             }
             .frame(minHeight: max(0, viewport.size.height - 20))
             .padding(.horizontal, 14)
@@ -1578,6 +1583,11 @@ struct ChoseongTypingView: View {
         VStack(spacing: 12) {
           quizCard
           typingCard
+            .overlay {
+              if overlaysHiddenOSIMEInput {
+                osIMEInputPanel
+              }
+            }
         }
         .frame(maxHeight: .infinity)
         .padding(.horizontal, 14)
@@ -1585,8 +1595,10 @@ struct ChoseongTypingView: View {
         .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
       }
 
-      inputArea
-        .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+      if !overlaysHiddenOSIMEInput {
+        inputArea
+          .hancoCenteredContent(maxWidth: adaptiveMetrics.keyboardMaxWidth)
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(gameBackground.ignoresSafeArea())
@@ -2117,18 +2129,7 @@ struct ChoseongTypingView: View {
           .padding(.horizontal, 12)
       }
       if inputMode == .osIME {
-        OSIMEInputPanel(
-          target: viewModel.currentRound.answer.ko,
-          acceptedText: viewModel.enteredText,
-          resetRevision: viewModel.roundRevision + inputResetRevision,
-          onInputStart: {
-            HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
-          },
-          onAcceptedSequence: synchronizeOSIME,
-          onConfirmedMismatch: recordOSIMEMistake,
-          showsChrome: false,
-          showsFocusRecovery: true
-        )
+        osIMEInputPanel
       } else {
         if builtInKeyboardLayout == .korean10Key {
           Korean10KeyKeyboardView(
@@ -2158,6 +2159,26 @@ struct ChoseongTypingView: View {
         }
       }
     }
+  }
+
+  private var overlaysHiddenOSIMEInput: Bool {
+    inputMode == .osIME
+      && !OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true)
+  }
+
+  private var osIMEInputPanel: some View {
+    OSIMEInputPanel(
+      target: viewModel.currentRound.answer.ko,
+      acceptedText: viewModel.enteredText,
+      resetRevision: viewModel.roundRevision + inputResetRevision,
+      onInputStart: {
+        HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
+      },
+      onAcceptedSequence: synchronizeOSIME,
+      onConfirmedMismatch: recordOSIMEMistake,
+      showsChrome: false,
+      showsFocusRecovery: true
+    )
   }
 
   private func inputKorean10Key(_ key: Korean10KeyKey) {

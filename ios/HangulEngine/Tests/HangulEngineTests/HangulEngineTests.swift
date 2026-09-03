@@ -421,6 +421,36 @@ final class HangulEngineTests: XCTestCase {
     }
   }
 
+  func testOSIMEReachableDanglingComplexBatchimPrefixesRemainCompositionInProgress() throws {
+    let snapshots: [(target: String, committed: String, stableText: String)] = [
+      ("괜찮아", "괜찬ㅅ", "괜찬"),
+      ("찮아", "찬ㅅ", "찬"),
+      ("않아", "안ㅅ", "안"),
+      ("많이", "만ㅅ", "만"),
+      ("삶", "살ㅇ", "살"),
+      ("핥다", "할ㄷ", "할"),
+      ("읊다", "을ㅂ", "을"),
+      ("앓다", "알ㅅ", "알"),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        try JamoDecomposer.keySequence(for: snapshot.stableText),
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+    }
+  }
+
   func testOSIMEBatchimBoundaryNegativeMatrixRemainsConfirmed() throws {
     let snapshots: [(target: String, committed: String, mismatch: Int)] = [
       ("일해", "읽", 3),
@@ -428,8 +458,9 @@ final class HangulEngineTests: XCTestCase {
       ("닭", "닮", 3),
       ("앓다", "앎", 3),
       ("읊다", "읅", 3),
-      ("삶", "살ㅇ", 3),
-      ("많이", "만ㅅ", 3),
+      ("삶", "살ㅅ", 3),
+      ("많이", "만ㅈ", 3),
+      ("않아", "안ㅈ", 3),
       ("읽어", "읽아", 5),
       ("일해", "일개", 3),
     ]
@@ -537,6 +568,32 @@ final class HangulEngineTests: XCTestCase {
       )
       XCTAssertEqual(evaluation.status, .composingMismatch, snapshot.target)
       XCTAssertEqual(evaluation.acceptedSequence, snapshot.accepted, snapshot.target)
+    }
+  }
+
+  func testOSIMEWordPrefixDoubleDotVowelStatesRemainCompositionInProgress() throws {
+    let snapshots: [(target: String, committed: String, stableText: String)] = [
+      ("어요", "어ㅇ\u{11A2}", "어ㅇ"),
+      ("와요", "와ㅇ\u{11A2}", "와ㅇ"),
+      ("해요", "해ㅇ\u{11A2}", "해ㅇ"),
+      ("좋아요", "좋아ㅇ\u{11A2}", "좋아ㅇ"),
+    ]
+
+    for snapshot in snapshots {
+      let evaluation = try OSIMETextJudge.evaluate(
+        target: snapshot.target,
+        committedText: snapshot.committed
+      )
+      XCTAssertEqual(
+        evaluation.status,
+        .composingMismatch,
+        "\(snapshot.target): \(snapshot.committed)"
+      )
+      XCTAssertEqual(
+        evaluation.acceptedSequence,
+        try JamoDecomposer.keySequence(for: snapshot.stableText),
+        "\(snapshot.target): \(snapshot.committed)"
+      )
     }
   }
 

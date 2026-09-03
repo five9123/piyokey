@@ -471,6 +471,23 @@ final class FlowGameViewModelTests: XCTestCase {
     XCTAssertEqual(complexFinal.evaluation.acceptedSequence, Array("ㅇㅡㄹ"))
   }
 
+  func testOSIMECandidateJudgeKeepsDanglingComplexBatchimPrefixViable() throws {
+    let selection = try XCTUnwrap(
+      OSIMECandidateTextJudge.evaluate(
+        targets: ["괜자", "괜찮아"],
+        preferredTarget: "괜자",
+        committedText: "괜찬ㅅ"
+      )
+    )
+
+    XCTAssertEqual(selection.target, "괜찮아")
+    XCTAssertEqual(selection.evaluation.status, .composingMismatch)
+    XCTAssertEqual(
+      selection.evaluation.acceptedSequence,
+      try JamoDecomposer.keySequence(for: "괜찬")
+    )
+  }
+
   func testOSIMECandidateJudgeKeepsClassCAndDIntermediatesViable() throws {
     for committed in ["핰", "핚"] {
       let selection = try XCTUnwrap(
