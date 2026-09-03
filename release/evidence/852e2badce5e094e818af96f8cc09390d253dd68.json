@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "852e2badce5e094e818af96f8cc09390d253dd68",
+  "verified_tree": "dda46ee39c941945708c04fdb618a9cd38176f4d",
+  "branch": "codex/92-physical-keyboard-guide-regression",
+  "scope": "TYP-92 final iPhone OS IME and physical keyboard guide policy, keycap-guide restoration, and TYP-82 focus-recovery regression assertion",
+  "result": "pass",
+  "recorded_at": "2026-09-03T01:41:28Z",
+  "checks": [
+    {
+      "name": "/opt/homebrew Python 3.12 strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean worktree at final implementation commit."
+    },
+    {
+      "name": "/opt/homebrew Python 3.12 release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "focused input-guide policy unit tests",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/PracticeSessionViewModelTests/testKeyboardOptionsDefaultOnForEveryDeviceAndAllowGraduationMode -only-testing:HancoTests/PracticeSessionViewModelTests/testOSIMEInputPanelPolicyKeepsRequestedRecoveryChromeIPadOnly -only-testing:HancoTests/PracticeSessionViewModelTests/testPhysicalKeyboardGuidePolicyIsIPadOnly",
+      "note": "3 selected tests passed, 0 failed in 29.705 seconds on the clean final implementation commit."
+    },
+    {
+      "name": "focused iPhone input-guide and focus-recovery UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP92RestoresKeyGuideAcrossSettingsDeckLessonAndGames -only-testing:HancoUITests/HancoUITests/testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance",
+      "note": "5 selected tests passed, 0 failed in 293.669 seconds on the clean final implementation commit. Includes the exact TYP-82 recovery selector that failed during Claude review at the previous head."
+    },
+    {
+      "name": "focused iPad input-guide and focus-recovery UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad (A16),OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP92RestoresKeyGuideAcrossSettingsDeckLessonAndGames -only-testing:HancoUITests/HancoUITests/testOnboardingDeviceKeyboardCompletesFirstInputAndCarriesIntoHatchMission -only-testing:HancoUITests/HancoUITests/testFlowAndAcidRainOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testRecallTypingGamesOSIMEApplyDevicePanelPolicyAndKeepRecovery -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance",
+      "note": "5 selected tests passed, 0 failed in 299.829 seconds on the clean final implementation commit."
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main fdce1d31a5b619e1ca0a2311c6588aeca8ffd241 is an ancestor."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "production and test input-guide consumer audit",
+      "status": "pass",
+      "command": "rg -n --glob '*.swift' 'OSIMEInputPanel\\s*\\(|PhysicalKeyboardGuideView\\s*\\(|showsPhysicalKeyboardGuide|shows_physical_keyboard_guide|os_ime\\.input\\.recovery' ios/Hanco/Hanco ios/Hanco/HancoUITests/HancoUITests.swift",
+      "note": "Production construction/render/preference boundaries and all recovery identifier assertions were enumerated; the previously missed TYP-82 test is now device-conditional."
+    }
+  ],
+  "manual_gates": [
+    "Build 14 TestFlight verification on physical iPhone and iPad remains open; TYP-92 must not move to Done before it passes.",
+    "Fresh Claude exact-head review and maintainer manual merge approval remain open.",
+    "GitHub Actions are disabled. Account, content-rights, IAP, archive, signing, store, and release gates remain open.",
+    "The evidence for 7e483bfa22b0860129780ef9dcded49cd54d9f58 is superseded by this final evidence. The accidental whole HancoTests target run and stale pre-call-site-edit iPad batch remain excluded."
+  ]
+}
