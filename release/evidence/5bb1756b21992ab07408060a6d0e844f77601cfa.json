@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "verified_commit": "5bb1756b21992ab07408060a6d0e844f77601cfa",
+  "verified_tree": "0c9bb6c61ddb672fc375d72573bf7f64dbbaca0d",
+  "branch": "codex/95-tenkey-judge",
+  "scope": "TYP-94 + TYP-95 merged-tree verification before PR #160 merge and TestFlight build 16",
+  "result": "pass",
+  "recorded_at": "2026-09-03T15:49:41.171339+00:00",
+  "checks": [
+    {
+      "name": "hangul-engine",
+      "status": "pass",
+      "command": "swift test",
+      "note": "67 tests passed at 5bb1756b21992ab07408060a6d0e844f77601cfa"
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "107 tests passed at 5bb1756b21992ab07408060a6d0e844f77601cfa"
+    },
+    {
+      "name": "focused-app-units",
+      "status": "pass",
+      "command": "xcodebuild test HancoTests selected TYP-94/TYP-95 cases",
+      "note": "4 tests passed on iPhone 17"
+    },
+    {
+      "name": "ios-simulator-build",
+      "status": "pass",
+      "command": "xcodebuild build -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination generic/platform=iOS Simulator CODE_SIGNING_ALLOWED=NO",
+      "note": "exit 0"
+    },
+    {
+      "name": "release-preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": "all static release checks passed"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": "strict checks passed"
+    },
+    {
+      "name": "origin-main-ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main 586f00b included"
+    },
+    {
+      "name": "merged-tree-ui-revalidation",
+      "status": "skip",
+      "command": "xcodebuild test HancoUITests selected TYP-94 cases",
+      "note": "pre-execution CoreSimulator/LLDB launch failure; no assertion failure; TYP-94 exact implementation evidence 6404b632... passed iPhone and iPad UI tests"
+    }
+  ],
+  "manual_gates": [
+    "Claude exact-head review skipped only for build 16 by Jungmin explicit Buzz approval event 4e655f5c01de20413909e7ba5c44e571a89be651a18ad7b6233eb95021a7a5a6; exception recorded on PR #159 and #160",
+    "Physical iPhone and iPad TestFlight build 16 smoke remains open",
+    "TestFlight processing and availability remains open until App Store Connect confirms",
+    "Release/App Store submission remains out of scope; do not mark Done",
+    "TYP-85 is excluded from build 16 and remains 1.1.1 follow-up"
+  ]
+}
