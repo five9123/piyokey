@@ -128,6 +128,15 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(target.label, "사랑해요")
     XCTAssertEqual(target.value as? String, "0 / 4 音節完了")
     XCTAssertEqual(jamoProgress.value as? String, "0 / 9")
+    let firstJamo = element("practice.jamo.active")
+    let lastJamo = element("practice.jamo.8")
+    XCTAssertTrue(firstJamo.exists)
+    XCTAssertTrue(lastJamo.exists)
+    XCTAssertEqual(
+      (firstJamo.frame.minX + lastJamo.frame.maxX) / 2,
+      app.frame.midX,
+      accuracy: 2
+    )
 
     app.buttons["keyboard.key.ㅅ"].tap()
     XCTAssertEqual(target.value as? String, "0 / 4 音節完了")
@@ -589,6 +598,76 @@ final class HancoUITests: XCTestCase {
     randomWords.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
     waitForValue("1 / 5", on: element("practice.overall_progress"), timeout: 3)
+  }
+
+  func testTYP97RandomFiveAcceptedInputKeepsPracticeScreenVerticallyStable() throws {
+    let scenarios: [(layout: String, usesOSIME: Bool)] = [
+      ("dubeolsik", false),
+      ("korean_10key", false),
+      ("dubeolsik", true),
+    ]
+
+    for scenario in scenarios {
+      app.terminate()
+      app = makeApplication(
+        resetKeyboardPreferences: true,
+        koreanKeyboardAvailable: true
+      )
+      app.launchArguments += ["-keyboard.builtin_layout_default", scenario.layout]
+      if scenario.usesOSIME {
+        app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+      }
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+
+      let randomWords = element("home.quick.random")
+      scrollToHittable(randomWords)
+      randomWords.tap()
+      XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+      waitForValue("1 / 5", on: element("practice.overall_progress"), timeout: 3)
+
+      let progress = element("practice.jamo_progress.value")
+      let activeJamo = element("practice.jamo.active")
+      XCTAssertTrue(activeJamo.waitForExistence(timeout: 3))
+      guard let progressValue = progress.value as? String,
+        let totalText = progressValue.split(separator: "/").last?
+          .trimmingCharacters(in: .whitespaces),
+        let total = Int(totalText)
+      else {
+        XCTFail("Random 5 jamo progress must expose its total")
+        continue
+      }
+
+      if scenario.usesOSIME {
+        let imeField = app.textFields["os_ime.text_field"]
+        XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+        imeField.tap()
+        Thread.sleep(forTimeInterval: 0.8)
+        assertPracticeCardsStayVerticallyFixed {
+          imeField.typeText(activeJamo.label)
+        }
+      } else if scenario.layout == "korean_10key" {
+        let recipe = try korean10KeyRecipeIdentifiers(for: activeJamo.label)
+        for identifier in recipe.dropLast() {
+          app.buttons[identifier].tap()
+        }
+        guard let finalIdentifier = recipe.last else {
+          XCTFail("10-key recipe must not be empty")
+          continue
+        }
+        assertPracticeCardsStayVerticallyFixed {
+          app.buttons[finalIdentifier].tap()
+        }
+      } else {
+        let key = app.buttons["keyboard.key.\(activeJamo.label)"]
+        XCTAssertTrue(key.isHittable)
+        assertPracticeCardsStayVerticallyFixed {
+          key.tap()
+        }
+      }
+
+      waitForValue("1 / \(total)", on: progress, timeout: 3)
+    }
   }
 
   func testHomeQuickActionStartsWeeklyPiyoCupDirectly() {
@@ -1551,6 +1630,7 @@ final class HancoUITests: XCTestCase {
     )
     XCTAssertEqual(XCTWaiter.wait(for: [activeJamoVisible], timeout: 3), .completed)
     XCTAssertEqual(activeJamo.label, "ㅜ")
+    XCTAssertEqual(activeJamo.frame.midX, app.frame.midX, accuracy: 2)
     attachScreenshot(named: "practice-long-jamo-follow-ja")
   }
 
@@ -4159,6 +4239,49 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(deck)
     deck.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func assertPracticeCardsStayVerticallyFixed(
+    during action: () -> Void,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let targetCard = element("practice.target.card")
+    XCTAssertTrue(targetCard.exists, file: file, line: line)
+
+    var targetPositions = [targetCard.frame.minY]
+    action()
+
+    let deadline = Date().addingTimeInterval(0.5)
+    while Date() < deadline {
+      targetPositions.append(targetCard.frame.minY)
+      Thread.sleep(forTimeInterval: 0.01)
+    }
+
+    XCTAssertLessThanOrEqual(
+      (targetPositions.max() ?? 0) - (targetPositions.min() ?? 0),
+      1,
+      "Accepted input moved the enclosing practice target card vertically",
+      file: file,
+      line: line
+    )
+  }
+
+  private func korean10KeyRecipeIdentifiers(for initialJamo: String) throws -> [String] {
+    let recipes: [String: (key: String, tapCount: Int)] = [
+      "ㄱ": ("giyeok", 1), "ㅋ": ("giyeok", 2), "ㄲ": ("giyeok", 3),
+      "ㄴ": ("nieun", 1), "ㄹ": ("nieun", 2),
+      "ㄷ": ("digeut", 1), "ㅌ": ("digeut", 2), "ㄸ": ("digeut", 3),
+      "ㅂ": ("bieup", 1), "ㅍ": ("bieup", 2), "ㅃ": ("bieup", 3),
+      "ㅅ": ("siot", 1), "ㅎ": ("siot", 2), "ㅆ": ("siot", 3),
+      "ㅈ": ("jieut", 1), "ㅊ": ("jieut", 2), "ㅉ": ("jieut", 3),
+      "ㅇ": ("ieung", 1), "ㅁ": ("ieung", 2),
+    ]
+    let recipe = try XCTUnwrap(
+      recipes[initialJamo],
+      "Random word must begin with a supported Korean initial: \(initialJamo)"
+    )
+    return Array(repeating: "keyboard.10key.\(recipe.key)", count: recipe.tapCount)
   }
 
   private func assertLandscapeOrientation(file: StaticString = #filePath, line: UInt = #line) {

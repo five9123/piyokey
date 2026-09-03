@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "verified_commit": "137e186b2fc9a7ea0d83698f4f75b1d631c9f662",
+  "verified_tree": "745fafba8b00a995928981c1c8b3d95b2f413c66",
+  "branch": "codex/97-random5-scroll-jump",
+  "scope": "TYP-97 iOS/iPadOS practice vertical stability and jamo-track regression on merged origin/main",
+  "result": "pass",
+  "recorded_at": "2026-09-03T18:17:49.507628+00:00",
+  "checks": [
+    {
+      "name": "iPhone 17 focused practice UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP97RandomFiveAcceptedInputKeepsPracticeScreenVerticallyStable -only-testing:HancoUITests/HancoUITests/testCompletedSyllableShowsSuccessStateWhileTyping -only-testing:HancoUITests/HancoUITests/testKorean10KeyPracticeUsesThreeByFourLayoutAndPendingBackspace -only-testing:HancoUITests/HancoUITests/testSessionSwitchesToOSIMEAndKeepsAcceptedJamoProgress -only-testing:HancoUITests/HancoUITests/testDeckDetailDownloadsAndStartsOfflinePracticeWithinThreeTaps -only-testing:HancoUITests/HancoUITests/testCompletingDokkaebiTargetAdvancesToNextProblem",
+      "note": "6 selected tests passed, 0 failures; includes TYP-97 built-in Dubeolsik, built-in Korean 10-Key, and OS Korean IME accepted-input vertical target-card stability plus short/long jamo-track and shared practice paths"
+    },
+    {
+      "name": "iPad Pro focused practice UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testIPadPracticeRotationPreservesProblemInputAndCentersKeyboard",
+      "note": "1 selected test passed, 0 failures; portrait-landscape-portrait state and centered keyboard assertions"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean branch codex/97-random5-scroll-jump; Issue 97 ownership; Python 3.12.13"
+    },
+    {
+      "name": "origin main ancestry",
+      "status": "pass",
+      "command": "git fetch --prune origin && git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main 2812559e615cba66d8a3b83a33332ba8c947af54 is an ancestor of verified HEAD"
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors"
+    }
+  ],
+  "manual_gates": [
+    "Build 17 TestFlight/archive/signing verification remains open.",
+    "Physical iPhone smoke remains open for built-in Dubeolsik, built-in Korean 10-Key, and OS Korean IME; for each path start Home Random 5, enter every accepted key for multiple items, and confirm the practice target/composition/keyboard screen has zero vertical jump while only the long jamo track follows the active chip.",
+    "Physical iPad portrait/landscape smoke, Dynamic Type reachability, state preservation, and absence of whole-screen horizontal scrolling remain open.",
+    "GitHub Actions is repository-disabled; CI remains open. Full regression and all store/marketing capture tests were intentionally not run.",
+    "Claude review:passed on the exact PR head and maintainer manual approval remain open; any new head requires a fresh review.",
+    "Merge and the final origin/main no-forward check remain open.",
+    "Account, content-rights, IAP, TestFlight, App Review, App Store, and other external release gates remain open."
+  ]
+}
