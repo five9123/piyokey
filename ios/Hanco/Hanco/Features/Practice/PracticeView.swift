@@ -1386,46 +1386,38 @@ private struct JamoProgressTrack: View {
 
   var body: some View {
     GeometryReader { geometry in
-      ScrollViewReader { scrollProxy in
-        let overflows = estimatedContentWidth > geometry.size.width
+      let overflows = estimatedContentWidth > geometry.size.width
 
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack(spacing: Self.chipSpacing) {
-            ForEach(Array(sequence.enumerated()), id: \.offset) { index, jamo in
-              Text(verbatim: String(jamo))
-                .font(.system(.body, design: .rounded, weight: .bold))
-                .foregroundStyle(index < completedCount ? .white : AppPalette.ink)
-                .frame(width: chipWidth, height: 34 * adaptiveMetrics.typographyScale)
-                .background(
-                  index < completedCount
-                    ? AppPalette.accent : AppPalette.accentSoft.opacity(0.38),
-                  in: RoundedRectangle(cornerRadius: 9)
-                )
-                .overlay {
-                  if index == completedCount {
-                    RoundedRectangle(cornerRadius: 9)
-                      .strokeBorder(AppPalette.accent, lineWidth: 2)
-                  }
-                }
-                .id(index)
-                .accessibilityIdentifier(
-                  index == completedCount ? "practice.jamo.active" : "practice.jamo.\(index)"
-                )
+      HStack(spacing: Self.chipSpacing) {
+        ForEach(Array(sequence.enumerated()), id: \.offset) { index, jamo in
+          Text(verbatim: String(jamo))
+            .font(.system(.body, design: .rounded, weight: .bold))
+            .foregroundStyle(index < completedCount ? .white : AppPalette.ink)
+            .frame(width: chipWidth, height: 34 * adaptiveMetrics.typographyScale)
+            .background(
+              index < completedCount
+                ? AppPalette.accent : AppPalette.accentSoft.opacity(0.38),
+              in: RoundedRectangle(cornerRadius: 9)
+            )
+            .overlay {
+              if index == completedCount {
+                RoundedRectangle(cornerRadius: 9)
+                  .strokeBorder(AppPalette.accent, lineWidth: 2)
+              }
             }
-          }
-          .padding(.horizontal, Self.horizontalSafeInset)
-          .frame(minWidth: geometry.size.width, alignment: .center)
-          .padding(.vertical, 2)
+            .accessibilityIdentifier(
+              index == completedCount ? "practice.jamo.active" : "practice.jamo.\(index)"
+            )
         }
-        .overlay {
-          edgeFades(overflows: overflows)
-        }
-        .onAppear {
-          followActiveJamo(using: scrollProxy, animated: false)
-        }
-        .onChange(of: completedCount) { _ in
-          followActiveJamo(using: scrollProxy, animated: true)
-        }
+      }
+      .padding(.horizontal, Self.horizontalSafeInset)
+      .padding(.vertical, 2)
+      .offset(x: horizontalOffset(in: geometry.size.width))
+      .animation(.easeOut(duration: 0.18), value: completedCount)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .clipped()
+      .overlay {
+        edgeFades(overflows: overflows)
       }
     }
     .frame(height: 38 * adaptiveMetrics.typographyScale)
@@ -1452,15 +1444,18 @@ private struct JamoProgressTrack: View {
     .frame(width: 22)
   }
 
-  private func followActiveJamo(using scrollProxy: ScrollViewProxy, animated: Bool) {
-    guard let activeIndex else { return }
-    if animated {
-      withAnimation(.easeOut(duration: 0.18)) {
-        scrollProxy.scrollTo(activeIndex, anchor: .center)
-      }
-    } else {
-      scrollProxy.scrollTo(activeIndex, anchor: .center)
+  private func horizontalOffset(in availableWidth: CGFloat) -> CGFloat {
+    guard estimatedContentWidth > availableWidth else {
+      return (availableWidth - estimatedContentWidth) / 2
     }
+    guard let activeIndex else { return 0 }
+
+    let activeCenter =
+      Self.horizontalSafeInset
+      + CGFloat(activeIndex) * (chipWidth + Self.chipSpacing)
+      + chipWidth / 2
+    let centeredOffset = availableWidth / 2 - activeCenter
+    return min(0, max(availableWidth - estimatedContentWidth, centeredOffset))
   }
 }
 
