@@ -1624,9 +1624,9 @@ struct SessionSettingsOverlay: View {
   let onUnavailableOSIME: () -> Void
   let onClose: () -> Void
 
-  @State private var showsDisplaySettings = false
+  @State private var showsDisplaySettings = true
   @State private var showsPromptOrder = false
-  @State private var showsSoundSettings = false
+  @State private var showsSoundSettings = true
 
   var body: some View {
     ZStack {
@@ -1682,6 +1682,42 @@ struct SessionSettingsOverlay: View {
           }
 
           disclosureButton(
+            title: "settings.sound",
+            systemImage: "speaker.wave.2.fill",
+            isExpanded: $showsSoundSettings,
+            identifier: "practice.session_settings.sound_menu"
+          )
+          if showsSoundSettings {
+            VStack(alignment: .leading, spacing: 10) {
+              Toggle(isOn: $practiceAutoSpeaks) {
+                Label(
+                  "settings.practice_auto_speak",
+                  systemImage: practiceAutoSpeaks ? "speaker.wave.2.fill" : "speaker.slash.fill"
+                )
+              }
+              .accessibilityIdentifier("practice.session_settings.auto_speak")
+
+              Toggle(isOn: $soundEffectsEnabled) {
+                Label(
+                  "practice.setup.sound",
+                  systemImage: soundEffectsEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill"
+                )
+              }
+              .accessibilityIdentifier("practice.session_settings.sound")
+
+              Picker("practice.setup.sound_preset", selection: $typingSoundPreset) {
+                Text("practice.setup.sound_system").tag(TypingSoundPreset.system.rawValue)
+                Text("practice.setup.sound_mechanical").tag(TypingSoundPreset.mechanical.rawValue)
+                Text("practice.setup.sound_soft").tag(TypingSoundPreset.soft.rawValue)
+              }
+              .pickerStyle(.segmented)
+              .disabled(!soundEffectsEnabled)
+              .accessibilityIdentifier("practice.session_settings.sound_preset")
+            }
+            .padding(.top, 8)
+          }
+
+          disclosureButton(
             title: "settings.practice_display",
             systemImage: "rectangle.3.group.fill",
             isExpanded: $showsDisplaySettings,
@@ -1731,42 +1767,6 @@ struct SessionSettingsOverlay: View {
                 .accessibilityIdentifier("practice.session_settings.mascot")
               Toggle("settings.practice_composition", isOn: $practiceShowsComposition)
                 .accessibilityIdentifier("practice.session_settings.composition")
-            }
-            .padding(.top, 8)
-          }
-
-          disclosureButton(
-            title: "settings.sound",
-            systemImage: "speaker.wave.2.fill",
-            isExpanded: $showsSoundSettings,
-            identifier: "practice.session_settings.sound_menu"
-          )
-          if showsSoundSettings {
-            VStack(alignment: .leading, spacing: 10) {
-              Toggle(isOn: $practiceAutoSpeaks) {
-                Label(
-                  "settings.practice_auto_speak",
-                  systemImage: practiceAutoSpeaks ? "speaker.wave.2.fill" : "speaker.slash.fill"
-                )
-              }
-              .accessibilityIdentifier("practice.session_settings.auto_speak")
-
-              Toggle(isOn: $soundEffectsEnabled) {
-                Label(
-                  "practice.setup.sound",
-                  systemImage: soundEffectsEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill"
-                )
-              }
-              .accessibilityIdentifier("practice.session_settings.sound")
-
-              Picker("practice.setup.sound_preset", selection: $typingSoundPreset) {
-                Text("practice.setup.sound_system").tag(TypingSoundPreset.system.rawValue)
-                Text("practice.setup.sound_mechanical").tag(TypingSoundPreset.mechanical.rawValue)
-                Text("practice.setup.sound_soft").tag(TypingSoundPreset.soft.rawValue)
-              }
-              .pickerStyle(.segmented)
-              .disabled(!soundEffectsEnabled)
-              .accessibilityIdentifier("practice.session_settings.sound_preset")
             }
             .padding(.top, 8)
           }
