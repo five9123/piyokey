@@ -15,7 +15,7 @@
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
 | iOS 1.1 | `main` `2812559`에 TYP-94 PR #159와 TYP-95 PR #160까지 병합됨 | build 16에서 iPhone 게임·연습·레슨·온보딩 OS 키보드 레이아웃·포커스 복구, iPad 기존 레이아웃과 OS 10키 겹받침 진행을 실기기로 검증. 이 gate 전에는 TYP-43을 진행하거나 출시 완료로 표현하지 않음 |
-| iOS 1.1.1 | TYP-85 인앱 천지인 플릭 source 작업이 `codex/85-ios-10key-flick`에서 진행 중이며 1.1 제출을 차단하지 않음 | focused source 검증·exact-head review 뒤 iPhone·iPad 전체 방향표, 롱프레스 현행 동작, p95≤50ms, 지원 게임 60fps와 VoiceOver 실기기 gate |
+| iOS 1.1.1 | TYP-85 인앱 천지인 플릭 source가 Draft PR #161 / `codex/85-ios-10key-flick`에서 In Review이며 1.1 제출을 차단하지 않음 | exact-head review 뒤 iPhone·iPad 전체 방향표, 롱프레스 현행 동작, p95≤50ms, 지원 게임 60fps와 VoiceOver 실기기 gate |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -24,7 +24,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-85 인앱 천지인 방향 플릭 | Backlog / source 작업 `codex/85-ios-10key-flick` | 24pt·450ms 플릭 판정, 완성 자모 recipe 접두 경로, de/en/es/fr/ja/ko VoiceOver 힌트의 focused source gate를 완료하고 iPhone·iPad 실기기 매핑·p95·60fps 전에는 Done 처리하지 않음 |
+| TYP-85 인앱 천지인 방향 플릭 | In Review / Draft PR #161 / `codex/85-ios-10key-flick` | 검증 SHA `ed5336a`의 focused source gate를 완료했다. exact-head review와 iPhone·iPad 실기기 매핑·롱프레스·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-95 OS 10키 겹받침 진행 보존 | Merged / PR #160 → main `2812559` | build 16 iPhone·iPad 실기기에서 연습·지원 게임의 OS 천지인 겹받침 진행을 확인하기 전 Done 처리하지 않음 |
 | TYP-94 iPhone 게임 레이아웃 미확장 | Merged / PR #159 → main `586f00b` | build 16 iPhone 실기기에서 게임·연습·레슨·온보딩의 OS 키보드 레이아웃과 TYP-92 포커스 복구를 확인하고, iPad 기존 레이아웃을 재확인하기 전 Done 처리하지 않음 |
 | TYP-93 세션 설정 정보구조 | Merged / PR #158 → main `fe05bd2` | build 14 TestFlight의 iPhone 실기기 덱 플레이·연습 확인 전 Done 처리하지 않음 |
