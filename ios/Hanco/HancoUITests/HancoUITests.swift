@@ -199,6 +199,28 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "practice-korean-10key-large-ja")
   }
 
+  func testKorean10KeyFlickCommitsOneJamoPerGesture() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    let progress = element("practice.jamo_progress.value")
+    let siot = app.buttons["keyboard.10key.siot"]
+    let vertical = app.buttons["keyboard.10key.vertical"]
+    XCTAssertTrue(siot.waitForExistence(timeout: 3))
+    XCTAssertTrue(vertical.exists)
+
+    flick(siot, fromX: 0.8, toX: 0.2)
+    waitForValue("1 / 9", on: progress, timeout: 3)
+
+    flick(vertical, fromX: 0.2, toX: 0.8)
+    waitForValue("2 / 9", on: progress, timeout: 3)
+    XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
+  }
+
   func testKorean10KeyLayoutCarriesIntoFlowGame() {
     app.tabBars.buttons["ゲーム"].tap()
     app.buttons["game.mode.flow"].tap()
@@ -4631,6 +4653,21 @@ final class HancoUITests: XCTestCase {
 
     XCTFail(
       "Timed out waiting for value to contain \(value); current value is \(String(describing: element.value))"
+    )
+  }
+
+  private func flick(_ element: XCUIElement, fromX: CGFloat, toX: CGFloat) {
+    let start = element.coordinate(
+      withNormalizedOffset: CGVector(dx: fromX, dy: 0.5)
+    )
+    let end = element.coordinate(
+      withNormalizedOffset: CGVector(dx: toX, dy: 0.5)
+    )
+    start.press(
+      forDuration: 0.01,
+      thenDragTo: end,
+      withVelocity: 1_000,
+      thenHoldForDuration: 0
     )
   }
 

@@ -92,6 +92,11 @@
 "keyboard.10key.jieut" = "Grupo ㅈ, ㅊ, ㅉ";
 "keyboard.10key.ieung" = "Grupo ㅇ, ㅁ";
 "keyboard.10key.next" = "Pasar a la siguiente consonante";
+"keyboard.10key.flick.vertical" = "Desliza: izquierda ㅓ, derecha ㅏ, arriba ㅕ, abajo ㅑ";
+"keyboard.10key.flick.dot" = "Desliza: izquierda ㅓ, derecha ㅏ, arriba ㅗ, abajo ㅜ";
+"keyboard.10key.flick.horizontal" = "Desliza: izquierda ㅠ, derecha ㅛ, arriba ㅗ, abajo ㅜ";
+"keyboard.10key.flick.three" = "Desliza: izquierda %@, derecha %@, abajo %@";
+"keyboard.10key.flick.two" = "Desliza: izquierda %@, derecha %@";
 "input_mode.builtin" = "Teclado integrado";
 "input_mode.builtin_korean_10key" = "Coreano de 10 teclas";
 "input_mode.os_ime" = "Teclado del sistema";

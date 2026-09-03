@@ -17,6 +17,12 @@
    - docs-only 변경의 iOS 전체 build를 분리
    - iOS unit test를 정기·수동 release workflow로 보강
 
+## Next — R1.1.1 인앱 천지인 플릭
+
+- TYP-85에서 기존 3×4 탭 recipe와 멀티터치 롤오버를 보존하면서 방향 플릭을 추가한다.
+- source gate는 focused 단위 테스트와 iPhone·iPad UI selector로 닫고, 전체 방향표·롱프레스·p95≤50ms·지원 게임 60fps·VoiceOver는 실제 iPhone·iPad에서 별도로 검증한다.
+- 1.1 출시 후보와 branch·빌드·완료 판단을 섞지 않으며 1.1 제출을 차단하지 않는다.
+
 ## Next — 병합된 소스의 외부 gate 완결
 
 - iPad Universal #10 / PR #18

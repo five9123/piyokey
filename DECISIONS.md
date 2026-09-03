@@ -1767,3 +1767,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: 정책 단위 테스트와 explicit iPhone·iPad focused UI selector에서 다음 키 토글/키캡 강조, `OSIMEInputPanel` compact 표시 정책·탭 입력·foreground 포커스 복구, Settings·덱 연습·커리큘럼 레슨·온보딩의 물리 참조 배열 정책을 확인한다. simulator 결과는 build 14 TestFlight의 실제 iPhone·iPad 검증을 대체하지 않으며 그 전에는 TYP-92·TYP-90 또는 1.1 출시를 Done으로 처리하지 않는다. ordinary issue 범위를 넘겨 실수로 실행한 전체 `HancoTests` target 결과는 검증 evidence로 사용하지 않는다.
 - 근거: 사용자 이미지 대조로 원본 게임 영역은 compact `OSIMEInputPanel`, 최신 비게임 영역은 덱·레슨 연습의 `PhysicalKeyboardGuideView`로 각각 확인됐다. responder와 저장 마이그레이션을 건드리지 않고 component 시각 경계만 기기별로 선택해야 iPhone 화면 공간을 회수하면서 TYP-82의 연속 포커스 계약과 iPad 동작을 보존할 수 있다.
 - 영향 범위: iOS/iPadOS `OSIMEInputPanel`·`PhysicalKeyboardGuideView` component 경계, 내장 키보드 옵션·Settings·세션 설정, focused 단위/UI 회귀, PRD F2·F2a·F10. Android·텐키 판정·다른 설정·localization은 변경하지 않는다.
+
+## 2026-09-04 TYP-85 인앱 천지인 방향 플릭
+
+- 관련: TYP-85, PRD v6.21·F2, iOS/iPadOS 1.1.1.
+- 결정: 기존 3×4 배열과 탭 순환을 유지하면서 `ㅣ` 좌/우/상/하=`ㅓ/ㅏ/ㅕ/ㅑ`, `ㆍ`=`ㅓ/ㅏ/ㅗ/ㅜ`, `ㅡ`=`ㅠ/ㅛ/ㅗ/ㅜ` 플릭을 제공한다. 자음 묶음은 좌=첫 자음 강제 확정, 우=둘째 자음, 된소리가 있는 묶음의 하=셋째 자음으로 둔다. 자음 상 플릭과 `ㄴㄹ`·`ㅇㅁ`의 하 플릭은 실기기 근거 없이 임의 출력을 배정하지 않고 잘못된 플릭으로 처리한다.
+- 결정: 탭과 플릭은 터치별로 배타 판정한다. 24pt 미만은 탭이고, 450ms 이내 24pt 이상이며 우세 축이 다른 축의 1.15배 이상일 때만 방향 플릭이다. 느린 이동·대각선·미할당 방향은 오타 1회, UIKit 취소 터치는 입력 없음이다. 이 판정은 기존 다중 터치 추적과 키 다운 시 눌림·햅틱·키음 피드백을 유지하되 입력 결과와 레이턴시 측정은 방향을 확정하는 터치 업에서 시작한다.
+- 결정: 플릭 결과는 raw 획이 아니라 완성 호환 자모로 `Korean10KeyInterpreter`에 전달한다. 그 자모의 golden recipe가 현재 목표 recipe의 시작 접두일 때만 수용하고, 남은 raw 탭으로 목표를 완성한다. raw 탭이 이미 pending인 상태에서 다른 완성 자모 플릭을 이어 붙이는 경로는 거부한다. 같은 묶음의 다음 첫 자음은 좌 플릭으로 `→` 없이 확정할 수 있다.
+- 결정: 다음 키 가이드는 기존 키캡 단위 강조를 유지한다. 방향 라벨·팝업·설정 토글은 추가하지 않고 VoiceOver 현지화 힌트가 각 플릭 대안과 방향을 읽는다. 롱프레스 숫자 팝업·자동 확정 timeout은 실기기 동작과 제품 필요가 별도로 확정되기 전에는 현재 탭 동작에서 확장하지 않는다.
+- 검증 gate: 방향·임계값·golden recipe 접두·잘못된 플릭을 focused 단위 테스트로 고정한다. iPhone·iPad 실기기에서 전체 방향표와 롱프레스 현행 동작, 동시 입력, p95 50ms 이하, 연습·지원 게임의 60fps·VoiceOver를 확인하기 전 source 테스트 결과만으로 TYP-85나 1.1.1을 Done 처리하지 않는다.
+- 근거: 터치 시작 즉시 탭을 확정한 뒤 플릭을 덧붙이면 한 제스처가 두 입력이 된다. 터치별 종료 시점에서 탭/플릭을 한 번만 선택하고, 플릭 자모를 기존 recipe의 시작 접두로 정규화하면 HangulEngine과 자모 판정을 배열 독립적으로 유지하면서 기존 all-tap 회귀도 보존할 수 있다.
+- 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView` 터치 추적, `Korean10KeyInterpreter`, 덱·레슨 연습과 다섯 직접 입력 게임, de/en/es/fr/ja/ko VoiceOver 힌트, focused 단위·실기기·성능 회귀. OS IME와 동결 Android는 변경하지 않는다.
