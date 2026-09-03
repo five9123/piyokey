@@ -668,6 +668,9 @@ final class PracticeSessionViewModelTests: XCTestCase {
       (target: "번째", committed: "벉", acceptedText: "번"),
       (target: "앓다", committed: "앐", acceptedText: "알"),
       (target: "읊다", committed: "읇", acceptedText: "을"),
+      (target: "괜찮아", committed: "괜찬ㅅ", acceptedText: "괜찬"),
+      (target: "많이", committed: "만ㅅ", acceptedText: "만"),
+      (target: "삶", committed: "살ㅇ", acceptedText: "살"),
     ]
 
     for snapshot in snapshots {
@@ -719,6 +722,27 @@ final class PracticeSessionViewModelTests: XCTestCase {
       committedText: "ㅇ\u{11A2}ㅣ"
     )
     XCTAssertEqual(wrongRawStroke.status, .confirmedMismatch(expectedIndex: 1))
+  }
+
+  func testOSIMEWordPrefixDoubleDotStateCanCompleteEoyoWithoutRollback() throws {
+    let model = PracticeSessionViewModel(target: "어요")
+    let intermediate = try OSIMETextJudge.evaluate(
+      target: "어요",
+      committedText: "어ㅇ\u{11A2}"
+    )
+
+    model.synchronizeOSIME(acceptedSequence: intermediate.acceptedSequence)
+
+    XCTAssertEqual(intermediate.status, .composingMismatch)
+    XCTAssertEqual(model.enteredText, "엉")
+    XCTAssertEqual(model.mistakeCount, 0)
+
+    let completed = try OSIMETextJudge.evaluate(target: "어요", committedText: "어요")
+    model.synchronizeOSIME(acceptedSequence: completed.acceptedSequence)
+
+    XCTAssertTrue(model.isComplete)
+    XCTAssertEqual(model.enteredText, "어요")
+    XCTAssertEqual(model.mistakeCount, 0)
   }
 
   func testKoreanKeyboardAvailabilityMatchesOnlyKoreanLanguageModes() {

@@ -212,6 +212,46 @@ public enum Korean10KeyRecipe {
     )
   }
 
+  /// Recognizes the device-reported path where the first component of a target
+  /// compound final remains attached to its syllable while the next tap-cycle
+  /// consonant is temporarily committed on its own. For example, `찬ㅅ` is a
+  /// strict recipe prefix on the way from `찬` to `찮`, and `살ㅇ` is the same
+  /// kind of prefix on the way to `삶`.
+  ///
+  /// Earlier text must exactly match the target, the stable syllable must be
+  /// the target syllable with only the compound final's second component
+  /// removed, and the dangling consonant must be a real (not completed)
+  /// prefix of that exact second component's tap recipe.
+  static func committedDocumentEndsInReachableDanglingComplexTrailingPrefix(
+    target: String,
+    committedText: String
+  ) -> Bool {
+    let targetCharacters = Array(target)
+    let committedCharacters = Array(committedText)
+    guard committedCharacters.count >= 2,
+      let danglingCharacter = committedCharacters.last,
+      let danglingConsonant = standaloneConsonant(of: danglingCharacter)
+    else { return false }
+
+    let targetIndex = committedCharacters.count - 2
+    guard targetIndex < targetCharacters.count,
+      committedCharacters.dropLast(2).elementsEqual(targetCharacters.prefix(targetIndex)),
+      let candidate = syllableComponents(of: committedCharacters[targetIndex]),
+      let target = syllableComponents(of: targetCharacters[targetIndex]),
+      candidate.leading == target.leading,
+      candidate.medial == target.medial,
+      let candidateTrailing = candidate.trailing,
+      let targetTrailing = target.trailing,
+      let targetPair = HangulTables.splitTrailing[targetTrailing],
+      candidateTrailing == targetPair.first
+    else { return false }
+
+    return isReachableIntermediateConsonant(
+      danglingConsonant,
+      toward: targetPair.second
+    )
+  }
+
   /// Preserves the already-correct closed syllable while Apple's Korean
   /// 10-key keyboard is still cycling the same physical key instead of
   /// starting the next onset. For `학교`, consecutive ㄱ-key taps may expose
