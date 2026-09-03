@@ -1135,9 +1135,12 @@ final class HancoUITests: XCTestCase {
     app.buttons["OSキーボード"].tap()
 
     XCTAssertFalse(element("practice.composition_card").exists)
-    XCTAssertTrue(element("os_ime.input.recovery").waitForExistence(timeout: 3))
     let imeField = app.textFields["os_ime.text_field"]
     XCTAssertTrue(imeField.waitForExistence(timeout: 3))
+    XCTAssertEqual(
+      app.staticTexts["os_ime.input.recovery"].firstMatch.exists,
+      isIPadDestination
+    )
     imeField.tap()
     imeField.typeText("사")
     waitForValue("사", on: imeField, timeout: 3)
