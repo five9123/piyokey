@@ -189,7 +189,8 @@ struct PracticeView: View {
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
         }
         .scrollDismissesKeyboard(.never)
-        .overlay {
+        // Keep the full-area OS IME refocus target behind interactive practice controls.
+        .background {
           if overlaysHiddenOSIMEInput {
             osIMEInputPanel(showsFocusRecovery: false)
           }

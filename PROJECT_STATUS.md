@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-98 연습 발음 버튼 OS IME 터치 차단 | In Review / `codex/98-practice-speaker-os-ime` | exact-head Claude review·maintainer 승인·merge 뒤 build 17 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
 | TYP-97 Random 5 입력 중 세로 이동 | In Review / PR #162 / `codex/97-random5-scroll-jump` | exact-head Claude review·maintainer 승인·merge 뒤 build 17 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
 | TYP-94 iPhone 게임 레이아웃 미확장 | Merged / PR #159 → main `586f00b` | build 16 검증은 TYP-97 때문에 철회된 심사를 대체하지 않는다. build 17 iPhone 실기기에서 게임·연습·레슨·온보딩의 OS 키보드 레이아웃과 TYP-92 포커스 복구를 확인하고 iPad 기존 레이아웃을 재확인하기 전 Done 처리하지 않음 |
 | TYP-93 세션 설정 정보구조 | Merged / PR #158 → main `fe05bd2` | build 14 TestFlight의 iPhone 실기기 덱 플레이·연습 확인 전 Done 처리하지 않음 |

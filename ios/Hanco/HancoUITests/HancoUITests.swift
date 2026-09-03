@@ -898,6 +898,36 @@ final class HancoUITests: XCTestCase {
     assertTYP93SessionSettingsDefaultsAndOrder(exercisesDisclosure: false)
   }
 
+  func testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik() {
+    startTYP98DeckPractice(inputMode: "builtin", builtInLayout: "dubeolsik")
+
+    XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].waitForExistence(timeout: 3))
+    XCTAssertFalse(app.buttons["keyboard.10key.siot"].exists)
+    assertTYP98SpeakerStartsPronunciation()
+  }
+
+  func testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key() {
+    startTYP98DeckPractice(inputMode: "builtin", builtInLayout: "korean_10key")
+
+    XCTAssertTrue(app.buttons["keyboard.10key.siot"].waitForExistence(timeout: 3))
+    XCTAssertFalse(app.buttons["keyboard.key.ㅅ"].exists)
+    assertTYP98SpeakerStartsPronunciation()
+  }
+
+  func testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME() {
+    startTYP98DeckPractice(inputMode: "os_ime")
+
+    assertTYP98OSIMEHitTesting(typing: "사")
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+  }
+
+  func testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME() {
+    startTYP98CurriculumLesson()
+
+    assertTYP98OSIMEHitTesting(typing: "ㄱ")
+    waitForLabel("ㄴ", on: element("practice.target.value"), timeout: 3)
+  }
+
   func testPracticeSessionSoundSettingsToggleAutomaticSpeech() {
     startPractice()
 
@@ -4239,6 +4269,81 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(deck)
     deck.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func startTYP98DeckPractice(
+    inputMode: String,
+    builtInLayout: String = "dubeolsik"
+  ) {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
+    app.launchArguments += [
+      "-keyboard.input_mode_default", inputMode,
+      "-keyboard.builtin_layout_default", builtInLayout,
+    ]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+  }
+
+  private func startTYP98CurriculumLesson() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 2,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
+    app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openPracticeTab()
+    let firstStage = element("curriculum.stage.chapter_1_basic_consonants")
+    scrollToHittable(firstStage)
+    firstStage.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func assertTYP98SpeakerStartsPronunciation(
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let pronunciationStarts = element("debug.pronunciation.start_count")
+    XCTAssertTrue(pronunciationStarts.waitForExistence(timeout: 3), file: file, line: line)
+    let initialStartCount = pronunciationStarts.label
+    let speakTarget = app.buttons["practice.speak_target"]
+    XCTAssertTrue(speakTarget.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(speakTarget.isHittable, app.debugDescription, file: file, line: line)
+
+    speakTarget.tap()
+
+    waitForLabelDifferentFrom(initialStartCount, on: pronunciationStarts, timeout: 3)
+  }
+
+  private func assertTYP98OSIMEHitTesting(
+    typing text: String,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let imeField = app.textFields["os_ime.text_field"]
+    let speakTarget = app.buttons["practice.speak_target"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(speakTarget.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertEqual(
+      imeField.frame.intersects(speakTarget.frame),
+      !isIPadDestination,
+      "Only the iPhone hidden field should span the speaker frame",
+      file: file,
+      line: line
+    )
+    assertTYP98SpeakerStartsPronunciation(file: file, line: line)
+
+    imeField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75)).tap()
+    imeField.typeText(text)
   }
 
   private func assertPracticeCardsStayVerticallyFixed(
