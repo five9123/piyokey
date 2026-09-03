@@ -762,7 +762,18 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "practice-auto-advanced-ja")
   }
 
-  func testPracticeToolbarOffersTargetSpeechAndLiveSessionSettings() {
+  func testTYP93SessionSettingsMatchGlobalOrderAndPreserveTYP92DevicePolicy() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true
+    )
+    app.launchArguments += [
+      "-keyboard.shows_key_guide", "YES",
+      "-keyboard.shows_physical_keyboard_guide", "YES",
+    ]
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
 
     let speakTarget = app.buttons["practice.speak_target"]
@@ -775,19 +786,37 @@ final class HancoUITests: XCTestCase {
     let settings = app.buttons["practice.session_settings"]
     XCTAssertTrue(settings.waitForExistence(timeout: 3))
     settings.tap()
+    assertTYP93SessionSettingsDefaultsAndOrder(exercisesDisclosure: true)
     XCTAssertTrue(element("practice.session_settings.key_guide").waitForExistence(timeout: 3))
     XCTAssertTrue(element("practice.session_settings.roman_hints").exists)
     XCTAssertTrue(element("practice.session_settings.haptics").exists)
-    let displaySettings = app.buttons["practice.session_settings.display"]
-    XCTAssertTrue(displaySettings.exists)
-    displaySettings.tap()
-    XCTAssertTrue(element("practice.session_settings.target").exists)
-    XCTAssertTrue(element("practice.session_settings.meaning").exists)
-    XCTAssertTrue(element("practice.session_settings.reading").exists)
-    XCTAssertTrue(element("practice.session_settings.order").exists)
-    XCTAssertTrue(element("practice.session_settings.jamo").exists)
-    XCTAssertTrue(element("practice.session_settings.mascot").exists)
-    XCTAssertTrue(element("practice.session_settings.composition").exists)
+
+    let osMode = app.buttons["input_mode.os_ime"]
+    scrollToHittable(osMode)
+    osMode.tap()
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    settings.tap()
+    XCTAssertEqual(
+      element("practice.session_settings.physical_keyboard_guide").exists,
+      isIPadDestination
+    )
+    app.buttons["practice.session_settings.close"].tap()
+    XCTAssertEqual(element("physical_keyboard.guide").exists, isIPadDestination)
+    XCTAssertFalse(app.staticTexts["os_ime.input.recovery"].firstMatch.exists)
+
+    settings.tap()
+    app.buttons["input_mode.builtin"].tap()
+    app.buttons[storeText("練習を終了する", "End practice", "연습 끝내기")].tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+
+    openPracticeTab()
+    let firstStage = element("curriculum.stage.chapter_1_basic_consonants")
+    scrollToHittable(firstStage)
+    firstStage.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+    assertKeyboardKeyGuideVisible(context: "curriculum lesson")
+    app.buttons["practice.session_settings"].tap()
+    assertTYP93SessionSettingsDefaultsAndOrder(exercisesDisclosure: false)
   }
 
   func testPracticeSessionSoundSettingsToggleAutomaticSpeech() {
@@ -795,7 +824,6 @@ final class HancoUITests: XCTestCase {
 
     let settings = app.buttons["practice.session_settings"]
     settings.tap()
-    app.buttons["practice.session_settings.sound_menu"].tap()
 
     let automaticSpeech = element("practice.session_settings.auto_speak")
     XCTAssertTrue(automaticSpeech.waitForExistence(timeout: 3))
@@ -804,7 +832,6 @@ final class HancoUITests: XCTestCase {
 
     app.buttons["practice.session_settings.close"].tap()
     settings.tap()
-    app.buttons["practice.session_settings.sound_menu"].tap()
     XCTAssertEqual(automaticSpeech.value as? String, "1")
     automaticSpeech.tap()
   }
@@ -813,7 +840,6 @@ final class HancoUITests: XCTestCase {
     startPractice()
 
     app.buttons["practice.session_settings"].tap()
-    app.buttons["practice.session_settings.display"].tap()
     element("practice.session_settings.order").tap()
     app.buttons["日本語の意味 → お題を表示 → 日本語式の読み方"].tap()
     app.buttons["practice.session_settings.close"].tap()
@@ -4180,6 +4206,43 @@ final class HancoUITests: XCTestCase {
       file: file,
       line: line
     )
+  }
+
+  private func assertTYP93SessionSettingsDefaultsAndOrder(
+    exercisesDisclosure: Bool,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let soundSection = app.buttons["practice.session_settings.sound_menu"]
+    let displaySection = app.buttons["practice.session_settings.display"]
+    XCTAssertTrue(soundSection.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(displaySection.exists, file: file, line: line)
+    XCTAssertLessThan(soundSection.frame.minY, displaySection.frame.minY, file: file, line: line)
+
+    let automaticSpeech = element("practice.session_settings.auto_speak")
+    let target = element("practice.session_settings.target")
+    XCTAssertTrue(automaticSpeech.exists, file: file, line: line)
+    XCTAssertTrue(target.exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.meaning").exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.reading").exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.order").exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.jamo").exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.mascot").exists, file: file, line: line)
+    XCTAssertTrue(element("practice.session_settings.composition").exists, file: file, line: line)
+
+    guard exercisesDisclosure else { return }
+
+    scrollToHittable(soundSection)
+    soundSection.tap()
+    XCTAssertFalse(automaticSpeech.exists, file: file, line: line)
+    soundSection.tap()
+    XCTAssertTrue(automaticSpeech.waitForExistence(timeout: 3), file: file, line: line)
+
+    scrollToHittable(displaySection)
+    displaySection.tap()
+    XCTAssertFalse(target.exists, file: file, line: line)
+    displaySection.tap()
+    XCTAssertTrue(target.waitForExistence(timeout: 3), file: file, line: line)
   }
 
   private func adaptiveWidthClass(for width: CGFloat) -> String {
