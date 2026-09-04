@@ -61,6 +61,8 @@ struct PracticeView: View {
   @State private var inputResetRevision = 0
   @State private var isSessionSettingsPresented = false
   @State private var isOSIMEFocusSuspended = false
+  @State private var osIMEInputSourceBannerPresentation =
+    OSIMEInputSourceBannerPresentation.hidden
   @State private var showsOSIMEUnavailable = false
   @State private var showsResult = false
   @State private var exitsAfterResultDismiss = false
@@ -187,11 +189,23 @@ struct PracticeView: View {
           .padding(.vertical, sessionVerticalPadding)
           .frame(minHeight: viewport.size.height, alignment: adaptiveMetrics.isExpanded ? .center : .top)
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
+          // Keep blank-area refocus inside the scroll content, behind its controls.
+          .background {
+            if overlaysHiddenOSIMEInput {
+              osIMEInputPanel(showsFocusRecovery: false)
+            }
+          }
         }
         .scrollDismissesKeyboard(.never)
-        .overlay {
+        .overlay(alignment: .top) {
           if overlaysHiddenOSIMEInput {
-            osIMEInputPanel(showsFocusRecovery: false)
+            // The hidden field stays behind the content for blank-area refocus, while
+            // the warning must remain visible above the opaque practice cards.
+            OSIMEInputSourceBannerLayer(
+              presentation: osIMEInputSourceBannerPresentation,
+              accessibilityIdentifier: "os_ime.input_source_warning.foreground"
+            )
+            .allowsHitTesting(false)
           }
         }
       }
@@ -778,7 +792,9 @@ struct PracticeView: View {
       onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
       showsChrome: false,
       showsFocusRecovery: showsFocusRecovery,
-      isFocusSuspended: isOSIMEFocusSuspended
+      isFocusSuspended: isOSIMEFocusSuspended,
+      externalInputSourceBannerPresentation: overlaysHiddenOSIMEInput
+        ? $osIMEInputSourceBannerPresentation : nil
     )
   }
 
@@ -1359,6 +1375,13 @@ struct PracticeView: View {
       viewModel.target,
       bundledAudioPath: currentReviewSource?.item.audio
     )
+    #if DEBUG
+      if inputMode == .osIME,
+        ProcessInfo.processInfo.environment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] == "1"
+      {
+        isOSIMEFocusSuspended = true
+      }
+    #endif
   }
 
   private func playFeedbackSound() {
@@ -1400,46 +1423,38 @@ private struct JamoProgressTrack: View {
 
   var body: some View {
     GeometryReader { geometry in
-      ScrollViewReader { scrollProxy in
-        let overflows = estimatedContentWidth > geometry.size.width
+      let overflows = estimatedContentWidth > geometry.size.width
 
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack(spacing: Self.chipSpacing) {
-            ForEach(Array(sequence.enumerated()), id: \.offset) { index, jamo in
-              Text(verbatim: String(jamo))
-                .font(.system(.body, design: .rounded, weight: .bold))
-                .foregroundStyle(index < completedCount ? .white : AppPalette.ink)
-                .frame(width: chipWidth, height: 34 * adaptiveMetrics.typographyScale)
-                .background(
-                  index < completedCount
-                    ? AppPalette.accent : AppPalette.accentSoft.opacity(0.38),
-                  in: RoundedRectangle(cornerRadius: 9)
-                )
-                .overlay {
-                  if index == completedCount {
-                    RoundedRectangle(cornerRadius: 9)
-                      .strokeBorder(AppPalette.accent, lineWidth: 2)
-                  }
-                }
-                .id(index)
-                .accessibilityIdentifier(
-                  index == completedCount ? "practice.jamo.active" : "practice.jamo.\(index)"
-                )
+      HStack(spacing: Self.chipSpacing) {
+        ForEach(Array(sequence.enumerated()), id: \.offset) { index, jamo in
+          Text(verbatim: String(jamo))
+            .font(.system(.body, design: .rounded, weight: .bold))
+            .foregroundStyle(index < completedCount ? .white : AppPalette.ink)
+            .frame(width: chipWidth, height: 34 * adaptiveMetrics.typographyScale)
+            .background(
+              index < completedCount
+                ? AppPalette.accent : AppPalette.accentSoft.opacity(0.38),
+              in: RoundedRectangle(cornerRadius: 9)
+            )
+            .overlay {
+              if index == completedCount {
+                RoundedRectangle(cornerRadius: 9)
+                  .strokeBorder(AppPalette.accent, lineWidth: 2)
+              }
             }
-          }
-          .padding(.horizontal, Self.horizontalSafeInset)
-          .frame(minWidth: geometry.size.width, alignment: .center)
-          .padding(.vertical, 2)
+            .accessibilityIdentifier(
+              index == completedCount ? "practice.jamo.active" : "practice.jamo.\(index)"
+            )
         }
-        .overlay {
-          edgeFades(overflows: overflows)
-        }
-        .onAppear {
-          followActiveJamo(using: scrollProxy, animated: false)
-        }
-        .onChange(of: completedCount) { _ in
-          followActiveJamo(using: scrollProxy, animated: true)
-        }
+      }
+      .padding(.horizontal, Self.horizontalSafeInset)
+      .padding(.vertical, 2)
+      .offset(x: horizontalOffset(in: geometry.size.width))
+      .animation(.easeOut(duration: 0.18), value: completedCount)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .clipped()
+      .overlay {
+        edgeFades(overflows: overflows)
       }
     }
     .frame(height: 38 * adaptiveMetrics.typographyScale)
@@ -1466,15 +1481,18 @@ private struct JamoProgressTrack: View {
     .frame(width: 22)
   }
 
-  private func followActiveJamo(using scrollProxy: ScrollViewProxy, animated: Bool) {
-    guard let activeIndex else { return }
-    if animated {
-      withAnimation(.easeOut(duration: 0.18)) {
-        scrollProxy.scrollTo(activeIndex, anchor: .center)
-      }
-    } else {
-      scrollProxy.scrollTo(activeIndex, anchor: .center)
+  private func horizontalOffset(in availableWidth: CGFloat) -> CGFloat {
+    guard estimatedContentWidth > availableWidth else {
+      return (availableWidth - estimatedContentWidth) / 2
     }
+    guard let activeIndex else { return 0 }
+
+    let activeCenter =
+      Self.horizontalSafeInset
+      + CGFloat(activeIndex) * (chipWidth + Self.chipSpacing)
+      + chipWidth / 2
+    let centeredOffset = availableWidth / 2 - activeCenter
+    return min(0, max(availableWidth - estimatedContentWidth, centeredOffset))
   }
 }
 

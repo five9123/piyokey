@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "49a405b9b39e331594edd09e3ef423e46d3aa19a",
+  "verified_tree": "6a4da1cfd716505cacdf3db03bc9287866f76b8e",
+  "branch": "codex/98-practice-speaker-os-ime",
+  "scope": "TYP-98 speaker hit testing, explicit OS IME focus recovery, foreground input-source warning, and animation transaction follow-up",
+  "result": "pass",
+  "recorded_at": "2026-09-04T01:25:49.405494+00:00",
+  "checks": [
+    {
+      "name": "HangulEngine and DeckKit package suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed, 0 failed."
+    },
+    {
+      "name": "iPhone 17 focused practice input UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -resultBundlePath /tmp/typ98-49a405b-iphone.xcresult -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance -only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus -only-testing:HancoUITests/HancoUITests/testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean",
+      "note": "7 tests passed, 0 failed. Foreground warning remained visible above the target card, speaker pronunciation advanced, repeated ASCII feedback remained, Korean input dismissed it, and the discriminating focus-loss then blank-gap tap restored focus/input. Screenshots: /tmp/typ98-49a405b-iphone-attachments/26385AA0-CF98-4E8C-95E5-01A4C62629CC.png (SHA-256 195f725bf135928957250c0b1ee2080427cb6ccaf18f6dee043081fb3d083a10) and /tmp/typ98-49a405b-iphone-attachments/56222C00-AA58-4C0B-AEE5-A1F4C542F150.png (SHA-256 4dc63e219044c3a07731f5e3e5b8f6b96dc7cb60a69df50ced55380de67f5d54)."
+    },
+    {
+      "name": "iPhone repeated English-input motion evidence",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -resultBundlePath /tmp/typ98-49a405b-shake.xcresult -only-testing:HancoUITests/HancoUITests/testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean; xcrun simctl io 001DD016-283A-430F-AF05-B31288E5B605 recordVideo; avconvert --start 58.5 --duration 3.0",
+      "note": "1 test passed, 0 failed. Direct frame inspection confirmed the foreground banner moves horizontally on repeated ASCII input while the target card and keyboard remain fixed, followed by the orange emphasis state. Trimmed 3.0-second video: /tmp/typ98-49a405b-shake.mov (SHA-256 3302640f8e2ac03041f69ff20f78a7e1705aae1bd175d0e4050181e29fc39651). Reference frames: /tmp/typ98-shake-frame-19.png centered (SHA-256 24094f3db4c45bf732f941240be356ee166d9769ca7a2c38729067f8c422ecdd) and /tmp/typ98-shake-frame-22.png right-shifted (SHA-256 5f49db3ed55fb1203ad52f1e98b00dcd30f179a5dbffc6784d8eb69d84a4f221)."
+    },
+    {
+      "name": "iPad Pro 13-inch focused practice input UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -resultBundlePath /tmp/typ98-49a405b-ipad.xcresult -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance -only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus -only-testing:HancoUITests/HancoUITests/testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean",
+      "note": "7 tests passed, 0 failed; verifies unchanged iPad inline warning, visible panel focus recovery, speaker, input, built-in layouts, and session behavior."
+    },
+    {
+      "name": "repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry and pinned base",
+      "status": "pass",
+      "command": "git fetch --prune origin && test \"1f669cfcff509457849cb0db18228ce538f70b16\" = 1f669cfcff509457849cb0db18228ce538f70b16 && git merge-base --is-ancestor origin/main 49a405b9b39e331594edd09e3ef423e46d3aa19a",
+      "note": "origin/main remained the required pinned base."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...49a405b9b39e331594edd09e3ef423e46d3aa19a",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Build 17 physical iPhone smoke remains open for deck practice and curriculum lesson speaker playback, full-area OS IME tap-to-refocus, visible English-input warning show/hide/shake/color emphasis, and unchanged built-in two-set and Korean 10-Key.",
+    "Build 17 physical iPad smoke remains open for existing speaker, OS IME inline warning/panel/refocus, built-in layouts, and session progress behavior.",
+    "New exact-PR-head Claude review and maintainer manual approval remain open; GitHub Actions are repository-disabled.",
+    "Full HancoTests/HancoUITests targets, release-capture and screenshot-production tests, signing, archive, account, rights, IAP, store, and App Review gates were not run and remain open where applicable."
+  ]
+}

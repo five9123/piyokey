@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "verified_commit": "07cebf5dc15e72daff8e4bc4298449fdf151b34a",
+  "verified_tree": "509f220ea212bb2b49d2e383b5628792b57fa6c2",
+  "branch": "codex/98-practice-speaker-os-ime",
+  "scope": "TYP-98 speaker hit testing and explicit OS IME focus recovery follow-up",
+  "result": "pass",
+  "recorded_at": "2026-09-04T00:15:07.815645+00:00",
+  "checks": [
+    {
+      "name": "HangulEngine and DeckKit package suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed, 0 failed."
+    },
+    {
+      "name": "iPhone 17 focused practice input UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance -only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus",
+      "note": "6 tests passed, 0 failed; OS IME deck and lesson tests explicitly observed keyboard focus loss, blank-gap tap recovery, keyboard return, and accepted judged input."
+    },
+    {
+      "name": "iPad Pro 13-inch focused practice input UI tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key -only-testing:HancoUITests/HancoUITests/testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME -only-testing:HancoUITests/HancoUITests/testOSIMEReturnAndForegroundRestoreFocusWithRecoveryAffordance -only-testing:HancoUITests/HancoUITests/testOSIMESessionSettingsPreservesProgressAndRestoresFocus",
+      "note": "6 tests passed, 0 failed; verifies unchanged iPad panel focus recovery, speaker, input, built-in layouts, and session behavior."
+    },
+    {
+      "name": "repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry and pinned base",
+      "status": "pass",
+      "command": "git fetch --prune origin && git rev-parse origin/main | grep -qx 1f669cfcff509457849cb0db18228ce538f70b16 && git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main remained the required pinned base."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Build 17 physical iPhone smoke remains open for deck practice and curriculum lesson speaker playback plus full-area OS IME tap-to-refocus, with built-in two-set and Korean 10-Key unchanged.",
+    "Build 17 physical iPad smoke remains open for existing speaker, OS IME panel/refocus, built-in layouts, and session progress behavior.",
+    "New exact-PR-head Claude review and maintainer manual approval remain open; GitHub Actions are repository-disabled.",
+    "Full HancoTests/HancoUITests targets, release-capture and screenshot-production tests, signing, archive, account, rights, IAP, store, and App Review gates were not run and remain open where applicable."
+  ]
+}
