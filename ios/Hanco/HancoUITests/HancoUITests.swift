@@ -4285,6 +4285,9 @@ final class HancoUITests: XCTestCase {
       "-keyboard.input_mode_default", inputMode,
       "-keyboard.builtin_layout_default", builtInLayout,
     ]
+    if inputMode == "os_ime" {
+      app.launchEnvironment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] = "1"
+    }
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
@@ -4299,6 +4302,7 @@ final class HancoUITests: XCTestCase {
       audioProbe: true
     )
     app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+    app.launchEnvironment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] = "1"
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     openPracticeTab()
@@ -4340,9 +4344,42 @@ final class HancoUITests: XCTestCase {
       file: file,
       line: line
     )
+    let keyboard = app.keyboards.firstMatch
+    XCTAssertTrue(keyboard.waitForExistence(timeout: 3), file: file, line: line)
     assertTYP98SpeakerStartsPronunciation(file: file, line: line)
+    XCTAssertTrue(
+      keyboard.waitForNonExistence(timeout: 3),
+      "The DEBUG focus-loss hook should resign the OS IME field",
+      file: file,
+      line: line
+    )
 
-    imeField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75)).tap()
+    if isIPadDestination {
+      imeField.tap()
+    } else {
+      let targetCard = element("practice.target.card")
+      let compositionCard = element("practice.composition.card")
+      XCTAssertTrue(targetCard.waitForExistence(timeout: 3), file: file, line: line)
+      XCTAssertTrue(compositionCard.waitForExistence(timeout: 3), file: file, line: line)
+      let blankAreaY = (targetCard.frame.maxY + compositionCard.frame.minY) / 2
+      XCTAssertGreaterThan(
+        compositionCard.frame.minY - targetCard.frame.maxY,
+        1,
+        "The focus recovery tap must target the blank gap between practice cards",
+        file: file,
+        line: line
+      )
+      let normalizedBlankAreaY = (blankAreaY - imeField.frame.minY) / imeField.frame.height
+      imeField.coordinate(
+        withNormalizedOffset: CGVector(dx: 0.5, dy: normalizedBlankAreaY)
+      ).tap()
+    }
+    XCTAssertTrue(
+      keyboard.waitForExistence(timeout: 3),
+      "Tapping the OS IME recovery area should restore keyboard focus",
+      file: file,
+      line: line
+    )
     imeField.typeText(text)
   }
 

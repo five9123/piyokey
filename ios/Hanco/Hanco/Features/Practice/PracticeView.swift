@@ -187,14 +187,14 @@ struct PracticeView: View {
           .padding(.vertical, sessionVerticalPadding)
           .frame(minHeight: viewport.size.height, alignment: adaptiveMetrics.isExpanded ? .center : .top)
           .hancoCenteredContent(maxWidth: adaptiveMetrics.sessionLaneMaxWidth)
-        }
-        .scrollDismissesKeyboard(.never)
-        // Keep the full-area OS IME refocus target behind interactive practice controls.
-        .background {
-          if overlaysHiddenOSIMEInput {
-            osIMEInputPanel(showsFocusRecovery: false)
+          // Keep blank-area refocus inside the scroll content, behind its controls.
+          .background {
+            if overlaysHiddenOSIMEInput {
+              osIMEInputPanel(showsFocusRecovery: false)
+            }
           }
         }
+        .scrollDismissesKeyboard(.never)
       }
 
       inputArea
@@ -1346,6 +1346,13 @@ struct PracticeView: View {
       viewModel.target,
       bundledAudioPath: currentReviewSource?.item.audio
     )
+    #if DEBUG
+      if inputMode == .osIME,
+        ProcessInfo.processInfo.environment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] == "1"
+      {
+        isOSIMEFocusSuspended = true
+      }
+    #endif
   }
 
   private func playFeedbackSound() {
