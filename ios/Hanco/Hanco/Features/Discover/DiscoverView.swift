@@ -315,7 +315,9 @@ struct DiscoverView: View {
         deck: deck,
         rank: rank,
         isInstalled: deckLibrary.isInstalled(deck.deckId),
-        updateAvailable: deckLibrary.needsUpdate(deck)
+        updateAvailable: deckLibrary.needsUpdate(deck),
+        fixedHeight: DeckCardView.regularMinimumHeight,
+        limitsTitleToOneLine: true
       )
     }
     .buttonStyle(.plain)

@@ -1779,3 +1779,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: 방향·임계값·golden recipe 접두·잘못된 플릭을 focused 단위 테스트로 고정한다. iPhone·iPad 실기기에서 전체 방향표와 롱프레스 현행 동작, 취소, 동시 입력, p95 50ms 이하, 연습·지원 게임의 60fps·VoiceOver를 확인하기 전 source 테스트 결과만으로 TYP-85나 iOS/iPadOS 1.1을 Done 처리하지 않는다.
 - 근거: 터치 시작 즉시 탭을 확정한 뒤 플릭을 덧붙이면 한 제스처가 두 입력이 된다. 터치별 종료 시점에서 탭/플릭을 한 번만 선택하고, 플릭 자모를 기존 recipe의 시작 접두로 정규화하면 HangulEngine과 자모 판정을 배열 독립적으로 유지하면서 기존 all-tap 회귀도 보존할 수 있다.
 - 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView` 터치 추적, `Korean10KeyInterpreter`, 덱·레슨 연습과 다섯 직접 입력 게임, de/en/es/fr/ja/ko VoiceOver 힌트, focused 단위·실기기·성능 회귀. OS IME와 동결 Android는 변경하지 않는다.
+
+## 2026-09-05 TYP-43 build 19 UI 정정과 분석 실설정
+
+- 관련: TYP-43, iOS/iPadOS 1.1 build 18 실물 감사와 사용자 화면 녹화.
+- 결정: build 18은 PostHog 프로젝트 토큰과 Firebase 설정 파일이 앱 번들에 없고, Discover 카드 제목이 두 줄로 흐르며 연습 목록에 수평 overscroll이 재현돼 출시 후보에서 제외한다. 두 UI 정정과 분석 실설정을 포함한 build 19로 대체한다.
+- 결정: Discover 탭이 직접 표시하는 덱 카드는 제목 1줄과 146pt 고정 높이를 사용한다. 별도 전체 목록 화면과 홈 추천 카드 정책은 변경하지 않는다. 연습 커리큘럼은 readable width에 좌우 여백을 적용한 뒤 viewport 폭으로 제한해 대각선 스와이프에도 콘텐츠가 좌우로 이동하지 않게 한다.
+- 결정: PostHog EU 프로젝트 토큰은 git-ignored Release xcconfig로 주입하고, Google Analytics를 비활성화한 Firebase iOS 앱 `app.piyokey.Piyokey`의 plist도 버전 관리 밖에 둔다. Release archive는 둘 중 하나라도 빠지면 실패하고, 설정 파일이 있는 Release 빌드에서 plist를 앱 번들에 복사한다. Debug/test와 비-archive Release build의 기존 no-op 계약은 유지한다.
+- 검증 gate: source PR의 focused UI·전체 iOS 회귀와 exact-head review를 통과한 뒤 최신 clean `origin/main`에서만 build 19 archive를 만든다. 동의 ON 이벤트 수신, OFF 무전송, Crashlytics 테스트 크래시와 dSYM symbolication, App Store 개인정보 대조, iPhone·iPad 실기기 확인 전에는 TYP-43이나 1.1 출시를 Done 처리하지 않는다.
+- 영향 범위: `DiscoverView`, `CurriculumMapView`, iOS Release build phase, analytics release state와 출시 문서. Android와 App Review 제출은 이 source 변경에 포함하지 않는다.

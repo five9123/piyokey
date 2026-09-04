@@ -461,8 +461,8 @@ struct CurriculumMapView: View {
           }
         }
         .frame(maxWidth: adaptiveMetrics.readableContentMaxWidth)
-        .frame(maxWidth: .infinity)
         .padding(.horizontal, adaptiveMetrics.horizontalPadding)
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
       }
       .background(

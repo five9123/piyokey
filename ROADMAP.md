@@ -4,15 +4,16 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭은 iOS/iPadOS 1.1 포함이 승인됐고 1–2일 출시 지연을 수용한다. build 17은 대체됐으며 업로드하지 않고, TYP-85 source gate와 병합 뒤 clean `origin/main`에서만 build 18을 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭은 `main`에 병합됐다. build 18은 분석 설정 미포함과 Search/연습 UI 결함으로 대체하며, TYP-43 source gate와 병합 뒤 clean `origin/main`에서만 build 19를 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
 1. iOS 1.1 출시 후보
-   - TYP-85의 full source 검증·exact-head review·maintainer 승인·병합 완료
-   - 최신 clean `origin/main`과 tree가 같은 `1.1 (18)` archive/TestFlight 생성. build 17은 업로드 금지
+   - TYP-43의 Search 카드·연습 목록·분석 설정 source 검증, exact-head review와 maintainer 승인·병합
+   - 최신 clean `origin/main`과 tree가 같은 `1.1 (19)` archive/TestFlight 생성. build 18은 후보에서 제외
    - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
    - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
 2. iOS 1.1 외부 출시 gate #77
-   - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 18 실기기 QA
+   - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 19 실기기 QA
+   - PostHog 동의 ON 수신·OFF 무전송과 Crashlytics 테스트 크래시·dSYM symbolication
    - TYP-85 전체 방향표·롱프레스·취소·동시 입력, p95≤50ms, 지원 게임 60fps와 VoiceOver의 iPhone·iPad 실기기 검증
    - strict preflight 통과 뒤에만 App Review 제출
 3. CI 비용·검증 범위 최적화

@@ -81,6 +81,24 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertNotIn("ArchiveAction must not use a local StoreKit configuration", messages)
         self.assertNotIn("Release ProfileAction must not use a local StoreKit configuration", messages)
 
+    def test_repository_checks_require_release_firebase_embed_phase(self):
+        project_path = ROOT / "ios/Hanco/Hanco.xcodeproj/project.pbxproj"
+        original_read_text = Path.read_text
+
+        def read_text(path, *args, **kwargs):
+            source = original_read_text(path, *args, **kwargs)
+            if path == project_path:
+                return source.replace("Embed Firebase Config", "Missing Firebase Config")
+            return source
+
+        with patch.object(Path, "read_text", read_text):
+            messages = {finding.message for finding in release_preflight.repository_checks(ROOT)}
+
+        self.assertIn(
+            "iOS telemetry project integration is missing: Embed Firebase Config",
+            messages,
+        )
+
     def test_game_center_contract_rejects_duplicate_and_unknown_ids(self):
         findings = release_preflight.game_center_contract_findings(
             {

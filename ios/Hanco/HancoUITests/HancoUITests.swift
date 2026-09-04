@@ -260,7 +260,10 @@ final class HancoUITests: XCTestCase {
 
   func testCurriculumMapStartsWithSequentialCoreUnlocks() {
     openPracticeTab()
-    XCTAssertTrue(element("curriculum.stage.chapter_1_basic_consonants").exists)
+    let firstStage = element("curriculum.stage.chapter_1_basic_consonants")
+    XCTAssertTrue(firstStage.exists)
+    XCTAssertGreaterThanOrEqual(firstStage.frame.minX, app.frame.minX)
+    XCTAssertLessThanOrEqual(firstStage.frame.maxX, app.frame.maxX)
     XCTAssertTrue(element("curriculum.stage.chapter_2_basic_vowels.locked").exists)
     XCTAssertFalse(app.staticTexts["ハングルキーボードコース"].exists)
     XCTAssertFalse(app.staticTexts["スタンプを集めよう"].exists)
@@ -1616,7 +1619,9 @@ final class HancoUITests: XCTestCase {
   }
 
   func testDiscoverCatalogLoadsAndFiltersBundledFixture() {
-    app.tabBars.buttons["さがす"].tap()
+    let discoverTab = app.buttons[storeText("さがす", "Discover", "둘러보기")].firstMatch
+    XCTAssertTrue(discoverTab.waitForExistence(timeout: 3))
+    discoverTab.tap()
 
     let search = app.textFields["discover.search"]
     XCTAssertTrue(search.waitForExistence(timeout: 5))
@@ -1624,7 +1629,9 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.buttons["root.settings"].exists)
     XCTAssertLessThan(search.frame.minY, app.frame.height * 0.12)
     XCTAssertTrue(element("discover.catalog").waitForExistence(timeout: 5))
-    XCTAssertTrue(element("discover.deck.official_keyboard_start").waitForExistence(timeout: 3))
+    let firstDeck = element("discover.deck.official_keyboard_start").firstMatch
+    XCTAssertTrue(firstDeck.waitForExistence(timeout: 3))
+    XCTAssertEqual(firstDeck.frame.height, 146, accuracy: 1)
 
     search.tap()
     search.typeText("TOPIK")
