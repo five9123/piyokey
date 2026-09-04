@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "verified_commit": "6ab386030c0ae1cd0f736965dd96ba1f9a7f3d1f",
+  "verified_tree": "c921d5d5ccf6e1a04e5b49a3fd0cd8f1d80560e5",
+  "branch": "codex/43-ios-1-1-release",
+  "scope": "TYP-43 build 19 telemetry wiring, Discover card consistency, and curriculum horizontal stability",
+  "result": "pass",
+  "recorded_at": "2026-09-04T17:40:21.979256+00:00",
+  "checks": [
+    {
+      "name": "iPhone 17 Pro focused UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=F8A971DA-8A7C-407B-994B-5AEF4770CEC6' -derivedDataPath /tmp/typ43-ipad-derived -only-testing:HancoUITests/HancoUITests/testCurriculumMapStartsWithSequentialCoreUnlocks -only-testing:HancoUITests/HancoUITests/testDiscoverCatalogLoadsAndFiltersBundledFixture",
+      "note": "2 selected tests passed at exact implementation SHA"
+    },
+    {
+      "name": "iPad A16 focused UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=EC1B0BD0-27D4-4D86-A666-5A61832016B0' -derivedDataPath /tmp/typ43-ipad-derived -only-testing:HancoUITests/HancoUITests/testCurriculumMapStartsWithSequentialCoreUnlocks -only-testing:HancoUITests/HancoUITests/testDiscoverCatalogLoadsAndFiltersBundledFixture",
+      "note": "2 selected tests passed at exact implementation SHA"
+    },
+    {
+      "name": "Release simulator telemetry bundle",
+      "status": "pass",
+      "command": "xcodebuild build -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/typ43-release-derived -xcconfig ios/Hanco/ReleaseSecrets.xcconfig CURRENT_PROJECT_VERSION=19 CODE_SIGNING_ALLOWED=NO",
+      "note": "Build 19 app contained a non-empty PostHog token, EU host, matching Firebase bundle/project identifiers, and Firebase Analytics disabled; token value was not logged"
+    },
+    {
+      "name": "tools regression",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover tools/tests",
+      "note": "108 tests passed"
+    },
+    {
+      "name": "analytics contract generation",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/gen_analytics_contract.py --check",
+      "note": "Generated analytics contract is current"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean TYP-43 branch and owner contract; GitHub CLI authentication warning remains an external PR operation gate"
+    },
+    {
+      "name": "origin main ancestry",
+      "status": "pass",
+      "command": "git fetch --prune origin && git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main 0a0182bd8461325f1762993b589963c4e026c776 is an ancestor of the verified commit"
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors"
+    },
+    {
+      "name": "release secrets excluded",
+      "status": "pass",
+      "command": "git check-ignore ios/Hanco/ReleaseSecrets.xcconfig ios/Hanco/Hanco/Resources/GoogleService-Info.plist",
+      "note": "Both local release configuration files are ignored and untracked"
+    }
+  ],
+  "manual_gates": [
+    "Exact-head Claude review and maintainer manual approval remain open; any new head requires a fresh review.",
+    "Merge and final origin/main no-forward check remain open; build 19 archive is forbidden before merge.",
+    "A full exact-head Hanco scheme regression is not part of this focused evidence; the diagnostic full run is not counted as commit-addressed evidence.",
+    "Physical iPhone and iPad verification of Discover card layout and diagonal curriculum scrolling remains open.",
+    "PostHog consent ON event receipt and consent OFF network silence remain open on the archived build.",
+    "Crashlytics test crash, dSYM upload, and symbolication remain open on the archived build.",
+    "The five operating dashboards remain uncreated until live event names and properties are verified.",
+    "Account, rights, IAP, TestFlight, App Review, App Store, and other external release gates remain open."
+  ]
+}
