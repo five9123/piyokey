@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `0a0182b`에 TYP-85까지 병합됐다. build 18은 PostHog 토큰·Firebase plist 미포함과 Search 카드/연습 목록 UI 결함으로 대체하며 다음 후보는 build 19다 | TYP-43에서 분석 설정과 두 UI 결함을 병합한 최신 clean `origin/main`으로만 build 19를 만든다. 동의 ON/OFF 네트워크, Crashlytics dSYM, iPhone·iPad 회귀와 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
+| iOS 1.1 | `main` `e9684bf`에 TYP-43 build 19 source까지 병합됐다. build 19 실기기 확인에서 TYP-101·TYP-103 후속 UI 작업이 확정돼 다음 후보는 build 20이다 | `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103을 병합한 최신 clean `origin/main`으로만 build 20을 만든다. 동의 ON/OFF 네트워크, Crashlytics dSYM, iPhone·iPad 회귀와 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,7 +23,8 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-43 iOS/iPadOS 1.1 출시 | In Progress / `codex/43-ios-1-1-release` | build 19의 Search 카드 1줄·고정 높이와 연습 목록 수평 overscroll 수정, PostHog/Firebase 실설정 배선을 source PR로 병합한다. 이후 clean `origin/main` archive에서 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
+| TYP-43 iOS/iPadOS 1.1 출시 | In Progress / build 19 source `e9684bf` | `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103을 병합한 clean `origin/main`에서 build 20을 만들고 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
+| TYP-103 Settings 키보드 카드 순서 | In Review / `codex/103-settings-keyboard-order` | `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`)에서 입력 모드→내장 배열 순서와 OS 모드의 배열 비활성·dim을 iPhone·iPad simulator focused UI로 검증했다. exact-head Claude review·maintainer 승인·병합 뒤 build 20 실기기 gate를 유지 |
 | TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
 | TYP-97 Random 5 입력 중 세로 이동 | Merged / PR #162 → main `1f669cf` | build 19 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
@@ -54,9 +55,9 @@
 
 ## 즉시 작업 순서
 
-1. TYP-43 source PR에서 build 19의 Search 카드·연습 목록 수정과 Firebase config embed를 검증하고 exact-head review·maintainer 승인을 받는다.
-2. 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 19 archive를 만든다.
-3. build 19에서 동의 ON 이벤트 수신·동의 OFF 무전송·Crashlytics 테스트 크래시와 dSYM을 먼저 확인하고, TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
+1. `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103 source PR에 exact-head review·maintainer 승인을 기록하고 최신 `origin/main`에 병합한다.
+2. 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 20 archive를 만든다.
+3. build 20에서 동의 ON 이벤트 수신·동의 OFF 무전송·Crashlytics 테스트 크래시와 dSYM을 먼저 확인하고, TYP-101·103과 TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
 4. #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다.
 5. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 

@@ -1024,17 +1024,30 @@ final class HancoUITests: XCTestCase {
     openSettings()
     let layoutPicker = element("settings.builtin_keyboard_layout")
     scrollToHittable(layoutPicker)
+    let builtInMode = app.buttons["input_mode.builtin"]
+    let osMode = app.buttons["input_mode.os_ime"]
+    XCTAssertTrue(builtInMode.waitForExistence(timeout: 3))
+    XCTAssertTrue(osMode.exists)
+    XCTAssertEqual(builtInMode.frame.midY, osMode.frame.midY, accuracy: 1)
+    XCTAssertLessThan(builtInMode.frame.maxY, layoutPicker.frame.minY)
+    XCTAssertLessThan(osMode.frame.maxY, layoutPicker.frame.minY)
+
     let tenKeyLayout = layoutPicker.buttons["天地人（10キー）"]
     XCTAssertTrue(tenKeyLayout.isHittable)
     tenKeyLayout.tap()
     XCTAssertTrue(tenKeyLayout.isSelected)
+    let enabledLayoutContrast = grayscaleContrast(of: layoutPicker)
 
-    let osMode = app.buttons["input_mode.os_ime"]
     scrollToHittable(osMode, direction: .down)
     osMode.tap()
     XCTAssertTrue(osMode.isSelected)
     XCTAssertFalse(layoutPicker.isEnabled)
-    let builtInMode = app.buttons["input_mode.builtin"]
+    let dimmedLayoutContrast = grayscaleContrast(of: layoutPicker)
+    XCTAssertLessThan(
+      dimmedLayoutContrast,
+      enabledLayoutContrast * 0.8,
+      "OS mode should preserve the layout picker's visual dimming"
+    )
     builtInMode.tap()
     XCTAssertTrue(builtInMode.isSelected)
     XCTAssertTrue(layoutPicker.isEnabled)
@@ -4976,6 +4989,49 @@ final class HancoUITests: XCTestCase {
       Thread.sleep(forTimeInterval: 0.1)
     } while Date() < deadline
     return false
+  }
+
+  private func grayscaleContrast(of element: XCUIElement) -> Double {
+    guard let image = element.screenshot().image.cgImage else {
+      XCTFail("Could not capture \(element.identifier) for visual contrast")
+      return .infinity
+    }
+    let width = image.width
+    let height = image.height
+    let bytesPerPixel = 4
+    let bytesPerRow = width * bytesPerPixel
+    var pixels = [UInt8](repeating: 0, count: bytesPerRow * height)
+    guard let context = CGContext(
+      data: &pixels,
+      width: width,
+      height: height,
+      bitsPerComponent: 8,
+      bytesPerRow: bytesPerRow,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    ) else {
+      XCTFail("Could not inspect \(element.identifier) visual contrast")
+      return .infinity
+    }
+    context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+    var sampleCount = 0.0
+    var luminanceSum = 0.0
+    var squaredLuminanceSum = 0.0
+    for y in stride(from: 0, to: height, by: 2) {
+      for x in stride(from: 0, to: width, by: 2) {
+        let offset = y * bytesPerRow + x * bytesPerPixel
+        let luminance =
+          0.2126 * Double(pixels[offset])
+          + 0.7152 * Double(pixels[offset + 1])
+          + 0.0722 * Double(pixels[offset + 2])
+        sampleCount += 1
+        luminanceSum += luminance
+        squaredLuminanceSum += luminance * luminance
+      }
+    }
+    let mean = luminanceSum / sampleCount
+    return sqrt(max(0, squaredLuminanceSum / sampleCount - mean * mean))
   }
 
   private func waitForValueContaining(
