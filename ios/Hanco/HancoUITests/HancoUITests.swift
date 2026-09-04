@@ -898,6 +898,36 @@ final class HancoUITests: XCTestCase {
     assertTYP93SessionSettingsDefaultsAndOrder(exercisesDisclosure: false)
   }
 
+  func testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInDubeolsik() {
+    startTYP98DeckPractice(inputMode: "builtin", builtInLayout: "dubeolsik")
+
+    XCTAssertTrue(app.buttons["keyboard.key.ㅅ"].waitForExistence(timeout: 3))
+    XCTAssertFalse(app.buttons["keyboard.10key.siot"].exists)
+    assertTYP98SpeakerStartsPronunciation()
+  }
+
+  func testTYP98DeckPracticeSpeakerRemainsTappableWithBuiltInKorean10Key() {
+    startTYP98DeckPractice(inputMode: "builtin", builtInLayout: "korean_10key")
+
+    XCTAssertTrue(app.buttons["keyboard.10key.siot"].waitForExistence(timeout: 3))
+    XCTAssertFalse(app.buttons["keyboard.key.ㅅ"].exists)
+    assertTYP98SpeakerStartsPronunciation()
+  }
+
+  func testTYP98DeckPracticeSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME() {
+    startTYP98DeckPractice(inputMode: "os_ime")
+
+    assertTYP98OSIMEHitTesting(typing: "사")
+    XCTAssertEqual(element("practice.entered_text.value").value as? String, "사")
+  }
+
+  func testTYP98CurriculumLessonSpeakerAndHiddenFieldTapRemainInteractiveWithOSIME() {
+    startTYP98CurriculumLesson()
+
+    assertTYP98OSIMEHitTesting(typing: "ㄱ")
+    waitForLabel("ㄴ", on: element("practice.target.value"), timeout: 3)
+  }
+
   func testPracticeSessionSoundSettingsToggleAutomaticSpeech() {
     startPractice()
 
@@ -1202,7 +1232,11 @@ final class HancoUITests: XCTestCase {
 
   func testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean() {
     app.terminate()
-    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
@@ -1215,12 +1249,29 @@ final class HancoUITests: XCTestCase {
     imeField.tap()
     imeField.typeText("r")
 
-    let warning = element("os_ime.input_source_warning")
+    let warning = element(
+      isIPadDestination
+        ? "os_ime.input_source_warning"
+        : "os_ime.input_source_warning.foreground"
+    )
     XCTAssertTrue(warning.waitForExistence(timeout: 3))
+    XCTAssertEqual(
+      element("os_ime.input_source_warning.foreground").exists,
+      !isIPadDestination,
+      "Only iPhone practice should externalize the hidden-panel warning into the foreground"
+    )
+    if !isIPadDestination {
+      XCTAssertTrue(
+        warning.frame.intersects(element("practice.target.card").frame),
+        "The foreground warning should visibly cover the top of the target card"
+      )
+    }
     XCTAssertTrue(app.staticTexts["英語キーボードになっています"].exists)
     XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
     XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
     attachScreenshot(named: "os-ime-english-source-warning-ja")
+
+    assertTYP98SpeakerStartsPronunciation(requiresHittable: false)
 
     imeField.typeText("t")
     XCTAssertTrue(warning.exists)
@@ -4239,6 +4290,124 @@ final class HancoUITests: XCTestCase {
     scrollToHittable(deck)
     deck.tap()
     XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func startTYP98DeckPractice(
+    inputMode: String,
+    builtInLayout: String = "dubeolsik"
+  ) {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
+    app.launchArguments += [
+      "-keyboard.input_mode_default", inputMode,
+      "-keyboard.builtin_layout_default", builtInLayout,
+    ]
+    if inputMode == "os_ime" {
+      app.launchEnvironment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] = "1"
+    }
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+  }
+
+  private func startTYP98CurriculumLesson() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 2,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
+    app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+    app.launchEnvironment["UITEST_RESIGN_OS_IME_AFTER_SPEAKER"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openPracticeTab()
+    let firstStage = element("curriculum.stage.chapter_1_basic_consonants")
+    scrollToHittable(firstStage)
+    firstStage.tap()
+    XCTAssertTrue(element("practice.target.value").waitForExistence(timeout: 5))
+  }
+
+  private func assertTYP98SpeakerStartsPronunciation(
+    requiresHittable: Bool = true,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let pronunciationStarts = element("debug.pronunciation.start_count")
+    XCTAssertTrue(pronunciationStarts.waitForExistence(timeout: 3), file: file, line: line)
+    let initialStartCount = pronunciationStarts.label
+    let speakTarget = app.buttons["practice.speak_target"]
+    XCTAssertTrue(speakTarget.waitForExistence(timeout: 3), file: file, line: line)
+    if requiresHittable {
+      XCTAssertTrue(speakTarget.isHittable, app.debugDescription, file: file, line: line)
+      speakTarget.tap()
+    } else {
+      // XCTest marks controls under a non-hit-testing SwiftUI overlay as not hittable;
+      // a coordinate event verifies that the overlay still passes the tap through.
+      speakTarget.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
+    waitForLabelDifferentFrom(initialStartCount, on: pronunciationStarts, timeout: 3)
+  }
+
+  private func assertTYP98OSIMEHitTesting(
+    typing text: String,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    let imeField = app.textFields["os_ime.text_field"]
+    let speakTarget = app.buttons["practice.speak_target"]
+    XCTAssertTrue(imeField.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertTrue(speakTarget.waitForExistence(timeout: 3), file: file, line: line)
+    XCTAssertEqual(
+      imeField.frame.intersects(speakTarget.frame),
+      !isIPadDestination,
+      "Only the iPhone hidden field should span the speaker frame",
+      file: file,
+      line: line
+    )
+    let keyboard = app.keyboards.firstMatch
+    XCTAssertTrue(keyboard.waitForExistence(timeout: 3), file: file, line: line)
+    assertTYP98SpeakerStartsPronunciation(file: file, line: line)
+    XCTAssertTrue(
+      keyboard.waitForNonExistence(timeout: 3),
+      "The DEBUG focus-loss hook should resign the OS IME field",
+      file: file,
+      line: line
+    )
+
+    if isIPadDestination {
+      imeField.tap()
+    } else {
+      let targetCard = element("practice.target.card")
+      let compositionCard = element("practice.composition.card")
+      XCTAssertTrue(targetCard.waitForExistence(timeout: 3), file: file, line: line)
+      XCTAssertTrue(compositionCard.waitForExistence(timeout: 3), file: file, line: line)
+      let blankAreaY = (targetCard.frame.maxY + compositionCard.frame.minY) / 2
+      XCTAssertGreaterThan(
+        compositionCard.frame.minY - targetCard.frame.maxY,
+        1,
+        "The focus recovery tap must target the blank gap between practice cards",
+        file: file,
+        line: line
+      )
+      let normalizedBlankAreaY = (blankAreaY - imeField.frame.minY) / imeField.frame.height
+      imeField.coordinate(
+        withNormalizedOffset: CGVector(dx: 0.5, dy: normalizedBlankAreaY)
+      ).tap()
+    }
+    XCTAssertTrue(
+      keyboard.waitForExistence(timeout: 3),
+      "Tapping the OS IME recovery area should restore keyboard focus",
+      file: file,
+      line: line
+    )
+    imeField.typeText(text)
   }
 
   private func assertPracticeCardsStayVerticallyFixed(
