@@ -96,6 +96,11 @@
 "keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ 묶음";
 "keyboard.10key.ieung" = "ㅇ, ㅁ 묶음";
 "keyboard.10key.next" = "다음 자음으로 진행";
+"keyboard.10key.flick.vertical" = "플릭: 왼쪽 ㅓ, 오른쪽 ㅏ, 위 ㅕ, 아래 ㅑ";
+"keyboard.10key.flick.dot" = "플릭: 왼쪽 ㅓ, 오른쪽 ㅏ, 위 ㅗ, 아래 ㅜ";
+"keyboard.10key.flick.horizontal" = "플릭: 왼쪽 ㅠ, 오른쪽 ㅛ, 위 ㅗ, 아래 ㅜ";
+"keyboard.10key.flick.three" = "플릭: 왼쪽 %@, 오른쪽 %@, 아래 %@";
+"keyboard.10key.flick.two" = "플릭: 왼쪽 %@, 오른쪽 %@";
 "input_mode.builtin" = "내장 키보드";
 "input_mode.builtin_korean_10key" = "한국어 10키";
 "input_mode.os_ime" = "OS 키보드";

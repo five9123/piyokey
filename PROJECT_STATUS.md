@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `2812559`에 TYP-95 PR #160까지 병합됐다. build 16 심사는 홈 Random 5 입력 중 세로 이동 TYP-97 때문에 철회됐고 PR #162에서 수정·검증 중 | TYP-97 source gate 뒤 build 17에서 iPhone Random 5의 내장 두벌식·한국어 10키·OS IME와 iPad 기존 레이아웃을 실기기로 검증. 이 gate 전에는 TYP-43을 진행하거나 출시 완료로 표현하지 않음 |
+| iOS 1.1 | `main` `4a27d6b`에 TYP-97 PR #162와 TYP-98 PR #163까지 병합됐다. TYP-85 인앱 천지인 플릭은 1.1 포함이 승인돼 PR #161에서 검증 중이다. build 17은 대체됐으며 업로드하지 않고 다음 후보는 build 18이다 | TYP-85 exact-head source gate와 maintainer 승인·병합 뒤 최신 clean `origin/main`에서만 build 18 후보를 준비한다. iPhone·iPad 전체 플릭 방향표·롱프레스·취소·동시 입력, p95≤50ms, 지원 게임 60fps, VoiceOver와 기존 1.1 실기기·계정·권리·store gate 전에는 TYP-43을 진행하거나 출시 완료로 표현하지 않음 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,9 +23,11 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-98 연습 발음 버튼 OS IME 터치 차단 | In Review / PR #163 / `codex/98-practice-speaker-os-ime` | exact-head Claude review·maintainer 승인·merge 뒤 build 17 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
-| TYP-97 Random 5 입력 중 세로 이동 | In Review / PR #162 / `codex/97-random5-scroll-jump` | exact-head Claude review·maintainer 승인·merge 뒤 build 17 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
-| TYP-94 iPhone 게임 레이아웃 미확장 | Merged / PR #159 → main `586f00b` | build 16 검증은 TYP-97 때문에 철회된 심사를 대체하지 않는다. build 17 iPhone 실기기에서 게임·연습·레슨·온보딩의 OS 키보드 레이아웃과 TYP-92 포커스 복구를 확인하고 iPad 기존 레이아웃을 재확인하기 전 Done 처리하지 않음 |
+| TYP-85 인앱 천지인 방향 플릭 | In Review / PR #161 / `codex/85-ios-10key-flick` / iOS 1.1 승인 | 최신 `origin/main` merged tree의 full source 검증·evidence와 exact-head Claude review 뒤 maintainer 승인을 받는다. iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
+| TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 18 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
+| TYP-97 Random 5 입력 중 세로 이동 | Merged / PR #162 → main `1f669cf` | build 18 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
+| TYP-95 OS 10키 겹받침 진행 보존 | Merged / PR #160 → main `2812559` | build 18 iPhone·iPad 실기기에서 연습·지원 게임의 OS 천지인 겹받침 진행을 확인하기 전 Done 처리하지 않음 |
+| TYP-94 iPhone 게임 레이아웃 미확장 | Merged / PR #159 → main `586f00b` | 철회된 build 16 검증은 다음 후보를 대체하지 않는다. build 18 iPhone 실기기에서 게임·연습·레슨·온보딩의 OS 키보드 레이아웃과 TYP-92 포커스 복구를 확인하고 iPad 기존 레이아웃을 재확인하기 전 Done 처리하지 않음 |
 | TYP-93 세션 설정 정보구조 | Merged / PR #158 → main `fe05bd2` | build 14 TestFlight의 iPhone 실기기 덱 플레이·연습 확인 전 Done 처리하지 않음 |
 | TYP-92 iPhone 입력 보조 UI 회귀 | Merged / PR #157 → main `855bf27` | build 14 실제 iPhone·iPad에서 OS 입력 패널·물리 참조 배열·포커스·다음 키 강조를 확인하기 전 Done 처리하지 않음. 실수로 실행한 전체 `HancoTests` target pass는 evidence에서 제외 |
 | TYP-90 다음 키 가이드 오식별 정정 | In Review / PR #156 → main `fdce1d3` | TYP-92에서 iPhone 포함 기존 다음 키 강조·토글을 복구하고 OS 입력 패널 및 물리 참조 배열을 기기별로 정정한 뒤 build 14 실기기 gate까지 In Review 유지 |
@@ -51,9 +53,9 @@
 
 ## 즉시 작업 순서
 
-1. 승인된 code-freeze 예외인 TYP-94의 focused iPhone/iPad simulator evidence, exact-head Claude review와 수동 source gate를 완료하되 build 16 실기기·TestFlight gate를 닫지 않고 TYP-43을 진행하지 않는다. ordinary issue에서 전체 `HancoTests` 또는 `HancoUITests` target 결과는 evidence로 사용하지 않는다.
-2. build 16에서 TYP-94 iPhone 게임·연습·레슨·온보딩 레이아웃과 TYP-92 포커스 복구, iPad 기존 레이아웃을 확인한다. TYP-93 덱 플레이·연습 세션 설정, TYP-88 OS 10키 corpus, TYP-83의 iPhone·iPad OS 천지인 대표 복합모음과 두벌식 실제 오타 gate는 계속 OPEN으로 둔다.
-3. clean `origin/main`에서 정확한 iOS 1.1 RC를 archive·TestFlight 처리하고 TYP-73·TYP-82 연속 단어·포커스, TYP-77 입력원 경고와 row-13 최종 QA를 함께 수행한다.
+1. TYP-85를 포함한 iOS/iPadOS 1.1 source gate를 최신 `origin/main` merged tree에서 완료하고 PR #161의 exact-head Claude review와 maintainer 승인을 받는다. build 17은 대체됐으므로 업로드하지 않는다.
+2. TYP-85 병합 뒤 clean `origin/main`에서만 다음 iOS 1.1 후보 build 18을 준비한다. 이 작업에서는 archive·업로드·App Store Connect 변경을 수행하지 않는다.
+3. build 18에서 TYP-85 전체 방향표·롱프레스·취소·동시 입력·p95≤50ms·60fps·VoiceOver와 TYP-94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
 4. #7·#58과 #77 외부 gate를 처리한다.
 5. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 

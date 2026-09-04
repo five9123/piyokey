@@ -795,6 +795,169 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertNil(Korean10KeyInterpreter.recipe(for: "A"))
   }
 
+  func testKorean10KeyFlickMappingCoversVowelsAndConsonantAlternatives() {
+    let expected: [(Korean10KeyKey, Korean10KeyFlickDirection, Character?)] = [
+      (.vertical, .left, "ㅓ"), (.vertical, .right, "ㅏ"),
+      (.vertical, .up, "ㅕ"), (.vertical, .down, "ㅑ"),
+      (.dot, .left, "ㅓ"), (.dot, .right, "ㅏ"),
+      (.dot, .up, "ㅗ"), (.dot, .down, "ㅜ"),
+      (.horizontal, .left, "ㅠ"), (.horizontal, .right, "ㅛ"),
+      (.horizontal, .up, "ㅗ"), (.horizontal, .down, "ㅜ"),
+      (.giyeok, .left, "ㄱ"), (.giyeok, .right, "ㅋ"), (.giyeok, .down, "ㄲ"),
+      (.nieun, .left, "ㄴ"), (.nieun, .right, "ㄹ"), (.nieun, .down, nil),
+      (.digeut, .left, "ㄷ"), (.digeut, .right, "ㅌ"), (.digeut, .down, "ㄸ"),
+      (.bieup, .left, "ㅂ"), (.bieup, .right, "ㅍ"), (.bieup, .down, "ㅃ"),
+      (.siot, .left, "ㅅ"), (.siot, .right, "ㅎ"), (.siot, .down, "ㅆ"),
+      (.jieut, .left, "ㅈ"), (.jieut, .right, "ㅊ"), (.jieut, .down, "ㅉ"),
+      (.ieung, .left, "ㅇ"), (.ieung, .right, "ㅁ"), (.ieung, .down, nil),
+    ]
+
+    for (key, direction, jamo) in expected {
+      XCTAssertEqual(
+        Korean10KeyFlickMapping.completedJamo(for: key, direction: direction),
+        jamo,
+        "\(key) \(direction)"
+      )
+    }
+    for key in Korean10KeyKey.allCases.filter(\.supportsFlick) {
+      if key != .vertical, key != .dot, key != .horizontal {
+        XCTAssertNil(Korean10KeyFlickMapping.completedJamo(for: key, direction: .up))
+      }
+    }
+  }
+
+  func testKorean10KeyFlickGestureThresholdSeparatesTapFlickAndInvalidMotion() {
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: CGSize(width: 23.9, height: 0),
+        duration: 0.1
+      ),
+      .tap
+    )
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: .zero,
+        duration: 1
+      ),
+      .tap,
+      "A stationary long press must preserve the existing tap behavior"
+    )
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: CGSize(width: -30, height: 2),
+        duration: 0.2
+      ),
+      .flick(.left)
+    )
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: CGSize(width: 2, height: -30),
+        duration: 0.2
+      ),
+      .flick(.up)
+    )
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: CGSize(width: 30, height: 30),
+        duration: 0.2
+      ),
+      .invalidFlick
+    )
+    XCTAssertEqual(
+      Korean10KeyFlickGestureResolver.interpretation(
+        translation: CGSize(width: 30, height: 0),
+        duration: 0.451
+      ),
+      .invalidFlick
+    )
+  }
+
+  func testKorean10KeyCompletedFlickUsesOnlyGoldenRecipePrefixes() throws {
+    let flickVowels: [Character] = ["ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ"]
+    let vowels: [Character] = [
+      "ㅣ", "ㅡ", "ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅐ", "ㅒ", "ㅔ", "ㅖ",
+      "ㅘ", "ㅙ", "ㅚ", "ㅝ", "ㅞ", "ㅟ", "ㅢ",
+    ]
+
+    for expected in vowels {
+      var interpreter = Korean10KeyInterpreter()
+      let recipe = try XCTUnwrap(Korean10KeyInterpreter.recipe(for: expected))
+      let shortcut = flickVowels
+        .compactMap { jamo -> (Character, [Korean10KeyKey])? in
+          guard let candidate = Korean10KeyInterpreter.recipe(for: jamo),
+            recipe.starts(with: candidate)
+          else { return nil }
+          return (jamo, candidate)
+        }
+        .max { $0.1.count < $1.1.count }
+
+      var consumed = 0
+      if let shortcut {
+        let result = interpreter.inputCompletedJamo(shortcut.0, expecting: expected)
+        consumed = shortcut.1.count
+        if consumed == recipe.count {
+          XCTAssertEqual(result, .committed(expected), String(expected))
+          continue
+        }
+        guard case .pending = result else {
+          return XCTFail("Expected pending flick prefix for \(expected), got \(result)")
+        }
+      }
+
+      for (index, key) in recipe.dropFirst(consumed).enumerated() {
+        let result = interpreter.input(key, expecting: expected)
+        if index == recipe.count - consumed - 1 {
+          XCTAssertEqual(result, .committed(expected), String(expected))
+        }
+      }
+    }
+
+    var invalidSplice = Korean10KeyInterpreter()
+    XCTAssertEqual(
+      invalidSplice.input(.vertical, expecting: "ㅒ"),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      invalidSplice.inputCompletedJamo("ㅓ", expecting: "ㅒ"),
+      .incorrect(expected: "ㅒ")
+    )
+    XCTAssertEqual(invalidSplice.nextKey(for: "ㅒ"), .vertical)
+  }
+
+  func testKorean10KeyCompletedConsonantFlickCanForceSameGroupBoundary() {
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(interpreter.inputCompletedJamo("ㄴ", expecting: "ㄴ"), .committed("ㄴ"))
+    XCTAssertEqual(interpreter.nextKey(for: "ㄴ"), .next)
+    XCTAssertEqual(interpreter.inputCompletedJamo("ㄴ", expecting: "ㄴ"), .committed("ㄴ"))
+    XCTAssertEqual(interpreter.inputCompletedJamo(nil, expecting: "ㅏ"), .incorrect(expected: "ㅏ"))
+  }
+
+  func testKorean10KeyPendingMatchingCompletedFlickCountsOneMistakeWithoutAdvancing() {
+    let model = PracticeSessionViewModel(target: "가")
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(interpreter.input(.giyeok, expecting: model.nextExpectedKey), .committed("ㄱ"))
+    model.input("ㄱ")
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+
+    XCTAssertEqual(
+      interpreter.input(.vertical, expecting: model.nextExpectedKey),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      interpreter.inputCompletedJamo("ㅏ", expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㅏ")
+    )
+    model.recordConfirmedOSIMEMistake()
+
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 1)
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+    XCTAssertEqual(model.enteredText, "ㄱ")
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .vertical)
+  }
+
   func testKorean10KeyEmitsOnlyCompletedJamoIntoSharedJudge() throws {
     for target in ["가나", "꽤", "뼈", "휘", "의자", "언니", "띄어 쓰기", "외국"] {
       let model = PracticeSessionViewModel(target: target)
@@ -866,8 +1029,10 @@ final class PracticeSessionViewModelTests: XCTestCase {
       interpreter.input(.nieun, expecting: model.nextExpectedKey),
       .incorrect(expected: "ㄴ")
     )
-    model.input("ㄹ")
+    model.recordConfirmedOSIMEMistake()
     XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 3)
+    XCTAssertEqual(model.nextExpectedKey, "ㄴ")
     XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .next)
     XCTAssertEqual(
       interpreter.input(.next, expecting: model.nextExpectedKey),

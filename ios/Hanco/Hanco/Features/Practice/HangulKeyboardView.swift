@@ -153,6 +153,123 @@ extension Korean10KeyKey {
     case .space: "keyboard.space"
     }
   }
+
+  var supportsFlick: Bool {
+    switch self {
+    case .vertical, .dot, .horizontal, .giyeok, .nieun, .digeut, .bieup, .siot,
+      .jieut, .ieung:
+      true
+    case .next, .space:
+      false
+    }
+  }
+
+  var flickAccessibilityHint: String {
+    switch self {
+    case .vertical:
+      AppLocalization.string("keyboard.10key.flick.vertical")
+    case .dot:
+      AppLocalization.string("keyboard.10key.flick.dot")
+    case .horizontal:
+      AppLocalization.string("keyboard.10key.flick.horizontal")
+    case .giyeok:
+      AppLocalization.format("keyboard.10key.flick.three", "ㄱ", "ㅋ", "ㄲ")
+    case .digeut:
+      AppLocalization.format("keyboard.10key.flick.three", "ㄷ", "ㅌ", "ㄸ")
+    case .bieup:
+      AppLocalization.format("keyboard.10key.flick.three", "ㅂ", "ㅍ", "ㅃ")
+    case .siot:
+      AppLocalization.format("keyboard.10key.flick.three", "ㅅ", "ㅎ", "ㅆ")
+    case .jieut:
+      AppLocalization.format("keyboard.10key.flick.three", "ㅈ", "ㅊ", "ㅉ")
+    case .nieun:
+      AppLocalization.format("keyboard.10key.flick.two", "ㄴ", "ㄹ")
+    case .ieung:
+      AppLocalization.format("keyboard.10key.flick.two", "ㅇ", "ㅁ")
+    case .next, .space:
+      ""
+    }
+  }
+}
+
+enum Korean10KeyFlickDirection: Equatable {
+  case left
+  case right
+  case up
+  case down
+}
+
+enum Korean10KeyTouchInterpretation: Equatable {
+  case tap
+  case flick(Korean10KeyFlickDirection)
+  case invalidFlick
+}
+
+enum Korean10KeyFlickGestureResolver {
+  static let minimumDistance: CGFloat = 24
+  static let maximumDuration: TimeInterval = 0.45
+  static let axisDominance: CGFloat = 1.15
+
+  static func interpretation(
+    translation: CGSize,
+    duration: TimeInterval
+  ) -> Korean10KeyTouchInterpretation {
+    let horizontalDistance = abs(translation.width)
+    let verticalDistance = abs(translation.height)
+    let distance = max(horizontalDistance, verticalDistance)
+    guard distance >= minimumDistance else { return .tap }
+    guard duration <= maximumDuration else { return .invalidFlick }
+
+    if horizontalDistance >= verticalDistance * axisDominance {
+      return .flick(translation.width < 0 ? .left : .right)
+    }
+    if verticalDistance >= horizontalDistance * axisDominance {
+      return .flick(translation.height < 0 ? .up : .down)
+    }
+    return .invalidFlick
+  }
+}
+
+enum Korean10KeyFlickMapping {
+  static func completedJamo(
+    for key: Korean10KeyKey,
+    direction: Korean10KeyFlickDirection
+  ) -> Character? {
+    switch (key, direction) {
+    case (.vertical, .left): "ㅓ"
+    case (.vertical, .right): "ㅏ"
+    case (.vertical, .up): "ㅕ"
+    case (.vertical, .down): "ㅑ"
+    case (.dot, .left): "ㅓ"
+    case (.dot, .right): "ㅏ"
+    case (.dot, .up): "ㅗ"
+    case (.dot, .down): "ㅜ"
+    case (.horizontal, .left): "ㅠ"
+    case (.horizontal, .right): "ㅛ"
+    case (.horizontal, .up): "ㅗ"
+    case (.horizontal, .down): "ㅜ"
+    case (.giyeok, .left): "ㄱ"
+    case (.giyeok, .right): "ㅋ"
+    case (.giyeok, .down): "ㄲ"
+    case (.nieun, .left): "ㄴ"
+    case (.nieun, .right): "ㄹ"
+    case (.digeut, .left): "ㄷ"
+    case (.digeut, .right): "ㅌ"
+    case (.digeut, .down): "ㄸ"
+    case (.bieup, .left): "ㅂ"
+    case (.bieup, .right): "ㅍ"
+    case (.bieup, .down): "ㅃ"
+    case (.siot, .left): "ㅅ"
+    case (.siot, .right): "ㅎ"
+    case (.siot, .down): "ㅆ"
+    case (.jieut, .left): "ㅈ"
+    case (.jieut, .right): "ㅊ"
+    case (.jieut, .down): "ㅉ"
+    case (.ieung, .left): "ㅇ"
+    case (.ieung, .right): "ㅁ"
+    default: nil
+    }
+  }
 }
 
 enum Korean10KeyInterpretation: Equatable {
@@ -216,6 +333,33 @@ struct Korean10KeyInterpreter: Equatable {
 
     pendingKeys = proposed
     return .pending(display: Self.display(for: proposed) ?? "")
+  }
+
+  /// Accepts a jamo selected directly by a flick. A flick may replace only the
+  /// leading portion of a golden recipe; once raw taps are pending, another
+  /// completed flick is rejected so unrelated recipe fragments cannot splice.
+  mutating func inputCompletedJamo(
+    _ jamo: Character?,
+    expecting expected: Character?
+  ) -> Korean10KeyInterpretation {
+    guard let expected, let expectedRecipe = Self.recipe(for: expected),
+      let jamo, let completedRecipe = Self.recipe(for: jamo), pendingKeys.isEmpty,
+      expectedRecipe.starts(with: completedRecipe)
+    else {
+      pendingKeys.removeAll(keepingCapacity: true)
+      return .incorrect(expected: expected)
+    }
+
+    if completedRecipe == expectedRecipe {
+      let groupedKey = completedRecipe.first
+      lastCommittedGroupedConsonantKey = groupedKey.map(Self.groupedConsonantKeys.contains) == true
+        ? groupedKey : nil
+      didAcceptSeparator = false
+      return .committed(expected)
+    }
+
+    pendingKeys = completedRecipe
+    return .pending(display: Self.display(for: completedRecipe) ?? String(jamo))
   }
 
   mutating func backspace() -> Korean10KeyBackspaceResult {
@@ -867,7 +1011,7 @@ struct HangulKeyboardView: View {
     activate(action)
   }
 
-  private func endPress(_ action: HangulKeyboardAction) {
+  private func endPress(_ action: HangulKeyboardAction, _: KeyboardTouchGesture) {
     let remainingCount = pressedActionCounts[action, default: 0] - 1
     if remainingCount > 0 {
       pressedActionCounts[action] = remainingCount
@@ -911,6 +1055,7 @@ struct Korean10KeyKeyboardView: View {
   var onInputStart: () -> Void = {}
   let onKeyFeedback: (TypingSoundKeyRole) -> Void
   let onKey: (Korean10KeyKey) -> Void
+  var onCompletedJamo: (Character?) -> Void = { _ in }
   let onBackspace: () -> Void
 
   @State private var guidePulse = false
@@ -981,6 +1126,7 @@ struct Korean10KeyKeyboardView: View {
       systemImage: systemImage,
       romanHint: nil,
       accessibilityLabel: Text(key.accessibilityKey),
+      accessibilityHint: Text(verbatim: key.flickAccessibilityHint),
       accessibilityIdentifier: "keyboard.10key.\(key.rawValue)",
       highlighted: options.showsKeyGuide && nextExpectedKey == key,
       guidePulse: guidePulse,
@@ -1032,15 +1178,38 @@ struct Korean10KeyKeyboardView: View {
 
   private func beginPress(_ action: HangulKeyboardAction) {
     pressedActionCounts[action, default: 0] += 1
+    if case .korean10Key(let key) = action, key.supportsFlick {
+      KeyHaptics.fire(if: options.hapticsEnabled)
+      onKeyFeedback(.character)
+      return
+    }
     activate(action)
   }
 
-  private func endPress(_ action: HangulKeyboardAction) {
+  private func endPress(_ action: HangulKeyboardAction, gesture: KeyboardTouchGesture) {
+    if !gesture.wasCancelled, case .korean10Key(let key) = action, key.supportsFlick {
+      activate(key, gesture: gesture)
+    }
     let remainingCount = pressedActionCounts[action, default: 0] - 1
     if remainingCount > 0 {
       pressedActionCounts[action] = remainingCount
     } else {
       pressedActionCounts.removeValue(forKey: action)
+    }
+  }
+
+  private func activate(_ key: Korean10KeyKey, gesture: KeyboardTouchGesture) {
+    onInputStart()
+    switch Korean10KeyFlickGestureResolver.interpretation(
+      translation: gesture.translation,
+      duration: gesture.duration
+    ) {
+    case .tap:
+      onKey(key)
+    case .flick(let direction):
+      onCompletedJamo(Korean10KeyFlickMapping.completedJamo(for: key, direction: direction))
+    case .invalidFlick:
+      onCompletedJamo(nil)
     }
   }
 
@@ -1092,6 +1261,7 @@ private struct Keycap: View {
   let systemImage: String?
   let romanHint: String?
   let accessibilityLabel: Text
+  var accessibilityHint: Text = Text(verbatim: "")
   let accessibilityIdentifier: String
   let highlighted: Bool
   let guidePulse: Bool
@@ -1137,6 +1307,7 @@ private struct Keycap: View {
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(accessibilityLabel)
+    .accessibilityHint(accessibilityHint)
     .accessibilityValue(Text(verbatim: romanHint ?? ""))
     .accessibilityIdentifier(accessibilityIdentifier)
     .accessibilityAddTraits(.isButton)
@@ -1157,6 +1328,12 @@ enum HangulKeyboardAction: Hashable {
 struct KeyboardTouchTarget: Equatable {
   let action: HangulKeyboardAction
   let frame: CGRect
+}
+
+struct KeyboardTouchGesture: Equatable {
+  let translation: CGSize
+  let duration: TimeInterval
+  let wasCancelled: Bool
 }
 
 enum KeyboardTouchTargetResolver {
@@ -1226,7 +1403,7 @@ private struct KeyboardKeyBoundsPreferenceKey: PreferenceKey {
 private struct RolloverKeyboardTouchSurface: UIViewRepresentable {
   let targets: [KeyboardTouchTarget]
   let onTouchBegan: (HangulKeyboardAction) -> Void
-  let onTouchEnded: (HangulKeyboardAction) -> Void
+  let onTouchEnded: (HangulKeyboardAction, KeyboardTouchGesture) -> Void
 
   func makeUIView(context: Context) -> RolloverKeyboardTouchView {
     let view = RolloverKeyboardTouchView(frame: .zero)
@@ -1245,9 +1422,15 @@ private struct RolloverKeyboardTouchSurface: UIViewRepresentable {
 final class RolloverKeyboardTouchView: UIView {
   var targets: [KeyboardTouchTarget] = []
   var onTouchBegan: ((HangulKeyboardAction) -> Void)?
-  var onTouchEnded: ((HangulKeyboardAction) -> Void)?
+  var onTouchEnded: ((HangulKeyboardAction, KeyboardTouchGesture) -> Void)?
 
-  private var trackedActions: [ObjectIdentifier: HangulKeyboardAction] = [:]
+  private struct TrackedTouch {
+    let action: HangulKeyboardAction
+    let location: CGPoint
+    let timestamp: TimeInterval
+  }
+
+  private var trackedTouches: [ObjectIdentifier: TrackedTouch] = [:]
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -1265,33 +1448,48 @@ final class RolloverKeyboardTouchView: UIView {
     super.touchesBegan(touches, with: event)
     for touch in touches {
       let identifier = ObjectIdentifier(touch)
-      guard trackedActions[identifier] == nil,
+      guard trackedTouches[identifier] == nil,
         let action = KeyboardTouchTargetResolver.action(
           at: touch.location(in: self),
           targets: targets
         )
       else { continue }
-      trackedActions[identifier] = action
+      trackedTouches[identifier] = TrackedTouch(
+        action: action,
+        location: touch.location(in: self),
+        timestamp: touch.timestamp
+      )
       onTouchBegan?(action)
     }
   }
 
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesEnded(touches, with: event)
-    finish(touches)
+    finish(touches, wasCancelled: false)
   }
 
   override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesCancelled(touches, with: event)
-    finish(touches)
+    finish(touches, wasCancelled: true)
   }
 
-  private func finish(_ touches: Set<UITouch>) {
+  private func finish(_ touches: Set<UITouch>, wasCancelled: Bool) {
     for touch in touches {
-      guard let action = trackedActions.removeValue(forKey: ObjectIdentifier(touch)) else {
+      guard let tracked = trackedTouches.removeValue(forKey: ObjectIdentifier(touch)) else {
         continue
       }
-      onTouchEnded?(action)
+      let location = touch.location(in: self)
+      onTouchEnded?(
+        tracked.action,
+        KeyboardTouchGesture(
+          translation: CGSize(
+            width: location.x - tracked.location.x,
+            height: location.y - tracked.location.y
+          ),
+          duration: max(0, touch.timestamp - tracked.timestamp),
+          wasCancelled: wasCancelled
+        )
+      )
     }
   }
 }

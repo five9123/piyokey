@@ -16,6 +16,32 @@ final class FlowGameViewModelTests: XCTestCase {
     )
   }
 
+  func testKorean10KeyPendingMatchingCompletedFlickCountsOneMistakeWithoutAdvancing() {
+    let model = FlowGameViewModel(targets: ["가"], cardTravelDuration: 100)
+    let origin = Date(timeIntervalSince1970: 0)
+    var interpreter = Korean10KeyInterpreter()
+    model.start(at: origin)
+
+    XCTAssertEqual(interpreter.input(.giyeok, expecting: model.nextExpectedKey), .committed("ㄱ"))
+    model.input("ㄱ")
+    XCTAssertEqual(
+      interpreter.input(.vertical, expecting: model.nextExpectedKey),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      interpreter.inputCompletedJamo("ㅏ", expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㅏ")
+    )
+    model.recordConfirmedOSIMEMistake()
+
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 1)
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+    XCTAssertEqual(model.enteredText, "ㄱ")
+    XCTAssertEqual(model.completedItemCount, 0)
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .vertical)
+  }
+
   func testBundledFlowPresetDecksLoadInHybridDifficultyOrder() throws {
     let presets = GamePresetDeckLoader.load(gameKind: .flow)
 

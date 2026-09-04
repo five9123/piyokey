@@ -91,6 +91,11 @@
 "keyboard.10key.jieut" = "Gruppe ㅈ, ㅊ, ㅉ";
 "keyboard.10key.ieung" = "Gruppe ㅇ, ㅁ";
 "keyboard.10key.next" = "Zum nächsten Konsonanten";
+"keyboard.10key.flick.vertical" = "Wischen: links ㅓ, rechts ㅏ, oben ㅕ, unten ㅑ";
+"keyboard.10key.flick.dot" = "Wischen: links ㅓ, rechts ㅏ, oben ㅗ, unten ㅜ";
+"keyboard.10key.flick.horizontal" = "Wischen: links ㅠ, rechts ㅛ, oben ㅗ, unten ㅜ";
+"keyboard.10key.flick.three" = "Wischen: links %@, rechts %@, unten %@";
+"keyboard.10key.flick.two" = "Wischen: links %@, rechts %@";
 "input_mode.builtin" = "Integrierte Tastatur";
 "input_mode.builtin_korean_10key" = "Koreanisch mit 10 Tasten";
 "input_mode.os_ime" = "Systemtastatur";

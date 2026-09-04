@@ -474,6 +474,7 @@ struct FlowGameView: View {
             ),
             onKeyFeedback: playKeySound,
             onKey: inputKorean10Key,
+            onCompletedJamo: inputKorean10KeyCompletedJamo,
             onBackspace: backspaceKorean10Key
           )
         } else {
@@ -523,13 +524,28 @@ struct FlowGameView: View {
 
   private func inputKorean10Key(_ key: Korean10KeyKey) {
     markBuiltInInputUsed()
-    switch korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey) {
+    applyKorean10KeyInterpretation(
+      korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey)
+    )
+  }
+
+  private func inputKorean10KeyCompletedJamo(_ jamo: Character?) {
+    markBuiltInInputUsed()
+    applyKorean10KeyInterpretation(
+      korean10KeyInterpreter.inputCompletedJamo(jamo, expecting: viewModel.nextExpectedKey)
+    )
+  }
+
+  private func applyKorean10KeyInterpretation(
+    _ interpretation: Korean10KeyInterpretation
+  ) {
+    switch interpretation {
     case .pending, .separatorAccepted:
       break
     case .committed(let jamo):
       viewModel.input(jamo)
     case .incorrect:
-      viewModel.input(key.displayText.first ?? "ㆍ")
+      viewModel.recordConfirmedOSIMEMistake()
     }
   }
 

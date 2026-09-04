@@ -96,6 +96,11 @@
 "keyboard.10key.jieut" = "ㅈ, ㅊ, ㅉ group";
 "keyboard.10key.ieung" = "ㅇ, ㅁ group";
 "keyboard.10key.next" = "Advance to the next consonant";
+"keyboard.10key.flick.vertical" = "Flick: left ㅓ, right ㅏ, up ㅕ, down ㅑ";
+"keyboard.10key.flick.dot" = "Flick: left ㅓ, right ㅏ, up ㅗ, down ㅜ";
+"keyboard.10key.flick.horizontal" = "Flick: left ㅠ, right ㅛ, up ㅗ, down ㅜ";
+"keyboard.10key.flick.three" = "Flick: left %@, right %@, down %@";
+"keyboard.10key.flick.two" = "Flick: left %@, right %@";
 "input_mode.builtin" = "Built-in keyboard";
 "input_mode.builtin_korean_10key" = "Korean 10-Key";
 "input_mode.os_ime" = "OS keyboard";
