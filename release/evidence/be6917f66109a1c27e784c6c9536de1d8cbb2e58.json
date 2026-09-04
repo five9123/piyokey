@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "be6917f66109a1c27e784c6c9536de1d8cbb2e58",
+  "verified_tree": "f8c433a1b9c4c3de10f962bdbc3d2062b529648f",
+  "branch": "codex/101-flick-preview",
+  "scope": "TYP-101 merged-tree Korean 10-key flick direction preview focused regression",
+  "result": "pass",
+  "recorded_at": "2026-09-04T19:12:13.422252+00:00",
+  "checks": [
+    {
+      "name": "focused flick mapping threshold and preview units",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyFlickMappingCoversVowelsAndConsonantAlternatives -only-testing:HancoTests/PracticeSessionViewModelTests/testKorean10KeyFlickGestureThresholdSeparatesTapFlickAndInvalidMotion -only-testing:HancoTests/PracticeSessionViewModelTests/testTYP101FlickPreviewUsesSharedMappingAndLifecycle -only-testing:HancoTests/PracticeSessionViewModelTests/testTYP101FlickPreviewTopEdgeLayoutAndAccessibilityIsolation",
+      "note": "Exactly 4 selected tests passed."
+    },
+    {
+      "name": "existing Korean 10-key flick UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testKorean10KeyFlickCommitsOneJamoPerGesture",
+      "note": "Exactly 1 selected UI test passed."
+    },
+    {
+      "name": "TYP-101 preview UI on iPhone 17 simulator",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP101Korean10KeyFlickPreviewShowsMappingHighlightsAndDismisses",
+      "note": "Exactly 1 selected UI test passed."
+    },
+    {
+      "name": "TYP-101 preview UI on iPad Pro simulator",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP101Korean10KeyFlickPreviewShowsMappingHighlightsAndDismisses",
+      "note": "Exactly 1 selected UI test passed."
+    },
+    {
+      "name": "release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was e9684bffba1823fd9206e5d582444184bfdf8132."
+    },
+    {
+      "name": "implementation diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "OPEN: physical iPhone and iPad preview mapping, release/cancel, top-edge, and VoiceOver verification.",
+    "OPEN: physical-device flick p95 <= 50ms and supported-game 60fps measurement.",
+    "OPEN: Claude exact-head review and maintainer manual merge approval; GitHub Actions are repository-disabled.",
+    "OPEN: TestFlight build 20, deployment/archive/signing, account, content-rights, IAP, App Store review, and release gates."
+  ]
+}
