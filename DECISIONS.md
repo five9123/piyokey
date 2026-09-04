@@ -1780,6 +1780,15 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 터치 시작 즉시 탭을 확정한 뒤 플릭을 덧붙이면 한 제스처가 두 입력이 된다. 터치별 종료 시점에서 탭/플릭을 한 번만 선택하고, 플릭 자모를 기존 recipe의 시작 접두로 정규화하면 HangulEngine과 자모 판정을 배열 독립적으로 유지하면서 기존 all-tap 회귀도 보존할 수 있다.
 - 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView` 터치 추적, `Korean10KeyInterpreter`, 덱·레슨 연습과 다섯 직접 입력 게임, de/en/es/fr/ja/ko VoiceOver 힌트, focused 단위·실기기·성능 회귀. OS IME와 동결 Android는 변경하지 않는다.
 
+## 2026-09-05 TYP-101 인앱 천지인 플릭 방향 미리보기
+
+- 관련: TYP-101, TYP-85, PRD v6.22·F2, Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`).
+- 결정: 정민의 명시 승인으로 iOS/iPadOS 1.1의 모든 플릭 지원 10키에 십자형 방향 미리보기를 추가한다. 중앙은 탭 키, 방향 후보는 `Korean10KeyFlickMapping`의 할당 결과로만 생성해 표시와 실제 입력의 매핑을 이중 정의하지 않는다.
+- 결정: 터치 이동 중 후보 강조에는 `Korean10KeyFlickGestureResolver`의 24pt·450ms·1.15배 축 우세 의미를 그대로 재사용하되 resolver와 입력 완료 경로는 변경하지 않는다. 릴리스와 UIKit 취소에서 미리보기를 즉시 제거하고 hit testing을 받지 않게 하며, 기존 VoiceOver 키 라벨과 현지화 방향 힌트는 유지한다. 최상단 행은 팝업 frame을 키보드 bounds 안으로 보정한다.
+- 결정: build 19는 동의 ON/OFF·Crashlytics 분석 배선 검증에만 사용하고 심사 제출하지 않는다. TYP-101과 TYP-102 source gate를 포함한 다음 후보를 build 20으로 둔다. 이 source 결정은 iPhone·iPad 실기기, p95 50ms 이하, 지원 게임 60fps, VoiceOver, TestFlight·CI·계정·권리·IAP·store gate를 완료한 것으로 간주하지 않는다.
+- 검증 gate: 기존 매핑·임계값 exact unit selector와 입력 UI 회귀를 유지하고, preview mapping parity·방향 강조·짧은 탭·release/cancel 제거·상단 보정·접근성 격리를 focused unit/UI selector로 고정한다. 동일 preview UI selector를 iPhone·iPad simulator에서 실행하되 실기기·성능 gate를 대체하지 않는다.
+- 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`의 view-layer 터치 관찰·팝업, focused 단위/UI 회귀, PRD·현황판. `Korean10KeyFlickGestureResolver`, `Korean10KeyInterpreter`, localization, OS IME, 롱프레스 숫자와 동결 Android는 변경하지 않는다.
+
 ## 2026-09-05 TYP-43 build 19 UI 정정과 분석 실설정
 
 - 관련: TYP-43, iOS/iPadOS 1.1 build 18 실물 감사와 사용자 화면 녹화.
