@@ -164,12 +164,11 @@ struct OSIMEInputPanel: View {
     .onDisappear {
       externalInputSourceBannerPresentation?.wrappedValue = .hidden
     }
-    .onChange(of: inputSourceBannerPresentation) { presentation in
-      externalInputSourceBannerPresentation?.wrappedValue = presentation
-    }
     .onChange(of: resetRevision) { _ in
       fieldText = acceptedText
-      showsInputSourceWarning = false
+      withAnimation(.easeOut(duration: 0.18)) {
+        updateInputSourceBannerPresentation(isVisible: false)
+      }
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
@@ -182,12 +181,12 @@ struct OSIMEInputPanel: View {
     .task(id: inputSourceWarningFeedbackRevision) {
       guard inputSourceWarningFeedbackRevision > 0 else { return }
       withAnimation(.easeOut(duration: 0.1)) {
-        isInputSourceWarningEmphasized = true
+        updateInputSourceBannerPresentation(isEmphasized: true)
       }
       try? await Task.sleep(nanoseconds: 420_000_000)
       guard !Task.isCancelled else { return }
       withAnimation(.easeOut(duration: 0.18)) {
-        isInputSourceWarningEmphasized = false
+        updateInputSourceBannerPresentation(isEmphasized: false)
       }
     }
   }
@@ -347,21 +346,45 @@ struct OSIMEInputPanel: View {
 
   private func handleUnsupportedASCIIInput(acceptedSequence: [Character]) {
     let shouldEmphasizeWarning = showsInputSourceWarning
-    showsInputSourceWarning = true
+    withAnimation(.easeOut(duration: 0.18)) {
+      updateInputSourceBannerPresentation(isVisible: true)
+    }
     fieldText = HangulComposer.compose(acceptedSequence).text
 
     guard shouldEmphasizeWarning else { return }
     inputSourceWarningFeedbackRevision &+= 1
     if !reduceMotion {
       withAnimation(.linear(duration: 0.3)) {
-        inputSourceWarningShakeStep += 1
+        updateInputSourceBannerPresentation(
+          shakeStep: inputSourceWarningShakeStep + 1
+        )
       }
     }
   }
 
   private func dismissInputSourceWarning() {
-    showsInputSourceWarning = false
-    isInputSourceWarningEmphasized = false
+    withAnimation(.easeOut(duration: 0.18)) {
+      updateInputSourceBannerPresentation(
+        isVisible: false,
+        isEmphasized: false
+      )
+    }
+  }
+
+  private func updateInputSourceBannerPresentation(
+    isVisible: Bool? = nil,
+    isEmphasized: Bool? = nil,
+    shakeStep: CGFloat? = nil
+  ) {
+    let presentation = OSIMEInputSourceBannerPresentation(
+      isVisible: isVisible ?? showsInputSourceWarning,
+      isEmphasized: isEmphasized ?? isInputSourceWarningEmphasized,
+      shakeStep: shakeStep ?? inputSourceWarningShakeStep
+    )
+    showsInputSourceWarning = presentation.isVisible
+    isInputSourceWarningEmphasized = presentation.isEmphasized
+    inputSourceWarningShakeStep = presentation.shakeStep
+    externalInputSourceBannerPresentation?.wrappedValue = presentation
   }
 }
 
