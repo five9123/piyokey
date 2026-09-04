@@ -1232,7 +1232,11 @@ final class HancoUITests: XCTestCase {
 
   func testOSIMEEnglishInputShowsSwitchHintWithoutChangingSessionAndResumesInKorean() {
     app.terminate()
-    app = makeApplication(resetKeyboardPreferences: true, koreanKeyboardAvailable: true)
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      koreanKeyboardAvailable: true,
+      audioProbe: true
+    )
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
     startPractice()
@@ -1245,12 +1249,29 @@ final class HancoUITests: XCTestCase {
     imeField.tap()
     imeField.typeText("r")
 
-    let warning = element("os_ime.input_source_warning")
+    let warning = element(
+      isIPadDestination
+        ? "os_ime.input_source_warning"
+        : "os_ime.input_source_warning.foreground"
+    )
     XCTAssertTrue(warning.waitForExistence(timeout: 3))
+    XCTAssertEqual(
+      element("os_ime.input_source_warning.foreground").exists,
+      !isIPadDestination,
+      "Only iPhone practice should externalize the hidden-panel warning into the foreground"
+    )
+    if !isIPadDestination {
+      XCTAssertTrue(
+        warning.frame.intersects(element("practice.target.card").frame),
+        "The foreground warning should visibly cover the top of the target card"
+      )
+    }
     XCTAssertTrue(app.staticTexts["英語キーボードになっています"].exists)
     XCTAssertEqual(element("practice.entered_text.value").value as? String, "…")
     XCTAssertEqual(element("practice.mistakes.value").value as? String, "0")
     attachScreenshot(named: "os-ime-english-source-warning-ja")
+
+    assertTYP98SpeakerStartsPronunciation(requiresHittable: false)
 
     imeField.typeText("t")
     XCTAssertTrue(warning.exists)
@@ -4313,6 +4334,7 @@ final class HancoUITests: XCTestCase {
   }
 
   private func assertTYP98SpeakerStartsPronunciation(
+    requiresHittable: Bool = true,
     file: StaticString = #filePath,
     line: UInt = #line
   ) {
@@ -4321,9 +4343,14 @@ final class HancoUITests: XCTestCase {
     let initialStartCount = pronunciationStarts.label
     let speakTarget = app.buttons["practice.speak_target"]
     XCTAssertTrue(speakTarget.waitForExistence(timeout: 3), file: file, line: line)
-    XCTAssertTrue(speakTarget.isHittable, app.debugDescription, file: file, line: line)
-
-    speakTarget.tap()
+    if requiresHittable {
+      XCTAssertTrue(speakTarget.isHittable, app.debugDescription, file: file, line: line)
+      speakTarget.tap()
+    } else {
+      // XCTest marks controls under a non-hit-testing SwiftUI overlay as not hittable;
+      // a coordinate event verifies that the overlay still passes the tap through.
+      speakTarget.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
 
     waitForLabelDifferentFrom(initialStartCount, on: pronunciationStarts, timeout: 3)
   }

@@ -98,6 +98,7 @@ struct OSIMEInputPanel: View {
   let showsChrome: Bool
   let showsFocusRecovery: Bool
   let isFocusSuspended: Bool
+  let externalInputSourceBannerPresentation: Binding<OSIMEInputSourceBannerPresentation>?
 
   @State private var fieldText = ""
   @State private var focusRevision = 0
@@ -118,7 +119,8 @@ struct OSIMEInputPanel: View {
     onConfirmedMismatch: @escaping () -> Void,
     showsChrome: Bool = true,
     showsFocusRecovery: Bool = false,
-    isFocusSuspended: Bool = false
+    isFocusSuspended: Bool = false,
+    externalInputSourceBannerPresentation: Binding<OSIMEInputSourceBannerPresentation>? = nil
   ) {
     self.target = target
     self.candidateTargets = candidateTargets
@@ -131,6 +133,7 @@ struct OSIMEInputPanel: View {
     self.showsChrome = showsChrome
     self.showsFocusRecovery = showsFocusRecovery
     self.isFocusSuspended = isFocusSuspended
+    self.externalInputSourceBannerPresentation = externalInputSourceBannerPresentation
   }
 
   var body: some View {
@@ -145,23 +148,24 @@ struct OSIMEInputPanel: View {
           .contentShape(Rectangle())
       }
 
-      if showsInputSourceWarning {
-        OSIMEInputSourceBanner(isEmphasized: isInputSourceWarningEmphasized)
-          .padding(.horizontal, 12)
-          .padding(.top, 10)
-          .transition(.move(edge: .top).combined(with: .opacity))
-          .modifier(
-            OSIMEInputSourceWarningShakeEffect(
-              animatableData: inputSourceWarningShakeStep
-            )
-          )
-          .allowsHitTesting(false)
+      if externalInputSourceBannerPresentation == nil {
+        OSIMEInputSourceBannerLayer(
+          presentation: inputSourceBannerPresentation,
+          accessibilityIdentifier: "os_ime.input_source_warning"
+        )
       }
     }
     .animation(.easeOut(duration: 0.18), value: showsInputSourceWarning)
     .onAppear {
       fieldText = acceptedText
+      externalInputSourceBannerPresentation?.wrappedValue = inputSourceBannerPresentation
       if !isFocusSuspended { requestFocus() }
+    }
+    .onDisappear {
+      externalInputSourceBannerPresentation?.wrappedValue = .hidden
+    }
+    .onChange(of: inputSourceBannerPresentation) { presentation in
+      externalInputSourceBannerPresentation?.wrappedValue = presentation
     }
     .onChange(of: resetRevision) { _ in
       fieldText = acceptedText
@@ -186,6 +190,14 @@ struct OSIMEInputPanel: View {
         isInputSourceWarningEmphasized = false
       }
     }
+  }
+
+  private var inputSourceBannerPresentation: OSIMEInputSourceBannerPresentation {
+    OSIMEInputSourceBannerPresentation(
+      isVisible: showsInputSourceWarning,
+      isEmphasized: isInputSourceWarningEmphasized,
+      shakeStep: inputSourceWarningShakeStep
+    )
   }
 
   private var compactInputPanel: some View {
@@ -353,6 +365,39 @@ struct OSIMEInputPanel: View {
   }
 }
 
+struct OSIMEInputSourceBannerPresentation: Equatable {
+  let isVisible: Bool
+  let isEmphasized: Bool
+  let shakeStep: CGFloat
+
+  static let hidden = OSIMEInputSourceBannerPresentation(
+    isVisible: false,
+    isEmphasized: false,
+    shakeStep: 0
+  )
+}
+
+struct OSIMEInputSourceBannerLayer: View {
+  let presentation: OSIMEInputSourceBannerPresentation
+  let accessibilityIdentifier: String
+
+  var body: some View {
+    if presentation.isVisible {
+      OSIMEInputSourceBanner(isEmphasized: presentation.isEmphasized)
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .transition(.move(edge: .top).combined(with: .opacity))
+        .modifier(
+          OSIMEInputSourceWarningShakeEffect(
+            animatableData: presentation.shakeStep
+          )
+        )
+        .allowsHitTesting(false)
+        .accessibilityIdentifier(accessibilityIdentifier)
+    }
+  }
+}
+
 struct OSIMEInputSourceBanner: View {
   let isEmphasized: Bool
 
@@ -386,7 +431,6 @@ struct OSIMEInputSourceBanner: View {
         )
     }
     .accessibilityElement(children: .combine)
-    .accessibilityIdentifier("os_ime.input_source_warning")
   }
 }
 

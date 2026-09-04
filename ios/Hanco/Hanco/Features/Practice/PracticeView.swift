@@ -61,6 +61,8 @@ struct PracticeView: View {
   @State private var inputResetRevision = 0
   @State private var isSessionSettingsPresented = false
   @State private var isOSIMEFocusSuspended = false
+  @State private var osIMEInputSourceBannerPresentation =
+    OSIMEInputSourceBannerPresentation.hidden
   @State private var showsOSIMEUnavailable = false
   @State private var showsResult = false
   @State private var exitsAfterResultDismiss = false
@@ -195,6 +197,17 @@ struct PracticeView: View {
           }
         }
         .scrollDismissesKeyboard(.never)
+        .overlay(alignment: .top) {
+          if overlaysHiddenOSIMEInput {
+            // The hidden field stays behind the content for blank-area refocus, while
+            // the warning must remain visible above the opaque practice cards.
+            OSIMEInputSourceBannerLayer(
+              presentation: osIMEInputSourceBannerPresentation,
+              accessibilityIdentifier: "os_ime.input_source_warning.foreground"
+            )
+            .allowsHitTesting(false)
+          }
+        }
       }
 
       inputArea
@@ -765,7 +778,9 @@ struct PracticeView: View {
       onConfirmedMismatch: viewModel.recordConfirmedOSIMEMistake,
       showsChrome: false,
       showsFocusRecovery: showsFocusRecovery,
-      isFocusSuspended: isOSIMEFocusSuspended
+      isFocusSuspended: isOSIMEFocusSuspended,
+      externalInputSourceBannerPresentation: overlaysHiddenOSIMEInput
+        ? $osIMEInputSourceBannerPresentation : nil
     )
   }
 
