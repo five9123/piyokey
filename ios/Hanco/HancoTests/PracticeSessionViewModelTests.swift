@@ -933,6 +933,31 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertEqual(interpreter.inputCompletedJamo(nil, expecting: "ㅏ"), .incorrect(expected: "ㅏ"))
   }
 
+  func testKorean10KeyPendingMatchingCompletedFlickCountsOneMistakeWithoutAdvancing() {
+    let model = PracticeSessionViewModel(target: "가")
+    var interpreter = Korean10KeyInterpreter()
+
+    XCTAssertEqual(interpreter.input(.giyeok, expecting: model.nextExpectedKey), .committed("ㄱ"))
+    model.input("ㄱ")
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+
+    XCTAssertEqual(
+      interpreter.input(.vertical, expecting: model.nextExpectedKey),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      interpreter.inputCompletedJamo("ㅏ", expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㅏ")
+    )
+    model.recordConfirmedOSIMEMistake()
+
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 1)
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+    XCTAssertEqual(model.enteredText, "ㄱ")
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .vertical)
+  }
+
   func testKorean10KeyEmitsOnlyCompletedJamoIntoSharedJudge() throws {
     for target in ["가나", "꽤", "뼈", "휘", "의자", "언니", "띄어 쓰기", "외국"] {
       let model = PracticeSessionViewModel(target: target)
@@ -1004,8 +1029,10 @@ final class PracticeSessionViewModelTests: XCTestCase {
       interpreter.input(.nieun, expecting: model.nextExpectedKey),
       .incorrect(expected: "ㄴ")
     )
-    model.input("ㄹ")
+    model.recordConfirmedOSIMEMistake()
     XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 3)
+    XCTAssertEqual(model.nextExpectedKey, "ㄴ")
     XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .next)
     XCTAssertEqual(
       interpreter.input(.next, expecting: model.nextExpectedKey),

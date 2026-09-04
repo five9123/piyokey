@@ -525,22 +525,19 @@ struct FlowGameView: View {
   private func inputKorean10Key(_ key: Korean10KeyKey) {
     markBuiltInInputUsed()
     applyKorean10KeyInterpretation(
-      korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey),
-      incorrectInput: key.displayText.first ?? "ㆍ"
+      korean10KeyInterpreter.input(key, expecting: viewModel.nextExpectedKey)
     )
   }
 
   private func inputKorean10KeyCompletedJamo(_ jamo: Character?) {
     markBuiltInInputUsed()
     applyKorean10KeyInterpretation(
-      korean10KeyInterpreter.inputCompletedJamo(jamo, expecting: viewModel.nextExpectedKey),
-      incorrectInput: jamo ?? "ㆍ"
+      korean10KeyInterpreter.inputCompletedJamo(jamo, expecting: viewModel.nextExpectedKey)
     )
   }
 
   private func applyKorean10KeyInterpretation(
-    _ interpretation: Korean10KeyInterpretation,
-    incorrectInput: Character
+    _ interpretation: Korean10KeyInterpretation
   ) {
     switch interpretation {
     case .pending, .separatorAccepted:
@@ -548,7 +545,7 @@ struct FlowGameView: View {
     case .committed(let jamo):
       viewModel.input(jamo)
     case .incorrect:
-      viewModel.input(incorrectInput)
+      viewModel.recordConfirmedOSIMEMistake()
     }
   }
 

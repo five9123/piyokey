@@ -225,6 +225,12 @@ final class HancoUITests: XCTestCase {
     flick(siot, fromX: 0.8, toX: 0.2)
     waitForValue("1 / 9", on: progress, timeout: 3)
 
+    vertical.tap()
+    XCTAssertEqual(progress.value as? String, "1 / 9")
+    flick(vertical, fromX: 0.2, toX: 0.8)
+    XCTAssertEqual(progress.value as? String, "1 / 9")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "1")
+
     flick(vertical, fromX: 0.2, toX: 0.8)
     waitForValue("2 / 9", on: progress, timeout: 3)
     XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")

@@ -125,6 +125,39 @@ final class ChoseongQuizViewModelTests: XCTestCase {
     XCTAssertEqual(byID["music"]?.requiresMeaningHint, false)
   }
 
+  func testTypingKorean10KeyPendingMatchingCompletedFlickCountsOneMistakeWithoutAdvancing() {
+    let answer = item("ga", "가")
+    let model = ChoseongTypingViewModel(
+      rounds: [
+        ChoseongTypingRound(answer: answer, initials: "ㄱ", requiresMeaningHint: false)
+      ]
+    )
+    let origin = Date(timeIntervalSince1970: 4_400)
+    var interpreter = Korean10KeyInterpreter()
+    model.start(at: origin)
+
+    XCTAssertEqual(interpreter.input(.giyeok, expecting: model.nextExpectedKey), .committed("ㄱ"))
+    XCTAssertEqual(model.input("ㄱ", at: origin.addingTimeInterval(1)), .correct)
+    XCTAssertEqual(
+      interpreter.input(.vertical, expecting: model.nextExpectedKey),
+      .pending(display: "ㅣ")
+    )
+    XCTAssertEqual(
+      interpreter.inputCompletedJamo("ㅏ", expecting: model.nextExpectedKey),
+      .incorrect(expected: "ㅏ")
+    )
+
+    XCTAssertEqual(
+      model.recordConfirmedOSIMEMistake(at: origin.addingTimeInterval(2)),
+      .incorrect(answer: answer, expected: "ㅏ", jamoIndex: 1)
+    )
+    XCTAssertEqual(model.mistakeCount, 1)
+    XCTAssertEqual(model.completedJamoCount, 1)
+    XCTAssertEqual(model.nextExpectedKey, "ㅏ")
+    XCTAssertEqual(model.enteredText, "ㄱ")
+    XCTAssertEqual(interpreter.nextKey(for: model.nextExpectedKey), .vertical)
+  }
+
   func testRequiredDisambiguationHintCanOpenWithoutScorePenalty() {
     let answer = item("company", "회사")
     let model = ChoseongTypingViewModel(
