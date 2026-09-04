@@ -669,6 +669,7 @@
 				D00000000000000000000001 /* Sources */,
 				D00000000000000000000002 /* Frameworks */,
 				D00000000000000000000003 /* Resources */,
+				D40000000000000000000002 /* Embed Firebase Config */,
 				D40000000000000000000001 /* Upload Crashlytics Symbols */,
 			);
 			buildRules = (
@@ -824,6 +825,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D40000000000000000000002 /* Embed Firebase Config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Firebase Config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" != \"Release\" ]; then\n  exit 0\nfi\nsource_path=\"${PROJECT_DIR}/Hanco/Resources/GoogleService-Info.plist\"\nif [ \"${ACTION}\" = \"install\" ] && [ ! -f \"${source_path}\" ]; then\n  echo \"error: Release archive requires GoogleService-Info.plist\" >&2\n  exit 1\nfi\nif [ \"${ACTION}\" = \"install\" ] && [ -z \"${PIYOKEY_POSTHOG_PROJECT_TOKEN}\" ]; then\n  echo \"error: Release archive requires PIYOKEY_POSTHOG_PROJECT_TOKEN\" >&2\n  exit 1\nfi\nif [ ! -f \"${source_path}\" ]; then\n  exit 0\nfi\ndestination_path=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\n/bin/cp \"${source_path}\" \"${destination_path}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D40000000000000000000001 /* Upload Crashlytics Symbols */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -841,7 +862,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" != \"Release\" ] || [ ! -f \"${PROJECT_DIR}/Hanco/Resources/GoogleService-Info.plist\" ]; then\n  exit 0\nfi\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+			shellScript = "if [ \"${CONFIGURATION}\" != \"Release\" ] || [ \"${ACTION}\" != \"install\" ] || [ ! -f \"${PROJECT_DIR}/Hanco/Resources/GoogleService-Info.plist\" ]; then\n  exit 0\nfi\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

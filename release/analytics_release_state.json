@@ -5,7 +5,7 @@
   "gates": {
     "posthog_eu_project_created": true,
     "posthog_billing_limit_guarded": true,
-    "firebase_ios_app_registered": false,
+    "firebase_ios_app_registered": true,
     "firebase_android_app_registered": false,
     "ios_dsym_symbolication_verified": false,
     "android_r8_mapping_verified": false,

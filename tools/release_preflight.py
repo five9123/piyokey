@@ -872,6 +872,9 @@ def repository_checks(root: Path) -> list[Finding]:
     for required in (
         "PostHog in Frameworks",
         "FirebaseCrashlytics in Frameworks",
+        "Embed Firebase Config",
+        "Release archive requires GoogleService-Info.plist",
+        "Release archive requires PIYOKEY_POSTHOG_PROJECT_TOKEN",
         "Upload Crashlytics Symbols",
         "AnalyticsContract.generated.swift in Sources",
         "TelemetryService.swift in Sources",
