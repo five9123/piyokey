@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "verified_commit": "d56453c54db025441e071bbceefaec159275e8cd",
+  "verified_tree": "b8737eb5a7861f162ac57e1f851669a4010b6c39",
+  "branch": "codex/85-ios-10key-flick",
+  "scope": "TYP-85 P2/P3 explicit mistake recording for iOS/iPadOS 1.1 in-app Korean 10-key flick on origin/main 4a27d6b",
+  "result": "pass",
+  "recorded_at": "2026-09-04T15:09:31.092558+00:00",
+  "checks": [
+    {
+      "name": "Latest origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main d56453c54db025441e071bbceefaec159275e8cd",
+      "note": "origin/main 4a27d6be955236ed3d7a5786e9aea08b1e96ad36 is an ancestor"
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "All strict worktree, ownership and repository checks passed"
+    },
+    {
+      "name": "Python repository suite",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "107 tests passed, 0 failures"
+    },
+    {
+      "name": "HangulEngine full package suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine and swift test",
+      "note": "67 tests passed, 0 failures"
+    },
+    {
+      "name": "Full HancoTests target",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPhone 17,OS=26.5 -derivedDataPath /private/tmp/TYP85Build18Source -only-testing:HancoTests",
+      "note": "425 tests passed, 0 failures, 0 skipped"
+    },
+    {
+      "name": "iPhone flick UI coverage",
+      "status": "pass",
+      "command": "xcodebuild test on iPhone 17 for HancoUITests testKorean10KeyFlickCommitsOneJamoPerGesture",
+      "note": "1 test passed, 0 failures"
+    },
+    {
+      "name": "iPad flick UI coverage",
+      "status": "pass",
+      "command": "xcodebuild test on iPad Pro 13-inch M5 for HancoUITests testKorean10KeyFlickCommitsOneJamoPerGesture",
+      "note": "1 test passed, 0 failures"
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository preflight passed"
+    },
+    {
+      "name": "Diff integrity",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": "No whitespace errors on clean verified commit"
+    }
+  ],
+  "manual_gates": [
+    "Canonical exact-head Claude rereview remains OPEN until the evidence-only head is pushed and review:claude is attached",
+    "Human native iPhone 10-key full mapping table remains OPEN; any mismatch is a release blocker. Physical iPad full mapping remains OPEN",
+    "Physical iPhone and iPad stationary long-press, cancelled touch and concurrent multi-touch verification remains OPEN",
+    "Physical-device touch-up-to-render p95 <= 50 ms, supported-game 60 fps and VoiceOver verification remains OPEN",
+    "Maintainer manual approval and PR merge remain OPEN; no merge is authorized",
+    "Build 17 is superseded and must not be uploaded; build 18 archive, upload and App Store Connect actions were not performed",
+    "Release signing, TestFlight, account, content-rights, IAP, store and external-service gates remain OPEN"
+  ]
+}
