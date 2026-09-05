@@ -3408,11 +3408,17 @@ final class HancoUITests: XCTestCase {
     finishHatchMissionResult()
 
     XCTAssertTrue(element("mascot.growth.celebration").waitForExistence(timeout: 5))
+    XCTAssertEqual(
+      app.descendants(matching: .any)
+        .matching(identifier: "mascot.growth.celebration").allElementsBoundByIndex.count,
+      1
+    )
     XCTAssertFalse(app.textFields["mascot.growth.name"].exists)
     XCTAssertTrue(app.buttons["mascot.growth.confirm"].waitForExistence(timeout: 4))
     app.buttons["mascot.growth.confirm"].tap()
 
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("mascot.growth.celebration").exists)
     assertAppTourStep("homePrimary")
     attachScreenshot(named: "app-tour-home-primary-ja")
 
@@ -3459,6 +3465,50 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("app_tour.step.homePrimary").waitForExistence(timeout: 1))
     XCTAssertTrue(element("home.primary.recommend_deck").exists)
     XCTAssertFalse(element("home.primary.resume_curriculum").exists)
+  }
+
+  func testFinalHatchCompletionPersistsBeforeCelebrationAndRelaunchSkipsMissionThree() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 1,
+      showsHatchOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+    let firstMission = app.buttons["onboarding.hatch.continue"]
+    scrollToHittable(firstMission)
+    firstMission.tap()
+
+    waitForLabel("ㄱ", on: element("practice.target.value"), timeout: 5)
+    app.buttons["keyboard.key.ㄱ"].tap()
+    finishHatchMissionResult()
+    XCTAssertTrue(element("mascot.growth.celebration").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["mascot.growth.confirm"].waitForExistence(timeout: 4))
+    app.buttons["mascot.growth.confirm"].tap()
+
+    waitForLabel("ㅏ", on: element("practice.target.value"), timeout: 5)
+    app.buttons["keyboard.key.ㅏ"].tap()
+    finishHatchMissionResult()
+
+    waitForLabel("가", on: element("practice.target.value"), timeout: 5)
+    app.buttons["keyboard.key.ㄱ"].tap()
+    app.buttons["keyboard.key.ㅏ"].tap()
+    finishHatchMissionResult()
+
+    // The final CTA is enabled only after finishAndWait has written and read back
+    // mission 3. Terminate before the delayed celebration can finish.
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      showsHatchOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("onboarding.hatch.screen").exists)
+    XCTAssertFalse(element("practice.target.value").exists)
   }
 
   func testAppTourLayoutAcrossRepresentativeScreenSize() {
