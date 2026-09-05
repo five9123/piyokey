@@ -131,37 +131,101 @@ final class CurriculumProgressStoreTests: XCTestCase {
     )
   }
 
-  func testFinalHatchTransitionWaitsForResultPopAndCompletesExactlyOnce() {
-    var transition = FinalHatchTransitionCoordinator()
+  func testHatchTransitionSerializesMissionOneCelebrationBeforeMissionTwoExactlyOnce() {
+    var transition = HatchMissionTransitionCoordinator(activeStageID: "mission-1")
 
     XCTAssertEqual(
-      transition.resultDidDismiss(pendingCelebration: .chick),
+      transition.resultDidDismiss(
+        completedStageID: "mission-1",
+        nextStageID: "mission-2",
+        pendingCelebration: .hatching
+      ),
       .waitForPresentationTransition
     )
-    XCTAssertEqual(transition.resultDidDismiss(pendingCelebration: .chick), .none)
-    XCTAssertEqual(transition.state, .waitingForPresentationTransition(.chick))
+    XCTAssertEqual(
+      transition.resultDidDismiss(
+        completedStageID: "mission-1",
+        nextStageID: "mission-2",
+        pendingCelebration: .hatching
+      ),
+      .none
+    )
+    XCTAssertTrue(transition.ownsCelebration(for: "mission-1"))
 
+    XCTAssertEqual(
+      transition.presentationTransitionDidFinish(),
+      .presentCelebration(.hatching)
+    )
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
+    XCTAssertEqual(transition.celebrationDidDismiss(), .advanceToMission("mission-2"))
+    XCTAssertEqual(transition.celebrationDidDismiss(), .none)
+    XCTAssertTrue(transition.missionDidActivate("mission-2"))
+    XCTAssertFalse(transition.missionDidActivate("mission-2"))
+    XCTAssertEqual(transition.state, .awaitingResultDismissal("mission-2"))
+    XCTAssertEqual(
+      transition.resultDidDismiss(
+        completedStageID: "mission-1",
+        nextStageID: "mission-2",
+        pendingCelebration: nil
+      ),
+      .none
+    )
+  }
+
+  func testHatchTransitionSerializesMissionTwoResultBeforeMissionThree() {
+    var transition = HatchMissionTransitionCoordinator(activeStageID: "mission-2")
+
+    XCTAssertEqual(
+      transition.resultDidDismiss(
+        completedStageID: "mission-2",
+        nextStageID: "mission-3",
+        pendingCelebration: nil
+      ),
+      .waitForPresentationTransition
+    )
+    XCTAssertEqual(
+      transition.presentationTransitionDidFinish(),
+      .advanceToMission("mission-3")
+    )
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
+    XCTAssertTrue(transition.missionDidActivate("mission-3"))
+    XCTAssertEqual(transition.state, .awaitingResultDismissal("mission-3"))
+  }
+
+  func testHatchTransitionSerializesFinalCelebrationAndHomeExactlyOnce() {
+    var transition = HatchMissionTransitionCoordinator(activeStageID: "mission-3")
+
+    XCTAssertEqual(
+      transition.resultDidDismiss(
+        completedStageID: "mission-3",
+        nextStageID: nil,
+        pendingCelebration: .chick
+      ),
+      .waitForPresentationTransition
+    )
     XCTAssertEqual(
       transition.presentationTransitionDidFinish(),
       .presentCelebration(.chick)
     )
-    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
-    XCTAssertEqual(transition.celebrationDidDismiss(), .advance)
+    XCTAssertEqual(transition.celebrationDidDismiss(), .completeHatch)
     XCTAssertEqual(transition.celebrationDidDismiss(), .none)
-    XCTAssertEqual(transition.hatchDidComplete(), .completeHatch)
-    XCTAssertEqual(transition.hatchDidComplete(), .none)
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
     XCTAssertEqual(transition.state, .completed)
   }
 
-  func testFinalHatchTransitionWithoutPendingCelebrationStillWaitsForResultPop() {
-    var transition = FinalHatchTransitionCoordinator()
+  func testHatchTransitionFinalWithoutPendingCelebrationStillWaitsForResultPop() {
+    var transition = HatchMissionTransitionCoordinator(activeStageID: "mission-3")
 
     XCTAssertEqual(
-      transition.resultDidDismiss(pendingCelebration: nil),
+      transition.resultDidDismiss(
+        completedStageID: "mission-3",
+        nextStageID: nil,
+        pendingCelebration: nil
+      ),
       .waitForPresentationTransition
     )
-    XCTAssertEqual(transition.presentationTransitionDidFinish(), .advance)
-    XCTAssertEqual(transition.hatchDidComplete(), .completeHatch)
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .completeHatch)
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
   }
 
   func testActiveSessionRoundTripsAndFailedAttemptClearsWithoutCompletion() throws {
@@ -290,6 +354,32 @@ final class CurriculumProgressStoreTests: XCTestCase {
       HatchOnboardingPolicy.isComplete(
         completedStageIDs: relaunchedLibrary.completedStageIDs
       )
+    )
+    XCTAssertNil(relaunchedLibrary.activeSession)
+  }
+
+  @MainActor
+  func testSecondHatchCompletionSurvivesImmediateLibraryReloadAndResumesMissionThree()
+    async throws
+  {
+    let requiredStages = HatchOnboardingPolicy.requiredStages
+    XCTAssertEqual(requiredStages.count, 3)
+    try store.finishStage(stageId: requiredStages[0].id, stars: 3, accuracy: 100)
+    let library = CurriculumProgressLibrary(store: store)
+
+    let persisted = await library.finishAndWait(
+      stageId: requiredStages[1].id,
+      stars: 3,
+      accuracy: 100
+    )
+    let relaunchedLibrary = CurriculumProgressLibrary(store: store)
+
+    XCTAssertTrue(persisted)
+    XCTAssertEqual(
+      HatchOnboardingPolicy.nextRequiredStage(
+        completedStageIDs: relaunchedLibrary.completedStageIDs
+      )?.id,
+      requiredStages[2].id
     )
     XCTAssertNil(relaunchedLibrary.activeSession)
   }
