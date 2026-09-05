@@ -359,10 +359,14 @@ struct Korean10KeyFlickPreviewState: Equatable {
 
 struct Korean10KeyFlickPreviewTracker: Equatable {
   private(set) var activeStates: [Korean10KeyKey: Korean10KeyFlickPreviewState] = [:]
+  private var activeTouchCounts: [Korean10KeyKey: Int] = [:]
 
   mutating func begin(key: Korean10KeyKey) {
     guard key.supportsFlick else { return }
-    activeStates[key] = Korean10KeyFlickPreviewState(key: key)
+    activeTouchCounts[key, default: 0] += 1
+    if activeStates[key] == nil {
+      activeStates[key] = Korean10KeyFlickPreviewState(key: key)
+    }
   }
 
   mutating func move(key: Korean10KeyKey, gesture: KeyboardTouchGesture) {
@@ -373,22 +377,161 @@ struct Korean10KeyFlickPreviewTracker: Equatable {
   }
 
   mutating func finish(key: Korean10KeyKey, wasCancelled _: Bool) {
-    activeStates.removeValue(forKey: key)
+    let remainingCount = activeTouchCounts[key, default: 0] - 1
+    if remainingCount > 0 {
+      activeTouchCounts[key] = remainingCount
+    } else {
+      activeTouchCounts.removeValue(forKey: key)
+      activeStates.removeValue(forKey: key)
+    }
   }
 }
 
 enum Korean10KeyFlickPreviewLayout {
-  static func popupFrame(
+  struct Candidate: Equatable {
+    let position: Korean10KeyFlickPreviewPosition
+    let petalFrame: CGRect
+    let stemStart: CGPoint
+    let stemEnd: CGPoint
+  }
+
+  struct Result: Equatable {
+    let anchorFrame: CGRect
+    let candidates: [Candidate]
+  }
+
+  static func result(
     anchor: CGRect,
     keyboardBounds: CGRect,
-    cellSize: CGFloat
-  ) -> CGRect {
-    let side = cellSize * 3
-    let maximumX = max(keyboardBounds.minX, keyboardBounds.maxX - side)
-    let maximumY = max(keyboardBounds.minY, keyboardBounds.maxY - side)
-    let originX = min(max(anchor.midX - side / 2, keyboardBounds.minX), maximumX)
-    let originY = min(max(anchor.midY - side / 2, keyboardBounds.minY), maximumY)
-    return CGRect(x: originX, y: originY, width: side, height: side)
+    petalSize: CGFloat,
+    positions: [Korean10KeyFlickPreviewPosition]
+  ) -> Result {
+    let spacing = max(6, petalSize * 0.18)
+    let step = petalSize + spacing
+    let halfPetal = petalSize / 2
+    let topY = anchor.minY - spacing - halfPetal
+    let bottomY = anchor.maxY + spacing + halfPetal
+    let leftX = anchor.minX - spacing - halfPetal
+    let rightX = anchor.maxX + spacing + halfPetal
+
+    let rowX = fittedCenters(
+      [anchor.midX - step, anchor.midX, anchor.midX + step],
+      minimum: keyboardBounds.minX + halfPetal,
+      maximum: keyboardBounds.maxX - halfPetal
+    )
+    let columnY = fittedCenters(
+      [anchor.midY - step, anchor.midY, anchor.midY + step],
+      minimum: keyboardBounds.minY + halfPetal,
+      maximum: keyboardBounds.maxY - halfPetal
+    )
+
+    let topFrames = rowX.map { petalFrame(center: CGPoint(x: $0, y: topY), size: petalSize) }
+    let bottomFrames = rowX.map {
+      petalFrame(center: CGPoint(x: $0, y: bottomY), size: petalSize)
+    }
+    let leftFrames = columnY.map { petalFrame(center: CGPoint(x: leftX, y: $0), size: petalSize) }
+    let rightFrames = columnY.map {
+      petalFrame(center: CGPoint(x: rightX, y: $0), size: petalSize)
+    }
+
+    var occupiedFrames: [CGRect] = []
+    var candidates: [Candidate] = []
+    for position in positions where position != .center {
+      let preferredFrames: [CGRect]
+      switch position {
+      case .left:
+        preferredFrames =
+          [
+            leftFrames[1], leftFrames[0], leftFrames[2], bottomFrames[0],
+            topFrames[0], bottomFrames[1], topFrames[1],
+          ]
+          + rightFrames + bottomFrames + topFrames
+      case .right:
+        preferredFrames =
+          [
+            rightFrames[1], rightFrames[0], rightFrames[2], bottomFrames[2],
+            topFrames[2], bottomFrames[1], topFrames[1],
+          ]
+          + leftFrames + Array(bottomFrames.reversed()) + Array(topFrames.reversed())
+      case .up:
+        preferredFrames =
+          [
+            topFrames[1], topFrames[0], topFrames[2], leftFrames[0],
+            rightFrames[0], leftFrames[1], rightFrames[1],
+          ]
+          + bottomFrames + leftFrames + rightFrames
+      case .down:
+        preferredFrames =
+          [
+            bottomFrames[1], bottomFrames[0], bottomFrames[2], leftFrames[2],
+            rightFrames[2], leftFrames[1], rightFrames[1],
+          ]
+          + Array(topFrames.reversed()) + Array(leftFrames.reversed())
+          + Array(rightFrames.reversed())
+      case .center:
+        preferredFrames = []
+      }
+
+      guard
+        let frame = preferredFrames.first(where: { candidateFrame in
+          keyboardBounds.contains(candidateFrame)
+            && !candidateFrame.intersects(anchor)
+            && !occupiedFrames.contains(where: { occupiedFrame in
+              occupiedFrame.insetBy(dx: -spacing / 2, dy: -spacing / 2)
+                .intersects(candidateFrame)
+            })
+        })
+      else { continue }
+
+      occupiedFrames.append(frame)
+      let stemStart = anchorPoint(for: position, in: anchor)
+      candidates.append(
+        Candidate(
+          position: position,
+          petalFrame: frame,
+          stemStart: stemStart,
+          stemEnd: closestPoint(on: frame, to: stemStart)
+        )
+      )
+    }
+
+    return Result(anchorFrame: anchor, candidates: candidates)
+  }
+
+  private static func petalFrame(center: CGPoint, size: CGFloat) -> CGRect {
+    CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
+  }
+
+  private static func fittedCenters(
+    _ centers: [CGFloat],
+    minimum: CGFloat,
+    maximum: CGFloat
+  ) -> [CGFloat] {
+    guard let first = centers.first, let last = centers.last else { return centers }
+    let leadingAdjustment = max(0, minimum - first)
+    let trailingAdjustment = min(0, maximum - (last + leadingAdjustment))
+    let adjustment = leadingAdjustment + trailingAdjustment
+    return centers.map { $0 + adjustment }
+  }
+
+  private static func anchorPoint(
+    for position: Korean10KeyFlickPreviewPosition,
+    in anchor: CGRect
+  ) -> CGPoint {
+    switch position {
+    case .center: CGPoint(x: anchor.midX, y: anchor.midY)
+    case .left: CGPoint(x: anchor.minX, y: anchor.midY)
+    case .right: CGPoint(x: anchor.maxX, y: anchor.midY)
+    case .up: CGPoint(x: anchor.midX, y: anchor.minY)
+    case .down: CGPoint(x: anchor.midX, y: anchor.maxY)
+    }
+  }
+
+  private static func closestPoint(on frame: CGRect, to point: CGPoint) -> CGPoint {
+    CGPoint(
+      x: min(max(point.x, frame.minX), frame.maxX),
+      y: min(max(point.y, frame.minY), frame.maxY)
+    )
   }
 }
 
@@ -1224,6 +1367,11 @@ struct Korean10KeyKeyboardView: View {
       tenKey(.space, systemImage: "space")
         .padding(.horizontal, 56)
     }
+    .frame(maxWidth: adaptiveMetrics.isExpanded ? 600 : .infinity)
+    .frame(maxWidth: .infinity)
+    .padding(.horizontal, 12)
+    .padding(.top, 10)
+    .padding(.bottom, 8)
     .coordinateSpace(name: KeyboardCoordinateSpace.name)
     .overlayPreferenceValue(KeyboardKeyBoundsPreferenceKey.self) { anchors in
       GeometryReader { proxy in
@@ -1238,11 +1386,6 @@ struct Korean10KeyKeyboardView: View {
         }
       }
     }
-    .frame(maxWidth: adaptiveMetrics.isExpanded ? 600 : .infinity)
-    .frame(maxWidth: .infinity)
-    .padding(.horizontal, 12)
-    .padding(.top, 10)
-    .padding(.bottom, 8)
     .background(.ultraThinMaterial)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text("keyboard.10key.accessibility_label"))
@@ -1328,14 +1471,21 @@ struct Korean10KeyKeyboardView: View {
         let anchor = anchors[.korean10Key(key)]
       {
         let keyFrame = proxy[anchor]
-        let cellSize = max(36, keyFrame.height * 0.78)
-        let popupFrame = Korean10KeyFlickPreviewLayout.popupFrame(
+        let petalSize = max(36, keyFrame.height * 0.78)
+        let candidates = Korean10KeyFlickMapping.previewCandidates(for: state.key)
+        let layout = Korean10KeyFlickPreviewLayout.result(
           anchor: keyFrame,
           keyboardBounds: CGRect(origin: .zero, size: proxy.size),
-          cellSize: cellSize
+          petalSize: petalSize,
+          positions: Korean10KeyFlickPreviewPosition.directionalCases.filter {
+            candidates[$0] != nil
+          }
         )
-        Korean10KeyFlickPreview(state: state, cellSize: cellSize)
-          .position(x: popupFrame.midX, y: popupFrame.midY)
+        Korean10KeyFlickPreview(
+          state: state,
+          layout: layout,
+          keyboardSize: proxy.size
+        )
       }
     }
   }
@@ -1441,7 +1591,8 @@ private struct Korean10KeyFlickPreview: View {
   @Environment(\.hancoFontScale) private var fontScale
 
   let state: Korean10KeyFlickPreviewState
-  let cellSize: CGFloat
+  let layout: Korean10KeyFlickPreviewLayout.Result
+  let keyboardSize: CGSize
 
   private var candidates: Korean10KeyFlickPreviewCandidates {
     Korean10KeyFlickMapping.previewCandidates(for: state.key)
@@ -1449,26 +1600,41 @@ private struct Korean10KeyFlickPreview: View {
 
   var body: some View {
     ZStack {
-      ForEach(Korean10KeyFlickPreviewPosition.allCases, id: \.self) { position in
+      ForEach(layout.candidates, id: \.position) { candidate in
+        let position = candidate.position
+        let isHighlighted = state.highlightedPosition == position
+
+        Path { path in
+          path.move(to: candidate.stemStart)
+          path.addLine(to: candidate.stemEnd)
+        }
+        .stroke(
+          isHighlighted ? AppPalette.accent : AppPalette.key,
+          style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round)
+        )
+        .shadow(color: AppPalette.keyShadow, radius: 3, y: 2)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+      }
+
+      ForEach(layout.candidates, id: \.position) { candidate in
+        let position = candidate.position
+        let isHighlighted = state.highlightedPosition == position
         if let label = candidates[position] {
-          let isHighlighted = state.highlightedPosition == position
           Text(verbatim: label)
             .font(.system(size: 19 * fontScale, weight: .bold, design: .rounded))
             .foregroundStyle(isHighlighted ? Color.white : AppPalette.ink)
-            .frame(width: cellSize, height: cellSize)
+            .frame(width: candidate.petalFrame.width, height: candidate.petalFrame.height)
             .background(
               isHighlighted ? AppPalette.accent : AppPalette.key,
-              in: RoundedRectangle(cornerRadius: 11, style: .continuous)
+              in: RoundedRectangle(cornerRadius: 14, style: .continuous)
             )
             .overlay {
-              RoundedRectangle(cornerRadius: 11, style: .continuous)
+              RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(AppPalette.keyShadow.opacity(0.85), lineWidth: 1)
             }
             .shadow(color: AppPalette.keyShadow, radius: 5, y: 3)
-            .offset(
-              x: position.gridOffset.width * cellSize,
-              y: position.gridOffset.height * cellSize
-            )
+            .position(x: candidate.petalFrame.midX, y: candidate.petalFrame.midY)
             .accessibilityLabel(Text(verbatim: label))
             .accessibilityValue(Text(verbatim: isHighlighted ? "highlighted" : ""))
             .accessibilityIdentifier(
@@ -1477,7 +1643,7 @@ private struct Korean10KeyFlickPreview: View {
         }
       }
     }
-    .frame(width: cellSize * 3, height: cellSize * 3)
+    .frame(width: keyboardSize.width, height: keyboardSize.height, alignment: .topLeading)
     .accessibilityElement(children: .contain)
     .accessibilityIdentifier("keyboard.10key.preview.\(state.key.rawValue)")
     .accessibilityHidden(Korean10KeyFlickPreviewAccessibilityPolicy.isHidden())

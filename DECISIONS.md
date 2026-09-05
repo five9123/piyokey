@@ -1789,6 +1789,16 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: 기존 매핑·임계값 exact unit selector와 입력 UI 회귀를 유지하고, preview mapping parity·방향 강조·짧은 탭·release/cancel 제거·상단 보정·접근성 격리를 focused unit/UI selector로 고정한다. 동일 preview UI selector를 iPhone·iPad simulator에서 실행하되 실기기·성능 gate를 대체하지 않는다.
 - 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`의 view-layer 터치 관찰·팝업, focused 단위/UI 회귀, PRD·현황판. `Korean10KeyFlickGestureResolver`, `Korean10KeyInterpreter`, localization, OS IME, 롱프레스 숫자와 동결 Android는 변경하지 않는다.
 
+## 2026-09-06 TYP-106 플릭 팝업 물리 키 앵커 고정
+
+- 관련: TYP-106, TYP-101, TYP-85, PRD v6.24·F2, iOS/iPadOS 1.1 build 22.
+- 결정: 플릭 미리보기는 10키 전체 root 좌표계에서 키 anchor preference를 해석한다. 누른 물리 키캡 자체를 중앙 앵커로 계속 표시하고 별도의 중앙 후보 셀은 그리지 않으며, `Korean10KeyFlickMapping`이 반환한 유효 방향 후보만 각 물리 키 가장자리에서 stem과 petal로 연결한다.
+- 결정: 기본 방향 위치가 키보드 밖으로 나가는 상단·좌우·하단 가장자리 키에서는 물리 키 frame을 clamp하지 않는다. 후보 petal만 anchor와 서로 겹치지 않는 keyboard-bounds 내부 가용 rail로 옮기고 stem의 시작점은 원래 방향의 물리 키 edge에 고정한다.
+- 결정: release와 UIKit cancel은 해당 touch의 preview만 즉시 제거하고 다른 동시 touch preview를 보존한다. preview는 hit testing과 production 접근성 트리에서 제외해 기존 키 라벨·현지화 방향 힌트를 그대로 유지한다. 배열·키 크기·매핑·24pt·0.45초·1.15배 판정·롱프레스·입력 완료 경로는 변경하지 않는다.
+- 검증 gate: anchor 불변·상하좌우 edge·유효 후보만 표시·release/cancel·multitouch cleanup·접근성 격리를 focused unit/UI selector로 고정하고 같은 selector를 iPhone·iPad simulator에서 실행한다. p95 입력 지연 50ms 이하, 지원 게임 60fps, 실제 VoiceOver 읽기와 제공된 OS 키보드 영상 대비는 build 22 iPhone·iPad 실기기 gate로 남긴다.
+- 근거: TYP-101의 3×3 불투명 popup frame 전체 clamp는 중앙 셀이 실제 키캡을 덮고, 경계 보정 시 중앙 셀까지 물리 키에서 이탈시켰다. 물리 key frame과 후보 배치를 분리하면 입력·배열 계약을 건드리지 않고 native 키보드처럼 고정된 키 앵커와 연결된 후보만 표현할 수 있다.
+- 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`의 view-layer 좌표계·미리보기 layout/drawing, focused 단위/UI 회귀, PRD·현황판. mapping/resolver/interpreter, localization, OS IME, 롱프레스 숫자와 동결 Android는 변경하지 않는다.
+
 ## 2026-09-05 TYP-103 Settings 키보드 카드 결정 순서
 
 - 관련: TYP-103, TYP-89, PRD v6.23·F10, iOS/iPadOS 1.1 build 21.
