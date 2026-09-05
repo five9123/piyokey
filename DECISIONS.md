@@ -1789,6 +1789,15 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: 기존 매핑·임계값 exact unit selector와 입력 UI 회귀를 유지하고, preview mapping parity·방향 강조·짧은 탭·release/cancel 제거·상단 보정·접근성 격리를 focused unit/UI selector로 고정한다. 동일 preview UI selector를 iPhone·iPad simulator에서 실행하되 실기기·성능 gate를 대체하지 않는다.
 - 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`의 view-layer 터치 관찰·팝업, focused 단위/UI 회귀, PRD·현황판. `Korean10KeyFlickGestureResolver`, `Korean10KeyInterpreter`, localization, OS IME, 롱프레스 숫자와 동결 Android는 변경하지 않는다.
 
+## 2026-09-05 TYP-103 Settings 키보드 카드 결정 순서
+
+- 관련: TYP-103, TYP-89, PRD v6.23·F10, iOS/iPadOS 1.1 build 21.
+- 결정: Settings 키보드 카드는 상위 결정인 입력 모드(내장/OS 키보드)를 첫 항목에 두고, 그 선택에 종속되는 내장 배열(두벌식/천지인) segmented control을 두 번째에 둔다. 기존 키 가이드·로마자·햅틱 토글은 그 뒤 순서를 유지한다.
+- 결정: OS 키보드 선택 시 배열 control의 disabled 상태와 0.45 opacity를 유지한다. 컨트롤·현지화 문구·저장 키·접근성 identifier와 다른 Settings 섹션 순서는 변경하지 않는다.
+- 검증 gate: iPhone·iPad simulator에서 항목의 수직 순서와 OS 모드 배열 비활성·dim을 focused UI selector로 확인한다. simulator 결과는 build 21 실제 iPhone·iPad 설정 회귀와 출시 gate를 대체하지 않는다.
+- 근거: 사용자가 먼저 입력 환경을 고르고 그 다음에 내장 배열을 고르는 의사결정 계층을 화면 순서에 반영하되, 승인된 요청인 배치 변경 밖으로 범위를 넓히지 않기 위함이다.
+- 영향 범위: iOS/iPadOS `SettingsView.keyboardSection`, focused Settings UI 회귀, PRD·현황판. 저장·localization·OS IME 동작과 동결 Android는 변경하지 않는다.
+
 ## 2026-09-05 TYP-43 build 19 UI 정정과 분석 실설정
 
 - 관련: TYP-43, iOS/iPadOS 1.1 build 18 실물 감사와 사용자 화면 녹화.

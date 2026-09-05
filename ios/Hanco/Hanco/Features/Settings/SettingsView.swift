@@ -286,6 +286,19 @@ struct SettingsView: View {
       systemImage: "keyboard",
       identifier: "settings.section.keyboard"
     ) {
+      VStack(alignment: .leading, spacing: 8) {
+        Text("practice.setup.input_mode")
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(AppPalette.ink)
+        SessionInputModeControl(
+          selection: defaultInputModeBinding,
+          onUnavailableOSIME: { showsKoreanKeyboardGuide = true }
+        )
+      }
+      .padding(.vertical, 7)
+
+      Divider().opacity(0.5)
+
       settingPicker(
         title: "keyboard.layout.title",
         selection: $builtInLayoutDefault,
@@ -298,19 +311,6 @@ struct SettingsView: View {
       }
       .disabled(defaultInputModeBinding.wrappedValue == .osIME)
       .opacity(defaultInputModeBinding.wrappedValue == .osIME ? 0.45 : 1)
-
-      Divider().opacity(0.5)
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("practice.setup.input_mode")
-          .font(.subheadline.weight(.semibold))
-          .foregroundStyle(AppPalette.ink)
-        SessionInputModeControl(
-          selection: defaultInputModeBinding,
-          onUnavailableOSIME: { showsKoreanKeyboardGuide = true }
-        )
-      }
-      .padding(.vertical, 7)
 
       Divider().opacity(0.5)
 

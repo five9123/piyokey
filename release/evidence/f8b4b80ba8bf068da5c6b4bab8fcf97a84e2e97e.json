@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "verified_commit": "f8b4b80ba8bf068da5c6b4bab8fcf97a84e2e97e",
+  "verified_tree": "d1516a8a892821342503798211a6c644380a55f0",
+  "branch": "codex/103-settings-keyboard-order",
+  "scope": "TYP-103 latest-origin/main merged-tree Settings keyboard order for iOS/iPadOS 1.1 build 21",
+  "result": "pass",
+  "recorded_at": "2026-09-05T03:02:39.942416+00:00",
+  "checks": [
+    {
+      "name": "python contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "108 tests passed"
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "iPhone 17 focused Settings UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Executed exactly 1 selected test; exit 0"
+    },
+    {
+      "name": "iPad Pro 13-inch focused Settings UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416' -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Executed exactly 1 selected test; exit 0"
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main was 4e0b96954f651bd9065d27277f723b529184902c"
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "GitHub Actions are repository-disabled; no CI success is claimed.",
+    "No unfiltered Hanco scheme, full HancoUITests target, AppStoreScreenshot, ScreenshotCapture, AppPreview, or store/marketing capture test was run; full release regression remains open.",
+    "Exact-head independent review, maintainer manual fail-closed approval, squash merge, build 21 physical-device/TestFlight verification, deployment, account, content-rights, IAP, signing, and store gates remain open."
+  ]
+}
