@@ -236,6 +236,52 @@ final class HancoUITests: XCTestCase {
     XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
   }
 
+  func testTYP101Korean10KeyFlickPreviewShowsMappingHighlightsAndDismisses() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
+    app.launchEnvironment["UITEST_FLICK_PREVIEW_PROBE"] = "1"
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    startPractice()
+
+    let progress = element("practice.jamo_progress.value")
+    let mistakes = element("practice.mistakes.value")
+    let siot = app.buttons["keyboard.10key.siot"]
+    let vertical = app.buttons["keyboard.10key.vertical"]
+    let keyboard = element("keyboard.10key.container")
+    XCTAssertTrue(siot.waitForExistence(timeout: 3))
+    XCTAssertTrue(vertical.exists)
+    XCTAssertTrue(keyboard.exists)
+
+    siot.tap()
+    waitForValue("1 / 9", on: progress, timeout: 3)
+    XCTAssertFalse(
+      element("keyboard.10key.preview.siot").exists,
+      "A short tap must dismiss its preview without obstructing input"
+    )
+
+    let preview = element("keyboard.10key.preview.vertical")
+    flick(vertical, fromX: 0.2, toX: 0.8)
+    XCTAssertTrue(preview.waitForExistence(timeout: 1))
+    XCTAssertEqual(element("keyboard.10key.preview.vertical.center").label, "ㅣ")
+    XCTAssertEqual(element("keyboard.10key.preview.vertical.left").label, "ㅓ")
+    XCTAssertEqual(element("keyboard.10key.preview.vertical.right").label, "ㅏ")
+    XCTAssertEqual(element("keyboard.10key.preview.vertical.up").label, "ㅕ")
+    XCTAssertEqual(element("keyboard.10key.preview.vertical.down").label, "ㅑ")
+    XCTAssertEqual(
+      element("keyboard.10key.preview.vertical.right").value as? String,
+      "highlighted"
+    )
+    XCTAssertGreaterThanOrEqual(preview.frame.minY, keyboard.frame.minY - 1)
+    XCTAssertLessThanOrEqual(preview.frame.maxX, keyboard.frame.maxX + 1)
+
+    waitForValue("2 / 9", on: progress, timeout: 3)
+    XCTAssertEqual(mistakes.value as? String, "0")
+    XCTAssertTrue(preview.waitForNonExistence(timeout: 3))
+    XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
+  }
+
   func testKorean10KeyLayoutCarriesIntoFlowGame() {
     app.tabBars.buttons["ゲーム"].tap()
     app.buttons["game.mode.flow"].tap()

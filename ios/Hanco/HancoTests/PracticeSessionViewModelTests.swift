@@ -872,6 +872,101 @@ final class PracticeSessionViewModelTests: XCTestCase {
     )
   }
 
+  func testTYP101FlickPreviewUsesSharedMappingAndLifecycle() {
+    for key in Korean10KeyKey.allCases.filter(\.supportsFlick) {
+      let candidates = Korean10KeyFlickMapping.previewCandidates(for: key)
+      XCTAssertEqual(candidates[.center], key.displayText)
+      for position in Korean10KeyFlickPreviewPosition.directionalCases {
+        let mappedJamo = position.direction.flatMap {
+          Korean10KeyFlickMapping.completedJamo(for: key, direction: $0)
+        }
+        XCTAssertEqual(candidates[position], mappedJamo.map(String.init), "\(key) \(position)")
+      }
+    }
+
+    var tracker = Korean10KeyFlickPreviewTracker()
+    tracker.begin(key: .next)
+    XCTAssertTrue(tracker.activeStates.isEmpty)
+
+    tracker.begin(key: .vertical)
+    XCTAssertEqual(tracker.activeStates[.vertical]?.highlightedPosition, .center)
+    tracker.move(
+      key: .vertical,
+      gesture: KeyboardTouchGesture(
+        translation: CGSize(width: 23.9, height: 0),
+        duration: 0.1,
+        wasCancelled: false
+      )
+    )
+    XCTAssertEqual(
+      tracker.activeStates[.vertical]?.highlightedPosition,
+      .center,
+      "A short tap keeps the center candidate selected without changing input semantics"
+    )
+    tracker.move(
+      key: .vertical,
+      gesture: KeyboardTouchGesture(
+        translation: CGSize(width: 30, height: 1),
+        duration: 0.2,
+        wasCancelled: false
+      )
+    )
+    XCTAssertEqual(tracker.activeStates[.vertical]?.highlightedPosition, .right)
+    tracker.move(
+      key: .vertical,
+      gesture: KeyboardTouchGesture(
+        translation: CGSize(width: 30, height: 30),
+        duration: 0.2,
+        wasCancelled: false
+      )
+    )
+    XCTAssertNil(tracker.activeStates[.vertical]?.highlightedPosition)
+    tracker.finish(key: .vertical, wasCancelled: false)
+    XCTAssertTrue(tracker.activeStates.isEmpty, "Release must dismiss the preview immediately")
+
+    tracker.begin(key: .giyeok)
+    tracker.move(
+      key: .giyeok,
+      gesture: KeyboardTouchGesture(
+        translation: CGSize(width: 1, height: -30),
+        duration: 0.2,
+        wasCancelled: false
+      )
+    )
+    XCTAssertNil(
+      tracker.activeStates[.giyeok]?.highlightedPosition,
+      "An unassigned direction must not invent or highlight a candidate"
+    )
+    tracker.finish(key: .giyeok, wasCancelled: true)
+    XCTAssertTrue(tracker.activeStates.isEmpty, "Cancellation must dismiss without committing")
+  }
+
+  func testTYP101FlickPreviewTopEdgeLayoutAndAccessibilityIsolation() {
+    let keyboardBounds = CGRect(x: 0, y: 0, width: 330, height: 260)
+    let topRowKey = CGRect(x: 117, y: 0, width: 96, height: 52)
+    let popupFrame = Korean10KeyFlickPreviewLayout.popupFrame(
+      anchor: topRowKey,
+      keyboardBounds: keyboardBounds,
+      cellSize: 40
+    )
+
+    XCTAssertEqual(popupFrame.minY, keyboardBounds.minY)
+    XCTAssertGreaterThanOrEqual(popupFrame.minX, keyboardBounds.minX)
+    XCTAssertLessThanOrEqual(popupFrame.maxX, keyboardBounds.maxX)
+    XCTAssertLessThanOrEqual(popupFrame.maxY, keyboardBounds.maxY)
+    XCTAssertTrue(Korean10KeyFlickPreviewAccessibilityPolicy.isHidden(environment: [:]))
+    XCTAssertFalse(
+      Korean10KeyFlickPreviewAccessibilityPolicy.isHidden(
+        environment: ["UITEST_FLICK_PREVIEW_PROBE": "1"]
+      )
+    )
+
+    let existingHint = Korean10KeyKey.vertical.flickAccessibilityHint
+    _ = Korean10KeyFlickMapping.previewCandidates(for: .vertical)
+    XCTAssertFalse(existingHint.isEmpty)
+    XCTAssertEqual(Korean10KeyKey.vertical.flickAccessibilityHint, existingHint)
+  }
+
   func testKorean10KeyCompletedFlickUsesOnlyGoldenRecipePrefixes() throws {
     let flickVowels: [Character] = ["ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ"]
     let vowels: [Character] = [
