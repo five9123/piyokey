@@ -3548,6 +3548,49 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("practice.target.value").exists)
   }
 
+  func testSecondHatchCompletionPersistsBeforeMissionThreeAndRelaunchResumesThere() {
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      curriculumItemLimit: 1,
+      showsHatchOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+    let firstMission = app.buttons["onboarding.hatch.continue"]
+    scrollToHittable(firstMission)
+    firstMission.tap()
+
+    waitForLabel("ㄱ", on: element("practice.target.value"), timeout: 5)
+    app.buttons["keyboard.key.ㄱ"].tap()
+    finishHatchMissionResult()
+    XCTAssertTrue(element("mascot.growth.celebration").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["mascot.growth.confirm"].waitForExistence(timeout: 4))
+    app.buttons["mascot.growth.confirm"].tap()
+
+    waitForLabel("ㅏ", on: element("practice.target.value"), timeout: 5)
+    app.buttons["keyboard.key.ㅏ"].tap()
+    finishHatchMissionResult()
+
+    // Mission 2's CTA is enabled only after finishAndWait has durably stored it.
+    // Terminating before mission 3 appears must still resume at mission 3.
+    app.terminate()
+    app = makeApplication(
+      resetKeyboardPreferences: false,
+      curriculumItemLimit: 1,
+      showsHatchOnboarding: true
+    )
+    app.launch()
+
+    XCTAssertTrue(element("onboarding.hatch.screen").waitForExistence(timeout: 5))
+    let resumeMission = app.buttons["onboarding.hatch.continue"]
+    scrollToHittable(resumeMission)
+    resumeMission.tap()
+    waitForLabel("가", on: element("practice.target.value"), timeout: 5)
+    XCTAssertFalse(element("practice.result.screen").exists)
+  }
+
   func testAppTourLayoutAcrossRepresentativeScreenSize() {
     app.terminate()
     app = makeApplication(
