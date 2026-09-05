@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-102 마지막 부화 3/3 완료 전환 | In Progress / Draft PR #167 / `codex/102-hatch-completion` | 소스·simulator 회귀와 exact-head review 뒤 In Review로 전환한다. build 20 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
 | TYP-43 iOS/iPadOS 1.1 출시 | In Progress / `codex/43-ios-1-1-release` | build 19의 Search 카드 1줄·고정 높이와 연습 목록 수평 overscroll 수정, PostHog/Firebase 실설정 배선을 source PR로 병합한다. 이후 clean `origin/main` archive에서 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
 | TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
@@ -54,11 +55,12 @@
 
 ## 즉시 작업 순서
 
-1. TYP-43 source PR에서 build 19의 Search 카드·연습 목록 수정과 Firebase config embed를 검증하고 exact-head review·maintainer 승인을 받는다.
-2. 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 19 archive를 만든다.
-3. build 19에서 동의 ON 이벤트 수신·동의 OFF 무전송·Crashlytics 테스트 크래시와 dSYM을 먼저 확인하고, TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
-4. #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다.
-5. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
+1. TYP-102 source PR의 final hatch 3/3 완료 전환과 내구 저장을 검증·review한 뒤 병합하고, build 20 iPhone에서 성장 축하 1회·홈 도착·종료 후 재실행을 확인한다.
+2. TYP-43 source PR에서 build 19의 Search 카드·연습 목록 수정과 Firebase config embed를 검증하고 exact-head review·maintainer 승인을 받는다.
+3. 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 19 archive를 만든다.
+4. build 19에서 동의 ON 이벤트 수신·동의 OFF 무전송·Crashlytics 테스트 크래시와 dSYM을 먼저 확인하고, TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
+5. #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다.
+6. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 
 ## 출시 완료 판단
 
