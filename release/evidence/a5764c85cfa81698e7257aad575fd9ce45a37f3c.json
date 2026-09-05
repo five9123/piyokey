@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a5764c85cfa81698e7257aad575fd9ce45a37f3c",
+  "verified_tree": "e745c0c6531b69eaebf2a027e730e201b567ee15",
+  "branch": "codex/111-hide-flick-preview",
+  "scope": "TYP-111 remove Korean 10-key flick preview display from exact origin/main 71f088a48d2473295669b6a9864e95cf46656870 while preserving directional input",
+  "result": "pass",
+  "recorded_at": "2026-09-05T18:58:36.785813+00:00",
+  "checks": [
+    {
+      "name": "Python contract suite",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests",
+      "note": "108 tests passed on clean implementation SHA."
+    },
+    {
+      "name": "Swift package suites",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed: DeckKit 21, HangulEngine 29, PiyoDeck 17."
+    },
+    {
+      "name": "Complete Hanco unit suite",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -only-testing:HancoTests",
+      "note": "xcresult reports 432 passed, 0 failed, 0 skipped."
+    },
+    {
+      "name": "TYP-111 iPhone UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testTYP111Korean10KeyFlickPreviewIsAbsentAndDirectionalInputStillWorks",
+      "note": "1 passed, 0 failed; preview probe remains absent while left and right directional flicks advance input."
+    },
+    {
+      "name": "TYP-111 iPad UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testTYP111Korean10KeyFlickPreviewIsAbsentAndDirectionalInputStillWorks",
+      "note": "1 passed, 0 failed; same focused regression passed on iPad."
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "All strict feature-worktree checks passed on the clean implementation SHA."
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository preflight passed."
+    },
+    {
+      "name": "Exact requested origin/main base",
+      "status": "pass",
+      "command": "git rev-parse origin/main",
+      "note": "origin/main was 71f088a48d2473295669b6a9864e95cf46656870."
+    },
+    {
+      "name": "Current main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "Exact requested origin/main is an ancestor of the implementation SHA."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors."
+    }
+  ],
+  "manual_gates": [
+    "Physical iPhone and iPad verification that no flick preview is displayed while every directional input remains functional is open for Jungmin.",
+    "Physical-device p95 input latency at or below 50 ms, supported-game 60 fps, and VoiceOver behavior remain open.",
+    "Claude exact-head review and maintainer manual fail-closed approval remain open; any later head change invalidates review.",
+    "GitHub Actions are repository-disabled. Full HancoTests ran locally; the unfiltered HancoUITests target and store screenshot/capture suites were not run because focused iPhone/iPad UI coverage is the scoped gate.",
+    "No archive/distribution build, App Store Connect change, upload, IAP submission, App Review submission, merge, signing, or release was performed; all account, rights, IAP, store, and release gates remain open."
+  ]
+}
