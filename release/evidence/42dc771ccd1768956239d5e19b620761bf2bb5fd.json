@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "verified_commit": "42dc771ccd1768956239d5e19b620761bf2bb5fd",
+  "verified_tree": "3a603452f9904f7c29025fa6c27d18377c60a954",
+  "branch": "codex/105-hatch-transition",
+  "scope": "TYP-105 build 21 residual hatch result-dismissal transition serialization on exact origin/main 504df3ecb8c7a23d7c577ec5a81015e2d2b5d353",
+  "result": "pass",
+  "recorded_at": "2026-09-05T15:46:15.642680+00:00",
+  "checks": [
+    {
+      "name": "Python contract suite",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -B -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "108 tests passed on the clean implementation commit."
+    },
+    {
+      "name": "Swift package suites",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed: DeckKit 21, HangulEngine 29, PiyoDeck 17."
+    },
+    {
+      "name": "Exact-SHA hatch unit plus mission-2 relaunch UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -derivedDataPath /private/tmp/TYP105DevDerived -parallel-testing-enabled NO -only-testing:HancoTests/CurriculumProgressStoreTests -only-testing:HancoUITests/HancoUITests/testSecondHatchCompletionPersistsBeforeMissionThreeAndRelaunchResumesThere",
+      "note": "At 42dc771ccd1768956239d5e19b620761bf2bb5fd, 19 unit tests and the mission-2 terminate/relaunch UI test passed; xcresult summary reported 20 passed, 0 failed."
+    },
+    {
+      "name": "Focused hatch UI development run",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -derivedDataPath /private/tmp/TYP105DevDerived -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs -only-testing:HancoUITests/HancoUITests/testSecondHatchCompletionPersistsBeforeMissionThreeAndRelaunchResumesThere -only-testing:HancoUITests/HancoUITests/testFinalHatchCompletionPersistsBeforeCelebrationAndRelaunchSkipsMissionThree -only-testing:HancoUITests/HancoUITests/testFutureCurriculumSchemaKeepsHatchResultRecoverable",
+      "note": "Before commit creation, the exact product/test source later committed as 42dc771 ran 4 focused UI tests with 0 failures in 263.820 seconds; the full mission chain proves mission 1, 2, and 3 progression and one celebration/Home handoff."
+    },
+    {
+      "name": "Resource-starved UI rerun",
+      "status": "skip",
+      "command": "xcodebuild test-without-building -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -derivedDataPath /private/tmp/TYP105DevDerived -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testFirstHatchResultContinuesToSecondMissionWithoutRetry -only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs -only-testing:HancoUITests/HancoUITests/testSecondHatchCompletionPersistsBeforeMissionThreeAndRelaunchResumesThere -only-testing:HancoUITests/HancoUITests/testFinalHatchCompletionPersistsBeforeCelebrationAndRelaunchSkipsMissionThree -only-testing:HancoUITests/HancoUITests/testFutureCurriculumSchemaKeepsHatchResultRecoverable",
+      "note": "Infrastructure-invalid run: Xcode elapsed 1107.861 seconds; xcresult recorded launch timeout, background assertion failure, and automation helper disconnect. Host had only 4.8 GiB free and approximately 74 MiB free memory; no product assertion was used as release evidence."
+    },
+    {
+      "name": "Fresh-simulator follow-up",
+      "status": "skip",
+      "command": "xcodebuild test-without-building -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=F8A971DA-8A7C-407B-994B-5AEF4770CEC6' -derivedDataPath /private/tmp/TYP105DevDerived -parallel-testing-enabled NO [four focused hatch UI selectors]",
+      "note": "One authorized follow-up on a newly booted iPhone 17 Pro ended during package graph resolution when the execution session was interrupted; no xcresult was created and it was not repeated."
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "All strict feature-worktree checks passed at 42dc771; the separate deployment-only --require-origin-main variant rejected the expected feature-branch HEAD divergence."
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository preflight passed."
+    },
+    {
+      "name": "Exact base ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "After git fetch --prune origin, origin/main remained 504df3ecb8c7a23d7c577ec5a81015e2d2b5d353 and was an ancestor of the implementation commit."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors."
+    }
+  ],
+  "manual_gates": [
+    "Build 22 clean-install physical iPhone verification remains open for mission 1→2, mission 2→3, mission 3→celebration→Home, plus immediate and 10-second relaunch persistence.",
+    "Exact-head Claude review and maintainer manual approval remain open at evidence creation.",
+    "Build 22 archive/signing/upload, TestFlight, App Store, IAP, account, content-rights, and submission gates remain open; no build was uploaded or submitted.",
+    "GitHub Actions are repository-disabled; no CI result is claimed. Android was not touched."
+  ]
+}
