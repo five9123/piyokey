@@ -308,6 +308,32 @@ private actor CurriculumProgressWriter {
     try store.persistSnapshot(snapshot)
     persistedRevision = revision
   }
+
+  func persistAndVerifyCompletion(
+    snapshot: CurriculumProgressSnapshot,
+    revision: Int,
+    stageId: String
+  ) throws -> Bool {
+    guard revision >= latestRequestedRevision else { return false }
+    latestRequestedRevision = revision
+    try store.persistSnapshot(snapshot)
+    let persisted = try store.loadSnapshot()
+    guard persisted.activeSession?.stageId != stageId else { return false }
+    let verified: Bool
+    switch (snapshot.stageProgress[stageId], persisted.stageProgress[stageId]) {
+    case (nil, nil):
+      verified = true
+    case (.some(let expected), .some(let actual)):
+      verified = expected.stars == actual.stars
+        && expected.bestAccuracy == actual.bestAccuracy
+    default:
+      verified = false
+    }
+    if verified {
+      persistedRevision = max(persistedRevision, revision)
+    }
+    return verified
+  }
 }
 
 @MainActor
@@ -368,7 +394,13 @@ final class CurriculumProgressLibrary: ObservableObject {
     let previousSnapshot = currentSnapshot
     applyFinish(stageId: stageId, stars: stars, accuracy: accuracy)
     let completionRevision = revision
-    let succeeded = await flushAndWait()
+    debounceTask?.cancel()
+    debounceTask = nil
+    let succeeded = await persistAndVerifyCompletion(
+      snapshot: currentSnapshot,
+      revision: completionRevision,
+      stageId: stageId
+    )
     guard !succeeded, completionRevision == revision else { return succeeded }
 
     // Completion unlocks curriculum navigation, so a failed durable write must not
@@ -450,6 +482,38 @@ final class CurriculumProgressLibrary: ObservableObject {
   ) async -> Bool {
     do {
       try await writer.persist(snapshot: snapshot, revision: requestedRevision)
+      if requestedRevision == revision {
+        saveFailed = false
+        retryAction = nil
+      }
+      return true
+    } catch {
+      if requestedRevision == revision {
+        saveFailed = true
+        retryAction = { [weak self] in self?.flush() }
+      }
+      return false
+    }
+  }
+
+  private func persistAndVerifyCompletion(
+    snapshot: CurriculumProgressSnapshot,
+    revision requestedRevision: Int,
+    stageId: String
+  ) async -> Bool {
+    do {
+      let verified = try await writer.persistAndVerifyCompletion(
+        snapshot: snapshot,
+        revision: requestedRevision,
+        stageId: stageId
+      )
+      guard verified else {
+        if requestedRevision == revision {
+          saveFailed = true
+          retryAction = { [weak self] in self?.flush() }
+        }
+        return false
+      }
       if requestedRevision == revision {
         saveFailed = false
         retryAction = nil

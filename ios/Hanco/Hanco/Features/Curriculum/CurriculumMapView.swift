@@ -1055,8 +1055,66 @@ private struct CurriculumPracticeDestination: View {
   }
 }
 
+struct FinalHatchTransitionCoordinator: Equatable {
+  enum State: Equatable {
+    case awaitingResultDismissal
+    case waitingForPresentationTransition(MascotStage?)
+    case celebrating(MascotStage)
+    case advancing
+    case completed
+  }
+
+  enum Action: Equatable {
+    case none
+    case waitForPresentationTransition
+    case presentCelebration(MascotStage)
+    case advance
+    case completeHatch
+  }
+
+  static let presentationSettlementNanoseconds: UInt64 = 650_000_000
+
+  private(set) var state: State = .awaitingResultDismissal
+
+  var isWaitingForPresentationTransition: Bool {
+    if case .waitingForPresentationTransition = state { return true }
+    return false
+  }
+
+  mutating func resultDidDismiss(pendingCelebration: MascotStage?) -> Action {
+    guard state == .awaitingResultDismissal else { return .none }
+    state = .waitingForPresentationTransition(pendingCelebration)
+    return .waitForPresentationTransition
+  }
+
+  mutating func presentationTransitionDidFinish() -> Action {
+    guard case .waitingForPresentationTransition(let pendingCelebration) = state else {
+      return .none
+    }
+    if let pendingCelebration {
+      state = .celebrating(pendingCelebration)
+      return .presentCelebration(pendingCelebration)
+    }
+    state = .advancing
+    return .advance
+  }
+
+  mutating func celebrationDidDismiss() -> Action {
+    guard case .celebrating = state else { return .none }
+    state = .advancing
+    return .advance
+  }
+
+  mutating func hatchDidComplete() -> Action {
+    guard state == .advancing else { return .none }
+    state = .completed
+    return .completeHatch
+  }
+}
+
 private struct HatchMissionSequenceDestination: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.scenePhase) private var scenePhase
   @EnvironmentObject private var progress: CurriculumProgressLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
 
@@ -1064,6 +1122,8 @@ private struct HatchMissionSequenceDestination: View {
   @State private var activeStageID: String
   @State private var celebratingStage: MascotStage?
   @State private var advancesAfterCelebration = false
+  @State private var finalTransition = FinalHatchTransitionCoordinator()
+  @State private var finalTransitionTask: Task<Void, Never>?
 
   init(initialStage: CurriculumStage, onHatchCompleted: @escaping () -> Void) {
     self.onHatchCompleted = onHatchCompleted
@@ -1092,10 +1152,33 @@ private struct HatchMissionSequenceDestination: View {
         celebratingStage = nil
       }
     }
-    .onAppear(perform: presentPendingGrowthCelebration)
+    .onAppear {
+      presentPendingGrowthCelebration()
+      scheduleFinalPresentationTransitionIfNeeded()
+    }
+    .onChange(of: scenePhase) { phase in
+      if phase == .active {
+        scheduleFinalPresentationTransitionIfNeeded()
+      } else {
+        finalTransitionTask?.cancel()
+        finalTransitionTask = nil
+      }
+    }
+    .onDisappear {
+      finalTransitionTask?.cancel()
+      finalTransitionTask = nil
+    }
   }
 
   private func advanceAfterResult() {
+    if isFinalMission {
+      performFinalTransitionAction(
+        finalTransition.resultDidDismiss(
+          pendingCelebration: companion.pendingCelebration(current: progress.mascotStage)
+        )
+      )
+      return
+    }
     if let pendingStage = companion.pendingCelebration(current: progress.mascotStage) {
       advancesAfterCelebration = true
       celebratingStage = pendingStage
@@ -1106,10 +1189,17 @@ private struct HatchMissionSequenceDestination: View {
 
   private func presentPendingGrowthCelebration() {
     guard celebratingStage == nil else { return }
+    // The final result dismissal owns the chick presentation. Reappearing under a
+    // navigation pop must not race that presentation with a second full-screen cover.
+    if isFinalMission, progress.completedStageIDs.contains(activeStageID) { return }
     celebratingStage = companion.pendingCelebration(current: progress.mascotStage)
   }
 
   private func completeDeferredAdvance() {
+    if isFinalMission {
+      performFinalTransitionAction(finalTransition.celebrationDidDismiss())
+      return
+    }
     guard advancesAfterCelebration else { return }
     advancesAfterCelebration = false
     advanceImmediately()
@@ -1121,7 +1211,51 @@ private struct HatchMissionSequenceDestination: View {
     ) {
       activeStageID = nextStage.id
     } else {
+      if isFinalMission {
+        performFinalTransitionAction(finalTransition.hatchDidComplete())
+      } else {
+        onHatchCompleted()
+      }
+    }
+  }
+
+  private var isFinalMission: Bool {
+    activeStageID == HatchOnboardingPolicy.requiredStages.last?.id
+  }
+
+  private func performFinalTransitionAction(
+    _ action: FinalHatchTransitionCoordinator.Action
+  ) {
+    switch action {
+    case .none:
+      break
+    case .waitForPresentationTransition:
+      scheduleFinalPresentationTransitionIfNeeded()
+    case .presentCelebration(let stage):
+      celebratingStage = stage
+    case .advance:
+      advanceImmediately()
+    case .completeHatch:
       onHatchCompleted()
+    }
+  }
+
+  private func scheduleFinalPresentationTransitionIfNeeded() {
+    guard isFinalMission, finalTransition.isWaitingForPresentationTransition,
+      scenePhase == .active
+    else { return }
+    finalTransitionTask?.cancel()
+    finalTransitionTask = Task { @MainActor in
+      do {
+        try await Task.sleep(
+          nanoseconds: FinalHatchTransitionCoordinator.presentationSettlementNanoseconds
+        )
+      } catch {
+        return
+      }
+      guard !Task.isCancelled, scenePhase == .active else { return }
+      finalTransitionTask = nil
+      performFinalTransitionAction(finalTransition.presentationTransitionDidFinish())
     }
   }
 }

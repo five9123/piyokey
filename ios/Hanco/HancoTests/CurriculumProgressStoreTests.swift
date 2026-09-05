@@ -131,6 +131,39 @@ final class CurriculumProgressStoreTests: XCTestCase {
     )
   }
 
+  func testFinalHatchTransitionWaitsForResultPopAndCompletesExactlyOnce() {
+    var transition = FinalHatchTransitionCoordinator()
+
+    XCTAssertEqual(
+      transition.resultDidDismiss(pendingCelebration: .chick),
+      .waitForPresentationTransition
+    )
+    XCTAssertEqual(transition.resultDidDismiss(pendingCelebration: .chick), .none)
+    XCTAssertEqual(transition.state, .waitingForPresentationTransition(.chick))
+
+    XCTAssertEqual(
+      transition.presentationTransitionDidFinish(),
+      .presentCelebration(.chick)
+    )
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .none)
+    XCTAssertEqual(transition.celebrationDidDismiss(), .advance)
+    XCTAssertEqual(transition.celebrationDidDismiss(), .none)
+    XCTAssertEqual(transition.hatchDidComplete(), .completeHatch)
+    XCTAssertEqual(transition.hatchDidComplete(), .none)
+    XCTAssertEqual(transition.state, .completed)
+  }
+
+  func testFinalHatchTransitionWithoutPendingCelebrationStillWaitsForResultPop() {
+    var transition = FinalHatchTransitionCoordinator()
+
+    XCTAssertEqual(
+      transition.resultDidDismiss(pendingCelebration: nil),
+      .waitForPresentationTransition
+    )
+    XCTAssertEqual(transition.presentationTransitionDidFinish(), .advance)
+    XCTAssertEqual(transition.hatchDidComplete(), .completeHatch)
+  }
+
   func testActiveSessionRoundTripsAndFailedAttemptClearsWithoutCompletion() throws {
     let checkpoint = makeCheckpoint(index: 3, acceptedKeys: "ㄹ", duration: 12.5)
     try store.saveActiveSession(stageId: "stage", checkpoint: checkpoint)
@@ -233,6 +266,52 @@ final class CurriculumProgressStoreTests: XCTestCase {
     XCTAssertTrue(library.saveFailed)
     XCTAssertFalse(library.completedStageIDs.contains("stage"))
     XCTAssertEqual(try Data(contentsOf: fileURL), futureData)
+  }
+
+  @MainActor
+  func testFinalHatchCompletionSurvivesImmediateLibraryReload() async throws {
+    let requiredStages = HatchOnboardingPolicy.requiredStages
+    XCTAssertEqual(requiredStages.count, 3)
+    for stage in requiredStages.dropLast() {
+      try store.finishStage(stageId: stage.id, stars: 3, accuracy: 100)
+    }
+    let library = CurriculumProgressLibrary(store: store)
+    let finalStage = try XCTUnwrap(requiredStages.last)
+
+    let persisted = await library.finishAndWait(
+      stageId: finalStage.id,
+      stars: 3,
+      accuracy: 100
+    )
+    let relaunchedLibrary = CurriculumProgressLibrary(store: store)
+
+    XCTAssertTrue(persisted)
+    XCTAssertTrue(
+      HatchOnboardingPolicy.isComplete(
+        completedStageIDs: relaunchedLibrary.completedStageIDs
+      )
+    )
+    XCTAssertNil(relaunchedLibrary.activeSession)
+  }
+
+  @MainActor
+  func testFinishAndWaitVerifiesDurableFailedAttemptWithoutChangingScoring() async throws {
+    let library = CurriculumProgressLibrary(store: store)
+    library.save(
+      stageId: "stage",
+      checkpoint: makeCheckpoint(index: 0, acceptedKeys: "ㄱ", duration: 1)
+    )
+
+    let persisted = await library.finishAndWait(
+      stageId: "stage",
+      stars: 0,
+      accuracy: 79
+    )
+    let relaunchedLibrary = CurriculumProgressLibrary(store: store)
+
+    XCTAssertTrue(persisted)
+    XCTAssertFalse(relaunchedLibrary.completedStageIDs.contains("stage"))
+    XCTAssertNil(relaunchedLibrary.activeSession)
   }
 
   private func makeCheckpoint(

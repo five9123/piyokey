@@ -23,8 +23,9 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-43 iOS/iPadOS 1.1 출시 | In Progress / build 19 source `e9684bf` | `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103을 병합한 clean `origin/main`에서 build 20을 만들고 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
-| TYP-103 Settings 키보드 카드 순서 | In Review / `codex/103-settings-keyboard-order` | `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`)에서 입력 모드→내장 배열 순서와 OS 모드의 배열 비활성·dim을 iPhone·iPad simulator focused UI로 검증했다. exact-head Claude review·maintainer 승인·병합 뒤 build 20 실기기 gate를 유지 |
+| TYP-102 마지막 부화 3/3 완료 전환 | In Review / PR #167 / `codex/102-hatch-completion` | focused simulator 회귀와 evidence를 완료했다. build 20 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
+| TYP-43 iOS/iPadOS 1.1 출시 | In Review / build 20 uploaded, build 21 selected | TYP-103·TYP-101을 순차 병합한 최신 clean `origin/main`에서 build 21을 만들고 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
+| TYP-103 Settings 키보드 카드 순서 | In Review / `codex/103-settings-keyboard-order` | 입력 모드→내장 배열 순서와 OS 모드의 배열 비활성·dim을 iPhone·iPad simulator focused UI로 재검증하고 exact-head Claude review·maintainer 승인·병합 뒤 build 21 실기기 gate를 유지 |
 | TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
 | TYP-97 Random 5 입력 중 세로 이동 | Merged / PR #162 → main `1f669cf` | build 19 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
@@ -55,11 +56,12 @@
 
 ## 즉시 작업 순서
 
-1. `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103 source PR에 exact-head review·maintainer 승인을 기록하고 최신 `origin/main`에 병합한다.
-2. 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 20 archive를 만든다.
-3. build 20에서 동의 ON 이벤트 수신·동의 OFF 무전송·Crashlytics 테스트 크래시와 dSYM을 먼저 확인하고, TYP-101·103과 TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀를 iPhone·iPad 실기기로 확인한다.
-4. #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다.
-5. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
+1. TYP-103을 최신 `origin/main` merged tree에서 재검증·exact-head review·maintainer 승인 후 병합한다.
+2. TYP-101을 그 다음 최신 `origin/main` merged tree에서 재검증·exact-head review·maintainer 승인 후 병합한다.
+3. 두 PR 병합 뒤 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 21 archive를 만든다.
+4. build 21에서 TYP-101·103·102와 TYP-85·94·95·97·98 및 기존 TYP-73·77·82·83·88·93 회귀, 동의 ON/OFF 네트워크와 Crashlytics dSYM을 iPhone·iPad 실기기로 확인한다.
+5. #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다.
+6. Dependabot PR을 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않음. #8은 Later 유지.
 
 ## 출시 완료 판단
 
