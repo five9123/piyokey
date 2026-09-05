@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-102 마지막 부화 3/3 완료 전환 | In Progress / Draft PR #167 / `codex/102-hatch-completion` | 소스·simulator 회귀와 exact-head review 뒤 In Review로 전환한다. build 20 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
+| TYP-102 마지막 부화 3/3 완료 전환 | In Review / PR #167 / `codex/102-hatch-completion` | focused simulator 회귀와 evidence를 완료했다. build 20 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
 | TYP-43 iOS/iPadOS 1.1 출시 | In Progress / `codex/43-ios-1-1-release` | build 19의 Search 카드 1줄·고정 높이와 연습 목록 수평 overscroll 수정, PostHog/Firebase 실설정 배선을 source PR로 병합한다. 이후 clean `origin/main` archive에서 동의 ON/OFF·Crashlytics dSYM·실기기·계정·권리·IAP·store gate를 순서대로 닫음 |
 | TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
