@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "verified_commit": "fc533e75c0e07f9d0d65562779676918154856e2",
+  "verified_tree": "7fbe2b702c117934c6c09434fb711209a768448c",
+  "branch": "codex/106-flick-popup",
+  "scope": "TYP-106 fixed whole-keyboard flick preview anchored to TYP-105-integrated origin/main c81df6de9ef11b0e95e01fd499d2b0603def3962",
+  "result": "pass",
+  "recorded_at": "2026-09-05T17:07:05.037700+00:00",
+  "checks": [
+    {
+      "name": "Python contract suite",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests",
+      "note": "108 tests passed on clean merged implementation SHA."
+    },
+    {
+      "name": "Swift package suites",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed: DeckKit 21, HangulEngine 29, PiyoDeck 17."
+    },
+    {
+      "name": "Complete Hanco unit suite",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests",
+      "note": "xcresult reports 435 passed, 0 failed, 0 skipped on iPhone 17 iOS 26.5 simulator."
+    },
+    {
+      "name": "TYP-106 iPhone UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP106Korean10KeyFlickPreviewAnchorsEdgesAndDismisses",
+      "note": "Passed after isolating the touch surface from outer keyboard padding; verifies fixed anchor, edge fitting, valid candidate geometry, and cleanup."
+    },
+    {
+      "name": "TYP-106 iPad UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testTYP106Korean10KeyFlickPreviewAnchorsEdgesAndDismisses",
+      "note": "Passed after touch-surface correction on iPad Pro 13-inch M5 iOS 26.5 simulator."
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "All strict feature-worktree checks passed on the clean merged implementation SHA."
+    },
+    {
+      "name": "Release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository preflight passed."
+    },
+    {
+      "name": "Current main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "Fetched origin/main c81df6de9ef11b0e95e01fd499d2b0603def3962 is an ancestor of the implementation SHA."
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors."
+    }
+  ],
+  "manual_gates": [
+    "Physical iPhone and iPad comparison against the supplied recordings/images remains open; simulator screenshots were inspected but do not substitute for direct device verification.",
+    "Physical-device flick preview performance remains open: p95 at or below 50 ms and 60 fps were not directly measured on hardware.",
+    "Physical VoiceOver focus/announcement verification remains open; unit coverage confirms the preview overlay is accessibility-hidden and the existing key hint contract is unchanged.",
+    "Build 22 archive, signing, export, and Apple upload remain open until the new TYP-106 exact-head Claude review and integration into origin/main.",
+    "App Store submission, IAP Add for Review, release, account, content-rights, and remaining device gates are out of scope/open. GitHub Actions are disabled; Android was not touched."
+  ]
+}
