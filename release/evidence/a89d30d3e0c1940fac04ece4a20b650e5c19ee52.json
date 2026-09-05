@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "verified_commit": "a89d30d3e0c1940fac04ece4a20b650e5c19ee52",
+  "verified_tree": "f80ecb4cbf754be3fde5f2a54c1e753d38c9f6de",
+  "branch": "codex/102-hatch-completion",
+  "scope": "TYP-102 final hatch mission 3 result dismissal, exactly-once celebration/home transition, and durable completion persistence",
+  "result": "pass",
+  "recorded_at": "2026-09-05T01:43:38.412352+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean owned TYP-102 worktree on Python 3.12.13"
+    },
+    {
+      "name": "tools regression",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p \"test_*.py\"",
+      "note": "108 tests passed"
+    },
+    {
+      "name": "HangulEngine and DeckKit package",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests passed"
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "TYP-102 focused iOS unit and UI",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/CurriculumProgressStoreTests/testFinalHatchTransitionWaitsForResultPopAndCompletesExactlyOnce -only-testing:HancoTests/CurriculumProgressStoreTests/testFinalHatchTransitionWithoutPendingCelebrationStillWaitsForResultPop -only-testing:HancoTests/CurriculumProgressStoreTests/testFinalHatchCompletionSurvivesImmediateLibraryReload -only-testing:HancoTests/CurriculumProgressStoreTests/testFinishAndWaitVerifiesDurableFailedAttemptWithoutChangingScoring -only-testing:HancoTests/CurriculumProgressStoreTests/testFinishAndWaitRollsBackOptimisticCompletionWhenFutureSchemaBlocksWrite -only-testing:HancoUITests/HancoUITests/testThreeHatchMissionsLandOnHomeAndIntroduceMainTabs -only-testing:HancoUITests/HancoUITests/testFinalHatchCompletionPersistsBeforeCelebrationAndRelaunchSkipsMissionThree -only-testing:HancoUITests/HancoUITests/testFutureCurriculumSchemaKeepsHatchResultRecoverable",
+      "note": "5 selected unit tests and 3 selected UI tests passed; xcresult Test-Hanco-2026.09.05_10-39-40-+0900.xcresult"
+    },
+    {
+      "name": "unfiltered Hanco scheme",
+      "status": "skip",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\"",
+      "note": "Stopped immediately on user direction; exit 75 TEST INTERRUPTED after 2253.057 seconds; prohibited unfiltered/AppStoreScreenshot/AppPreview execution is excluded from evidence"
+    },
+    {
+      "name": "no residual test processes",
+      "status": "pass",
+      "command": "ps -axo pid=,command= | rg \"(^|/)(xcodebuild|HancoUITests-Runner)( |$)|HancoUITests\\\\.xctest\" | rg -v \"rg \"",
+      "note": "Zero matching xcodebuild or Hanco UI-test runner processes after interruption and after focused run"
+    },
+    {
+      "name": "origin main ancestry",
+      "status": "pass",
+      "command": "git fetch --prune origin && git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main e9684bffba1823fd9206e5d582444184bfdf8132 is an ancestor of the verified commit"
+    },
+    {
+      "name": "PR diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "No whitespace errors"
+    }
+  ],
+  "manual_gates": [
+    "Exact-head Claude review and maintainer manual approval remain OPEN; any new head requires a fresh review.",
+    "Merge and final origin/main no-forward check remain OPEN; this PR must not be merged without maintainer approval.",
+    "Build 20 physical-iPhone gate remains OPEN: clean install must complete hatch missions 1 to 3, close the final result, show the chick celebration exactly once, then land on Home.",
+    "Build 20 durability gate remains OPEN: verify both immediate force-quit after the final CTA and the required 10-second post-completion wait followed by force-quit/relaunch remain on Home and never resume mission 3.",
+    "Build 20 archive, signing, TestFlight install/upload, release upload, store settings, accounts, rights, and IAP are out of TYP-102 scope and remain OPEN with the maintainer/release owner."
+  ]
+}
