@@ -941,19 +941,73 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertTrue(tracker.activeStates.isEmpty, "Cancellation must dismiss without committing")
   }
 
-  func testTYP101FlickPreviewTopEdgeLayoutAndAccessibilityIsolation() {
-    let keyboardBounds = CGRect(x: 0, y: 0, width: 330, height: 260)
-    let topRowKey = CGRect(x: 117, y: 0, width: 96, height: 52)
-    let popupFrame = Korean10KeyFlickPreviewLayout.popupFrame(
-      anchor: topRowKey,
-      keyboardBounds: keyboardBounds,
-      cellSize: 40
+  func testTYP106FlickPreviewKeepsPhysicalAnchorFixedAndFitsEdgeCandidates() {
+    let keyboardBounds = CGRect(x: 0, y: 0, width: 330, height: 278)
+    let edgeKeys = [
+      CGRect(x: 12, y: 10, width: 96, height: 52),
+      CGRect(x: 117, y: 10, width: 96, height: 52),
+      CGRect(x: 222, y: 10, width: 96, height: 52),
+      CGRect(x: 12, y: 187, width: 96, height: 52),
+      CGRect(x: 222, y: 187, width: 96, height: 52),
+    ]
+
+    for anchor in edgeKeys {
+      let result = Korean10KeyFlickPreviewLayout.result(
+        anchor: anchor,
+        keyboardBounds: keyboardBounds,
+        petalSize: 40,
+        positions: Korean10KeyFlickPreviewPosition.directionalCases
+      )
+
+      XCTAssertEqual(
+        result.anchorFrame,
+        anchor,
+        "Layout must never clamp or replace the key anchor"
+      )
+      XCTAssertEqual(
+        Set(result.candidates.map(\.position)),
+        Set(Korean10KeyFlickPreviewPosition.directionalCases),
+        "Missing edge candidate for anchor \(anchor)"
+      )
+      for candidate in result.candidates {
+        XCTAssertTrue(keyboardBounds.contains(candidate.petalFrame), "\(candidate.position)")
+        XCTAssertFalse(candidate.petalFrame.intersects(anchor), "\(candidate.position)")
+        switch candidate.position {
+        case .left: XCTAssertEqual(candidate.stemStart.x, anchor.minX)
+        case .right: XCTAssertEqual(candidate.stemStart.x, anchor.maxX)
+        case .up: XCTAssertEqual(candidate.stemStart.y, anchor.minY)
+        case .down: XCTAssertEqual(candidate.stemStart.y, anchor.maxY)
+        case .center:
+          XCTFail("The physical keycap is the anchor; no center petal is rendered")
+        }
+      }
+    }
+  }
+
+  func testTYP106FlickPreviewReleaseCancelMultitouchAndAccessibilityCleanup() {
+    var tracker = Korean10KeyFlickPreviewTracker()
+    tracker.begin(key: .vertical)
+    tracker.begin(key: .vertical)
+    tracker.begin(key: .horizontal)
+    XCTAssertEqual(Set(tracker.activeStates.keys), [.vertical, .horizontal])
+
+    tracker.finish(key: .vertical, wasCancelled: false)
+    XCTAssertNotNil(
+      tracker.activeStates[.vertical],
+      "The first same-key release must preserve the other touch preview"
+    )
+    tracker.finish(key: .vertical, wasCancelled: true)
+    XCTAssertNil(
+      tracker.activeStates[.vertical],
+      "The last same-key cancellation removes that key's preview"
+    )
+    XCTAssertNotNil(tracker.activeStates[.horizontal])
+    tracker.finish(key: .horizontal, wasCancelled: true)
+    XCTAssertTrue(
+      tracker.activeStates.isEmpty,
+      "Cancellation cleans up the remaining touch preview"
     )
 
-    XCTAssertEqual(popupFrame.minY, keyboardBounds.minY)
-    XCTAssertGreaterThanOrEqual(popupFrame.minX, keyboardBounds.minX)
-    XCTAssertLessThanOrEqual(popupFrame.maxX, keyboardBounds.maxX)
-    XCTAssertLessThanOrEqual(popupFrame.maxY, keyboardBounds.maxY)
     XCTAssertTrue(Korean10KeyFlickPreviewAccessibilityPolicy.isHidden(environment: [:]))
     XCTAssertFalse(
       Korean10KeyFlickPreviewAccessibilityPolicy.isHidden(
