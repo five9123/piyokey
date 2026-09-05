@@ -1369,21 +1369,23 @@ struct Korean10KeyKeyboardView: View {
     }
     .frame(maxWidth: adaptiveMetrics.isExpanded ? 600 : .infinity)
     .frame(maxWidth: .infinity)
+    .overlayPreferenceValue(KeyboardKeyBoundsPreferenceKey.self) { anchors in
+      GeometryReader { proxy in
+        RolloverKeyboardTouchSurface(
+          targets: touchTargets(from: anchors, proxy: proxy),
+          onTouchBegan: beginPress,
+          onTouchMoved: movePress,
+          onTouchEnded: endPress
+        )
+      }
+    }
     .padding(.horizontal, 12)
     .padding(.top, 10)
     .padding(.bottom, 8)
     .coordinateSpace(name: KeyboardCoordinateSpace.name)
     .overlayPreferenceValue(KeyboardKeyBoundsPreferenceKey.self) { anchors in
       GeometryReader { proxy in
-        ZStack {
-          flickPreviews(from: anchors, proxy: proxy)
-          RolloverKeyboardTouchSurface(
-            targets: touchTargets(from: anchors, proxy: proxy),
-            onTouchBegan: beginPress,
-            onTouchMoved: movePress,
-            onTouchEnded: endPress
-          )
-        }
+        flickPreviews(from: anchors, proxy: proxy)
       }
     }
     .background(.ultraThinMaterial)
