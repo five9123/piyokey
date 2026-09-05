@@ -208,35 +208,7 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "practice-korean-10key-large-ja")
   }
 
-  func testKorean10KeyFlickCommitsOneJamoPerGesture() {
-    app.terminate()
-    app = makeApplication(resetKeyboardPreferences: true)
-    app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
-    app.launch()
-    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-    startPractice()
-
-    let progress = element("practice.jamo_progress.value")
-    let siot = app.buttons["keyboard.10key.siot"]
-    let vertical = app.buttons["keyboard.10key.vertical"]
-    XCTAssertTrue(siot.waitForExistence(timeout: 3))
-    XCTAssertTrue(vertical.exists)
-
-    flick(siot, fromX: 0.8, toX: 0.2)
-    waitForValue("1 / 9", on: progress, timeout: 3)
-
-    vertical.tap()
-    XCTAssertEqual(progress.value as? String, "1 / 9")
-    flick(vertical, fromX: 0.2, toX: 0.8)
-    XCTAssertEqual(progress.value as? String, "1 / 9")
-    XCTAssertEqual(element("practice.mistakes.value").value as? String, "1")
-
-    flick(vertical, fromX: 0.2, toX: 0.8)
-    waitForValue("2 / 9", on: progress, timeout: 3)
-    XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
-  }
-
-  func testTYP106Korean10KeyFlickPreviewAnchorsEdgesAndDismisses() {
+  func testTYP111Korean10KeyFlickPreviewIsAbsentAndDirectionalInputStillWorks() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true)
     app.launchArguments += ["-keyboard.builtin_layout_default", "korean_10key"]
@@ -246,64 +218,29 @@ final class HancoUITests: XCTestCase {
     startPractice()
 
     let progress = element("practice.jamo_progress.value")
-    let mistakes = element("practice.mistakes.value")
     let siot = app.buttons["keyboard.10key.siot"]
     let vertical = app.buttons["keyboard.10key.vertical"]
-    let horizontal = app.buttons["keyboard.10key.horizontal"]
-    let keyboard = element("keyboard.10key.container")
+    let previewElements = app.descendants(matching: .any).matching(
+      NSPredicate(format: "identifier BEGINSWITH %@", "keyboard.10key.preview.")
+    )
     XCTAssertTrue(siot.waitForExistence(timeout: 3))
     XCTAssertTrue(vertical.exists)
-    XCTAssertTrue(horizontal.exists)
-    XCTAssertTrue(keyboard.exists)
+    XCTAssertEqual(previewElements.count, 0)
 
-    siot.tap()
+    flick(siot, fromX: 0.8, toX: 0.2)
     waitForValue("1 / 9", on: progress, timeout: 3)
-    XCTAssertFalse(
-      element("keyboard.10key.preview.siot").exists,
-      "A short tap must dismiss its preview without obstructing input"
-    )
+    XCTAssertEqual(previewElements.count, 0, "Left flick must not show a preview overlay")
 
-    let preview = element("keyboard.10key.preview.vertical")
-    let verticalAnchorFrame = vertical.frame
+    vertical.tap()
+    XCTAssertEqual(progress.value as? String, "1 / 9")
     flick(vertical, fromX: 0.2, toX: 0.8)
-    XCTAssertTrue(preview.waitForExistence(timeout: 1))
-    XCTAssertFalse(
-      element("keyboard.10key.preview.vertical.center").exists,
-      "The physical keycap remains the visible center anchor"
-    )
-    XCTAssertEqual(vertical.frame, verticalAnchorFrame)
-    XCTAssertEqual(element("keyboard.10key.preview.vertical.left").label, "ㅓ")
-    XCTAssertEqual(element("keyboard.10key.preview.vertical.right").label, "ㅏ")
-    XCTAssertEqual(element("keyboard.10key.preview.vertical.up").label, "ㅕ")
-    XCTAssertEqual(element("keyboard.10key.preview.vertical.down").label, "ㅑ")
-    XCTAssertEqual(
-      element("keyboard.10key.preview.vertical.right").value as? String,
-      "highlighted"
-    )
-    for position in ["left", "right", "up", "down"] {
-      let candidate = element("keyboard.10key.preview.vertical.\(position)")
-      XCTAssertTrue(keyboard.frame.insetBy(dx: -1, dy: -1).contains(candidate.frame))
-      XCTAssertFalse(candidate.frame.intersects(vertical.frame))
-    }
+    XCTAssertEqual(progress.value as? String, "1 / 9")
+    XCTAssertEqual(element("practice.mistakes.value").value as? String, "1")
 
+    flick(vertical, fromX: 0.2, toX: 0.8)
     waitForValue("2 / 9", on: progress, timeout: 3)
-    XCTAssertEqual(mistakes.value as? String, "0")
-    XCTAssertTrue(preview.waitForNonExistence(timeout: 3))
+    XCTAssertEqual(previewElements.count, 0, "Right flick must not show a preview overlay")
     XCTAssertEqual(element("practice.target.value").value as? String, "1 / 4 音節完了")
-
-    let rightEdgePreview = element("keyboard.10key.preview.horizontal")
-    let rightEdgeAnchorFrame = horizontal.frame
-    flick(horizontal, fromX: 0.8, toX: 0.2)
-    XCTAssertTrue(rightEdgePreview.waitForExistence(timeout: 1))
-    XCTAssertEqual(horizontal.frame, rightEdgeAnchorFrame)
-    XCTAssertFalse(element("keyboard.10key.preview.horizontal.center").exists)
-    for position in ["left", "right", "up", "down"] {
-      let candidate = element("keyboard.10key.preview.horizontal.\(position)")
-      XCTAssertTrue(candidate.exists)
-      XCTAssertTrue(keyboard.frame.insetBy(dx: -1, dy: -1).contains(candidate.frame))
-      XCTAssertFalse(candidate.frame.intersects(horizontal.frame))
-    }
-    XCTAssertTrue(rightEdgePreview.waitForNonExistence(timeout: 3))
   }
 
   func testKorean10KeyLayoutCarriesIntoFlowGame() {
