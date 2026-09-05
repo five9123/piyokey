@@ -4,17 +4,17 @@
 
 ## Now — R1.1 기준선 안정화
 
-기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭과 TYP-101 방향 미리보기는 `main`에 병합됐고 build 21 실기기 회귀에서 TYP-105 부화 전환 경합과 TYP-106 플릭 팝업 앵커 이탈이 확인됐다. 두 수정의 source/review gate를 통과한 clean `origin/main`에서만 build 22를 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭은 `main`에 병합됐고, build 22 실기기 확인에서 플릭 방향 미리보기의 시각 품질 미달(petal의 인접 키 덮음·에지 잘림)이 확인돼 제출을 철회했다. TYP-111이 미리보기 표시만 제거(입력 계약 v6.21 유지)하며, 그 source/review gate를 통과한 clean `origin/main`에서만 build 23을 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
 
 1. iOS 1.1 출시 후보
    - TYP-43의 Search 카드·연습 목록·분석 설정 source 검증, exact-head review와 maintainer 승인·병합
-   - TYP-105·TYP-106 review/병합 뒤 최신 clean `origin/main`과 tree가 같은 `1.1 (22)` archive/TestFlight 생성. build 21은 후보에서 제외
+   - TYP-111 review/병합 뒤 최신 clean `origin/main`과 tree가 같은 `1.1 (23)` archive/TestFlight 생성. build 21·22는 후보에서 제외
    - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
    - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
 2. iOS 1.1 외부 출시 gate #77
    - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 19 실기기 QA
    - PostHog 동의 ON 수신·OFF 무전송과 Crashlytics 테스트 크래시·dSYM symbolication
-   - TYP-85 전체 방향표·롱프레스와 TYP-106 고정 anchor·edge 후보·release/cancel·동시 입력, p95≤50ms, 지원 게임 60fps와 VoiceOver의 iPhone·iPad 실기기 검증
+   - TYP-85 전체 방향표·롱프레스와 TYP-111 미리보기 부재·동시 입력, p95≤50ms, 지원 게임 60fps와 VoiceOver의 iPhone·iPad 실기기 검증
    - strict preflight 통과 뒤에만 App Review 제출
 3. CI 비용·검증 범위 최적화
    - docs-only 변경의 iOS 전체 build를 분리
