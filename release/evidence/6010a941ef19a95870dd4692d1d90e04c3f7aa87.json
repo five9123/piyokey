@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_commit": "6010a941ef19a95870dd4692d1d90e04c3f7aa87",
+  "verified_tree": "95b1c3a850b4a7b21dc21b0ceb5caefdff9cbfe9",
+  "branch": "codex/103-settings-keyboard-order",
+  "scope": "TYP-103 PR #166 build 21 critical-path merged-tree Settings keyboard order for iOS/iPadOS 1.1 Global Release",
+  "result": "pass",
+  "recorded_at": "2026-09-05T05:40:00.042191+00:00",
+  "checks": [
+    {
+      "name": "python contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "108 tests passed"
+    },
+    {
+      "name": "RC full iOS unit regression",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests",
+      "note": "Entire HancoTests target passed; exit 0"
+    },
+    {
+      "name": "iPhone 17 focused Settings UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Exactly 1 selected UI test passed; exit 0"
+    },
+    {
+      "name": "iPad Pro 13-inch focused Settings UI",
+      "status": "pass",
+      "command": "xcodebuild test -quiet -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -only-testing:HancoUITests/HancoUITests/testKeyboardSettingsPersistAcrossDeckPracticeExitAndRelaunch",
+      "note": "Exactly 1 selected UI test passed; exit 0"
+    },
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "origin/main ancestry",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main 6010a941ef19a95870dd4692d1d90e04c3f7aa87",
+      "note": "origin/main was 1a9715b707b8e872e7b7da6f7de35f4305444b3b"
+    },
+    {
+      "name": "implementation diff whitespace",
+      "status": "pass",
+      "command": "git diff --check origin/main...6010a941ef19a95870dd4692d1d90e04c3f7aa87",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "OPEN: GitHub Actions are repository-disabled; no CI success is claimed.",
+    "OPEN: exact-head Claude review and maintainer manual fail-closed approval for PR #166.",
+    "OPEN: build 21 archive/TestFlight and physical iPhone/iPad Settings, TYP-101/102/103 and listed regression, network consent, Crashlytics dSYM, p95/60fps, and VoiceOver gates.",
+    "OPEN: deployment, account, legal/tax/banking, content-rights, IAP, distribution signing, App Store review, and release gates."
+  ]
+}
