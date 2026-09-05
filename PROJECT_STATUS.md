@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | `main` `e9684bf`에 TYP-43 build 19 source까지 병합됐다. build 19 실기기 확인에서 TYP-101·TYP-103 후속 UI 작업이 확정돼 다음 후보는 build 20이다 | `iOS/iPadOS 1.1 Global Release`의 TYP-101·TYP-103을 병합한 최신 clean `origin/main`으로만 build 20을 만든다. 동의 ON/OFF 네트워크, Crashlytics dSYM, iPhone·iPad 회귀와 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
+| iOS 1.1 | `main` `4e0b969`에 TYP-102까지 병합됐고 build 20은 TestFlight에 업로드됐다. TYP-101·TYP-103 추가 편입으로 최종 후보는 build 21이다 | TYP-103·TYP-101을 순차 병합한 최신 clean `origin/main`으로만 build 21을 만든다. 동의 ON/OFF 네트워크, Crashlytics dSYM, iPhone·iPad 회귀와 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
