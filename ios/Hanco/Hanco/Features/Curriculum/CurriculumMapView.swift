@@ -927,10 +927,6 @@ private struct CurriculumStageRow: View {
         .font(.caption)
       }
       Spacer()
-      if !isLocked {
-        Image(systemName: "chevron.right")
-          .foregroundStyle(AppPalette.mutedInk)
-      }
     }
     .padding(16)
     .background(

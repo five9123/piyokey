@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "verified_commit": "f4f997d8e9d4e48dfd0938846b6a430c26d0c7aa",
+  "verified_tree": "3e86202ecadb77575e5aadb656ba00d9a4b41fdf",
+  "branch": "codex/114-curriculum-chevron",
+  "scope": "TYP-114 curriculum stage decorative chevron only; iOS/iPadOS 1.1 Global Release (99007f20-e78b-4ede-8c02-5fc47a062053)",
+  "result": "pass",
+  "recorded_at": "2026-09-06T13:59:27.732530+00:00",
+  "checks": [
+    {
+      "name": "focused-ios",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testCurriculumMapStartsWithSequentialCoreUnlocks -only-testing:HancoUITests/HancoUITests/testCurriculumCheckpointRestoresCompletedProblemAcrossRelaunch -only-testing:HancoUITests/HancoUITests/testOnboardingSelectsLevelBeforeFirstInputAndRoutesToForcedHatchMissions -only-testing:HancoTests/CurriculumProgressStoreTests/testCompletionKeepsBestStarsAccuracyAndFirstCompletedDate -resultBundlePath /tmp/typ114-validation/focused.xcresult",
+      "note": "4 tests passed (3 UI, 1 unit); default DerivedData; no broad/store/Android tests"
+    },
+    {
+      "name": "python-ios-language",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_ui_language_scope.UILanguageScopeTests.test_ios_ships_all_supported_ui_languages -v",
+      "note": "1 passed"
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "diff",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    },
+    {
+      "name": "simulator-visual",
+      "status": "pass",
+      "command": "xcrun simctl io 001DD016-283A-430F-AF05-B31288E5B605 screenshot /tmp/typ114-validation/hatch-en.png; xcrun xcresulttool export attachments --path /tmp/typ114-validation/focused.xcresult --output-path /tmp/typ114-validation/attachments; xcrun simctl io BD45DD0D-82DA-4327-B898-037BE3580E78 screenshot /tmp/typ114-validation/map-resume-stars-en.png",
+      "note": "Hatch https://uploads.linear.app/798991d7-ff7f-4617-a8d0-54c9e62e5d38/3e168488-ce4a-4ae2-9a02-e261b3539b30/ef6b743e-e28a-4313-a280-9e7a7767a797 ; map https://uploads.linear.app/798991d7-ff7f-4617-a8d0-54c9e62e5d38/ce2da79a-713a-4aa5-aad2-fa347b624e6a/f98a905c-2fc9-485a-a66e-b0251af5bb6f ; seeded stars/resume https://uploads.linear.app/798991d7-ff7f-4617-a8d0-54c9e62e5d38/7f363dcb-a486-486b-bff6-86d65e142cf2/fd11a84c-cfdd-46ef-940d-2bcce695a657 . Same f4f997d simulator binary; explicit schema-v1 fixture for visual stars/resume, actual checkpoint behavior covered by selected UI test."
+    }
+  ],
+  "manual_gates": [
+    "Current head Claude review:claude, latest-origin/main merged-tree recheck and maintainer manual approval required before merge. No merge authorized.",
+    "Full regression, iPad simulator/physical-device QA, deployment, account, rights, IAP, store/marketing capture, external-service and signing gates not run or closed by focused validation; no release authorization.",
+    "Post-validation eab7fef changes PROJECT_STATUS.md only to link GitHub #172 and truthful results; production source identical to tested f4f997d. Linear ownership number 114 is not GitHub #114."
+  ]
+}
