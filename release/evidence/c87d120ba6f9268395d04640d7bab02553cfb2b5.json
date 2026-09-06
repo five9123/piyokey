@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c87d120ba6f9268395d04640d7bab02553cfb2b5",
+  "verified_tree": "41524e15d359eb20ddcdb08fa4a7617cefe54838",
+  "branch": "codex/113-piyocup-osime-ranking",
+  "scope": "ios",
+  "result": "pass",
+  "recorded_at": "2026-09-06T15:00:39.146353+00:00",
+  "checks": [
+    {
+      "name": "game-center-and-progress",
+      "status": "pass",
+      "command": "xcodebuild focused GameCenterServiceTests and GameProgressStoreTests",
+      "note": "36 tests, 0 failures; /tmp/typ113-unit.xcresult"
+    },
+    {
+      "name": "piyocup-osime-iphone",
+      "status": "pass",
+      "command": "xcodebuild focused TYP-113 UI on iPhone 17 iOS 26.5",
+      "note": "1 test, 0 failures; /tmp/typ113-ui-iphone.xcresult"
+    },
+    {
+      "name": "piyocup-osime-ipad",
+      "status": "pass",
+      "command": "xcodebuild focused TYP-113 UI on iPad Pro 13-inch M5 iOS 26.5",
+      "note": "1 test, 0 failures; /tmp/typ113-ui-ipad.xcresult"
+    },
+    {
+      "name": "ui-language-contract",
+      "status": "pass",
+      "command": "python3 -m unittest tools.tests.test_ui_language_scope",
+      "note": "9 tests, 0 failures"
+    },
+    {
+      "name": "workspace-doctor",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --scope ios --strict --json",
+      "note": "clean owned worktree at verified SHA"
+    },
+    {
+      "name": "diff-check",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": "clean"
+    }
+  ],
+  "manual_gates": [
+    "build 24 actual iPad and physical keyboard Piyo Cup input",
+    "Game Center sandbox weekly leaderboard submission",
+    "App Store account, rights, IAP, review, and release"
+  ]
+}
