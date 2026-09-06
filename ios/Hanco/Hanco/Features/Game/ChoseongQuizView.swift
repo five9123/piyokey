@@ -2176,11 +2176,8 @@ struct ChoseongTypingView: View {
   }
 
   private var overlaysHiddenOSIMEInput: Bool {
-    // With the physical keyboard guide off, iPad hides the recovery strip and
-    // falls back to the invisible overlay, matching iPhone (정민, TYP-112).
     inputMode == .osIME
-      && !(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true)
-        && showsPhysicalKeyboardGuide)
+      && !OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true)
   }
 
   private var osIMEInputPanel: some View {
@@ -2194,7 +2191,7 @@ struct ChoseongTypingView: View {
       onAcceptedSequence: synchronizeOSIME,
       onConfirmedMismatch: recordOSIMEMistake,
       showsChrome: false,
-      showsFocusRecovery: !overlaysHiddenOSIMEInput
+      showsFocusRecovery: true
     )
   }
 
