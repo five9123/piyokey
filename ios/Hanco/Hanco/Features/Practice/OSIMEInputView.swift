@@ -128,6 +128,7 @@ struct OSIMEInputPanel: View {
   @State private var fieldText = ""
   @State private var focusRevision = 0
   @State private var isFieldFocused = false
+  @State private var sceneSuspendsFocus = false
   @State private var showsInputSourceWarning = false
   @State private var inputSourceWarningFeedbackRevision = 0
   @State private var inputSourceWarningShakeStep: CGFloat = 0
@@ -197,11 +198,15 @@ struct OSIMEInputPanel: View {
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
-      guard phase == .active, !isFocusSuspended else { return }
-      requestFocus()
+      if phase == .active {
+        sceneSuspendsFocus = false
+        if !isFocusSuspended { requestFocus() }
+      } else {
+        sceneSuspendsFocus = true
+      }
     }
     .onChange(of: isFocusSuspended) { suspended in
-      if !suspended { requestFocus() }
+      if !suspended, scenePhase == .active { requestFocus() }
     }
     .task(id: inputSourceWarningFeedbackRevision) {
       guard inputSourceWarningFeedbackRevision > 0 else { return }
@@ -303,7 +308,7 @@ struct OSIMEInputPanel: View {
       targets: candidateTargets.isEmpty ? [target] : candidateTargets,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
-      isFocusSuspended: isFocusSuspended,
+      isFocusSuspended: isFocusSuspended || sceneSuspendsFocus,
       isFocused: $isFieldFocused,
       onReturn: requestFocus,
       onFocusRecovery: requestFocus,
