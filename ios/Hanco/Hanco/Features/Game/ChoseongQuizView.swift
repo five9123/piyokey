@@ -2197,6 +2197,7 @@ struct ChoseongTypingView: View {
       target: viewModel.currentRound.answer.ko,
       acceptedText: viewModel.enteredText,
       resetRevision: viewModel.roundRevision + inputResetRevision,
+      sessionRevision: inputResetRevision,
       onInputStart: {
         HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
       },

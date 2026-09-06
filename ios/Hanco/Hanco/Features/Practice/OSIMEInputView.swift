@@ -116,6 +116,7 @@ struct OSIMEInputPanel: View {
   let candidateTargets: [String]
   let acceptedText: String
   let resetRevision: Int
+  let sessionRevision: Int
   let onInputStart: () -> Void
   let onAcceptedSequence: ([Character]) -> Void
   let onAcceptedCandidateSequence: ((String, [Character]) -> Void)?
@@ -139,6 +140,7 @@ struct OSIMEInputPanel: View {
     candidateTargets: [String] = [],
     acceptedText: String,
     resetRevision: Int,
+    sessionRevision: Int = 0,
     onInputStart: @escaping () -> Void = {},
     onAcceptedSequence: @escaping ([Character]) -> Void,
     onAcceptedCandidateSequence: ((String, [Character]) -> Void)? = nil,
@@ -152,6 +154,7 @@ struct OSIMEInputPanel: View {
     self.candidateTargets = candidateTargets
     self.acceptedText = acceptedText
     self.resetRevision = resetRevision
+    self.sessionRevision = sessionRevision
     self.onInputStart = onInputStart
     self.onAcceptedSequence = onAcceptedSequence
     self.onAcceptedCandidateSequence = onAcceptedCandidateSequence
@@ -314,6 +317,10 @@ struct OSIMEInputPanel: View {
       onFocusRecovery: requestFocus,
       onTextChange: evaluate(committedText:markedText:)
     )
+    // Result/retry and input-mode transitions can retain this SwiftUI panel.
+    // Give UIKit a fresh text-input client at those session boundaries while
+    // keeping ordinary per-target resets in the same responder session.
+    .id(sessionRevision)
   }
 
   private func requestFocus() {

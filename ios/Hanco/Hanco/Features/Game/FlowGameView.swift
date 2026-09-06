@@ -535,6 +535,7 @@ struct FlowGameView: View {
       candidateTargets: acidRainOSIMECandidateTargets,
       acceptedText: viewModel.enteredText,
       resetRevision: viewModel.cardRevision + inputResetRevision,
+      sessionRevision: inputResetRevision,
       onInputStart: {
         HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
       },

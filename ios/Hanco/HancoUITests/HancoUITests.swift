@@ -2434,7 +2434,12 @@ final class HancoUITests: XCTestCase {
 
   func testInstalledDeckStartsTimedFlowGameAndRetriesFromResult() {
     app.terminate()
-    app = makeApplication(resetKeyboardPreferences: true, gameDuration: 8)
+    app = makeApplication(
+      resetKeyboardPreferences: true,
+      gameDuration: 8,
+      koreanKeyboardAvailable: true
+    )
+    app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
@@ -2508,6 +2513,12 @@ final class HancoUITests: XCTestCase {
     app.buttons["game.result.retry"].tap()
     XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
     XCTAssertTrue(element("game.timer.value").exists)
+    let retryTarget = element("game.target.value")
+    XCTAssertTrue(retryTarget.waitForExistence(timeout: 5))
+    let retryField = app.textFields["os_ime.text_field"]
+    XCTAssertTrue(retryField.waitForExistence(timeout: 3))
+    retryField.typeText(retryTarget.label)
+    waitForLabelDifferentFrom("0", on: element("game.score.value"), timeout: 3)
   }
 
   func testChoseongQuizCompletesTenQuestionsAndShowsSeparateResult() {
