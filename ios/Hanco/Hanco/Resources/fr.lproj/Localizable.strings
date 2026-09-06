@@ -927,7 +927,7 @@
 "game_center.ranked_deck" = "Paquet classé avec clavier intégré";
 "piyo_cup.title" = "Coupe Piyo hebdomadaire";
 "piyo_cup.weekly_badge" = "HEBDOMADAIRE";
-"piyo_cup.detail" = "Une partie équitable de 60 secondes sur le coréen quotidien. Clavier intégré uniquement.";
+"piyo_cup.detail" = "Une partie équitable de 60 secondes sur le coréen quotidien. Utilisez le clavier sélectionné.";
 "piyo_cup.unavailable" = "Impossible de charger le paquet de compétition.";
 "piyo_cup.result.clear" = "Coupe Piyo terminée !";
 "piyo_cup.share.badge" = "Coupe Piyo hebdomadaire · rang %@";

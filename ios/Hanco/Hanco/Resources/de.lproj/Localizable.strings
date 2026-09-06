@@ -927,7 +927,7 @@
 "game_center.ranked_deck" = "Ranglistendeck mit integrierter Tastatur";
 "piyo_cup.title" = "Wöchentlicher Piyo-Cup";
 "piyo_cup.weekly_badge" = "WÖCHENTLICH";
-"piyo_cup.detail" = "Faire 60 Sekunden mit Alltagskoreanisch für alle. Nur integrierte Tastatur.";
+"piyo_cup.detail" = "Faire 60 Sekunden mit Alltagskoreanisch für alle. Verwende deine ausgewählte Tastatur.";
 "piyo_cup.unavailable" = "Wettkampfdeck konnte nicht geladen werden.";
 "piyo_cup.result.clear" = "Piyo-Cup geschafft!";
 "piyo_cup.share.badge" = "Wöchentlicher Piyo-Cup · Rang %@";

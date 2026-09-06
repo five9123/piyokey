@@ -959,7 +959,7 @@
 "game_center.ranked_deck" = "내장 키보드 랭킹 대상";
 "piyo_cup.title" = "주간 피요컵";
 "piyo_cup.weekly_badge" = "매주 갱신";
-"piyo_cup.detail" = "모두 같은 ‘매일의 한국어’로 60초 대결해요. 내장 키보드 전용이에요.";
+"piyo_cup.detail" = "모두 같은 ‘매일의 한국어’로 60초 대결해요. 선택한 키보드를 사용할 수 있어요.";
 "piyo_cup.unavailable" = "경쟁 덱을 불러오지 못했어요.";
 "piyo_cup.result.clear" = "피요컵 완료!";
 "piyo_cup.share.badge" = "주간 피요컵 %@ 랭크";

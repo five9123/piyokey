@@ -957,7 +957,7 @@
 "game_center.ranked_deck" = "内蔵キーボードランキング対象";
 "piyo_cup.title" = "週間ピヨカップ";
 "piyo_cup.weekly_badge" = "毎週更新";
-"piyo_cup.detail" = "全員同じ「毎日の韓国語」で60秒勝負。内蔵キーボード限定です。";
+"piyo_cup.detail" = "全員同じ「毎日の韓国語」で60秒勝負。選択中のキーボードを使えます。";
 "piyo_cup.unavailable" = "競技デッキを読み込めませんでした。";
 "piyo_cup.result.clear" = "ピヨカップ終了！";
 "piyo_cup.share.badge" = "週間ピヨカップ %@ランク";
