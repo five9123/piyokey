@@ -270,281 +270,6 @@ enum Korean10KeyFlickMapping {
     default: nil
     }
   }
-
-  static func previewCandidates(for key: Korean10KeyKey) -> Korean10KeyFlickPreviewCandidates {
-    var labels: [Korean10KeyFlickPreviewPosition: String] = [
-      .center: key.displayText,
-    ]
-    for position in Korean10KeyFlickPreviewPosition.directionalCases {
-      guard let direction = position.direction,
-        let jamo = completedJamo(for: key, direction: direction)
-      else { continue }
-      labels[position] = String(jamo)
-    }
-    return Korean10KeyFlickPreviewCandidates(labels: labels)
-  }
-}
-
-enum Korean10KeyFlickPreviewPosition: String, CaseIterable, Hashable {
-  case center
-  case left
-  case right
-  case up
-  case down
-
-  static let directionalCases: [Self] = [.left, .right, .up, .down]
-
-  init(direction: Korean10KeyFlickDirection) {
-    switch direction {
-    case .left: self = .left
-    case .right: self = .right
-    case .up: self = .up
-    case .down: self = .down
-    }
-  }
-
-  var direction: Korean10KeyFlickDirection? {
-    switch self {
-    case .center: nil
-    case .left: .left
-    case .right: .right
-    case .up: .up
-    case .down: .down
-    }
-  }
-
-  var gridOffset: CGSize {
-    switch self {
-    case .center: .zero
-    case .left: CGSize(width: -1, height: 0)
-    case .right: CGSize(width: 1, height: 0)
-    case .up: CGSize(width: 0, height: -1)
-    case .down: CGSize(width: 0, height: 1)
-    }
-  }
-}
-
-struct Korean10KeyFlickPreviewCandidates: Equatable {
-  let labels: [Korean10KeyFlickPreviewPosition: String]
-
-  subscript(position: Korean10KeyFlickPreviewPosition) -> String? {
-    labels[position]
-  }
-}
-
-struct Korean10KeyFlickPreviewState: Equatable {
-  let key: Korean10KeyKey
-  fileprivate(set) var highlightedPosition: Korean10KeyFlickPreviewPosition? = .center
-
-  mutating func update(gesture: KeyboardTouchGesture) {
-    let nextPosition: Korean10KeyFlickPreviewPosition?
-    switch Korean10KeyFlickGestureResolver.interpretation(
-      translation: gesture.translation,
-      duration: gesture.duration
-    ) {
-    case .tap:
-      nextPosition = .center
-    case .flick(let direction):
-      let position = Korean10KeyFlickPreviewPosition(direction: direction)
-      nextPosition = Korean10KeyFlickMapping.previewCandidates(for: key)[position] == nil
-        ? nil
-        : position
-    case .invalidFlick:
-      nextPosition = nil
-    }
-    guard highlightedPosition != nextPosition else { return }
-    highlightedPosition = nextPosition
-  }
-}
-
-struct Korean10KeyFlickPreviewTracker: Equatable {
-  private(set) var activeStates: [Korean10KeyKey: Korean10KeyFlickPreviewState] = [:]
-  private var activeTouchCounts: [Korean10KeyKey: Int] = [:]
-
-  mutating func begin(key: Korean10KeyKey) {
-    guard key.supportsFlick else { return }
-    activeTouchCounts[key, default: 0] += 1
-    if activeStates[key] == nil {
-      activeStates[key] = Korean10KeyFlickPreviewState(key: key)
-    }
-  }
-
-  mutating func move(key: Korean10KeyKey, gesture: KeyboardTouchGesture) {
-    guard var state = activeStates[key] else { return }
-    state.update(gesture: gesture)
-    guard activeStates[key] != state else { return }
-    activeStates[key] = state
-  }
-
-  mutating func finish(key: Korean10KeyKey, wasCancelled _: Bool) {
-    let remainingCount = activeTouchCounts[key, default: 0] - 1
-    if remainingCount > 0 {
-      activeTouchCounts[key] = remainingCount
-    } else {
-      activeTouchCounts.removeValue(forKey: key)
-      activeStates.removeValue(forKey: key)
-    }
-  }
-}
-
-enum Korean10KeyFlickPreviewLayout {
-  struct Candidate: Equatable {
-    let position: Korean10KeyFlickPreviewPosition
-    let petalFrame: CGRect
-    let stemStart: CGPoint
-    let stemEnd: CGPoint
-  }
-
-  struct Result: Equatable {
-    let anchorFrame: CGRect
-    let candidates: [Candidate]
-  }
-
-  static func result(
-    anchor: CGRect,
-    keyboardBounds: CGRect,
-    petalSize: CGFloat,
-    positions: [Korean10KeyFlickPreviewPosition]
-  ) -> Result {
-    let spacing = max(6, petalSize * 0.18)
-    let step = petalSize + spacing
-    let halfPetal = petalSize / 2
-    let topY = anchor.minY - spacing - halfPetal
-    let bottomY = anchor.maxY + spacing + halfPetal
-    let leftX = anchor.minX - spacing - halfPetal
-    let rightX = anchor.maxX + spacing + halfPetal
-
-    let rowX = fittedCenters(
-      [anchor.midX - step, anchor.midX, anchor.midX + step],
-      minimum: keyboardBounds.minX + halfPetal,
-      maximum: keyboardBounds.maxX - halfPetal
-    )
-    let columnY = fittedCenters(
-      [anchor.midY - step, anchor.midY, anchor.midY + step],
-      minimum: keyboardBounds.minY + halfPetal,
-      maximum: keyboardBounds.maxY - halfPetal
-    )
-
-    let topFrames = rowX.map { petalFrame(center: CGPoint(x: $0, y: topY), size: petalSize) }
-    let bottomFrames = rowX.map {
-      petalFrame(center: CGPoint(x: $0, y: bottomY), size: petalSize)
-    }
-    let leftFrames = columnY.map { petalFrame(center: CGPoint(x: leftX, y: $0), size: petalSize) }
-    let rightFrames = columnY.map {
-      petalFrame(center: CGPoint(x: rightX, y: $0), size: petalSize)
-    }
-
-    var occupiedFrames: [CGRect] = []
-    var candidates: [Candidate] = []
-    for position in positions where position != .center {
-      let preferredFrames: [CGRect]
-      switch position {
-      case .left:
-        preferredFrames =
-          [
-            leftFrames[1], leftFrames[0], leftFrames[2], bottomFrames[0],
-            topFrames[0], bottomFrames[1], topFrames[1],
-          ]
-          + rightFrames + bottomFrames + topFrames
-      case .right:
-        preferredFrames =
-          [
-            rightFrames[1], rightFrames[0], rightFrames[2], bottomFrames[2],
-            topFrames[2], bottomFrames[1], topFrames[1],
-          ]
-          + leftFrames + Array(bottomFrames.reversed()) + Array(topFrames.reversed())
-      case .up:
-        preferredFrames =
-          [
-            topFrames[1], topFrames[0], topFrames[2], leftFrames[0],
-            rightFrames[0], leftFrames[1], rightFrames[1],
-          ]
-          + bottomFrames + leftFrames + rightFrames
-      case .down:
-        preferredFrames =
-          [
-            bottomFrames[1], bottomFrames[0], bottomFrames[2], leftFrames[2],
-            rightFrames[2], leftFrames[1], rightFrames[1],
-          ]
-          + Array(topFrames.reversed()) + Array(leftFrames.reversed())
-          + Array(rightFrames.reversed())
-      case .center:
-        preferredFrames = []
-      }
-
-      guard
-        let frame = preferredFrames.first(where: { candidateFrame in
-          keyboardBounds.contains(candidateFrame)
-            && !candidateFrame.intersects(anchor)
-            && !occupiedFrames.contains(where: { occupiedFrame in
-              occupiedFrame.insetBy(dx: -spacing / 2, dy: -spacing / 2)
-                .intersects(candidateFrame)
-            })
-        })
-      else { continue }
-
-      occupiedFrames.append(frame)
-      let stemStart = anchorPoint(for: position, in: anchor)
-      candidates.append(
-        Candidate(
-          position: position,
-          petalFrame: frame,
-          stemStart: stemStart,
-          stemEnd: closestPoint(on: frame, to: stemStart)
-        )
-      )
-    }
-
-    return Result(anchorFrame: anchor, candidates: candidates)
-  }
-
-  private static func petalFrame(center: CGPoint, size: CGFloat) -> CGRect {
-    CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
-  }
-
-  private static func fittedCenters(
-    _ centers: [CGFloat],
-    minimum: CGFloat,
-    maximum: CGFloat
-  ) -> [CGFloat] {
-    guard let first = centers.first, let last = centers.last else { return centers }
-    let leadingAdjustment = max(0, minimum - first)
-    let trailingAdjustment = min(0, maximum - (last + leadingAdjustment))
-    let adjustment = leadingAdjustment + trailingAdjustment
-    return centers.map { $0 + adjustment }
-  }
-
-  private static func anchorPoint(
-    for position: Korean10KeyFlickPreviewPosition,
-    in anchor: CGRect
-  ) -> CGPoint {
-    switch position {
-    case .center: CGPoint(x: anchor.midX, y: anchor.midY)
-    case .left: CGPoint(x: anchor.minX, y: anchor.midY)
-    case .right: CGPoint(x: anchor.maxX, y: anchor.midY)
-    case .up: CGPoint(x: anchor.midX, y: anchor.minY)
-    case .down: CGPoint(x: anchor.midX, y: anchor.maxY)
-    }
-  }
-
-  private static func closestPoint(on frame: CGRect, to point: CGPoint) -> CGPoint {
-    CGPoint(
-      x: min(max(point.x, frame.minX), frame.maxX),
-      y: min(max(point.y, frame.minY), frame.maxY)
-    )
-  }
-}
-
-enum Korean10KeyFlickPreviewAccessibilityPolicy {
-  static func exposesUITestProbe(
-    environment: [String: String] = ProcessInfo.processInfo.environment
-  ) -> Bool {
-    environment["UITEST_FLICK_PREVIEW_PROBE"] == "1"
-  }
-
-  static func isHidden(environment: [String: String] = ProcessInfo.processInfo.environment) -> Bool {
-    !exposesUITestProbe(environment: environment)
-  }
 }
 
 enum Korean10KeyInterpretation: Equatable {
@@ -1335,8 +1060,6 @@ struct Korean10KeyKeyboardView: View {
 
   @State private var guidePulse = false
   @State private var pressedActionCounts: [HangulKeyboardAction: Int] = [:]
-  @State private var flickPreviewTracker = Korean10KeyFlickPreviewTracker()
-  @State private var flickPreviewProbeSnapshot: Korean10KeyFlickPreviewState?
 
   private let rows: [[Korean10KeyKey]] = [
     [.vertical, .dot, .horizontal],
@@ -1374,7 +1097,6 @@ struct Korean10KeyKeyboardView: View {
         RolloverKeyboardTouchSurface(
           targets: touchTargets(from: anchors, proxy: proxy),
           onTouchBegan: beginPress,
-          onTouchMoved: movePress,
           onTouchEnded: endPress
         )
       }
@@ -1383,11 +1105,6 @@ struct Korean10KeyKeyboardView: View {
     .padding(.top, 10)
     .padding(.bottom, 8)
     .coordinateSpace(name: KeyboardCoordinateSpace.name)
-    .overlayPreferenceValue(KeyboardKeyBoundsPreferenceKey.self) { anchors in
-      GeometryReader { proxy in
-        flickPreviews(from: anchors, proxy: proxy)
-      }
-    }
     .background(.ultraThinMaterial)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text("keyboard.10key.accessibility_label"))
@@ -1460,50 +1177,9 @@ struct Korean10KeyKeyboardView: View {
     pressedActionCounts[action, default: 0] > 0
   }
 
-  @ViewBuilder
-  private func flickPreviews(
-    from anchors: [HangulKeyboardAction: Anchor<CGRect>],
-    proxy: GeometryProxy
-  ) -> some View {
-    ForEach(
-      renderedFlickPreviewStates.keys.sorted { $0.rawValue < $1.rawValue },
-      id: \.self
-    ) { key in
-      if let state = renderedFlickPreviewStates[key],
-        let anchor = anchors[.korean10Key(key)]
-      {
-        let keyFrame = proxy[anchor]
-        let petalSize = max(36, keyFrame.height * 0.78)
-        let candidates = Korean10KeyFlickMapping.previewCandidates(for: state.key)
-        let layout = Korean10KeyFlickPreviewLayout.result(
-          anchor: keyFrame,
-          keyboardBounds: CGRect(origin: .zero, size: proxy.size),
-          petalSize: petalSize,
-          positions: Korean10KeyFlickPreviewPosition.directionalCases.filter {
-            candidates[$0] != nil
-          }
-        )
-        Korean10KeyFlickPreview(
-          state: state,
-          layout: layout,
-          keyboardSize: proxy.size
-        )
-      }
-    }
-  }
-
-  private var renderedFlickPreviewStates: [Korean10KeyKey: Korean10KeyFlickPreviewState] {
-    var states = flickPreviewTracker.activeStates
-    if let snapshot = flickPreviewProbeSnapshot, states[snapshot.key] == nil {
-      states[snapshot.key] = snapshot
-    }
-    return states
-  }
-
   private func beginPress(_ action: HangulKeyboardAction) {
     pressedActionCounts[action, default: 0] += 1
     if case .korean10Key(let key) = action, key.supportsFlick {
-      flickPreviewTracker.begin(key: key)
       KeyHaptics.fire(if: options.hapticsEnabled)
       onKeyFeedback(.character)
       return
@@ -1511,16 +1187,8 @@ struct Korean10KeyKeyboardView: View {
     activate(action)
   }
 
-  private func movePress(_ action: HangulKeyboardAction, gesture: KeyboardTouchGesture) {
-    guard case .korean10Key(let key) = action, key.supportsFlick else { return }
-    flickPreviewTracker.move(key: key, gesture: gesture)
-  }
-
   private func endPress(_ action: HangulKeyboardAction, gesture: KeyboardTouchGesture) {
     if case .korean10Key(let key) = action, key.supportsFlick {
-      let completedPreview = flickPreviewTracker.activeStates[key]
-      flickPreviewTracker.finish(key: key, wasCancelled: gesture.wasCancelled)
-      retainUITestProbeIfNeeded(completedPreview, wasCancelled: gesture.wasCancelled)
       if !gesture.wasCancelled {
         activate(key, gesture: gesture)
       }
@@ -1530,27 +1198,6 @@ struct Korean10KeyKeyboardView: View {
       pressedActionCounts[action] = remainingCount
     } else {
       pressedActionCounts.removeValue(forKey: action)
-    }
-  }
-
-  private func retainUITestProbeIfNeeded(
-    _ completedPreview: Korean10KeyFlickPreviewState?,
-    wasCancelled: Bool
-  ) {
-    guard !wasCancelled,
-      Korean10KeyFlickPreviewAccessibilityPolicy.exposesUITestProbe(),
-      let completedPreview,
-      completedPreview.highlightedPosition != .center
-    else { return }
-
-    // XCUI gesture APIs are synchronous and cannot inspect a view while a finger is held.
-    // Production never enables this probe; it keeps the last non-interactive snapshot only
-    // long enough for the focused UI test to validate labels, highlighting, and geometry.
-    flickPreviewProbeSnapshot = completedPreview
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      if flickPreviewProbeSnapshot == completedPreview {
-        flickPreviewProbeSnapshot = nil
-      }
     }
   }
 
@@ -1586,70 +1233,6 @@ struct Korean10KeyKeyboardView: View {
 
     KeyHaptics.fire(if: options.hapticsEnabled)
     onKeyFeedback(soundRole)
-  }
-}
-
-private struct Korean10KeyFlickPreview: View {
-  @Environment(\.hancoFontScale) private var fontScale
-
-  let state: Korean10KeyFlickPreviewState
-  let layout: Korean10KeyFlickPreviewLayout.Result
-  let keyboardSize: CGSize
-
-  private var candidates: Korean10KeyFlickPreviewCandidates {
-    Korean10KeyFlickMapping.previewCandidates(for: state.key)
-  }
-
-  var body: some View {
-    ZStack {
-      ForEach(layout.candidates, id: \.position) { candidate in
-        let position = candidate.position
-        let isHighlighted = state.highlightedPosition == position
-
-        Path { path in
-          path.move(to: candidate.stemStart)
-          path.addLine(to: candidate.stemEnd)
-        }
-        .stroke(
-          isHighlighted ? AppPalette.accent : AppPalette.key,
-          style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round)
-        )
-        .shadow(color: AppPalette.keyShadow, radius: 3, y: 2)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-      }
-
-      ForEach(layout.candidates, id: \.position) { candidate in
-        let position = candidate.position
-        let isHighlighted = state.highlightedPosition == position
-        if let label = candidates[position] {
-          Text(verbatim: label)
-            .font(.system(size: 19 * fontScale, weight: .bold, design: .rounded))
-            .foregroundStyle(isHighlighted ? Color.white : AppPalette.ink)
-            .frame(width: candidate.petalFrame.width, height: candidate.petalFrame.height)
-            .background(
-              isHighlighted ? AppPalette.accent : AppPalette.key,
-              in: RoundedRectangle(cornerRadius: 14, style: .continuous)
-            )
-            .overlay {
-              RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(AppPalette.keyShadow.opacity(0.85), lineWidth: 1)
-            }
-            .shadow(color: AppPalette.keyShadow, radius: 5, y: 3)
-            .position(x: candidate.petalFrame.midX, y: candidate.petalFrame.midY)
-            .accessibilityLabel(Text(verbatim: label))
-            .accessibilityValue(Text(verbatim: isHighlighted ? "highlighted" : ""))
-            .accessibilityIdentifier(
-              "keyboard.10key.preview.\(state.key.rawValue).\(position.rawValue)"
-            )
-        }
-      }
-    }
-    .frame(width: keyboardSize.width, height: keyboardSize.height, alignment: .topLeading)
-    .accessibilityElement(children: .contain)
-    .accessibilityIdentifier("keyboard.10key.preview.\(state.key.rawValue)")
-    .accessibilityHidden(Korean10KeyFlickPreviewAccessibilityPolicy.isHidden())
-    .allowsHitTesting(false)
   }
 }
 
@@ -1823,7 +1406,6 @@ private struct KeyboardKeyBoundsPreferenceKey: PreferenceKey {
 private struct RolloverKeyboardTouchSurface: UIViewRepresentable {
   let targets: [KeyboardTouchTarget]
   let onTouchBegan: (HangulKeyboardAction) -> Void
-  var onTouchMoved: (HangulKeyboardAction, KeyboardTouchGesture) -> Void = { _, _ in }
   let onTouchEnded: (HangulKeyboardAction, KeyboardTouchGesture) -> Void
 
   func makeUIView(context: Context) -> RolloverKeyboardTouchView {
@@ -1836,7 +1418,6 @@ private struct RolloverKeyboardTouchSurface: UIViewRepresentable {
   func updateUIView(_ uiView: RolloverKeyboardTouchView, context: Context) {
     uiView.targets = targets
     uiView.onTouchBegan = onTouchBegan
-    uiView.onTouchMoved = onTouchMoved
     uiView.onTouchEnded = onTouchEnded
   }
 }
@@ -1844,7 +1425,6 @@ private struct RolloverKeyboardTouchSurface: UIViewRepresentable {
 final class RolloverKeyboardTouchView: UIView {
   var targets: [KeyboardTouchTarget] = []
   var onTouchBegan: ((HangulKeyboardAction) -> Void)?
-  var onTouchMoved: ((HangulKeyboardAction, KeyboardTouchGesture) -> Void)?
   var onTouchEnded: ((HangulKeyboardAction, KeyboardTouchGesture) -> Void)?
 
   private struct TrackedTouch {
@@ -1889,14 +1469,6 @@ final class RolloverKeyboardTouchView: UIView {
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesEnded(touches, with: event)
     finish(touches, wasCancelled: false)
-  }
-
-  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-    super.touchesMoved(touches, with: event)
-    for touch in touches {
-      guard let tracked = trackedTouches[ObjectIdentifier(touch)] else { continue }
-      onTouchMoved?(tracked.action, gesture(for: touch, tracked: tracked, wasCancelled: false))
-    }
   }
 
   override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {

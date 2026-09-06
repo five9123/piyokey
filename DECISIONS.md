@@ -1816,3 +1816,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: PostHog EU 프로젝트 토큰은 git-ignored Release xcconfig로 주입하고, Google Analytics를 비활성화한 Firebase iOS 앱 `app.piyokey.Piyokey`의 plist도 버전 관리 밖에 둔다. Release archive는 둘 중 하나라도 빠지면 실패하고, 설정 파일이 있는 Release 빌드에서 plist를 앱 번들에 복사한다. Debug/test와 비-archive Release build의 기존 no-op 계약은 유지한다.
 - 검증 gate: source PR의 focused UI·전체 iOS 회귀와 exact-head review를 통과한 뒤 최신 clean `origin/main`에서만 build 19 archive를 만든다. 동의 ON 이벤트 수신, OFF 무전송, Crashlytics 테스트 크래시와 dSYM symbolication, App Store 개인정보 대조, iPhone·iPad 실기기 확인 전에는 TYP-43이나 1.1 출시를 Done 처리하지 않는다.
 - 영향 범위: `DiscoverView`, `CurriculumMapView`, iOS Release build phase, analytics release state와 출시 문서. Android와 App Review 제출은 이 source 변경에 포함하지 않는다.
+
+## 2026-09-06 TYP-111 플릭 방향 미리보기 표시 제거 (표시만 롤백)
+
+- 관련: TYP-111, TYP-106, TYP-101, TYP-85, PRD v6.25·F2, iOS/iPadOS 1.1 build 23.
+- 결정: build 22 iPhone 실기기 확인에서 컴팩트 키 높이 대비 미리보기 petal이 인접 키를 덮고 좌측 에지에서 잘리는 시각 품질 미달이 확인되어(2026-09-06 정민 실기기 보고, 두 차례 표시 재작업 #165·#169 후에도 미달), build 22 제출을 철회하고 화면 방향 미리보기 표시를 전면 제거한다. 이 결정은 2026-09-05 TYP-101 결정과 2026-09-06 TYP-106 결정의 표시 부분을 대체하며, 재제출 후보는 build 23이다.
+- 결정: 입력 계약은 v6.21 그대로 유지한다 — `Korean10KeyFlickGestureResolver`의 24pt·450ms·1.15배 축 우세 판정, `Korean10KeyFlickMapping` 방향표, 탭/플릭 배타 판정, recipe 시작 접두 대체, 롱프레스 범위, VoiceOver 키 라벨·현지화 방향 힌트는 변경하지 않는다. 제거 대상은 표시 전용 터치 추적·레이아웃·팝업 렌더 코드와 그 표시 검증 자동 테스트·UI 프로브뿐이다.
+- 검증 gate: `UITEST_FLICK_PREVIEW_PROBE=1` 상태에서 preview 요소 0과 방향 플릭 입력 정상 동작을 단언하는 역방향 UI 테스트(`testTYP111Korean10KeyFlickPreviewIsAbsentAndDirectionalInputStillWorks`)와 기존 플릭 입력·접근성 힌트 회귀를 유지한다. build 23 실기기 gate는 방향 매핑·p95 50ms·지원 게임 60fps·VoiceOver로 한정한다.
+- 근거: 표시 품질을 컴팩트 키 높이에서 확보하려면 키 크기·배열 재설계가 필요해 1.1 범위를 벗어난다. 표시와 입력이 처음부터 분리 설계돼 있어(표시는 view-layer 관찰 전용) 표시 제거가 입력 의미를 바꾸지 않는다.
+- 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`(HangulKeyboardView.swift)의 표시 전용 코드, focused 단위/UI 회귀, PRD·현황판·로드맵. resolver·mapping·interpreter·localization·OS IME·롱프레스 숫자·동결 Android는 변경하지 않는다.
