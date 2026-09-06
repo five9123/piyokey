@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| TYP-114 커리큘럼 카드 셰브런 제거 | In Review / GitHub #172 / `codex/114-curriculum-chevron` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. `f4f997d`의 개별 UI 3개·별점 1개 및 Python iOS 언어 계약 PASS. 부화·맵 bug screenshot과 SHA evidence를 단일 PR에 연결하고 exact-head Claude review·maintainer 승인 대기. GitHub #114와 무관하며 기존 출시 Issue #77의 외부 gate 유지 |
 | TYP-111 플릭 프리뷰 표시 제거 | In Review 준비 / `codex/111-hide-flick-preview` | 표시 전용 overlay와 dead code 제거, full package·HancoTests 및 focused iPhone·iPad UI evidence 뒤 exact-head Claude review를 받고, 병합 전 maintainer 수동 승인을 대기 |
 | TYP-106 플릭 팝업 키캡 겹침·앵커 이탈 | Merged / PR #169 → main `71f088a` / build 22 검증 | build 22 실기기에서 확인된 프리뷰 시각 품질 미달은 TYP-111 표시 제거로 대체하되 기존 방향 입력·p95·60fps·VoiceOver gate는 유지 |
 | TYP-105 build 21 부화 결과 전환 경합 | Merged / PR #168 → main `c81df6d` | build 22 실제 iPhone에서 1→2·2→3·3→축하→Home과 mission 2 및 final 즉시/10초 종료·재실행을 확인 |
