@@ -1482,6 +1482,8 @@ struct ChoseongTypingView: View {
   @EnvironmentObject private var reviewDeck: ReviewDeckLibrary
   @EnvironmentObject private var retention: RetentionLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
   @AppStorage(KeyboardPreferenceKeys.showsRomanHints) private var showsRomanHints = true
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
@@ -2129,7 +2131,19 @@ struct ChoseongTypingView: View {
           .padding(.horizontal, 12)
       }
       if inputMode == .osIME {
+        // Compact recovery strip only — the quiz cards keep the vertical space
+        // (parity with PracticeView's OS-IME layout on iPad).
         osIMEInputPanel
+          .frame(maxHeight: 56)
+        if showsPhysicalKeyboardGuide,
+          PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice
+        {
+          // No expected-key highlight: recall games hide the answer on the
+          // built-in keyboard too (`nextExpectedKey: nil` below).
+          PhysicalKeyboardGuideView(nextExpectedKey: nil)
+            .padding(.horizontal, 8)
+            .padding(.bottom, 6)
+        }
       } else {
         if builtInKeyboardLayout == .korean10Key {
           Korean10KeyKeyboardView(

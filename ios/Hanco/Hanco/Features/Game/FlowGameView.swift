@@ -15,6 +15,8 @@ struct FlowGameView: View {
   @EnvironmentObject private var retention: RetentionLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
   @AppStorage(KeyboardPreferenceKeys.showsKeyGuide) private var showsKeyGuide = true
+  @AppStorage(KeyboardPreferenceKeys.showsPhysicalKeyboardGuide) private
+    var showsPhysicalKeyboardGuide = false
   @AppStorage(KeyboardPreferenceKeys.showsRomanHints) private var showsRomanHints = true
   @AppStorage(KeyboardPreferenceKeys.hapticsEnabled) private var hapticsEnabled = true
   @AppStorage(KeyboardPreferenceKeys.inputModeDefault) private var inputModeDefault =
@@ -462,7 +464,17 @@ struct FlowGameView: View {
       }
 
       if inputMode == .osIME {
+        // Compact recovery strip only — the game lane keeps the vertical space
+        // (parity with PracticeView's OS-IME layout on iPad).
         osIMEInputPanel
+          .frame(maxHeight: 56)
+        if showsPhysicalKeyboardGuide,
+          PhysicalKeyboardGuidePolicy.isVisibleOnCurrentDevice
+        {
+          PhysicalKeyboardGuideView(nextExpectedKey: viewModel.nextExpectedKey)
+            .padding(.horizontal, 8)
+            .padding(.bottom, 6)
+        }
       } else {
         if builtInKeyboardLayout == .korean10Key {
           Korean10KeyKeyboardView(
