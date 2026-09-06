@@ -1079,7 +1079,9 @@ struct IMETextField: UIViewRepresentable {
         }
       }
     }
-    if !isFocusSuspended, context.coordinator.lastFocusRevision != focusRevision {
+    if !isFocusSuspended,
+      (context.coordinator.lastFocusRevision != focusRevision || !textField.isFirstResponder)
+    {
       context.coordinator.lastFocusRevision = focusRevision
       let requestedRevision = focusRevision
       DispatchQueue.main.async { [weak textField, weak coordinator = context.coordinator] in
