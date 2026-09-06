@@ -1355,11 +1355,6 @@ struct FlowGameView: View {
   private func resolveInitialInputModeIfNeeded() {
     guard !didResolveInputMode else { return }
     didResolveInputMode = true
-    if competition != nil {
-      inputMode = .builtIn
-      recordInputMode = .builtIn
-      return
-    }
     if SessionInputMode(rawValue: inputModeDefault) == .osIME,
       KoreanKeyboardAvailability.isAvailable
     {

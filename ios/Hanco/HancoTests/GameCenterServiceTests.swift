@@ -92,6 +92,18 @@ final class GameCenterServiceTests: XCTestCase {
     XCTAssertEqual(GameCenterLeaderboard.leaderboard(for: cup), .weeklyPiyoCup)
   }
 
+  func testWeeklyPiyoCupOSIMESubmitsOnlyToWeeklyLeaderboard() {
+    let cup = record(
+      deckID: GameCenterRankedDeck.piyoCupDeckID,
+      deckVersion: GameCenterRankedDeck.piyoCupDeck.version,
+      competition: .weeklyPiyoCup,
+      inputMode: .osIME
+    )
+
+    XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: cup), [.weeklyPiyoCup])
+    XCTAssertEqual(GameCenterLeaderboard.leaderboard(for: cup), .weeklyPiyoCup)
+  }
+
   func testUnrankedConditionsNeverEnterGameCenterLeaderboards() {
     XCTAssertTrue(
       GameCenterLeaderboard.leaderboards(

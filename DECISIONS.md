@@ -1825,3 +1825,12 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: `UITEST_FLICK_PREVIEW_PROBE=1` 상태에서 preview 요소 0과 방향 플릭 입력 정상 동작을 단언하는 역방향 UI 테스트(`testTYP111Korean10KeyFlickPreviewIsAbsentAndDirectionalInputStillWorks`)와 기존 플릭 입력·접근성 힌트 회귀를 유지한다. build 23 실기기 gate는 방향 매핑·p95 50ms·지원 게임 60fps·VoiceOver로 한정한다.
 - 근거: 표시 품질을 컴팩트 키 높이에서 확보하려면 키 크기·배열 재설계가 필요해 1.1 범위를 벗어난다. 표시와 입력이 처음부터 분리 설계돼 있어(표시는 view-layer 관찰 전용) 표시 제거가 입력 의미를 바꾸지 않는다.
 - 영향 범위: iOS/iPadOS `Korean10KeyKeyboardView`(HangulKeyboardView.swift)의 표시 전용 코드, focused 단위/UI 회귀, PRD·현황판·로드맵. resolver·mapping·interpreter·localization·OS IME·롱프레스 숫자·동결 Android는 변경하지 않는다.
+
+## 2026-09-06 TYP-113 피요컵 OS 키보드·주간 랭킹
+
+- 관련: TYP-113, PRD v6.26·F2·F6f, iOS/iPadOS 1.1 build 24.
+- 결정: 주간 피요컵은 사용자가 선택한 입력 모드를 따른다. 내장 입력은 기존처럼 두벌식으로 고정하고, OS 키보드를 선택했으며 한국어 키보드를 사용할 수 있으면 기존 OS-IME 입력 경로로 실행한다. 한국어 OS 키보드를 사용할 수 없을 때의 기존 내장 두벌식 fallback은 유지한다.
+- 결정: 내장 두벌식 피요컵 기록은 recurring 주간 리더보드와 고정 흐름 초급 클래식 리더보드 양쪽에 제출한다. OS 키보드 피요컵 기록은 recurring 주간 리더보드에만 제출하며, 일반 공식 덱 클래식 리더보드의 내장 두벌식 한정 정책과 내장 천지인 기록 제외 정책은 변경하지 않는다.
+- 검증 gate: Game Center leaderboard mapping 단위 테스트와 iPhone·iPad simulator의 피요컵 OS-IME 진입 UI 테스트를 exact source SHA에서 확인한다. build 24의 실제 iPad·물리 키보드 입력과 Game Center 샌드박스 주간 점수 제출, 계정·권리·IAP·store gate 전에는 TYP-113이나 1.1 출시를 Done 처리하지 않는다.
+- 근거: 설정에서 OS 키보드를 선택해도 피요컵만 내장 두벌식으로 강제되던 예외는 사용자 기대와 불일치한다. 주간 보드는 같은 피요컵 콘텐츠·시간·목숨·채점 계약을 공유하므로 선택 입력을 허용하되, 입력 방식 비교가 섞이지 않게 운영 중인 클래식 보드는 기존 정책을 유지한다.
+- 영향 범위: iOS/iPadOS `FlowGameView` 초기 입력 모드 결정, Game Center 피요컵 leaderboard mapping, 피요컵 안내 현지화, focused 단위/UI 회귀, PRD·현황판. 피요컵 콘텐츠·채점·일반 공식 덱 랭킹·동결 Android는 변경하지 않는다.

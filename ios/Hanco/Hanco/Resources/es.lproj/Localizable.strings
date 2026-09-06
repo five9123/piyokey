@@ -905,7 +905,7 @@
 "game_center.ranked_deck" = "Mazo competitivo con teclado integrado";
 "piyo_cup.title" = "Copa Piyo semanal";
 "piyo_cup.weekly_badge" = "SEMANAL";
-"piyo_cup.detail" = "Una partida de 60 segundos con Coreano diario, igual para todos. Solo teclado integrado.";
+"piyo_cup.detail" = "Una partida de 60 segundos con Coreano diario, igual para todos. Usa el teclado seleccionado.";
 "piyo_cup.unavailable" = "No se ha podido cargar el mazo de competición.";
 "piyo_cup.result.clear" = "¡Copa Piyo completada!";
 "piyo_cup.share.badge" = "Copa Piyo semanal · rango %@";

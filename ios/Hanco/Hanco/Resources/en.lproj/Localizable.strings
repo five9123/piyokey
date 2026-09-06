@@ -957,7 +957,7 @@
 "game_center.ranked_deck" = "Built-in keyboard ranked deck";
 "piyo_cup.title" = "Weekly Piyo Cup";
 "piyo_cup.weekly_badge" = "WEEKLY";
-"piyo_cup.detail" = "A fair 60-second run on Daily Korean for everyone. Built-in keyboard only.";
+"piyo_cup.detail" = "A fair 60-second run on Daily Korean for everyone. Use your selected keyboard.";
 "piyo_cup.unavailable" = "The competition deck couldn't be loaded.";
 "piyo_cup.result.clear" = "Piyo Cup complete!";
 "piyo_cup.share.badge" = "Weekly Piyo Cup · %@ rank";

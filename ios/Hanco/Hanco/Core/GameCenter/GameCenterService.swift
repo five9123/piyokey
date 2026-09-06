@@ -22,7 +22,7 @@ enum GameCenterLeaderboard: String, CaseIterable, Hashable {
   case weeklyPiyoCup = "piyokey.v4.cup.weekly.flow"
 
   static func leaderboards(for record: GameRecord) -> [GameCenterLeaderboard] {
-    guard record.mode == .game, record.inputMode == .builtIn,
+    guard record.mode == .game,
       let rankedDeck = GameCenterRankedDeck.matching(
         deckID: record.deckId,
         version: record.deckVersion
@@ -31,8 +31,16 @@ enum GameCenterLeaderboard: String, CaseIterable, Hashable {
 
     if record.competition == .weeklyPiyoCup {
       guard rankedDeck.deckID == GameCenterRankedDeck.piyoCupDeckID else { return [] }
-      return [.weeklyPiyoCup, rankedDeck.leaderboard]
+      switch record.inputMode {
+      case .builtIn:
+        return [.weeklyPiyoCup, rankedDeck.leaderboard]
+      case .osIME:
+        return [.weeklyPiyoCup]
+      case .builtInKorean10Key:
+        return []
+      }
     }
+    guard record.inputMode == .builtIn else { return [] }
     return [rankedDeck.leaderboard]
   }
 

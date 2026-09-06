@@ -719,6 +719,19 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
   }
 
+  func testTYP113WeeklyPiyoCupUsesOSIMEPreference() {
+    relaunchForGameOSIME(koreanKeyboardAvailable: true)
+    let piyoCup = app.buttons["home.quick.piyo_cup"]
+
+    app.swipeUp()
+    XCTAssertTrue(piyoCup.waitForExistence(timeout: 3))
+    piyoCup.tap()
+
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+    XCTAssertTrue(app.textFields["os_ime.text_field"].waitForExistence(timeout: 3))
+    XCTAssertFalse(app.buttons["keyboard.key.ㄱ"].exists)
+  }
+
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
     let dailyEncouragement = "「今日もいっしょに始めよう！ピヨ！」"
     let myPiyoCard = element("home.my_piyo_card")
