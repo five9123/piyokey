@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-06 JST
+마지막 갱신: 2026-09-07 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -15,6 +15,7 @@
 |---|---|---|
 | iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
 | iOS 1.1 | build 23 이후 TYP-112 iPad OS 키보드 가이드·레이아웃과 TYP-114 커리큘럼 셰브런 정정을 `main` `dc42e19128bf7fc54971a68f30b89e6e21b54cb5`까지 병합했다. TYP-113 피요컵 OS 키보드·주간 랭킹을 포함한 다음 제출 후보는 build 24다 | TYP-113 source gate와 병합 뒤 최신 clean `origin/main`으로만 build 24를 만든다. TYP-112·113·114의 iPad 실기기 회귀, Game Center 샌드박스 주간 제출, 동의 ON/OFF 네트워크, Crashlytics dSYM, 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
+| Mac 로컬 데모 | Issue #175 / `codex/175-macos-demo`에서 macOS 14+ Catalyst target 구현 중. 동일 bundle ID를 사용하되 공식 학습·6개 게임·로컬 저장만 포함 | signed Debug 앱의 실제 창·물리 한국어 IME·6개 게임·재실행 복원 QA, focused iOS 회귀와 exact-head review. CloudKit/KVS·배포·스토어는 후속 범위 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,6 +24,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| #175 macOS 실행 데모 | In Progress / `codex/175-macos-demo` | signed Catalyst Debug 앱에서 커리큘럼·공식 덱·6개 게임, 방향키/Space, IME 조합·Backspace·한영 전환, 창 resize·비활성 복귀·오디오·재실행 저장을 확인하고 미검증 gate를 구분해 Draft PR에 인계 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | In Progress / `codex/113-piyocup-osime-ranking` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | 선택한 OS 키보드로 피요컵을 실행하고 OS-IME 기록은 주간 보드에만 제출한다. exact-SHA 단위·iPhone/iPad UI evidence와 자체 리뷰·병합 뒤 build 24 실기기·Game Center 샌드박스 gate로 이동 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |

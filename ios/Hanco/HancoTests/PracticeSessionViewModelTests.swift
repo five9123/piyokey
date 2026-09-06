@@ -358,8 +358,9 @@ final class PracticeSessionViewModelTests: XCTestCase {
     XCTAssertFalse(graduationMode.hapticsEnabled)
   }
 
-  func testOSIMEInputPanelPolicyKeepsRequestedRecoveryChromeIPadOnly() {
+  func testOSIMEInputPanelPolicyKeepsRequestedRecoveryChromeOnLargeSurfaces() {
     XCTAssertTrue(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true, on: .pad))
+    XCTAssertTrue(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true, on: .mac))
     XCTAssertFalse(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: true, on: .phone))
     XCTAssertFalse(OSIMEInputPanelPolicy.showsVisibleFocusRecovery(requested: false, on: .pad))
   }
@@ -746,13 +747,21 @@ final class PracticeSessionViewModelTests: XCTestCase {
   }
 
   func testKoreanKeyboardAvailabilityMatchesOnlyKoreanLanguageModes() {
-    XCTAssertTrue(
-      KoreanKeyboardAvailability.containsKorean(languages: ["ja-JP", "ko-KR", "en-US"])
+    XCTAssertEqual(
+      KoreanKeyboardAvailability.status(languages: ["ja-JP", "ko-KR", "en-US"]),
+      .available
     )
-    XCTAssertTrue(KoreanKeyboardAvailability.containsKorean(languages: ["ko"]))
-    XCTAssertFalse(
-      KoreanKeyboardAvailability.containsKorean(languages: ["ja-JP", nil, "en-US"])
+    XCTAssertEqual(KoreanKeyboardAvailability.status(languages: ["ko"]), .available)
+    XCTAssertEqual(
+      KoreanKeyboardAvailability.status(languages: ["ja-JP", nil, "en-US"]),
+      .unavailable
     )
+    XCTAssertFalse(KoreanKeyboardAvailability.permitsOSIME(for: .unavailable))
+    XCTAssertTrue(KoreanKeyboardAvailability.permitsOSIME(for: .available))
+  }
+
+  func testUnknownCatalystKeyboardStatusKeepsOSIMEAvailable() {
+    XCTAssertTrue(KoreanKeyboardAvailability.permitsOSIME(for: .unknown))
   }
 
   func testKorean10KeyGoldenRecipesCoverEveryCompatibilityJamo() {

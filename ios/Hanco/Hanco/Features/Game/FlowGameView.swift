@@ -178,6 +178,16 @@ struct FlowGameView: View {
     .toolbar { sessionToolbar }
     .toolbarBackground(AppPalette.backgroundTop, for: .navigationBar)
     .toolbarBackground(.automatic, for: .navigationBar)
+    #if targetEnvironment(macCatalyst)
+      .safeAreaInset(edge: .top, spacing: 0) {
+        hud
+          .padding(.horizontal, 12)
+          .padding(.vertical, 6)
+          .frame(maxWidth: .infinity)
+          .background(AppPalette.backgroundTop)
+          .accessibilityIdentifier("game.mac_hud")
+      }
+    #endif
     .navigationDestination(isPresented: $showsResult) {
       resultDestination
     }
@@ -197,9 +207,11 @@ struct FlowGameView: View {
       .accessibilityLabel(Text("game.end"))
       .accessibilityIdentifier("game.end")
     }
-    ToolbarItem(placement: .principal) {
-      hud
-    }
+    #if !targetEnvironment(macCatalyst)
+      ToolbarItem(placement: .principal) {
+        hud
+      }
+    #endif
   }
 
   private var resultDestination: some View {
@@ -1370,6 +1382,9 @@ struct FlowGameView: View {
   }
 
   private var resolvedCompetition: GameCompetition? {
+    #if PIYOKEY_MAC_DEMO
+      return nil
+    #else
     if competition == .weeklyPiyoCup {
       return .weeklyPiyoCup
     }
@@ -1377,6 +1392,7 @@ struct FlowGameView: View {
       GameCenterRankedDeck.isEligible(deckID: deck.deckId, version: deck.version)
     else { return nil }
     return .officialDeck
+    #endif
   }
 
   private func persistReviewResolution() {

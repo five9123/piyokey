@@ -3,14 +3,39 @@ import os
 import SwiftUI
 import UIKit
 
+enum KoreanKeyboardAvailabilityStatus: Equatable {
+  case available
+  case unavailable
+  case unknown
+}
+
 enum KoreanKeyboardAvailability {
   static var isAvailable: Bool {
+    permitsOSIME(for: currentStatus)
+  }
+
+  static var currentStatus: KoreanKeyboardAvailabilityStatus {
     #if DEBUG
       if let override = ProcessInfo.processInfo.environment["UITEST_KOREAN_KEYBOARD_AVAILABLE"] {
-        return override == "1"
+        return override == "1" ? .available : .unavailable
       }
     #endif
-    return containsKorean(languages: UITextInputMode.activeInputModes.map(\.primaryLanguage))
+    #if targetEnvironment(macCatalyst)
+      // Catalyst does not reliably expose the Mac's installed input sources through
+      // UITextInputMode. Keep OS input available and let the nonblocking input panel
+      // guide the user to switch sources if ASCII is received.
+      return .unknown
+    #else
+      return status(languages: UITextInputMode.activeInputModes.map(\.primaryLanguage))
+    #endif
+  }
+
+  static func status(languages: [String?]) -> KoreanKeyboardAvailabilityStatus {
+    containsKorean(languages: languages) ? .available : .unavailable
+  }
+
+  static func permitsOSIME(for status: KoreanKeyboardAvailabilityStatus) -> Bool {
+    status != .unavailable
   }
 
   static func containsKorean(languages: [String?]) -> Bool {
@@ -30,7 +55,7 @@ enum OSIMEInputPanelPolicy {
     requested: Bool,
     on interfaceIdiom: UIUserInterfaceIdiom
   ) -> Bool {
-    requested && interfaceIdiom == .pad
+    requested && (interfaceIdiom == .pad || interfaceIdiom == .mac)
   }
 }
 

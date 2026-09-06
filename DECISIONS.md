@@ -1834,3 +1834,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 검증 gate: Game Center leaderboard mapping 단위 테스트와 iPhone·iPad simulator의 피요컵 OS-IME 진입 UI 테스트를 exact source SHA에서 확인한다. build 24의 실제 iPad·물리 키보드 입력과 Game Center 샌드박스 주간 점수 제출, 계정·권리·IAP·store gate 전에는 TYP-113이나 1.1 출시를 Done 처리하지 않는다.
 - 근거: 설정에서 OS 키보드를 선택해도 피요컵만 내장 두벌식으로 강제되던 예외는 사용자 기대와 불일치한다. 주간 보드는 같은 피요컵 콘텐츠·시간·목숨·채점 계약을 공유하므로 선택 입력을 허용하되, 입력 방식 비교가 섞이지 않게 운영 중인 클래식 보드는 기존 정책을 유지한다.
 - 영향 범위: iOS/iPadOS `FlowGameView` 초기 입력 모드 결정, Game Center 피요컵 leaderboard mapping, 피요컵 안내 현지화, focused 단위/UI 회귀, PRD·현황판. 피요컵 콘텐츠·채점·일반 공식 덱 랭킹·동결 Android는 변경하지 않는다.
+
+## 2026-09-07 Issue #175 Mac Catalyst 로컬 데모 경계
+
+- 결정: 최신 iOS/iPadOS 구현을 공유하는 별도 `Piyokey Mac` target/scheme을 Mac Catalyst로 추가하고 macOS 14+를 기준으로 한다. 같은 `app.piyokey.Piyokey` bundle ID를 유지하며 native AppKit 재작성은 현재 Catalyst에서 빌드·입력이 성립하므로 선택하지 않는다.
+- 결정: Mac root는 커리큘럼, 공식 카탈로그/공식 덱 연습, 기존 5개 직접 입력 게임과 띄어쓰기만 노출한다. 물리 한국어 IME를 기본값으로 두고 띄어쓰기는 좌우 방향키와 Space를 버튼 동작과 같은 상태 전이에 연결한다. 기존 JSON/UserDefaults 저장, 오프라인 음원, `.playback`/`mixWithOthers`, scene 비활성 정지·flush를 재사용한다.
+- 결정: Mac target에서 My Page, 사용자 덱 draft/document/editor/paywall/purchase source와 파일 문서 등록을 제외한다. 게임 목록은 공식 설치 덱만 허용하고 피요컵 카드·Game Center 준비/제출 경로를 차단한다. 실제 CloudKit/KVS, 계정 동기화, distribution/archive, App Store Connect·TestFlight·제출은 후속 승인 범위다.
+- 후속 저장 경계: 현재 각 persistence store의 로컬 파일 API를 유지한다. 동기화 승인 시 작은 설정은 KVS adapter, 학습/게임 레코드는 CloudKit private database + CKSyncEngine adapter로 store 바깥에서 연결하고 schema·migration·충돌 정책을 별도 PRD/Issue에서 정한다.
+- 검증 gate: signed Debug 앱의 실제 실행, 한국어 IME 조합·겹받침·Backspace·한영 전환, 전체 커리큘럼/공식 덱/6개 게임, 방향키·Space, 창 resize, inactive/active, 음원·효과음, 종료·재실행 복원을 Mac에서 확인한다. focused iOS 회귀도 통과해야 한다. 측정하지 않은 60fps·실기기·배포·스토어·동기화 gate는 통과로 기록하지 않는다.
