@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "verified_commit": "9d8b5a899195a4da2a7b63774033cb71d2c4e73c",
+  "verified_tree": "c3bc8c823d51e1d6eb28715ff3bc180b2dbcdc03",
+  "branch": "codex/112-game-osime-keyboard-guide",
+  "scope": "TYP-112 iPad game OS-IME compact recovery strip and physical keyboard guide; self-review authorized by 정민 event 4a7c545a",
+  "result": "pass",
+  "recorded_at": "2026-09-06T14:38:58.388220+00:00",
+  "checks": [
+    {
+      "name": "focused-ios",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5 -parallel-testing-enabled NO -only-testing:HancoTests/PracticeSessionViewModelTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/AppSettingsTests -resultBundlePath /tmp/typ112-self-review.xcresult",
+      "note": "128 tests passed, 0 failures"
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "working tree clean after build cache preserved outside worktree"
+    },
+    {
+      "name": "diff",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Physical iPad and hardware-keyboard smoke remains for build 24.",
+    "Full regression, deployment, account, rights, IAP, store, signing and release gates remain open."
+  ]
+}
