@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c7849b17c0a6683fd15d7c10072fd13fad7f893b",
+  "verified_tree": "39a870133ec249100af05718d130e05eaaed2d5c",
+  "branch": "codex/175-macos-demo",
+  "scope": "Issue #175 Mac Catalyst local demo: exact-head build, focused iOS IME regression, repository policy, and recorded Mac runtime QA",
+  "result": "pass",
+  "recorded_at": "2026-09-06T18:20:07.668905+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "release preflight unit tests",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_release_preflight",
+      "note": "17 tests passed"
+    },
+    {
+      "name": "repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "signed Mac Catalyst Debug build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme 'Piyokey Mac' -configuration Debug -destination 'platform=macOS,variant=Mac Catalyst' -derivedDataPath /private/tmp/hanco-175-evidence-mac-derived CODE_SIGNING_ALLOWED=YES > /private/tmp/hanco-175-evidence-mac-build.log 2>&1",
+      "note": "app /private/tmp/hanco-175-evidence-mac-derived/Build/Products/Debug-maccatalyst/Piyokey Mac.app"
+    },
+    {
+      "name": "focused OS IME unit regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -derivedDataPath /private/tmp/hanco-175-evidence-ios-derived -only-testing:HancoTests/OSIMEInputResetTests -only-testing:HancoTests/PracticeSessionViewModelTests > /private/tmp/hanco-175-evidence-ime-unit.log 2>&1",
+      "note": "69 tests passed"
+    },
+    {
+      "name": "Flow OS IME result Retry UI regression",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -derivedDataPath /private/tmp/hanco-175-evidence-ios-derived -only-testing:HancoUITests/HancoUITests/testInstalledDeckStartsTimedFlowGameAndRetriesFromResult > /private/tmp/hanco-175-evidence-flow-retry-ui.log 2>&1",
+      "note": "1 test passed; post-Retry target input increased score"
+    }
+  ],
+  "manual_gates": [
+    "PASS: Actual Mac representative runtime covered full curriculum stage, official practice 12/12, all six games, persistence, resize, timer pause, Korean source warning/recovery, spacing hardware controls, and Flow result Retry; details and build generations are in docs/MAC_DEMO.md.",
+    "OPEN: A human must confirm physical Korean input after Cmd-H/foreground. CUA stopped delivering synthetic IME editing events although UIKit reported active key window and first responder; timer restoration passed.",
+    "OPEN: Human audible confirmation for pronunciation, dictation, effects, and pause-on-inactive; replay controls completed without an app error but automation does not capture sound.",
+    "OPEN: Acid Rain corrected HUD needs a final-build visual recheck; initial gameplay completion used the pre-HUD build.",
+    "OPEN release gates outside this local demo: iPhone 12 60fps device, rights/accounts/IAP/store, archive/notarization/App Store Connect/Universal Purchase, external services, and release signing."
+  ]
+}
