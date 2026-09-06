@@ -97,8 +97,9 @@ CloudKit container, entitlement, production schema, 계정 UI, 서버 환경과 
   복귀 뒤 timer가 wall-clock 시간을 따라잡아 감소하지 않는 것을 확인했다. CUA의
   Cmd-H/Raise 뒤에는 `UITextField`가 key window의 first responder이고 앱도 active임에도
   합성 키가 UIKit `editingChanged`에 도달하지 않았다. 새 field 생성도 이 현상을 바꾸지
-  않아 자동화 경로 한계로 기록한다. **실제 사람의 물리 키 입력이 복귀 뒤 전달되는지**는
-  별도 수동 gate로 OPEN이다.
+  않았다. 이 관찰만으로는 CUA 합성 입력 경로와 Catalyst IME integration 중 원인을
+  판별할 수 없다. **실제 사람의 물리 키 입력이 복귀 뒤 전달되는지**를 확인하는 별도
+  수동 gate를 OPEN으로 두고 그 결과로 원인 범위를 좁힌다.
 - 수동 확인 대기: 실제 스피커로 받아쓰기·발음·효과음이 들리는지, 산성비의 수정 HUD를
   최종 build에서 다시 보는지, inactive 중 재생 중인 발음이 즉시 정지하는지는 OPEN이다.
   build 통과나 재생 버튼의 무오류 동작을 청취 통과로 대신 기록하지 않는다.
