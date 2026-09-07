@@ -103,6 +103,19 @@ final class SpacingGameEngineTests: XCTestCase {
 
 @MainActor
 final class SpacingGameViewModelTests: XCTestCase {
+  func testCatalystKeyboardCommandsMapArrowsAndSpace() {
+    XCTAssertEqual(
+      SpacingKeyboardCommand.resolve(input: UIKeyCommand.inputLeftArrow),
+      .moveLeft
+    )
+    XCTAssertEqual(
+      SpacingKeyboardCommand.resolve(input: UIKeyCommand.inputRightArrow),
+      .moveRight
+    )
+    XCTAssertEqual(SpacingKeyboardCommand.resolve(input: " "), .toggleSpace)
+    XCTAssertNil(SpacingKeyboardCommand.resolve(input: "return"))
+  }
+
   func testViewModelMovesManuallyAndTogglesSpaceAtCurrentBoundary() {
     let passage = SpacingPassage(
       id: "test",

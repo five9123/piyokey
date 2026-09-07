@@ -179,7 +179,9 @@ struct GameDeckSelectionView: View {
     NavigationStack {
       ScrollView {
         VStack(spacing: 14) {
+          #if !PIYOKEY_MAC_DEMO
           piyoCupCard
+          #endif
 
           LazyVGrid(
             columns: Array(
@@ -220,7 +222,9 @@ struct GameDeckSelectionView: View {
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier("game.selection.screen")
       .rootSettingsToolbar()
-      .task { gameCenter.prepare() }
+      #if !PIYOKEY_MAC_DEMO
+        .task { gameCenter.prepare() }
+      #endif
     }
   }
 
@@ -392,7 +396,7 @@ private struct GameDeckListView: View {
       VStack(spacing: 18) {
         if !gamePresets.isEmpty {
           gamePresetDecks
-        } else if deckLibrary.installed.isEmpty {
+        } else if availableInstalledDecks.isEmpty {
           emptyState
         } else {
           installedDecks
@@ -448,7 +452,7 @@ private struct GameDeckListView: View {
         .accessibilityIdentifier("game.\(gameKind.rawValue).add_deck")
       }
 
-      if !deckLibrary.installed.isEmpty {
+      if !availableInstalledDecks.isEmpty {
         VStack(alignment: .leading, spacing: 12) {
           Label(
             LocalizedStringKey(presetLocalizationKey("added_decks.title")),
@@ -457,7 +461,7 @@ private struct GameDeckListView: View {
             .font(.headline.weight(.bold))
             .foregroundStyle(AppPalette.ink)
 
-          ForEach(deckLibrary.installed, id: \.deckId) { deck in
+          ForEach(availableInstalledDecks, id: \.deckId) { deck in
             deckLink(deck)
           }
         }
@@ -617,10 +621,18 @@ private struct GameDeckListView: View {
           .foregroundStyle(AppPalette.accent)
       }
 
-      ForEach(deckLibrary.installed, id: \.deckId) { deck in
+      ForEach(availableInstalledDecks, id: \.deckId) { deck in
         deckLink(deck)
       }
     }
+  }
+
+  private var availableInstalledDecks: [Deck] {
+    #if PIYOKEY_MAC_DEMO
+      deckLibrary.installed.filter(\.official)
+    #else
+      deckLibrary.installed
+    #endif
   }
 
   @ViewBuilder

@@ -26,17 +26,22 @@ final class DiscoverViewModel: ObservableObject {
   @Published private(set) var catalog: Catalog?
 
   private let repository: any CatalogRepository
+  private let officialOnly: Bool
   private var refreshTask: Task<Void, Never>?
 
-  init(repository: any CatalogRepository = CatalogRepositoryFactory.live()) {
+  init(
+    repository: any CatalogRepository = CatalogRepositoryFactory.live(),
+    officialOnly: Bool = false
+  ) {
     self.repository = repository
+    self.officialOnly = officialOnly
   }
 
   @discardableResult
   func loadIfNeeded() -> Task<Void, Never>? {
     guard loadState == .idle else { return refreshTask }
     do {
-      catalog = try repository.loadCatalog()
+      catalog = visibleCatalog(try repository.loadCatalog())
       loadState = .loaded
     } catch {
       catalog = nil
@@ -47,7 +52,7 @@ final class DiscoverViewModel: ObservableObject {
       guard let self else { return }
       do {
         if let refreshed = try await repository.refreshCatalog(), !Task.isCancelled {
-          catalog = refreshed
+          catalog = visibleCatalog(refreshed)
           loadState = .loaded
         }
       } catch {
@@ -196,6 +201,16 @@ final class DiscoverViewModel: ObservableObject {
 
   private var availableDecks: [CatalogDeck] {
     (catalog?.decks ?? []).filter(\.isAvailableInCurrentLanguage)
+  }
+
+  private func visibleCatalog(_ catalog: Catalog) -> Catalog {
+    guard officialOnly else { return catalog }
+    return Catalog(
+      catalogVersion: catalog.catalogVersion,
+      generatedAt: catalog.generatedAt,
+      decks: catalog.decks.filter(\.official),
+      tags: catalog.tags
+    )
   }
 
   private func unique(_ values: [String]) -> [String] {

@@ -32,6 +32,7 @@
 
 ## Later — 출시 기준선을 막지 않는 탐색
 
+- Issue #175 macOS 14+ Catalyst 로컬 데모: 공식 학습·6개 게임·물리 IME·로컬 저장 검증. CloudKit/KVS와 Mac 배포·스토어는 후속 결정
 - 자동 발음·게임 힌트 #8 및 관련 Draft PR
 - 기본 dirty worktree recovery queue: `typee.app` 링크, 흔들림 애니메이션 수정, 스토어/Pro 자산을 기능별 새 issue·최신 main branch로 재적용
 - 신규 플랫폼·추가 언어(이번 es/de/fr 확장 제외)·클라우드 동기화
@@ -43,7 +44,7 @@ Later 작업은 R1.1 출시 파일이나 공용 충돌 파일을 동시에 소�
 
 - 전체 동시 개발 최대 2개: release-critical 1개와 독립 탐색 1개.
 - 플랫폼별 `In Progress` 최대 1개.
-- 활성 네이티브 플랫폼은 iOS/iPadOS뿐이며 `android/`는 참고용 동결 상태다.
+- 활성 출시 플랫폼은 iOS/iPadOS다. Issue #175 Mac Catalyst는 로컬 데모 한정이며 `android/`는 참고용 동결 상태다.
 - non-draft PR은 검증 완료·병합 준비 상태만 허용.
 - `PRD.md`, `DECISIONS.md`, `AGENTS.md`, localization, catalog·audio manifest는 단일 소유.
 - 완료는 코드 작성이 아니라 검증 증빙, PR 병합, Issue/Project 종료까지 포함한다.
