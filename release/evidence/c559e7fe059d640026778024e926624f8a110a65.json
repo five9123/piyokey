@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "verified_commit": "c559e7fe059d640026778024e926624f8a110a65",
+  "verified_tree": "8b12f5d16e371765a7e6f2adbe2cd3cd637dc0c2",
+  "branch": "codex/175-macos-demo",
+  "scope": "Issue #175 Mac demo human-gate completion supplement; implementation is unchanged from exact automated evidence c7849b1",
+  "result": "pass",
+  "recorded_at": "2026-09-07T00:01:21.559414+00:00",
+  "checks": [
+    {
+      "name": "strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "repository release preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "prior exact evidence is an ancestor",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor c7849b17c0a6683fd15d7c10072fd13fad7f893b HEAD",
+      "note": "automated evidence release/evidence/c7849b17c0a6683fd15d7c10072fd13fad7f893b.json"
+    },
+    {
+      "name": "implementation and policy sources unchanged",
+      "status": "pass",
+      "command": "git diff --quiet c7849b17c0a6683fd15d7c10072fd13fad7f893b HEAD -- ios tools PRD.md PROJECT_STATUS.md ROADMAP.md DECISIONS.md AGENTS.md",
+      "note": "only docs/MAC_DEMO.md and prior evidence changed after the verified implementation"
+    },
+    {
+      "name": "signed Mac Catalyst build",
+      "status": "skip",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Piyokey\\\\ Mac",
+      "note": "not rerun because implementation is byte-for-byte unchanged; PASS recorded at c7849b1"
+    },
+    {
+      "name": "focused iOS OS IME regression",
+      "status": "skip",
+      "command": "xcodebuild test focused OS IME selectors",
+      "note": "not rerun because implementation is byte-for-byte unchanged; 69 unit plus 1 Flow Retry UI PASS recorded at c7849b1"
+    }
+  ],
+  "manual_gates": [
+    "PASS USER-CONFIRMED: Physical Korean input continues after Cmd-H and return through the Dock.",
+    "PASS USER-CONFIRMED: Pronunciation and effects are audible, and active pronunciation stops on Cmd-H.",
+    "PASS CUA VISUAL: In the final exact c7849b1 app, Acid Rain at 52 seconds after countdown visibly retained timer, score, combo, and lives.",
+    "PASS: Mac demo runtime acceptance is complete; detailed per-flow results are in docs/MAC_DEMO.md.",
+    "OPEN release gates outside the authorized local demo: iPhone 12 60fps device, content rights, accounts/IAP/store, release signing, archive/notarization/App Store Connect/Universal Purchase, external services, and distribution."
+  ]
+}
