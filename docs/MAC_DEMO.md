@@ -77,10 +77,12 @@ CloudKit container, entitlement, production schema, 계정 UI, 서버 환경과 
 - 자동 확인: 구현 SHA `6ea9aea880c0b48aee93191f9c21b05185cddd20`에서
   `/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict`, repository preflight,
   preflight 단위 테스트 17개와 signed Mac Catalyst Debug build가 통과했다. 이후 IME
-  lifecycle/retry 변경의 정확한 SHA 검증은 release evidence 생성 전에 다시 실행한다.
-- iOS 회귀: iPhone 17 / iOS 26.5에서 Practice, OS IME, 5개 직접 입력 게임,
-  띄어쓰기, 커리큘럼/게임 저장, 오디오 focused selector 208개가 통과했다. Flow 결과의
-  Retry 뒤 OS IME로 목표를 입력해 점수가 증가하는 focused UI test도 별도로 통과했다.
+  lifecycle/retry와 문서까지 포함한 SHA `c7849b17c0a6683fd15d7c10072fd13fad7f893b`에서는
+  strict doctor, preflight 17개, repository preflight와 signed Mac build를 다시 통과했다.
+- iOS 회귀: 초기 구현 SHA `6ea9aea`에서 Practice, OS IME, 5개 직접 입력 게임,
+  띄어쓰기, 커리큘럼/게임 저장, 오디오 focused selector 208개가 통과했다. 이후 최종
+  IME 변경을 포함한 `c7849b1`에서 OS IME focused unit test 69개와 Flow 결과의 Retry 뒤
+  OS IME로 목표를 입력해 점수가 증가하는 focused UI test 1개를 통과했다.
 - Mac 수동 확인: 첫 커리큘럼 스테이지를 물리 한국어 입력 10개, 실수 0개로 완료했고
   종료·재실행 뒤 다음 스테이지 해금과 설치한 공식 덱이 유지됐다. 공식 번들 카탈로그는
   공식 덱만 표시했고 Everyday Korean Words를 설치한 뒤 공식 연습을 물리 입력 12/12,
@@ -93,13 +95,14 @@ CloudKit container, entitlement, production schema, 계정 UI, 서버 환경과 
   받아쓰기는 공식 덱 10/10·1,450점·91.2%·combo 9로 완료했고 Listen again 동작에
   오류가 없었다. 띄어쓰기는 좌우 방향키와 Space로 81개 경계를 모두 이동·수정해
   1,000점·100% 결과를 확인했다. 해당 결과 화면에는 Game Center 동작이 없었다.
-- lifecycle 확인: 흐름과 띄어쓰기에서 inactive 동안 timer·목표·목숨/위치가 유지되고
-  복귀 뒤 timer가 wall-clock 시간을 따라잡아 감소하지 않는 것을 확인했다. CUA의
-  Cmd-H/Raise 뒤에는 `UITextField`가 key window의 first responder이고 앱도 active임에도
-  합성 키가 UIKit `editingChanged`에 도달하지 않았다. 새 field 생성도 이 현상을 바꾸지
-  않았다. 이 관찰만으로는 CUA 합성 입력 경로와 Catalyst IME integration 중 원인을
-  판별할 수 없다. **실제 사람의 물리 키 입력이 복귀 뒤 전달되는지**를 확인하는 별도
-  수동 gate를 OPEN으로 두고 그 결과로 원인 범위를 좁힌다.
-- 수동 확인 대기: 실제 스피커로 받아쓰기·발음·효과음이 들리는지, 산성비의 수정 HUD를
-  최종 build에서 다시 보는지, inactive 중 재생 중인 발음이 즉시 정지하는지는 OPEN이다.
-  build 통과나 재생 버튼의 무오류 동작을 청취 통과로 대신 기록하지 않는다.
+- lifecycle·오디오 확인: 흐름과 띄어쓰기에서 inactive 동안 timer·목표·목숨/위치가
+  유지되고 복귀 뒤 timer가 wall-clock 시간을 따라잡아 감소하지 않았다. 사용자가
+  Cmd-H 뒤 Dock으로 복귀해 물리 한국어 입력이 계속 전달되는 것을 확인했다. 발음과
+  효과음이 실제로 들리고 재생 중 Cmd-H에서 발음이 정지하는 것도 사용자가 확인했다.
+  CUA의 Cmd-H/Raise 경로에서만 합성 키가 UIKit `editingChanged`에 도달하지 않았으므로
+  이 현상은 데모 앱의 사람 입력 실패로 재현되지 않았으며 자동화 integration의 세부
+  원인은 더 좁히지 않았다.
+- HUD 확인: 최종 exact app의 산성비에서 countdown 뒤 52초 시점에도 timer, score,
+  combo, lives 네 항목이 모두 표시됐다. 흐름 HUD 확인과 함께 수정 HUD gate를 통과했다.
+- Mac 로컬 데모의 사람 확인 gate는 통과했다. iPhone 12 60fps 실기기, 콘텐츠 권리,
+  계정·IAP·스토어·release signing·배포는 이 데모 밖의 release gate로 계속 OPEN이다.
