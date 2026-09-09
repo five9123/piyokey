@@ -83,7 +83,13 @@ class AnalyticsContractTests(unittest.TestCase):
         self.assertIn("Participate and continue", analytics)
         self.assertIn("Continue without sharing", analytics)
         self.assertIn("Settings keeps the two independent toggles", analytics)
-        self.assertIn("PrivacyNoticePolicy.currentVersion` is 2", analytics)
+        settings_source = (ROOT / "ios/Hanco/Hanco/Core/Settings/AppSettings.swift").read_text()
+        policy = settings_source.split("enum PrivacyNoticePolicy {", 1)[1]
+        version = re.search(r"static let currentVersion = (\d+)", policy).group(1)
+        settings_prd = prd.split("### F10.", 1)[1].split("\n### ", 1)[0]
+        documented_versions = re.findall(r"`PrivacyNoticePolicy\.currentVersion`[은는] (\d+)", settings_prd)
+        self.assertEqual({version}, set(documented_versions))
+        self.assertIn(f"PrivacyNoticePolicy.currentVersion` is {version}", analytics)
 
 
 if __name__ == "__main__":
