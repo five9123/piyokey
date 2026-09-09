@@ -736,7 +736,7 @@ final class HancoUITests: XCTestCase {
     for method in ["dubeolsik", "korean_10key", "os_ime"] {
       app.terminate()
       app = makeApplication(resetKeyboardPreferences: true, gameDuration: 3,
-        resultAnimationScale: 0, koreanKeyboardAvailable: true)
+        resultAnimationScale: 0.01, koreanKeyboardAvailable: true)
       app.launchArguments += ["-settings.language", "en"]
       if method == "os_ime" {
         app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
@@ -757,7 +757,7 @@ final class HancoUITests: XCTestCase {
         XCTAssertTrue(app.buttons["keyboard.key.ㄱ"].exists)
       }
       XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
-      XCTAssertTrue(element("game.result.game_center").exists, method)
+      XCTAssertTrue(element("game.result.game_center").waitForExistence(timeout: 3), method)
       attachScreenshot(named: "hotfix-cup-ranking-\(method)-en")
     }
   }
