@@ -954,7 +954,7 @@
 "game_center.best_rank_format" = "自己ベスト順位 #%d";
 "game_center.result_action" = "Game Centerランキングを見る";
 "game_center.result_rank_format" = "#%d・Game Centerランキング";
-"game_center.ranked_deck" = "内蔵キーボードランキング対象";
+"game_center.ranked_deck" = "ランキング対象・すべてのキーボード";
 "piyo_cup.title" = "週間ピヨカップ";
 "piyo_cup.weekly_badge" = "毎週更新";
 "piyo_cup.detail" = "全員同じ「毎日の韓国語」で60秒勝負。選択中のキーボードを使えます。";
@@ -1288,3 +1288,11 @@
 "curriculum.chapter_6_fan_support.item_9.meaning" = "来てくれてありがとう";
 "curriculum.chapter_6_fan_support.item_10.reading" = "オヌル チャクチャン チェゴエヨ";
 "curriculum.chapter_6_fan_support.item_10.meaning" = "今日の衣装、最高です";
+
+// Game Center score delivery
+"game_center.submission.sign_in" = "Game Centerにサインインするとスコアを登録できます。";
+"game_center.submission.pending" = "スコア登録待ち";
+"game_center.submission.submitting" = "スコアを登録中…";
+"game_center.submission.submitted" = "登録済み・最高スコアを保持";
+"game_center.submission.failed" = "登録できませんでした。再試行します。";
+"game_center.submission.retry" = "再試行";

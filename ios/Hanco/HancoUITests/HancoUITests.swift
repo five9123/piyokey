@@ -732,6 +732,36 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.buttons["keyboard.key.ㄱ"].exists)
   }
 
+  func testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs() {
+    for method in ["dubeolsik", "korean_10key", "os_ime"] {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 3,
+        resultAnimationScale: 0, koreanKeyboardAvailable: true)
+      app.launchArguments += ["-settings.language", "en"]
+      if method == "os_ime" {
+        app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+      } else {
+        app.launchArguments += ["-keyboard.builtin_layout_default", method]
+      }
+      app.launch()
+      let cup = element("home.quick.piyo_cup")
+      XCTAssertTrue(cup.waitForExistence(timeout: 5))
+      scrollToHittable(cup)
+      cup.tap()
+      XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+      if method == "korean_10key" {
+        XCTAssertTrue(element("keyboard.10key.container").exists)
+      } else if method == "os_ime" {
+        XCTAssertTrue(app.textFields["os_ime.text_field"].exists)
+      } else {
+        XCTAssertTrue(app.buttons["keyboard.key.ㄱ"].exists)
+      }
+      XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+      XCTAssertTrue(element("game.result.game_center").exists, method)
+      attachScreenshot(named: "hotfix-cup-ranking-\(method)-en")
+    }
+  }
+
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
     let dailyEncouragement = "「今日もいっしょに始めよう！ピヨ！」"
     let myPiyoCard = element("home.my_piyo_card")

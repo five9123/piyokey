@@ -1,0 +1,203 @@
+{
+  "record_status": "version_1_1_build_11_source_candidate_pending_review_not_uploaded",
+  "historical_top_level_record_immutable": true,
+  "app_store_connect_app_id": "6794853985",
+  "developer_team_id": "X44BQNTAH9",
+  "bundle_id": "app.piyokey.Piyokey",
+  "marketing_version": "1.1",
+  "build_number": "11",
+  "currently_linked_build_number": "7",
+  "latest_uploaded_superseded_build_number": "10",
+  "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
+  "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
+  "localized_media": {
+    "status": "apple_login_restored_final_rc_media_pending",
+    "evidence": "release/store-assets/verification-20260828.json",
+    "locales": [
+      "ja",
+      "en-US",
+      "ko",
+      "zh-Hans",
+      "zh-Hant",
+      "de-DE",
+      "fr-FR",
+      "es-ES",
+      "pt-BR",
+      "id"
+    ],
+    "screenshots": 100,
+    "previews": 10,
+    "latest_review_at": "2026-08-28T09:16:00+09:00",
+    "upload_blocker": "Apple login restored in Chrome on 2026-08-29 JST. Final 1.1 RC matching, native-language review, iPad assets, required locale metadata and upload/save verification remain open. Existing Japanese assets are still the previous eight screenshots and one preview; no media was replaced.",
+    "new_locale_required_metadata_saved": false,
+    "final_release_candidate_match_verified": false,
+    "app_store_connect_uploaded": false
+  },
+  "release_mode": "automatic_after_approval",
+  "manual_hold": false,
+  "privacy_policy_url": "https://typee.app/privacy",
+  "support_url": "https://typee.app/support",
+  "marketing_url": "https://typee.app/",
+  "copyright": "2026 Jungmin Oh",
+  "availability": {
+    "selection": "ALL_COUNTRIES_OR_REGIONS",
+    "include_future_storefronts": true,
+    "app_and_iap_match": true,
+    "country_waves_enabled": false,
+    "current_app_available_countries_or_regions": 1,
+    "current_app_processing_to_available_countries_or_regions": 145,
+    "current_app_trader_status_not_provided_countries_or_regions": 29,
+    "current_app_available_country_or_region": "Japan",
+    "target_countries_or_regions": 175,
+    "regional_storefront_status_review_completed": true,
+    "regional_compliance_exceptions": [
+      "EU: 29 countries or regions show Trader Status Not Provided"
+    ]
+  },
+  "app_store_localizations": {
+    "saved": true,
+    "current_primary_locale": "ja",
+    "planned_primary_locale": "en-US",
+    "primary_locale_switch_blocker": "Apple requires all mandatory English screenshots for every version before the primary language can change",
+    "locales": [
+      "ja",
+      "en-US",
+      "en-GB",
+      "en-AU",
+      "en-CA",
+      "ko"
+    ],
+    "names": {
+      "ja": "韓国語タイピング - ピヨキー",
+      "en-US": "Korean Typing - typee",
+      "en-GB": "Korean Typing - typee",
+      "en-AU": "Korean Typing Practice - typee",
+      "en-CA": "Korean Typing Practice - typee",
+      "ko": "한글 타자 연습 - typee"
+    }
+  },
+  "content_rights_confirmed": false,
+  "app_review": {
+    "contact_name": "Jungmin Oh",
+    "contact_email": "contact@typee.app",
+    "contact_phone": "+821050910203",
+    "notes_prepared": true,
+    "notes_path": "release/APP_REVIEW_NOTES.md"
+  },
+  "in_app_purchase": {
+    "reference_name": "typee pro Lifetime",
+    "product_id": "app.piyokey.deckmaker.lifetime",
+    "app_store_connect_apple_id": "6803850493",
+    "type": "NON_CONSUMABLE",
+    "product_record_created": true,
+    "product_record_created_at": "2026-08-21T18:47:35+09:00",
+    "country_or_region_availability": "ALL_COUNTRIES_OR_REGIONS",
+    "include_future_storefronts": true,
+    "family_sharing_enabled": false,
+    "tax_category_current": "MATCH_PARENT_APP",
+    "paid_apps_agreement_status": "PENDING_USER_INFO",
+    "legal_entity_update_required": null,
+    "localizations": [
+      "ja",
+      "en-US",
+      "ko"
+    ],
+    "paid_apps_agreement_active": false,
+    "tax_and_banking_active": false,
+    "small_business_program_status_checked": false,
+    "price_and_availability_configured": true,
+    "tax_category_confirmed": true,
+    "family_sharing_policy_confirmed": true,
+    "review_screenshot_uploaded": false,
+    "review_notes_saved": true,
+    "ready_to_submit": false,
+    "added_for_review": false,
+    "attached_to_version_1_1_submission": false,
+    "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
+  },
+  "qa_gates": {
+    "release_archive_validated": false,
+    "full_unit_and_ui_regression": false,
+    "testflight_clean_install_smoke": false,
+    "korean_os_ime_device_check": false,
+    "tts_device_check": false,
+    "silent_mode_sound_device_check": false,
+    "external_audio_mix_device_check": false,
+    "iphone_12_performance_gate": false,
+    "game_center_live_device_check": false,
+    "deck_maker_local_storekit_check": true,
+    "deck_maker_sandbox_purchase_check": false,
+    "deck_maker_sandbox_cancel_check": false,
+    "deck_maker_sandbox_pending_check": false,
+    "deck_maker_sandbox_restore_check": false,
+    "deck_maker_sandbox_refund_revocation_check": false,
+    "free_piyodeck_boundary_check": true
+  },
+  "build_artifact": {
+    "source_main_sha": "9af01ef96e06472eb3d842880649b5e697c5877e",
+    "archive_checkout_sha": "4e7acf242d11b5cfbbfe418adbc817c1f14e7179",
+    "source_tree_sha": "3d9bb0354e83f0499e993dbe6bd74a0d2fdc0e2c",
+    "archive_tree_sha256": "cbfdab353ac437b5379832df8a78c815c6dd1f01b7aef7a0449323d632f936b6",
+    "local_export_ipa_sha256": "6a676f13db48c53da9234c878943a905f73002609152a50eed14f6759ea22221",
+    "record": "release/IOS_1_1_BUILD_7.md",
+    "app_ui_languages": [
+      "ja",
+      "en",
+      "es",
+      "de",
+      "fr"
+    ],
+    "device_families": [
+      "iPhone",
+      "iPad"
+    ],
+    "local_distribution_signature_verified": true,
+    "build_uploaded": true,
+    "uploaded_build_processing_state": "complete_ready_to_submit",
+    "linked_to_version": true,
+    "final_review_submission_sent": false,
+    "upload_succeeded_at": "2026-08-29T01:24:29+09:00",
+    "archive_zip_sha256": "bbf814350c432795989bdf7cf9ded9d555936c4defc19e11faa7541cc694dd27",
+    "app_store_connect_build_id": "c544f5af-c1c4-41c6-950f-3d9caa35d64e",
+    "testflight_groups_observed": [
+      "PIYOKEY Internal QA",
+      "Tester"
+    ],
+    "link_saved_and_reloaded": true
+  },
+  "live_console_observation_20260829": {
+    "version_status": "PREPARE_FOR_SUBMISSION",
+    "free_apps_agreement_status": "ACTIVE",
+    "paid_apps_agreement_status": "NEW",
+    "legal_entity_update_required": true,
+    "automatic_release_after_approval_selected": true,
+    "phased_release_enabled": false,
+    "copyright": "2026 Kiish",
+    "japanese_description_still_lists_retired_korean_ui": true,
+    "metadata_saved_this_run": false,
+    "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged.",
+    "build_link_only_saved_this_run": true
+  },
+  "review_submission_blocked": true,
+  "release_decision": {
+    "confirmed_on": "2026-08-29",
+    "source": "User explicitly requested review submission and immediate release",
+    "automatic_after_approval": true,
+    "phased_release_enabled": false,
+    "release_to_all_users_immediately": true,
+    "console_selection_verified": true,
+    "does_not_waive_submission_gates": true
+  },
+  "submission_followup": {
+    "issue": 77,
+    "version_status": "PREPARE_FOR_SUBMISSION",
+    "paid_apps_agreement_status": "PENDING_USER_INFO",
+    "bank_account_entry_missing": true,
+    "republic_of_korea_tax_form": "MISSING_TAX_INFO",
+    "us_tax_questionnaire": "MISSING_TAX_INFO",
+    "shared_app_information_confirmation_opened": true,
+    "confirmation_canceled_without_continue": true,
+    "final_review_submission_sent": false,
+    "public_release_completed": false
+  }
+}

@@ -153,17 +153,17 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_build_11_source_candidate_pending_review_not_uploaded",
+    "record_status": "version_1_1_1_build_25_hotfix_source_candidate_not_uploaded",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
-    "marketing_version": "1.1",
-    "build_number": "11",
-    "currently_linked_build_number": "7",
-    "latest_uploaded_superseded_build_number": "10",
-    "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
-    "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
+    "marketing_version": "1.1.1",
+    "build_number": "25",
+    "currently_linked_build_number": null,
+    "latest_uploaded_superseded_build_number": "24",
+    "app_store_connect_version_status": "NOT_CREATED",
+    "app_store_connect_version_record_created_at": null,
     "localized_media": {
       "status": "apple_login_restored_final_rc_media_pending",
       "evidence": "release/store-assets/verification-20260828.json",
@@ -187,8 +187,8 @@
       "final_release_candidate_match_verified": false,
       "app_store_connect_uploaded": false
     },
-    "release_mode": "automatic_after_approval",
-    "manual_hold": false,
+    "release_mode": "manual_after_approval",
+    "manual_hold": true,
     "privacy_policy_url": "https://typee.app/privacy",
     "support_url": "https://typee.app/support",
     "marketing_url": "https://typee.app/",
@@ -353,6 +353,15 @@
       "confirmation_canceled_without_continue": true,
       "final_review_submission_sent": false,
       "public_release_completed": false
-    }
+    },
+    "previous_source_candidate_record": "release/history/ios-1.1-build-11-source-candidate.json",
+    "current_live_release": {
+      "marketing_version": "1.1",
+      "build_number": "24",
+      "status": "READY_FOR_DISTRIBUTION",
+      "verified_on": "2026-09-10 JST"
+    },
+    "hotfix_scope": "All keyboard leaderboard participation; independent Cup/Flow records; Game Center availability, delivery retries and rank refresh.",
+    "inherited_external_fields_note": "Existing rights, IAP, availability and media gates below are retained as unverified carry-forward data, not fresh App Store assertions. Resolve against the same signed hotfix candidate before release."
   }
 }

@@ -23,8 +23,8 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 피요컵·일반 Flow 기록 분리](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 사용자 정정에 따라 제출·순위·로컬 집계를 분리하고 schema 1/2 혼합 요약을 보존한다. focused 로컬 검증과 exact-head Claude review·maintainer 승인 뒤 새 빌드 실기기에서 독립 제출 확인. 기존 서버 혼합 점수 정리는 별도 결정 |
-| TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함은 #181의 모드 분리와 별도로 수정·실기기 확인 |
+| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드 참여·피요컵 분리·공통 등록 복구·결과별 제출 상태를 구현 중. 새로운 SHA 검증·exact-head Claude review·maintainer gate와 동일 빌드 실기기 Game Center·스토어 확인 필요. 공개판은 여전히 1.1 (24) |
+| TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
@@ -65,10 +65,10 @@
 
 ## 즉시 작업 순서
 
-1. TYP-113을 exact-SHA focused evidence와 정민이 승인한 자체 리뷰 뒤 병합한다.
-2. 최신 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 24 archive를 만들고 TestFlight에 업로드한다.
-3. build 24에서 TYP-112 가이드 ON/OFF·게임 확장, TYP-113 피요컵 OS 입력·주간 Game Center 제출, TYP-114 셰브런 미표시와 기존 방향 입력·부화 전환·종료 내구성 및 회귀·p95·60fps·VoiceOver·동의 ON/OFF 네트워크·Crashlytics dSYM을 iPhone·iPad 실기기로 확인한다.
-4. 기존 제출을 철회하고 앱·typee pro IAP를 함께 재제출한 뒤 #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다. Dependabot은 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않으며 #8은 Later 유지한다.
+1. #181 / PR #183에서 모든 키보드 Game Center 참여, 피요컵/일반 Flow 분리와 TYP-120 등록 복구를 검증한다. 16개 보드×3개 입력 방식과 응답 지연·실패·로그인·foreground를 포함한다.
+2. 최신 main 병합 → clean 구현 SHA의 focused 검증·evidence → 새 head Claude review → maintainer gate를 통과한다. 기존 분리 PR의 8483f7b 리뷰는 확장된 핫픽스에 재사용하지 않는다.
+3. App Store Connect 기본 보드를 현행으로 정리하고 구형 표시명을 구분한다. 기존 점수를 삭제하지 않고, 새 보드 생성/구형 archive는 구버전 영향을 확인한 별도 이행 대상으로 남긴다.
+4. 승인·병합한 최신 main에서 1.1.1 (25)를 서명·업로드한다. 실제 iPhone/iPad Game Center 제출·조회, 전체 iOS 단위 회귀와 기존 출시 gate를 확인하고 App Review 결과를 확인한 단계까지만 완료 처리한다.
 
 ## 출시 완료 판단
 

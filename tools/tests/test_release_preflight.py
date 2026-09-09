@@ -48,7 +48,7 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertIn("In-app purchase gate is open: review_screenshot_uploaded", messages)
         self.assertIn("In-app purchase gate is open: ready_to_submit", messages)
         self.assertIn("In-app purchase gate is open: attached_to_version_1_1_submission", messages)
-        self.assertNotIn("Next submission record must target version 1.1", messages)
+        self.assertNotIn("Next submission record must target version 1.1 or a patch hotfix", messages)
         self.assertNotIn("Submission marketing version must match Xcode", messages)
         self.assertNotIn("Submission build number must match Xcode", messages)
         release_mode_error = "Next submission release mode must be resolved independently of availability"

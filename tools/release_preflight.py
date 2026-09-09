@@ -1194,8 +1194,8 @@ def strict_checks(root: Path) -> list[Finding]:
             findings.append(Finding("ERROR", f"Invalid analytics release state: {error}"))
     add(
         findings,
-        submission.get("marketing_version") == "1.1",
-        "Next submission record must target version 1.1",
+        re.fullmatch(r"1\.1(?:\.[1-9][0-9]*)?", str(submission.get("marketing_version", ""))) is not None,
+        "Next submission record must target version 1.1 or a patch hotfix",
     )
 
     project = project_path.read_text(encoding="utf-8")

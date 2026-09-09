@@ -85,7 +85,7 @@ struct FlowGameView: View {
       ) ?? BuiltInKeyboardLayout.dubeolsik.rawValue
     )
     _builtInKeyboardLayout = State(
-      initialValue: competition == nil ? storedBuiltInLayout : .dubeolsik
+      initialValue: storedBuiltInLayout
     )
     var sessionItems = GamePresetSessionRandomizer.shuffledItems(
       from: deck,
@@ -1374,7 +1374,7 @@ struct FlowGameView: View {
     if competition == .weeklyPiyoCup {
       return .weeklyPiyoCup
     }
-    guard gameKind == .flow, recordInputMode == .builtIn,
+    guard gameKind == .flow,
       GameCenterRankedDeck.isEligible(deckID: deck.deckId, version: deck.version)
     else { return nil }
     return .officialDeck

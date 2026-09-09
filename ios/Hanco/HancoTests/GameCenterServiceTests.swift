@@ -112,16 +112,6 @@ final class GameCenterServiceTests: XCTestCase {
     )
     XCTAssertTrue(
       GameCenterLeaderboard.leaderboards(
-        for: record(competition: .officialDeck, inputMode: .osIME)
-      ).isEmpty
-    )
-    XCTAssertTrue(
-      GameCenterLeaderboard.leaderboards(
-        for: record(competition: .officialDeck, inputMode: .builtInKorean10Key)
-      ).isEmpty
-    )
-    XCTAssertTrue(
-      GameCenterLeaderboard.leaderboards(
         for: record(deckVersion: 999, competition: .officialDeck)
       ).isEmpty
     )
@@ -162,7 +152,7 @@ final class GameCenterServiceTests: XCTestCase {
     )
   }
 
-  func testRuntimeAvailabilityDeduplicatesAndUsesAuthoritativeProbeResult() throws {
+  func testRuntimeAvailabilityKeepsLiveBaselineAcrossPartialResults() throws {
     let contract = GameCenterAvailabilityContract(
       rawLeaderboardIDs: [GameCenterLeaderboard.acidRainBeginner.rawValue],
       intendedLeaderboardIDs: [
@@ -181,7 +171,7 @@ final class GameCenterServiceTests: XCTestCase {
         succeeded: true
       )
     )
-    XCTAssertEqual(runtime.available, [.flowBeginner])
+    XCTAssertEqual(runtime.available, [.acidRainBeginner, .flowBeginner])
     XCTAssertTrue(runtime.probeIsComplete)
     XCTAssertNil(runtime.beginProbe())
 
@@ -392,9 +382,51 @@ final class GameCenterServiceTests: XCTestCase {
 
     XCTAssertEqual(scores, [.weeklyPiyoCup: 1_100])
     XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: record()), [.flowBeginner])
-    XCTAssertTrue(GameCenterLeaderboard.leaderboards(for: record(
+    XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: record(
       competition: .weeklyPiyoCup, inputMode: .builtInKorean10Key
-    )).isEmpty)
+    )), [.weeklyPiyoCup])
+  }
+
+  @MainActor
+  func testEveryKeyboardCanEnterAllSixteenLeaderboardsWithoutBeatingPersonalBest() {
+    let modes: [SessionInputMode] = [.builtIn, .builtInKorean10Key, .osIME]
+    let service = GameCenterService(isEnabled: false, availabilityContract:
+      GameCenterAvailabilityContract(rawLeaderboardIDs: GameCenterLeaderboard.allCases.map(\.rawValue)))
+    for mode in modes {
+      for deck in GameCenterRankedDeck.all {
+        let run = record(score: 1, deckID: deck.deckID, deckVersion: deck.version, inputMode: mode)
+        XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: run), [deck.leaderboard])
+        XCTAssertTrue(service.isLeaderboardAvailable(for: run))
+      }
+      let cup = record(score: 1, competition: .weeklyPiyoCup, inputMode: mode)
+      XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: cup), [.weeklyPiyoCup])
+      XCTAssertTrue(service.isLeaderboardAvailable(for: cup))
+    }
+  }
+
+  func testBestScoreCombinesKeyboardMethodsButNeverCombinesCupAndFlow() {
+    let now = date("2026-09-09T03:00:00Z")
+    let scores = GameCenterLeaderboard.bestScores(from: [
+      record(score: 100, inputMode: .builtIn, playedAt: now),
+      record(score: 900, inputMode: .builtInKorean10Key, playedAt: now),
+      record(score: 700, inputMode: .osIME, playedAt: now),
+      record(score: 1200, competition: .weeklyPiyoCup, inputMode: .builtInKorean10Key, playedAt: now),
+    ], asOf: now)
+    XCTAssertEqual(scores, [.flowBeginner: 900, .weeklyPiyoCup: 1200])
+  }
+
+  func testEmptyProbeCannotHideLiveBoardsAndCanBeRetriedAfterForeground() throws {
+    let live = Set(GameCenterLeaderboard.allCases)
+    var runtime = GameCenterRuntimeAvailability(contract:
+      GameCenterAvailabilityContract(rawLeaderboardIDs: live.map(\.rawValue)))
+    let first = try XCTUnwrap(runtime.beginProbe())
+    XCTAssertTrue(runtime.completeProbe(token: first, returned: [], succeeded: true))
+    XCTAssertEqual(runtime.available, live)
+    runtime.allowRetry()
+    let retry = try XCTUnwrap(runtime.beginProbe())
+    XCTAssertNotEqual(first, retry)
+    XCTAssertFalse(runtime.completeProbe(token: first, returned: [], succeeded: true))
+    XCTAssertTrue(runtime.completeProbe(token: retry, returned: live, succeeded: true))
   }
 
   func testGrowthAchievementsMirrorExistingGrowthThresholds() {

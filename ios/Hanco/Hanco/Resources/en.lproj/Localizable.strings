@@ -954,7 +954,7 @@
 "game_center.best_rank_format" = "Best global rank #%d";
 "game_center.result_action" = "View Game Center rankings";
 "game_center.result_rank_format" = "#%d · Game Center rankings";
-"game_center.ranked_deck" = "Built-in keyboard ranked deck";
+"game_center.ranked_deck" = "Ranked game · all keyboards";
 "piyo_cup.title" = "Weekly Piyo Cup";
 "piyo_cup.weekly_badge" = "WEEKLY";
 "piyo_cup.detail" = "A fair 60-second run on Daily Korean for everyone. Use your selected keyboard.";
@@ -1288,3 +1288,11 @@
 "curriculum.chapter_6_fan_support.item_9.meaning" = "Thanks for coming";
 "curriculum.chapter_6_fan_support.item_10.reading" = "Oneul chakjang choegoyeyo";
 "curriculum.chapter_6_fan_support.item_10.meaning" = "Today's outfit is the best";
+
+// Game Center score delivery
+"game_center.submission.sign_in" = "Sign in to Game Center to register your score.";
+"game_center.submission.pending" = "Waiting to register";
+"game_center.submission.submitting" = "Registering score…";
+"game_center.submission.submitted" = "Score registered · best score kept";
+"game_center.submission.failed" = "Couldn’t register. Your score will be retried.";
+"game_center.submission.retry" = "Retry";
