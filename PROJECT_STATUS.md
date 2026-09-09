@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / `codex/180-country-analytics-consent` | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현했다. focused iPhone/iPad·Release 검증과 exact-head Claude review 뒤 maintainer 병합 승인을 받는다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics gate는 별도 |
+| #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | In Progress / `codex/113-piyocup-osime-ranking` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | 선택한 OS 키보드로 피요컵을 실행하고 OS-IME 기록은 주간 보드에만 제출한다. exact-SHA 단위·iPhone/iPad UI evidence와 자체 리뷰·병합 뒤 build 24 실기기·Game Center 샌드박스 gate로 이동 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
