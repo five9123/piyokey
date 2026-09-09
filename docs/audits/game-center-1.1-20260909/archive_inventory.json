@@ -1,0 +1,211 @@
+{
+  "version": "1.1",
+  "build": "24",
+  "bundle_id": "app.piyokey.Piyokey",
+  "preset_contracts": [
+    {
+      "game": "flow",
+      "level": "beginner",
+      "deck_id": "flow_topik_beginner",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.flow.beginner",
+      "deck_sha256": "390b0dc9a24e70a9fc44030e209e5bcd800bb2911dac8c60c27845480a9dd9d6"
+    },
+    {
+      "game": "flow",
+      "level": "intermediate",
+      "deck_id": "flow_topik_intermediate",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.flow.intermediate",
+      "deck_sha256": "f04375e1620e77b97ae8e03f0e55ffd4b471db9c0c026e54abc7e8c881999241"
+    },
+    {
+      "game": "flow",
+      "level": "advanced",
+      "deck_id": "flow_topik_advanced",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.flow.advanced",
+      "deck_sha256": "55fa34607835e5d20b74c476ff418a3f1eb2ada773b2bab2bc3a333f02a8576c"
+    },
+    {
+      "game": "acid_rain",
+      "level": "beginner",
+      "deck_id": "acid_rain_topik_beginner",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.acid_rain.beginner",
+      "deck_sha256": "34b04c2ca8a03b9e3bdf60c3a420f4664789a20a786d4a898ef22f571f332bd5"
+    },
+    {
+      "game": "acid_rain",
+      "level": "intermediate",
+      "deck_id": "acid_rain_topik_intermediate",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.acid_rain.intermediate",
+      "deck_sha256": "b799a837b6f4275e560ff9257cb65e3afe7fbaf06b5cd862489028a7ffc78f6a"
+    },
+    {
+      "game": "acid_rain",
+      "level": "advanced",
+      "deck_id": "acid_rain_topik_advanced",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.acid_rain.advanced",
+      "deck_sha256": "5804bac717e87886bd4691a45674e4b09ff5e76b68023aabcefb47fee0a89724"
+    },
+    {
+      "game": "choseong",
+      "level": "beginner",
+      "deck_id": "choseong_topik_beginner",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.choseong.beginner",
+      "deck_sha256": "f1a83993e286d4d0718d2e350358c19c38e65914ff5634ef6614c883abd513b6"
+    },
+    {
+      "game": "choseong",
+      "level": "intermediate",
+      "deck_id": "choseong_topik_intermediate",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.choseong.intermediate",
+      "deck_sha256": "053baa52670ec7a372320e077ce466590e82b72faf5bab687fd96b53352db831"
+    },
+    {
+      "game": "choseong",
+      "level": "advanced",
+      "deck_id": "choseong_topik_advanced",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.choseong.advanced",
+      "deck_sha256": "07ec00d6455153cfce2c7a381272269a524e838c73b66a919e53fde43c336df2"
+    },
+    {
+      "game": "dictation",
+      "level": "beginner",
+      "deck_id": "dictation_topik_beginner",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.dictation.beginner",
+      "deck_sha256": "34751fb7de1e21f8aabad89f124c0f1d40103a81437baea14ba585272cf5346e"
+    },
+    {
+      "game": "dictation",
+      "level": "intermediate",
+      "deck_id": "dictation_topik_intermediate",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.dictation.intermediate",
+      "deck_sha256": "db91b5934b31bb7f149e05f375bd8adb186db8a6ff2ec17164c20dc52dda2122"
+    },
+    {
+      "game": "dictation",
+      "level": "advanced",
+      "deck_id": "dictation_topik_advanced",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v3.dictation.advanced",
+      "deck_sha256": "fd0603263fd34ea880c7905cef7ab45db0c6aa54f3aaae0bb7f57026335f72f3"
+    },
+    {
+      "game": "word_match",
+      "level": "beginner",
+      "deck_id": "word_match_topik_beginner",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.word_match.beginner",
+      "deck_sha256": "2437519e39bef31b5d857e457275fca6408c168fd37307c94f5deb164d69099f"
+    },
+    {
+      "game": "word_match",
+      "level": "intermediate",
+      "deck_id": "word_match_topik_intermediate",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.word_match.intermediate",
+      "deck_sha256": "b173ca5731938bb7673b57996ac8e0ba6f73f60e33b990088defa2fbab64453e"
+    },
+    {
+      "game": "word_match",
+      "level": "advanced",
+      "deck_id": "word_match_topik_advanced",
+      "deck_version": 3,
+      "item_count": 100,
+      "board_id": "piyokey.v4.word_match.advanced",
+      "deck_sha256": "0990adec081cd98349f79e5f1994ade0f656aaa91b1b3a154778a4ef79de487b"
+    }
+  ],
+  "available_ids": [
+    "piyokey.v3.acid_rain.advanced",
+    "piyokey.v3.acid_rain.beginner",
+    "piyokey.v3.acid_rain.intermediate",
+    "piyokey.v3.choseong.advanced",
+    "piyokey.v3.choseong.beginner",
+    "piyokey.v3.choseong.intermediate",
+    "piyokey.v3.dictation.advanced",
+    "piyokey.v3.dictation.beginner",
+    "piyokey.v3.dictation.intermediate",
+    "piyokey.v4.cup.weekly.flow",
+    "piyokey.v4.flow.advanced",
+    "piyokey.v4.flow.beginner",
+    "piyokey.v4.flow.intermediate",
+    "piyokey.v4.word_match.advanced",
+    "piyokey.v4.word_match.beginner",
+    "piyokey.v4.word_match.intermediate"
+  ],
+  "intended_ids": [
+    "piyokey.v3.acid_rain.advanced",
+    "piyokey.v3.acid_rain.beginner",
+    "piyokey.v3.acid_rain.intermediate",
+    "piyokey.v3.choseong.advanced",
+    "piyokey.v3.choseong.beginner",
+    "piyokey.v3.choseong.intermediate",
+    "piyokey.v3.dictation.advanced",
+    "piyokey.v3.dictation.beginner",
+    "piyokey.v3.dictation.intermediate",
+    "piyokey.v4.cup.weekly.flow",
+    "piyokey.v4.flow.advanced",
+    "piyokey.v4.flow.beginner",
+    "piyokey.v4.flow.intermediate",
+    "piyokey.v4.word_match.advanced",
+    "piyokey.v4.word_match.beginner",
+    "piyokey.v4.word_match.intermediate"
+  ],
+  "localized_result_strings": {
+    "ja": {
+      "game_center.result_action": "Game Centerランキングを見る",
+      "game_center.result_rank_format": "#%d・Game Centerランキング",
+      "input_mode.builtin": "内蔵キーボード",
+      "input_mode.builtin_korean_10key": "韓国語10キー"
+    },
+    "en": {
+      "game_center.result_action": "View Game Center rankings",
+      "game_center.result_rank_format": "#%d · Game Center rankings",
+      "input_mode.builtin": "Built-in keyboard",
+      "input_mode.builtin_korean_10key": "Korean 10-Key"
+    },
+    "es": {
+      "game_center.result_action": "Ver clasificaciones de Game Center",
+      "game_center.result_rank_format": "#%d · Clasificaciones de Game Center",
+      "input_mode.builtin": "Teclado integrado",
+      "input_mode.builtin_korean_10key": "Coreano de 10 teclas"
+    },
+    "de": {
+      "game_center.result_action": "Game-Center-Ranglisten anzeigen",
+      "game_center.result_rank_format": "#%d · Game-Center-Ranglisten",
+      "input_mode.builtin": "Integrierte Tastatur",
+      "input_mode.builtin_korean_10key": "Koreanisch mit 10 Tasten"
+    },
+    "fr": {
+      "game_center.result_action": "Voir les classements Game Center",
+      "game_center.result_rank_format": "N° %d · classements Game Center",
+      "input_mode.builtin": "Clavier intégré",
+      "input_mode.builtin_korean_10key": "Coréen à 10 touches"
+    }
+  },
+  "status": "all archived contracts matched; no device language-switch test performed"
+}

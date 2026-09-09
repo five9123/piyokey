@@ -1,0 +1,6 @@
+ALL_20_RELEASED_CONTROL returned=20 flowButtons=[true, true, true] flowSubmissions=3 rainSubmitted=true
+FLOW_MISSING_IN_SUCCESSFUL_RESPONSE returned=17 flowButtons=[false, false, false] flowSubmissions=0 rainSubmitted=true
+FLOW_MISSING_IN_SUCCESSFUL_RESPONSE_AFTER_RECOVERY fullListLoads=1 flowButtons=[false, false, false]
+ALL_20_BUT_FLOW_RELEASE_FLAG_ABSENT returned=20 flowButtons=[false, false, false] flowSubmissions=0 rainSubmitted=true
+ALL_20_BUT_FLOW_RELEASE_FLAG_ABSENT_AFTER_RECOVERY fullListLoads=1 flowButtons=[false, false, false]
+AVAILABILITY_BLOCKING_REPRODUCED (mock GameKit; device response remains unknown)

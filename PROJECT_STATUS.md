@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-06 JST
+마지막 갱신: 2026-09-10 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -13,8 +13,8 @@
 
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
-| iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
-| iOS 1.1 | build 23 이후 TYP-112 iPad OS 키보드 가이드·레이아웃과 TYP-114 커리큘럼 셰브런 정정을 `main` `dc42e19128bf7fc54971a68f30b89e6e21b54cb5`까지 병합했다. TYP-113 피요컵 OS 키보드·주간 랭킹을 포함한 다음 제출 후보는 build 24다 | TYP-113 source gate와 병합 뒤 최신 clean `origin/main`으로만 build 24를 만든다. TYP-112·113·114의 iPad 실기기 회귀, Game Center 샌드박스 주간 제출, 동의 ON/OFF 네트워크, Crashlytics dSYM, 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
+| iOS 공개판 | 2026-09-09 ASC 직접 조회: `1.1 (24)` Ready for Distribution, iPhone 15 Pro JM 설치본도 `1.1 (24)` | 지역별 실제 판매 상태·기존 외부 gate는 별도 확인. 출시 후 Game Center 재발은 TYP-120으로 추적 |
+| iOS 1.1 | build 24는 TYP-112·113·114를 포함한 `main` `85ebfadabc434659943ea8cd3edcb93a91a39a71`에서 생성됐고 ASC 선택 빌드·archive·iPhone 설치 버전이 일치 | Game Center 현행 16개 Live·entitlement·주간 주기는 확인됐으나 제출/재시도/순위 갱신 결함과 구형 기본 보드 노출이 남아 있음. [조사 보고서](docs/audits/game-center-1.1-20260909/REPORT.md) |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| TYP-113 피요컵 OS 키보드·주간 랭킹 | In Progress / `codex/113-piyocup-osime-ranking` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | 선택한 OS 키보드로 피요컵을 실행하고 OS-IME 기록은 주간 보드에만 제출한다. exact-SHA 단위·iPhone/iPad UI evidence와 자체 리뷰·병합 뒤 build 24 실기기·Game Center 샌드박스 gate로 이동 |
+| TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
 | TYP-111 플릭 프리뷰 표시 제거 | In Review 준비 / `codex/111-hide-flick-preview` | 표시 전용 overlay와 dead code 제거, full package·HancoTests 및 focused iPhone·iPad UI evidence 뒤 exact-head Claude review를 받고, 병합 전 maintainer 수동 승인을 대기 |
@@ -31,7 +31,7 @@
 | TYP-105 build 21 부화 결과 전환 경합 | Merged / PR #168 → main `c81df6d` | build 22 실제 iPhone에서 1→2·2→3·3→축하→Home과 mission 2 및 final 즉시/10초 종료·재실행을 확인 |
 | TYP-101 인앱 천지인 플릭 방향 미리보기 | Merged / PR #165 → main `1a9715b`; 표시 계약은 TYP-111로 대체 | 프리뷰 실기기 gate는 TYP-111 표시 제거 결정으로 폐기하고, 기존 방향 매핑·입력·VoiceOver와 p95·60fps gate는 유지 |
 | TYP-102 마지막 부화 3/3 완료 전환 | Merged / PR #167 → main `4e0b969` / build 21 target | 최종 RC build 21 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
-| TYP-43 iOS/iPadOS 1.1 출시 | In Review / build 20·21·22 uploaded, build 22 심사 철회, build 24 pending TYP-113 | TYP-113을 병합한 최신 clean `origin/main`에서 build 24를 만들고 TYP-112·113·114 실기기 회귀, Game Center 주간 제출, 동의 ON/OFF·Crashlytics dSYM·계정·권리·IAP·store gate를 순서대로 닫음 |
+| TYP-43 iOS/iPadOS 1.1 출시 | Linear In Review / ASC `1.1 (24)` Ready for Distribution 직접 확인 | 출시 전 문서·트래커의 오래된 상태는 TYP-117에서 정리. TYP-120 Game Center 재발과 지역·계정·권리·IAP 등 미확인 gate를 별도로 추적 |
 | TYP-103 Settings 키보드 카드 순서 | Merged / PR #166 → main `504df3e` / build 21 target | build 22 iPhone·iPad에서 입력 모드→내장 배열 순서와 OS 모드의 배열 비활성·dim을 재확인 |
 | TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
 | TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
@@ -55,7 +55,7 @@
 | TYP-68 게임 OS 키보드 전환 후 IME 입력 잔존 | Review / PR #139 (#138 대체) | PR review·병합 후 iPhone·iPad 실기기에서 OS 한국어 키보드(두벌식·천지인)로 5개 직접 입력 게임 연속 10단어 전환 확인 |
 | #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
 | #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8·9를 RC로 사용하지 않고 최신 `main`의 build 10으로 대체 |
-| #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
+| #7 / TYP-7 Game Center 전체 점검 | 기존 점검 Done 이력 보존 / 배포 후 재발 → [TYP-120](https://linear.app/typee/issue/TYP-120) Todo·High | 현행 16개+구형 4개 ASC 상세 점검, 관련 단위 36/36 PASS, 원본 서비스 대역 실행으로 제출·재시도·순위 갱신 결함 확인. 후속 수정 및 동일 빌드 iPhone·iPad 검증 필요 |
 | #58 현지 20시 리마인더 | Verify | iOS 실제 기기에서 권한 동의 뒤 현지 20시 수신 확인 |
 | #123 iPad 물리 키보드 영문 입력 안내 | Verify | iPad Bluetooth 1차 동작 확인 완료. 반복 영문 입력의 흔들림·색 강조 후 한국어 두벌식 전환 → 현재 문제 완료를 재확인 |
 | #8 자동 발음 재생 검토 | Verify / Later | 기존 수동 발음과 차이·재생 시점·기본값을 사용자와 확정하기 전 구현하지 않음 |
@@ -63,10 +63,9 @@
 
 ## 즉시 작업 순서
 
-1. TYP-113을 exact-SHA focused evidence와 정민이 승인한 자체 리뷰 뒤 병합한다.
-2. 최신 clean `origin/main`에서만 PostHog token과 Firebase plist를 주입한 build 24 archive를 만들고 TestFlight에 업로드한다.
-3. build 24에서 TYP-112 가이드 ON/OFF·게임 확장, TYP-113 피요컵 OS 입력·주간 Game Center 제출, TYP-114 셰브런 미표시와 기존 방향 입력·부화 전환·종료 내구성 및 회귀·p95·60fps·VoiceOver·동의 ON/OFF 네트워크·Crashlytics dSYM을 iPhone·iPad 실기기로 확인한다.
-4. 기존 제출을 철회하고 앱·typee pro IAP를 함께 재제출한 뒤 #7·#58과 #77의 계정·권리·IAP·store gate를 처리한다. Dependabot은 변경 범위별로 검토하고 성공한 check 없이 자동 병합하지 않으며 #8은 Later 유지한다.
+1. TYP-120에서 출시된 1.1 (24)의 공통 Game Center 서비스를 수정한다. Flow 캡처에서 시작한 [전체 게임 조사](docs/audits/game-center-1.1-20260909/ALL_GAMES.md)로 현행 16개 모두에서 F7 버튼·제출 차단 및 F1~F4를 대역 재현했다. 피요컵은 주간 미제출인데 클래식 버튼만 남는 부분 실패도 가능하다. archive 15개 덱·16개 ID·5개 언어 리소스 일치, 관련 XCTest 116/116 통과와 별개로 실제 기기의 실패 응답은 미확인이다. F7 가용성 판정·복구와 보드별 진단을 우선하고 제출·재시도·순위 갱신·구형 노출도 함께 정리한다.
+2. 수정된 동일 빌드의 iPhone·iPad에서 인증 직후·offline 복귀·낮은 다음 점수·응답 지연·주간 경계를 포함한 16개 리더보드 검증을 수행한다. 조사 완료를 수정·실기기 검증 완료로 표시하지 않는다.
+3. TYP-117에서 build 24의 실제 출시 상태와 Linear/GitHub/출시 문서의 오래된 상태를 동기화하고, 기존 기기·계정·권리·IAP·지역·telemetry gate는 실제 증빙으로만 닫는다. TYP-120 조사에서는 운영 설정 변경·새 빌드 배포를 수행하지 않았다.
 
 ## 출시 완료 판단
 
