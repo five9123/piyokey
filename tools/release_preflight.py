@@ -31,6 +31,9 @@ REQUIRED_PRIVACY_REASONS = {
     "NSPrivacyAccessedAPICategoryActiveKeyboards": ["54BD.1"],
 }
 REQUIRED_COLLECTED_DATA = {
+    "NSPrivacyCollectedDataTypeCoarseLocation": {
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+    },
     "NSPrivacyCollectedDataTypeCrashData": {
         "NSPrivacyCollectedDataTypePurposeAppFunctionality",
         "NSPrivacyCollectedDataTypePurposeAnalytics",
@@ -1140,6 +1143,9 @@ def repository_checks(root: Path) -> list[Finding]:
         add(findings, bool(release_state.get("gates")), "Analytics release gates are missing")
         required_gates = {
             "posthog_geoip_disabled",
+            "usage_context_transform_verified",
+            "usage_context_reconsent_verified",
+            "usage_context_app_store_privacy_updated",
             "consent_notice_ui_verified",
             "privacy_policy_published",
             "privacy_retention_and_deletion_verified",

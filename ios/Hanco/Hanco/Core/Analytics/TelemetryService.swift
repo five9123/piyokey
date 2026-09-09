@@ -12,6 +12,33 @@ import UIKit
 #endif
 
 enum AnalyticsTransportPrivacy {
+  static let usageContextConsentProperty = "piyokey_usage_context_consent_version"
+
+  // Standard SDK environment fields, admitted only for events captured after notice v2.
+  static let usageContextProperties: Set<String> = [
+    "$app_name",
+    "$app_version",
+    "$app_build",
+    "$app_namespace",
+    "$device_manufacturer",
+    "$device_model",
+    "$device_type",
+    "$os_name",
+    "$os_version",
+    "$screen_width",
+    "$screen_height",
+    "$locale",
+    "$timezone",
+    "$network_wifi",
+    "$network_cellular",
+    "$is_emulator",
+    "$is_testflight",
+    "$is_sideloaded",
+    "$is_ios_running_on_mac",
+    "$is_mac_catalyst_app",
+    "$session_id",
+  ]
+
   private static let sdkOperationalProperties: Set<String> = [
     "$geoip_disable",
     "$process_person_profile",
@@ -21,7 +48,8 @@ enum AnalyticsTransportPrivacy {
 
   static func sanitizedProperties(
     eventName: String,
-    properties: [String: Any]
+    properties: [String: Any],
+    usageContextAllowed: Bool = false
   ) -> [String: Any]? {
     guard
       let event = AnalyticsEvent(rawValue: eventName),
@@ -29,7 +57,19 @@ enum AnalyticsTransportPrivacy {
     else { return nil }
 
     let allowed = Set(eventProperties.map(\.rawValue)).union(sdkOperationalProperties)
-    return properties.filter { allowed.contains($0.key) }
+    var sanitized = properties.filter { allowed.contains($0.key) }
+    // Keep PostHog's full GeoIP enrichment disabled even after usage-context consent.
+    // Only our consent-gated ingestion transformation may perform the lookup.
+    sanitized["$geoip_disable"] = true
+    sanitized["$process_person_profile"] = false
+    if usageContextAllowed,
+      let version = properties[usageContextConsentProperty] as? Int,
+      version == PrivacyNoticePolicy.currentVersion
+    {
+      sanitized.merge(properties.filter { usageContextProperties.contains($0.key) }) { _, new in new }
+      sanitized[usageContextConsentProperty] = version
+    }
+    return sanitized
   }
 
   static func platform(
@@ -162,6 +202,10 @@ final class TelemetryService {
           uniqueKeysWithValues: properties.map { ($0.key.rawValue, $0.value) }
         )
         sdkProperties["$geoip_disable"] = true
+        if usageContextAllowed {
+          sdkProperties[AnalyticsTransportPrivacy.usageContextConsentProperty] =
+            PrivacyNoticePolicy.currentVersion
+        }
         PostHogSDK.shared.capture(
           event.rawValue,
           properties: sdkProperties
@@ -255,6 +299,17 @@ final class TelemetryService {
     ]
   }
 
+  private var usageContextAllowed: Bool {
+    PrivacyNoticePolicy.allowsUsageContext(
+      analyticsEnabled: UserDefaults.standard.bool(
+        forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+      ),
+      reviewedVersion: UserDefaults.standard.integer(
+        forKey: SettingsPreferenceKeys.privacyNoticeVersion
+      )
+    )
+  }
+
   private func configurePostHogIfAvailable() {
     #if canImport(PostHog)
       guard appOpenTracker.analyticsEnabled, !isProductAnalyticsConfigured else { return }
@@ -286,7 +341,15 @@ final class TelemetryService {
         guard
           let properties = AnalyticsTransportPrivacy.sanitizedProperties(
             eventName: event.event,
-            properties: event.properties
+            properties: event.properties,
+            usageContextAllowed: PrivacyNoticePolicy.allowsUsageContext(
+              analyticsEnabled: UserDefaults.standard.bool(
+                forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+              ),
+              reviewedVersion: UserDefaults.standard.integer(
+                forKey: SettingsPreferenceKeys.privacyNoticeVersion
+              )
+            )
           )
         else { return nil }
         event.properties = properties

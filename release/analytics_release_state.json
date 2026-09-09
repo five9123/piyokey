@@ -22,6 +22,9 @@
     "app_store_privacy_updated": false,
     "play_data_safety_updated": false,
     "product_dashboard_created": true,
-    "crash_alerts_created": false
+    "crash_alerts_created": false,
+    "usage_context_transform_verified": false,
+    "usage_context_reconsent_verified": false,
+    "usage_context_app_store_privacy_updated": false
   }
 }

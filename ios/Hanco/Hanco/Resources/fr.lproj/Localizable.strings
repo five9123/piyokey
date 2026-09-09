@@ -243,7 +243,7 @@
 "settings.privacy_policy" = "Politique de confidentialité";
 "settings.privacy" = "Confidentialité";
 "settings.anonymous_analytics" = "Statistiques d’utilisation anonymes";
-"settings.anonymous_analytics_detail" = "Partager les fonctions utilisées et si les sessions sont terminées.";
+"settings.anonymous_analytics_detail" = "Partager les fonctions utilisées, les sessions, le pays déduit de l’IP et les données de l’appareil, du système, de l’écran, de langue, de fuseau horaire et de connexion.";
 "settings.crash_diagnostics" = "Diagnostic des plantages";
 "settings.crash_diagnostics_detail" = "Partager les diagnostics des plantages et blocages.";
 "settings.analytics_privacy_note" = "Les textes saisis, contenus personnels, noms et adresses e-mail ne sont jamais envoyés. Les deux options sont désactivées par défaut.";
@@ -253,8 +253,10 @@
 "privacy_consent.navigation_title" = "Choix de confidentialité";
 "privacy_consent.title" = "Veux-tu améliorer typee ?";
 "privacy_consent.introduction" = "Envoie des informations anonymes sur l’utilisation et les erreurs pour nous aider à améliorer l’app.";
+"privacy_consent.update_introduction" = "Le partage inclut désormais le pays et les données de l’appareil. Choisis si tu souhaites les partager.";
+"privacy_consent.existing_diagnostics_detail" = "Ton choix actuel reste inchangé";
 "privacy_consent.usage_title" = "Informations d’utilisation";
-"privacy_consent.usage_detail" = "Les fonctionnalités utilisées";
+"privacy_consent.usage_detail" = "Fonctions utilisées, pays et appareil/système";
 "privacy_consent.error_title" = "Informations sur les erreurs";
 "privacy_consent.error_detail" = "La cause de l’arrêt de l’app";
 "privacy_consent.excluded_data" = "Nous n’envoyons pas ce que tu saisis, ton nom ni ton adresse e-mail.";

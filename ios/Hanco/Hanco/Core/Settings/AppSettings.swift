@@ -187,7 +187,18 @@ enum SettingsPreferenceKeys {
 }
 
 enum PrivacyNoticePolicy {
-  static let currentVersion = 1
+  static let currentVersion = 2
+
+  static func allowsUsageContext(analyticsEnabled: Bool, reviewedVersion: Int) -> Bool {
+    analyticsEnabled && reviewedVersion >= currentVersion
+  }
+
+  // An upgrade asks about the expanded usage scope, not a change to diagnostics.
+  static func diagnosticsAfterNotice(
+    participate: Bool, reviewedVersion: Int, previousDiagnostics: Bool
+  ) -> Bool {
+    reviewedVersion > 0 ? previousDiagnostics : participate
+  }
 
   static func shouldPresent(
     reviewedVersion: Int,

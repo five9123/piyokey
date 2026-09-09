@@ -344,6 +344,7 @@ final class AppSettingsTests: XCTestCase {
       Set(collectedTypes.compactMap { $0["NSPrivacyCollectedDataType"] as? String }),
       [
         "NSPrivacyCollectedDataTypeCrashData",
+        "NSPrivacyCollectedDataTypeCoarseLocation",
         "NSPrivacyCollectedDataTypeProductInteraction",
         "NSPrivacyCollectedDataTypeDeviceID",
         "NSPrivacyCollectedDataTypeOtherUsageData",
@@ -385,7 +386,7 @@ final class AppSettingsTests: XCTestCase {
   }
 
   func testPrivacyTwoButtonDecisionsMapToBothStoredChoices() {
-    XCTAssertEqual(PrivacyNoticePolicy.currentVersion, 1)
+    XCTAssertEqual(PrivacyNoticePolicy.currentVersion, 2)
     XCTAssertTrue(PrivacyConsentDecision.participate.analyticsEnabled)
     XCTAssertTrue(PrivacyConsentDecision.participate.diagnosticsEnabled)
     XCTAssertFalse(PrivacyConsentDecision.continueWithoutSharing.analyticsEnabled)
@@ -394,6 +395,71 @@ final class AppSettingsTests: XCTestCase {
 
   func testAppDoesNotDeclareTrackingPermission() {
     XCTAssertNil(Bundle.main.object(forInfoDictionaryKey: "NSUserTrackingUsageDescription"))
+  }
+
+  func testUsageContextRequiresCurrentUsageConsent() {
+    for version in [0, 1, 2] {
+      for enabled in [false, true] {
+        XCTAssertEqual(
+          PrivacyNoticePolicy.allowsUsageContext(
+            analyticsEnabled: enabled, reviewedVersion: version
+          ), enabled && version == 2
+        )
+      }
+    }
+  }
+
+  func testUpgradeNoticePreservesIndependentDiagnosticChoice() {
+    for participate in [false, true] {
+      for diagnostics in [false, true] {
+        XCTAssertEqual(
+          PrivacyNoticePolicy.diagnosticsAfterNotice(
+            participate: participate, reviewedVersion: 1, previousDiagnostics: diagnostics
+          ), diagnostics
+        )
+        XCTAssertEqual(
+          PrivacyNoticePolicy.diagnosticsAfterNotice(
+            participate: participate, reviewedVersion: 0, previousDiagnostics: diagnostics
+          ), participate
+        )
+      }
+    }
+    XCTAssertTrue(PrivacyNoticePolicy.shouldPresent(
+      reviewedVersion: 1, onboardingCompleted: true, appTourCompleted: true
+    ))
+  }
+
+  func testUsageContextTransportNeverEnablesFullGeoIPOrReconsentsQueuedEvents() throws {
+    let marker = AnalyticsTransportPrivacy.usageContextConsentProperty
+    let properties: [String: Any] = [
+      "platform": "ios", "entry_point": "cold_start", marker: 2,
+      "$geoip_disable": false, "$process_person_profile": true,
+      "$ip": "must-not-leave-device", "$geoip_city_name": "private",
+      "$geoip_country_code": "XX", "$geoip_latitude": 12.3,
+      "$set": ["$geoip_city_name": "private"],
+    ]
+    for allowed in [false, true] {
+      let sanitized = try XCTUnwrap(AnalyticsTransportPrivacy.sanitizedProperties(
+        eventName: "app_opened", properties: properties, usageContextAllowed: allowed
+      ))
+      XCTAssertEqual(sanitized["$geoip_disable"] as? Bool, true)
+      XCTAssertEqual(sanitized["$process_person_profile"] as? Bool, false)
+      XCTAssertEqual(sanitized[marker] as? Int, allowed ? 2 : nil)
+      for forbidden in ["$ip", "$geoip_city_name", "$geoip_country_code", "$geoip_latitude", "$set"] {
+        XCTAssertNil(sanitized[forbidden])
+      }
+    }
+    for oldVersion in [0, 1, 3] {
+      let sanitized = AnalyticsTransportPrivacy.sanitizedProperties(
+        eventName: "app_opened", properties: [marker: oldVersion], usageContextAllowed: true
+      )
+      XCTAssertNil(sanitized?[marker])
+    }
+    let queuedBeforeConsent = AnalyticsTransportPrivacy.sanitizedProperties(
+      eventName: "app_opened", properties: ["$geoip_disable": true],
+      usageContextAllowed: true
+    )
+    XCTAssertNil(queuedBeforeConsent?[marker])
   }
 
   func testAnalyticsAppOpenTrackerCapturesOncePerForegroundAfterConsent() {
@@ -599,6 +665,41 @@ final class AppSettingsTests: XCTestCase {
         properties: ["$screen_name": "Home"]
       )
     )
+  }
+
+  func testUsageContextRequiresEventMarkerAndPreservesOnlyListedSDKFields() throws {
+    let marker = AnalyticsTransportPrivacy.usageContextConsentProperty
+    let properties: [String: Any] = [
+      marker: 2, "platform": "ios", "$os_name": "iOS", "$os_version": "26.5",
+      "$device_model": "iPhone18,3", "$device_type": "Mobile",
+      "$screen_width": 393, "$screen_height": 852, "$locale": "ja",
+      "$timezone": "Asia/Tokyo", "$network_wifi": true, "$network_cellular": false,
+      "$session_id": "00000000-0000-4000-8000-000000000001", "$is_testflight": true,
+      "$device_name": "User's iPhone", "$device_id": "must-strip", "$idfa": "must-strip",
+      "$screen_name": "User deck title", "$set_once": ["name": "must-strip"],
+      "$geoip_postal_code": "must-strip", "text": "must-strip", "$future_sdk_field": "must-strip",
+    ]
+    for allowed in [false, true] {
+      let result = try XCTUnwrap(AnalyticsTransportPrivacy.sanitizedProperties(
+        eventName: "app_opened", properties: properties, usageContextAllowed: allowed
+      ))
+      let expected = properties.keys.filter { AnalyticsTransportPrivacy.usageContextProperties.contains($0) }
+      for key in expected {
+        XCTAssertEqual(result[key] != nil, allowed, key)
+      }
+      for key in ["$device_name", "$device_id", "$idfa", "$screen_name", "$set_once",
+                  "$geoip_postal_code", "text", "$future_sdk_field"] {
+        XCTAssertNil(result[key], key)
+      }
+    }
+    var oldEvent = properties
+    oldEvent.removeValue(forKey: marker)
+    let result = try XCTUnwrap(AnalyticsTransportPrivacy.sanitizedProperties(
+      eventName: "app_opened", properties: oldEvent, usageContextAllowed: true
+    ))
+    for key in AnalyticsTransportPrivacy.usageContextProperties {
+      XCTAssertNil(result[key], "Old queued events must not acquire expanded scope: \(key)")
+    }
   }
 
   func testAnalyticsPlatformDetectsIPadCompatibilityMode() {

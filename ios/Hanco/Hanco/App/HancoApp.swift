@@ -57,6 +57,11 @@ struct HancoApp: App {
           forKey: SettingsPreferenceKeys.crashDiagnosticsEnabled
         )
       }
+      if let rawVersion = ProcessInfo.processInfo.environment["UITEST_SEED_PRIVACY_NOTICE_VERSION"],
+        let version = Int(rawVersion)
+      {
+        UserDefaults.standard.set(version, forKey: SettingsPreferenceKeys.privacyNoticeVersion)
+      }
       if ProcessInfo.processInfo.environment["UITEST_SEED_LEGACY_REMINDER_DISABLED"] == "1" {
         UserDefaults.standard.set(false, forKey: DailyReminderSettingsStore.enabledKey)
       }

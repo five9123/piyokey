@@ -251,7 +251,7 @@
 "settings.privacy_policy" = "개인정보처리방침";
 "settings.privacy" = "개인정보";
 "settings.anonymous_analytics" = "익명 사용 분석";
-"settings.anonymous_analytics_detail" = "선호 기능과 세션 완료 여부를 공유합니다.";
+"settings.anonymous_analytics_detail" = "기능 사용·세션, IP 기반 국가과 기기·OS·화면·언어·시간대·연결 환경을 공유합니다.";
 "settings.crash_diagnostics" = "크래시 진단";
 "settings.crash_diagnostics_detail" = "크래시와 앱 멈춤 진단 정보를 공유합니다.";
 "settings.analytics_privacy_note" = "입력한 글자, 사용자 덱 내용, 이름과 이메일은 전송하지 않습니다. 두 옵션 모두 기본값은 꺼짐입니다.";
@@ -261,8 +261,10 @@
 "privacy_consent.navigation_title" = "개인정보 선택";
 "privacy_consent.title" = "피요키 개선에 참여할까요?";
 "privacy_consent.introduction" = "사용 정보와 오류 정보를 익명으로 보내 앱을 더 좋게 만들어요.";
+"privacy_consent.update_introduction" = "사용 정보에 국가과 기기 정보가 추가됩니다. 공유할지 선택해 주세요.";
+"privacy_consent.existing_diagnostics_detail" = "기존 선택을 그대로 유지합니다";
 "privacy_consent.usage_title" = "사용 정보";
-"privacy_consent.usage_detail" = "어떤 기능을 썼는지";
+"privacy_consent.usage_detail" = "기능 사용, 국가, 기기·OS 정보";
 "privacy_consent.error_title" = "오류 정보";
 "privacy_consent.error_detail" = "앱이 멈춘 원인";
 "privacy_consent.excluded_data" = "입력한 글자, 이름, 이메일은 보내지 않아요.";

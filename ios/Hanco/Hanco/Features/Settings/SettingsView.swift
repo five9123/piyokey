@@ -121,7 +121,6 @@ struct SettingsView: View {
       }
     }
     .onChange(of: crashDiagnosticsEnabled) { enabled in
-      privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
       TelemetryService.shared.updateConsent(
         productAnalytics: anonymousAnalyticsEnabled,
         crashDiagnostics: enabled
@@ -887,6 +886,7 @@ enum PrivacyConsentDecision: Equatable {
 
 struct PrivacyConsentView: View {
   @Environment(\.dismiss) private var dismiss
+  var isAnalyticsUpdate = false
   let onDecision: (PrivacyConsentDecision) -> Void
 
   var body: some View {
@@ -930,7 +930,8 @@ struct PrivacyConsentView: View {
         )
         informationRow(
           title: "privacy_consent.error_title",
-          detail: "privacy_consent.error_detail",
+          detail: isAnalyticsUpdate
+            ? "privacy_consent.existing_diagnostics_detail" : "privacy_consent.error_detail",
           systemImage: "stethoscope",
           identifier: "privacy_consent.error_information"
         )
@@ -995,7 +996,8 @@ struct PrivacyConsentView: View {
       Text("privacy_consent.title")
         .font(.title2.weight(.heavy))
         .foregroundStyle(AppPalette.ink)
-      Text("privacy_consent.introduction")
+      Text(LocalizedStringKey(isAnalyticsUpdate
+        ? "privacy_consent.update_introduction" : "privacy_consent.introduction"))
         .font(.body)
         .foregroundStyle(AppPalette.mutedInk)
     }

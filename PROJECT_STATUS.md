@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-06 JST
+마지막 갱신: 2026-09-10 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -13,7 +13,7 @@
 
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
-| iOS 공개판 | `1.0.2 (6)` 공개 상태 | EU DSA 거래자 상태와 지역별 실제 판매 상태 확인 |
+| iOS 공개판 | `1.1` 공개 및 PostHog 수신은 2026-09-10 사용자 확인. 출시 빌드 번호는 별도 대조 | Crashlytics 최초 크래시 수신·symbolication 및 남은 외부 gate는 공개 사실과 구분 |
 | iOS 1.1 | build 23 이후 TYP-112 iPad OS 키보드 가이드·레이아웃과 TYP-114 커리큘럼 셰브런 정정을 `main` `dc42e19128bf7fc54971a68f30b89e6e21b54cb5`까지 병합했다. TYP-113 피요컵 OS 키보드·주간 랭킹을 포함한 다음 제출 후보는 build 24다 | TYP-113 source gate와 병합 뒤 최신 clean `origin/main`으로만 build 24를 만든다. TYP-112·113·114의 iPad 실기기 회귀, Game Center 샌드박스 주간 제출, 동의 ON/OFF 네트워크, Crashlytics dSYM, 기존 계정·권리·IAP·store gate 전에는 출시 완료로 표현하지 않음 |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
@@ -23,6 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
+| #180 PostHog 국가·기기 사용 환경 분석·재동의 | In Progress / `codex/180-country-analytics-consent` | 국가·환경 허용 목록과 전용 변환, 고지 v2와 기존 진단 선택 보존, ja/en/es/de/fr 문구·정책·Coarse Location 신고안을 focused 검증한다. 운영 수신·정책 게시·스토어·기기 gate 전에는 적용 완료로 표현하지 않음 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | In Progress / `codex/113-piyocup-osime-ranking` / Linear Project `iOS/iPadOS 1.1 Global Release` (`99007f20-e78b-4ede-8c02-5fc47a062053`) | 선택한 OS 키보드로 피요컵을 실행하고 OS-IME 기록은 주간 보드에만 제출한다. exact-SHA 단위·iPhone/iPad UI evidence와 자체 리뷰·병합 뒤 build 24 실기기·Game Center 샌드박스 gate로 이동 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
