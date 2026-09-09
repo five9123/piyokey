@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "verified_commit": "2f5c5d0323721eeafa6c3e9fae9a3c059a079f88",
+  "verified_tree": "5682178052a7eec995e07aba0279fe9f9c05b29d",
+  "branch": "codex/180-country-analytics-consent",
+  "scope": "Issue #180 consent v2, country and explicit SDK context; initial implementation before withdrawal hardening",
+  "result": "pass",
+  "recorded_at": "2026-09-09T16:47:52.992330+00:00",
+  "checks": [
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_analytics_contract tools.tests.test_ui_language_scope tools.tests.test_release_preflight",
+      "note": "34 tests on verified SHA"
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "iphone-settings-unit-and-privacy-ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -derivedDataPath /private/tmp/piyokey-180/DerivedData -clonedSourcePackagesDirPath /Users/jungminoh/Library/Developer/Xcode/DerivedData/Hanco-afcmfogzwstijzbnlhxwmgasxqvg/SourcePackages -disableAutomaticPackageResolution -parallel-testing-enabled NO -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeDeclinePreservesDiagnosticsAndDoesNotRepeat -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeParticipationKeepsDiagnosticsOff -only-testing:HancoUITests/HancoUITests/testPrivacyParticipateEnablesBothChoicesAndNoticeIsShownOnce -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad -only-testing:HancoUITests/HancoUITests/testLegacyUpgradePreservesDisabledReminderAndContinuesPrivacyFlow -only-testing:HancoUITests/HancoUITests/testSettingsHierarchyVersionAndPrivacyCleanup -resultBundlePath /private/tmp/piyokey-180/phone-final.xcresult",
+      "note": "41 unit + 6 UI tests PASS; 10 initial/upgrade layouts across ja/en/es/de/fr"
+    },
+    {
+      "name": "ipad-privacy-ui",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5\" -derivedDataPath /private/tmp/piyokey-180/DerivedData -clonedSourcePackagesDirPath /Users/jungminoh/Library/Developer/Xcode/DerivedData/Hanco-afcmfogzwstijzbnlhxwmgasxqvg/SourcePackages -disableAutomaticPackageResolution -parallel-testing-enabled NO -only-testing:HancoUITests/HancoUITests/testPrivacyDefaultTypeFitsWithoutScrollingOnPhoneAndIPad -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeDeclinePreservesDiagnosticsAndDoesNotRepeat -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeParticipationKeepsDiagnosticsOff -resultBundlePath /private/tmp/piyokey-180/ipad-final.xcresult",
+      "note": "3 UI tests PASS including 10 locale/notice layouts. Same Debug product built from verified SHA."
+    },
+    {
+      "name": "posthog-transform-harness",
+      "status": "pass",
+      "command": "PostHog EU 258358 transformation test UI, function 01a086f4-7fed-0000-6e20-fb1198493205",
+      "note": "v2 retains permitted context + Sweden/SE only; v1 and missing marker strip context/geo; ipados invalid IP retains permitted context without country. IP/region/city/postcode/coordinates/person updates/name/IDFA/text/unknown injected fields removed. Source SHA256 3dc249e96f207c118ed97dca24e92a3651fa31af227248e770538c84eae65772; Active at priority 1; Discard client IP data ON. Harness is not signed-app storage evidence."
+    }
+  ],
+  "manual_gates": [
+    "Withdrawal hardening in following implementation commit requires its own evidence.",
+    "Signed iPhone/iPad network and persisted-event verification; public policy; App Store Privacy; Crashlytics test crash/dSYM; exact-head Claude review and maintainer merge approval remain separate."
+  ]
+}

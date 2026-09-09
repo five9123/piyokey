@@ -251,7 +251,7 @@
 "settings.privacy_policy" = "Privacy policy";
 "settings.privacy" = "Privacy";
 "settings.anonymous_analytics" = "Anonymous usage analytics";
-"settings.anonymous_analytics_detail" = "Share which features are used and whether sessions finish.";
+"settings.anonymous_analytics_detail" = "Share feature use, sessions, IP-derived country, and device, OS, screen, language, time zone and connection details.";
 "settings.crash_diagnostics" = "Crash diagnostics";
 "settings.crash_diagnostics_detail" = "Share diagnostics for crashes and app hangs.";
 "settings.analytics_privacy_note" = "Typed text, user-deck content, names, and email addresses are never sent. Both options are off by default.";
@@ -261,8 +261,10 @@
 "privacy_consent.navigation_title" = "Privacy choices";
 "privacy_consent.title" = "Help improve typee?";
 "privacy_consent.introduction" = "Send anonymous usage and error information to help us improve the app.";
+"privacy_consent.update_introduction" = "Usage sharing now includes country and device details. Choose whether to share.";
+"privacy_consent.existing_diagnostics_detail" = "Your existing choice stays the same";
 "privacy_consent.usage_title" = "Usage information";
-"privacy_consent.usage_detail" = "Features you use";
+"privacy_consent.usage_detail" = "Feature use, country and device/OS details";
 "privacy_consent.error_title" = "Error information";
 "privacy_consent.error_detail" = "What caused the app to stop";
 "privacy_consent.excluded_data" = "We don't send what you type, your name, or your email.";

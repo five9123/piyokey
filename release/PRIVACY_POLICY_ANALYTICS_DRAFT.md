@@ -2,8 +2,8 @@
 
 > Publication gate: this is the approved source copy for the next analytics-enabled build. It is not effective until it replaces the live content at `https://typee.app/privacy`. Before publishing, confirm the processor names, production region, retention settings, and support contact. Keep Japanese first on the public page and provide an obvious language switch.
 
-Effective date: 2026-08-26  
-Operator: Jungmin Oh / PIYOKEY  
+Effective date: pending publication with the usage-context analytics update
+Operator: Jungmin Oh / PIYOKEY
 Contact: https://typee.app/support
 
 ## 日本語
@@ -16,10 +16,10 @@ PIYOKEY（以下「本アプリ」）は、アカウント登録や広告なし�
 
 本アプリでは、次の2項目を個別に選べます。どちらも初期設定はオフです。共有しなくても、レッスン、ゲーム、ローカルデッキ、購入済み機能を含むすべての機能を利用できます。
 
-- **匿名の利用状況分析**：利用された機能、オンボーディングやセッションの開始・完了、ゲーム種別・難易度・結果の範囲、デッキの取得や作成機能の操作、購入フローの段階、アプリのバージョン、OS、言語、ランダムなアプリ識別子。
+- **匿名の利用状況分析**：利用された機能、オンボーディングやセッションの開始・完了、ゲーム種別・難易度・結果の範囲、デッキの取得や作成機能の操作、購入フローの段階、アプリのバージョン、OS、言語、端末モデル・種類、OSバージョン、画面サイズ、アプリの配布環境、端末の言語・時間帯、Wi-Fi／モバイル接続の別、IPから推定したおおよその地域、ランダムなアプリ・セッション識別子。
 - **クラッシュ診断**：クラッシュ・ANR・動作停止のログ、スタックトレース、発生時の限定されたアプリ状態、端末モデル、OS、アプリのバージョン、ランダムなインストール識別子。
 
-本アプリは、入力中または確定した文字、回答、目標単語、検索語、デッキ・項目ID、ユーザーデッキの名前・内容・ファイル・パス、氏名、メールアドレス、広告ID、録音、画面録画、セッションリプレイを分析・診断データとして送信しません。IPアドレスから位置情報を推定する処理も無効にします。
+本アプリは、入力中または確定した文字、回答、目標単語、検索語、デッキ・項目ID、ユーザーデッキの名前・内容・ファイル・パス、氏名、メールアドレス、広告ID、録音、画面録画、セッションリプレイを分析・診断データとして送信しません。更新後の利用状況分析に同意した場合のみ、利用環境とIPアドレスから推定した地域を記録します。地域情報は国名と国コードに限定します。都道府県・州・都市・郵便番号・緯度経度・推定範囲・IPから推定した時間帯は保存しません。VPNなどにより誤差が生じ、居住地を特定する情報ではありません。IPアドレスは推定のため一時的に処理し、イベントには保存しません。GPS位置情報や利用者が付けた端末名は取得しません。既存の利用者には改めて選択を求め、クラッシュ診断の現在の設定は維持します。
 
 #### 2. 利用目的と委託先
 
@@ -58,10 +58,10 @@ PIYOKEY is a Korean typing-learning app that can be used without an account or a
 
 You can choose the following two options independently. Both are off by default. Refusing does not limit lessons, games, local decks, or purchased features.
 
-- **Anonymous usage analytics:** features used; onboarding and session starts/completions; game type, difficulty, and result buckets; deck download and creation-tool actions; purchase-flow stages; app version; OS; language; and a random app identifier.
+- **Anonymous usage analytics:** features used; onboarding and session starts/completions; game type, difficulty, and result buckets; deck download and creation-tool actions; purchase-flow stages; app version; OS; language; device model/type; OS version; screen dimensions; app distribution environment; device language and time zone; Wi-Fi/cellular connection type; country inferred from IP; and random app/session identifiers.
 - **Crash diagnostics:** crash, ANR, and hang logs; stack traces; limited relevant app state; device model; OS; app version; and a random installation identifier.
 
-PIYOKEY does not send typed or composed text, answers, target words, searches, deck or item IDs, user-deck names or content, files or paths, names, email addresses, advertising IDs, recordings, screen recordings, or session replay as analytics or diagnostics. IP-based geolocation is disabled.
+PIYOKEY does not send typed or composed text, answers, target words, searches, deck or item IDs, user-deck names or content, files or paths, names, email addresses, advertising IDs, recordings, screen recordings, or session replay as analytics or diagnostics. Only after you consent to the updated usage analytics do we record the listed device context and infer country name and code from IP. We do not retain state/region, city, postcode, coordinates, accuracy radius or IP-derived time zone. IP estimates can be inaccurate and do not establish your residence. The IP address is processed transiently and is not stored with events. We do not access GPS/device location services or user-assigned device names. Existing users choose usage sharing again; their crash diagnostics choice stays unchanged.
 
 #### 2. Purposes and processors
 
@@ -100,10 +100,10 @@ PIYOKEY(피요키)는 계정이나 광고 없이 이용할 수 있는 한국어 
 
 다음 두 항목을 각각 선택할 수 있으며 기본값은 모두 꺼짐입니다. 공유하지 않아도 레슨, 게임, 로컬 덱과 구매한 기능을 제한 없이 이용할 수 있습니다.
 
-- **익명 사용 분석:** 사용한 기능, 온보딩·세션 시작과 완료, 게임 종류·난이도·결과 구간, 덱 다운로드와 생성 도구 동작, 구매 흐름 단계, 앱 버전, OS, 언어, 무작위 앱 식별자.
+- **익명 사용 분석:** 사용한 기능, 온보딩·세션 시작과 완료, 게임 종류·난이도·결과 구간, 덱 다운로드와 생성 도구 동작, 구매 흐름 단계, 앱 버전, OS, 언어, 기기 모델·유형, OS 버전, 화면 크기, 앱 배포 환경, 기기 언어·시간대, Wi-Fi/셀룰러 연결 유형, IP로 추정한 국가, 무작위 앱·세션 식별자.
 - **크래시 진단:** 크래시·ANR·앱 멈춤 로그, 스택 추적, 발생 당시의 제한된 앱 상태, 기기 모델, OS, 앱 버전, 무작위 설치 식별자.
 
-피요키는 입력 중이거나 확정된 글자, 정답, 목표 단어, 검색어, 덱·항목 ID, 사용자 덱 이름·내용·파일·경로, 이름, 이메일 주소, 광고 ID, 녹음, 화면 녹화, 세션 리플레이를 분석·진단 데이터로 전송하지 않습니다. IP 기반 위치 추정도 비활성화합니다.
+피요키는 입력 중이거나 확정된 글자, 정답, 목표 단어, 검색어, 덱·항목 ID, 사용자 덱 이름·내용·파일·경로, 이름, 이메일 주소, 광고 ID, 녹음, 화면 녹화, 세션 리플레이를 분석·진단 데이터로 전송하지 않습니다. 갱신된 사용 분석에 동의한 경우에만 위 사용 환경 정보와 IP 기반 국가 이름·코드를 기록합니다. 시·도/주/현·도시·우편번호·좌표·추정 반경·IP 기반 시간대는 저장하지 않습니다. IP 추정에는 오차가 있으며 실제 거주지를 나타내지 않습니다. IP 주소는 추정에 일시적으로 처리하며 이벤트에는 저장하지 않습니다. GPS/기기 위치 서비스나 사용자가 지정한 기기 이름은 수집하지 않습니다. 기존 이용자는 사용 분석 여부를 다시 선택하며 기존 크래시 진단 선택은 유지합니다.
 
 #### 2. 이용 목적과 처리업체
 

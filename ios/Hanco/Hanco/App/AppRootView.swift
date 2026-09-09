@@ -214,6 +214,7 @@ struct AppRootView: View {
     }
     .sheet(isPresented: $showsPrivacyConsent) {
       PrivacyConsentView(
+        isAnalyticsUpdate: privacyNoticeVersion > 0,
         onDecision: applyPrivacyDecision
       )
       .hancoAdaptiveLayout()
@@ -247,7 +248,7 @@ struct AppRootView: View {
     }
     .task(id: shouldStartOnboardingPrivacyFlow) {
       guard shouldStartOnboardingPrivacyFlow else { return }
-      guard !onboardingNotificationPermissionRequested else {
+      guard privacyNoticeVersion == 0, !onboardingNotificationPermissionRequested else {
         showsPrivacyConsent = true
         return
       }
@@ -406,11 +407,15 @@ struct AppRootView: View {
 
   private func applyPrivacyDecision(_ decision: PrivacyConsentDecision) {
     anonymousAnalyticsEnabled = decision.analyticsEnabled
-    crashDiagnosticsEnabled = decision.diagnosticsEnabled
+    crashDiagnosticsEnabled = PrivacyNoticePolicy.diagnosticsAfterNotice(
+      participate: decision.diagnosticsEnabled,
+      reviewedVersion: privacyNoticeVersion,
+      previousDiagnostics: crashDiagnosticsEnabled
+    )
     privacyNoticeVersion = PrivacyNoticePolicy.currentVersion
     TelemetryService.shared.updateConsent(
       productAnalytics: decision.analyticsEnabled,
-      crashDiagnostics: decision.diagnosticsEnabled
+      crashDiagnostics: crashDiagnosticsEnabled
     )
     if decision.analyticsEnabled {
       TelemetryService.shared.capture(

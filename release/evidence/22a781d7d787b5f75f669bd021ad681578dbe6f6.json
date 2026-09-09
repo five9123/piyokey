@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "verified_commit": "22a781d7d787b5f75f669bd021ad681578dbe6f6",
+  "verified_tree": "e50dbf487d41b83ea1f10e3de18eadc8afe29558",
+  "branch": "codex/180-country-analytics-consent",
+  "scope": "Issue #180 Claude review correction: canonical F10 notice v2, first/upgrade wording, inactive Korean source grammar, cross-document version test",
+  "result": "pass",
+  "recorded_at": "2026-09-09T17:08:25.219127+00:00",
+  "checks": [
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_analytics_contract tools.tests.test_ui_language_scope tools.tests.test_release_preflight",
+      "note": "34 tests PASS. Canonical F10 version is now checked against the Swift runtime and analytics documentation."
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "whitespace",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    },
+    {
+      "name": "runtime-scope-unchanged",
+      "status": "pass",
+      "command": "git diff db4644d8e379375170d22368fc98d4c40bbd3033 HEAD --stat",
+      "note": "Only PRD.md, inactive ko Localizable.strings, unpublished privacy policy draft and Python contract test changed. Runtime, active localization, manifest, UI and Hog transform unchanged; no iOS rebuild required for this documentation-only correction. Runtime evidence remains explicitly tied to 8d89f1d and UI evidence to 2f5c5d0."
+    }
+  ],
+  "manual_gates": [
+    "Re-review the new exact HEAD including this evidence; prior Claude finding did not pass review. Maintainer manual merge approval still required.",
+    "Public policy/retention/deletion/identity linkage, App Store Privacy, signed-device stored events/consent/OFF network, Firebase Crashlytics crash/dSYM and existing release gates remain open."
+  ]
+}

@@ -13,7 +13,7 @@
 
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
-| iOS 공개판 | 2026-09-09 ASC 직접 조회: `1.1 (24)` Ready for Distribution, iPhone 15 Pro JM 설치본도 `1.1 (24)` | 지역별 실제 판매 상태·기존 외부 gate는 별도 확인. 출시 후 Game Center 재발은 TYP-120으로 추적 |
+| iOS 공개판 | 2026-09-09 ASC 직접 조회: `1.1 (24)` Ready for Distribution, iPhone 15 Pro JM 설치본도 `1.1 (24)` | PostHog 수신은 2026-09-10 사용자 확인. 지역별 판매·Crashlytics 최초 크래시 수신 및 symbolication·기존 외부 gate는 별도 확인. 출시 후 Game Center 재발은 TYP-120으로 추적 |
 | iOS 1.1 | build 24는 TYP-112·113·114를 포함한 `main` `85ebfadabc434659943ea8cd3edcb93a91a39a71`에서 생성됐고 ASC 선택 빌드·archive·iPhone 설치 버전이 일치 | Game Center 현행 16개 Live·entitlement·주간 주기는 확인됐으나 제출/재시도/순위 갱신 결함과 구형 기본 보드 노출이 남아 있음. [조사 PR #179](https://github.com/five9123-maker/piyokey/pull/179) |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
@@ -23,9 +23,10 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드 참여·피요컵 분리·공통 등록 복구·결과별 제출 상태를 구현 중. 새로운 SHA 검증·exact-head Claude review·maintainer gate와 동일 빌드 실기기 Game Center·스토어 확인 필요. 공개판은 여전히 1.1 (24) |
+| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드 참여·피요컵 분리·공통 등록 복구·결과별 제출 상태 구현 완료, 최신 main 병합 후 검증 중. 새로운 SHA 검증·exact-head Claude review·maintainer gate와 동일 빌드 실기기 Game Center·스토어 확인 필요. 공개판은 여전히 1.1 (24) |
 | TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
+| #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
 | TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
 | TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
 | TYP-111 플릭 프리뷰 표시 제거 | In Review 준비 / `codex/111-hide-flick-preview` | 표시 전용 overlay와 dead code 제거, full package·HancoTests 및 focused iPhone·iPad UI evidence 뒤 exact-head Claude review를 받고, 병합 전 maintainer 수동 승인을 대기 |

@@ -243,7 +243,7 @@
 "settings.privacy_policy" = "Datenschutzerklärung";
 "settings.privacy" = "Datenschutz";
 "settings.anonymous_analytics" = "Anonyme Nutzungsanalyse";
-"settings.anonymous_analytics_detail" = "Teilen, welche Funktionen genutzt und ob Sitzungen beendet werden.";
+"settings.anonymous_analytics_detail" = "Funktionsnutzung, Sitzungen, Land aus der IP sowie Gerät, Betriebssystem, Bildschirm, Sprache, Zeitzone und Verbindung teilen.";
 "settings.crash_diagnostics" = "Absturzdiagnose";
 "settings.crash_diagnostics_detail" = "Diagnosedaten zu Abstürzen und Hängern teilen.";
 "settings.analytics_privacy_note" = "Eingaben, Inhalte eigener Decks, Namen und E-Mail-Adressen werden nie gesendet. Beide Optionen sind standardmäßig aus.";
@@ -253,8 +253,10 @@
 "privacy_consent.navigation_title" = "Datenschutzauswahl";
 "privacy_consent.title" = "Möchtest du typee verbessern?";
 "privacy_consent.introduction" = "Sende anonyme Nutzungs- und Fehlerinformationen, damit wir die App verbessern können.";
+"privacy_consent.update_introduction" = "Die Nutzungsdaten umfassen jetzt Land und Gerätedaten. Wähle, ob du sie teilen möchtest.";
+"privacy_consent.existing_diagnostics_detail" = "Deine bisherige Auswahl bleibt erhalten";
 "privacy_consent.usage_title" = "Nutzungsinformationen";
-"privacy_consent.usage_detail" = "Welche Funktionen du nutzt";
+"privacy_consent.usage_detail" = "Funktionsnutzung, Land und Gerät/Betriebssystem";
 "privacy_consent.error_title" = "Fehlerinformationen";
 "privacy_consent.error_detail" = "Warum die App nicht mehr reagiert";
 "privacy_consent.excluded_data" = "Wir senden weder deine Eingaben noch deinen Namen oder deine E-Mail-Adresse.";

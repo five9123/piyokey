@@ -12,6 +12,41 @@ import UIKit
 #endif
 
 enum AnalyticsTransportPrivacy {
+  static let usageContextConsentProperty = "piyokey_usage_context_consent_version"
+
+  static func networkConfiguration() -> URLSessionConfiguration {
+    let configuration = URLSessionConfiguration.ephemeral
+    configuration.urlCache = nil
+    configuration.protocolClasses = [AnalyticsConsentURLProtocol.self]
+      + (configuration.protocolClasses ?? [])
+    return configuration
+  }
+
+  // Standard SDK environment fields, admitted only for events captured after notice v2.
+  static let usageContextProperties: Set<String> = [
+    "$app_name",
+    "$app_version",
+    "$app_build",
+    "$app_namespace",
+    "$device_manufacturer",
+    "$device_model",
+    "$device_type",
+    "$os_name",
+    "$os_version",
+    "$screen_width",
+    "$screen_height",
+    "$locale",
+    "$timezone",
+    "$network_wifi",
+    "$network_cellular",
+    "$is_emulator",
+    "$is_testflight",
+    "$is_sideloaded",
+    "$is_ios_running_on_mac",
+    "$is_mac_catalyst_app",
+    "$session_id",
+  ]
+
   private static let sdkOperationalProperties: Set<String> = [
     "$geoip_disable",
     "$process_person_profile",
@@ -21,7 +56,8 @@ enum AnalyticsTransportPrivacy {
 
   static func sanitizedProperties(
     eventName: String,
-    properties: [String: Any]
+    properties: [String: Any],
+    usageContextAllowed: Bool = false
   ) -> [String: Any]? {
     guard
       let event = AnalyticsEvent(rawValue: eventName),
@@ -29,7 +65,19 @@ enum AnalyticsTransportPrivacy {
     else { return nil }
 
     let allowed = Set(eventProperties.map(\.rawValue)).union(sdkOperationalProperties)
-    return properties.filter { allowed.contains($0.key) }
+    var sanitized = properties.filter { allowed.contains($0.key) }
+    // Keep PostHog's full GeoIP enrichment disabled even after usage-context consent.
+    // Only our consent-gated ingestion transformation may perform the lookup.
+    sanitized["$geoip_disable"] = true
+    sanitized["$process_person_profile"] = false
+    if usageContextAllowed,
+      let version = properties[usageContextConsentProperty] as? Int,
+      version == PrivacyNoticePolicy.currentVersion
+    {
+      sanitized.merge(properties.filter { usageContextProperties.contains($0.key) }) { _, new in new }
+      sanitized[usageContextConsentProperty] = version
+    }
+    return sanitized
   }
 
   static func platform(
@@ -50,6 +98,28 @@ enum AnalyticsTransportPrivacy {
       simulatorModelIdentifier: ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"]
     )
   }
+}
+
+// beforeSend runs before SDK persistence, not again when an offline queue drains.
+// This protocol belongs only to PostHog's URLSession and rechecks consent at dispatch.
+final class AnalyticsConsentURLProtocol: URLProtocol {
+  override class func canInit(with request: URLRequest) -> Bool {
+    !UserDefaults.standard.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+  }
+
+  override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+  override func startLoading() {
+    guard let url = request.url,
+      let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+    else { return }
+    // A local success discards the rejected batch instead of retrying it over the network.
+    client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+    client?.urlProtocol(self, didLoad: Data("{\"status\":1}".utf8))
+    client?.urlProtocolDidFinishLoading(self)
+  }
+
+  override func stopLoading() {}
 }
 
 struct AnalyticsAppOpenTracker: Equatable {
@@ -119,7 +189,13 @@ final class TelemetryService {
       }
       if isProductAnalyticsConfigured {
         #if canImport(PostHog)
-          productAnalytics ? PostHogSDK.shared.optIn() : PostHogSDK.shared.optOut()
+          if productAnalytics {
+            PostHogSDK.shared.optIn()
+          } else {
+            PostHogSDK.shared.optOut()
+            PostHogSDK.shared.close()
+            isProductAnalyticsConfigured = false
+          }
         #endif
       }
       captureAppOpened(entryPoint: appOpenEntryPoint)
@@ -162,6 +238,10 @@ final class TelemetryService {
           uniqueKeysWithValues: properties.map { ($0.key.rawValue, $0.value) }
         )
         sdkProperties["$geoip_disable"] = true
+        if usageContextAllowed {
+          sdkProperties[AnalyticsTransportPrivacy.usageContextConsentProperty] =
+            PrivacyNoticePolicy.currentVersion
+        }
         PostHogSDK.shared.capture(
           event.rawValue,
           properties: sdkProperties
@@ -255,6 +335,17 @@ final class TelemetryService {
     ]
   }
 
+  private var usageContextAllowed: Bool {
+    PrivacyNoticePolicy.allowsUsageContext(
+      analyticsEnabled: UserDefaults.standard.bool(
+        forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+      ),
+      reviewedVersion: UserDefaults.standard.integer(
+        forKey: SettingsPreferenceKeys.privacyNoticeVersion
+      )
+    )
+  }
+
   private func configurePostHogIfAvailable() {
     #if canImport(PostHog)
       guard appOpenTracker.analyticsEnabled, !isProductAnalyticsConfigured else { return }
@@ -266,6 +357,7 @@ final class TelemetryService {
       let host = Bundle.main.object(forInfoDictionaryKey: "PiyokeyPostHogHost") as? String
         ?? "https://eu.i.posthog.com"
       let config = PostHogConfig(projectToken: token, host: host)
+      config.urlSessionConfiguration = AnalyticsTransportPrivacy.networkConfiguration()
       config.optOut = !UserDefaults.standard.bool(
         forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
       )
@@ -286,7 +378,15 @@ final class TelemetryService {
         guard
           let properties = AnalyticsTransportPrivacy.sanitizedProperties(
             eventName: event.event,
-            properties: event.properties
+            properties: event.properties,
+            usageContextAllowed: PrivacyNoticePolicy.allowsUsageContext(
+              analyticsEnabled: UserDefaults.standard.bool(
+                forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
+              ),
+              reviewedVersion: UserDefaults.standard.integer(
+                forKey: SettingsPreferenceKeys.privacyNoticeVersion
+              )
+            )
           )
         else { return nil }
         event.properties = properties
