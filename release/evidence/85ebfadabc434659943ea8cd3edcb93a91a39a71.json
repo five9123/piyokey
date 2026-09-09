@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "verified_commit": "85ebfadabc434659943ea8cd3edcb93a91a39a71",
+  "verified_tree": "c6fcb98ac9c4beae6e7844d78059282e50eaa52d",
+  "branch": "codex/7-game-center-1-1-audit",
+  "scope": "Issue #7 audit of released iOS 1.1 (24); existing tests pass but product behavior defects remain open in TYP-120",
+  "result": "fail",
+  "recorded_at": "2026-09-09T15:06:59.812574+00:00",
+  "checks": [
+    {
+      "name": "game-center-and-progress-tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB -derivedDataPath /tmp/piyokey-gc-audit-dd -resultBundlePath /tmp/piyokey-gc-audit-tests.xcresult -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO",
+      "note": "36 tests passed; full log /tmp/piyokey-gc-audit-tests.log"
+    },
+    {
+      "name": "expected-submission-and-refresh-behavior",
+      "status": "fail",
+      "command": "/tmp/piyokey-gc-audit/reproduce",
+      "note": "Probe exited 0 because assertions confirmed F1-F4 defects; no production GameKit calls. Persistent reproducer is in docs/audits/game-center-1.1-20260909."
+    }
+  ],
+  "manual_gates": [
+    "TYP-120: F1-F4 known code defects and F5 obsolete default/visible duplicate boards are unresolved; do not treat audit completion as product acceptance.",
+    "Actual user failure GameKit error and server receipt not captured; iPad locked; exact fixed-build iPhone/iPad 16-board verification remains open.",
+    "No implementation fix, App Store configuration change, release, exact-head Claude review or maintainer merge approval performed."
+  ]
+}
