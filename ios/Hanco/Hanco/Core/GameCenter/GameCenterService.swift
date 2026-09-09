@@ -32,9 +32,7 @@ enum GameCenterLeaderboard: String, CaseIterable, Hashable {
     if record.competition == .weeklyPiyoCup {
       guard rankedDeck.deckID == GameCenterRankedDeck.piyoCupDeckID else { return [] }
       switch record.inputMode {
-      case .builtIn:
-        return [.weeklyPiyoCup, rankedDeck.leaderboard]
-      case .osIME:
+      case .builtIn, .osIME:
         return [.weeklyPiyoCup]
       case .builtInKorean10Key:
         return []

@@ -79,7 +79,7 @@ final class GameCenterServiceTests: XCTestCase {
     XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: acidRain), [.acidRainAdvanced])
   }
 
-  func testWeeklyPiyoCupSubmitsToCupAndFixedDeckLeaderboards() {
+  func testWeeklyPiyoCupSubmitsOnlyToWeeklyLeaderboard() {
     let cup = record(
       deckID: GameCenterRankedDeck.piyoCupDeckID,
       deckVersion: GameCenterRankedDeck.piyoCupDeck.version,
@@ -87,7 +87,7 @@ final class GameCenterServiceTests: XCTestCase {
     )
     XCTAssertEqual(
       GameCenterLeaderboard.leaderboards(for: cup),
-      [.weeklyPiyoCup, .flowBeginner]
+      [.weeklyPiyoCup]
     )
     XCTAssertEqual(GameCenterLeaderboard.leaderboard(for: cup), .weeklyPiyoCup)
   }
@@ -262,7 +262,7 @@ final class GameCenterServiceTests: XCTestCase {
     XCTAssertFalse(runtime.probeIsComplete)
   }
 
-  func testAvailabilityRankLookupIsPureAndFallsBackToAvailableClassicBoard() {
+  func testCupRankNeverFallsBackToOrdinaryFlowRank() {
     let contract = GameCenterAvailabilityContract(rawLeaderboardIDs: [
       GameCenterLeaderboard.flowBeginner.rawValue,
     ])
@@ -276,7 +276,15 @@ final class GameCenterServiceTests: XCTestCase {
       .flowBeginner: 19,
     ]
 
-    XCTAssertEqual(contract.rank(for: cup, ranks: ranks), 19)
+    XCTAssertTrue(contract.leaderboards(for: cup).isEmpty)
+    XCTAssertNil(contract.rank(for: cup, ranks: ranks))
+    XCTAssertEqual(contract.rank(for: record(), ranks: ranks), 19)
+    let bothAvailable = GameCenterAvailabilityContract(rawLeaderboardIDs: [
+      GameCenterLeaderboard.flowBeginner.rawValue,
+      GameCenterLeaderboard.weeklyPiyoCup.rawValue,
+    ])
+    XCTAssertEqual(bothAvailable.rank(for: cup, ranks: ranks), 3)
+    XCTAssertNil(bothAvailable.rank(for: cup, ranks: [.flowBeginner: 1]))
     XCTAssertEqual(ranks[.weeklyPiyoCup], 3)
     XCTAssertEqual(ranks[.flowBeginner], 19)
   }
@@ -351,7 +359,7 @@ final class GameCenterServiceTests: XCTestCase {
       record(mode: .lesson, score: 9_999, competition: .officialDeck),
     ], asOf: now)
 
-    XCTAssertEqual(scores[.flowBeginner], 900)
+    XCTAssertEqual(scores[.flowBeginner], 400)
     XCTAssertEqual(scores[.weeklyPiyoCup], 900)
     XCTAssertEqual(scores[.flowAdvanced], 700)
     XCTAssertEqual(scores.count, 3)
@@ -363,6 +371,7 @@ final class GameCenterServiceTests: XCTestCase {
     let asOf = date("2026-07-22T03:00:00Z")
     let scores = GameCenterLeaderboard.bestScores(
       from: [
+        record(score: 700, competition: .officialDeck, playedAt: previousSunday),
         record(score: 1_200, competition: .weeklyPiyoCup, playedAt: previousSunday),
         record(score: 900, competition: .weeklyPiyoCup, playedAt: currentMonday),
       ],
@@ -371,7 +380,21 @@ final class GameCenterServiceTests: XCTestCase {
 
     XCTAssertEqual(PiyoCupWeek.start(containing: currentMonday), currentMonday)
     XCTAssertEqual(scores[.weeklyPiyoCup], 900)
-    XCTAssertEqual(scores[.flowBeginner], 1_200)
+    XCTAssertEqual(scores[.flowBeginner], 700)
+  }
+
+  func testCupOnlyHistoryNeverCreatesAClassicScore() {
+    let now = date("2026-09-09T03:00:00Z")
+    let scores = GameCenterLeaderboard.bestScores(from: [
+      record(score: 900, competition: .weeklyPiyoCup, playedAt: now),
+      record(score: 1_100, competition: .weeklyPiyoCup, inputMode: .osIME, playedAt: now),
+    ], asOf: now)
+
+    XCTAssertEqual(scores, [.weeklyPiyoCup: 1_100])
+    XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: record()), [.flowBeginner])
+    XCTAssertTrue(GameCenterLeaderboard.leaderboards(for: record(
+      competition: .weeklyPiyoCup, inputMode: .builtInKorean10Key
+    )).isEmpty)
   }
 
   func testGrowthAchievementsMirrorExistingGrowthThresholds() {

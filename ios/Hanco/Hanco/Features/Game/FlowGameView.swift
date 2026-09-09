@@ -309,13 +309,10 @@ struct FlowGameView: View {
   private func handleAppear() {
     resolveInitialInputModeIfNeeded()
     captureAnalyticsStartIfNeeded()
-    priorBestCombo =
-      gameProgress.records
-      .filter {
-        $0.deckId == deck.deckId && GameKind(course: $0.course) == gameKind
-      }
-      .map(\.maxCombo)
-      .max() ?? 0
+    priorBestCombo = gameProgress.bestCombo(
+      for: deck.deckId, gameKind: gameKind,
+      inputMode: recordInputMode, competition: competition
+    )
     previousAcceptedInputCount = viewModel.totalAcceptedInputCount
     if viewModel.phase == .ready {
       beginCountdown()
@@ -417,6 +414,10 @@ struct FlowGameView: View {
     retentionSession = RetentionSessionContext()
     hasUsedBuiltInInput = false
     recordInputMode = resolvedRecordInputMode
+    priorBestCombo = gameProgress.bestCombo(
+      for: deck.deckId, gameKind: gameKind,
+      inputMode: recordInputMode, competition: competition
+    )
     korean10KeyInterpreter.reset()
     previousAcceptedInputCount = 0
     didCelebrateBestCombo = false
