@@ -70,3 +70,5 @@ cd android && ./gradlew :core:analytics:test :core:settings:test :app:lintDebug 
 xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/AppSettingsTests
 python3 tools/release_preflight.py
 ```
+
+The pinned SDK runs `beforeSend` at capture time and does not purge/stop its queue in `optOut()`. PIYOKEY therefore closes the SDK on withdrawal and installs a consent-checking URLProtocol only on its PostHog session. A request dispatched while usage sharing is OFF completes locally without networking, so stale batches are not retried over the network. Requests already dispatched before withdrawal cannot be recalled; signed-device network verification remains required. Re-enabling sharing configures the SDK again.

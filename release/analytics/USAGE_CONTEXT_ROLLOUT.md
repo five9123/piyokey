@@ -47,3 +47,5 @@ Before shipping the next build:
 - [PostHog GeoIP template](https://github.com/PostHog/posthog/blob/master/nodejs/src/cdp/templates/_transformations/geoip/geoip.template.ts) provides the lookup response shape. Its general enrichment/person writes are intentionally not enabled.
 - [Apple App Privacy details](https://developer.apple.com/app-store/app-privacy-details/) defines coarse location, data linkage and required disclosures.
 - [Apple User Privacy and Data Use](https://developer.apple.com/app-store/user-privacy-and-data-use/) defines tracking and ATT requirements.
+
+The pinned SDK runs `beforeSend` at capture time and does not purge/stop its queue in `optOut()`. PIYOKEY therefore closes the SDK on withdrawal and installs a consent-checking URLProtocol only on its PostHog session. A request dispatched while usage sharing is OFF completes locally without networking, so stale batches are not retried over the network. Requests already dispatched before withdrawal cannot be recalled; signed-device network verification remains required. Re-enabling sharing configures the SDK again.

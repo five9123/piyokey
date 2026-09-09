@@ -14,6 +14,14 @@ import UIKit
 enum AnalyticsTransportPrivacy {
   static let usageContextConsentProperty = "piyokey_usage_context_consent_version"
 
+  static func networkConfiguration() -> URLSessionConfiguration {
+    let configuration = URLSessionConfiguration.ephemeral
+    configuration.urlCache = nil
+    configuration.protocolClasses = [AnalyticsConsentURLProtocol.self]
+      + (configuration.protocolClasses ?? [])
+    return configuration
+  }
+
   // Standard SDK environment fields, admitted only for events captured after notice v2.
   static let usageContextProperties: Set<String> = [
     "$app_name",
@@ -92,6 +100,28 @@ enum AnalyticsTransportPrivacy {
   }
 }
 
+// beforeSend runs before SDK persistence, not again when an offline queue drains.
+// This protocol belongs only to PostHog's URLSession and rechecks consent at dispatch.
+final class AnalyticsConsentURLProtocol: URLProtocol {
+  override class func canInit(with request: URLRequest) -> Bool {
+    !UserDefaults.standard.bool(forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled)
+  }
+
+  override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+  override func startLoading() {
+    guard let url = request.url,
+      let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+    else { return }
+    // A local success discards the rejected batch instead of retrying it over the network.
+    client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+    client?.urlProtocol(self, didLoad: Data("{\"status\":1}".utf8))
+    client?.urlProtocolDidFinishLoading(self)
+  }
+
+  override func stopLoading() {}
+}
+
 struct AnalyticsAppOpenTracker: Equatable {
   private(set) var analyticsEnabled: Bool
   private(set) var capturedInCurrentForeground = false
@@ -159,7 +189,13 @@ final class TelemetryService {
       }
       if isProductAnalyticsConfigured {
         #if canImport(PostHog)
-          productAnalytics ? PostHogSDK.shared.optIn() : PostHogSDK.shared.optOut()
+          if productAnalytics {
+            PostHogSDK.shared.optIn()
+          } else {
+            PostHogSDK.shared.optOut()
+            PostHogSDK.shared.close()
+            isProductAnalyticsConfigured = false
+          }
         #endif
       }
       captureAppOpened(entryPoint: appOpenEntryPoint)
@@ -321,6 +357,7 @@ final class TelemetryService {
       let host = Bundle.main.object(forInfoDictionaryKey: "PiyokeyPostHogHost") as? String
         ?? "https://eu.i.posthog.com"
       let config = PostHogConfig(projectToken: token, host: host)
+      config.urlSessionConfiguration = AnalyticsTransportPrivacy.networkConfiguration()
       config.optOut = !UserDefaults.standard.bool(
         forKey: SettingsPreferenceKeys.anonymousAnalyticsEnabled
       )

@@ -702,6 +702,28 @@ final class AppSettingsTests: XCTestCase {
     }
   }
 
+  func testAnalyticsNetworkRechecksConsentWhenAQueuedRequestIsDispatched() async throws {
+    let key = SettingsPreferenceKeys.anonymousAnalyticsEnabled
+    let original = UserDefaults.standard.object(forKey: key)
+    defer {
+      if let original { UserDefaults.standard.set(original, forKey: key) }
+      else { UserDefaults.standard.removeObject(forKey: key) }
+    }
+    let configuration = AnalyticsTransportPrivacy.networkConfiguration()
+    configuration.protocolClasses = [AnalyticsConsentURLProtocol.self, AnalyticsForwardingProbe.self]
+    let session = URLSession(configuration: configuration)
+    defer { session.invalidateAndCancel() }
+    UserDefaults.standard.set(true, forKey: key)
+    let queuedRequest = URLRequest(url: try XCTUnwrap(URL(string: "https://analytics.invalid/batch/")))
+    // The fallback probe replaces all real networking, including the consented path.
+    for enabled in [false, true, false] {
+      UserDefaults.standard.set(enabled, forKey: key)
+      let (data, response) = try await session.data(for: queuedRequest)
+      XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, enabled ? 202 : 200)
+      XCTAssertEqual(String(decoding: data, as: UTF8.self), enabled ? "forwarded" : "{\"status\":1}")
+    }
+  }
+
   func testAnalyticsPlatformDetectsIPadCompatibilityMode() {
     XCTAssertEqual(
       AnalyticsTransportPrivacy.platform(
@@ -886,4 +908,16 @@ final class AppSettingsTests: XCTestCase {
       return String(value[swiftRange])
     }
   }
+}
+
+private final class AnalyticsForwardingProbe: URLProtocol {
+  override class func canInit(with request: URLRequest) -> Bool { true }
+  override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+  override func startLoading() {
+    let response = HTTPURLResponse(url: request.url!, statusCode: 202, httpVersion: nil, headerFields: nil)!
+    client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+    client?.urlProtocol(self, didLoad: Data("forwarded".utf8))
+    client?.urlProtocolDidFinishLoading(self)
+  }
+  override func stopLoading() {}
 }
