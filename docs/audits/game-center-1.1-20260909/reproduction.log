@@ -1,0 +1,8 @@
+AUTH_DASHBOARD_OPEN submissionCount=0 currentlySubmitted=[]
+AFTER_DASHBOARD_CLOSE submissions=[1234]
+FOREGROUND_AFTER_FAILURE submissions=[9000] failed=true
+NEXT_LOWER_GAME submissions=[9000, 3000] failed=false
+EXPLICIT_SYNC submissions=[9000, 3000, 9000]
+NO_CALLBACK_RESYNC submissions=[8000] failed=false
+DELAYED_SERVER_ENTRY rankAfterSync=nil backendRank=7
+AUDIT_REPRODUCTIONS_CONFIRMED (mock GameKit; no network submission)
