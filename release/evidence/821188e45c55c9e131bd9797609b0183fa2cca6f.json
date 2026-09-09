@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "verified_commit": "821188e45c55c9e131bd9797609b0183fa2cca6f",
+  "verified_tree": "0d7b3a26f1ed529a9be51f8896769540664b4fab",
+  "branch": "codex/180-country-analytics-consent",
+  "scope": "Issue #180 merge preparation: PROJECT_STATUS source completion only; user requested PostHog + Crashlytics configuration unchanged",
+  "result": "pass",
+  "recorded_at": "2026-09-09T17:27:59.603811+00:00",
+  "checks": [
+    {
+      "name": "whitespace",
+      "status": "pass",
+      "command": "git diff HEAD^ HEAD --check",
+      "note": ""
+    },
+    {
+      "name": "status-policy-review",
+      "status": "pass",
+      "command": "git diff HEAD^ HEAD -- PROJECT_STATUS.md",
+      "note": "Reviewed the one-row update against PRD, docs/ANALYTICS.md, rollout document and the three existing SHA-specific evidence records. It retains Verify and all external release gates; no completed rollout or merge claim."
+    },
+    {
+      "name": "implementation-unchanged",
+      "status": "pass",
+      "command": "git diff --exit-code a528a99966ec06637c23dc88a8eced2ee56cfe4d HEAD -- . \":(exclude)PROJECT_STATUS.md\"",
+      "note": "Only PROJECT_STATUS.md changed. Existing runtime/UI/Release evidence remains explicitly scoped to its original verified SHAs; no new runtime testing required for this documentation change."
+    }
+  ],
+  "manual_gates": [
+    "New exact-head Claude review including this evidence must pass before merge. User explicitly authorized maintaining current configuration and merging in this task; record that authorization on PR #182 after the final review and latest-main check.",
+    "Public policy, retention/deletion/identity linkage, App Store Privacy, signed-device stored events/consent/OFF network, Firebase Crashlytics crash/dSYM and existing release gates remain open."
+  ]
+}
