@@ -11,6 +11,8 @@
 
 실제 서비스 구현을 로컬 GameKit 대역에 연결하여 아래 F1~F4를 재현했다. 이 검증은 제어된 응답 순서에 대한 코드 결함 증거다. 사용자 기기에서 발생했던 개별 실패의 GameKit 오류·서버 수신 기록은 확보하지 못했으므로, 이번 신고의 단일 원인을 확정한 것은 아니다. 앱 코드와 운영 설정의 수정·배포는 이 조사에 포함하지 않았다.
 
+**9월 10일 추가 캡처로 신고 증상이 구체화됐다.** 사용자는 영어 설정·내장 두벌식으로 Flow 초급·중급·고급을 완료했으나 **결과의 랭킹 버튼 자체가 없음**을 확인했다. 아래 F7의 availability 차단을 이번 증상의 최우선 조사 대상으로 올린다. 구형 보드 혼동(F5)이나 순위 숫자 갱신(F4)만으로 이 버튼 누락을 설명할 수 없다.
+
 ## 배포본·스토어 직접 확인
 
 - [App Store Connect 버전](https://appstoreconnect.apple.com/apps/6794853985/distribution/ios/version/deliverable): **1.1 Ready for Distribution**, 선택 build **24**, Game Center 체크 ON.
@@ -87,12 +89,37 @@ Apple callback이 실제 사용자 환경에서 영구 미도착했다고 확인
 
 권고: 보드별 pending/submitting/submitted/failed 상태, 명시적 재시도, 개인정보를 제외한 로컬 구조화 오류 로그를 추가한다. 로그를 외부 분석으로 보내는 것은 별도 동의 계약에 맞춰 검토한다.
 
+### F7 · P1 · 가용 보드 조회가 Flow 버튼과 제출을 함께 차단할 수 있음
+
+사용자 증거: `IMG_2269.PNG`(중급 478점, Personal best 1,070점), `IMG_2272.PNG`(초급 464점, Personal best 588점), `IMG_2271.PNG`(고급 220점, NEW RECORD), `IMG_2270.PNG`(중급 결과 하단, 복습 목록 다음에 랭킹 없이 Save Image/Share가 나옴). 세 난이도 완료·버튼 누락과 영어·내장 두벌식은 사용자 확인이며, 하단 버튼 영역을 직접 보여 주는 사진은 중급이다. 사용자 이미지 원본은 저장소에 복사하지 않았다.
+
+코드와 대조해 확인한 사항:
+
+- `FlowGameResultView` 264~271행의 `Built-in keyboard`는 `recordOutcome.record.inputMode`를 읽어 표시한다. `Personal best`/`NEW RECORD` 역시 `recordOutcome`가 있을 때만 표시한다. 따라서 이 결과들에서 `recordOutcome == nil` 때문에 버튼이 빠졌다는 설명은 맞지 않는다. 이는 기록 객체의 존재를 입증하며 디스크 영속화 성공까지 단정하는 근거는 아니다.
+- Beginner/Intermediate/Advanced 표시는 고정 preset 덱 ID와의 일치로 결정된다. 실제 build 24 archive의 세 Flow JSON도 고정 ID·version 3·100개 항목이고, Info.plist baseline에는 현행 Flow v4 세 ID가 모두 들어 있다. 게임 preset 로더는 version 3을 검사하며 언어에 따라 덱을 교체하지 않는다.
+- 결과 버튼은 366~369행에서 `isLeaderboardAvailable(for:)`가 false면 렌더링하지 않는다. 같은 조건이 서비스 499행의 점수 제출도 막는다. 목숨 소진, 낮은 점수, 신기록 여부, 로그인 여부는 버튼을 숨기는 직접 조건이 아니다.
+- iOS 26의 전체 목록 조회는 `.released`인 보드만 남긴다(서비스 887~896행). **오류 없는 부분 목록 또는 공개 상태 플래그가 빠진 응답**은 baseline보다 우선한다(149~159행). `probeIsComplete`가 true이므로 같은 플레이어 세션에서는 prepare/foreground/synchronize를 반복해도 전체 목록을 다시 조회하지 않는다.
+
+추가 대역 재현은 실제 서비스 소스를 수정하지 않고 GameKit 응답만 바꿨다. 버튼 표시식이 사용하는 서비스 판정과 실제 제출 호출 횟수를 검사했으며 SwiftUI 화면을 실기기에서 자동 재현한 것은 아니다.
+
+| 제어된 GameKit 응답 | Flow 초·중·고 버튼 조건 | Flow 전송 호출 | 산성비 초급 전송 |
+|---|---|---:|---|
+| 현행 16 + 구형 4, 모두 released | 모두 true | 3회 | 성공 |
+| 정상 응답이지만 Flow 현행 3개 누락 | 모두 false | 0회 | 성공 |
+| 20개를 모두 반환하되 Flow 현행 3개의 released 표시 없음 | 모두 false | 0회 | 성공 |
+
+후자의 두 경우에 서버 대역을 정상 20개 응답으로 바꾸고 foreground/prepare/synchronize를 실행해도 전체 조회 횟수는 1회, Flow 버튼은 모두 false로 유지됐다. [재현 실행기](availability_probe.py), [시나리오](availability_probe.swift), [출력](availability_probe.log). 실행: `python3.12 docs/audits/game-center-1.1-20260909/availability_probe.py`.
+
+**확정 범위:** 이 차단 경로가 버튼 누락과 실제 미제출을 동시에 만들고 세션 중 회복하지 못함은 재현했다. **미확정 범위:** 사용자 기기의 GameKit 응답·releaseState·availableLeaderboards는 아직 읽지 못했다. 빈/부분 응답 또는 플래그 누락을 실제 Apple 서버 장애로 확정하지 않는다. Games 앱에서 20개가 보인다는 사실은 우리 앱의 해당 호출에서 받은 응답과 동일함을 보증하지 않는다.
+
+수정 방향: 출시 확인된 baseline과 런타임 조회 실패·불완전 응답을 구분해 일시적인 응답이 정당한 기록의 제출 경로와 복구 버튼을 영구 차단하지 않도록 한다. 의도적으로 미출시/제한된 새 보드는 계속 차단해야 한다. 화면에 자격 제외와 확인 실패를 구분하고, 한정된 재조회·명시적 재시도 및 보드 ID/상태 진단을 추가한다. 실제 기기의 실패 세션을 진단하고 같은 빌드의 대조 실험을 수행하기 전에는 이번 개별 사건의 원인 확정이나 수정 완료로 표시하지 않는다.
+
 ## 정상 계약과 추가 확인 필요 항목
 
 - **Best Score**이므로 매 게임 이력을 쌓는 것이 아니라 최고점만 갱신한다. 최고점 이하 결과가 리더보드 값을 바꾸지 않는 것은 정상이다.
 - 공식 고정 v3 덱의 내장 두벌식만 클래식 15개 대상이다. OS/앱 내 천지인·사용자/다운로드 덱·띄어쓰기는 일반 랭킹 제외. 이번 사용자는 내장 두벌식을 확인했으므로 키보드 제외 정책으로 이번 신고를 종결하면 안 된다.
 - 피요컵 두벌식은 주간+흐름 초급, OS 키보드는 주간만 제출한다. 지난주 점수를 새 주간 회차로 보충하지 않는 것은 정상이다. [Apple recurring 설명](https://developer.apple.com/documentation/gamekit/creating-recurring-leaderboards)과 운영 주기를 대조했다.
-- iOS 26의 availability probe는 성공한 빈/부분 응답을 baseline보다 우선하고 같은 플레이어 세션에서 재검사하지 않는다. 모두 Live인 이번 운영 상태에서도 실제 응답이 비정상적으로 비어 있다면 보드가 사라질 수 있으나, 해당 서버 응답은 관찰하지 못했다. F1~F4의 재현에서는 정상 16개 released 응답을 사용했다.
+- iOS 26 availability 차단의 추가 재현과 사용자 캡처의 대조는 F7 참조. 실제 기기의 응답은 여전히 미관찰이며 F1~F4의 기존 재현에서는 정상 16개 released 응답을 사용했다.
 - `GameProgressStore`는 2,048건으로 압축할 때 클래식 최고점과 현재 주간 최고점 대표 기록을 보존한다. 이에 대한 기존 단위 검증은 통과했다.
 - `release/GAME_CENTER_SETUP.md`와 smoke 문서에는 피요컵 내장 키보드 고정/OS 제외라는 과거 문구가 남아 있고, `PROJECT_STATUS.md`도 build 24 출시 전 상태였다. 현재 PRD와 배포 상태가 우선이며 오래된 문서를 검증 완료 증거로 재사용하면 안 된다.
 
@@ -107,7 +134,7 @@ Apple callback이 실제 사용자 환경에서 영구 미도착했다고 확인
 
 ## 남은 실기기 검증과 수정 순서
 
-1. F1/F2를 먼저 수정하고 F3/F4와 보드별 오류 상태를 함께 회귀 검증한다. 공개판 갱신에는 새 앱 버전이 필요하다.
+1. 버튼 자체 누락을 설명하는 F7 availability 차단을 먼저 진단·수정하고 F1/F2 및 F3/F4와 보드별 오류 상태를 함께 회귀 검증한다. 공개판 갱신에는 새 앱 버전이 필요하다.
 2. 별도로 App Store Connect의 기본 보드·구형 보드 표시를 정리한다. 이는 앱의 재시도 결함을 해결하지 않는다.
 3. 수정된 동일 빌드의 iPhone·iPad에서 15개 클래식+주간을 내장 두벌식으로 확인한다. 인증 후 첫 진입, offline→online, 낮은 다음 점수, 결과에서 즉시 닫기·종료, 순위 지연, 주간 경계, 로그아웃·계정 전환을 포함한다.
 4. 사용자 개별 실패를 판별할 오류 로그와 서버 조회 결과를 확보한다. 이번 iPhone 배포 앱 데이터 컨테이너 열람은 CoreDevice 오류로 불가했고 iPad는 잠금으로 조회하지 못했다. 사용자 데이터·기기 설치본·실제 서버 점수는 변경하지 않았다.
