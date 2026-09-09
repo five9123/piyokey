@@ -4079,6 +4079,47 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("privacy_consent.screen").exists)
   }
 
+  func testUsageContextUpgradeDeclinePreservesDiagnosticsAndDoesNotRepeat() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, showsPrivacyConsent: true)
+    app.launchEnvironment["UITEST_SEED_PRIVACY_CHOICES_ENABLED"] = "1"
+    app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = "1"
+    app.launch()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "0")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "1")
+    app.buttons["settings.done"].tap()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false, showsPrivacyConsent: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+  }
+
+  func testUsageContextUpgradeParticipationKeepsDiagnosticsOff() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, showsPrivacyConsent: true)
+    app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = "1"
+    app.launch()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.participate_and_continue"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "1")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "0")
+  }
+
   func testSettingsHierarchyVersionAndPrivacyCleanup() {
     app.terminate()
     app = makeApplication(
@@ -4118,7 +4159,8 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(dubeolsikLayout.isHittable)
     XCTAssertTrue(tenKeyLayout.isHittable)
     XCTAssertTrue(dubeolsikLayout.isSelected)
-    XCTAssertLessThan(layout.frame.minY, app.buttons["input_mode.builtin"].frame.minY)
+    // The input-source selector precedes the built-in layout selector.
+    XCTAssertGreaterThan(layout.frame.minY, app.buttons["input_mode.builtin"].frame.minY)
     tenKeyLayout.tap()
     XCTAssertTrue(tenKeyLayout.isSelected)
     let osMode = app.buttons["input_mode.os_ime"]
@@ -4257,27 +4299,36 @@ final class HancoUITests: XCTestCase {
     if isIPad {
       XCUIDevice.shared.orientation = .landscapeLeft
     }
-    app = makeApplication(
-      resetKeyboardPreferences: true,
-      showsPrivacyConsent: true,
-      onboardingNotificationResult: "denied"
-    )
-    app.launch()
+    for language in ["ja", "en", "es", "de", "fr"] {
+      for previousVersion in [0, 1] {
+        app = makeApplication(
+          resetKeyboardPreferences: true,
+          showsPrivacyConsent: true,
+          onboardingNotificationResult: "denied"
+        )
+        app.launchArguments += ["-settings.language", language]
+        app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = String(previousVersion)
+        app.launch()
 
-    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    XCTAssertFalse(app.scrollViews["privacy_consent.scroll"].exists)
-    for identifier in [
-      "privacy_consent.usage_information",
-      "privacy_consent.error_information",
-      "privacy_consent.excluded_data",
-      "privacy_consent.privacy_policy",
-      "privacy_consent.participate_and_continue",
-      "privacy_consent.continue_without_sharing",
-    ] {
-      let item = element(identifier)
-      XCTAssertTrue(item.exists, identifier)
-      XCTAssertGreaterThanOrEqual(item.frame.minY, app.frame.minY, identifier)
-      XCTAssertLessThanOrEqual(item.frame.maxY, app.frame.maxY, identifier)
+        let context = "\(language), previous notice \(previousVersion)"
+        XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5), context)
+        XCTAssertFalse(app.scrollViews["privacy_consent.scroll"].exists, context)
+        for identifier in [
+          "privacy_consent.usage_information",
+          "privacy_consent.error_information",
+          "privacy_consent.excluded_data",
+          "privacy_consent.privacy_policy",
+          "privacy_consent.participate_and_continue",
+          "privacy_consent.continue_without_sharing",
+        ] {
+          let item = element(identifier)
+          XCTAssertTrue(item.exists, "\(context): \(identifier)")
+          XCTAssertGreaterThanOrEqual(item.frame.minY, app.frame.minY, context)
+          XCTAssertLessThanOrEqual(item.frame.maxY, app.frame.maxY, context)
+        }
+        attachScreenshot(named: "usage-consent-\(language)-v\(previousVersion)")
+        app.terminate()
+      }
     }
   }
 
@@ -4384,7 +4435,7 @@ final class HancoUITests: XCTestCase {
       }
     } else {
       application.launchArguments += [
-        "-settings.privacy_notice_version", "1",
+        "-settings.privacy_notice_version", "2",
       ]
     }
     application.launchEnvironment["UITEST_JST_DAY"] = "2026-07-19"

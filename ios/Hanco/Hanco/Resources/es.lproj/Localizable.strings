@@ -244,7 +244,7 @@
 "settings.privacy_policy" = "Política de privacidad";
 "settings.privacy" = "Privacidad";
 "settings.anonymous_analytics" = "Análisis de uso anónimo";
-"settings.anonymous_analytics_detail" = "Compartir qué funciones se usan y si se completan las sesiones.";
+"settings.anonymous_analytics_detail" = "Compartir uso de funciones, sesiones, país por IP y datos del dispositivo, sistema, pantalla, idioma, zona horaria y conexión.";
 "settings.crash_diagnostics" = "Diagnóstico de fallos";
 "settings.crash_diagnostics_detail" = "Compartir diagnósticos de cierres inesperados y bloqueos.";
 "settings.analytics_privacy_note" = "Nunca se envían el texto escrito, el contenido de mazos del usuario, nombres ni correos. Ambas opciones están desactivadas por defecto.";
@@ -254,8 +254,10 @@
 "privacy_consent.navigation_title" = "Opciones de privacidad";
 "privacy_consent.title" = "¿Ayudas a mejorar typee?";
 "privacy_consent.introduction" = "Envía información anónima de uso y errores para ayudarnos a mejorar la app.";
+"privacy_consent.update_introduction" = "Ahora se incluyen país y datos del dispositivo. Elige si deseas compartirlos.";
+"privacy_consent.existing_diagnostics_detail" = "Se mantiene tu elección actual";
 "privacy_consent.usage_title" = "Información de uso";
-"privacy_consent.usage_detail" = "Qué funciones utilizas";
+"privacy_consent.usage_detail" = "Uso de funciones, país y dispositivo/sistema";
 "privacy_consent.error_title" = "Información de errores";
 "privacy_consent.error_detail" = "Qué hizo que la app se detuviera";
 "privacy_consent.excluded_data" = "No enviamos lo que escribes, tu nombre ni tu correo electrónico.";
