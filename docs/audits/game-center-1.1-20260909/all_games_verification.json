@@ -1,0 +1,110 @@
+{
+  "recorded_at": "2026-09-09T16:20:57.446570+00:00",
+  "tested_checkout_head": "21be5f388e531465f055fef4044c70bb86521c98",
+  "shipping_source_commit": "85ebfadabc434659943ea8cd3edcb93a91a39a71",
+  "service_sha256": "f37e33744f345f6a7d91e5287427b274ed50438e09cff6e5ccf9edb54dcb2c43",
+  "shipping_app": {
+    "version": "1.1",
+    "build": "24",
+    "bundle_id": "app.piyokey.Piyokey"
+  },
+  "xctest": [
+    {
+      "name": "allgame",
+      "status": "pass",
+      "test_count": 109,
+      "command_argv": [
+        "xcodebuild",
+        "test",
+        "-project",
+        "ios/Hanco/Hanco.xcodeproj",
+        "-scheme",
+        "Hanco",
+        "-destination",
+        "platform=iOS Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB",
+        "-derivedDataPath",
+        "/tmp/piyokey-gc-audit-dd",
+        "-resultBundlePath",
+        "/tmp/piyokey-allgame-audit-20260910.xcresult",
+        "-only-testing:HancoTests/GameCenterServiceTests",
+        "-only-testing:HancoTests/GameProgressStoreTests",
+        "-only-testing:HancoTests/FlowGameViewModelTests",
+        "-only-testing:HancoTests/FlowGameRankTuningTests",
+        "-only-testing:HancoTests/ChoseongQuizViewModelTests",
+        "-only-testing:HancoTests/SpacingGameTests",
+        "-parallel-testing-enabled",
+        "NO",
+        "CODE_SIGNING_ALLOWED=NO"
+      ],
+      "log": "/tmp/piyokey-allgame-audit-20260910.log",
+      "log_sha256": "9863d1a318bb3ef52546b63f28a5047743f92129b27b55e8419238923481b8de"
+    },
+    {
+      "name": "spacing",
+      "status": "pass",
+      "test_count": 7,
+      "command_argv": [
+        "xcodebuild",
+        "test",
+        "-project",
+        "ios/Hanco/Hanco.xcodeproj",
+        "-scheme",
+        "Hanco",
+        "-destination",
+        "platform=iOS Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB",
+        "-derivedDataPath",
+        "/tmp/piyokey-gc-audit-dd",
+        "-resultBundlePath",
+        "/tmp/piyokey-spacing-audit-20260910.xcresult",
+        "-only-testing:HancoTests/SpacingGameEngineTests",
+        "-only-testing:HancoTests/SpacingGameViewModelTests",
+        "-parallel-testing-enabled",
+        "NO",
+        "CODE_SIGNING_ALLOWED=NO"
+      ],
+      "log": "/tmp/piyokey-spacing-audit-20260910.log",
+      "log_sha256": "c4232e98af904a58246b657336eb7c13ebc2e96eafa3a2cb81e082051f8ae763"
+    }
+  ],
+  "xctest_total": 116,
+  "selection_correction": "SpacingGameTests was not a class; first run executed 109 tests. SpacingGameEngineTests and SpacingGameViewModelTests then executed 7 tests.",
+  "mock_matrix": {
+    "command": "python3.12 docs/audits/game-center-1.1-20260909/all_boards.py",
+    "eligibility_assertions": 111,
+    "availability_scenarios": 37,
+    "lifecycle_defect_reproductions": 64,
+    "cup_partial_availability_scenarios": 3,
+    "result": "audit assertions matched; known product defects reproduced",
+    "log_sha256": "a669c7f1692414329a86f6ff3e8f4e0059450b865d86f2f120636385c0a7e994"
+  },
+  "archive_inventory": {
+    "command_argv": [
+      "python3.12",
+      "docs/audits/game-center-1.1-20260909/archive_inventory.py",
+      "/Users/jungminoh/orca/workspaces/hanco/TYP-43-ios-1-1-release/outputs/appstore-1.1-24-20260907/PIYOKEY-1.1-24.xcarchive/Products/Applications/Hanco.app"
+    ],
+    "decks": 15,
+    "ids": 16,
+    "ui_languages": [
+      "ja",
+      "en",
+      "es",
+      "de",
+      "fr"
+    ]
+  },
+  "device": {
+    "installed_version_check": "1.1 (24) confirmed",
+    "record_container_read": "failed: CoreDevice.ActionError 3",
+    "actual_failed_gamekit_response": "not captured"
+  },
+  "open_gates": [
+    "Actual GameKit response diagnosis",
+    "All-mode live-device server receipt verification",
+    "Language-switch device comparison",
+    "Production fix and release",
+    "Current-head Claude review and maintainer approval"
+  ],
+  "production_changes": false,
+  "app_store_connect_changes": false
+}

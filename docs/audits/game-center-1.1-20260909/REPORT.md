@@ -13,6 +13,8 @@
 
 **9월 10일 추가 캡처로 신고 증상이 구체화됐다.** 사용자는 영어 설정·내장 두벌식으로 Flow 초급·중급·고급을 완료했으나 **결과의 랭킹 버튼 자체가 없음**을 확인했다. 아래 F7의 availability 차단을 이번 증상의 최우선 조사 대상으로 올린다. 구형 보드 혼동(F5)이나 순위 숫자 갱신(F4)만으로 이 버튼 누락을 설명할 수 없다.
 
+**전체 게임 확장 조사:** [16개 보드 전수 결과](ALL_GAMES.md). 다섯 게임 × 3단계 및 피요컵 모두에서 F7 차단과 F1~F4를 대역으로 재현했다. 실제 archive의 15개 덱·16개 ID·5개 UI 언어 리소스 일치, 관련 XCTest 116/116 통과. 피요컵 내장 입력은 주간 보드가 차단돼도 클래식 보드로 버튼과 전송이 남는 부분 실패가 가능하다. 실기기의 실제 실패 응답과 다른 게임별 서버 수신은 여전히 미확인이다.
+
 ## 배포본·스토어 직접 확인
 
 - [App Store Connect 버전](https://appstoreconnect.apple.com/apps/6794853985/distribution/ios/version/deliverable): **1.1 Ready for Distribution**, 선택 build **24**, Game Center 체크 ON.

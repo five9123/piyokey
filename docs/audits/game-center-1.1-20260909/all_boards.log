@@ -1,0 +1,58 @@
+ELIGIBILITY 111 assertions passed: 15 presets x modes/versions/lesson + exclusions + cup modes
+AVAILABILITY normal_20: blocked=0/16 submittedBoards=16 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY empty_success: blocked=16/16 submittedBoards=0 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY legacy_only_success: blocked=16/16 submittedBoards=0 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY error_fallback: blocked=0/16 submittedBoards=16 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY timeout_fallback: blocked=0/16 submittedBoards=16 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY omit_piyokey.v4.flow.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.flow.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.flow.beginner: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.flow.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.flow.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.flow.intermediate: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.flow.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.flow.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.flow.advanced: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.acid_rain.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.acid_rain.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.acid_rain.beginner: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.acid_rain.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.acid_rain.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.acid_rain.intermediate: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.acid_rain.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.acid_rain.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.acid_rain.advanced: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.choseong.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.choseong.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.choseong.beginner: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.choseong.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.choseong.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.choseong.intermediate: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.choseong.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.choseong.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.choseong.advanced: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.dictation.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.dictation.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.dictation.beginner: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.dictation.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.dictation.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.dictation.intermediate: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v3.dictation.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v3.dictation.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v3.dictation.advanced: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.word_match.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.word_match.beginner: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.word_match.beginner: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.word_match.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.word_match.intermediate: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.word_match.intermediate: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.word_match.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.word_match.advanced: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.word_match.advanced: F1/F2/F3/F4 reproduced (4/4)
+AVAILABILITY omit_piyokey.v4.cup.weekly.flow: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+AVAILABILITY unreleased_piyokey.v4.cup.weekly.flow: blocked=1/16 submittedBoards=15 fullListLoads=1 failureFlagAfterSubmissions=false
+LIFECYCLE piyokey.v4.cup.weekly.flow: F1/F2/F3/F4 reproduced (4/4)
+CUP_BUILTIN missing=["piyokey.v4.cup.weekly.flow"] button=true submitted=["piyokey.v4.flow.beginner"]
+CUP_BUILTIN missing=["piyokey.v4.flow.beginner"] button=true submitted=["piyokey.v4.cup.weekly.flow"]
+CUP_BUILTIN missing=["piyokey.v4.cup.weekly.flow", "piyokey.v4.flow.beginner"] button=false submitted=[]
+AUDIT_COMPLETE: 111 eligibility assertions; 37 availability scenarios; 64 lifecycle defect reproductions; 3 cup fallback scenarios. Mock responses only; real-device failure response remains unknown.
