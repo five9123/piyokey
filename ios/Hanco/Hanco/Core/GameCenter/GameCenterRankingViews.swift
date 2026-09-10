@@ -203,6 +203,8 @@ struct GameCenterRankingDetailView: View {
             gameCenter.showLeaderboard(leaderboard, scope: scope)
           } label: {
             Label("game_center.ranking.open_game_center", systemImage: "trophy")
+              .font(.caption.weight(.semibold))
+              .fixedSize(horizontal: false, vertical: true)
               .frame(minHeight: 44)
           }
           .disabled(!gameCenter.canPresentDashboard)
@@ -299,7 +301,11 @@ struct GameCenterGrowthCard: View {
         ? "game_center.growth.trophy_unlocked" : "game_center.growth.trophy_condition")
         .font(.caption)
       Button { gameCenter.showAchievements() } label: {
-        Label("game_center.growth.open", systemImage: "rosette").frame(minHeight: 44)
+        Label("game_center.growth.open", systemImage: "rosette")
+          .font(.caption.weight(.semibold))
+          .fixedSize(horizontal: false, vertical: true)
+          .frame(minHeight: 44)
+          .foregroundStyle(AppPalette.accent)
       }
       .disabled(!gameCenter.canPresentDashboard)
       .accessibilityIdentifier("game_center.growth.open")

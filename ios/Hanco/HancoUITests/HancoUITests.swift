@@ -880,7 +880,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(localRow.waitForExistence(timeout: 3))
     XCTAssertTrue(localRow.label.contains("You"))
     let native = element("game_center.ranking.native")
-    scrollToHittable(native)
+    scrollRankingControlAboveTabBar(native)
     XCTAssertGreaterThanOrEqual(native.frame.height, 44)
     XCTAssertGreaterThanOrEqual(native.frame.minX, 0)
     XCTAssertLessThanOrEqual(native.frame.maxX, app.frame.width)
@@ -895,11 +895,32 @@ final class HancoUITests: XCTestCase {
     piyo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
     XCTAssertTrue(element("my_piyo.detail.screen").waitForExistence(timeout: 5))
     let growth = element("game_center.growth.open")
-    scrollToHittable(growth)
+    scrollRankingControlAboveTabBar(growth)
     XCTAssertGreaterThanOrEqual(growth.frame.height, 44)
     XCTAssertGreaterThanOrEqual(growth.frame.minX, 0)
     XCTAssertLessThanOrEqual(growth.frame.maxX, app.frame.width)
     attachScreenshot(named: "gc-growth-accessibility-en")
+  }
+
+  private func scrollRankingControlAboveTabBar(_ target: XCUIElement) {
+    func viewport() -> CGRect {
+      let top = app.navigationBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.intersects(app.frame) }
+        .map { $0.frame.maxY }.max() ?? app.frame.minY
+      let bottom = app.tabBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.minY > app.frame.midY }
+        .map { $0.frame.minY }.min() ?? app.frame.maxY
+      return CGRect(x: app.frame.minX, y: top, width: app.frame.width,
+                    height: max(0, bottom - top)).insetBy(dx: 8, dy: 12)
+    }
+    for _ in 0..<20 {
+      if target.exists && target.isHittable && viewport().contains(target.frame) { return }
+      let direction: ScrollDirection = target.exists && target.frame.midY < viewport().midY
+        ? .down : .up
+      scrollVisibleSurfaceToward(direction)
+    }
+    XCTAssertTrue(target.exists && target.isHittable && viewport().contains(target.frame),
+      "Game Center control overlaps navigation or tab bar: \(app.debugDescription)")
   }
 
   private func assertRankingButtonVisibleAboveResultFooter(context: String) {
