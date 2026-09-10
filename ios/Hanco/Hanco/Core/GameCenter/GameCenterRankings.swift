@@ -25,6 +25,8 @@ struct GameCenterRankingSnapshot: Equatable {
   let fetchedAt: Date
   let periodStart: Date?
 
+  var isEmpty: Bool { totalPlayerCount == 0 && nearbyEntries.isEmpty }
+
   var nearbyEntries: [GameCenterRankingEntry] {
     var unique = Dictionary(entries.filter { $0.rank > 0 }.map { ($0.id, $0) },
       uniquingKeysWith: { _, latest in latest })

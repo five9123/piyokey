@@ -866,6 +866,7 @@ final class HancoUITests: XCTestCase {
     // Tap its visible upper region instead of requiring the whole card to fit.
     XCTAssertTrue(piyo.isHittable)
     piyo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+    XCTAssertTrue(element("my_piyo.detail.screen").waitForExistence(timeout: 5))
     let growth = element("game_center.growth.open")
     scrollToHittable(growth)
     XCTAssertGreaterThanOrEqual(growth.frame.height, 44)

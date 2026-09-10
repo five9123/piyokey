@@ -47,7 +47,7 @@ class GKLeaderboard {
   struct Entry { let rank: Int; var score: Int = 0; var player: GKPlayer = GKLocalPlayer.local }
   let baseLeaderboardID: String
   let occurrence: Int
-  var startDate: Date? = Self.occurrenceStart ?? PiyoCupWeek.start(containing: Date())
+  var startDate: Date? = GKLeaderboard.occurrenceStart ?? PiyoCupWeek.start(containing: Date())
   static var occurrenceStart: Date?
   var duration: TimeInterval = 7 * 24 * 60 * 60
   var releaseState = GKReleaseState.released

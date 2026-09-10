@@ -511,6 +511,8 @@ final class GameCenterServiceTests: XCTestCase {
     let value = snapshot(rank: 42, score: 850, entries: [below, above, above])
     XCTAssertEqual(value.nearbyEntries.map(\.id), ["above", "me", "below"])
     XCTAssertEqual(value.pointsToMatch, 50)
+    XCTAssertFalse(GameCenterRankingSnapshot(localEntry: nil, entries: [above], totalPlayerCount: 0,
+      fetchedAt: Date(), periodStart: nil).isEmpty, "A partial count cannot hide a returned record")
     XCTAssertEqual(snapshot(rank: 42, score: 900, entries: [above]).pointsToMatch, 0)
     XCTAssertNil(snapshot(rank: 1, score: 900, entries: [above]).nextTarget)
     XCTAssertNil(snapshot(rank: 45, score: 800, entries: [above]).nextTarget)

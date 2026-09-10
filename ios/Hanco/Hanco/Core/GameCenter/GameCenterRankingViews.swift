@@ -88,7 +88,7 @@ struct GameCenterRankingPanel: View {
               Text(AppLocalization.format("game_center.ranking.server_best", entry.score.formatted()))
                 .font(.caption.weight(.semibold))
             } else {
-              Text(snapshot.totalPlayerCount == 0
+              Text(snapshot.isEmpty
                 ? "game_center.ranking.empty" : "game_center.ranking.not_played")
                 .font(.caption)
             }
@@ -231,7 +231,7 @@ struct GameCenterRankingDetailView: View {
       snapshot.nearbyEntries.allSatisfy({ $0.id == snapshot.localEntry?.id })
     {
       Text("game_center.ranking.no_friends")
-    } else if snapshot.totalPlayerCount == 0 && snapshot.localEntry == nil {
+    } else if snapshot.isEmpty {
       Text("game_center.ranking.empty")
     } else if snapshot.localEntry == nil {
       Text("game_center.ranking.not_played")
