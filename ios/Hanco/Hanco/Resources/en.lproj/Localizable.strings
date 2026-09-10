@@ -1295,6 +1295,8 @@
 "game_center.submission.sign_in" = "Sign in to Game Center to register your score.";
 "game_center.submission.pending" = "Waiting to register";
 "game_center.submission.submitting" = "Registering score…";
+"game_center.submission.confirming" = "Checking your leaderboard score…";
+"game_center.submission.unconfirmed" = "Couldn’t confirm your score yet. Retry to check again.";
 "game_center.submission.submitted" = "Score registered · best score kept";
 "game_center.submission.failed" = "Couldn’t register. Your score will be retried.";
 "game_center.submission.retry" = "Retry";

@@ -44,12 +44,18 @@ struct GKReleaseState: OptionSet { let rawValue: Int; static let released = Self
 class GKLeaderboard {
   enum PlayerScope { case global }
   enum TimeScope { case allTime }
-  struct Entry { let rank: Int }
+  struct Entry { let rank: Int; var score: Int = 0 }
   let baseLeaderboardID: String
+  let occurrence: Int
   var releaseState = GKReleaseState.released
-  init(_ id: String) { baseLeaderboardID = id }
+  init(_ id: String) { baseLeaderboardID = id; occurrence = Self.currentOccurrence }
   static var submitted: [(id: String, score: Int)] = []
   static var error: Error?
+  static var storesSubmittedScores = true
+  static var currentOccurrence = 0
+  static var occurrenceSubmissions = 0
+  static var holdWeeklyLookup = false
+  static var weeklyLookups: [() -> Void] = []
   static var holdSubmission = false
   static var callbacks: [(Error?) -> Void] = []
   static var holdRank = false
@@ -61,12 +67,35 @@ class GKLeaderboard {
   static func loadLeaderboards(IDs: [String]?, completionHandler: @escaping ([GKLeaderboard]?, Error?) -> Void) {
     let boards = (IDs ?? probeIDs ?? GameCenterLeaderboard.allCases.map(\.rawValue)).map(GKLeaderboard.init)
     if IDs == nil, !probeReleased { boards.forEach { $0.releaseState = [] } }
+    if holdWeeklyLookup, IDs == [GameCenterLeaderboard.weeklyPiyoCup.rawValue] {
+      weeklyLookups.append { completionHandler(boards, nil) }
+      return
+    }
     completionHandler(boards, nil)
   }
   static func submitScore(_ score: Int, context: Int, player: GKPlayer, leaderboardIDs: [String], completionHandler: @escaping (Error?) -> Void) {
     submitted += leaderboardIDs.map { ($0, score) }
-    callbacks.append(completionHandler)
-    if !holdSubmission { completionHandler(error) }
+    let submittingPlayerID = player.gamePlayerID
+    let finish: (Error?) -> Void = { error in
+      if error == nil, storesSubmittedScores, GKLocalPlayer.local.gamePlayerID == submittingPlayerID {
+        for id in leaderboardIDs {
+          let previous = entries[id]
+          entries[id] = Entry(rank: previous?.rank ?? 1, score: max(previous?.score ?? 0, score))
+        }
+      }
+      completionHandler(error)
+    }
+    callbacks.append(finish)
+    if !holdSubmission { finish(error) }
+  }
+  func submitScore(_ score: Int, context: Int, player: GKPlayer, completionHandler: @escaping (Error?) -> Void) {
+    Self.occurrenceSubmissions += 1
+    guard occurrence == Self.currentOccurrence else {
+      completionHandler(NSError(domain: "ExpiredWeeklyOccurrence", code: 1))
+      return
+    }
+    Self.submitScore(score, context: context, player: player,
+      leaderboardIDs: [baseLeaderboardID], completionHandler: completionHandler)
   }
   func loadEntries(for scope: PlayerScope, timeScope: TimeScope, range: NSRange, completionHandler: @escaping (Entry?, [Entry]?, Int, Error?) -> Void) {
     Self.entryLoads += 1

@@ -763,6 +763,38 @@ final class HancoUITests: XCTestCase {
     }
   }
 
+  func testHotfixFlowRankingAllDifficultiesAndInputsGlobalEN() {
+    for method in ["dubeolsik", "korean_10key", "os_ime"] {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 2,
+        resultAnimationScale: 0.01, koreanKeyboardAvailable: true)
+      app.launchArguments += ["-settings.language", "en"]
+      if method == "os_ime" {
+        app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+      } else {
+        app.launchArguments += ["-keyboard.builtin_layout_default", method]
+      }
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+      app.tabBars.buttons["Game"].tap()
+      app.buttons["game.mode.flow"].tap()
+      // Repeat beginner with the same zero score to cover a result that is not a new best.
+      for level in ["beginner", "beginner", "intermediate", "advanced"] {
+        XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+        element("game.flow.preset.\(level)").tap()
+        XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+        let ranking = element("game.result.game_center")
+        XCTAssertTrue(ranking.waitForExistence(timeout: 3), "\(method) / \(level)")
+        scrollToHittable(ranking)
+        XCTAssertTrue(ranking.label.contains("View Game Center rankings"))
+        if level == "advanced" {
+          attachScreenshot(named: "hotfix-flow-\(method)-advanced-ranking-en")
+        }
+        app.buttons["result.done"].tap()
+      }
+    }
+  }
+
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
     let dailyEncouragement = "「今日もいっしょに始めよう！ピヨ！」"
     let myPiyoCard = element("home.my_piyo_card")

@@ -14,6 +14,11 @@ import Foundation
     GKLeaderboard.callbacks = []
     GKLeaderboard.entryCallbacks = []
     GKLeaderboard.error = nil
+    GKLeaderboard.storesSubmittedScores = true
+    GKLeaderboard.currentOccurrence = 0
+    GKLeaderboard.occurrenceSubmissions = 0
+    GKLeaderboard.holdWeeklyLookup = false
+    GKLeaderboard.weeklyLookups = []
     GKLeaderboard.holdSubmission = false
     GKLeaderboard.holdRank = false
     GKLeaderboard.entries = [:]
@@ -49,6 +54,7 @@ import Foundation
         check(service.submissionState(for: run) == .submitted, "submitted / \(run.deckId) / \(run.competition != nil) / \(mode)")
       }
       check(GKLeaderboard.submitted.count == 16, "exactly 16 destinations / \(mode)")
+      check(GKLeaderboard.occurrenceSubmissions == 1, "Cup binds to one weekly occurrence / \(mode)")
       check(GKLeaderboard.submitted.first { $0.id == GameCenterLeaderboard.flowBeginner.rawValue }?.score == 100, "cup never raises Flow score / \(mode)")
       await stop(service)
     }
@@ -103,19 +109,24 @@ import Foundation
       let expired = GKLeaderboard.callbacks[0]
       check(s.submissionStates[.flowBeginner] == .failed, "missing callback expires instead of blocking forever")
       s.retrySubmission(for: run)
+      GKLeaderboard.storesSubmittedScores = false
       expired(nil); await pause(0.015)
       check(s.submissionStates[.flowBeginner] == .submitting, "late callback cannot overwrite newer request")
+      GKLeaderboard.storesSubmittedScores = true
       GKLeaderboard.callbacks.last?(nil); await pause()
       check(s.submissionStates[.flowBeginner] == .submitted, "manual retry can finish newer request")
       await stop(s)
     }
     do {
       let s = makeService(); let run = GameRecord(score: 7000)
+      GKLeaderboard.storesSubmittedScores = false
       s.submitScore(for: run); await pause()
       check(s.rank(for: run) == nil, "rank initially absent")
-      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 7)
+      check(s.submissionState(for: run) == .confirming, "submit success alone is not confirmed registration")
+      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 7, score: 7000)
       await pause(0.08)
       check(s.rank(for: run) == 7, "delayed server rank refreshed automatically")
+      check(s.submissionState(for: run) == .submitted, "matching server score confirms registration")
       await stop(s)
     }
     do {
@@ -124,7 +135,7 @@ import Foundation
       s.submitScore(for: run); await pause(0.18)
       let old = GKLeaderboard.entryCallbacks.first { $0.id == GameCenterLeaderboard.flowBeginner.rawValue }!.callback
       GKLeaderboard.holdRank = false
-      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 5)
+      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 5, score: 6000)
       s.synchronize(); await pause()
       old(.init(rank: 99), [], 0, nil); await pause()
       check(s.rank(for: run) == 5, "rank timeout releases lock and ignores stale entry callback")
@@ -143,6 +154,55 @@ import Foundation
       GKLocalPlayer.local.gamePlayerID = UUID().uuidString
       s.prepare(); old(nil); await pause(0.02)
       check(s.submissionStates[.flowBeginner] == .submitting, "old player callback cannot complete new player's request")
+      await stop(s)
+    }
+    do {
+      let s = makeService(delay: 0.01)
+      let run = GameRecord(score: 5000)
+      GKLeaderboard.storesSubmittedScores = false
+      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 4, score: 3000)
+      s.submitScore(for: run); await pause(0.025)
+      check(s.rank(for: run) == 4 && s.serverScores[.flowBeginner] == 3000,
+        "server rank alone does not imply the new score is present")
+      check(s.submissionState(for: run) == .confirming,
+        "older lower server score does not confirm the retained best")
+      await pause(0.7)
+      check(s.submissionState(for: run) == .unconfirmed,
+        "unconfirmed read-back becomes an explicit retryable state")
+      check(GKLeaderboard.submitted.count == 3,
+        "successful callbacks without remote score cannot restart retries forever")
+      check(s.submissionFailures[.flowBeginner]?.score == 5000,
+        "unconfirmed best score remains available for recovery")
+      GKLeaderboard.storesSubmittedScores = true
+      s.retrySubmission(for: run); await pause()
+      check(s.submissionState(for: run) == .submitted && s.serverScores[.flowBeginner] == 5000,
+        "manual recovery resends and verifies the retained best")
+      await stop(s)
+    }
+    do {
+      let s = makeService()
+      GKLeaderboard.entries[GameCenterLeaderboard.flowBeginner.rawValue] = .init(rank: 2, score: 9000)
+      GKLeaderboard.holdSubmission = true
+      let run = GameRecord(score: 1000)
+      s.submitScore(for: run); await pause()
+      check(s.submissionState(for: run) == .submitted,
+        "a higher existing server best confirms a lower game result")
+      GKLeaderboard.callbacks.last?(NSError(domain: "LateFailure", code: 1)); await pause()
+      check(s.submissionState(for: run) == .submitted,
+        "late submit failure cannot override a confirmed server entry")
+      await stop(s)
+    }
+    do {
+      let s = makeService(delay: 1)
+      GKLeaderboard.holdWeeklyLookup = true
+      let cup = GameRecord(competition: .weeklyPiyoCup, score: 800)
+      s.submitScore(for: cup); await pause(0.015)
+      GKLeaderboard.currentOccurrence += 1
+      GKLeaderboard.weeklyLookups.first?(); await pause()
+      check(GKLeaderboard.occurrenceSubmissions == 1,
+        "weekly submission uses the loaded occurrence instance")
+      check(GKLeaderboard.submitted.isEmpty && s.submissionState(for: cup) == .failed,
+        "expired weekly occurrence does not route a delayed score into the next cup")
       await stop(s)
     }
     print("All controlled Game Center delivery scenarios passed; real-device/server verification remains separate.")

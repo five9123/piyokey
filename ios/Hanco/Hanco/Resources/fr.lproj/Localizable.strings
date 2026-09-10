@@ -1275,6 +1275,8 @@
 "game_center.submission.sign_in" = "Connectez-vous à Game Center pour enregistrer votre score.";
 "game_center.submission.pending" = "En attente d’enregistrement";
 "game_center.submission.submitting" = "Enregistrement du score…";
+"game_center.submission.confirming" = "Vérification de ton score au classement…";
+"game_center.submission.unconfirmed" = "Ton score n’a pas encore pu être confirmé. Réessaie.";
 "game_center.submission.submitted" = "Enregistré · meilleur score conservé";
 "game_center.submission.failed" = "Échec de l’enregistrement. Une nouvelle tentative sera effectuée.";
 "game_center.submission.retry" = "Réessayer";

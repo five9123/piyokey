@@ -439,7 +439,7 @@ struct FlowGameResultView: View {
             .font(.caption)
             .foregroundStyle(AppPalette.mutedInk)
             .accessibilityIdentifier("game.result.game_center_status")
-          if state == .failed {
+          if state == .failed || state == .unconfirmed {
             Button("game_center.submission.retry") {
               gameCenter.retrySubmission(for: record)
             }
@@ -455,8 +455,10 @@ struct FlowGameResultView: View {
     switch state {
     case .pending: "game_center.submission.pending"
     case .submitting: "game_center.submission.submitting"
+    case .confirming: "game_center.submission.confirming"
     case .submitted: "game_center.submission.submitted"
     case .failed: "game_center.submission.failed"
+    case .unconfirmed: "game_center.submission.unconfirmed"
     }
   }
 

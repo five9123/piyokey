@@ -1275,6 +1275,8 @@
 "game_center.submission.sign_in" = "Melde dich bei Game Center an, um deine Punktzahl einzutragen.";
 "game_center.submission.pending" = "Eintragung ausstehend";
 "game_center.submission.submitting" = "Punktzahl wird eingetragen…";
+"game_center.submission.confirming" = "Deine Ranglistenpunktzahl wird geprüft…";
+"game_center.submission.unconfirmed" = "Deine Punktzahl konnte noch nicht bestätigt werden. Bitte erneut versuchen.";
 "game_center.submission.submitted" = "Eingetragen · beste Punktzahl bleibt erhalten";
 "game_center.submission.failed" = "Eintragung fehlgeschlagen. Wird erneut versucht.";
 "game_center.submission.retry" = "Erneut versuchen";

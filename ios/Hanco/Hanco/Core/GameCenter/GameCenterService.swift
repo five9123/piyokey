@@ -378,7 +378,7 @@ final class GameCenterService: ObservableObject {
   }
 
   enum SubmissionState: Equatable {
-    case pending, submitting, submitted, failed
+    case pending, submitting, confirming, submitted, failed, unconfirmed
   }
 
   struct SubmissionFailure: Equatable {
@@ -392,6 +392,7 @@ final class GameCenterService: ObservableObject {
   @Published private(set) var submissionFailures: [GameCenterLeaderboard: SubmissionFailure] = [:]
   @Published private(set) var state: ConnectionState = .idle
   @Published private(set) var ranks: [GameCenterLeaderboard: Int] = [:]
+  @Published private(set) var serverScores: [GameCenterLeaderboard: Int] = [:]
   @Published private(set) var hasSubmittedScore = false
   @Published private(set) var lastSyncFailed = false
   @Published private(set) var isDashboardBusy = false
@@ -964,6 +965,9 @@ final class GameCenterService: ObservableObject {
       availableLeaderboards.contains(leaderboard)
     {
       submit(score: score, to: leaderboard)
+      if submissionStates[leaderboard] == .confirming, rankRefreshTasks[leaderboard] == nil {
+        scheduleRankRefresh(leaderboard)
+      }
     }
   }
 
@@ -989,13 +993,37 @@ final class GameCenterService: ObservableObject {
         playerID: playerID, weekStart: submissionWeekStart,
         error: NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut))
     }
-    GKLeaderboard.submitScore(score, context: 0, player: GKLocalPlayer.local,
-      leaderboardIDs: [leaderboard.rawValue]
-    ) { [weak self] error in
+    let completion: (Error?) -> Void = { [weak self] error in
       Task { @MainActor in
         self?.finishSubmission(score: score, leaderboard: leaderboard, token: token,
           playerID: playerID, weekStart: submissionWeekStart, error: error)
       }
+    }
+    if leaderboard == .weeklyPiyoCup {
+      // Bind the submission to this occurrence. The class method can route a delayed
+      // request to whichever weekly occurrence is active when Game Center receives it.
+      GKLeaderboard.loadLeaderboards(IDs: [leaderboard.rawValue]) { [weak self] boards, error in
+        Task { @MainActor in
+          guard let self, self.activePlayerID == playerID,
+            GKLocalPlayer.local.isAuthenticated
+          else { return }
+          self.refreshWeeklyPeriod()
+          guard self.submissionTokens[leaderboard] == token,
+            self.weeklyPeriodStart == submissionWeekStart
+          else { return }
+          guard error == nil,
+            let board = boards?.first(where: { $0.baseLeaderboardID == leaderboard.rawValue })
+          else {
+            completion(error ?? NSError(domain: "GameCenterWeeklyOccurrence", code: 1))
+            return
+          }
+          board.submitScore(score, context: 0, player: GKLocalPlayer.local,
+            completionHandler: completion)
+        }
+      }
+    } else {
+      GKLeaderboard.submitScore(score, context: 0, player: GKLocalPlayer.local,
+        leaderboardIDs: [leaderboard.rawValue], completionHandler: completion)
     }
   }
 
@@ -1019,11 +1047,9 @@ final class GameCenterService: ObservableObject {
       scheduleSubmissionRetry(leaderboard)
     } else {
       submittedScores[leaderboard] = max(submittedScores[leaderboard] ?? 0, score)
-      submissionStates[leaderboard] = .submitted
+      submissionStates[leaderboard] = .confirming
       submissionFailures[leaderboard] = nil
       submissionRetryTasks.removeValue(forKey: leaderboard)?.cancel()
-      retryCounts[leaderboard] = 0
-      hasSubmittedScore = true
       lastSyncFailed = !submissionFailures.isEmpty
       loadRanks(identifiers: [leaderboard], force: true)
       scheduleRankRefresh(leaderboard)
@@ -1055,9 +1081,48 @@ final class GameCenterService: ObservableObject {
         guard !Task.isCancelled, let self else { return }
         guard self.isSceneActive, GKLocalPlayer.local.isAuthenticated else { break }
         self.loadRanks(identifiers: [leaderboard], force: true)
+        // Wait for this read (including the service's request timeout) before deciding
+        // whether the remote entry actually contains our retained best score.
+        let deadline = Date().addingTimeInterval(self.requestTimeout + 1)
+        while self.rankLoadsInFlight.contains(leaderboard), Date() < deadline {
+          guard !Task.isCancelled else { return }
+          try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        guard !Task.isCancelled else { return }
+        if self.submissionStates[leaderboard] == .submitted { break }
       }
-      self?.rankRefreshTasks[leaderboard] = nil
+      guard !Task.isCancelled, let self else { return }
+      self.rankRefreshTasks[leaderboard] = nil
+      guard self.isSceneActive, GKLocalPlayer.local.isAuthenticated,
+        self.submissionStates[leaderboard] == .confirming,
+        let score = self.submittedScores[leaderboard]
+      else { return }
+      // A successful submit callback is not a successful read-back. Release the
+      // accepted-score floor so foreground/manual/bounded automatic retries can repair it.
+      self.submittedScores[leaderboard] = self.serverScores[leaderboard]
+      self.submissionStates[leaderboard] = .unconfirmed
+      self.submissionFailures[leaderboard] = SubmissionFailure(score: score,
+        domain: "GameCenterScoreConfirmation", code: 1, date: Date())
+      self.lastSyncFailed = true
+      self.scheduleSubmissionRetry(leaderboard)
     }
+  }
+
+  private func confirmServerScore(_ score: Int, for leaderboard: GameCenterLeaderboard) {
+    serverScores[leaderboard] = score
+    guard let expected = GameCenterLeaderboard.bestScores(from: records)[leaderboard],
+      score >= expected
+    else { return }
+    submittedScores[leaderboard] = max(submittedScores[leaderboard] ?? 0, score)
+    submissionStates[leaderboard] = .submitted
+    submissionFailures[leaderboard] = nil
+    submissionTokens[leaderboard] = nil
+    submittingScores[leaderboard] = nil
+    submissionTimeoutTasks.removeValue(forKey: leaderboard)?.cancel()
+    submissionRetryTasks.removeValue(forKey: leaderboard)?.cancel()
+    rankRefreshTasks.removeValue(forKey: leaderboard)?.cancel()
+    retryCounts[leaderboard] = 0
+    lastSyncFailed = !submissionFailures.isEmpty
   }
 
   private func synchronizeGrowthAchievements() {
@@ -1158,20 +1223,21 @@ final class GameCenterService: ObservableObject {
             range: NSRange(location: 1, length: 1)
           ) { [weak self] localEntry, _, _, entryError in
             Task { @MainActor in
-              guard let self, self.activePlayerID == playerID,
-                self.rankLoadTokens[mapped] == token
-              else { return }
+              guard let self, self.activePlayerID == playerID else { return }
+              self.refreshWeeklyPeriod()
+              guard self.rankLoadTokens[mapped] == token else { return }
               if mapped == .weeklyPiyoCup, self.weeklyPeriodStart != weekStart {
                 self.finishRankLoad(mapped, token: token, markLoaded: false)
                 return
               }
-              if let localEntry {
+              if entryError == nil, let localEntry, localEntry.rank > 0 {
                 self.ranks[mapped] = localEntry.rank
                 self.hasSubmittedScore = true
+                self.confirmServerScore(localEntry.score, for: mapped)
               }
               if entryError != nil { self.lastSyncFailed = true }
               self.finishRankLoad(mapped, token: token,
-                markLoaded: entryError == nil && localEntry != nil)
+                markLoaded: entryError == nil && (localEntry?.rank ?? 0) > 0)
             }
           }
         }
@@ -1199,6 +1265,7 @@ final class GameCenterService: ObservableObject {
     if activePlayerID != playerID {
       cancelPendingRequests()
       ranks.removeAll()
+      serverScores.removeAll()
       submittedScores.removeAll()
       submittingScores.removeAll()
       rankLoadsInFlight.removeAll()
@@ -1224,6 +1291,7 @@ final class GameCenterService: ObservableObject {
     weeklyPeriodStart = periodStart
     cancelPendingRequests(for: .weeklyPiyoCup)
     ranks[.weeklyPiyoCup] = nil
+    serverScores[.weeklyPiyoCup] = nil
     submittedScores[.weeklyPiyoCup] = nil
     submittingScores[.weeklyPiyoCup] = nil
     rankLoadsInFlight.remove(.weeklyPiyoCup)
@@ -1236,6 +1304,7 @@ final class GameCenterService: ObservableObject {
     cancelPendingRequests()
     activePlayerID = nil
     ranks.removeAll()
+    serverScores.removeAll()
     submittedScores.removeAll()
     submittingScores.removeAll()
     rankLoadsInFlight.removeAll()

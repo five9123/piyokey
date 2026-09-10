@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드·피요컵 분리·공통 복구 구현 및 merged SHA e074ed1 검증 완료. ASC 1.1.1 초안·6개 로케일 변경 안내 저장, 구형 4개 archive·기본 v4 전환 완료. Flow 초급 v5 심사 대기 → Live 확인 후 앱 전환. Claude 리뷰는 직전 API 429로 미완료이며 maintainer·서명·실기기 gate도 열림. 공개판은 1.1 (24) |
+| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드·피요컵 분리·공통 복구 구현 및 e074ed1 검증 후 서버 score 재조회·미확인 복구·주간 회차 고정 추가 검증 중. ASC 1.1.1 초안·6개 로케일 변경 안내 저장, 구형 4개 archive·기본 v4 전환 완료. Flow 초급 v5 심사 대기 → Live 확인 후 앱 전환. Claude 리뷰는 직전 API 429로 미완료이며 maintainer·서명·실기기 gate도 열림. 공개판은 1.1 (24) |
 | TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
 | #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
