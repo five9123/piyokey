@@ -164,6 +164,8 @@ struct AppRootView: View {
         mainTabs
       }
     }
+    // An explicit native Game Center request must finish before another session can start.
+    .disabled(gameCenter.isDashboardBusy)
     .hancoAdaptiveLayout()
     .environmentObject(deckLibrary)
     .environmentObject(deckMakerPurchaseStore)

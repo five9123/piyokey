@@ -575,6 +575,8 @@ enum StampReward: Int, CaseIterable, Identifiable {
 }
 
 struct MyPiyoDetailView: View {
+  @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var retention: RetentionLibrary
   @EnvironmentObject private var companion: MascotCompanionLibrary
   @EnvironmentObject private var progress: CurriculumProgressLibrary
@@ -587,10 +589,13 @@ struct MyPiyoDetailView: View {
     ScrollView {
       VStack(spacing: 18) {
         profileCard
+        GameCenterGrowthCard()
         stampCard
         rewardsCard
       }
       .padding(18)
+      .frame(width: min(adaptiveMetrics.availableWidth, 720))
+      .frame(maxWidth: .infinity)
     }
     .background(
       LinearGradient(
@@ -610,7 +615,10 @@ struct MyPiyoDetailView: View {
   }
 
   private var profileCard: some View {
-    HStack(spacing: 16) {
+    let layout = dynamicTypeSize.isAccessibilitySize
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
+      : AnyLayout(HStackLayout(spacing: 16))
+    return layout {
       GrowingMascotView(
         mood: .idle,
         showsNameTag: false,
@@ -664,7 +672,14 @@ struct MyPiyoDetailView: View {
       StampWeekHeader(days: days, stampedDayCount: stampedDays, streak: streak)
         .accessibilityIdentifier("my_piyo.detail.stamps")
 
-      SevenDayStampRow(today: today)
+      if dynamicTypeSize.isAccessibilitySize {
+        ScrollView(.horizontal) {
+          SevenDayStampRow(today: today)
+            .frame(width: max(560, min(adaptiveMetrics.availableWidth, 720) - 72))
+        }
+      } else {
+        SevenDayStampRow(today: today)
+      }
 
       Text(
         AppLocalization.format("retention.streak.longest_format",

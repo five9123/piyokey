@@ -218,6 +218,11 @@ enum PiyoCupWeek {
     else { return false }
     return date >= weekStart && date < nextWeekStart
   }
+
+  static func end(containing date: Date) -> Date {
+    // JST does not observe daylight saving time.
+    start(containing: date).addingTimeInterval(7 * 24 * 60 * 60)
+  }
 }
 
 struct GameCenterRankedDeck: Equatable {
@@ -393,6 +398,8 @@ final class GameCenterService: ObservableObject {
   @Published private(set) var state: ConnectionState = .idle
   @Published private(set) var ranks: [GameCenterLeaderboard: Int] = [:]
   @Published private(set) var serverScores: [GameCenterLeaderboard: Int] = [:]
+  @Published private(set) var rankingSummaries: [GameCenterLeaderboard: GameCenterRankingReadState] = [:]
+  @Published private(set) var rankingDetails: [GameCenterRankingQuery: GameCenterRankingReadState] = [:]
   @Published private(set) var hasSubmittedScore = false
   @Published private(set) var lastSyncFailed = false
   @Published private(set) var isDashboardBusy = false
@@ -417,14 +424,20 @@ final class GameCenterService: ObservableObject {
   private weak var authenticationController: UIViewController?
   private var authenticationPresentationTask: Task<Void, Never>?
   private var authenticationDismissalTask: Task<Void, Never>?
+  private var authenticationRequestTimeoutTask: Task<Void, Never>?
   private var requestedLeaderboard: GameCenterLeaderboard?
   private var shouldShowAllLeaderboards = false
+  private var shouldShowAchievements = false
+  private var requestedPlayerScope = GameCenterRankingScope.global
+  private var detailTokens: [GameCenterRankingQuery: Int] = [:]
+  private var detailTimeouts: [GameCenterRankingQuery: Task<Void, Never>] = [:]
+  private var nextDetailToken = 0
   private var dashboardRequestGeneration = 0
   private var dashboardPresentationTask: Task<Void, Never>?
   private var synchronizationTask: Task<Void, Never>?
   private var availabilityProbeTimeoutTask: Task<Void, Never>?
   private var records: [GameRecord] = []
-  private var growthSnapshot = GameCenterGrowthSnapshot.empty
+  @Published private var growthSnapshot = GameCenterGrowthSnapshot.empty
   private var activePlayerID: String?
   private var weeklyPeriodStart: Date?
   private var submittedScores: [GameCenterLeaderboard: Int] = [:]
@@ -450,6 +463,28 @@ final class GameCenterService: ObservableObject {
     self.availabilityContract = contract
     runtimeAvailability = GameCenterRuntimeAvailability(contract: contract)
     availableLeaderboards = contract.availableLeaderboards
+    #if DEBUG
+    if ProcessInfo.processInfo.environment["UITEST_GAME_CENTER_RANKINGS"] == "1" {
+      // Presentation fixture only: liveServicesEnabled stays false, so this cannot submit/open Game Center.
+      state = .authenticated(displayName: "Fixture")
+      weeklyPeriodStart = PiyoCupWeek.start(containing: Date())
+      for board in GameCenterLeaderboard.allCases {
+        for scope in GameCenterRankingScope.allCases {
+          let rank = scope == .global ? 42 : 3
+          let me = GameCenterRankingEntry(id: "me", displayName: "Fixture", rank: rank, score: 123456789)
+          let rival = GameCenterRankingEntry(id: "rival", displayName: "Alexandra Long Display Name", rank: rank - 1, score: 123456999)
+          let snapshot = GameCenterRankingSnapshot(localEntry: me, entries: [rival, me],
+            totalPlayerCount: scope == .global ? 123456 : 5, fetchedAt: Date(),
+            periodStart: board == .weeklyPiyoCup ? PiyoCupWeek.start(containing: Date()) : nil)
+          rankingDetails[.init(leaderboard: board, scope: scope)] = .init(snapshot: snapshot)
+          if scope == .global {
+            rankingSummaries[board] = .init(snapshot: snapshot)
+            ranks[board] = rank
+          }
+        }
+      }
+    }
+    #endif
   }
 
   var isAuthenticated: Bool {
@@ -482,6 +517,30 @@ final class GameCenterService: ObservableObject {
     growthSnapshot = growth
   }
 
+  var growthProgress: [GameCenterGrowthAchievement: Double] {
+    GameCenterGrowthAchievement.progress(for: growthSnapshot)
+  }
+
+  func localBestScore(for leaderboard: GameCenterLeaderboard, asOf date: Date = Date()) -> Int? {
+    GameCenterLeaderboard.bestScores(from: records, asOf: date)[leaderboard]
+  }
+
+  func summary(for leaderboard: GameCenterLeaderboard, asOf date: Date = Date()) -> GameCenterRankingReadState {
+    let value = rankingSummaries[leaderboard] ?? GameCenterRankingReadState()
+    guard value.snapshot?.belongsToCurrentWeek(asOf: date) != false else {
+      return GameCenterRankingReadState()
+    }
+    return value
+  }
+
+  func refreshRankings(_ identifiers: [GameCenterLeaderboard], force: Bool = false) {
+    prepare()
+    guard isEnabled, isSceneActive, GKLocalPlayer.local.isAuthenticated else { return }
+    refreshWeeklyPeriod()
+    let needed = identifiers.filter { force || summary(for: $0).needsRefresh(asOf: Date()) }
+    loadRanks(identifiers: needed, force: true)
+  }
+
   func isLeaderboardAvailable(for record: GameRecord) -> Bool {
     !effectiveLeaderboards(for: record).isEmpty
   }
@@ -503,6 +562,9 @@ final class GameCenterService: ObservableObject {
   /// Initializes local Game Center state without presenting sign-in UI. Authentication
   /// controllers are accepted only during an explicit user dashboard request.
   func prepare() {
+    #if DEBUG
+    if !isEnabled, ProcessInfo.processInfo.environment["UITEST_GAME_CENTER_RANKINGS"] == "1" { return }
+    #endif
     guard isEnabled else {
       state = .unavailable
       return
@@ -514,6 +576,7 @@ final class GameCenterService: ObservableObject {
       synchronize()
       return
     }
+    if activePlayerID != nil { clearPlayerSession() }
     startAuthenticationIfNeeded(allowsPresentation: false)
   }
 
@@ -529,7 +592,19 @@ final class GameCenterService: ObservableObject {
     guard let leaderboard = effectiveLeaderboards(for: record).first else {
       return
     }
+    showLeaderboard(leaderboard)
+  }
+
+  func showLeaderboard(_ leaderboard: GameCenterLeaderboard, scope: GameCenterRankingScope = .global) {
+    guard canPresentDashboard, availableLeaderboards.contains(leaderboard) else { return }
+    requestedPlayerScope = scope
     beginDashboardRequest(leaderboard: leaderboard, showsAllLeaderboards: false)
+  }
+
+  func showAchievements() {
+    guard canPresentDashboard else { return }
+    shouldShowAchievements = true
+    beginDashboardRequest(leaderboard: nil, showsAllLeaderboards: false)
   }
 
   func submitScore(for record: GameRecord) {
@@ -541,9 +616,12 @@ final class GameCenterService: ObservableObject {
     adoptAuthenticatedPlayer()
     refreshWeeklyPeriod()
     // Always drain retained best scores, including a higher score that previously failed.
+    for leaderboard in effectiveLeaderboards(for: record) {
+      invalidateRankingDetails(for: leaderboard)
+    }
     synchronizeBestScores()
     synchronizeGrowthAchievements()
-    loadRanks()
+    loadRanks(identifiers: effectiveLeaderboards(for: record), force: true)
   }
 
   func synchronize() {
@@ -600,6 +678,19 @@ final class GameCenterService: ObservableObject {
     authenticationGeneration &+= 1
     let generation = authenticationGeneration
     state = .authenticating
+    authenticationRequestTimeoutTask?.cancel()
+    if allowsPresentation {
+      authenticationRequestTimeoutTask = Task { @MainActor [weak self] in
+        guard let delay = self?.requestTimeout else { return }
+        try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+        guard !Task.isCancelled, let self,
+          self.authenticationGeneration == generation, self.authenticationController == nil,
+          self.authenticationAttemptActive else { return }
+        self.state = .signInRequired
+        self.resetAuthenticationForRetry()
+        self.finishDashboardRequest()
+      }
+    }
     GKLocalPlayer.local.authenticateHandler = { [weak self] viewController, error in
       Task { @MainActor in
         self?.handleAuthentication(
@@ -617,10 +708,13 @@ final class GameCenterService: ObservableObject {
     generation: Int
   ) {
     guard authenticationGeneration == generation else { return }
+    authenticationRequestTimeoutTask?.cancel()
+    authenticationRequestTimeoutTask = nil
     if let viewController {
       guard authenticationAllowsPresentation, isDashboardBusy, isSceneActive else {
         state = .signInRequired
         resetAuthenticationForRetry()
+        finishDashboardRequest()
         return
       }
       scheduleAuthenticationPresentation(viewController, generation: generation)
@@ -841,13 +935,15 @@ final class GameCenterService: ObservableObject {
         if #available(iOS 18.0, *) {
           accessPoint.trigger(
             leaderboardID: leaderboard.rawValue,
-            playerScope: .global,
+            playerScope: self.requestedPlayerScope == .friends ? .friendsOnly : .global,
             timeScope: .allTime,
             handler: nil
           )
         } else {
           accessPoint.trigger(state: .leaderboards) {}
         }
+      } else if self.shouldShowAchievements {
+        accessPoint.trigger(state: .achievements) {}
       } else if self.shouldShowAllLeaderboards {
         accessPoint.trigger(state: .leaderboards) {}
       } else {
@@ -897,10 +993,14 @@ final class GameCenterService: ObservableObject {
   private func finishDashboardRequest() {
     requestedLeaderboard = nil
     shouldShowAllLeaderboards = false
+    shouldShowAchievements = false
+    requestedPlayerScope = .global
     isDashboardBusy = false
   }
 
   private func resetAuthenticationForRetry() {
+    authenticationRequestTimeoutTask?.cancel()
+    authenticationRequestTimeoutTask = nil
     authenticationGeneration &+= 1
     authenticationAttemptActive = false
     authenticationAllowsPresentation = false
@@ -938,7 +1038,9 @@ final class GameCenterService: ObservableObject {
     }
     GKLeaderboard.loadLeaderboards(IDs: nil) { [weak self] leaderboards, error in
       Task { @MainActor in
-        guard let self, self.activePlayerID == playerID else { return }
+        guard let self, self.activePlayerID == playerID,
+          GKLocalPlayer.local.isAuthenticated, GKLocalPlayer.local.gamePlayerID == playerID
+        else { return }
         let returned: Set<GameCenterLeaderboard> = Set(
           (leaderboards ?? []).compactMap { leaderboard -> GameCenterLeaderboard? in
             guard leaderboard.releaseState.contains(.released) else { return nil }
@@ -981,6 +1083,7 @@ final class GameCenterService: ObservableObject {
     guard score >= 0,
       score > max(submittedScores[leaderboard] ?? -1, submittingScores[leaderboard] ?? -1)
     else { return }
+    invalidateRankingDetails(for: leaderboard)
     submittingScores[leaderboard] = score
     submissionStates[leaderboard] = .submitting
     nextSubmissionToken &+= 1
@@ -1145,13 +1248,17 @@ final class GameCenterService: ObservableObject {
       reportingAchievements[achievement] = percent
       let value = GKAchievement(identifier: achievement.rawValue)
       value.percentComplete = percent
-      value.showsCompletionBanner = percent >= 100
+      // Growth may be mirrored while a lesson/game is active. The app celebrates
+      // locally outside the session; a deferred Game Center banner must not interrupt it.
+      value.showsCompletionBanner = false
       return value
     }
     let playerID = activePlayerID
     GKAchievement.report(gameKitAchievements) { [weak self] error in
       Task { @MainActor in
-        guard let self, self.activePlayerID == playerID else { return }
+        guard let self, self.activePlayerID == playerID,
+          GKLocalPlayer.local.isAuthenticated, GKLocalPlayer.local.gamePlayerID == playerID
+        else { return }
         changed.forEach { achievement, percent in
           if self.reportingAchievements[achievement] == percent {
             self.reportingAchievements[achievement] = nil
@@ -1189,6 +1296,8 @@ final class GameCenterService: ObservableObject {
       tokens[leaderboard] = nextRankLoadToken
       rankLoadTokens[leaderboard] = nextRankLoadToken
       rankLoadsInFlight.insert(leaderboard)
+      rankingSummaries[leaderboard, default: GameCenterRankingReadState()].isLoading = true
+      rankingSummaries[leaderboard]?.failed = false
       let token = nextRankLoadToken
       rankTimeoutTasks[leaderboard]?.cancel()
       rankTimeoutTasks[leaderboard] = Task { @MainActor [weak self] in
@@ -1200,7 +1309,9 @@ final class GameCenterService: ObservableObject {
     }
     GKLeaderboard.loadLeaderboards(IDs: pending.map(\.rawValue)) { [weak self] leaderboards, error in
       Task { @MainActor in
-        guard let self, self.activePlayerID == playerID else { return }
+        guard let self, self.activePlayerID == playerID,
+          GKLocalPlayer.local.isAuthenticated, GKLocalPlayer.local.gamePlayerID == playerID
+        else { return }
         guard error == nil, let leaderboards else {
           self.lastSyncFailed = true
           pending.forEach {
@@ -1222,13 +1333,21 @@ final class GameCenterService: ObservableObject {
           guard let mapped = GameCenterLeaderboard(rawValue: leaderboard.baseLeaderboardID),
             let token = tokens[mapped], self.rankLoadTokens[mapped] == token
           else { continue }
+          if mapped == .weeklyPiyoCup,
+            leaderboard.startDate != weekStart || leaderboard.duration != 7 * 24 * 60 * 60
+          {
+            self.finishRankLoad(mapped, token: token, markLoaded: false)
+            continue
+          }
           leaderboard.loadEntries(
             for: .global,
             timeScope: .allTime,
             range: NSRange(location: 1, length: 1)
-          ) { [weak self] localEntry, _, _, entryError in
+          ) { [weak self] localEntry, entries, total, entryError in
             Task { @MainActor in
-              guard let self, self.activePlayerID == playerID else { return }
+              guard let self, self.activePlayerID == playerID,
+          GKLocalPlayer.local.isAuthenticated, GKLocalPlayer.local.gamePlayerID == playerID
+        else { return }
               self.refreshWeeklyPeriod()
               guard self.rankLoadTokens[mapped] == token else { return }
               if mapped == .weeklyPiyoCup, self.weeklyPeriodStart != weekStart {
@@ -1239,10 +1358,18 @@ final class GameCenterService: ObservableObject {
                 self.ranks[mapped] = localEntry.rank
                 self.hasSubmittedScore = true
                 self.confirmServerScore(localEntry.score, for: mapped)
+              } else if entryError == nil {
+                self.ranks[mapped] = nil
+                self.serverScores[mapped] = nil
+              }
+              if entryError == nil {
+                self.rankingSummaries[mapped]?.snapshot = Self.rankingSnapshot(
+                  localEntry: localEntry, entries: entries ?? [], total: total,
+                  periodStart: mapped == .weeklyPiyoCup ? weekStart : nil)
               }
               if entryError != nil { self.lastSyncFailed = true }
               self.finishRankLoad(mapped, token: token,
-                markLoaded: entryError == nil && (localEntry?.rank ?? 0) > 0)
+                markLoaded: entryError == nil)
             }
           }
         }
@@ -1259,10 +1386,135 @@ final class GameCenterService: ObservableObject {
     rankLoadTokens[leaderboard] = nil
     rankTimeoutTasks.removeValue(forKey: leaderboard)?.cancel()
     rankLoadsInFlight.remove(leaderboard)
+    rankingSummaries[leaderboard, default: GameCenterRankingReadState()].isLoading = false
+    rankingSummaries[leaderboard]?.failed = !markLoaded
     if markLoaded { loadedRankLeaderboards.insert(leaderboard) }
     guard pendingRankReloads.remove(leaderboard) != nil else { return }
     loadedRankLeaderboards.remove(leaderboard)
     loadRanks(identifiers: [leaderboard], force: true)
+  }
+
+  /// Detailed reads are lazy and separately scoped; a friends rank must never
+  /// overwrite the global rank used by result cards or score confirmation.
+  func refreshRankingDetails(_ query: GameCenterRankingQuery, force: Bool = false) {
+    prepare()
+    guard isEnabled, isSceneActive, GKLocalPlayer.local.isAuthenticated,
+      availableLeaderboards.contains(query.leaderboard)
+    else { return }
+    refreshWeeklyPeriod()
+    let previous = rankingDetails[query] ?? GameCenterRankingReadState()
+    guard !previous.isLoading, force || previous.needsRefresh(asOf: Date()) else { return }
+    nextDetailToken &+= 1
+    let token = nextDetailToken
+    let playerID = activePlayerID
+    let weekStart = weeklyPeriodStart
+    detailTokens[query] = token
+    rankingDetails[query, default: GameCenterRankingReadState()].isLoading = true
+    rankingDetails[query]?.failed = false
+    detailTimeouts[query] = Task { @MainActor [weak self] in
+      guard let delay = self?.requestTimeout else { return }
+      try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+      guard !Task.isCancelled else { return }
+      self?.finishRankingDetails(query, token: token, snapshot: nil)
+    }
+    GKLeaderboard.loadLeaderboards(IDs: [query.leaderboard.rawValue]) { [weak self] boards, error in
+      Task { @MainActor in
+        guard let self, self.activePlayerID == playerID,
+          self.detailTokens[query] == token else { return }
+        guard error == nil, let board = boards?.first(where: {
+          $0.baseLeaderboardID == query.leaderboard.rawValue
+        }) else {
+          self.finishRankingDetails(query, token: token, snapshot: nil)
+          return
+        }
+        self.refreshWeeklyPeriod()
+        guard self.detailTokens[query] == token else { return }
+        if query.leaderboard == .weeklyPiyoCup,
+          board.startDate != weekStart || board.duration != 7 * 24 * 60 * 60
+        {
+          self.finishRankingDetails(query, token: token, snapshot: nil)
+          return
+        }
+        self.loadRankingNeighborhood(board, query: query, token: token, playerID: playerID,
+          weekStart: weekStart, range: NSRange(location: 1, length: 5), remainingReads: 2)
+      }
+    }
+  }
+
+  private func loadRankingNeighborhood(
+    _ board: GKLeaderboard, query: GameCenterRankingQuery, token: Int, playerID: String?,
+    weekStart: Date?, range: NSRange, remainingReads: Int
+  ) {
+    board.loadEntries(for: query.scope == .friends ? .friendsOnly : .global,
+      timeScope: .allTime, range: range
+    ) { [weak self] localEntry, entries, total, error in
+      Task { @MainActor in
+        guard let self, self.activePlayerID == playerID,
+          GKLocalPlayer.local.isAuthenticated, GKLocalPlayer.local.gamePlayerID == playerID
+        else { return }
+        self.refreshWeeklyPeriod()
+        guard self.detailTokens[query] == token else { return }
+        guard error == nil,
+          query.leaderboard != .weeklyPiyoCup || self.weeklyPeriodStart == weekStart
+        else {
+          self.finishRankingDetails(query, token: token, snapshot: nil)
+          return
+        }
+        let desired = GameCenterRankingSnapshot.nearbyRange(localRank: localEntry?.rank)
+        if let localEntry, localEntry.rank > 0, desired != range, remainingReads > 0 {
+          self.loadRankingNeighborhood(board, query: query, token: token, playerID: playerID,
+            weekStart: weekStart, range: desired, remainingReads: remainingReads - 1)
+          return
+        }
+        let nearby = (entries ?? []).filter { entry in
+          guard let localEntry, localEntry.rank > 0 else { return true }
+          return abs(entry.rank - localEntry.rank) <= 2
+        }
+        self.finishRankingDetails(query, token: token,
+          snapshot: Self.rankingSnapshot(localEntry: localEntry, entries: nearby, total: total,
+            periodStart: query.leaderboard == .weeklyPiyoCup ? weekStart : nil))
+      }
+    }
+  }
+
+  private static func rankingSnapshot(
+    localEntry: GKLeaderboard.Entry?, entries: [GKLeaderboard.Entry], total: Int, periodStart: Date?
+  ) -> GameCenterRankingSnapshot {
+    func convert(_ entry: GKLeaderboard.Entry) -> GameCenterRankingEntry {
+      GameCenterRankingEntry(id: entry.player.gamePlayerID, displayName: entry.player.displayName,
+        rank: entry.rank, score: entry.score)
+    }
+    return GameCenterRankingSnapshot(
+      localEntry: localEntry.flatMap { $0.rank > 0 ? convert($0) : nil },
+      entries: entries.filter { $0.rank > 0 }.map(convert), totalPlayerCount: max(0, total),
+      fetchedAt: Date(), periodStart: periodStart)
+  }
+
+  private func finishRankingDetails(
+    _ query: GameCenterRankingQuery, token: Int, snapshot: GameCenterRankingSnapshot?
+  ) {
+    guard detailTokens[query] == token else { return }
+    detailTokens[query] = nil
+    detailTimeouts.removeValue(forKey: query)?.cancel()
+    rankingDetails[query, default: GameCenterRankingReadState()].isLoading = false
+    rankingDetails[query]?.failed = snapshot == nil
+    if let snapshot { rankingDetails[query]?.snapshot = snapshot }
+  }
+
+  private func invalidateRankingDetails(for leaderboard: GameCenterLeaderboard) {
+    for query in Array(rankingDetails.keys) where query.leaderboard == leaderboard {
+      rankingDetails[query] = nil
+      detailTokens[query] = nil
+      detailTimeouts.removeValue(forKey: query)?.cancel()
+    }
+  }
+
+  private func clearRankingReads() {
+    rankingSummaries.removeAll()
+    rankingDetails.removeAll()
+    detailTokens.removeAll()
+    detailTimeouts.values.forEach { $0.cancel() }
+    detailTimeouts.removeAll()
   }
 
   private func adoptAuthenticatedPlayer() {
@@ -1270,6 +1522,7 @@ final class GameCenterService: ObservableObject {
     if activePlayerID != playerID {
       cancelPendingRequests()
       ranks.removeAll()
+      clearRankingReads()
       serverScores.removeAll()
       submittedScores.removeAll()
       submittingScores.removeAll()
@@ -1296,6 +1549,12 @@ final class GameCenterService: ObservableObject {
     weeklyPeriodStart = periodStart
     cancelPendingRequests(for: .weeklyPiyoCup)
     ranks[.weeklyPiyoCup] = nil
+    rankingSummaries[.weeklyPiyoCup] = nil
+    for query in Array(rankingDetails.keys) where query.leaderboard == .weeklyPiyoCup {
+      rankingDetails[query] = nil
+      detailTokens[query] = nil
+      detailTimeouts.removeValue(forKey: query)?.cancel()
+    }
     serverScores[.weeklyPiyoCup] = nil
     submittedScores[.weeklyPiyoCup] = nil
     submittingScores[.weeklyPiyoCup] = nil
@@ -1309,6 +1568,7 @@ final class GameCenterService: ObservableObject {
     cancelPendingRequests()
     activePlayerID = nil
     ranks.removeAll()
+    clearRankingReads()
     serverScores.removeAll()
     submittedScores.removeAll()
     submittingScores.removeAll()

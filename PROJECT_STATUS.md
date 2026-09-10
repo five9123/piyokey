@@ -1,6 +1,6 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-10 JST
+마지막 갱신: 2026-09-11 JST
 기준 저장소: `five9123-maker/piyokey`
 기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
 
@@ -23,7 +23,8 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드·피요컵 분리·공통 복구와 서버 score 재조회·미확인 복구·주간 회차 고정 구현. 랭킹 버튼·등록 상태를 공통 점수 카드로 이동했고 iPhone 단위 133/UI 4 및 iPad Flow·Cup·OS UI 3 검증 통과. 기존 iPad 종료 테스트의 탭 탐색 전용 수정·재검증 결과는 PR #183 최신 SHA evidence에서 추적. ASC 1.1.1 초안·6개 로케일 변경 안내·새 심사 설명 저장, 구형 4개 archive·기본 v4 전환 완료. v5 Live 확인 후 앱 enum·intended·출고 후보 baseline·테스트를 v5로 전환. c127b04 Claude 리뷰 통과 후 이 전환으로 새 head 검증·리뷰가 필요하며 maintainer·서명·실기기 gate는 열림. 공개판은 1.1 (24) |
+| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | Source merged / [PR #183](https://github.com/five9123-maker/piyokey/pull/183) → main `602e923` / 외부 gate 열림 | 모든 입력 방식·Flow/Cup 격리·등록 복구·v5 전환 소스는 병합됐다. 2026-09-11 ASC 사이드바에서 1.1.1 Waiting for Review, 1.1 Ready for Distribution을 확인했다. 실제 계정·서명 빌드·심사 결과와 #181의 외부 완료 근거는 별도 추적한다. |
+| [#184 Game Center 경험 통합](https://github.com/five9123-maker/piyokey/issues/184) | Verify / `codex/184-game-center-experience` | 허브·난이도별 순위, 주간 요약, 결과 공통 패널, 주변/친구 기록, 성장 연결 구현과 focused 검증·current-head Claude review·PR 준비. ASC 현행 16개와 업적 5개 Live 직접 확인; 이전 Flow v4 포함 콘솔은 17개. 확장 결정·검증 경계는 `docs/GAME_CENTER_EXPERIENCE.md`. |
 | TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
 | #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
@@ -66,10 +67,10 @@
 
 ## 즉시 작업 순서
 
-1. #181 / PR #183에서 모든 키보드 Game Center 참여, 피요컵/일반 Flow 분리와 TYP-120 등록 복구를 검증한다. 16개 보드×3개 입력 방식과 응답 지연·실패·로그인·foreground를 포함한다.
-2. 최신 main 병합 → clean 구현 SHA의 focused 검증·evidence → 새 head Claude review → maintainer gate를 통과한다. 기존 분리 PR의 8483f7b 리뷰는 확장된 핫픽스에 재사용하지 않는다.
+1. #181/PR #183의 병합된 소스를 기반으로 #184 게임별 순위 접근·주변 기록·친구 비교·성장 연계를 검증한다. 열린 #181 외부 gate나 다른 작업을 중복 종료하지 않는다.
+2. #184에서 최신 main 병합 → clean 구현 SHA focused 검증·evidence → 현재 PR head Claude review와 finding 해결 → 리뷰 가능한 PR까지 준비한다. 병합은 maintainer 승인 후 진행한다.
 3. ASC 기본 보드 v4 전환·구형 Flow v3 3개/weekly v3 archive를 완료했다. Flow 초급 v5 단독 심사 제출(acb65714-82c5-477e-96ca-e39b320280c3)의 v5 Live를 확인하고 앱 ID·설정·테스트를 전환했다. 새 앱 실제 검증·배포 전에는 ASC 기본 v4와 기존 v4 보드를 유지한다. 상세 사실과 순서는 `release/GAME_CENTER_HOTFIX_20260910.md`를 따른다.
-4. 승인·병합한 최신 main에서 1.1.1 (25)를 서명·업로드한다. 실제 iPhone/iPad Game Center 제출·조회, 전체 iOS 단위 회귀와 기존 출시 gate를 확인하고 App Review 결과를 확인한 단계까지만 완료 처리한다.
+4. #184를 포함하는 후속 배포는 별도 승인된 최신 clean main을 사용한다. 현재 심사 대기 중인 1.1.1과 #184의 미배포 소스를 구분하며, 실제 iPhone/iPad Game Center 제출·조회·전체 iOS 회귀와 기존 출시 gate를 통과한 단계까지만 완료 처리한다.
 
 ## 출시 완료 판단
 

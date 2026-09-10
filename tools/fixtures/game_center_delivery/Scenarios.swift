@@ -16,6 +16,7 @@ import Foundation
     GKLeaderboard.error = nil
     GKLeaderboard.storesSubmittedScores = true
     GKLeaderboard.currentOccurrence = 0
+    GKLeaderboard.occurrenceStart = nil
     GKLeaderboard.occurrenceSubmissions = 0
     GKLeaderboard.holdWeeklyLookup = false
     GKLeaderboard.weeklyLookups = []
@@ -25,6 +26,12 @@ import Foundation
     GKLeaderboard.probeIDs = nil
     GKLeaderboard.probeReleased = true
     GKLeaderboard.entryLoads = 0
+    GKLeaderboard.readHandler = nil
+    GKLeaderboard.loadedRanges = []
+    GKAccessPoint.shared.openedBoard = nil
+    GKAccessPoint.shared.openedScope = nil
+    GKAccessPoint.shared.openedState = nil
+    GKAchievement.reportedBanners = []
     GKAccessPoint.shared.isPresentingGameCenter = false
     GKAccessPoint.shared.submittedAtOpen = []
     return GameCenterService(isEnabled: true, availabilityContract:
@@ -37,6 +44,28 @@ import Foundation
     await pause(0.15)
   }
   @MainActor static func main() async {
+    do {
+      let s = makeService(timeout: 0.07)
+      GKLocalPlayer.local.isAuthenticated = false
+      s.showLeaderboard(.flowBeginner)
+      await pause(0.12)
+      check(!s.isDashboardBusy && s.state == .signInRequired,
+        "silent authentication timeout releases the app navigation")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.5)
+      GKLocalPlayer.local.isAuthenticated = false
+      s.showLeaderboard(.flowBeginner)
+      s.updateSceneActivity(false)
+      GKLocalPlayer.local.authenticateHandler?(UIViewController(), nil)
+      await pause()
+      check(!s.isDashboardBusy, "authentication arriving in background releases navigation")
+      check(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        .first?.windows.first?.rootViewController?.presentedViewController == nil,
+        "background authentication callback never presents a modal")
+      await stop(s)
+    }
     // Real service mapping/submit for every board and every keyboard with an empty probe.
     for mode in SessionInputMode.allCases {
       let service = makeService()
@@ -203,6 +232,94 @@ import Foundation
         "weekly submission uses the loaded occurrence instance")
       check(GKLeaderboard.submitted.isEmpty && s.submissionState(for: cup) == .failed,
         "expired weekly occurrence does not route a delayed score into the next cup")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.5)
+      s.refreshRankings([.flowBeginner]); await pause()
+      check(s.summary(for: .flowBeginner).snapshot?.totalPlayerCount == 0,
+        "successful empty board is distinct from failed or not fetched")
+      let count = GKLeaderboard.entryLoads
+      s.refreshRankings([.flowBeginner]); s.prepare(); await pause()
+      check(GKLeaderboard.entryLoads == count, "fresh empty boards do not refetch on repeated appearances")
+      GKLeaderboard.readHandler = { _, _, _, done in done(nil, nil, 0, NSError(domain: "Offline", code: 1)) }
+      s.refreshRankings([.flowBeginner], force: true); await pause()
+      check(s.summary(for: .flowBeginner).failed && s.summary(for: .flowBeginner).snapshot != nil,
+        "failed summary keeps the last successful value and timestamp")
+      GKLocalPlayer.local.isAuthenticated = false
+      s.prepare()
+      check(s.rankingSummaries.isEmpty && s.rankingDetails.isEmpty, "logout clears account-scoped cached reads")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.5)
+      let global = GameCenterRankingQuery(leaderboard: .flowBeginner, scope: .global)
+      let friends = GameCenterRankingQuery(leaderboard: .flowBeginner, scope: .friends)
+      let rival = GKPlayer(); rival.gamePlayerID = "rival"; rival.displayName = "Rival"
+      GKLeaderboard.readHandler = { _, scope, range, done in
+        let localRank = scope == .global ? 42 : 3
+        let local = GKLeaderboard.Entry(rank: localRank, score: 100)
+        let above = GKLeaderboard.Entry(rank: localRank - 1, score: 125, player: rival)
+        done(local, range.location == max(1, localRank - 2) ? [above, local] : [], 100, nil)
+      }
+      s.refreshRankingDetails(global); await pause()
+      check(s.rankingDetails[global]?.snapshot?.pointsToMatch == 25,
+        "nearby target comes from an adjacent row returned by the server")
+      check(GKLeaderboard.loadedRanges.contains { $0.2 == NSRange(location: 40, length: 5) },
+        "far-away local rank fetches its own neighborhood")
+      s.refreshRankingDetails(friends); await pause()
+      check(s.rankingDetails[friends]?.snapshot?.localEntry?.rank == 3 && s.ranks[.flowBeginner] == 42,
+        "friends rank never overwrites global result rank")
+      let old = s.rankingDetails[friends]?.snapshot
+      GKLeaderboard.readHandler = { _, _, _, done in done(nil, nil, 0, NSError(domain: "Offline", code: 1)) }
+      s.refreshRankingDetails(friends, force: true); await pause()
+      check(s.rankingDetails[friends]?.failed == true && s.rankingDetails[friends]?.snapshot == old,
+        "failed neighborhood keeps the prior verified data")
+      s.submitScore(for: GameRecord(score: 200)); await pause()
+      check(s.rankingDetails[global] == nil && s.rankingDetails[friends] == nil,
+        "new best invalidates both scope caches before submitting")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.08)
+      let query = GameCenterRankingQuery(leaderboard: .flowBeginner, scope: .global)
+      var oldCallback: ((GKLeaderboard.Entry?, [GKLeaderboard.Entry]?, Int, Error?) -> Void)?
+      GKLeaderboard.readHandler = { _, _, range, done in if range.length == 5 { oldCallback = done } else { done(nil, [], 0, nil) } }
+      s.refreshRankingDetails(query); await pause(0.12)
+      check(s.rankingDetails[query]?.failed == true && s.rankingDetails[query]?.isLoading == false,
+        "neighborhood timeout releases loading state")
+      oldCallback?(.init(rank: 2, score: 100), [], 2, nil); await pause()
+      check(s.rankingDetails[query]?.snapshot == nil, "timed-out neighborhood callback cannot restore stale data")
+      s.refreshRankingDetails(query, force: true); await pause(0.01)
+      GKLocalPlayer.local.gamePlayerID = "new-account"
+      s.prepare(); await pause()
+      oldCallback?(.init(rank: 2, score: 100), [], 2, nil); await pause()
+      check(s.rankingDetails[query] == nil, "late neighborhood callback cannot cross accounts")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.5)
+      GKLeaderboard.occurrenceStart = PiyoCupWeek.start(containing: Date()).addingTimeInterval(-604800)
+      let query = GameCenterRankingQuery(leaderboard: .weeklyPiyoCup, scope: .global)
+      s.refreshRankingDetails(query); await pause()
+      check(s.rankingDetails[query]?.failed == true && s.rankingDetails[query]?.snapshot == nil,
+        "a prior server Cup occurrence cannot become the current neighborhood")
+      check(s.summary(for: .weeklyPiyoCup).failed && s.summary(for: .weeklyPiyoCup).snapshot == nil,
+        "a prior server Cup occurrence cannot become the current summary")
+      await stop(s)
+    }
+    for board in GameCenterLeaderboard.allCases {
+      let s = makeService(timeout: 0.5)
+      s.showLeaderboard(board, scope: .friends); await pause(0.35)
+      check(GKAccessPoint.shared.openedBoard == board.rawValue && GKAccessPoint.shared.openedScope == .friendsOnly,
+        "native board opens without a GameRecord / \(board.rawValue)")
+      await stop(s)
+    }
+    do {
+      let s = makeService(timeout: 0.5)
+      s.showAchievements(); await pause(0.35)
+      check(GKAccessPoint.shared.openedState == .achievements, "growth opens native achievements")
+      check(!GKAchievement.reportedBanners.contains(true), "achievement synchronization never schedules a session-interrupting banner")
       await stop(s)
     }
     print("All controlled Game Center delivery scenarios passed; real-device/server verification remains separate.")

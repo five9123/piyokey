@@ -42,11 +42,14 @@ class GKLocalPlayer: GKPlayer {
 }
 struct GKReleaseState: OptionSet { let rawValue: Int; static let released = Self(rawValue: 1) }
 class GKLeaderboard {
-  enum PlayerScope { case global }
+  enum PlayerScope: Hashable { case global, friendsOnly }
   enum TimeScope { case allTime }
-  struct Entry { let rank: Int; var score: Int = 0 }
+  struct Entry { let rank: Int; var score: Int = 0; var player: GKPlayer = GKLocalPlayer.local }
   let baseLeaderboardID: String
   let occurrence: Int
+  var startDate: Date? = GKLeaderboard.occurrenceStart ?? PiyoCupWeek.start(containing: Date())
+  static var occurrenceStart: Date?
+  var duration: TimeInterval = 7 * 24 * 60 * 60
   var releaseState = GKReleaseState.released
   init(_ id: String) { baseLeaderboardID = id; occurrence = Self.currentOccurrence }
   static var submitted: [(id: String, score: Int)] = []
@@ -64,6 +67,8 @@ class GKLeaderboard {
   static var probeIDs: [String]?
   static var probeReleased = true
   static var entryLoads = 0
+  static var readHandler: ((String, PlayerScope, NSRange, @escaping (Entry?, [Entry]?, Int, Error?) -> Void) -> Void)?
+  static var loadedRanges: [(String, PlayerScope, NSRange)] = []
   static func loadLeaderboards(IDs: [String]?, completionHandler: @escaping ([GKLeaderboard]?, Error?) -> Void) {
     let boards = (IDs ?? probeIDs ?? GameCenterLeaderboard.allCases.map(\.rawValue)).map(GKLeaderboard.init)
     if IDs == nil, !probeReleased { boards.forEach { $0.releaseState = [] } }
@@ -99,22 +104,31 @@ class GKLeaderboard {
   }
   func loadEntries(for scope: PlayerScope, timeScope: TimeScope, range: NSRange, completionHandler: @escaping (Entry?, [Entry]?, Int, Error?) -> Void) {
     Self.entryLoads += 1
+    Self.loadedRanges.append((baseLeaderboardID, scope, range))
+    if let handler = Self.readHandler {
+      handler(baseLeaderboardID, scope, range, completionHandler)
+      return
+    }
     Self.entryCallbacks.append((baseLeaderboardID, completionHandler))
     if !Self.holdRank { completionHandler(Self.entries[baseLeaderboardID], [], 0, nil) }
   }
 }
 class GKAccessPoint {
-  enum State { case leaderboards }
+  enum State { case leaderboards, achievements }
   static let shared = GKAccessPoint()
   var isPresentingGameCenter = false
+  var openedBoard: String?
+  var openedScope: GKLeaderboard.PlayerScope?
+  var openedState: State?
   var submittedAtOpen: [(id: String, score: Int)] = []
-  func trigger(leaderboardID: String, playerScope: GKLeaderboard.PlayerScope, timeScope: GKLeaderboard.TimeScope, handler: (() -> Void)?) { open() }
-  func trigger(state: State, handler: @escaping () -> Void) { open() }
+  func trigger(leaderboardID: String, playerScope: GKLeaderboard.PlayerScope, timeScope: GKLeaderboard.TimeScope, handler: (() -> Void)?) { openedBoard = leaderboardID; openedScope = playerScope; open() }
+  func trigger(state: State, handler: @escaping () -> Void) { openedState = state; open() }
   func open() { submittedAtOpen = GKLeaderboard.submitted; isPresentingGameCenter = true }
 }
 class GKAchievement {
   init(identifier: String) {}
   var percentComplete = 0.0
   var showsCompletionBanner = false
-  static func report(_ list: [GKAchievement], withCompletionHandler completionHandler: @escaping (Error?) -> Void) { completionHandler(nil) }
+  static var reportedBanners: [Bool] = []
+  static func report(_ list: [GKAchievement], withCompletionHandler completionHandler: @escaping (Error?) -> Void) { reportedBanners += list.map(\.showsCompletionBanner); completionHandler(nil) }
 }

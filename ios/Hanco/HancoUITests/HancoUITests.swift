@@ -780,17 +780,147 @@ final class HancoUITests: XCTestCase {
       // Repeat beginner with the same zero score to cover a result that is not a new best.
       for level in ["beginner", "beginner", "intermediate", "advanced"] {
         XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
-        element("game.flow.preset.\(level)").tap()
+        let preset = element("game.flow.preset.\(level)")
+        scrollToHittable(preset)
+        preset.tap()
         XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
         let ranking = element("game.result.game_center")
         assertRankingButtonVisibleAboveResultFooter(context: "\(method) / \(level)")
-        XCTAssertTrue(ranking.label.contains("View Game Center rankings"))
+        XCTAssertTrue(ranking.label.contains("Leaderboards"))
         if level == "advanced" {
           attachScreenshot(named: "hotfix-flow-\(method)-advanced-ranking-en")
         }
         app.buttons["result.done"].tap()
       }
     }
+  }
+
+  func testGameCenterRankingsAccessibleBeforePlayingGlobalEN() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments += ["-settings.language", "en"]
+    app.launch()
+    app.buttons["Game"].firstMatch.tap()
+    XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
+    let cupBoard = "piyokey.v4.cup.weekly.flow"
+    let cupPlay = element("game.piyo_cup")
+    let cupRank = element("game_center.ranking.open.\(cupBoard)")
+    XCTAssertTrue(cupRank.exists)
+    XCTAssertFalse(cupPlay.frame.intersects(cupRank.frame))
+    attachScreenshot(named: "gc-hub-before-play-en")
+    for (game, version) in [("flow", "v5"), ("acid_rain", "v3"), ("choseong", "v3"), ("dictation", "v3"), ("word_match", "v4")] {
+      let mode = element("game.mode.\(game)")
+      scrollToHittable(mode)
+      let rank = element("game_center.ranking.open.piyokey.\(version).\(game).beginner")
+      XCTAssertTrue(rank.exists)
+      XCTAssertFalse(mode.frame.intersects(rank.frame))
+      mode.tap()
+      XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+      for level in ["beginner", "intermediate", "advanced"] {
+        let boardVersion = game == "flow" && level != "beginner" ? "v4" : version
+        let board = "piyokey.\(boardVersion).\(game).\(level)"
+        let ranking = element("game_center.ranking.open.\(board)")
+        scrollToHittable(ranking)
+        XCTAssertGreaterThanOrEqual(ranking.frame.height, 44)
+        let details = element("game_center.ranking.details.\(board)")
+        scrollToHittable(details)
+        details.tap()
+        XCTAssertTrue(element("game_center.ranking.detail.screen").waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Sign in to Game Center to register your score."].exists)
+        XCTAssertTrue(element("game_center.ranking.native").exists)
+        app.navigationBars.buttons.firstMatch.tap()
+      }
+      app.navigationBars.buttons.firstMatch.tap()
+    }
+  }
+
+  func testGameCenterResultDetailsPreserveRetryGlobalEN() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, gameDuration: 2, resultAnimationScale: 0.01)
+    app.launchArguments += ["-settings.language", "en"]
+    app.launch()
+    app.buttons["Game"].firstMatch.tap()
+    let mode = element("game.mode.flow")
+    scrollToHittable(mode)
+    mode.tap()
+    let preset = element("game.flow.preset.beginner")
+    scrollToHittable(preset)
+    preset.tap()
+    XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+    assertRankingButtonVisibleAboveResultFooter(context: "result detail navigation")
+    let details = element("game_center.ranking.details.piyokey.v5.flow.beginner")
+    scrollToHittable(details)
+    details.tap()
+    XCTAssertTrue(element("game_center.ranking.detail.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.navigationBars["Flow Mode · Beginner"].exists)
+    app.navigationBars.buttons.firstMatch.tap()
+    XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 3))
+    app.buttons["game.result.retry"].tap()
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 3))
+  }
+
+  func testGameCenterLargeTypeNeighborhoodAndGrowthGlobalEN() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true)
+    app.launchArguments += ["-settings.language", "en"]
+    app.launchEnvironment["UITEST_GAME_CENTER_RANKINGS"] = "1"
+    app.launchEnvironment["UITEST_DYNAMIC_TYPE_ACCESSIBILITY"] = "1"
+    app.launch()
+    app.buttons["Game"].firstMatch.tap()
+    let details = element("game_center.ranking.details.piyokey.v4.cup.weekly.flow")
+    scrollToHittable(details)
+    attachScreenshot(named: "gc-cup-accessibility-en")
+    details.tap()
+    XCTAssertTrue(element("game_center.ranking.detail.screen").waitForExistence(timeout: 3))
+    let scopes = app.segmentedControls["game_center.ranking.scope"]
+    XCTAssertTrue(scopes.buttons["World"].exists)
+    attachScreenshot(named: "gc-world-nearby-accessibility-en")
+    scopes.buttons["Friends"].tap()
+    let localRow = element("game_center.ranking.row.me")
+    XCTAssertTrue(localRow.waitForExistence(timeout: 3))
+    XCTAssertTrue(localRow.label.contains("You"))
+    let native = element("game_center.ranking.native")
+    scrollRankingControlAboveTabBar(native)
+    XCTAssertGreaterThanOrEqual(native.frame.height, 44)
+    XCTAssertGreaterThanOrEqual(native.frame.minX, 0)
+    XCTAssertLessThanOrEqual(native.frame.maxX, app.frame.width)
+    attachScreenshot(named: "gc-friends-nearby-accessibility-en")
+    app.navigationBars.buttons.firstMatch.tap()
+    app.buttons["Home"].firstMatch.tap()
+    let piyo = element("home.my_piyo_card")
+    XCTAssertTrue(piyo.waitForExistence(timeout: 3))
+    // At accessibility XXXL the existing home card exceeds the SE viewport.
+    // Tap its visible upper region instead of requiring the whole card to fit.
+    XCTAssertTrue(piyo.isHittable)
+    piyo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+    XCTAssertTrue(element("my_piyo.detail.screen").waitForExistence(timeout: 5))
+    let growth = element("game_center.growth.open")
+    scrollRankingControlAboveTabBar(growth)
+    XCTAssertGreaterThanOrEqual(growth.frame.height, 44)
+    XCTAssertGreaterThanOrEqual(growth.frame.minX, 0)
+    XCTAssertLessThanOrEqual(growth.frame.maxX, app.frame.width)
+    attachScreenshot(named: "gc-growth-accessibility-en")
+  }
+
+  private func scrollRankingControlAboveTabBar(_ target: XCUIElement) {
+    func viewport() -> CGRect {
+      let top = app.navigationBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.intersects(app.frame) }
+        .map { $0.frame.maxY }.max() ?? app.frame.minY
+      let bottom = app.tabBars.allElementsBoundByIndex
+        .filter { $0.isHittable && $0.frame.minY > app.frame.midY }
+        .map { $0.frame.minY }.min() ?? app.frame.maxY
+      return CGRect(x: app.frame.minX, y: top, width: app.frame.width,
+                    height: max(0, bottom - top)).insetBy(dx: 8, dy: 12)
+    }
+    for _ in 0..<20 {
+      if target.exists && target.isHittable && viewport().contains(target.frame) { return }
+      let direction: ScrollDirection = target.exists && target.frame.midY < viewport().midY
+        ? .down : .up
+      scrollVisibleSurfaceToward(direction)
+    }
+    XCTAssertTrue(target.exists && target.isHittable && viewport().contains(target.frame),
+      "Game Center control overlaps navigation or tab bar: \(app.debugDescription)")
   }
 
   private func assertRankingButtonVisibleAboveResultFooter(context: String) {
