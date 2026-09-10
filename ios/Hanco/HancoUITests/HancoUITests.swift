@@ -775,7 +775,7 @@ final class HancoUITests: XCTestCase {
       }
       app.launch()
       XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
-      app.tabBars.buttons["Game"].tap()
+      app.buttons["Game"].firstMatch.tap()
       app.buttons["game.mode.flow"].tap()
       // Repeat beginner with the same zero score to cover a result that is not a new best.
       for level in ["beginner", "beginner", "intermediate", "advanced"] {
