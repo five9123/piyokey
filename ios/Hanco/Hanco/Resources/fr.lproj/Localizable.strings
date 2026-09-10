@@ -926,7 +926,7 @@
 "game_center.best_rank_format" = "Meilleur rang mondial n° %d";
 "game_center.result_action" = "Voir les classements Game Center";
 "game_center.result_rank_format" = "N° %d · classements Game Center";
-"game_center.ranked_deck" = "Paquet classé avec clavier intégré";
+"game_center.ranked_deck" = "Classement · tous les claviers";
 "piyo_cup.title" = "Coupe Piyo hebdomadaire";
 "piyo_cup.weekly_badge" = "HEBDOMADAIRE";
 "piyo_cup.detail" = "Une partie équitable de 60 secondes sur le coréen quotidien. Utilisez le clavier sélectionné.";
@@ -1270,3 +1270,13 @@
 "curriculum.chapter_6_fan_support.item_9.meaning" = "Merci d’être là";
 "curriculum.chapter_6_fan_support.item_10.reading" = "Oneul chakjang choegoyeyo";
 "curriculum.chapter_6_fan_support.item_10.meaning" = "Ta tenue d’aujourd’hui est la meilleure";
+
+// Game Center score delivery
+"game_center.submission.sign_in" = "Connectez-vous à Game Center pour enregistrer votre score.";
+"game_center.submission.pending" = "En attente d’enregistrement";
+"game_center.submission.submitting" = "Enregistrement du score…";
+"game_center.submission.confirming" = "Vérification de ton score au classement…";
+"game_center.submission.unconfirmed" = "Ton score n’a pas encore pu être confirmé. Réessaie.";
+"game_center.submission.submitted" = "Enregistré · meilleur score conservé";
+"game_center.submission.failed" = "Échec de l’enregistrement. Une nouvelle tentative sera effectuée.";
+"game_center.submission.retry" = "Réessayer";

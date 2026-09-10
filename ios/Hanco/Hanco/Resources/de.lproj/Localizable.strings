@@ -926,7 +926,7 @@
 "game_center.best_rank_format" = "Bester Weltrang #%d";
 "game_center.result_action" = "Game-Center-Ranglisten anzeigen";
 "game_center.result_rank_format" = "#%d · Game-Center-Ranglisten";
-"game_center.ranked_deck" = "Ranglistendeck mit integrierter Tastatur";
+"game_center.ranked_deck" = "Rangliste · alle Tastaturen";
 "piyo_cup.title" = "Wöchentlicher Piyo-Cup";
 "piyo_cup.weekly_badge" = "WÖCHENTLICH";
 "piyo_cup.detail" = "Faire 60 Sekunden mit Alltagskoreanisch für alle. Verwende deine ausgewählte Tastatur.";
@@ -1270,3 +1270,13 @@
 "curriculum.chapter_6_fan_support.item_9.meaning" = "Danke, dass du gekommen bist";
 "curriculum.chapter_6_fan_support.item_10.reading" = "Oneul chakjang choegoyeyo";
 "curriculum.chapter_6_fan_support.item_10.meaning" = "Dein Outfit heute ist das Beste";
+
+// Game Center score delivery
+"game_center.submission.sign_in" = "Melde dich bei Game Center an, um deine Punktzahl einzutragen.";
+"game_center.submission.pending" = "Eintragung ausstehend";
+"game_center.submission.submitting" = "Punktzahl wird eingetragen…";
+"game_center.submission.confirming" = "Deine Ranglistenpunktzahl wird geprüft…";
+"game_center.submission.unconfirmed" = "Deine Punktzahl konnte noch nicht bestätigt werden. Bitte erneut versuchen.";
+"game_center.submission.submitted" = "Eingetragen · beste Punktzahl bleibt erhalten";
+"game_center.submission.failed" = "Eintragung fehlgeschlagen. Wird erneut versucht.";
+"game_center.submission.retry" = "Erneut versuchen";

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "verified_commit": "6e96f72786333e56a1b70699e2cbe8b1bf5dba82",
+  "verified_tree": "c0a8fc3ac53bcdb05b04663f069bbad08ec60ed8",
+  "branch": "codex/181-separate-cup-flow",
+  "scope": "Issue181 App Store cleanup and Flow beginner v5 component review; docs-only follow-up, application source unchanged from e074ed1",
+  "result": "pass",
+  "recorded_at": "2026-09-10T00:46:25.833644+00:00",
+  "checks": [
+    {
+      "name": "repository_preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "/private/tmp/piyokey-hotfix-6e96f72-preflight.log; repository only, not strict submission."
+    },
+    {
+      "name": "application_source_identity",
+      "status": "pass",
+      "command": "git diff --quiet e074ed10bfafe1ddb5e5b324ec9f67e8f1f92bfe HEAD -- ios shared tools web",
+      "note": "Native/Python/Swift implementation and test sources identical to e074ed1. Its 110 Python,67 Swift,133 iOS unit and4 UI results remain tied to that SHA; they were not rerun or relabeled as this SHA."
+    },
+    {
+      "name": "workspace_doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean owned Issue181 worktree; authenticated gh; origin/main3aa148f ancestor."
+    },
+    {
+      "name": "diff_check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Exact current PR head Claude review and maintainer approval remain required. Prior429 started no review.",
+    "Flow beginner v5 WAITING_FOR_REVIEW; its creation/submission is not Live. Current app mapping remains v4 until Live/device transition described in release/GAME_CENTER_HOTFIX_20260910.md.",
+    "1.1.1 metadata draft saved in6locales, manual release; build25 has not been created/uploaded/linked/submitted. Signed latestmain/full iOS/device Game Center and release gates open.",
+    "Existing e074ed1 evidence covers application implementation; this docs-only commit adds actual authorized store changes, so old operational pending-action notes are superseded, not edited historically.",
+    "Main Issue180 privacy-policy/App Store Privacy/consent-ingestion/device gates remain independent."
+  ]
+}

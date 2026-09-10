@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "verified_commit": "544851d0a1af849f34bff75e44cceab5e768c56c",
+  "verified_tree": "689ee194ff9d76a57abcaad0a4195983c8465da7",
+  "branch": "codex/181-separate-cup-flow",
+  "scope": "Issue #181: independent Piyo Cup/Flow score routing, local progress migration and result comparisons",
+  "result": "pass",
+  "recorded_at": "2026-09-09T16:53:58.026697+00:00",
+  "checks": [
+    {
+      "name": "python_contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p test_*.py",
+      "note": "108/108; /tmp/piyokey-cup-python-544851d.log"
+    },
+    {
+      "name": "ios_build_and_focused_tests",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -resultBundlePath /tmp/piyokey-cup-separation-544851d.xcresult -parallel-testing-enabled NO -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/FlowRankTuningTests",
+      "note": "85/85 (21 Game Center, 22 progress, 42 Flow). FlowRankTuningTests selector did not match a class; actual FlowGameRankTuningTests executed separately below. Log /tmp/piyokey-cup-separation-544851d.log"
+    },
+    {
+      "name": "flow_rank_tuning",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination platform=iOS\\ Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -resultBundlePath /tmp/piyokey-cup-rank-544851d.xcresult -parallel-testing-enabled NO -only-testing:HancoTests/FlowGameRankTuningTests -disableAutomaticPackageResolution",
+      "note": "3/3; /tmp/piyokey-cup-rank-544851d.log"
+    },
+    {
+      "name": "workspace_doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean issue-owned worktree; authenticated gh under normal host permissions"
+    },
+    {
+      "name": "diff_check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Exact PR head Claude review and maintainer manual approval before merge",
+    "Real Game Center account: new build independent Flow and weekly Cup submissions, rank dashboard and offline backfill on iPhone/iPad",
+    "Existing server mixed scores and old 1.1 clients require separate operational decision; no remote records modified",
+    "PR #179 / TYP-120 shared availability, retry and rank-cache fixes remain outside this diff",
+    "Full HancoTests/UI/device/performance/signing/store release gates not executed; focused tests do not close them"
+  ]
+}

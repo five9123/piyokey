@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "verified_commit": "e074ed10bfafe1ddb5e5b324ec9f67e8f1f92bfe",
+  "verified_tree": "efdd4916fa984b39f8d772bb3840370fd8250adc",
+  "branch": "codex/181-separate-cup-flow",
+  "scope": "Issue181 / iOS1.1.1(25): all keyboards, independent Cup/Flow, availability and submission/rank recovery on latest merged main",
+  "result": "pass",
+  "recorded_at": "2026-09-10T00:13:00.419138+00:00",
+  "checks": [
+    {
+      "name": "python_contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "110/110 pass; /tmp/piyokey-hotfix-e074ed1-python.log"
+    },
+    {
+      "name": "swift_contracts",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67/67 pass; /tmp/piyokey-hotfix-e074ed1-swift.log"
+    },
+    {
+      "name": "controlled_delivery",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/test_game_center_delivery.py",
+      "note": "Production service with framework adapters; all16 x3 eligibility/CTA, first auth, retry higher best, timeout/late callbacks, player/rank races, nil-rank refresh and bounded retries pass. /tmp/piyokey-hotfix-e074ed1-delivery.log; not actual GameKit server receipt."
+    },
+    {
+      "name": "iphone_build_unit_ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -parallel-testing-enabled NO -disableAutomaticPackageResolution -destination 'platform=iOS Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB' -resultBundlePath /tmp/piyokey-hotfix-e074ed1-iphone.xcresult -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/FlowGameRankTuningTests -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs -only-testing:HancoUITests/HancoUITests/testTYP113WeeklyPiyoCupUsesOSIMEPreference",
+      "note": "133 unit tests (GameCenter24, Progress22, Flow42, Rank3, Settings42) and2 UI tests pass. English Cup UI exercises Dubeolsik,10-key,OS IME selection and ranking CTA. /tmp/piyokey-hotfix-e074ed1-iphone.log. Earlier6abf4dd test failed by checking before result action animation; corrected wait oncc0b692 and verified on mergedSHA."
+    },
+    {
+      "name": "ipad_ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -parallel-testing-enabled NO -disableAutomaticPackageResolution -destination 'platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416' -resultBundlePath /tmp/piyokey-hotfix-e074ed1-ipad.xcresult -only-testing:HancoUITests/HancoUITests/testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs -only-testing:HancoUITests/HancoUITests/testTYP113WeeklyPiyoCupUsesOSIMEPreference",
+      "note": "iPad Pro13-inch(M5), iOS26.5:2/2 UI pass; same3-input English matrix and OS preference regression. /tmp/piyokey-hotfix-e074ed1-ipad.log"
+    },
+    {
+      "name": "workspace_doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean Issue181 owned worktree; authenticated GitHub CLI"
+    },
+    {
+      "name": "diff_check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "origin/main3aa148ffd84b522dc555ce0c8d0e2ce7fcc4461b is ancestor; fetched again after user resumed"
+    }
+  ],
+  "manual_gates": [
+    "Exact current PR head Claude review including this evidence commit and maintainer manual fail-closed approval before merge.",
+    "Signed iPhone/iPad same-build actual Game Center authentication, all-game independent submission, offline recovery, physical keyboard, week rollover; controlled adapters and UI automation do not prove server receipt.",
+    "Full iOS unit regression on latest clean origin/main before release candidate; device/performance/signing/archive/upload/App Review/release gates remain open.",
+    "App Store default Flowv4, legacy4 localized display names,1.1.1 draft not saved; automatic review requires explicit action-specific approval. No records/boards deleted.",
+    "Already-published mixed Flow scores and old1.1clients require separate operational migration; unrecoverable compacted legacy records are preserved as mixed summaries, not imputed.",
+    "Latest main includes Issue180 analytics: live privacy policy, App Store Privacy, signed-device consent/ingestion/OFF silence and Crashlytics gates remain separate."
+  ]
+}
