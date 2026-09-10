@@ -757,8 +757,7 @@ final class HancoUITests: XCTestCase {
         XCTAssertTrue(app.buttons["keyboard.key.ㄱ"].exists)
       }
       XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
-      XCTAssertTrue(element("game.result.game_center").waitForExistence(timeout: 3), method)
-      app.scrollViews.firstMatch.swipeUp()
+      assertRankingButtonVisibleAboveResultFooter(context: method)
       attachScreenshot(named: "hotfix-cup-ranking-\(method)-en")
     }
   }
@@ -784,8 +783,7 @@ final class HancoUITests: XCTestCase {
         element("game.flow.preset.\(level)").tap()
         XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
         let ranking = element("game.result.game_center")
-        XCTAssertTrue(ranking.waitForExistence(timeout: 3), "\(method) / \(level)")
-        scrollToHittable(ranking)
+        assertRankingButtonVisibleAboveResultFooter(context: "\(method) / \(level)")
         XCTAssertTrue(ranking.label.contains("View Game Center rankings"))
         if level == "advanced" {
           attachScreenshot(named: "hotfix-flow-\(method)-advanced-ranking-en")
@@ -793,6 +791,16 @@ final class HancoUITests: XCTestCase {
         app.buttons["result.done"].tap()
       }
     }
+  }
+
+  private func assertRankingButtonVisibleAboveResultFooter(context: String) {
+    let ranking = element("game.result.game_center")
+    XCTAssertTrue(ranking.waitForExistence(timeout: 3), context)
+    let retry = app.buttons["game.result.retry"]
+    XCTAssertTrue(retry.waitForExistence(timeout: 3), context)
+    XCTAssertTrue(ranking.isHittable, context)
+    XCTAssertGreaterThan(ranking.frame.minY, app.buttons["result.done"].frame.maxY, context)
+    XCTAssertLessThan(ranking.frame.maxY, retry.frame.minY - 16, context)
   }
 
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {

@@ -319,6 +319,12 @@ struct FlowGameResultView: View {
           .accessibilityIdentifier("game.result.best_score.value")
         }
       }
+      if reveal.actionsEnabled, let record = recordOutcome?.record,
+        gameCenter.isLeaderboardAvailable(for: record)
+      {
+        gameCenterButton(for: record)
+          .padding(.top, 10)
+      }
     }
     .frame(maxWidth: .infinity)
     .padding(16)
@@ -363,12 +369,6 @@ struct FlowGameResultView: View {
 
   private var nextActionsSection: some View {
     VStack(spacing: 14) {
-      if let record = recordOutcome?.record,
-        gameCenter.isLeaderboardAvailable(for: record)
-      {
-        gameCenterButton(for: record)
-      }
-
       SessionShareButton(
         model: shareCardModel,
         accessibilityIdentifier: "game.result.share",
