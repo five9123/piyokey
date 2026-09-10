@@ -780,7 +780,9 @@ final class HancoUITests: XCTestCase {
       // Repeat beginner with the same zero score to cover a result that is not a new best.
       for level in ["beginner", "beginner", "intermediate", "advanced"] {
         XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
-        element("game.flow.preset.\(level)").tap()
+        let preset = element("game.flow.preset.\(level)")
+        scrollToHittable(preset)
+        preset.tap()
         XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
         let ranking = element("game.result.game_center")
         assertRankingButtonVisibleAboveResultFooter(context: "\(method) / \(level)")
@@ -832,6 +834,31 @@ final class HancoUITests: XCTestCase {
     }
   }
 
+  func testGameCenterResultDetailsPreserveRetryGlobalEN() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, gameDuration: 2, resultAnimationScale: 0.01)
+    app.launchArguments += ["-settings.language", "en"]
+    app.launch()
+    app.buttons["Game"].firstMatch.tap()
+    let mode = element("game.mode.flow")
+    scrollToHittable(mode)
+    mode.tap()
+    let preset = element("game.flow.preset.beginner")
+    scrollToHittable(preset)
+    preset.tap()
+    XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+    assertRankingButtonVisibleAboveResultFooter(context: "result detail navigation")
+    let details = element("game_center.ranking.details.piyokey.v5.flow.beginner")
+    scrollToHittable(details)
+    details.tap()
+    XCTAssertTrue(element("game_center.ranking.detail.screen").waitForExistence(timeout: 3))
+    XCTAssertTrue(app.navigationBars["Flow Mode · Beginner"].exists)
+    app.navigationBars.buttons.firstMatch.tap()
+    XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 3))
+    app.buttons["game.result.retry"].tap()
+    XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 3))
+  }
+
   func testGameCenterLargeTypeNeighborhoodAndGrowthGlobalEN() {
     app.terminate()
     app = makeApplication(resetKeyboardPreferences: true)
@@ -870,6 +897,8 @@ final class HancoUITests: XCTestCase {
     let growth = element("game_center.growth.open")
     scrollToHittable(growth)
     XCTAssertGreaterThanOrEqual(growth.frame.height, 44)
+    XCTAssertGreaterThanOrEqual(growth.frame.minX, 0)
+    XCTAssertLessThanOrEqual(growth.frame.maxX, app.frame.width)
     attachScreenshot(named: "gc-growth-accessibility-en")
   }
 

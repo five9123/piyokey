@@ -307,6 +307,7 @@ struct GameCenterGrowthCard: View {
     .foregroundStyle(AppPalette.ink)
     .padding(18)
     .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24))
+    .accessibilityElement(children: .contain)
     .accessibilityIdentifier("game_center.growth.card")
     .task { gameCenter.prepare() }
   }
