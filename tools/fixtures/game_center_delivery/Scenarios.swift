@@ -53,6 +53,19 @@ import Foundation
         "silent authentication timeout releases the app navigation")
       await stop(s)
     }
+    do {
+      let s = makeService(timeout: 0.5)
+      GKLocalPlayer.local.isAuthenticated = false
+      s.showLeaderboard(.flowBeginner)
+      s.updateSceneActivity(false)
+      GKLocalPlayer.local.authenticateHandler?(UIViewController(), nil)
+      await pause()
+      check(!s.isDashboardBusy, "authentication arriving in background releases navigation")
+      check(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        .first?.windows.first?.rootViewController?.presentedViewController == nil,
+        "background authentication callback never presents a modal")
+      await stop(s)
+    }
     // Real service mapping/submit for every board and every keyboard with an empty probe.
     for mode in SessionInputMode.allCases {
       let service = makeService()

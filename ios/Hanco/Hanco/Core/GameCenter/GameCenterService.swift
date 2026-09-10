@@ -714,6 +714,7 @@ final class GameCenterService: ObservableObject {
       guard authenticationAllowsPresentation, isDashboardBusy, isSceneActive else {
         state = .signInRequired
         resetAuthenticationForRetry()
+        finishDashboardRequest()
         return
       }
       scheduleAuthenticationPresentation(viewController, generation: generation)
