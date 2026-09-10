@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "verified_commit": "42dc9386427433533deb70374fec58d7d98d6d53",
+  "verified_tree": "c624b883ecf0be5cfd95d9fd940b28e539e13e8d",
+  "branch": "codex/184-game-center-experience",
+  "scope": "Issue #184 / PR #185: Game Center hub, difficulty, weekly Cup, results, nearby/friends and growth integration; iOS/iPadOS only",
+  "result": "pass",
+  "recorded_at": "2026-09-10T16:18:02.238413+00:00",
+  "checks": [
+    {
+      "name": "merged-main",
+      "status": "pass",
+      "command": "git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main 602e923e3eddcb32b7ef75c62e3921f28f7a3e33; unchanged after final fetch."
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict --scope ios",
+      "note": "Log /private/tmp/piyokey-184-42dc938-doctor.log; sha256 bce2bac02594600f61496aa3487b881a0bc2428f59707be489e83722dc2cde69"
+    },
+    {
+      "name": "diff",
+      "status": "pass",
+      "command": "git diff --check origin/main",
+      "note": "No whitespace errors."
+    },
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "110 tests passed. Log /private/tmp/piyokey-184-42dc938-contracts.log; sha256 27b4cc529c63c7fa56d97e1e3b8c4a4c169ac7ec352fae735d2545692ce7f327"
+    },
+    {
+      "name": "preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Log /private/tmp/piyokey-184-42dc938-preflight.log; sha256 3c77dc9b326706ca91730eac3d7c3724c4d765038ca857e776167371c4baa4fd"
+    },
+    {
+      "name": "controlled-game-center",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/test_game_center_delivery.py",
+      "note": "169 assertions passed; production service compiled with framework doubles. 16 boards, all inputs, account/week/scope isolation, timeouts/late/partial/empty responses, direct board and achievement requests. Does not contact Game Center. Log /private/tmp/piyokey-184-42dc938-delivery.log; sha256 65bf3431dfc4303fc80cfcc1bfaeb185db313448f0a2bd9a1efa3aa76b7b77d5"
+    },
+    {
+      "name": "simulator-test-build",
+      "status": "pass",
+      "command": "xcodebuild build-for-testing -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89' -derivedDataPath /private/tmp/piyokey-184-derived CODE_SIGNING_ALLOWED=NO",
+      "note": "Log /private/tmp/piyokey-184-42dc938-build.log; sha256 0d97dcb6d0db21500529b1c8552aedcea76eaaf501c55a430411564b760edb9e"
+    },
+    {
+      "name": "iphone-unit-and-ui",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -xctestrun /private/tmp/piyokey-184-derived/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -parallel-testing-enabled NO -destination 'platform=iOS Simulator,id=29687EE0-87F1-42F5-8CAE-E7B074644D89' -resultBundlePath /private/tmp/piyokey-184-42dc938-se.xcresult -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/MascotGrowthSystemTests -only-testing:HancoUITests/HancoUITests/testGameCenterRankingsAccessibleBeforePlayingGlobalEN -only-testing:HancoUITests/HancoUITests/testGameCenterLargeTypeNeighborhoodAndGrowthGlobalEN -only-testing:HancoUITests/HancoUITests/testGameCenterResultDetailsPreserveRetryGlobalEN",
+      "note": "iOS 26.5 iPhone SE 3rd generation; 66 unit and 3 UI tests passed. Builds above produced the tested bundles; no source changes during validation. Log /private/tmp/piyokey-184-42dc938-se.log; sha256 07e9f4b09d8bec68eaadd34f5c066d5862da7133b253d43c17d1c44abc723f42"
+    },
+    {
+      "name": "ipad-ui",
+      "status": "pass",
+      "command": "xcodebuild test-without-building -xctestrun /private/tmp/piyokey-184-derived/Build/Products/Hanco_Hanco_iphonesimulator26.5-arm64.xctestrun -parallel-testing-enabled NO -destination 'platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416' -resultBundlePath /private/tmp/piyokey-184-42dc938-ipad.xcresult -only-testing:HancoUITests/HancoUITests/testGameCenterRankingsAccessibleBeforePlayingGlobalEN -only-testing:HancoUITests/HancoUITests/testGameCenterLargeTypeNeighborhoodAndGrowthGlobalEN -only-testing:HancoUITests/HancoUITests/testGameCenterResultDetailsPreserveRetryGlobalEN -only-testing:HancoUITests/HancoUITests/testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs -only-testing:HancoUITests/HancoUITests/testHotfixFlowRankingAllDifficultiesAndInputsGlobalEN",
+      "note": "iPadOS 26.5 iPad Pro 13-inch M5; 5 UI tests passed. Includes 15 pre-play difficulty boards, Cup world/friends/growth accessibility, result-details-back-retry, Flow 3 difficulties x 3 inputs and Cup 3 inputs. Log /private/tmp/piyokey-184-42dc938-ipad.log; sha256 5001a6c723d663109964b17eae6c30ccc8b7ab68b4d611ec6b96d1b85a04e895"
+    },
+    {
+      "name": "release-simulator-build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath /private/tmp/piyokey-184-derived CODE_SIGNING_ALLOWED=NO",
+      "note": "Unsigned simulator Release build, not a device archive or store build. DEBUG fixture key was present in Debug and absent in Release executable/dylibs (positive and negative control). Log /private/tmp/piyokey-184-42dc938-release.log; sha256 01b6f807ed9a44fc74085d6db7145b7086e60762e2e44d2ca579fb19f9e25b23; Log /private/tmp/piyokey-184-42dc938-fixture-isolation.log; sha256 b508e5cdaab60d35a6a93c769720e6ea6d1787778e021a7db8a917dcb65bbf39"
+    },
+    {
+      "name": "se-visual-qa",
+      "status": "pass",
+      "command": "xcrun xcresulttool export attachments --path /private/tmp/piyokey-184-42dc938-se.xcresult --output-path /private/tmp/piyokey-184-42dc938-se-attachments",
+      "note": "Exported xcresult screenshots inspected with view_image: gc-growth-accessibility-en_0_178A19CA-0A2A-459A-B20B-EC23D6890973.png, gc-friends-nearby-accessibility-en_0_726D6783-8E79-4F9C-B620-F64477BF8CCF.png, gc-world-nearby-accessibility-en_0_A6519B4E-5CE8-4471-B614-ACADC7F6ECAD.png, gc-cup-accessibility-en_0_E217E94F-DA20-4DD2-B143-FD49C2A74373.png, gc-hub-before-play-en_0_638217A9-7B3D-4739-9A38-0C1B56ADBC47.png. Large-type growth and native actions fully above navigation/tab chrome. Fixture scores/names are display-only and not live account evidence."
+    },
+    {
+      "name": "ipad-visual-qa",
+      "status": "pass",
+      "command": "xcrun xcresulttool export attachments --path /private/tmp/piyokey-184-42dc938-ipad.xcresult --output-path /private/tmp/piyokey-184-42dc938-ipad-attachments",
+      "note": "Exported xcresult screenshots inspected with view_image: gc-growth-accessibility-en_0_4B7D5724-DBDE-4009-B6FD-2A0511CC5224.png, gc-friends-nearby-accessibility-en_0_F03E9F4F-A05B-46C0-89A5-BD261AF849B7.png, gc-world-nearby-accessibility-en_0_07BCEFD0-A8FB-4D50-82F9-E2CADF32E6EF.png, gc-cup-accessibility-en_0_3843D2CF-9E60-4658-AA31-C876A7BD2878.png, gc-hub-before-play-en_0_9C3C1C67-4F55-4AA5-93F3-8B3BA604B632.png. Large-type growth and native actions fully above navigation/tab chrome. Fixture scores/names are display-only and not live account evidence."
+    }
+  ],
+  "manual_gates": [
+    "Required current-PR-head Claude review includes the evidence-only commit and ancestry validation. Initial review attempt was blocked by Claude session quota (2026-09-11, reset 03:10 Asia/Tokyo); no review:passed exists. Retry against the final head; resolve any findings before readiness/merge.",
+    "Maintainer manual approval and unchanged latest origin/main are required before merge; no merge or deployment is authorized by this evidence. GitHub Actions remain disabled.",
+    "Real Game Center accounts/devices: authenticated direct native board on iOS 18+, iOS 16-17 fallback, two-account friends, login/cancel, offline recovery and actual recurring-week transition. Doubles and DEBUG UI fixtures do not close these gates.",
+    "Physical iPhone/iPad VoiceOver reading order, Reduce Motion, audio coexistence/background behavior, 60fps and device input performance; full HancoTests/full release regression remain release gates beyond focused checks.",
+    "Signing, TestFlight/App Review/store, rights/account/IAP and existing #181 external gates remain open. This unshipped source is not the 1.1.1 build observed Waiting for Review in ASC.",
+    "New Challenges/Activities, attempt submission rules, new boards and console es/de/fr localization are documented proposals requiring separate decisions/ASC changes; they are not implemented or activated by #184."
+  ]
+}
