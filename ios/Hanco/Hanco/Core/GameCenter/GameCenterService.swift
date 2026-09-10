@@ -974,6 +974,10 @@ final class GameCenterService: ObservableObject {
   private func submit(score: Int, to leaderboard: GameCenterLeaderboard) {
     guard availableLeaderboards.contains(leaderboard) else { return }
     refreshWeeklyPeriod()
+    if leaderboard == .weeklyPiyoCup {
+      // The week may have rolled over since synchronizeBestScores built its snapshot.
+      guard GameCenterLeaderboard.bestScores(from: records)[.weeklyPiyoCup] == score else { return }
+    }
     guard score >= 0,
       score > max(submittedScores[leaderboard] ?? -1, submittingScores[leaderboard] ?? -1)
     else { return }
@@ -1086,7 +1090,8 @@ final class GameCenterService: ObservableObject {
         let deadline = Date().addingTimeInterval(self.requestTimeout + 1)
         while self.rankLoadsInFlight.contains(leaderboard), Date() < deadline {
           guard !Task.isCancelled else { return }
-          try? await Task.sleep(nanoseconds: 10_000_000)
+          let pollInterval = min(0.1, self.requestTimeout / 10)
+          try? await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
         }
         guard !Task.isCancelled else { return }
         if self.submissionStates[leaderboard] == .submitted { break }
