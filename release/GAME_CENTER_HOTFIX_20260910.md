@@ -98,3 +98,17 @@ iPhone은 미연결, 연결된 iPad는 잠겨 있어 새 빌드 실제 서버 �
 경우도 발견했다. 모든 랭킹 게임이 공유하는 점수 카드 안으로 버튼·등록 상태를
 옮기고, 결과 연출 완료 조건은 유지했다. UI 테스트는 단순 존재/전체 화면 경계 대신
 상단 Done 아래와 고정 Retry 위의 실제 표시 위치를 검증하도록 보강했다.
+
+
+최종 제품 코드 `0e964728ebe56d01926028c24a3c38b8bd0bef5c`에서 Python 110,
+controlled delivery, iPhone 관련 단위 133 + UI 4, iPad 랭킹 Flow/Cup/OS UI 3이
+통과했다. iPad의 추가 종료 회귀 1개는 기존 테스트가 iPhone 하단 TabBar를
+가정해 탐색 단계에서 실패했다. 이후 테스트만 공통 버튼 탐색으로 바꾸어 별도
+재검증한다. 실제 실행 SHA와 결과는 후속 evidence에 기록한다. iPhone 스크린샷에서
+두벌식/OS 키보드의 버튼·상태가 첫 화면에 온전히 보이는 것도 확인했다.
+
+2026-09-10 10:17 JST 이후 ASC 세션이 만료되어 다시 로그인해야 한다.
+`release/APP_REVIEW_NOTES_1_1_1.md`는 이번 핫픽스 심사 설명 초안이며 아직 ASC에
+저장하지 않았다. 앱 업로드·심사 제출은 여전히 미실행이다. strict release preflight의
+41개 finding은 미완료 외부 gate를 포함한다. 과거 Android 항목은 동결 플랫폼의
+역사적 설정이므로 현재 iOS 핫픽스 작업 범위를 Android로 확장하는 근거가 아니다.

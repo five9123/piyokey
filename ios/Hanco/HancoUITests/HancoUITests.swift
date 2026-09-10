@@ -1925,7 +1925,7 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
-    app.tabBars.buttons["さがす"].tap()
+    app.buttons["さがす"].firstMatch.tap()
     let search = app.textFields["discover.search"]
     XCTAssertTrue(search.waitForExistence(timeout: 5))
     search.tap()
@@ -1955,7 +1955,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.buttons["deck.detail.play"].waitForExistence(timeout: 5))
     XCTAssertEqual(pronunciationStarts.label, pronunciationStartsBeforeDone)
 
-    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["ゲーム"].firstMatch.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
     app.buttons["game.mode.flow"].tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))

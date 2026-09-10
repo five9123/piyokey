@@ -246,7 +246,9 @@
       "contact_email": "contact@typee.app",
       "contact_phone": "+821050910203",
       "notes_prepared": true,
-      "notes_path": "release/APP_REVIEW_NOTES.md"
+      "notes_path": "release/APP_REVIEW_NOTES_1_1_1.md",
+      "hotfix_notes_saved_to_app_store_connect": false,
+      "hotfix_notes_save_blocker": "App Store Connect session expired on 2026-09-10 JST; login required."
     },
     "in_app_purchase": {
       "reference_name": "typee pro Lifetime",
@@ -345,7 +347,7 @@
       "status": "READY_FOR_DISTRIBUTION",
       "verified_on": "2026-09-10 JST"
     },
-    "hotfix_scope": "All keyboard leaderboard participation; independent Cup/Flow records; Game Center availability, delivery retries and rank refresh.",
+    "hotfix_scope": "All keyboard participation; independent Cup/Flow; ranking button and status in the score card; retained-best server-score read-back, bounded recovery, and occurrence-specific weekly submission.",
     "inherited_external_fields_note": "Existing rights, IAP, availability and media gates below are retained as unverified carry-forward data, not fresh App Store assertions. Resolve against the same signed hotfix candidate before release.",
     "app_store_connect_version_record_created_at_note": "Creation and Prepare for Submission observed in App Store Connect; exact server timestamp was not exposed.",
     "game_center_hotfix_operations_record": "release/GAME_CENTER_HOTFIX_20260910.md",
