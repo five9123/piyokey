@@ -14,7 +14,7 @@
 | 영역 | 현재 상태 | 다음 gate |
 |---|---|---|
 | iOS 공개판 | 2026-09-09 ASC 직접 조회: `1.1 (24)` Ready for Distribution, iPhone 15 Pro JM 설치본도 `1.1 (24)` | PostHog 수신은 2026-09-10 사용자 확인. 지역별 판매·Crashlytics 최초 크래시 수신 및 symbolication·기존 외부 gate는 별도 확인. 출시 후 Game Center 재발은 TYP-120으로 추적 |
-| iOS 1.1 | build 24는 TYP-112·113·114를 포함한 `main` `85ebfadabc434659943ea8cd3edcb93a91a39a71`에서 생성됐고 ASC 선택 빌드·archive·iPhone 설치 버전이 일치 | Game Center 현행 16개 Live·entitlement·주간 주기는 확인됐으나 제출/재시도/순위 갱신 결함과 구형 기본 보드 노출이 남아 있음. [조사 PR #179](https://github.com/five9123-maker/piyokey/pull/179) |
+| iOS 1.1 | build 24는 TYP-112·113·114를 포함한 `main` `85ebfadabc434659943ea8cd3edcb93a91a39a71`에서 생성됐고 ASC 선택 빌드·archive·iPhone 설치 버전이 일치 | Game Center 현행 16개 Live·entitlement·주간 주기는 확인됐으나 제출/재시도/순위 갱신 결함은 1.1.1 후보에서 수정. 2026-09-10 기본 보드 v4 전환·구형 4개 archive 완료, Flow 초급 v5는 별도 심사 대기. [조사 PR #179](https://github.com/five9123-maker/piyokey/pull/179) |
 | Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
 | 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
 | CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
@@ -23,7 +23,7 @@
 
 | Issue | Project 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드 참여·피요컵 분리·공통 등록 복구·결과별 제출 상태 구현 완료, 최신 main 병합 후 검증 중. 새로운 SHA 검증·exact-head Claude review·maintainer gate와 동일 빌드 실기기 Game Center·스토어 확인 필요. 공개판은 여전히 1.1 (24) |
+| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드·피요컵 분리·공통 복구 구현 및 merged SHA e074ed1 검증 완료. ASC 1.1.1 초안·6개 로케일 변경 안내 저장, 구형 4개 archive·기본 v4 전환 완료. Flow 초급 v5 심사 대기 → Live 확인 후 앱 전환. Claude 리뷰는 직전 API 429로 미완료이며 maintainer·서명·실기기 gate도 열림. 공개판은 1.1 (24) |
 | TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
 | TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
 | #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
@@ -68,7 +68,7 @@
 
 1. #181 / PR #183에서 모든 키보드 Game Center 참여, 피요컵/일반 Flow 분리와 TYP-120 등록 복구를 검증한다. 16개 보드×3개 입력 방식과 응답 지연·실패·로그인·foreground를 포함한다.
 2. 최신 main 병합 → clean 구현 SHA의 focused 검증·evidence → 새 head Claude review → maintainer gate를 통과한다. 기존 분리 PR의 8483f7b 리뷰는 확장된 핫픽스에 재사용하지 않는다.
-3. App Store Connect 기본 보드를 현행으로 정리하고 구형 표시명을 구분한다. 기존 점수를 삭제하지 않고, 새 보드 생성/구형 archive는 구버전 영향을 확인한 별도 이행 대상으로 남긴다.
+3. ASC 기본 보드 v4 전환·구형 Flow v3 3개/weekly v3 archive를 완료했다. Flow 초급 v5 단독 심사 제출(acb65714-82c5-477e-96ca-e39b320280c3)을 추적하고, Live 확인 후 앱 ID·설정·테스트를 함께 전환한다. 전환 검증 전에는 현재 v4를 유지한다. 상세 사실과 순서는 `release/GAME_CENTER_HOTFIX_20260910.md`를 따른다.
 4. 승인·병합한 최신 main에서 1.1.1 (25)를 서명·업로드한다. 실제 iPhone/iPad Game Center 제출·조회, 전체 iOS 단위 회귀와 기존 출시 gate를 확인하고 App Review 결과를 확인한 단계까지만 완료 처리한다.
 
 ## 출시 완료 판단

@@ -153,7 +153,7 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_1_build_25_hotfix_source_candidate_not_uploaded",
+    "record_status": "version_1_1_1_build_25_hotfix_store_draft_not_uploaded",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
@@ -162,7 +162,7 @@
     "build_number": "25",
     "currently_linked_build_number": null,
     "latest_uploaded_superseded_build_number": "24",
-    "app_store_connect_version_status": "NOT_CREATED",
+    "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
     "app_store_connect_version_record_created_at": null,
     "localized_media": {
       "status": "apple_login_restored_final_rc_media_pending",
@@ -228,7 +228,17 @@
         "en-AU": "Korean Typing Practice - typee",
         "en-CA": "Korean Typing Practice - typee",
         "ko": "한글 타자 연습 - typee"
-      }
+      },
+      "whats_new_saved": true,
+      "whats_new_saved_locales": [
+        "ja",
+        "en-US",
+        "en-GB",
+        "en-AU",
+        "en-CA",
+        "ko"
+      ],
+      "whats_new_reloaded_on": "2026-09-10 JST"
     },
     "content_rights_confirmed": false,
     "app_review": {
@@ -288,36 +298,14 @@
       "free_piyodeck_boundary_check": true
     },
     "build_artifact": {
-      "source_main_sha": "9af01ef96e06472eb3d842880649b5e697c5877e",
-      "archive_checkout_sha": "4e7acf242d11b5cfbbfe418adbc817c1f14e7179",
-      "source_tree_sha": "3d9bb0354e83f0499e993dbe6bd74a0d2fdc0e2c",
-      "archive_tree_sha256": "cbfdab353ac437b5379832df8a78c815c6dd1f01b7aef7a0449323d632f936b6",
-      "local_export_ipa_sha256": "6a676f13db48c53da9234c878943a905f73002609152a50eed14f6759ea22221",
-      "record": "release/IOS_1_1_BUILD_7.md",
-      "app_ui_languages": [
-        "ja",
-        "en",
-        "es",
-        "de",
-        "fr"
-      ],
-      "device_families": [
-        "iPhone",
-        "iPad"
-      ],
-      "local_distribution_signature_verified": true,
-      "build_uploaded": true,
-      "uploaded_build_processing_state": "complete_ready_to_submit",
-      "linked_to_version": true,
+      "status": "NOT_CREATED",
+      "source_branch": "codex/181-separate-cup-flow",
+      "build_uploaded": false,
+      "linked_to_version": false,
       "final_review_submission_sent": false,
-      "upload_succeeded_at": "2026-08-29T01:24:29+09:00",
-      "archive_zip_sha256": "bbf814350c432795989bdf7cf9ded9d555936c4defc19e11faa7541cc694dd27",
-      "app_store_connect_build_id": "c544f5af-c1c4-41c6-950f-3d9caa35d64e",
-      "testflight_groups_observed": [
-        "PIYOKEY Internal QA",
-        "Tester"
-      ],
-      "link_saved_and_reloaded": true
+      "source_main_sha": null,
+      "archive_checkout_sha": null,
+      "app_store_connect_build_id": null
     },
     "live_console_observation_20260829": {
       "version_status": "PREPARE_FOR_SUBMISSION",
@@ -334,25 +322,21 @@
     },
     "review_submission_blocked": true,
     "release_decision": {
-      "confirmed_on": "2026-08-29",
-      "source": "User explicitly requested review submission and immediate release",
-      "automatic_after_approval": true,
-      "phased_release_enabled": false,
-      "release_to_all_users_immediately": true,
+      "confirmed_on": "2026-09-10",
+      "source": "User authorized App Store hotfix and common fixes / four legacy archives / conditional Flow beginner replacement.",
+      "manual_after_approval": true,
       "console_selection_verified": true,
+      "phased_release_enabled": false,
       "does_not_waive_submission_gates": true
     },
     "submission_followup": {
-      "issue": 77,
+      "issue": 181,
       "version_status": "PREPARE_FOR_SUBMISSION",
-      "paid_apps_agreement_status": "PENDING_USER_INFO",
-      "bank_account_entry_missing": true,
-      "republic_of_korea_tax_form": "MISSING_TAX_INFO",
-      "us_tax_questionnaire": "MISSING_TAX_INFO",
-      "shared_app_information_confirmation_opened": true,
-      "confirmation_canceled_without_continue": true,
       "final_review_submission_sent": false,
-      "public_release_completed": false
+      "public_release_completed": false,
+      "game_center_component_submission_sent": true,
+      "game_center_component_submission_id": "acb65714-82c5-477e-96ca-e39b320280c3",
+      "game_center_component_status": "WAITING_FOR_REVIEW"
     },
     "previous_source_candidate_record": "release/history/ios-1.1-build-11-source-candidate.json",
     "current_live_release": {
@@ -362,6 +346,9 @@
       "verified_on": "2026-09-10 JST"
     },
     "hotfix_scope": "All keyboard leaderboard participation; independent Cup/Flow records; Game Center availability, delivery retries and rank refresh.",
-    "inherited_external_fields_note": "Existing rights, IAP, availability and media gates below are retained as unverified carry-forward data, not fresh App Store assertions. Resolve against the same signed hotfix candidate before release."
+    "inherited_external_fields_note": "Existing rights, IAP, availability and media gates below are retained as unverified carry-forward data, not fresh App Store assertions. Resolve against the same signed hotfix candidate before release.",
+    "app_store_connect_version_record_created_at_note": "Creation and Prepare for Submission observed in App Store Connect; exact server timestamp was not exposed.",
+    "game_center_hotfix_operations_record": "release/GAME_CENTER_HOTFIX_20260910.md",
+    "app_store_connect_version_record_created_on": "2026-09-10 JST"
   }
 }
