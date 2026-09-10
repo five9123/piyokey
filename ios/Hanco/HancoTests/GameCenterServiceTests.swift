@@ -478,6 +478,62 @@ final class GameCenterServiceTests: XCTestCase {
     )
   }
 
+  func testRankingTitlesIncludeLocalizedGameAndDifficultyForEveryBoard() {
+    for game in GameKind.allCases {
+      for level in GamePresetLevel.allCases {
+        let board = GameCenterLeaderboard.board(game: game, level: level)
+        XCTAssertNotNil(board)
+        XCTAssertTrue(board?.displayTitle.contains(AppLocalization.string("game.mode.\(game.rawValue)")) == true)
+        XCTAssertFalse(board?.displayTitle.contains("game_center.") == true)
+      }
+    }
+    XCTAssertFalse(GameCenterLeaderboard.weeklyPiyoCup.displayTitle.contains("piyo_cup."))
+  }
+
+  func testRankingSelectionDefaultsToBeginnerAndKeepsCupSeparate() {
+    let boards: [GameCenterLeaderboard] = [.flowBeginner, .flowIntermediate, .flowAdvanced]
+    XCTAssertEqual(GameCenterRankingSelection.preferredLeaderboard(candidates: boards, records: []), .flowBeginner)
+    let records = [
+      record(deckID: "flow_topik_advanced", playedAt: date("2026-09-10T00:00:00Z")),
+      record(competition: .weeklyPiyoCup, playedAt: date("2026-09-11T00:00:00Z")),
+      record(deckID: "user_custom", playedAt: date("2026-09-12T00:00:00Z")),
+    ]
+    XCTAssertEqual(GameCenterRankingSelection.preferredLeaderboard(candidates: boards, records: records), .flowAdvanced)
+  }
+
+  func testRankingTargetsRequireAnAdjacentVerifiedEntryAndHandleTies() {
+    func snapshot(rank: Int, score: Int, entries: [GameCenterRankingEntry]) -> GameCenterRankingSnapshot {
+      .init(localEntry: .init(id: "me", displayName: "Me", rank: rank, score: score),
+        entries: entries, totalPlayerCount: 100, fetchedAt: Date(), periodStart: nil)
+    }
+    let above = GameCenterRankingEntry(id: "above", displayName: "Other", rank: 41, score: 900)
+    let below = GameCenterRankingEntry(id: "below", displayName: "Other", rank: 43, score: 800)
+    let value = snapshot(rank: 42, score: 850, entries: [below, above, above])
+    XCTAssertEqual(value.nearbyEntries.map(\.id), ["above", "me", "below"])
+    XCTAssertEqual(value.pointsToMatch, 50)
+    XCTAssertEqual(snapshot(rank: 42, score: 900, entries: [above]).pointsToMatch, 0)
+    XCTAssertNil(snapshot(rank: 1, score: 900, entries: [above]).nextTarget)
+    XCTAssertNil(snapshot(rank: 45, score: 800, entries: [above]).nextTarget)
+    XCTAssertNil(snapshot(rank: 42, score: 950, entries: [above]).nextTarget)
+    XCTAssertEqual(GameCenterRankingSnapshot.nearbyRange(localRank: 42), NSRange(location: 40, length: 5))
+    XCTAssertEqual(GameCenterRankingSnapshot.nearbyRange(localRank: nil), NSRange(location: 1, length: 5))
+  }
+
+  func testRankingFreshnessAndWeeklyExpiryAreDifferentFromFailures() {
+    let sunday = date("2026-09-13T14:59:30Z")
+    let monday = date("2026-09-13T15:00:00Z")
+    let snapshot = GameCenterRankingSnapshot(localEntry: nil, entries: [], totalPlayerCount: 0,
+      fetchedAt: sunday, periodStart: PiyoCupWeek.start(containing: sunday))
+    var read = GameCenterRankingReadState(snapshot: snapshot)
+    XCTAssertFalse(read.needsRefresh(asOf: sunday.addingTimeInterval(10)))
+    XCTAssertTrue(read.needsRefresh(asOf: monday))
+    XCTAssertEqual(PiyoCupWeek.end(containing: sunday), monday)
+    read.failed = true
+    XCTAssertTrue(read.needsRefresh(asOf: sunday))
+    read.isLoading = true
+    XCTAssertFalse(read.needsRefresh(asOf: monday))
+  }
+
   private func record(
     mode: SessionMode = .game,
     score: Int = 500,

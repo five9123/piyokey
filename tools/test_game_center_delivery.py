@@ -23,6 +23,7 @@ def main():
         subprocess.run(['xcrun', 'swiftc', '-swift-version', '5', '-parse-as-library',
             '-module-cache-path', str(directory / 'cache'),
             str(FIXTURES / 'FrameworkDoubles.swift'), str(service),
+            str(source.with_name('GameCenterRankings.swift')),
             str(FIXTURES / 'Scenarios.swift'), '-o', str(binary)], check=True)
         subprocess.run([str(binary)], check=True)
 

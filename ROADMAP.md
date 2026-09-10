@@ -2,23 +2,14 @@
 
 로드맵은 기능 목록이 아니라 작업 순서와 WIP 경계다. 상세 제품 계약은 `PRD.md`, 현재 사실은 `PROJECT_STATUS.md`를 따른다.
 
-## Now — R1.1 기준선 안정화
+## Now — 공개판 안정화와 Game Center 경험 통합
 
-기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭은 `main`에 병합됐고, build 22 실기기 확인에서 플릭 방향 미리보기의 시각 품질 미달(petal의 인접 키 덮음·에지 잘림)이 확인돼 제출을 철회했다. TYP-111이 미리보기 표시만 제거(입력 계약 v6.21 유지)하며, 그 source/review gate를 통과한 clean `origin/main`에서만 build 23을 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+기준선은 `PROJECT_STATUS.md`의 최신 `origin/main`이다. 공개판 1.1과 심사 대기 중인 1.1.1, 아직 배포하지 않은 #184 소스를 구분한다. 시간에 따라 변하는 ASC·실기기 현황은 현황판과 각 Issue의 근거를 따른다.
 
-1. iOS 1.1 출시 후보
-   - TYP-43의 Search 카드·연습 목록·분석 설정 source 검증, exact-head review와 maintainer 승인·병합
-   - TYP-111 review/병합 뒤 최신 clean `origin/main`과 tree가 같은 `1.1 (23)` archive/TestFlight 생성. build 21·22는 후보에서 제외
-   - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
-   - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
-2. iOS 1.1 외부 출시 gate #77
-   - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 19 실기기 QA
-   - PostHog 동의 ON 수신·OFF 무전송과 Crashlytics 테스트 크래시·dSYM symbolication
-   - TYP-85 전체 방향표·롱프레스와 TYP-111 미리보기 부재·동시 입력, p95≤50ms, 지원 게임 60fps와 VoiceOver의 iPhone·iPad 실기기 검증
-   - strict preflight 통과 뒤에만 App Review 제출
-3. CI 비용·검증 범위 최적화
-   - docs-only 변경의 iOS 전체 build를 분리
-   - iOS unit test를 정기·수동 release workflow로 보강
+1. #181/PR #183 핫픽스의 남은 계정·실기기·심사 gate 확인. 완료된 복구·Flow/Cup 격리·모든 입력 방식·v5 소스는 재사용한다.
+2. #184의 게임별·난이도별 순위 접근, 주간 경쟁 요약, 결과·재도전, 주변/친구 기록, 성장 업적 연계 구현 → focused 검증 → clean SHA evidence → 현재 head Claude review → 리뷰 가능한 PR 준비.
+3. 기존 외부 gate #77·#7: 계정·권리·IAP·정확한 서명 빌드의 실기기·성능·VoiceOver·오디오·스토어 검증을 소스 완료와 분리한다.
+4. Challenges·Activities와 콘솔 es/de/fr 현지화는 `docs/GAME_CENTER_EXPERIENCE.md`의 구체적 결정안에 따라 별도 범위를 확정한다. 필수 #184 개발을 기다리게 하지 않는다.
 
 ## Next — 병합된 소스의 외부 gate 완결
 

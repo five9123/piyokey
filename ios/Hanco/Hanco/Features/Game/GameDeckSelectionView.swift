@@ -171,6 +171,7 @@ struct GameDeckSelectionView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @EnvironmentObject private var gameCenter: GameCenterService
+  @EnvironmentObject private var gameProgress: GameProgressLibrary
 
   let onFindDecks: () -> Void
   private let piyoCupDeck = PiyoCupDeckLoader.load()
@@ -190,14 +191,24 @@ struct GameDeckSelectionView: View {
             spacing: 14
           ) {
             ForEach(GameKind.allCases, id: \.rawValue) { gameKind in
-              NavigationLink {
-                GameDeckListView(gameKind: gameKind, onFindDecks: onFindDecks)
-              } label: {
-                gameCard(gameKind)
+              VStack(spacing: 0) {
+                NavigationLink {
+                  GameDeckListView(gameKind: gameKind, onFindDecks: onFindDecks)
+                } label: {
+                  gameCard(gameKind)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("game.mode.\(gameKind.rawValue)")
+                .appTourTarget(.gameModes, enabled: gameKind == .flow)
+                if let board = preferredLeaderboard(for: gameKind),
+                  gameCenter.availableLeaderboards.contains(board)
+                {
+                  GameCenterRankingLink(leaderboard: board, showsLevel: true)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 4)
+                }
               }
-              .buttonStyle(.plain)
-              .accessibilityIdentifier("game.mode.\(gameKind.rawValue)")
-              .appTourTarget(.gameModes, enabled: gameKind == .flow)
+              .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24))
             }
 
             NavigationLink {
@@ -213,6 +224,7 @@ struct GameDeckSelectionView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, adaptiveMetrics.horizontalPadding)
         .padding(.vertical, 18)
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("game.mode.grid")
       }
       .background(gameBackground)
@@ -220,25 +232,54 @@ struct GameDeckSelectionView: View {
       .navigationBarTitleDisplayMode(.inline)
       .accessibilityIdentifier("game.selection.screen")
       .rootSettingsToolbar()
-      .task { gameCenter.prepare() }
+      .refreshable { gameCenter.refreshRankings(GameCenterLeaderboard.allCases, force: true) }
+      .task { gameCenter.refreshRankings(GameCenterLeaderboard.allCases) }
     }
   }
 
   @ViewBuilder
   private var piyoCupCard: some View {
     if let piyoCupDeck {
-      NavigationLink {
-        FlowGameView(deck: piyoCupDeck, competition: .weeklyPiyoCup)
-      } label: {
-        piyoCupCardLabel(isAvailable: true)
+      VStack(alignment: .leading, spacing: 0) {
+        NavigationLink {
+          FlowGameView(deck: piyoCupDeck, competition: .weeklyPiyoCup)
+        } label: {
+          piyoCupCardLabel(isAvailable: true)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("game.piyo_cup")
+        if gameCenter.availableLeaderboards.contains(.weeklyPiyoCup) {
+          VStack(alignment: .leading, spacing: 6) {
+            TimelineView(.periodic(from: .now, by: 60)) { context in
+              if let best = gameCenter.localBestScore(for: .weeklyPiyoCup, asOf: context.date) {
+                Text(AppLocalization.format("game_center.ranking.weekly_best", best.formatted()))
+                  .font(.caption.weight(.semibold))
+              }
+              Text(AppLocalization.format("game_center.ranking.week_ends",
+                PiyoCupWeek.end(containing: context.date).formatted(
+                  Date.FormatStyle().month(.abbreviated).day().hour().minute().timeZone()
+                    .locale(AppLocalization.locale))))
+                .font(.caption)
+            }
+            GameCenterRankingPanel(leaderboard: .weeklyPiyoCup)
+          }
+          .padding(.horizontal, 16)
+          .padding(.bottom, 12)
+        }
       }
-      .buttonStyle(.plain)
-      .accessibilityIdentifier("game.piyo_cup")
+      .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 24))
+      .accessibilityElement(children: .contain)
     } else {
       piyoCupCardLabel(isAvailable: false)
         .opacity(0.6)
         .accessibilityIdentifier("game.piyo_cup.unavailable")
     }
+  }
+
+  private func preferredLeaderboard(for game: GameKind) -> GameCenterLeaderboard? {
+    GameCenterRankingSelection.preferredLeaderboard(
+      candidates: GamePresetLevel.allCases.compactMap { GameCenterLeaderboard.board(game: game, level: $0) },
+      records: gameProgress.records)
   }
 
   private func piyoCupCardLabel(isAvailable: Bool) -> some View {
@@ -376,6 +417,8 @@ private struct GameDeckListView: View {
   @Environment(\.hancoAdaptiveMetrics) private var adaptiveMetrics
   @EnvironmentObject private var deckLibrary: DeckLibrary
   @EnvironmentObject private var gameProgress: GameProgressLibrary
+  @EnvironmentObject private var gameCenter: GameCenterService
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   let gameKind: GameKind
   let onFindDecks: () -> Void
@@ -413,6 +456,12 @@ private struct GameDeckListView: View {
     .navigationBarTitleDisplayMode(.inline)
     .accessibilityIdentifier("game.deck_selection.screen")
     .rootSettingsToolbar()
+    .task { gameCenter.refreshRankings(rankedBoards) }
+    .refreshable { gameCenter.refreshRankings(rankedBoards, force: true) }
+  }
+
+  private var rankedBoards: [GameCenterLeaderboard] {
+    GamePresetLevel.allCases.compactMap { GameCenterLeaderboard.board(game: gameKind, level: $0) }
   }
 
   private var gamePresetDecks: some View {
@@ -423,22 +472,29 @@ private struct GameDeckListView: View {
         .fixedSize(horizontal: false, vertical: true)
 
       LazyVGrid(
-        columns: [
-          GridItem(.flexible(), spacing: 12),
-          GridItem(.flexible(), spacing: 12),
-        ],
+        columns: Array(repeating: GridItem(.flexible(), spacing: 12),
+          count: dynamicTypeSize.isAccessibilitySize ? 1 : 2),
         spacing: 12
       ) {
         ForEach(gamePresets) { preset in
-          NavigationLink {
-            gameDestination(for: preset.localizedDeck)
-          } label: {
-            gamePresetCard(preset)
+          VStack(spacing: 0) {
+            NavigationLink {
+              gameDestination(for: preset.localizedDeck)
+            } label: {
+              gamePresetCard(preset)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(
+              "game.\(gameKind.rawValue).preset.\(preset.level.rawValue)"
+            )
+            if let board = GameCenterLeaderboard.board(game: gameKind, level: preset.level),
+              gameCenter.availableLeaderboards.contains(board)
+            {
+              GameCenterRankingPanel(leaderboard: board)
+                .padding(.horizontal, 14).padding(.bottom, 8)
+            }
           }
-          .buttonStyle(.plain)
-          .accessibilityIdentifier(
-            "game.\(gameKind.rawValue).preset.\(preset.level.rawValue)"
-          )
+          .background(AppPalette.card, in: RoundedRectangle(cornerRadius: 22))
         }
 
         Button(action: findDecks) {

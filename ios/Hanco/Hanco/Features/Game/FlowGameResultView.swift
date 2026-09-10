@@ -401,74 +401,12 @@ struct FlowGameResultView: View {
     }
   }
 
+  @ViewBuilder
   private func gameCenterButton(for record: GameRecord) -> some View {
-    VStack(spacing: 8) {
-      Button {
-        gameCenter.showLeaderboard(for: record)
-      } label: {
-        HStack(spacing: 9) {
-          if gameCenter.isDashboardBusy {
-            ProgressView()
-              .tint(Color.orange)
-          } else {
-            Image(systemName: "trophy.fill")
-          }
-          Text(verbatim: gameCenterButtonTitle(for: record))
-          Spacer()
-          if !gameCenter.isDashboardBusy {
-            Image(systemName: "chevron.right")
-          }
-        }
-        .font(.headline.weight(.bold))
-        .foregroundStyle(Color.orange)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 13)
-        .padding(.horizontal, 15)
-        .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 17))
-      }
-      .disabled(!gameCenter.canPresentDashboard)
-      .opacity(gameCenter.canPresentDashboard ? 1 : 0.64)
-      .accessibilityIdentifier("game.result.game_center")
-      if !gameCenter.isAuthenticated {
-        Text("game_center.submission.sign_in")
-          .font(.caption)
-          .foregroundStyle(AppPalette.mutedInk)
-      } else if let state = gameCenter.submissionState(for: record) {
-        HStack {
-          Text(submissionStatusKey(state))
-            .font(.caption)
-            .foregroundStyle(AppPalette.mutedInk)
-            .accessibilityIdentifier("game.result.game_center_status")
-          if state == .failed || state == .unconfirmed {
-            Button("game_center.submission.retry") {
-              gameCenter.retrySubmission(for: record)
-            }
-            .font(.caption.weight(.bold))
-            .accessibilityIdentifier("game.result.game_center_retry")
-          }
-        }
-      }
+    if let board = GameCenterLeaderboard.leaderboard(for: record) {
+      GameCenterRankingPanel(leaderboard: board, record: record)
+        .task { gameCenter.refreshRankings([board]) }
     }
-  }
-
-  private func submissionStatusKey(_ state: GameCenterService.SubmissionState) -> LocalizedStringKey {
-    switch state {
-    case .pending: "game_center.submission.pending"
-    case .submitting: "game_center.submission.submitting"
-    case .confirming: "game_center.submission.confirming"
-    case .submitted: "game_center.submission.submitted"
-    case .failed: "game_center.submission.failed"
-    case .unconfirmed: "game_center.submission.unconfirmed"
-    }
-  }
-
-  private func gameCenterButtonTitle(for record: GameRecord) -> String {
-    if let rank = gameCenter.rank(for: record) {
-      return AppLocalization.format("game_center.result_rank_format",
-        rank
-      )
-    }
-    return AppLocalization.string("game_center.result_action")
   }
 
   @ViewBuilder

@@ -587,6 +587,7 @@ struct MyPiyoDetailView: View {
     ScrollView {
       VStack(spacing: 18) {
         profileCard
+        GameCenterGrowthCard()
         stampCard
         rewardsCard
       }
