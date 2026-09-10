@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "verified_commit": "0cc6a3f74998b7ee3a0a7c34faabd83b443ef931",
+  "verified_tree": "453f215e431c08331b24d67885ab40b84750dcad",
+  "branch": "codex/181-separate-cup-flow",
+  "scope": "Issue181 approved Live Flow beginner v5 cutover and store-notes save; final candidate focused verification",
+  "result": "pass",
+  "recorded_at": "2026-09-10T13:38:33.783921+00:00",
+  "checks": [
+    {
+      "name": "python_contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "110 pass; /tmp/piyokey-hotfix-v5-python.log"
+    },
+    {
+      "name": "repository_preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "/tmp/piyokey-hotfix-v5-preflight.log; not strict release approval"
+    },
+    {
+      "name": "controlled_delivery",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/test_game_center_delivery.py",
+      "note": "/tmp/piyokey-hotfix-v5-delivery.log; production service with doubles,16boards x3inputs and read-back/retry/account/week tests. Not real GameKit server receipt."
+    },
+    {
+      "name": "iphone_unit_and_rank_ui",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -parallel-testing-enabled NO -disableAutomaticPackageResolution -destination 'platform=iOS Simulator,id=85F886ED-1D0C-43A9-B72C-44EBBF0FBECB' -resultBundlePath /tmp/piyokey-hotfix-v5-iphone.xcresult -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/FlowGameRankTuningTests -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testHotfixFlowRankingAllDifficultiesAndInputsGlobalEN -only-testing:HancoUITests/HancoUITests/testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs",
+      "note": "134unit+2UI pass; /tmp/piyokey-hotfix-v5-iphone.log. New test rejects legacy v4 Flow beginner and maps all3inputs to v5 vs Cupweeklyv4. English Flow3levels/3inputs/repeat beginner and Cup3inputs button visibility pass. iPad UI was not rerun for this ID/config-only change; earlier0e96472/169de69 UI evidence is historical on unchanged layout."
+    },
+    {
+      "name": "workspace_doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean Issue181 owned worktree; authenticated GitHub CLI"
+    },
+    {
+      "name": "diff_check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "Latest fetched main3aa148ffd84b522dc555ce0c8d0e2ce7fcc4461b remains ancestor."
+    }
+  ],
+  "manual_gates": [
+    "Exact final head Claude review after evidence commit is required; earlierc127b04 passed but is not reused for v5 changes. Maintainer manual approval and pre-merge main recheck remain required.",
+    "ASC actual observation2026-09-10 22:29JST: v5 Flow beginner is Live; notes saved and reloaded; app1.1.1 Prepare for Submission with no build. This is not actual client score submission or app release.",
+    "All16 Live IDs are prepared in intended and candidate baseline including v5 so iOS16-25 does not lose Flow beginner CTA. Same signed candidate actual iPhone/iPad Game Center receipt/read-back/recovery/physical keyboard/week verification remains open; no release before this acceptance. This candidate-preparation ordering is explicitly recorded in DECISIONS and operations doc.",
+    "Actual target iPhone15ProJM/iPad unavailable at last check. KH iPhone is connected but user authorization to use that device was requested and not yet received. No new device install, account switch or test score submitted.",
+    "ASC default v4 and old v4 board stay until successful new-app device verification and rollout; no server high-score copy or deletion. Only retained attributed ordinary Flow source records backfill v5. Other15 IDs unchanged.",
+    "Latest clean origin/main source required before signing/archive/install/upload; full iOS regression, real device, rights/accounts/IAP/privacy/consent/Crashlytics/RC gates remain separate. Earlier strict preflight41findings on0e96472 remains historical open-readiness evidence, not a fresh strict pass; Android frozen."
+  ]
+}
