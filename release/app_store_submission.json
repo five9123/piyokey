@@ -247,8 +247,8 @@
       "contact_phone": "+821050910203",
       "notes_prepared": true,
       "notes_path": "release/APP_REVIEW_NOTES_1_1_1.md",
-      "hotfix_notes_saved_to_app_store_connect": false,
-      "hotfix_notes_save_blocker": "App Store Connect session expired on 2026-09-10 JST; login required."
+      "hotfix_notes_saved_to_app_store_connect": true,
+      "hotfix_notes_reloaded_on": "2026-09-10 22:29 JST"
     },
     "in_app_purchase": {
       "reference_name": "typee pro Lifetime",
@@ -338,7 +338,8 @@
       "public_release_completed": false,
       "game_center_component_submission_sent": true,
       "game_center_component_submission_id": "acb65714-82c5-477e-96ca-e39b320280c3",
-      "game_center_component_status": "WAITING_FOR_REVIEW"
+      "game_center_component_status": "LIVE",
+      "game_center_component_status_verified_on": "2026-09-10 22:29 JST"
     },
     "previous_source_candidate_record": "release/history/ios-1.1-build-11-source-candidate.json",
     "current_live_release": {
@@ -347,7 +348,7 @@
       "status": "READY_FOR_DISTRIBUTION",
       "verified_on": "2026-09-10 JST"
     },
-    "hotfix_scope": "All keyboard participation; independent Cup/Flow; ranking button and status in the score card; retained-best server-score read-back, bounded recovery, and occurrence-specific weekly submission.",
+    "hotfix_scope": "All keyboard participation; independent Cup/Flow; ranking button and status in the score card; retained-best server-score read-back, bounded recovery, and occurrence-specific weekly submission. Flow beginner uses Live v5; other15 IDs unchanged. Actual device acceptance is still open.",
     "inherited_external_fields_note": "Existing rights, IAP, availability and media gates below are retained as unverified carry-forward data, not fresh App Store assertions. Resolve against the same signed hotfix candidate before release.",
     "app_store_connect_version_record_created_at_note": "Creation and Prepare for Submission observed in App Store Connect; exact server timestamp was not exposed.",
     "game_center_hotfix_operations_record": "release/GAME_CENTER_HOTFIX_20260910.md",

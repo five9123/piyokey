@@ -63,7 +63,7 @@
 	<string>typee uses Photos access to save your game result image.</string>
 	<key>PiyokeyGameCenterIntendedLeaderboardIDs</key>
 	<array>
-		<string>piyokey.v4.flow.beginner</string>
+		<string>piyokey.v5.flow.beginner</string>
 		<string>piyokey.v4.flow.intermediate</string>
 		<string>piyokey.v4.flow.advanced</string>
 		<string>piyokey.v3.acid_rain.beginner</string>
@@ -82,7 +82,7 @@
 	</array>
 	<key>PiyokeyGameCenterAvailableLeaderboardIDs</key>
 	<array>
-		<string>piyokey.v4.flow.beginner</string>
+		<string>piyokey.v5.flow.beginner</string>
 		<string>piyokey.v4.flow.intermediate</string>
 		<string>piyokey.v4.flow.advanced</string>
 		<string>piyokey.v3.acid_rain.beginner</string>

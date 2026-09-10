@@ -6,7 +6,7 @@ final class GameCenterServiceTests: XCTestCase {
     XCTAssertEqual(GameCenterRankedDeck.all.count, 15)
     XCTAssertEqual(Set(GameCenterRankedDeck.all.map(\.deckID)).count, 15)
     XCTAssertEqual(Set(GameCenterRankedDeck.all.map(\.leaderboard)).count, 15)
-    XCTAssertEqual(GameCenterLeaderboard.flowBeginner.rawValue, "piyokey.v4.flow.beginner")
+    XCTAssertEqual(GameCenterLeaderboard.flowBeginner.rawValue, "piyokey.v5.flow.beginner")
     XCTAssertEqual(
       GameCenterLeaderboard.flowIntermediate.rawValue,
       "piyokey.v4.flow.intermediate"
@@ -52,6 +52,20 @@ final class GameCenterServiceTests: XCTestCase {
 
     XCTAssertEqual(contract.availableLeaderboards, expectedLive)
     XCTAssertEqual(contract.intendedLeaderboards, expectedLive)
+  }
+
+  func testFlowBeginnerCutoverRejectsLegacyServerID() {
+    XCTAssertNil(GameCenterLeaderboard(rawValue: "piyokey.v4.flow.beginner"))
+    let contract = GameCenterAvailabilityContract.bundled()
+    XCTAssertTrue(contract.contains(.flowBeginner))
+    for input in [SessionInputMode.builtIn, .builtInKorean10Key, .osIME] {
+      let flow = record(inputMode: input)
+      XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: flow).map(\.rawValue),
+        ["piyokey.v5.flow.beginner"])
+      let cup = record(competition: .weeklyPiyoCup, inputMode: input)
+      XCTAssertEqual(GameCenterLeaderboard.leaderboards(for: cup).map(\.rawValue),
+        ["piyokey.v4.cup.weekly.flow"])
+    }
   }
 
   func testBundledPiyoCupDeckMatchesFixedCompetitionContract() {

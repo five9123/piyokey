@@ -112,3 +112,23 @@ controlled delivery, iPhone 관련 단위 133 + UI 4, iPad 랭킹 Flow/Cup/OS UI
 저장하지 않았다. 앱 업로드·심사 제출은 여전히 미실행이다. strict release preflight의
 41개 finding은 미완료 외부 gate를 포함한다. 과거 Android 항목은 동결 플랫폼의
 역사적 설정이므로 현재 iOS 핫픽스 작업 범위를 Android로 확장하는 근거가 아니다.
+
+
+## 2026-09-10 22:29 JST 후속 확인
+
+- Claude 사용량 복구 후 exact head `c127b0401a697bbe6458de8a6ee6f688663f6691`
+  독립 리뷰가 **review:passed**로 완료됐다. PR 댓글에 원문을 저장했다. 이후 v5
+  전환 커밋은 이 리뷰를 재사용하지 않고 새 head 리뷰를 받는다.
+- ASC 로그인 복구 후 `APP_REVIEW_NOTES_1_1_1.md` 내용을 Notes에 저장하고 페이지
+  재탐색 후 같은 내용을 확인했다. 1.1.1은 Prepare for Submission, Build 미선택이다.
+- Flow Beginner v5 상세 화면의 ID와 **Live**, Integer/Best Score/High to Low,
+  범위 0–1,000,000, Hidden No를 재확인했다. 위의 Waiting for Review는 오전의 관측이다.
+- 일반 Flow 초급 enum·intended·후보 baseline과 테스트를 v5로 전환했다. ASC가 Live임을
+  확인했으므로 iOS 16–25에서도 초급 버튼이 사라지는 중간 후보를 피하도록 두 배열을
+  함께 준비한다. 이는 실제 서버 검증이나 출고 승격 완료를 의미하지 않는다. 새 head
+  리뷰·maintainer 승인·최신 main 서명 후보의 실제 제출/조회 확인 전에는 출고하지 않는다.
+  위의 단계 2~4는 최종 후보 준비와 실제 기기 승인 단계로 합쳐 수행한다.
+- 기기 목록에서 iPhone 15 Pro JM·Jungmin’s iPad는 미연결이다. 연결된 KH iPhone의
+  사용은 사용자에게 확인 중이며 임의 설치/계정 변경/점수 제출은 하지 않았다.
+- ASC 기본 보드 v4·기존 v4 보관 전 대기는 유지한다. v4 서버 최고점은 복사하지 않고
+  기기에 보존된 일반 Flow 원본만 v5에 보충 제출한다. 나머지15개 ID는 바꾸지 않는다.

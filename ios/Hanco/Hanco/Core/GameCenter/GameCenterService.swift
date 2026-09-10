@@ -4,7 +4,7 @@ import GameKit
 import UIKit
 
 enum GameCenterLeaderboard: String, CaseIterable, Hashable {
-  case flowBeginner = "piyokey.v4.flow.beginner"
+  case flowBeginner = "piyokey.v5.flow.beginner"
   case flowIntermediate = "piyokey.v4.flow.intermediate"
   case flowAdvanced = "piyokey.v4.flow.advanced"
   case acidRainBeginner = "piyokey.v3.acid_rain.beginner"

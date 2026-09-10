@@ -19,9 +19,9 @@
 
 baseline에 없는 새 ID는 intended에 있다는 이유만으로 활성화하지 않는다. iOS 26+는 released인 intended ID를 조회해 baseline에 합친다. 불완전한 성공 응답이나 빈 목록은 이미 Live로 검증한 baseline을 제거하지 않는다. 조회 오류·5초 timeout에도 baseline을 유지하고 foreground에서 다시 조회할 수 있다. token이 다른 늦은 callback은 무시한다. 기존 baseline의 제출은 probe 완료를 기다리지 않는다.
 
-`GKLeaderboard.releaseState`는 iOS 26+ API다. iOS 16~25는 baseline만 사용한다. 2026-08-20 현재 flow v4 3개와 weekly v4를 포함한 16개 운영 ID가 모두 Live로 확인되어 다음 출고 baseline에도 전부 포함한다. 따라서 iOS 16~25에서도 정확한 번들 덱·버전의 모든 입력 방식 기록은 해당 보드에 제출할 수 있다.
+`GKLeaderboard.releaseState`는 iOS 26+ API다. iOS 16~25는 baseline만 사용한다. 2026-09-10 22:29 JST Flow 초급 v5 Live를 확인했다. 다음 출고 후보는 초급 v5·Flow 중급/고급 v4·weekly v4를 포함한 Live 16개를 baseline으로 구성한다. 후보의 실제 서버 제출·조회 gate는 아직 열려 있고 통과 전 출고하지 않는다. 따라서 iOS 16~25에서도 정확한 번들 덱·버전의 모든 입력 방식 기록은 해당 보드에 제출할 수 있다.
 
-ID 추가 순서는 다음과 같다.
+신규 미출시 ID의 일반 확인 순서는 다음과 같다. 이번 v5 교체는 아래 추가 기록처럼 Live 확인 후 최종 후보의 intended/baseline을 함께 준비하며, 실제 서버 확인 전에는 출고하지 않는다.
 
 1. 새 계약은 먼저 `PiyokeyGameCenterIntendedLeaderboardIDs`에만 추가한다.
 2. App Store Connect에서 리더보드가 **Live**인지 확인한다.
@@ -37,7 +37,7 @@ ID 추가 순서는 다음과 같다.
 
 | Leaderboard ID | 고정 콘텐츠 | 일본어 표시명 | 영어 표시명 | 한국어 표시명 |
 |---|---|---|---|---|
-| `piyokey.v4.flow.beginner` | `flow_topik_beginner` v3 | フロー・初級 | Flow · Beginner | 흐름 · 초급 |
+| `piyokey.v5.flow.beginner` | `flow_topik_beginner` v3 | フロー・初級 | Flow · Beginner | 흐름 · 초급 |
 | `piyokey.v4.flow.intermediate` | `flow_topik_intermediate` v3 | フロー・中級 | Flow · Intermediate | 흐름 · 중급 |
 | `piyokey.v4.flow.advanced` | `flow_topik_advanced` v3 | フロー・上級 | Flow · Advanced | 흐름 · 고급 |
 | `piyokey.v3.acid_rain.beginner` | `acid_rain_topik_beginner` v3 | 単語の雨・初級 | Word Rain · Beginner | 산성비 · 초급 |
@@ -71,7 +71,7 @@ ID 추가 순서는 다음과 같다.
 - Restarts Interval: **1 week**
 - Start Date and Time: 2026-08-17 00:00 JST (2026-08-16 15:00 UTC)
 
-Issue #181의 정정 계약에서 피요컵 점수는 내장 두벌식·천지인·OS 키보드 모두 recurring 보드에만 제출한다. 일반 Flow는 난이도별 클래식 보드만 사용하며 피요컵 결과에서 Flow 순위로 대체하지 않는다. 기존 1.1 (24)은 이중 제출하므로 변경 소스를 포함한 새 빌드가 필요하다. 이미 섞인 서버 최고점은 이 변경으로 소급 수정되지 않는다. 2026-09-10 사용자 승인으로 기본 리더보드를 Flow 초급 v4로 변경하고 구형 Flow v3 3개와 weekly v3를 archive했다. Flow 초급의 혼합 기록은 v5 한 개로 교체하며 현재는 단독 심사 대기다. v5 Live·앱 전환·실기기 확인 전에는 v4를 유지하고 미승인 v5를 Live baseline에 넣지 않는다. [운영 확인과 전환 절차](GAME_CENTER_HOTFIX_20260910.md)를 따른다.
+Issue #181의 정정 계약에서 피요컵 점수는 내장 두벌식·천지인·OS 키보드 모두 recurring 보드에만 제출한다. 일반 Flow는 난이도별 클래식 보드만 사용하며 피요컵 결과에서 Flow 순위로 대체하지 않는다. 기존 1.1 (24)은 이중 제출하므로 변경 소스를 포함한 새 빌드가 필요하다. 이미 섞인 서버 최고점은 이 변경으로 소급 수정되지 않는다. 2026-09-10 사용자 승인으로 기본 리더보드를 Flow 초급 v4로 변경하고 구형 Flow v3 3개와 weekly v3를 archive했다. Flow 초급의 혼합 기록은 v5 한 개로 교체하며 2026-09-10 22:29 JST Live를 재확인했다. 앱의 초급 enum/intended/출고 후보 baseline을 v5로 전환했고 실기기·서명·출시는 아직 미완료다. ASC 기본 보드와 기존 v4는 새 앱의 실제 동작 확인·배포까지 유지한다. [운영 확인과 전환 절차](GAME_CENTER_HOTFIX_20260910.md)를 따른다.
 
 ## 4. 피요 성장 업적 5개
 
