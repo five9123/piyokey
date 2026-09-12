@@ -35,7 +35,7 @@ Orca 카드는 이 상태의 작업공간별 표시이며 별도 완료 기준�
 | [TYP-81](https://linear.app/typee/issue/TYP-81) | Todo / QA | 공개 1.1.1과 실제 설치 build를 기준으로 iPhone/iPad·IAP·계정·권리·지역·미디어 검증 결과 기록 |
 | [TYP-34](https://linear.app/typee/issue/TYP-34) | Todo / 검증만 | 구현은 PR #62/#140에 포함. 권한·기존 OFF 보존·시간대 변경·현지 20시 실제 수신 |
 | [TYP-78](https://linear.app/typee/issue/TYP-78) / PR #149 | Todo / 의도된 일시정지 | 과거 build 11 미디어와 현재 배포 UI 대조, 사람 검수·저장 재조회. exec 라벨 제거·중지 유지 |
-| [TYP-117](https://linear.app/typee/issue/TYP-117) / #186 | In Progress / 상태 동기화 | Linear·Orca 반영 후 현황 문서·release JSON의 검증·PR 리뷰·병합 gate |
+| [TYP-117](https://linear.app/typee/issue/TYP-117) / #186 · PR #187 | In Review / 상태 동기화 | Linear·Orca 반영과 현황 문서·release JSON 검증 완료. 현재 head 리뷰·maintainer 병합 gate |
 | [TYP-123](https://linear.app/typee/issue/TYP-123) / #175 · Draft PR #176 | In Review / 로컬 데모 | 최신 head 리뷰·maintainer 확인. Mac 출시·CloudKit·Universal Purchase 완료로 해석하지 않음 |
 
 ## 소스 병합 후 기능별 실기기 검증 대기
