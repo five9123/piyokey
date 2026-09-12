@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "af26b260f58f6a3c6fee8619a998fdfae09414f1",
+  "verified_tree": "5e5a2547aa29987786ee0b2cd23096b9c402b62e",
+  "branch": "codex/186-tracker-state-sync",
+  "scope": "TYP-117 / GitHub #186 tracker and release-state reconciliation",
+  "result": "pass",
+  "recorded_at": "2026-09-12T09:06:28.173519+00:00",
+  "checks": [
+    {
+      "name": "python-tools",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests -q (110 tests)",
+      "note": ""
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "diff",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Current-head Claude review and maintainer approval required before merge; physical device, account, rights, IAP, regional availability and Crashlytics gates remain separately tracked."
+  ]
+}
