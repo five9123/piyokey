@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "verified_commit": "1dd56180829bf1c35dcabb793634e8fbb9397eb3",
+  "verified_tree": "04bad0f806146cbfe5168844ed2e1c34b5d97935",
+  "branch": "codex/186-tracker-state-sync",
+  "scope": "TYP-117 / GitHub #186 final tracker status and release record",
+  "result": "pass",
+  "recorded_at": "2026-09-12T09:13:44.907505+00:00",
+  "checks": [
+    {
+      "name": "python-tools",
+      "status": "pass",
+      "command": "python3.12 -m unittest discover -s tools/tests -q (110 tests)",
+      "note": ""
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "workspace",
+      "status": "pass",
+      "command": "python3.12 tools/workspace_doctor.py --strict",
+      "note": ""
+    },
+    {
+      "name": "diff",
+      "status": "pass",
+      "command": "git diff --check",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "Maintainer manual merge approval and current-head Claude review; external QA gates tracked in Linear TYP-81/120/121 remain open."
+  ]
+}
