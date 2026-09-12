@@ -1,80 +1,87 @@
 # PIYOKEY 프로젝트 현황
 
-마지막 갱신: 2026-09-10 JST
+마지막 갱신: 2026-09-12 JST
 기준 저장소: `five9123-maker/piyokey`
-기준 `main`: `git fetch --prune origin && git rev-parse origin/main`으로 확인
+확인한 `origin/main`: `602e923e3eddcb32b7ef75c62e3921f28f7a3e33`
 
-이 문서는 현재 열린 작업과 출시 gate만 유지한다. 제품 계약은 `PRD.md`, 확정
-결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`, 실행 상태는
-[PIYOKEY Development Project](https://github.com/users/five9123-maker/projects/1)를
-기준으로 한다. 완료 작업의 상세 증빙은 해당 Issue·PR과 Git 기록에 남긴다.
+제품 계약은 `PRD.md`, 결정은 `DECISIONS.md`, 작업 순서는 `ROADMAP.md`를 따른다.
+작업 상태와 남은 검증은 [Linear Typee](https://linear.app/typee/team/TYP/all),
+소스·병합·검증 SHA는 GitHub Issue/PR과
+[PIYOKEY Development Project](https://github.com/users/five9123-maker/projects/1)에서 연결한다.
+Orca 카드는 이 상태의 작업공간별 표시이며 별도 완료 기준이 아니다.
+확인 근거와 동기화 내역은 [2026-09-12 점검](docs/audits/tracker-sync-20260912.md)을 참고한다.
 
 ## 현재 기준선
 
-| 영역 | 현재 상태 | 다음 gate |
+| 영역 | 확인 상태 | 남은 확인 |
 |---|---|---|
-| iOS 공개판 | 2026-09-09 ASC 직접 조회: `1.1 (24)` Ready for Distribution, iPhone 15 Pro JM 설치본도 `1.1 (24)` | PostHog 수신은 2026-09-10 사용자 확인. 지역별 판매·Crashlytics 최초 크래시 수신 및 symbolication·기존 외부 gate는 별도 확인. 출시 후 Game Center 재발은 TYP-120으로 추적 |
-| iOS 1.1 | build 24는 TYP-112·113·114를 포함한 `main` `85ebfadabc434659943ea8cd3edcb93a91a39a71`에서 생성됐고 ASC 선택 빌드·archive·iPhone 설치 버전이 일치 | Game Center 현행 16개 Live·entitlement·주간 주기는 확인됐으나 제출/재시도/순위 갱신 결함은 1.1.1 후보에서 수정. 2026-09-10 기본 보드 v4 전환·구형 4개 archive 완료, Flow 초급 v5는 9월 10일 22:29 JST Live 재확인. [조사 PR #179](https://github.com/five9123-maker/piyokey/pull/179) |
-| Android | 기존 Kotlin/Compose 포트는 참고용 동결. 현재 제품·유지보수·CI·Play 출시 범위에서 제외 | 재개하지 않음. 사용자가 별도 승인한 새 PRD·초기 설계가 생길 때만 신규 작업으로 시작 |
-| 웹 Builder | 별도 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소의 schema-v2 Builder PR #6 병합·배포 검증 완료 | 모바일과 교차 편집 회귀 유지. 이 저장소의 `web/`은 analytics 계약 패키지이며 웹 앱 본체가 아님 |
-| CI·병합 | GitHub Actions 비활성. `docs/WORKFLOW.md`의 기본 수동 fail-closed 정책에 따라 모든 PR이 exact-head Claude review, focused local evidence, 최신 `origin/main` merged-tree 검증과 maintainer 승인을 요구 | 비활성 CI는 성공으로 간주하지 않으며 full HancoTests와 외부 gate는 focused evidence로 닫지 않음 |
+| iOS 공개판 | Apple 공개 lookup을 2026-09-12 직접 조회: **JP/US/KR 모두 1.1.1**, 공개 일시 2026-09-11 09:33:05 JST | 공개 사실과 전체 수동 QA·권리·계정·지역 gate 통과를 구분한다. 세 국가 밖 판매 상태는 이번에 조회하지 않았다 |
+| 서명·제출 기록 | #181의 2026-09-11 기록: **1.1.1 (25)**, main `602e923`와 같은 tree의 archive/export/upload·처리·App Review 제출. 단위 449개 PASS. 당시 출시 설정 MANUAL | 공개 lookup에는 build 번호가 없다. build 25 연결은 이전 ASC/아카이브 기록이며, 9월 12일 ASC 상태 자체를 새로 읽지는 않았다 |
+| Game Center 핫픽스 | PR #183 병합. 모든 키보드 참여·Flow/Cup 분리·등록 복구·서버 점수 재조회. 구형 v3 4개 archive·Flow 초급 v5 Live 기록 | TYP-120의 동일 서명 기기별 인증·오프라인·최고점 재시도·주간 경계 read-back 증빙 |
+| 분석·진단 | PR #182 병합. PostHog 국가·사용 환경 분석과 동의 v2. #181에서 정책 게시·ASC Coarse Location 공시, #180에서 9월 12일 국가 집계 확인 | TYP-121의 재동의·OFF 네트워크·금지 속성 미보관·Crashlytics crash/dSYM |
+| 웹 Builder | 별도 `hanco_web` 저장소. schema v2 Builder PR #6 통합 기록, 정책 게시 PR #12는 #181에서 확인 | 모바일 교차 편집·미확인 서비스 gate는 별도. 이 저장소의 `web/`은 analytics 계약 패키지 |
+| Android | 과거 포트 참고용 동결 | 개발·의존성·CI·출시 범위 제외. TYP-119는 재개 시 재설계 backlog |
+| macOS | #175 / Draft PR #176 로컬 Catalyst 데모 수락 기록, **main 미병합**. TYP-123으로 연결 | 데모와 TYP-115/116 제품·동기화·출시 스파이크는 별도. TYP-116 사용자 중지/Backlog 유지 |
+| CI·병합 | Actions 비활성. 현재 head Claude 리뷰·focused 로컬 SHA evidence·최신 main tree·maintainer 수동 승인 정책 | 비활성 CI와 외부 미검증 항목을 성공으로 취급하지 않는다 |
 
-## 열린 작업
+## 현재 우선 작업
 
-| Issue | Project 상태 | 다음 한 단계 |
+| Linear / GitHub | 상태 | 다음 한 단계 |
 |---|---|---|
-| [#181 Game Center 핫픽스](https://github.com/five9123-maker/piyokey/issues/181) | In Progress / `codex/181-separate-cup-flow` | 1.1.1 (25) 후보: 모든 키보드·피요컵 분리·공통 복구와 서버 score 재조회·미확인 복구·주간 회차 고정 구현. 랭킹 버튼·등록 상태를 공통 점수 카드로 이동했고 iPhone 단위 133/UI 4 및 iPad Flow·Cup·OS UI 3 검증 통과. 기존 iPad 종료 테스트의 탭 탐색 전용 수정·재검증 결과는 PR #183 최신 SHA evidence에서 추적. ASC 1.1.1 초안·6개 로케일 변경 안내·새 심사 설명 저장, 구형 4개 archive·기본 v4 전환 완료. v5 Live 확인 후 앱 enum·intended·출고 후보 baseline·테스트를 v5로 전환. c127b04 Claude 리뷰 통과 후 이 전환으로 새 head 검증·리뷰가 필요하며 maintainer·서명·실기기 gate는 열림. 공개판은 1.1 (24) |
-| TYP-120 Game Center 전수 조사 | [Draft PR #179](https://github.com/five9123-maker/piyokey/pull/179) | 16개 현행 보드 공통 availability·제출 재시도·순위 갱신 결함의 수정을 #181 / PR #183 핫픽스에 통합. 조사와 실기기 실패 응답 확보를 구분 |
-| TYP-113 피요컵 OS 키보드·주간 랭킹 | Merged / PR #174 → main `85ebfad` / In Review | build 24에 포함. 정확한 실기기 주간 제출 확인과 TYP-120 공통 Game Center 재발 수정은 열린 상태로 유지 |
-| #180 PostHog 국가·기기 사용 환경 분석·재동의 | Verify / PR #182 / 소스 구현·focused 검증 완료 | 국가만 남기는 운영 변환과 고지 v2·진단 선택 보존·철회 시 전송 차단을 구현하고 iPhone/iPad·Release 검증을 통과했다. 사용 분석은 PostHog, Firebase는 Crashlytics 전용으로 유지한다. 정책 게시·App Store Privacy·서명된 앱 수신/OFF 네트워크·Crashlytics crash/dSYM 확인 전에는 Done 처리하지 않으며 현재 1.1의 국가 수집이 시작된 것으로 표현하지 않음 |
-| TYP-114 커리큘럼 카드 셰브런 제거 | Merged / PR #173 → main `060775a54a76e60e8da04ef75a83bd7e49328346` / In Review | 공유 stage row의 장식만 제거하고 Spacer·별·RESUME·레슨 탭 동작을 유지. build 24 iPad에서 최종 화면 확인 전 Done 처리하지 않음 |
-| TYP-112 iPad OS 키보드 가이드·게임 확장 | Merged / PR #171 → main `dc42e19128bf7fc54971a68f30b89e6e21b54cb5` / In Review | focused iPad 테스트 128/128와 최신 merged-tree 검증 PASS. build 24 실제 iPad·물리 키보드에서 가이드 ON/OFF, OS 입력 스트립과 게임 영역을 확인하기 전 Done 처리하지 않음 |
-| TYP-111 플릭 프리뷰 표시 제거 | In Review 준비 / `codex/111-hide-flick-preview` | 표시 전용 overlay와 dead code 제거, full package·HancoTests 및 focused iPhone·iPad UI evidence 뒤 exact-head Claude review를 받고, 병합 전 maintainer 수동 승인을 대기 |
-| TYP-106 플릭 팝업 키캡 겹침·앵커 이탈 | Merged / PR #169 → main `71f088a` / build 22 검증 | build 22 실기기에서 확인된 프리뷰 시각 품질 미달은 TYP-111 표시 제거로 대체하되 기존 방향 입력·p95·60fps·VoiceOver gate는 유지 |
-| TYP-105 build 21 부화 결과 전환 경합 | Merged / PR #168 → main `c81df6d` | build 22 실제 iPhone에서 1→2·2→3·3→축하→Home과 mission 2 및 final 즉시/10초 종료·재실행을 확인 |
-| TYP-101 인앱 천지인 플릭 방향 미리보기 | Merged / PR #165 → main `1a9715b`; 표시 계약은 TYP-111로 대체 | 프리뷰 실기기 gate는 TYP-111 표시 제거 결정으로 폐기하고, 기존 방향 매핑·입력·VoiceOver와 p95·60fps gate는 유지 |
-| TYP-102 마지막 부화 3/3 완료 전환 | Merged / PR #167 → main `4e0b969` / build 21 target | 최종 RC build 21 iPhone에서 결과 닫기 → 성장 축하 1회 → 홈, 10초 대기와 즉시 종료 각각의 재실행이 모두 홈을 유지하는지 확인하기 전 Done 처리하지 않음 |
-| TYP-43 iOS/iPadOS 1.1 출시 | Linear In Review / ASC `1.1 (24)` Ready for Distribution 직접 확인 | 출시 전 문서·트래커의 오래된 상태는 TYP-117에서 정리. TYP-120 Game Center 재발과 지역·계정·권리·IAP 등 미확인 gate를 별도로 추적 |
-| TYP-103 Settings 키보드 카드 순서 | Merged / PR #166 → main `504df3e` / build 21 target | build 22 iPhone·iPad에서 입력 모드→내장 배열 순서와 OS 모드의 배열 비활성·dim을 재확인 |
-| TYP-85 인앱 천지인 방향 플릭 | Merged / PR #161 → main `0a0182b` / iOS 1.1 승인 | build 19 iPhone·iPad 실기기 전체 매핑·롱프레스·취소·동시 입력·p95·60fps·VoiceOver 전에는 Done 처리하지 않음 |
-| TYP-98 연습 발음 버튼 OS IME 터치 차단 | Merged / PR #163 → main `4a27d6b` | build 19 실기기 iPhone에서 덱 연습·커리큘럼 레슨의 발음·OS IME 재포커스와 내장 두벌식·한국어 10키를 smoke하고, iPad 기존 동작을 재확인하기 전 Done 처리하지 않음 |
-| TYP-97 Random 5 입력 중 세로 이동 | Merged / PR #162 → main `1f669cf` | build 19 iPhone 내장 두벌식·한국어 10키·OS IME와 iPad 레이아웃을 실기기로 확인하고, CI·계정·권리·store gate가 열린 동안 Done 처리하지 않음 |
-| TYP-95 OS 10키 겹받침 진행 보존 | Merged / PR #160 → main `2812559` | build 19 iPhone·iPad 실기기에서 연습·지원 게임의 OS 천지인 겹받침 진행을 확인하기 전 Done 처리하지 않음 |
-| TYP-94 iPhone 게임 레이아웃 미확장 | Merged / PR #159 → main `586f00b` | 철회된 build 16 검증은 다음 후보를 대체하지 않는다. build 19 iPhone 실기기에서 게임·연습·레슨·온보딩의 OS 키보드 레이아웃과 TYP-92 포커스 복구를 확인하고 iPad 기존 레이아웃을 재확인하기 전 Done 처리하지 않음 |
-| TYP-93 세션 설정 정보구조 | Merged / PR #158 → main `fe05bd2` | build 14 TestFlight의 iPhone 실기기 덱 플레이·연습 확인 전 Done 처리하지 않음 |
-| TYP-92 iPhone 입력 보조 UI 회귀 | Merged / PR #157 → main `855bf27` | build 14 실제 iPhone·iPad에서 OS 입력 패널·물리 참조 배열·포커스·다음 키 강조를 확인하기 전 Done 처리하지 않음. 실수로 실행한 전체 `HancoTests` target pass는 evidence에서 제외 |
-| TYP-90 다음 키 가이드 오식별 정정 | In Review / PR #156 → main `fdce1d3` | TYP-92에서 iPhone 포함 기존 다음 키 강조·토글을 복구하고 OS 입력 패널 및 물리 참조 배열을 기기별로 정정한 뒤 build 14 실기기 gate까지 In Review 유지 |
-| TYP-89 Settings 정보구조·내장 배열 선택 시인성 | Merged / PR #155 → main `18d1521` | Settings 순서와 segmented 배열 선택은 TYP-90에서 보존. build 13 TestFlight iPhone·iPad 실기기 설정 화면 확인은 OPEN |
-| TYP-88 OS 10키 받침 경계 중간 상태 | Merged / PR #154 → main `93eef46` | Class A/B와 정확한 동일-key 경계 순환 Class C, Unicode scalar별 dot 확장 Class D 및 negative matrix를 exact source SHA에서 검증 완료. DEBUG-only probe는 진단 자산으로 유지하지만 standalone 입력 요청은 종료됐으며, build 12 snapshot·dangling 관찰과 정확한 build 13 iPhone·iPad corpus·TYP-81 로그는 OPEN |
-| TYP-83 OS 천지인 복합모음 committed 중간 상태 | Merged / PR #152 → main `0ed4777` | iPhone 15 Pro row-13 원문(`돼`·`과`·`웨`·`의`) 완료. iPad row-13, post-fix iPhone·iPad practice/lesson/Flow/Dictation, full HancoTests와 TestFlight·release gate는 OPEN |
-| TYP-86 일본어 콘텐츠 현지화 fallback | Merged / PR #151 → main `f46336c` | 후속 TestFlight build의 ja/en/es/de/fr 덱 연습·레슨·게임 표본과 일본어 iPhone·iPad 덱·7개 게임/연습 화면 증빙, full HancoTests·계정·권리·store/release gate는 OPEN |
-| TYP-78 iOS 1.1 스토어 미디어 | In Review / PR #149 / `codex/78-store-media` | build 11 소스 `e6d714d5`에서 일본어 iPad 13형 PNG 10장·iPhone App Preview 3편을 로컬 생성·검증했다. PR review 뒤 현지어 사람 검수와 App Store Connect 업로드·저장 후 재조회는 별도 `gate:store`로 유지 |
-| TYP-77 OS 천지인 ASCII guard 오판 | Merged / PR #147 → main `e6d714d` | marked ASCII를 확정 입력원 경고에서 제외하는 defensive hardening 병합 완료. Practice 배너 0회, 5개 직접 입력 게임×5단어, 일본어 로마자 IME 체감, 정확한 후속 TestFlight build의 iPhone·iPad 증빙은 `gate:device`로 유지 |
-| TYP-73 iOS/iPadOS OS 한국어 키보드 단어 전환 조합 잔존 | Merged / PR #145 → main `43d65b3` / build 11 source | 최신 `origin/main`으로 build 11을 만들고 Practice+5개 게임, iPhone·iPad × 두벌식·천지인 × 연속 10단어를 확인하며 천지인 `대형`·`쇼파`를 포함 |
-| TYP-84 게임 OS IME 입력 chrome | Merged / PR #153 → main `2ef04ed` | TestFlight build 12의 iPhone·iPad 실기기 확인 전 Done 금지 |
-| TYP-82 OS 한국어 키보드 단어 전환 flicker | Merged / PR #150 → main `b2079c3` | build 12 TestFlight의 iPhone·iPad × 두벌식·천지인 실기기 증빙과 full HancoTests는 OPEN |
-| TYP-71 iOS 온보딩 개인정보 문구 | Merged / PR #140 → main `17fb367` | build 10 TestFlight에서 iPhone·iPad 온보딩(알림 권한 1회 → 두 버튼 안내) 실기기 smoke |
-| #125 iPad 게임 재도전 마지막 단어 잔존 | Verify / PR #128 | 소스·자동 회귀 통합 후 iOS 26.5 simulator 접근성 runtime 장애와 분리해 iPad 실기기에서 재도전 countdown의 시각·VoiceOver 상태 확인 |
-| TYP-68 게임 OS 키보드 전환 후 IME 입력 잔존 | Review / PR #139 (#138 대체) | PR review·병합 후 iPhone·iPad 실기기에서 OS 한국어 키보드(두벌식·천지인)로 5개 직접 입력 게임 연속 10단어 전환 확인 |
-| #77 iOS 1.1 심사 제출 | Blocked | Account Holder가 Paid Apps 계약·은행·세금 정보를 완료한 뒤 나머지 제출 gate 진행 |
-| #75 기존 iOS 1.1 (7)/(8) TestFlight | Verify | build 7·8·9를 RC로 사용하지 않고 최신 `main`의 build 10으로 대체 |
-| #7 Game Center 전체 점검 | Verify | 실제 App Store Connect 계약과 인증·제출·리더보드를 실기기에서 확인 |
-| #58 현지 20시 리마인더 | Verify | iOS 실제 기기에서 권한 동의 뒤 현지 20시 수신 확인 |
-| #123 iPad 물리 키보드 영문 입력 안내 | Verify | iPad Bluetooth 1차 동작 확인 완료. 반복 영문 입력의 흔들림·색 강조 후 한국어 두벌식 전환 → 현재 문제 완료를 재확인 |
-| #8 자동 발음 재생 검토 | Verify / Later | 기존 수동 발음과 차이·재생 시점·기본값을 사용자와 확정하기 전 구현하지 않음 |
-| #122 iPad 완료 시 연습 카드 이동 | Review | PR review 뒤 iPad Split View·실기기에서 완료 전환과 Reduce Motion을 최종 확인 |
+| [TYP-120](https://linear.app/typee/issue/TYP-120) / #181 · PR #183 | In Review / 소스 병합·1.1.1 공개 확인 | 사용자 TestFlight 완료 보고와 별도로 남은 상세 Game Center 기기/서버 증빙 정리. 조사 Draft PR #179는 조사 이력 |
+| [TYP-121](https://linear.app/typee/issue/TYP-121) / #180 · PR #182 | In Review / 소스 병합 | 실제 서명 앱의 동의·철회 네트워크·저장 속성 및 Crashlytics 검증 |
+| [TYP-122](https://linear.app/typee/issue/TYP-122) / #184 · Draft PR #185 | In Review / 미병합 | head `8831e81`의 Claude 리뷰·maintainer 승인. focused 검증 완료 기록이 있으나 리뷰는 당시 한도로 미실행. **공개 1.1.1에 미포함** |
+| [TYP-43](https://linear.app/typee/issue/TYP-43) / #77 | In Review / 공개 후 잔여 증빙 | 오래된 심사 대기·은행 정보 미입력 주장을 현행 확정 사실로 사용하지 않는다. TYP-81·34·78 및 기능별 잔여 확인 |
+| [TYP-81](https://linear.app/typee/issue/TYP-81) | Todo / QA | 공개 1.1.1과 실제 설치 build를 기준으로 iPhone/iPad·IAP·계정·권리·지역·미디어 검증 결과 기록 |
+| [TYP-34](https://linear.app/typee/issue/TYP-34) | Todo / 검증만 | 구현은 PR #62/#140에 포함. 권한·기존 OFF 보존·시간대 변경·현지 20시 실제 수신 |
+| [TYP-78](https://linear.app/typee/issue/TYP-78) / PR #149 | Todo / 의도된 일시정지 | 과거 build 11 미디어와 현재 배포 UI 대조, 사람 검수·저장 재조회. exec 라벨 제거·중지 유지 |
+| [TYP-117](https://linear.app/typee/issue/TYP-117) / #186 | In Progress / 상태 동기화 | Linear·Orca 반영 후 현황 문서·release JSON의 검증·PR 리뷰·병합 gate |
+| [TYP-123](https://linear.app/typee/issue/TYP-123) / #175 · Draft PR #176 | In Review / 로컬 데모 | 최신 head 리뷰·maintainer 확인. Mac 출시·CloudKit·Universal Purchase 완료로 해석하지 않음 |
 
-## 즉시 작업 순서
+## 소스 병합 후 기능별 실기기 검증 대기
 
-1. #181 / PR #183에서 모든 키보드 Game Center 참여, 피요컵/일반 Flow 분리와 TYP-120 등록 복구를 검증한다. 16개 보드×3개 입력 방식과 응답 지연·실패·로그인·foreground를 포함한다.
-2. 최신 main 병합 → clean 구현 SHA의 focused 검증·evidence → 새 head Claude review → maintainer gate를 통과한다. 기존 분리 PR의 8483f7b 리뷰는 확장된 핫픽스에 재사용하지 않는다.
-3. ASC 기본 보드 v4 전환·구형 Flow v3 3개/weekly v3 archive를 완료했다. Flow 초급 v5 단독 심사 제출(acb65714-82c5-477e-96ca-e39b320280c3)의 v5 Live를 확인하고 앱 ID·설정·테스트를 전환했다. 새 앱 실제 검증·배포 전에는 ASC 기본 v4와 기존 v4 보드를 유지한다. 상세 사실과 순서는 `release/GAME_CENTER_HOTFIX_20260910.md`를 따른다.
-4. 승인·병합한 최신 main에서 1.1.1 (25)를 서명·업로드한다. 실제 iPhone/iPad Game Center 제출·조회, 전체 iOS 단위 회귀와 기존 출시 gate를 확인하고 App Review 결과를 확인한 단계까지만 완료 처리한다.
+아래 Linear 상태는 모두 **In Review**다. PR 병합은 확인했지만 이번 점검에서 새
+실기기 테스트를 수행하지 않았다. 과거 build 11~24 표기는 역사적 증빙이며 새 후보가
+아니다. 재검증할 때 실제 설치 build·OS·기기를 기록하고 각 티켓의 잔여 조건을 따른다.
 
-## 출시 완료 판단
+| Linear | 소스 | 남은 기능별 확인 범위 |
+|---|---|---|
+| [TYP-73](https://linear.app/typee/issue/TYP-73) | PR #145 병합 | [Regression][iOS/iPadOS] build 10 OS 한국어 키보드 조합 상태가 단어 전환 후 잔존 |
+| [TYP-75](https://linear.app/typee/issue/TYP-75) | PR #146 병합 | [UX][iOS] 설정 화면 정리: 키보드 재구성·섹션 정리·버전 표시·마이페이지 중복 제거 |
+| [TYP-77](https://linear.app/typee/issue/TYP-77) | PR #147 병합 | [Bug][iOS/iPadOS] OS 천지인 입력이 영어 키보드로 오판돼 입력 차단(ASCII 가드) |
+| [TYP-85](https://linear.app/typee/issue/TYP-85) | PR #161 병합 | [Feature][iOS/iPadOS 1.1] 인앱 천지인(10키) 키보드에 iOS 표준 플릭 제스처 추가 |
+| [TYP-88](https://linear.app/typee/issue/TYP-88) | PR #154 병합 | OS 10키 판정기: 받침 경계 중간 상태(겹받침 병합·조립)를 오타로 판정 |
+| [TYP-89](https://linear.app/typee/issue/TYP-89) | PR #155 병합 | 설정 화면 정보구조 개편 |
+| [TYP-90](https://linear.app/typee/issue/TYP-90) | PR #156 병합 | 키보드 입력 가이드 노출 정책 변경 |
+| [TYP-92](https://linear.app/typee/issue/TYP-92) | PR #157 병합 | [Regression][iOS] TYP-90 범위 정정 |
+| [TYP-93](https://linear.app/typee/issue/TYP-93) | PR #158 병합 | 세션 설정(덱 플레이·연습) 정보구조 |
+| [TYP-97](https://linear.app/typee/issue/TYP-97) | PR #162 병합 | [Bug][iOS] 메인 '랜덤 5' 세션 |
+| [TYP-98](https://linear.app/typee/issue/TYP-98) | PR #163 병합 | [Bug][iOS] iPhone OS 키보드 모드에서 '다시 듣기(스피커)' 버튼 탭 불가 |
+| [TYP-102](https://linear.app/typee/issue/TYP-102) | PR #167 병합 | [Bug][iOS] 부화 미션 결과 닫힘 후 다음 단계 전환이 배경 커버 상태로 정지 |
+| [TYP-103](https://linear.app/typee/issue/TYP-103) | PR #166 병합 | [UI][iOS/iPadOS 1.1] 설정 키보드 카드 |
+| [TYP-105](https://linear.app/typee/issue/TYP-105) | PR #168 병합 | [Regression][iOS] build 21 부화 미션 1→2·2→3 결과 전환 경합 잔여 수정 |
+| [TYP-112](https://linear.app/typee/issue/TYP-112) | PR #171 병합 | iPad OS 키보드 모드에서 게임 화면에 두벌식 가이드 미표시 + 가이드 off 시 전체화면 미전환 |
+| [TYP-113](https://linear.app/typee/issue/TYP-113) | PR #174 병합 | 피요컵이 OS 키보드 설정을 무시하고 인앱 두벌식 키보드 강제 |
+| [TYP-114](https://linear.app/typee/issue/TYP-114) | PR #173 병합 | 커리큘럼 스테이지 카드의 '>' 셰브런 제거 |
 
-- 소스·CI 성공은 TestFlight·App Review·App Store 또는 Google Play 출시 완료가 아니다.
-- iOS 새 RC는 `workspace_doctor.py --strict --require-origin-main`을 통과한 최신
-  `origin/main` tree에서 생성하고, build 7·8의 과거 검증을 재사용하지 않는다.
-- Account Holder의 법적·세금·은행 선언, 콘텐츠 권리 승인과 실제 기기 확인은
-  agent가 대신 완료 처리하지 않는다.
+## 완료·취소와 보류 경계
+
+- 기존 Linear Done: TYP-7·65·66·67·69·71·79·82·83·84·86·94·95·96·111.
+  해당 완료 이력을 보존하며 오래된 문서나 Orca 카드 때문에 재개하지 않는다.
+- 기존 Canceled: TYP-68·74·101·106. TYP-101/106 프리뷰는 TYP-111 표시 제거로
+  대체됐고 플릭 입력 자체는 유지한다. Orca의 종료 열에는 취소/대체 사유를 명시했다.
+- TYP-70·76·99·100·104·107~110·118 등 후속 범위의 우선순위·담당·일정은 이번
+  동기화에서 변경하지 않았다. TYP-115/116의 Mac 제품 일정·구조는 별도 결정이다.
+- 운영 TYP-72·91은 기존 In Progress, TYP-80·87은 Todo다. Orca reviewer·dispatcher는
+  활성, capacity watchdog은 비활성임을 확인했으며 자동화 설정은 변경하지 않았다.
+
+## 작업공간과 출시 판단
+
+- 기본 `/Users/jungminoh/Documents/hanco`는 `main`이 아니라 `feat/orca-task-name`
+  (`909585d`)이며 원격 main보다 38커밋 뒤, 고유 문서 커밋 1개가 있다. Orca 이름을
+  바로잡았다. 현재 기준선과 혼동해 배포하지 않는다.
+- 실제 로컬 `main`은 Codex `a1b5/hanco`에 있고 `3aa148f`로 원격보다 1커밋 뒤다.
+- `codex/181-separate-cup-flow`의 미커밋 `PROJECT_STATUS.md`, 미병합 PR, 임시·중지
+  작업공간과 터미널은 보존했다. 이번 정리로 branch를 일괄 최신화하거나 삭제하지 않았다.
+- 소스·자동 테스트·Apple 공개 관찰은 각각 별도 사실이다. 미확인 실기기·계정·권리·IAP·
+  전 지역 판매 검증을 완료로 추정하지 않으며 다음 배포 전 strict 기준을 다시 확인한다.
