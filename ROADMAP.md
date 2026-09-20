@@ -1,49 +1,44 @@
 # PIYOKEY 로드맵
 
-로드맵은 기능 목록이 아니라 작업 순서와 WIP 경계다. 상세 제품 계약은 `PRD.md`, 현재 사실은 `PROJECT_STATUS.md`를 따른다.
+상세 제품 계약은 `PRD.md`, 현재 사실과 확인 출처는 `PROJECT_STATUS.md`를 따른다.
 
-## Now — R1.1 기준선 안정화
+## Now — 공개 1.1.1 후속 검증
 
-기준선은 `PROJECT_STATUS.md`에 기록한 최신 `origin/main`이다. iPad·5개 UI 언어·schema v2·Pro 덱 언어 retag와 Actions 공급망 보안은 통합 완료다. TYP-85 인앱 천지인 플릭은 `main`에 병합됐고, build 22 실기기 확인에서 플릭 방향 미리보기의 시각 품질 미달(petal의 인접 키 덮음·에지 잘림)이 확인돼 제출을 철회했다. TYP-111이 미리보기 표시만 제거(입력 계약 v6.21 유지)하며, 그 source/review gate를 통과한 clean `origin/main`에서만 build 23을 다음 후보로 준비한다. 상세 검증은 `PROJECT_STATUS.md`와 최신 SHA 증빙, 반복 체크리스트는 `docs/LANGUAGE_EXPANSION_CHECKLIST.md`를 따른다.
+2026-09-12 JP/US/KR App Store 공개 버전은 1.1.1이다. 서명·제출 증빙은 main
+`602e923` / 1.1.1 (25)에 연결된다. build 19·21·22·23·24를 다시 만들 다음 후보로
+취급하지 않는다. 공개 관찰이 모든 수동 출시 gate의 완료를 뜻하지 않는다.
 
-1. iOS 1.1 출시 후보
-   - TYP-43의 Search 카드·연습 목록·분석 설정 source 검증, exact-head review와 maintainer 승인·병합
-   - TYP-111 review/병합 뒤 최신 clean `origin/main`과 tree가 같은 `1.1 (23)` archive/TestFlight 생성. build 21·22는 후보에서 제외
-   - StoreKit·파일 상호운용·1,000항목·스토어 자산 검증
-   - 10개 로케일 스토어 미디어 로컬 제작 완료 → 현지어·최종 빌드 일치 검수 후 신규 로케일 필수 메타데이터와 미디어 업로드
-2. iOS 1.1 외부 출시 gate #77
-   - Account Holder 계약·은행·세금, 권리·개인정보, IAP와 정확한 build 19 실기기 QA
-   - PostHog 동의 ON 수신·OFF 무전송과 Crashlytics 테스트 크래시·dSYM symbolication
-   - TYP-85 전체 방향표·롱프레스와 TYP-111 미리보기 부재·동시 입력, p95≤50ms, 지원 게임 60fps와 VoiceOver의 iPhone·iPad 실기기 검증
-   - strict preflight 통과 뒤에만 App Review 제출
-3. CI 비용·검증 범위 최적화
-   - docs-only 변경의 iOS 전체 build를 분리
-   - iOS unit test를 정기·수동 release workflow로 보강
+1. TYP-120 / #181: 병합된 Game Center 핫픽스의 실제 기기·서버 read-back 증빙 정리.
+2. TYP-121 / #180: 동의 v2 재선택·OFF 네트워크·금지 속성 미보관·Crashlytics 검증.
+3. TYP-43·81·34와 기능별 In Review: 정확한 배포 빌드의 잔여 QA·IAP·권리·계정·지역 확인.
+4. TYP-117 / #186: Linear·Orca·GitHub·현황 문서의 상태 동기화와 검토.
 
-## Next — 병합된 소스의 외부 gate 완결
+TYP-78의 스토어 미디어는 일시정지/Todo를 유지한다. 재개 시 캡처 빌드를 명시하고
+기존 미디어의 실제 UI 일치부터 확인한다.
 
-- iPad Universal #10 / PR #18
-- 세션 설정 크래시 #46 / PR #49
-- 물리 키보드 학습 #17 / PR #50
-- iOS 물리 키보드 gate #12 / PR #15
-- Game Center gate #7
+## Next — 이미 구현된 변경의 리뷰
 
-위 PR의 소스 병합은 PR #70에서 완료했다. 남은 실기기·출시 검증만 추적한다.
+- TYP-122 / #184 / Draft PR #185: 게임별 순위·주간 경쟁·주변 기록·성장 연계.
+  head 8831e81의 Claude 리뷰와 maintainer gate가 남았다. 아직 main·공개판에 없다.
+- TYP-123 / #175 / Draft PR #176: 로컬 Mac Catalyst 데모의 최신 head 검토.
+  별도 학습·6개 게임 데모 범위이며 제품 출시나 CloudKit 동기화를 포함하지 않는다.
+- Dependabot PR #177/#178: 변경 범위의 로컬 검증·리뷰·수동 병합 gate 적용.
 
-## Later — 출시 기준선을 막지 않는 탐색
+Next는 새 구현·자동 병합 승인이나 출시 버전 확정을 뜻하지 않는다.
 
-- 자동 발음·게임 힌트 #8 및 관련 Draft PR
-- 기본 dirty worktree recovery queue: `typee.app` 링크, 흔들림 애니메이션 수정, 스토어/Pro 자산을 기능별 새 issue·최신 main branch로 재적용
-- 신규 플랫폼·추가 언어(이번 es/de/fr 확장 제외)·클라우드 동기화
-- Android 재개는 기존 포트 backlog가 아니라 별도 승인된 새 PRD·초기 설계로만 검토
+## Later / 중지된 작업
 
-Later 작업은 R1.1 출시 파일이나 공용 충돌 파일을 동시에 소유하지 않는다.
+- TYP-76·99·100·107~110·118의 설정·입력·덱·IAP·성능 후속 작업은 Linear 우선순위를 따른다.
+- TYP-115/116 Mac 제품·아키텍처·동기화·출시 계획은 별도 결정이다. TYP-116은
+  사용자 중지/Backlog를 유지하고 로컬 데모 완료만으로 재개하지 않는다.
+- TYP-72·80·87·91 운영 개선은 현재 상태를 유지한다. 자동화·모델·스케줄은 이번 정리에서 변경하지 않았다.
+- Android는 동결. TYP-119를 포함한 재개는 별도 승인된 새 PRD·초기 설계에서만 시작한다.
 
 ## 운영 제한
 
-- 전체 동시 개발 최대 2개: release-critical 1개와 독립 탐색 1개.
-- 플랫폼별 `In Progress` 최대 1개.
-- 활성 네이티브 플랫폼은 iOS/iPadOS뿐이며 `android/`는 참고용 동결 상태다.
-- non-draft PR은 검증 완료·병합 준비 상태만 허용.
+- 전체 동시 개발 최대 2개: release-critical 1개와 독립 탐색 1개. 플랫폼별 구현 In Progress 최대 1개.
+- 활성 네이티브 제품 개발 범위는 iOS/iPadOS이며 별도 승인된 데모와 제품 출시를 구분한다.
+- 작업마다 Issue·담당·branch·worktree·PR을 하나씩 연결한다. 번호가 같은 GitHub/Linear 이슈를 자동으로 동일시하지 않는다.
 - `PRD.md`, `DECISIONS.md`, `AGENTS.md`, localization, catalog·audio manifest는 단일 소유.
-- 완료는 코드 작성이 아니라 검증 증빙, PR 병합, Issue/Project 종료까지 포함한다.
+- 현재 head Claude 리뷰·SHA evidence·최신 main 대조·maintainer 수동 승인 후에만 병합한다.
+- 완료는 필요한 증빙·병합·Issue/Project 정리를 포함한다. 미확인 외부 gate는 그대로 남긴다.
