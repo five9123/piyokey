@@ -153,17 +153,17 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_build_11_source_candidate_pending_review_not_uploaded",
+    "record_status": "version_1_1_1_public_storefront_observed_build_25_submission_record",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
-    "marketing_version": "1.1",
-    "build_number": "11",
-    "currently_linked_build_number": "7",
-    "latest_uploaded_superseded_build_number": "10",
-    "app_store_connect_version_status": "PREPARE_FOR_SUBMISSION",
-    "app_store_connect_version_record_created_at": "2026-08-21T18:49:00+09:00",
+    "marketing_version": "1.1.1",
+    "build_number": "25",
+    "currently_linked_build_number": "25",
+    "latest_uploaded_superseded_build_number": "24",
+    "app_store_connect_version_status": "WAITING_FOR_REVIEW",
+    "app_store_connect_version_record_created_at": null,
     "localized_media": {
       "status": "apple_login_restored_final_rc_media_pending",
       "evidence": "release/store-assets/verification-20260828.json",
@@ -187,8 +187,8 @@
       "final_release_candidate_match_verified": false,
       "app_store_connect_uploaded": false
     },
-    "release_mode": "automatic_after_approval",
-    "manual_hold": false,
+    "release_mode": "manual_after_approval",
+    "manual_hold": true,
     "privacy_policy_url": "https://typee.app/privacy",
     "support_url": "https://typee.app/support",
     "marketing_url": "https://typee.app/",
@@ -228,7 +228,17 @@
         "en-AU": "Korean Typing Practice - typee",
         "en-CA": "Korean Typing Practice - typee",
         "ko": "한글 타자 연습 - typee"
-      }
+      },
+      "whats_new_saved": true,
+      "whats_new_saved_locales": [
+        "ja",
+        "en-US",
+        "en-GB",
+        "en-AU",
+        "en-CA",
+        "ko"
+      ],
+      "whats_new_reloaded_on": "2026-09-10 JST"
     },
     "content_rights_confirmed": false,
     "app_review": {
@@ -236,7 +246,9 @@
       "contact_email": "contact@typee.app",
       "contact_phone": "+821050910203",
       "notes_prepared": true,
-      "notes_path": "release/APP_REVIEW_NOTES.md"
+      "notes_path": "release/APP_REVIEW_NOTES_1_1_1.md",
+      "hotfix_notes_saved_to_app_store_connect": true,
+      "hotfix_notes_reloaded_on": "2026-09-10 22:29 JST"
     },
     "in_app_purchase": {
       "reference_name": "typee pro Lifetime",
@@ -270,7 +282,7 @@
       "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
     },
     "qa_gates": {
-      "release_archive_validated": false,
+      "release_archive_validated": true,
       "full_unit_and_ui_regression": false,
       "testflight_clean_install_smoke": false,
       "korean_os_ime_device_check": false,
@@ -288,36 +300,17 @@
       "free_piyodeck_boundary_check": true
     },
     "build_artifact": {
-      "source_main_sha": "9af01ef96e06472eb3d842880649b5e697c5877e",
-      "archive_checkout_sha": "4e7acf242d11b5cfbbfe418adbc817c1f14e7179",
-      "source_tree_sha": "3d9bb0354e83f0499e993dbe6bd74a0d2fdc0e2c",
-      "archive_tree_sha256": "cbfdab353ac437b5379832df8a78c815c6dd1f01b7aef7a0449323d632f936b6",
-      "local_export_ipa_sha256": "6a676f13db48c53da9234c878943a905f73002609152a50eed14f6759ea22221",
-      "record": "release/IOS_1_1_BUILD_7.md",
-      "app_ui_languages": [
-        "ja",
-        "en",
-        "es",
-        "de",
-        "fr"
-      ],
-      "device_families": [
-        "iPhone",
-        "iPad"
-      ],
-      "local_distribution_signature_verified": true,
+      "status": "ARCHIVED_EXPORTED_UPLOADED_AND_REVIEW_SUBMITTED",
+      "source_branch": "main",
       "build_uploaded": true,
-      "uploaded_build_processing_state": "complete_ready_to_submit",
       "linked_to_version": true,
-      "final_review_submission_sent": false,
-      "upload_succeeded_at": "2026-08-29T01:24:29+09:00",
-      "archive_zip_sha256": "bbf814350c432795989bdf7cf9ded9d555936c4defc19e11faa7541cc694dd27",
-      "app_store_connect_build_id": "c544f5af-c1c4-41c6-950f-3d9caa35d64e",
-      "testflight_groups_observed": [
-        "PIYOKEY Internal QA",
-        "Tester"
-      ],
-      "link_saved_and_reloaded": true
+      "final_review_submission_sent": true,
+      "source_main_sha": "602e923e3eddcb32b7ef75c62e3921f28f7a3e33",
+      "archive_checkout_sha": null,
+      "app_store_connect_build_id": "cb235a28-982c-43e8-851d-f22ca96b704b",
+      "source_tree": "8e4ed637929f14633d95c02e26fee8193875cb1d",
+      "upload_completed_at": "2026-09-10T23:09:59+09:00",
+      "record_source": "GitHub Issue #181 release comments, 2026-09-10/11 JST; /private/tmp/piyokey-hotfix-release/release-status.json"
     },
     "live_console_observation_20260829": {
       "version_status": "PREPARE_FOR_SUBMISSION",
@@ -332,27 +325,81 @@
       "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged.",
       "build_link_only_saved_this_run": true
     },
-    "review_submission_blocked": true,
+    "review_submission_blocked": false,
     "release_decision": {
-      "confirmed_on": "2026-08-29",
-      "source": "User explicitly requested review submission and immediate release",
-      "automatic_after_approval": true,
-      "phased_release_enabled": false,
-      "release_to_all_users_immediately": true,
+      "confirmed_on": "2026-09-10",
+      "source": "User authorized App Store hotfix and common fixes / four legacy archives / conditional Flow beginner replacement.",
+      "manual_after_approval": true,
       "console_selection_verified": true,
+      "phased_release_enabled": false,
       "does_not_waive_submission_gates": true
     },
     "submission_followup": {
-      "issue": 77,
-      "version_status": "PREPARE_FOR_SUBMISSION",
-      "paid_apps_agreement_status": "PENDING_USER_INFO",
-      "bank_account_entry_missing": true,
-      "republic_of_korea_tax_form": "MISSING_TAX_INFO",
-      "us_tax_questionnaire": "MISSING_TAX_INFO",
-      "shared_app_information_confirmation_opened": true,
-      "confirmation_canceled_without_continue": true,
-      "final_review_submission_sent": false,
-      "public_release_completed": false
+      "issue": 181,
+      "version_status": "PUBLIC_STOREFRONT_OBSERVED",
+      "final_review_submission_sent": true,
+      "public_release_completed": true,
+      "game_center_component_submission_sent": true,
+      "game_center_component_submission_id": "acb65714-82c5-477e-96ca-e39b320280c3",
+      "game_center_component_status": "LIVE",
+      "game_center_component_status_verified_on": "2026-09-10 22:29 JST",
+      "public_release_scope": "JP, US and KR storefront availability observed; does not assert all external QA or regional gates passed",
+      "linear_issue": "TYP-120"
+    },
+    "previous_source_candidate_record": "release/history/ios-1.1-build-11-source-candidate.json",
+    "current_live_release": {
+      "marketing_version": "1.1.1",
+      "build_number": "25",
+      "build_number_basis": "Prior ASC selected-build and signed archive record; public lookup does not expose build numbers. No fresh ASC read performed.",
+      "status": "PUBLIC_STOREFRONT_OBSERVED",
+      "verified_on": "2026-09-12 JST",
+      "observed_at": "2026-09-12T09:04:35.652588+00:00",
+      "current_version_release_date": "2026-09-11T00:33:05Z",
+      "storefronts": [
+        {
+          "country": "JP",
+          "version": "1.1.1",
+          "release_date": "2026-09-11T00:33:05Z",
+          "lookup_url": "https://itunes.apple.com/lookup?id=6794853985&country=jp",
+          "store_url": "https://apps.apple.com/jp/app/%E9%9F%93%E5%9B%BD%E8%AA%9E%E3%82%BF%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0-%E3%83%94%E3%83%A8%E3%82%AD%E3%83%BC/id6794853985?uo=4"
+        },
+        {
+          "country": "US",
+          "version": "1.1.1",
+          "release_date": "2026-09-11T00:33:05Z",
+          "lookup_url": "https://itunes.apple.com/lookup?id=6794853985&country=us",
+          "store_url": "https://apps.apple.com/us/app/korean-typing-typee/id6794853985?uo=4"
+        },
+        {
+          "country": "KR",
+          "version": "1.1.1",
+          "release_date": "2026-09-11T00:33:05Z",
+          "lookup_url": "https://itunes.apple.com/lookup?id=6794853985&country=kr",
+          "store_url": "https://apps.apple.com/kr/app/%ED%95%9C%EA%B8%80-%ED%83%80%EC%9E%90-%EC%97%B0%EC%8A%B5-typee/id6794853985?uo=4"
+        }
+      ]
+    },
+    "hotfix_scope": "All keyboard participation; independent Cup/Flow; ranking button and status in the score card; retained-best server-score read-back, bounded recovery, and occurrence-specific weekly submission. Flow beginner uses Live v5; other15 IDs unchanged. Actual device acceptance is still open.",
+    "inherited_external_fields_note": "Rights, IAP, availability and media fields remain unverified carry-forward data, not fresh ASC assertions. Public 1.1.1 availability is separately observed in JP/US/KR. Unchecked QA gates remain unchecked; TYP-81/120/121 track remaining evidence.",
+    "app_store_connect_version_record_created_at_note": "Creation and Prepare for Submission observed in App Store Connect; exact server timestamp was not exposed.",
+    "game_center_hotfix_operations_record": "release/GAME_CENTER_HOTFIX_20260910.md",
+    "app_store_connect_version_record_created_on": "2026-09-10 JST",
+    "app_store_connect_version_status_verified_at": "2026-09-11T00:02:07.062126+09:00",
+    "app_store_connect_version_status_note": "Last direct ASC observation on 2026-09-11; historical after the public 1.1.1 storefront observation below. ASC was not re-queried during this sync.",
+    "previous_live_release_observation": {
+      "marketing_version": "1.1",
+      "build_number": "24",
+      "status": "READY_FOR_DISTRIBUTION",
+      "verified_on": "2026-09-10 JST"
+    },
+    "public_release_observation_does_not_waive_external_gates": true,
+    "manual_hold_note": "Historical MANUAL hold at submission is retained. Public availability is observed separately; this sync did not operate a release control.",
+    "privacy_disclosure_observation": {
+      "recorded_on": "2026-09-11 JST",
+      "source": "https://github.com/five9123-maker/piyokey/issues/181",
+      "public_policy": "Published via hanco_web PR #12; 1.1.1 notice observed in ja/en/es/ko",
+      "app_privacy": "Coarse Location published for Analytics, not linked to identity, no tracking; 8 data types",
+      "remaining_verification_issue": "TYP-121"
     }
   }
 }

@@ -319,6 +319,12 @@ struct FlowGameResultView: View {
           .accessibilityIdentifier("game.result.best_score.value")
         }
       }
+      if reveal.actionsEnabled, let record = recordOutcome?.record,
+        gameCenter.isLeaderboardAvailable(for: record)
+      {
+        gameCenterButton(for: record)
+          .padding(.top, 10)
+      }
     }
     .frame(maxWidth: .infinity)
     .padding(16)
@@ -363,12 +369,6 @@ struct FlowGameResultView: View {
 
   private var nextActionsSection: some View {
     VStack(spacing: 14) {
-      if let record = recordOutcome?.record,
-        gameCenter.isLeaderboardAvailable(for: record)
-      {
-        gameCenterButton(for: record)
-      }
-
       SessionShareButton(
         model: shareCardModel,
         accessibilityIdentifier: "game.result.share",
@@ -402,32 +402,64 @@ struct FlowGameResultView: View {
   }
 
   private func gameCenterButton(for record: GameRecord) -> some View {
-    Button {
-      gameCenter.showLeaderboard(for: record)
-    } label: {
-      HStack(spacing: 9) {
-        if gameCenter.isDashboardBusy {
-          ProgressView()
-            .tint(Color.orange)
-        } else {
-          Image(systemName: "trophy.fill")
+    VStack(spacing: 8) {
+      Button {
+        gameCenter.showLeaderboard(for: record)
+      } label: {
+        HStack(spacing: 9) {
+          if gameCenter.isDashboardBusy {
+            ProgressView()
+              .tint(Color.orange)
+          } else {
+            Image(systemName: "trophy.fill")
+          }
+          Text(verbatim: gameCenterButtonTitle(for: record))
+          Spacer()
+          if !gameCenter.isDashboardBusy {
+            Image(systemName: "chevron.right")
+          }
         }
-        Text(verbatim: gameCenterButtonTitle(for: record))
-        Spacer()
-        if !gameCenter.isDashboardBusy {
-          Image(systemName: "chevron.right")
+        .font(.headline.weight(.bold))
+        .foregroundStyle(Color.orange)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 13)
+        .padding(.horizontal, 15)
+        .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 17))
+      }
+      .disabled(!gameCenter.canPresentDashboard)
+      .opacity(gameCenter.canPresentDashboard ? 1 : 0.64)
+      .accessibilityIdentifier("game.result.game_center")
+      if !gameCenter.isAuthenticated {
+        Text("game_center.submission.sign_in")
+          .font(.caption)
+          .foregroundStyle(AppPalette.mutedInk)
+      } else if let state = gameCenter.submissionState(for: record) {
+        HStack {
+          Text(submissionStatusKey(state))
+            .font(.caption)
+            .foregroundStyle(AppPalette.mutedInk)
+            .accessibilityIdentifier("game.result.game_center_status")
+          if state == .failed || state == .unconfirmed {
+            Button("game_center.submission.retry") {
+              gameCenter.retrySubmission(for: record)
+            }
+            .font(.caption.weight(.bold))
+            .accessibilityIdentifier("game.result.game_center_retry")
+          }
         }
       }
-      .font(.headline.weight(.bold))
-      .foregroundStyle(Color.orange)
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 13)
-      .padding(.horizontal, 15)
-      .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 17))
     }
-    .disabled(!gameCenter.canPresentDashboard)
-    .opacity(gameCenter.canPresentDashboard ? 1 : 0.64)
-    .accessibilityIdentifier("game.result.game_center")
+  }
+
+  private func submissionStatusKey(_ state: GameCenterService.SubmissionState) -> LocalizedStringKey {
+    switch state {
+    case .pending: "game_center.submission.pending"
+    case .submitting: "game_center.submission.submitting"
+    case .confirming: "game_center.submission.confirming"
+    case .submitted: "game_center.submission.submitted"
+    case .failed: "game_center.submission.failed"
+    case .unconfirmed: "game_center.submission.unconfirmed"
+    }
   }
 
   private func gameCenterButtonTitle(for record: GameRecord) -> String {

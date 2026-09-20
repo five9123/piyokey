@@ -732,6 +732,77 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(app.buttons["keyboard.key.ㄱ"].exists)
   }
 
+  func testHotfixPiyoCupKeepsSelectedKeyboardAndShowsRankingForAllInputs() {
+    for method in ["dubeolsik", "korean_10key", "os_ime"] {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 3,
+        resultAnimationScale: 0.01, koreanKeyboardAvailable: true)
+      app.launchArguments += ["-settings.language", "en"]
+      if method == "os_ime" {
+        app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+      } else {
+        app.launchArguments += ["-keyboard.builtin_layout_default", method]
+      }
+      app.launch()
+      let cup = element("home.quick.piyo_cup")
+      XCTAssertTrue(cup.waitForExistence(timeout: 5))
+      scrollToHittable(cup)
+      cup.tap()
+      XCTAssertTrue(element("game.play.screen").waitForExistence(timeout: 5))
+      if method == "korean_10key" {
+        XCTAssertTrue(element("keyboard.10key.container").exists)
+      } else if method == "os_ime" {
+        XCTAssertTrue(app.textFields["os_ime.text_field"].exists)
+      } else {
+        XCTAssertTrue(app.buttons["keyboard.key.ㄱ"].exists)
+      }
+      XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+      assertRankingButtonVisibleAboveResultFooter(context: method)
+      attachScreenshot(named: "hotfix-cup-ranking-\(method)-en")
+    }
+  }
+
+  func testHotfixFlowRankingAllDifficultiesAndInputsGlobalEN() {
+    for method in ["dubeolsik", "korean_10key", "os_ime"] {
+      app.terminate()
+      app = makeApplication(resetKeyboardPreferences: true, gameDuration: 2,
+        resultAnimationScale: 0.01, koreanKeyboardAvailable: true)
+      app.launchArguments += ["-settings.language", "en"]
+      if method == "os_ime" {
+        app.launchArguments += ["-keyboard.input_mode_default", "os_ime"]
+      } else {
+        app.launchArguments += ["-keyboard.builtin_layout_default", method]
+      }
+      app.launch()
+      XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+      app.buttons["Game"].firstMatch.tap()
+      app.buttons["game.mode.flow"].tap()
+      // Repeat beginner with the same zero score to cover a result that is not a new best.
+      for level in ["beginner", "beginner", "intermediate", "advanced"] {
+        XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
+        element("game.flow.preset.\(level)").tap()
+        XCTAssertTrue(element("game.result.screen").waitForExistence(timeout: 8))
+        let ranking = element("game.result.game_center")
+        assertRankingButtonVisibleAboveResultFooter(context: "\(method) / \(level)")
+        XCTAssertTrue(ranking.label.contains("View Game Center rankings"))
+        if level == "advanced" {
+          attachScreenshot(named: "hotfix-flow-\(method)-advanced-ranking-en")
+        }
+        app.buttons["result.done"].tap()
+      }
+    }
+  }
+
+  private func assertRankingButtonVisibleAboveResultFooter(context: String) {
+    let ranking = element("game.result.game_center")
+    XCTAssertTrue(ranking.waitForExistence(timeout: 3), context)
+    let retry = app.buttons["game.result.retry"]
+    XCTAssertTrue(retry.waitForExistence(timeout: 3), context)
+    XCTAssertTrue(ranking.isHittable, context)
+    XCTAssertGreaterThan(ranking.frame.minY, app.buttons["result.done"].frame.maxY, context)
+    XCTAssertLessThan(ranking.frame.maxY, retry.frame.minY - 16, context)
+  }
+
   func testDailyMascotEncouragementMatchesHomeAndMyPage() {
     let dailyEncouragement = "「今日もいっしょに始めよう！ピヨ！」"
     let myPiyoCard = element("home.my_piyo_card")
@@ -1854,7 +1925,7 @@ final class HancoUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
 
-    app.tabBars.buttons["さがす"].tap()
+    app.buttons["さがす"].firstMatch.tap()
     let search = app.textFields["discover.search"]
     XCTAssertTrue(search.waitForExistence(timeout: 5))
     search.tap()
@@ -1884,7 +1955,7 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(app.buttons["deck.detail.play"].waitForExistence(timeout: 5))
     XCTAssertEqual(pronunciationStarts.label, pronunciationStartsBeforeDone)
 
-    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["ゲーム"].firstMatch.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
     app.buttons["game.mode.flow"].tap()
     XCTAssertTrue(element("game.deck_selection.screen").waitForExistence(timeout: 5))
@@ -4090,6 +4161,47 @@ final class HancoUITests: XCTestCase {
     XCTAssertFalse(element("privacy_consent.screen").exists)
   }
 
+  func testUsageContextUpgradeDeclinePreservesDiagnosticsAndDoesNotRepeat() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, showsPrivacyConsent: true)
+    app.launchEnvironment["UITEST_SEED_PRIVACY_CHOICES_ENABLED"] = "1"
+    app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = "1"
+    app.launch()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.continue_without_sharing"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "0")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "1")
+    app.buttons["settings.done"].tap()
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: false, showsPrivacyConsent: true)
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("privacy_consent.screen").exists)
+  }
+
+  func testUsageContextUpgradeParticipationKeepsDiagnosticsOff() {
+    app.terminate()
+    app = makeApplication(resetKeyboardPreferences: true, showsPrivacyConsent: true)
+    app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = "1"
+    app.launch()
+    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
+    app.buttons["privacy_consent.participate_and_continue"].tap()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    openSettings()
+    let analytics = app.switches["settings.anonymous_analytics"]
+    scrollToHittable(analytics)
+    XCTAssertEqual(analytics.value as? String, "1")
+    let diagnostics = app.switches["settings.crash_diagnostics"]
+    scrollToHittable(diagnostics)
+    XCTAssertEqual(diagnostics.value as? String, "0")
+  }
+
   func testSettingsHierarchyVersionAndPrivacyCleanup() {
     app.terminate()
     app = makeApplication(
@@ -4129,7 +4241,8 @@ final class HancoUITests: XCTestCase {
     XCTAssertTrue(dubeolsikLayout.isHittable)
     XCTAssertTrue(tenKeyLayout.isHittable)
     XCTAssertTrue(dubeolsikLayout.isSelected)
-    XCTAssertLessThan(layout.frame.minY, app.buttons["input_mode.builtin"].frame.minY)
+    // The input-source selector precedes the built-in layout selector.
+    XCTAssertGreaterThan(layout.frame.minY, app.buttons["input_mode.builtin"].frame.minY)
     tenKeyLayout.tap()
     XCTAssertTrue(tenKeyLayout.isSelected)
     let osMode = app.buttons["input_mode.os_ime"]
@@ -4268,27 +4381,36 @@ final class HancoUITests: XCTestCase {
     if isIPad {
       XCUIDevice.shared.orientation = .landscapeLeft
     }
-    app = makeApplication(
-      resetKeyboardPreferences: true,
-      showsPrivacyConsent: true,
-      onboardingNotificationResult: "denied"
-    )
-    app.launch()
+    for language in ["ja", "en", "es", "de", "fr"] {
+      for previousVersion in [0, 1] {
+        app = makeApplication(
+          resetKeyboardPreferences: true,
+          showsPrivacyConsent: true,
+          onboardingNotificationResult: "denied"
+        )
+        app.launchArguments += ["-settings.language", language]
+        app.launchEnvironment["UITEST_SEED_PRIVACY_NOTICE_VERSION"] = String(previousVersion)
+        app.launch()
 
-    XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5))
-    XCTAssertFalse(app.scrollViews["privacy_consent.scroll"].exists)
-    for identifier in [
-      "privacy_consent.usage_information",
-      "privacy_consent.error_information",
-      "privacy_consent.excluded_data",
-      "privacy_consent.privacy_policy",
-      "privacy_consent.participate_and_continue",
-      "privacy_consent.continue_without_sharing",
-    ] {
-      let item = element(identifier)
-      XCTAssertTrue(item.exists, identifier)
-      XCTAssertGreaterThanOrEqual(item.frame.minY, app.frame.minY, identifier)
-      XCTAssertLessThanOrEqual(item.frame.maxY, app.frame.maxY, identifier)
+        let context = "\(language), previous notice \(previousVersion)"
+        XCTAssertTrue(element("privacy_consent.screen").waitForExistence(timeout: 5), context)
+        XCTAssertFalse(app.scrollViews["privacy_consent.scroll"].exists, context)
+        for identifier in [
+          "privacy_consent.usage_information",
+          "privacy_consent.error_information",
+          "privacy_consent.excluded_data",
+          "privacy_consent.privacy_policy",
+          "privacy_consent.participate_and_continue",
+          "privacy_consent.continue_without_sharing",
+        ] {
+          let item = element(identifier)
+          XCTAssertTrue(item.exists, "\(context): \(identifier)")
+          XCTAssertGreaterThanOrEqual(item.frame.minY, app.frame.minY, context)
+          XCTAssertLessThanOrEqual(item.frame.maxY, app.frame.maxY, context)
+        }
+        attachScreenshot(named: "usage-consent-\(language)-v\(previousVersion)")
+        app.terminate()
+      }
     }
   }
 
@@ -4395,7 +4517,7 @@ final class HancoUITests: XCTestCase {
       }
     } else {
       application.launchArguments += [
-        "-settings.privacy_notice_version", "1",
+        "-settings.privacy_notice_version", "2",
       ]
     }
     application.launchEnvironment["UITEST_JST_DAY"] = "2026-07-19"

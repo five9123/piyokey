@@ -42,7 +42,7 @@ final class GameProgressStoreTests: XCTestCase {
     XCTAssertEqual(outcome.deckProgress.bestScore, 700)
     XCTAssertEqual(outcome.deckProgress.bestAccuracy, 92.5, accuracy: 0.001)
     XCTAssertEqual(snapshot.records, [record])
-    XCTAssertEqual(object["schema_version"] as? Int, 2)
+    XCTAssertEqual(object["schema_version"] as? Int, 3)
     XCTAssertEqual(
       snapshot.deckProgress[
         GameProgressSnapshot.progressKey(deckId: record.deckId, inputMode: .builtIn)
@@ -410,7 +410,7 @@ final class GameProgressStoreTests: XCTestCase {
       deckVersion: 3,
       competition: .weeklyPiyoCup,
       course: "word",
-      score: 8_888,
+      score: 18_888,
       maxCombo: 18,
       accuracy: 99,
       charactersPerMinute: 170,
@@ -506,6 +506,184 @@ final class GameProgressStoreTests: XCTestCase {
     XCTAssertGreaterThan(latest?.sessionCount ?? 0, 0)
   }
 
+  func testCupAndOrdinaryFlowHaveIndependentBestScoresAndNewRecordResults() throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    _ = try store.append(makeRecord(
+      score: 700, accuracy: 90, playedAt: date(1), competition: .officialDeck, deckID: deckID
+    ))
+    let cup = try store.append(makeRecord(
+      score: 900, accuracy: 99, playedAt: date(2), competition: .weeklyPiyoCup, deckID: deckID
+    ))
+    let flow = try store.append(makeRecord(
+      score: 800, accuracy: 91, playedAt: date(3), deckID: deckID
+    ))
+    let lowerCup = try store.append(makeRecord(
+      score: 850, accuracy: 95, playedAt: date(4), competition: .weeklyPiyoCup, deckID: deckID
+    ))
+
+    XCTAssertTrue(cup.isNewBest)
+    XCTAssertNil(cup.previousBestScore)
+    XCTAssertTrue(flow.isNewBest)
+    XCTAssertEqual(flow.previousBestScore, 700)
+    XCTAssertEqual(flow.deckProgress.plays, 2)
+    XCTAssertEqual(flow.deckProgress.bestAccuracy, 91)
+    XCTAssertFalse(lowerCup.isNewBest)
+    XCTAssertEqual(lowerCup.previousBestScore, 900)
+    XCTAssertEqual(lowerCup.deckProgress.plays, 2)
+    XCTAssertEqual(lowerCup.deckProgress.bestAccuracy, 99)
+    let reloaded = GameProgressLibrary(store: store)
+    XCTAssertEqual(reloaded.progress(for: deckID)?.bestScore, 800)
+    XCTAssertEqual(reloaded.progress(for: deckID, competition: .officialDeck)?.bestScore, 800)
+    XCTAssertEqual(reloaded.progress(for: deckID, competition: .weeklyPiyoCup)?.bestScore, 900)
+  }
+
+  func testCupRecordDoesNotCreateOrdinaryFlowProgress() throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    _ = try store.append(makeRecord(
+      score: 900, accuracy: 90, playedAt: date(1), competition: .weeklyPiyoCup, deckID: deckID
+    ))
+    let library = GameProgressLibrary(store: store)
+
+    XCTAssertNil(library.progress(for: deckID))
+    XCTAssertEqual(library.progress(for: deckID, competition: .weeklyPiyoCup)?.plays, 1)
+  }
+
+  func testCupAndFlowRemainSeparateForOSInputAndComboCelebrations() async throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    let library = GameProgressLibrary(store: store)
+    for (offset, scope) in [
+      (SessionInputMode.builtIn, GameCompetition.officialDeck, 700, 7),
+      (.builtIn, .weeklyPiyoCup, 900, 9),
+      (.osIME, .officialDeck, 1_100, 11),
+      (.osIME, .weeklyPiyoCup, 1_300, 13),
+    ].enumerated() {
+      _ = library.append(makeRecord(
+        score: scope.2, accuracy: 90, playedAt: date(Double(offset)),
+        inputMode: scope.0, competition: scope.1, deckID: deckID, maxCombo: scope.3
+      ))
+    }
+    _ = library.appendLesson(makeRecord(
+      score: 9_999, accuracy: 100, playedAt: date(5), mode: .lesson,
+      deckID: deckID, maxCombo: 999
+    ))
+    let persisted = await library.flushAndWait()
+    XCTAssertTrue(persisted)
+    let reloaded = GameProgressLibrary(store: store)
+
+    XCTAssertEqual(reloaded.progress(for: deckID, inputMode: .osIME)?.bestScore, 1_100)
+    XCTAssertEqual(reloaded.progress(
+      for: deckID, inputMode: .osIME, competition: .weeklyPiyoCup
+    )?.bestScore, 1_300)
+    XCTAssertEqual(reloaded.bestCombo(for: deckID), 7)
+    XCTAssertEqual(reloaded.bestCombo(for: deckID, competition: .weeklyPiyoCup), 9)
+    XCTAssertEqual(reloaded.bestCombo(for: deckID, inputMode: .osIME), 11)
+    XCTAssertEqual(reloaded.bestCombo(
+      for: deckID, inputMode: .osIME, competition: .weeklyPiyoCup
+    ), 13)
+  }
+
+  func testLegacyMixedSummariesArePreservedAndRebuiltFromAttributedRecords() async throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    let flow = makeRecord(
+      score: 400, accuracy: 90, playedAt: date(1), competition: .officialDeck, deckID: deckID
+    )
+    let cup = makeRecord(
+      score: 900, accuracy: 99, playedAt: date(2), competition: .weeklyPiyoCup, deckID: deckID
+    )
+    let mixed = DeckProgress(
+      deckId: deckID, inputMode: .builtIn, plays: 200, bestScore: 9_999,
+      bestAccuracy: 100, lastPlayedAt: date(2)
+    )
+    try writeLegacyProgress(records: [cup, flow], summaries: [mixed])
+    let migrated = try store.loadSnapshot()
+    let cupKey = GameProgressSnapshot.progressKey(
+      deckId: deckID, inputMode: .builtIn, competition: .weeklyPiyoCup
+    )
+
+    XCTAssertEqual(migrated.records, [cup, flow])
+    XCTAssertEqual(migrated.legacyMixedProgress[mixed.id], mixed)
+    XCTAssertEqual(migrated.deckProgress[mixed.id]?.bestScore, 400)
+    XCTAssertEqual(migrated.deckProgress[mixed.id]?.plays, 1)
+    XCTAssertEqual(migrated.deckProgress[cupKey]?.bestScore, 900)
+    XCTAssertEqual(migrated.deckProgress[cupKey]?.lastPlayedAt, date(2))
+
+    let library = GameProgressLibrary(store: store)
+    let persisted = await library.flushAndWait()
+    XCTAssertTrue(persisted)
+    XCTAssertEqual(try store.loadSnapshot(), migrated)
+    let saved = try XCTUnwrap(JSONSerialization.jsonObject(
+      with: Data(contentsOf: temporaryRoot.appendingPathComponent("game-progress.json"))
+    ) as? [String: Any])
+    XCTAssertEqual(saved["schema_version"] as? Int, 3)
+    let outcome = try XCTUnwrap(library.append(makeRecord(
+      score: 500, accuracy: 95, playedAt: date(3), deckID: deckID
+    )))
+    XCTAssertTrue(outcome.isNewBest)
+    XCTAssertEqual(outcome.previousBestScore, 400)
+    let appended = await library.flushAndWait()
+    XCTAssertTrue(appended)
+    XCTAssertEqual(try store.loadSnapshot().legacyMixedProgress[mixed.id], mixed)
+  }
+
+  func testCompactedLegacyCupCannotBeMisattributedToOrdinaryFlow() throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    let mixed = DeckProgress(
+      deckId: deckID, inputMode: .builtIn, plays: 200, bestScore: 9_999,
+      bestAccuracy: 100, lastPlayedAt: date(2)
+    )
+    try writeLegacyProgress(records: [], summaries: [mixed])
+    let migrated = try store.loadSnapshot()
+
+    XCTAssertTrue(migrated.deckProgress.isEmpty)
+    XCTAssertEqual(migrated.legacyMixedProgress[mixed.id], mixed)
+    let outcome = try store.append(makeRecord(
+      score: 500, accuracy: 95, playedAt: date(3), deckID: deckID
+    ))
+    XCTAssertTrue(outcome.isNewBest)
+    XCTAssertNil(outcome.previousBestScore)
+    XCTAssertEqual(try store.loadSnapshot().legacyMixedProgress[mixed.id], mixed)
+  }
+
+  func testLegacyMigrationPreservesUnaffectedModesAndSeparatesOSCup() throws {
+    let deckID = GameCenterRankedDeck.piyoCupDeckID
+    let summaries = [
+      DeckProgress(deckId: deckID, inputMode: .builtInKorean10Key, plays: 10,
+        bestScore: 800, bestAccuracy: 95, lastPlayedAt: date(2)),
+      DeckProgress(deckId: "flow_topik_intermediate", inputMode: .builtIn, plays: 10,
+        bestScore: 900, bestAccuracy: 96, lastPlayedAt: date(2)),
+      DeckProgress(deckId: deckID, inputMode: .osIME, plays: 20,
+        bestScore: 1_000, bestAccuracy: 98, lastPlayedAt: date(2)),
+    ]
+    try writeLegacyProgress(records: [
+      makeRecord(score: 500, accuracy: 90, playedAt: date(1), inputMode: .osIME, deckID: deckID),
+      makeRecord(score: 1_000, accuracy: 98, playedAt: date(2), inputMode: .osIME,
+        competition: .weeklyPiyoCup, deckID: deckID),
+    ], summaries: summaries)
+    let library = GameProgressLibrary(store: store)
+    let migrated = try store.loadSnapshot()
+
+    XCTAssertEqual(migrated.deckProgress[summaries[0].id], summaries[0])
+    XCTAssertEqual(migrated.deckProgress[summaries[1].id], summaries[1])
+    XCTAssertEqual(migrated.legacyMixedProgress, [summaries[2].id: summaries[2]])
+    XCTAssertEqual(library.progress(for: deckID, inputMode: .osIME)?.bestScore, 500)
+    XCTAssertEqual(library.progress(
+      for: deckID, inputMode: .osIME, competition: .weeklyPiyoCup
+    )?.bestScore, 1_000)
+  }
+
+  private func writeLegacyProgress(records: [GameRecord], summaries: [DeckProgress]) throws {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    let object: [String: Any] = [
+      "schema_version": 2,
+      "records": try JSONSerialization.jsonObject(with: encoder.encode(records)),
+      "deck_progress": try JSONSerialization.jsonObject(with: encoder.encode(summaries)),
+    ]
+    try FileManager.default.createDirectory(at: temporaryRoot, withIntermediateDirectories: true)
+    try JSONSerialization.data(withJSONObject: object)
+      .write(to: temporaryRoot.appendingPathComponent("game-progress.json"))
+  }
+
   private func makeRecord(
     score: Int,
     accuracy: Double,
@@ -517,17 +695,19 @@ final class GameProgressStoreTests: XCTestCase {
     completedItemCount: Int = 8,
     deckVersion: Int? = nil,
     competition: GameCompetition? = nil,
-    mode: SessionMode = .game
+    mode: SessionMode = .game,
+    deckID: String = "official_daily_words",
+    maxCombo: Int = 4
   ) -> GameRecord {
     GameRecord(
       id: UUID(),
       mode: mode,
-      deckId: "official_daily_words",
+      deckId: deckID,
       deckVersion: deckVersion,
       competition: competition,
       course: course,
       score: score,
-      maxCombo: 4,
+      maxCombo: maxCombo,
       accuracy: accuracy,
       charactersPerMinute: charactersPerMinute,
       activeDuration: activeDuration,

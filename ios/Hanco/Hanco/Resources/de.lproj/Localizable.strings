@@ -243,7 +243,7 @@
 "settings.privacy_policy" = "Datenschutzerklärung";
 "settings.privacy" = "Datenschutz";
 "settings.anonymous_analytics" = "Anonyme Nutzungsanalyse";
-"settings.anonymous_analytics_detail" = "Teilen, welche Funktionen genutzt und ob Sitzungen beendet werden.";
+"settings.anonymous_analytics_detail" = "Funktionsnutzung, Sitzungen, Land aus der IP sowie Gerät, Betriebssystem, Bildschirm, Sprache, Zeitzone und Verbindung teilen.";
 "settings.crash_diagnostics" = "Absturzdiagnose";
 "settings.crash_diagnostics_detail" = "Diagnosedaten zu Abstürzen und Hängern teilen.";
 "settings.analytics_privacy_note" = "Eingaben, Inhalte eigener Decks, Namen und E-Mail-Adressen werden nie gesendet. Beide Optionen sind standardmäßig aus.";
@@ -253,8 +253,10 @@
 "privacy_consent.navigation_title" = "Datenschutzauswahl";
 "privacy_consent.title" = "Möchtest du typee verbessern?";
 "privacy_consent.introduction" = "Sende anonyme Nutzungs- und Fehlerinformationen, damit wir die App verbessern können.";
+"privacy_consent.update_introduction" = "Die Nutzungsdaten umfassen jetzt Land und Gerätedaten. Wähle, ob du sie teilen möchtest.";
+"privacy_consent.existing_diagnostics_detail" = "Deine bisherige Auswahl bleibt erhalten";
 "privacy_consent.usage_title" = "Nutzungsinformationen";
-"privacy_consent.usage_detail" = "Welche Funktionen du nutzt";
+"privacy_consent.usage_detail" = "Funktionsnutzung, Land und Gerät/Betriebssystem";
 "privacy_consent.error_title" = "Fehlerinformationen";
 "privacy_consent.error_detail" = "Warum die App nicht mehr reagiert";
 "privacy_consent.excluded_data" = "Wir senden weder deine Eingaben noch deinen Namen oder deine E-Mail-Adresse.";
@@ -924,7 +926,7 @@
 "game_center.best_rank_format" = "Bester Weltrang #%d";
 "game_center.result_action" = "Game-Center-Ranglisten anzeigen";
 "game_center.result_rank_format" = "#%d · Game-Center-Ranglisten";
-"game_center.ranked_deck" = "Ranglistendeck mit integrierter Tastatur";
+"game_center.ranked_deck" = "Rangliste · alle Tastaturen";
 "piyo_cup.title" = "Wöchentlicher Piyo-Cup";
 "piyo_cup.weekly_badge" = "WÖCHENTLICH";
 "piyo_cup.detail" = "Faire 60 Sekunden mit Alltagskoreanisch für alle. Verwende deine ausgewählte Tastatur.";
@@ -1268,3 +1270,13 @@
 "curriculum.chapter_6_fan_support.item_9.meaning" = "Danke, dass du gekommen bist";
 "curriculum.chapter_6_fan_support.item_10.reading" = "Oneul chakjang choegoyeyo";
 "curriculum.chapter_6_fan_support.item_10.meaning" = "Dein Outfit heute ist das Beste";
+
+// Game Center score delivery
+"game_center.submission.sign_in" = "Melde dich bei Game Center an, um deine Punktzahl einzutragen.";
+"game_center.submission.pending" = "Eintragung ausstehend";
+"game_center.submission.submitting" = "Punktzahl wird eingetragen…";
+"game_center.submission.confirming" = "Deine Ranglistenpunktzahl wird geprüft…";
+"game_center.submission.unconfirmed" = "Deine Punktzahl konnte noch nicht bestätigt werden. Bitte erneut versuchen.";
+"game_center.submission.submitted" = "Eingetragen · beste Punktzahl bleibt erhalten";
+"game_center.submission.failed" = "Eintragung fehlgeschlagen. Wird erneut versucht.";
+"game_center.submission.retry" = "Erneut versuchen";

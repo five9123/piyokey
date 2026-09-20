@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_commit": "8d89f1debbcad5bf4834b416a9e9624eeeb45d7c",
+  "verified_tree": "7b70de719b942b7c70920543f2a932bb5ffd203f",
+  "branch": "codex/180-country-analytics-consent",
+  "scope": "Issue #180 final country/context implementation with queued-request consent withdrawal guard",
+  "result": "pass",
+  "recorded_at": "2026-09-09T16:53:43.058160+00:00",
+  "checks": [
+    {
+      "name": "python-contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest tools.tests.test_analytics_contract tools.tests.test_ui_language_scope tools.tests.test_release_preflight",
+      "note": "34 tests on final implementation; includes contract agreement and privacy manifest requirements."
+    },
+    {
+      "name": "repository-preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": ""
+    },
+    {
+      "name": "withdrawal-network-and-reconsent",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination \"platform=iOS Simulator,name=iPhone 17,OS=26.5\" -derivedDataPath /private/tmp/piyokey-180/DerivedData -clonedSourcePackagesDirPath /Users/jungminoh/Library/Developer/Xcode/DerivedData/Hanco-afcmfogzwstijzbnlhxwmgasxqvg/SourcePackages -disableAutomaticPackageResolution -parallel-testing-enabled NO -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeDeclinePreservesDiagnosticsAndDoesNotRepeat -only-testing:HancoUITests/HancoUITests/testUsageContextUpgradeParticipationKeepsDiagnosticsOff -resultBundlePath /private/tmp/piyokey-180/withdrawal-retry.xcresult",
+      "note": "42 unit + 2 UI tests PASS. Actual URLSession uses a forwarding probe, never a network endpoint, to verify OFF/ON/OFF dispatch behavior. An earlier attempt hit a concurrent build database lock before tests; serialized retry passed."
+    },
+    {
+      "name": "release-simulator-build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Release -destination \"generic/platform=iOS Simulator\" -derivedDataPath /private/tmp/piyokey-180/DerivedData -clonedSourcePackagesDirPath /Users/jungminoh/Library/Developer/Xcode/DerivedData/Hanco-afcmfogzwstijzbnlhxwmgasxqvg/SourcePackages -disableAutomaticPackageResolution CODE_SIGNING_ALLOWED=NO",
+      "note": "PASS in /private/tmp/piyokey-180/release-final.log, after clean implementation commit. Compiles #if !DEBUG analytics runtime; no app launch/upload and no signing evidence."
+    },
+    {
+      "name": "unchanged-ios-ui-and-transform-scope",
+      "status": "pass",
+      "command": "git diff 2f5c5d0323721eeafa6c3e9fae9a3c059a079f88 8d89f1debbcad5bf4834b416a9e9624eeeb45d7c -- ios/Hanco/HancoUITests ios/Hanco/Hanco/App ios/Hanco/Hanco/Features/Settings ios/Hanco/Hanco/Resources release/analytics/posthog_usage_context.hog release/analytics/usage_context.json",
+      "note": "No changes in these paths. Full iPhone 6 UI/iPad 3 UI and 20 localized initial/upgrade layouts are explicitly documented at their actual source SHA in release/evidence/2f5c5d0323721eeafa6c3e9fae9a3c059a079f88.json; new runtime behavior is tested above."
+    },
+    {
+      "name": "workspace-clean-and-main-ancestor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict; git merge-base --is-ancestor origin/main HEAD",
+      "note": "origin/main 85ebfadabc434659943ea8cd3edcb93a91a39a71 unchanged after fetch. Only preceding evidence JSON was added after verified implementation."
+    }
+  ],
+  "manual_gates": [
+    "Exact-head Claude review and maintainer manual merge approval. No deployment/merge has been performed.",
+    "Signed iPhone/iPad capture-to-storage country-only verification, fresh/upgrade consent and opt-out network checks. Already-dispatched requests cannot be recalled.",
+    "Live privacy policy publication and processor retention/deletion/identity-linkage audit; App Store Privacy update; Firebase Crashlytics consented crash/dSYM and existing release gates. Android frozen; full Hanco regression not required for this focused change."
+  ]
+}

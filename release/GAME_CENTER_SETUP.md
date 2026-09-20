@@ -17,11 +17,11 @@
 - `PiyokeyGameCenterIntendedLeaderboardIDs`: 이 빌드가 지원할 수 있는 전체 ID
 - `PiyokeyGameCenterAvailableLeaderboardIDs`: 출고 시점에 이미 Live가 확인된 baseline ID
 
-enum이나 intended 목록에 ID가 있다는 이유만으로 제출·순위 조회·CTA를 열지 않는다. iOS 26+의 인증된 세션에서는 `GKLeaderboard.loadLeaderboards(IDs: nil)`로 전체 목록을 한 번 로드하고, `releaseState`가 `.released`인 항목과 intended의 교집합을 실제 availability로 사용한다. 성공 응답은 baseline보다 우선하며, probe 오류 또는 5초 무응답 때는 baseline으로 fallback한다. 각 probe는 generation token을 사용하므로 timeout 뒤 도착한 callback은 무시한다. 플레이어가 바뀌면 동적 결과를 폐기하고 다시 한 번 확인한다. 따라서 sandbox의 `.prereleased` 및 미Live flow v4/weekly는 dashboard/submit에서 차단되고, Live가 된 뒤에는 build 6에서도 새 바이너리 없이 활성화된다. 키가 없거나 알 수 없는 ID면 fail-closed다.
+baseline에 없는 새 ID는 intended에 있다는 이유만으로 활성화하지 않는다. iOS 26+는 released인 intended ID를 조회해 baseline에 합친다. 불완전한 성공 응답이나 빈 목록은 이미 Live로 검증한 baseline을 제거하지 않는다. 조회 오류·5초 timeout에도 baseline을 유지하고 foreground에서 다시 조회할 수 있다. token이 다른 늦은 callback은 무시한다. 기존 baseline의 제출은 probe 완료를 기다리지 않는다.
 
-`GKLeaderboard.releaseState`는 iOS 26+ API다. iOS 16~25는 baseline만 사용한다. 2026-08-20 현재 flow v4 3개와 weekly v4를 포함한 16개 운영 ID가 모두 Live로 확인되어 다음 출고 baseline에도 전부 포함한다. 따라서 iOS 16~25에서도 정확한 번들 덱·버전·내장 키보드 기록은 해당 보드에 제출할 수 있다.
+`GKLeaderboard.releaseState`는 iOS 26+ API다. iOS 16~25는 baseline만 사용한다. 2026-09-10 22:29 JST Flow 초급 v5 Live를 확인했다. 다음 출고 후보는 초급 v5·Flow 중급/고급 v4·weekly v4를 포함한 Live 16개를 baseline으로 구성한다. 후보의 실제 서버 제출·조회 gate는 아직 열려 있고 통과 전 출고하지 않는다. 따라서 iOS 16~25에서도 정확한 번들 덱·버전의 모든 입력 방식 기록은 해당 보드에 제출할 수 있다.
 
-ID 추가 순서는 다음과 같다.
+신규 미출시 ID의 일반 확인 순서는 다음과 같다. 이번 v5 교체는 아래 추가 기록처럼 Live 확인 후 최종 후보의 intended/baseline을 함께 준비하며, 실제 서버 확인 전에는 출고하지 않는다.
 
 1. 새 계약은 먼저 `PiyokeyGameCenterIntendedLeaderboardIDs`에만 추가한다.
 2. App Store Connect에서 리더보드가 **Live**인지 확인한다.
@@ -33,11 +33,11 @@ ID 추가 순서는 다음과 같다.
 
 ## 2. 게임×난이도 클래식 리더보드 15개
 
-모두 **Classic**, **Best Score**, **High to Low**, 정수 점수, 단위 `点 / point(s) / 점`, 범위 0~1,000,000으로 만든다. 대상은 아래 각 게임의 번들 전용 100단어 복합 난이도 세트 v3이며 내장 키보드 기록만 제출한다. 다운로드 덱·사용자 덱·OS IME 기록은 로컬 최고 기록만 사용한다.
+모두 **Classic**, **Best Score**, **High to Low**, 정수 점수, 단위 `点 / point(s) / 점`, 범위 0~1,000,000으로 만든다. 대상은 아래 각 게임의 번들 전용 100단어 복합 난이도 세트 v3이며 내장 두벌식·천지인·OS IME의 최고점을 함께 제출한다. 다운로드 덱·사용자 덱 기록은 로컬 최고 기록만 사용한다.
 
 | Leaderboard ID | 고정 콘텐츠 | 일본어 표시명 | 영어 표시명 | 한국어 표시명 |
 |---|---|---|---|---|
-| `piyokey.v4.flow.beginner` | `flow_topik_beginner` v3 | フロー・初級 | Flow · Beginner | 흐름 · 초급 |
+| `piyokey.v5.flow.beginner` | `flow_topik_beginner` v3 | フロー・初級 | Flow · Beginner | 흐름 · 초급 |
 | `piyokey.v4.flow.intermediate` | `flow_topik_intermediate` v3 | フロー・中級 | Flow · Intermediate | 흐름 · 중급 |
 | `piyokey.v4.flow.advanced` | `flow_topik_advanced` v3 | フロー・上級 | Flow · Advanced | 흐름 · 고급 |
 | `piyokey.v3.acid_rain.beginner` | `acid_rain_topik_beginner` v3 | 単語の雨・初級 | Word Rain · Beginner | 산성비 · 초급 |
@@ -64,14 +64,14 @@ ID 추가 순서는 다음과 같다.
 다음 값으로 설정한다.
 
 - 콘텐츠: 번들 `flow_topik_beginner` v3
-- 규칙: 흐름 모드 60초·3목숨·0~50초 1.0→1.8배 점진 가속·내장 키보드 고정
+- 규칙: 흐름 모드 60초·3목숨·0~50초 1.0→1.8배 점진 가속·선택한 내장 두벌식·천지인 또는 OS 키보드
 - Score Submission Type: **Best Score**
 - Sort Order: **High to Low**
 - Duration: **1 week**
 - Restarts Interval: **1 week**
 - Start Date and Time: 2026-08-17 00:00 JST (2026-08-16 15:00 UTC)
 
-피요컵 점수는 recurring 보드와 `piyokey.v4.flow.beginner`에 동시에 제출한다. App Store Connect는 아직 심사 전인 새 보드에 `Make Default`를 제공하지 않으므로, `piyokey.v4.cup.weekly.flow`이 Live 상태가 된 뒤 기본 리더보드로 지정한다.
+Issue #181의 정정 계약에서 피요컵 점수는 내장 두벌식·천지인·OS 키보드 모두 recurring 보드에만 제출한다. 일반 Flow는 난이도별 클래식 보드만 사용하며 피요컵 결과에서 Flow 순위로 대체하지 않는다. 기존 1.1 (24)은 이중 제출하므로 변경 소스를 포함한 새 빌드가 필요하다. 이미 섞인 서버 최고점은 이 변경으로 소급 수정되지 않는다. 2026-09-10 사용자 승인으로 기본 리더보드를 Flow 초급 v4로 변경하고 구형 Flow v3 3개와 weekly v3를 archive했다. Flow 초급의 혼합 기록은 v5 한 개로 교체하며 2026-09-10 22:29 JST Live를 재확인했다. 앱의 초급 enum/intended/출고 후보 baseline을 v5로 전환했고 실기기·서명·출시는 아직 미완료다. ASC 기본 보드와 기존 v4는 새 앱의 실제 동작 확인·배포까지 유지한다. [운영 확인과 전환 절차](GAME_CENTER_HOTFIX_20260910.md)를 따른다.
 
 ## 4. 피요 성장 업적 5개
 
@@ -90,13 +90,30 @@ Game Center에 점수가 한 번이라도 정상 제출되거나 기존 순위�
 ## 5. 검증
 
 1. Game Center에 로그인한 개발 기기에서 게임 탭을 열어 인증 배너와 계정명을 확인한다.
-2. 덱을 다운로드하지 않은 상태에서 게임 허브의 주간 피요컵이 바로 시작되고 내장 키보드만 표시되는지 확인한다.
-3. 피요컵 결과가 recurring 보드와 `flow.beginner` 클래식 보드 양쪽에 제출되는지 확인한다.
-4. 다섯 게임의 초급·중급·고급 v3 번들 세트가 각각 대응하는 15개 보드에만 제출되고, 흐름만 v4·산성비/초성/받아쓰기는 v3·단어 퀴즈는 v4 계약을 사용하는지 확인한다. 업데이트 버전·다운로드 덱·OS IME에서는 순위 CTA가 나타나지 않아야 한다.
+2. 덱을 다운로드하지 않은 상태에서 게임 허브의 주간 피요컵이 바로 시작되고 선택한 내장 두벌식·천지인 또는 OS 키보드로 실행되는지 확인한다.
+3. 깨끗한 테스트 계정에서 일반 Flow 초급 400점 → 피요컵 900점 → 일반 Flow 500점 순서로 플레이한다. 피요컵은 주간 900점, 일반 Flow는 클래식 500점이며 일반 Flow의 500점이 로컬 신기록인지 확인한다. 피요컵 결과의 순위·열기는 주간 보드만 대상으로 해야 한다. OS 피요컵도 주간에만 반영되는지 확인한다.
+4. 다섯 게임의 초급·중급·고급 v3 번들 세트가 각각 대응하는 15개 보드에만 제출되고, 흐름만 v4·산성비/초성/받아쓰기는 v3·단어 퀴즈는 v4 계약을 사용하는지 확인한다. 일반 게임의 업데이트 버전·다운로드 덱에서는 순위 CTA가 나타나지 않아야 한다.
 5. 오프라인에서 기록을 만든 뒤 같은 주에 온라인으로 돌아와 게임 탭을 열고 최고 점수가 보충 제출되는지 확인한다. 다음 JST 월요일 00:00 이후에는 지난주 피요컵 점수가 새 회차에 제출되지 않는지도 확인한다.
 6. 피요 옷장에서 챔피언 트로피가 재실행 뒤에도 유지되는지 확인한다.
 7. App Store Connect에 등록한 5개 성장 업적의 진행률과 완료 배너를 확인한다.
 8. TestFlight 검증에는 출시 계정과 분리한 Game Center 테스트 계정을 사용하고, 제출 전 테스트 점수를 정리한다.
 9. 로그아웃 상태에서 CTA를 연타하고 인증을 취소한 뒤 다시 탭해 재인증할 수 있는지 확인한다. 인증 시트가 완전히 닫히기 전 리더보드가 겹쳐 열리면 실패다.
 10. 리더보드 표시 중 재탭, 앱 백그라운드→복귀, 오프라인→온라인 복구에서 중복 대시보드·강제 종료·무한 로딩이 없는지 확인한다.
-11. 다운로드/사용자 덱과 OS IME 결과에는 CTA가 없고, 계약에 포함된 번들+내장 키보드 결과에만 CTA가 있는지 확인한다.
+11. 일반 게임의 다운로드/사용자 덱 결과에는 CTA가 없고, 계약에 포함된 번들 게임의 내장 두벌식·천지인·OS 결과 모두 CTA가 있는지 확인한다. 피요컵은 세 입력 방식 모두 주간 CTA만 제공한다.
+
+## 1.1.1 핫픽스 추가 검증
+
+- 최고점보다 낮은 결과와 0점 결과에도 점수 카드 안에 랭킹 버튼·등록 상태가 표시된다. 하단 고정 재도전 영역에 가리지 않는지 스크린샷과 좌표로 확인한다.
+- 첫 인증 시 대시보드를 열기 전에 보관된 최고점이 제출된다.
+- 부분/빈 released 목록이 와도 Live 16개의 버튼·제출을 유지한다.
+- 실패 최고점 뒤 더 낮은 게임, 앱 복귀, 수동 재시도에서 높은 기록을 보충한다.
+- 무응답 timeout 뒤 재시도되며 이전 callback이 새 요청 상태를 덮지 않는다.
+- Game Center는 매 판의 전체 이력을 나열하는 저장소가 아니며 보드별 최고점(피요컵은 해당 주 최고점)을 표시한다. 개별 게임·입력 방식 원본은 기존 로컬 기록 계약을 유지한다.
+
+### 서버 기록 확인 추가 계약
+
+- 성공 콜백은 확인 중 상태로 전환한다. 실제 서버 rank > 0이고 score가 보존한 최고점
+  이상일 때 등록 완료로 전환한다. 순위만 있고 점수가 이전의 낮은 값이면 아직 미확인이다.
+- 재조회가 계속 실패하거나 서버 점수가 없으면 미확인·재시도 UI를 유지한다. SDK에서
+  성공을 반환했어도 확인되지 않은 최고점을 제한된 자동/앱 복귀/수동 재시도로 다시 보낸다.
+- 피요컵은 불러온 회차 인스턴스에 제출해 마감 직전의 지연 요청이 다음 주에 들어가지 않게 한다.

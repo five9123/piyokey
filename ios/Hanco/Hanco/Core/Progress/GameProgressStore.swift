@@ -129,6 +129,7 @@ struct DeckProgress: Codable, Equatable, Identifiable {
   let deckId: String
   let gameKind: GameKind
   let inputMode: SessionInputMode
+  let competition: GameCompetition?
   var plays: Int
   var bestScore: Int
   var bestAccuracy: Double
@@ -138,7 +139,8 @@ struct DeckProgress: Codable, Equatable, Identifiable {
     GameProgressSnapshot.progressKey(
       deckId: deckId,
       gameKind: gameKind,
-      inputMode: inputMode
+      inputMode: inputMode,
+      competition: competition
     )
   }
 
@@ -146,6 +148,7 @@ struct DeckProgress: Codable, Equatable, Identifiable {
     case deckId = "deck_id"
     case gameKind = "game_kind"
     case inputMode = "input_mode"
+    case competition
     case plays
     case bestScore = "best_score"
     case bestAccuracy = "best_accuracy"
@@ -156,6 +159,7 @@ struct DeckProgress: Codable, Equatable, Identifiable {
     deckId: String,
     gameKind: GameKind = .flow,
     inputMode: SessionInputMode,
+    competition: GameCompetition? = nil,
     plays: Int,
     bestScore: Int,
     bestAccuracy: Double,
@@ -164,6 +168,7 @@ struct DeckProgress: Codable, Equatable, Identifiable {
     self.deckId = deckId
     self.gameKind = gameKind
     self.inputMode = inputMode
+    self.competition = competition == .weeklyPiyoCup ? .weeklyPiyoCup : nil
     self.plays = plays
     self.bestScore = bestScore
     self.bestAccuracy = bestAccuracy
@@ -175,6 +180,8 @@ struct DeckProgress: Codable, Equatable, Identifiable {
     deckId = try container.decode(String.self, forKey: .deckId)
     gameKind = try container.decodeIfPresent(GameKind.self, forKey: .gameKind) ?? .flow
     inputMode = try container.decodeIfPresent(SessionInputMode.self, forKey: .inputMode) ?? .builtIn
+    let storedCompetition = try container.decodeIfPresent(GameCompetition.self, forKey: .competition)
+    competition = storedCompetition == .weeklyPiyoCup ? .weeklyPiyoCup : nil
     plays = try container.decode(Int.self, forKey: .plays)
     bestScore = try container.decode(Int.self, forKey: .bestScore)
     bestAccuracy = try container.decode(Double.self, forKey: .bestAccuracy)
@@ -185,15 +192,20 @@ struct DeckProgress: Codable, Equatable, Identifiable {
 struct GameProgressSnapshot: Equatable {
   var records: [GameRecord]
   var deckProgress: [String: DeckProgress]
+  // Schema 1/2 summaries may include compacted cup records that cannot be
+  // attributed anymore. Preserve them without using them as either mode's best.
+  var legacyMixedProgress: [String: DeckProgress] = [:]
 
   static let empty = GameProgressSnapshot(records: [], deckProgress: [:])
 
   static func progressKey(
     deckId: String,
     gameKind: GameKind = .flow,
-    inputMode: SessionInputMode
+    inputMode: SessionInputMode,
+    competition: GameCompetition? = nil
   ) -> String {
-    "\(deckId)::\(gameKind.rawValue)::\(inputMode.rawValue)"
+    let base = "\(deckId)::\(gameKind.rawValue)::\(inputMode.rawValue)"
+    return competition == .weeklyPiyoCup ? "\(base)::weekly_piyo_cup_v1" : base
   }
 }
 
@@ -381,15 +393,17 @@ struct GameProgressStore {
     let schemaVersion: Int
     var records: [GameRecord]
     var deckProgress: [DeckProgress]
+    var legacyMixedProgress: [DeckProgress]?
 
     private enum CodingKeys: String, CodingKey {
       case schemaVersion = "schema_version"
       case records
       case deckProgress = "deck_progress"
+      case legacyMixedProgress = "legacy_mixed_progress"
     }
   }
 
-  private static let currentSchemaVersion = 2
+  private static let currentSchemaVersion = 3
   static let maximumRetainedRecords = 2_048
 
   let rootURL: URL
@@ -429,17 +443,8 @@ struct GameProgressStore {
       throw GameProgressStoreError.unsupportedSchema(index.schemaVersion)
     }
 
-    var progressByDeck: [String: DeckProgress] = [:]
-    for progress in index.deckProgress {
-      guard !progress.deckId.isEmpty,
-        progress.plays >= 0,
-        progress.bestScore >= 0,
-        progress.bestAccuracy.isFinite,
-        (0...100).contains(progress.bestAccuracy),
-        progressByDeck[progress.id] == nil
-      else { throw GameProgressStoreError.invalidProgress }
-      progressByDeck[progress.id] = progress
-    }
+    let progressByDeck = try Self.validatedProgress(index.deckProgress)
+    let legacyMixedProgress = try Self.validatedProgress(index.legacyMixedProgress ?? [])
     guard Set(index.records.map(\.id)).count == index.records.count,
       index.records.allSatisfy({ record in
         !record.deckId.isEmpty && !record.course.isEmpty && record.score >= 0
@@ -450,7 +455,57 @@ struct GameProgressStore {
           && record.completedItemCount >= 0 && record.missedItemCount >= 0
       })
     else { throw GameProgressStoreError.invalidProgress }
-    return GameProgressSnapshot(records: index.records, deckProgress: progressByDeck)
+    let snapshot = GameProgressSnapshot(
+      records: index.records, deckProgress: progressByDeck,
+      legacyMixedProgress: legacyMixedProgress
+    )
+    return index.schemaVersion < 3 ? Self.separatingLegacyCupProgress(snapshot) : snapshot
+  }
+
+  private static func validatedProgress(_ values: [DeckProgress]) throws -> [String: DeckProgress] {
+    var result: [String: DeckProgress] = [:]
+    for progress in values {
+      guard !progress.deckId.isEmpty, progress.plays >= 0, progress.bestScore >= 0,
+        progress.bestAccuracy.isFinite, (0...100).contains(progress.bestAccuracy),
+        result[progress.id] == nil
+      else { throw GameProgressStoreError.invalidProgress }
+      result[progress.id] = progress
+    }
+    return result
+  }
+
+  private static func separatingLegacyCupProgress(
+    _ snapshot: GameProgressSnapshot
+  ) -> GameProgressSnapshot {
+    var result = snapshot
+    // Absence of a retained cup record does not prove a schema 1/2 summary is
+    // clean: older cup runs may already have been compacted out of the log.
+    var affectedKeys = Set(snapshot.deckProgress.values.filter {
+      $0.deckId == GameCenterRankedDeck.piyoCupDeckID && $0.gameKind == .flow
+        && $0.inputMode != .builtInKorean10Key
+    }.map(\.id))
+    for record in snapshot.records where record.mode == .game && record.competition == .weeklyPiyoCup {
+      affectedKeys.insert(GameProgressSnapshot.progressKey(
+        deckId: record.deckId, gameKind: GameKind(course: record.course), inputMode: record.inputMode
+      ))
+    }
+    for key in affectedKeys {
+      if let old = result.deckProgress.removeValue(forKey: key) {
+        result.legacyMixedProgress[key] = old
+      }
+    }
+    for record in snapshot.records.sorted(by: { $0.playedAt < $1.playedAt }) where record.mode == .game {
+      let ordinaryKey = GameProgressSnapshot.progressKey(
+        deckId: record.deckId, gameKind: GameKind(course: record.course), inputMode: record.inputMode
+      )
+      guard affectedKeys.contains(ordinaryKey) else { continue }
+      let key = GameProgressSnapshot.progressKey(
+        deckId: record.deckId, gameKind: GameKind(course: record.course),
+        inputMode: record.inputMode, competition: record.competition
+      )
+      result.deckProgress[key] = updatedProgress(for: record, previous: result.deckProgress[key])
+    }
+    return result
   }
 
   @discardableResult
@@ -504,10 +559,8 @@ struct GameProgressStore {
     let index = Index(
       schemaVersion: Self.currentSchemaVersion,
       records: snapshot.records,
-      deckProgress: snapshot.deckProgress.values.sorted {
-        ($0.deckId, $0.gameKind.rawValue, $0.inputMode.rawValue)
-          < ($1.deckId, $1.gameKind.rawValue, $1.inputMode.rawValue)
-      }
+      deckProgress: snapshot.deckProgress.values.sorted { $0.id < $1.id },
+      legacyMixedProgress: snapshot.legacyMixedProgress.values.sorted { $0.id < $1.id }
     )
     try RecoverableJSONFile.write(
       encoder.encode(index),
@@ -532,20 +585,13 @@ struct GameProgressStore {
     let progressKey = GameProgressSnapshot.progressKey(
       deckId: record.deckId,
       gameKind: GameKind(course: record.course),
-      inputMode: record.inputMode
+      inputMode: record.inputMode,
+      competition: record.competition
     )
     let previous = snapshot.deckProgress[progressKey]
     let previousBestScore = previous?.bestScore
     let isNewBest = previousBestScore == nil || record.score > (previousBestScore ?? 0)
-    let progress = DeckProgress(
-      deckId: record.deckId,
-      gameKind: GameKind(course: record.course),
-      inputMode: record.inputMode,
-      plays: (previous?.plays ?? 0) + 1,
-      bestScore: max(previousBestScore ?? record.score, record.score),
-      bestAccuracy: max(previous?.bestAccuracy ?? record.accuracy, record.accuracy),
-      lastPlayedAt: record.playedAt
-    )
+    let progress = updatedProgress(for: record, previous: previous)
 
     snapshot.records.append(record)
     snapshot.deckProgress[progressKey] = progress
@@ -554,6 +600,19 @@ struct GameProgressStore {
       previousBestScore: previousBestScore,
       isNewBest: isNewBest,
       deckProgress: progress
+    )
+  }
+
+  private static func updatedProgress(for record: GameRecord, previous: DeckProgress?) -> DeckProgress {
+    DeckProgress(
+      deckId: record.deckId,
+      gameKind: GameKind(course: record.course),
+      inputMode: record.inputMode,
+      competition: record.competition,
+      plays: (previous?.plays ?? 0) + 1,
+      bestScore: max(previous?.bestScore ?? record.score, record.score),
+      bestAccuracy: max(previous?.bestAccuracy ?? record.accuracy, record.accuracy),
+      lastPlayedAt: record.playedAt
     )
   }
 
@@ -573,7 +632,7 @@ struct GameProgressStore {
   ) -> GameProgressSnapshot {
     guard limit > 0, snapshot.records.count > limit else { return snapshot }
 
-    // DeckProgress is the durable, unbounded summary for every deck/game/input key.
+    // DeckProgress is the durable summary for every deck/game/input/competition key.
     // Keep raw records bounded while retaining the representative needed to rebuild
     // every current Game Center all-time score and the active weekly cup score.
     var bestByLeaderboard: [GameCenterLeaderboard: GameRecord] = [:]
@@ -638,6 +697,7 @@ final class GameProgressLibrary: ObservableObject {
   @Published private(set) var records: [GameRecord] = []
   @Published private(set) var deckProgress: [String: DeckProgress] = [:]
   @Published private(set) var saveFailed = false
+  private var legacyMixedProgress: [String: DeckProgress] = [:]
 
   private let store: GameProgressStore
   private let writer: GameProgressWriter
@@ -683,15 +743,28 @@ final class GameProgressLibrary: ObservableObject {
   func progress(
     for deckId: String,
     gameKind: GameKind = .flow,
-    inputMode: SessionInputMode = .builtIn
+    inputMode: SessionInputMode = .builtIn,
+    competition: GameCompetition? = nil
   ) -> DeckProgress? {
     deckProgress[
       GameProgressSnapshot.progressKey(
         deckId: deckId,
         gameKind: gameKind,
-        inputMode: inputMode
+        inputMode: inputMode,
+        competition: competition
       )
     ]
+  }
+
+  func bestCombo(
+    for deckId: String, gameKind: GameKind = .flow,
+    inputMode: SessionInputMode = .builtIn, competition: GameCompetition? = nil
+  ) -> Int {
+    records.lazy.filter {
+      $0.mode == .game && $0.deckId == deckId && GameKind(course: $0.course) == gameKind
+        && $0.inputMode == inputMode
+        && ($0.competition == .weeklyPiyoCup) == (competition == .weeklyPiyoCup)
+    }.map(\.maxCombo).max() ?? 0
   }
 
   func retryLastSave() {
@@ -712,13 +785,16 @@ final class GameProgressLibrary: ObservableObject {
   }
 
   private var currentSnapshot: GameProgressSnapshot {
-    GameProgressSnapshot(records: records, deckProgress: deckProgress)
+    GameProgressSnapshot(
+      records: records, deckProgress: deckProgress, legacyMixedProgress: legacyMixedProgress
+    )
   }
 
   private func accept(_ snapshot: GameProgressSnapshot) {
     revision += 1
     records = snapshot.records
     deckProgress = snapshot.deckProgress
+    legacyMixedProgress = snapshot.legacyMixedProgress
   }
 
   private func persist(snapshot: GameProgressSnapshot, revision requestedRevision: Int) async
@@ -745,12 +821,16 @@ final class GameProgressLibrary: ObservableObject {
       let snapshot = try store.loadSnapshot()
       records = snapshot.records
       deckProgress = snapshot.deckProgress
-      revision = 0
+      legacyMixedProgress = snapshot.legacyMixedProgress
+      // The loaded snapshot can include a schema migration. Let the next flush
+      // persist it even when the player has not completed another game yet.
+      revision = 1
       saveFailed = false
       retryAction = nil
     } catch {
       records = []
       deckProgress = [:]
+      legacyMixedProgress = [:]
       saveFailed = true
       retryAction = { [weak self] in self?.reload() }
     }

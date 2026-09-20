@@ -1,0 +1,179 @@
+// PIYOKEY usage context v2. Run before the built-in GeoIP transformation.
+// The client always sets $geoip_disable=true. Only this explicit, versioned consent
+// permits approximate location lookup. Never log the IP or the lookup response.
+let properties := event.properties ?? {}
+if (not (properties.platform in ['ios', 'ipados'])) {
+    return event
+}
+let allowedProperties := {
+  'app_opened': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'entry_point'
+  ],
+  'feature_viewed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'feature'
+  ],
+  'onboarding_step_completed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'onboarding_step'
+  ],
+  'deck_downloaded': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'deck_source',
+    'deck_category'
+  ],
+  'session_started': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'session_kind',
+    'deck_source',
+    'input_mode',
+    'game_mode',
+    'difficulty'
+  ],
+  'session_completed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'session_kind',
+    'result',
+    'duration_bucket',
+    'item_count_bucket',
+    'deck_source',
+    'input_mode',
+    'game_mode',
+    'difficulty'
+  ],
+  'session_abandoned': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'session_kind',
+    'reason',
+    'duration_bucket',
+    'deck_source',
+    'input_mode',
+    'game_mode',
+    'difficulty'
+  ],
+  'game_result': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'game_mode',
+    'difficulty',
+    'result',
+    'score_bucket',
+    'input_mode',
+    'deck_source'
+  ],
+  'review_completed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'item_count_bucket',
+    'result'
+  ],
+  'deck_maker_action': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'action',
+    'item_count_bucket',
+    'deck_source'
+  ],
+  'purchase_flow': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'purchase_state'
+  ],
+  'setting_changed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'setting',
+    'value_bucket'
+  ],
+  'share_completed': [
+    'schema_version',
+    'platform',
+    'app_version',
+    'build_number',
+    'locale',
+    'action',
+    'game_mode'
+  ]
+}
+let eventKeys := allowedProperties[event.event] ?? []
+let consented := properties.piyokey_usage_context_consent_version == 2
+    and properties.$geoip_disable == true
+    and properties.$process_person_profile == false
+    and not empty(eventKeys)
+let contextKeys := ['$app_name', '$app_version', '$app_build', '$app_namespace', '$device_manufacturer', '$device_model', '$device_type', '$os_name', '$os_version', '$screen_width', '$screen_height', '$locale', '$timezone', '$network_wifi', '$network_cellular', '$is_emulator', '$is_testflight', '$is_sideloaded', '$is_ios_running_on_mac', '$is_mac_catalyst_app', '$session_id']
+let filtered := {}
+for (let key, value in properties) {
+    if (key in eventKeys or key in ['$lib', '$lib_version']
+        or (consented and key in contextKeys)) {
+        filtered[key] := value
+    }
+}
+filtered.$geoip_disable := true
+filtered.$process_person_profile := false
+if (consented) {
+    filtered.piyokey_usage_context_consent_version := 2
+    if (not empty(properties.$ip)) {
+        let response := geoipLookup(properties.$ip)
+        if (response) {
+            let location := {
+                'country_name': response.country?.names?.en,
+                'country_code': response.country?.isoCode
+            }
+            // Country only: never retain region, city, postcode, coordinates or radius.
+            for (let key, value in location) {
+                if (value != null) {
+                    filtered[f'$geoip_{key}'] := value
+                }
+            }
+        }
+    }
+}
+// Reconstructing properties removes IP, client-supplied geo fields, and $set/$set_once.
+// Keep the project's Discard client IP data enabled as a second storage safeguard.
+let returnEvent := event
+returnEvent.properties := filtered
+return returnEvent

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "verified_commit": "169de694ae9e48a7cb362da9cf2eeab60d1ae34f",
+  "verified_tree": "45b7445738e953878a933f0c3ea34e7f5a18da95",
+  "branch": "codex/181-separate-cup-flow",
+  "scope": "Issue181 final focused verification: portable iPad dismissal regression, retained server-score confirmation and store review draft",
+  "result": "pass",
+  "recorded_at": "2026-09-10T01:30:56.337046+00:00",
+  "checks": [
+    {
+      "name": "python_contracts",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "110 tests; /tmp/piyokey-hotfix-169de69-python.log"
+    },
+    {
+      "name": "repository_preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "/tmp/piyokey-hotfix-169de69-preflight.log; store notes/metadata contracts pass; not strict release gate closure"
+    },
+    {
+      "name": "controlled_delivery",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/test_game_center_delivery.py",
+      "note": "All controlled scenarios pass on this SHA; /tmp/piyokey-hotfix-169de69-delivery.log; real Apple server receipt unverified"
+    },
+    {
+      "name": "ipad_build_unit_dismissal",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -derivedDataPath /tmp/piyokey-cup-separation-dd -clonedSourcePackagesDirPath /tmp/piyokey-gc-audit-dd/SourcePackages -parallel-testing-enabled NO -disableAutomaticPackageResolution -destination 'platform=iOS Simulator,id=3E5DF64B-1515-4AF4-87A8-9113E50DD416' -resultBundlePath /tmp/piyokey-hotfix-169de69-ipad-dismiss.xcresult -only-testing:HancoTests/GameCenterServiceTests -only-testing:HancoTests/GameProgressStoreTests -only-testing:HancoTests/FlowGameViewModelTests -only-testing:HancoTests/FlowGameRankTuningTests -only-testing:HancoTests/AppSettingsTests -only-testing:HancoUITests/HancoUITests/testDoneExitsPracticeAndGameResultsEvenDuringReveal",
+      "note": "133 unit+1UI pass on this clean SHA; /tmp/piyokey-hotfix-169de69-ipad-dismiss.log. Corrected tab navigation; practice/game Done during result reveal works. Resolves prior0e96472 iPad UI harness failure."
+    },
+    {
+      "name": "unchanged_product_and_unit_sources",
+      "status": "pass",
+      "command": "git diff --exit-code 0e964728ebe56d01926028c24a3c38b8bd0bef5c HEAD -- ios/Hanco/Hanco ios/Hanco/HancoTests ios/Hanco/Hanco.xcodeproj ios/HangulEngine shared tools web",
+      "note": "No differences. Previous SHA evidence records iPhone133+4UI and iPad3ranking/Cup/OS UI. These are prior runs on identical product code, not rerun on169de69. Only two selectors within the separate Done UI case changed; store docs/notes updated."
+    },
+    {
+      "name": "workspace_doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Clean owned Issue181 worktree, authenticated gh"
+    },
+    {
+      "name": "diff_check",
+      "status": "pass",
+      "command": "git diff --check origin/main...HEAD",
+      "note": "Latest fetched origin/main3aa148ffd84b522dc555ce0c8d0e2ce7fcc4461b remains ancestor."
+    }
+  ],
+  "manual_gates": [
+    "Exact final PR head review and maintainer manual fail-closed merge approval are open. Claude attempts on previous heads stopped at API429/usage credits exhausted with0 review tokens. A one-PR independent Codex substitution was requested but not yet authorized.",
+    "Same signed hotfix build real iPhone/iPad Game Center authentication, remote score receipt/read-back, lower/new-best play, all keyboards including physical, offline/relaunch recovery and week rollover remain unverified. Framework doubles and UI screenshots do not prove Apple server receipt. iPhone unavailable; connected iPad locked.",
+    "Flow beginner v5 standalone Game Center submission acb65714-82c5-477e-96ca-e39b320280c3 last observed Waiting for Review. Production app mappings remain v4. After Live, change source/intended/tests, review/merge and verify device before adding v5 baseline and release; only archive v4 after verified cutover.",
+    "ASC default v4 and four legacy v3 archives were saved and re-read; 1.1.1 draft and six-locale release notes saved. New App Review notes are prepared locally but not saved because ASC session expired. No build25 archive/upload/link/app review submission/public release.",
+    "Clean latest origin/main before signing/archive/install/upload and full iOS regression/actual-device/release gates remain required. No old1.1 artifact or exact-head review reused.",
+    "Strict release readiness was actually run on0e96472: /opt/homebrew/bin/python3.12 tools/release_preflight.py --strict exited1 with41 open findings (/tmp/piyokey-hotfix-0e96472-submission-readiness.log). Repository preflight pass is not release approval. Account/rights/IAP/privacy/signing/device gates require current evidence; historical frozen Android rows do not expand this iOS-only task.",
+    "Merged main includes Issue180: live privacy policy/App Store Privacy, signed consent/ingestion/OFF network silence and Crashlytics symbolication remain separate external gates."
+  ]
+}
