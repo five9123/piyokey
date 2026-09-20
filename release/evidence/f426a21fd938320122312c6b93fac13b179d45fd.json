@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "verified_commit": "f426a21fd938320122312c6b93fac13b179d45fd",
+  "verified_tree": "e202d47432ce100d319137908e55d7082704dc65",
+  "branch": "docs/exec-env-policy",
+  "scope": "docs-only: AGENTS.md 실행 환경 규칙 추가",
+  "result": "pass",
+  "recorded_at": "2026-09-20T16:25:10.571354+00:00",
+  "checks": [
+    {
+      "name": "docs-only-diff",
+      "status": "pass",
+      "command": "git diff origin/main..HEAD --name-only",
+      "note": ""
+    }
+  ],
+  "manual_gates": [
+    "실기기·스토어 gate 해당 없음(docs-only)"
+  ]
+}
