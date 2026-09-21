@@ -895,16 +895,22 @@ private struct RootSettingsToolbarModifier: ViewModifier {
     content.toolbar {
       ToolbarItem(placement: .topBarTrailing) {
         Button(action: openSettings) {
-          ZStack {
-            Circle()
-              .fill(AppPalette.card.opacity(0.9))
-              .frame(width: 32, height: 32)
+          #if PIYOKEY_MAC_DEMO
+            // Match the native toolbar symbol used by practice and quiz settings.
+            // Catalyst owns the toolbar background and hover/active appearance.
             Image(systemName: "gearshape.fill")
-              .font(.subheadline.weight(.bold))
-              .foregroundStyle(AppPalette.accent)
-          }
-          .frame(width: 44, height: 44)
-          .contentShape(Rectangle())
+          #else
+            ZStack {
+              Circle()
+                .fill(AppPalette.card.opacity(0.9))
+                .frame(width: 32, height: 32)
+              Image(systemName: "gearshape.fill")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(AppPalette.accent)
+            }
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+          #endif
         }
         .accessibilityLabel(Text("settings.navigation_title"))
         .accessibilityIdentifier("root.settings")
