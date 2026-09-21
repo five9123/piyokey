@@ -17,7 +17,7 @@ from typing import Optional, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_REMOTE = "github.com/five9123-maker/piyokey"
+EXPECTED_REMOTE = "github.com/five9123/piyokey"
 REQUIRED_FILES = (
     "AGENTS.md",
     "PROJECT_STATUS.md",
