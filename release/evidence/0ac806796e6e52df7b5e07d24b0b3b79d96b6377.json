@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "verified_commit": "0ac806796e6e52df7b5e07d24b0b3b79d96b6377",
+  "verified_tree": "04a0c86695e23617768da0995635da605f63e53b",
+  "branch": "codex/175-macos-demo",
+  "scope": "TYP-123 final-review baseline: main policy merge, canonical remote doctor fix, iPad smoke closure and staged Mac manual validation; no app source/resource change since 25539b4de87738821c10f124e8a6da8fe83d5a9a",
+  "result": "pass",
+  "recorded_at": "2026-09-21T04:57:30.346437+00:00",
+  "checks": [
+    {
+      "name": "PYTHON_FULL",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "Fresh execution at clean 0ac806796e6e52df7b5e07d24b0b3b79d96b6377; exit 0. 110 tests, 0 failures."
+    },
+    {
+      "name": "PREFLIGHT",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Fresh execution at clean 0ac806796e6e52df7b5e07d24b0b3b79d96b6377; exit 0."
+    },
+    {
+      "name": "DOCTOR",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Fresh execution at clean 0ac806796e6e52df7b5e07d24b0b3b79d96b6377; exit 0."
+    },
+    {
+      "name": "Application source equivalence",
+      "status": "pass",
+      "command": "git diff --name-only 25539b4de87738821c10f124e8a6da8fe83d5a9a 0ac806796e6e52df7b5e07d24b0b3b79d96b6377; git diff --exit-code 25539b4de87738821c10f124e8a6da8fe83d5a9a 0ac806796e6e52df7b5e07d24b0b3b79d96b6377 -- ios shared audio",
+      "note": "Only AGENTS.md, PROJECT_STATUS.md, inherited policy evidence and workspace_doctor plus its test fixtures changed; app build settings, sources and resources unchanged."
+    },
+    {
+      "name": "Prior app regression context",
+      "status": "skip",
+      "command": "See release/evidence/475b4f25c34ce0a83f25ddcdc475d0985ada48f4.json",
+      "note": "Swift 67 and HancoTests 452 previously passed on identical application sources. Not rerun for this docs/tools-only delta; this fresh evidence does not claim 629 new tests. Current-head review remains required."
+    },
+    {
+      "name": "Mac artifact preparation",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme 'Piyokey Mac' -configuration Debug -destination 'platform=macOS,variant=Mac Catalyst' -derivedDataPath /private/tmp/PIYOKEY_MAC_RESUME_20260920",
+      "note": "Build rerun on clean 25539b4de87738821c10f124e8a6da8fe83d5a9a at 2026-09-21 04:42:54–04:43:08 UTC, exit 0. Same application sources as this verified commit. Debug 1.1(11), executable SHA256 5294dc3a62b7b7ac2afef97e2aea889b022dae44c3d3e5bd265a195188e26bec; codesign verified."
+    },
+    {
+      "name": "iPad OS keyboard smoke",
+      "status": "pass",
+      "command": "Human-guided physical iPad checks; installation and launch confirmed with devicectl",
+      "note": "Jungmin reported Korean input, home/resume input, keyboard-dismiss persistence, and Initials Quiz retry first input all normal. iPadOS 26.6.2(23G90), app 1.1.1(25), build source 25539b4de87738821c10f124e8a6da8fe83d5a9a. Last report Buzz event 9adf8235a5e52a24062f930970dc6598f11854551cc5679e1da55571fa3a0a5a; Linear comment 6dd33860-a1e1-4397-9f5a-104e96ad78e5. User observation, not measured latency/fps."
+    },
+    {
+      "name": "Mac physical input and pronunciation",
+      "status": "pass",
+      "command": "Human-guided Korean input, delete/re-enter, Listen pronunciation on prepared app",
+      "note": "Jungmin reported all three normal in Buzz event 1f0e03fa8a468f0ec42b922cbed19bcdad4ecb478691e310b44aaffebbafbc77 at 2026-09-21 04:49:59 UTC. Not interpreted as all Mac acceptance."
+    }
+  ],
+  "manual_gates": [
+    "Current final HEAD, including evidence-only tail, requires independent Claude review, review:passed and maintainer approval. Prior advisory review of 25539b4 does not transfer. Branch protection remains unchanged; #187/#190 exceptions do not authorize #176.",
+    "Mac resize and Cmd-H/Dock resume input checks requested and awaiting user result. Input-source switching, effect sounds/audio mixing and inactive pause, quit/relaunch persistence, all-six-game input/retry/HUD acceptance remain unverified for this candidate.",
+    "CloudKit/KVS, Universal Purchase, accounts/IAP/content rights, release signing, distribution and Mac App Store remain outside this local demo integration. This does not close full iOS/iPadOS release or device-fps gates."
+  ]
+}
