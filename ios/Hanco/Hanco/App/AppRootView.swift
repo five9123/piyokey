@@ -888,35 +888,72 @@ extension AppTourStep {
   }
 }
 
+#if PIYOKEY_MAC_DEMO
+  // Keep navigation actions in the content bar instead of letting Catalyst move
+  // them into the window toolbar after a push/pop transition.
+  private struct MacContentNavigationBar: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> Controller { Controller() }
+
+    func updateUIViewController(_ controller: Controller, context: Context) {
+      controller.configureNavigationBar()
+    }
+
+    final class Controller: UIViewController {
+      override func loadView() {
+        view = UIView(frame: .zero)
+        view.isUserInteractionEnabled = false
+      }
+
+      override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        configureNavigationBar()
+      }
+
+      override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNavigationBar()
+      }
+
+      func configureNavigationBar() {
+        navigationController?.navigationBar.preferredBehavioralStyle = .pad
+      }
+    }
+  }
+#endif
+
 private struct RootSettingsToolbarModifier: ViewModifier {
   @Environment(\.openRootSettings) private var openSettings
 
   func body(content: Content) -> some View {
-    content.toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button(action: openSettings) {
-          #if PIYOKEY_MAC_DEMO
-            // Match the native toolbar symbol used by practice and quiz settings.
-            // Catalyst owns the toolbar background and hover/active appearance.
-            Image(systemName: "gearshape.fill")
-          #else
-            ZStack {
-              Circle()
-                .fill(AppPalette.card.opacity(0.9))
-                .frame(width: 32, height: 32)
+    content
+      #if PIYOKEY_MAC_DEMO
+      .background(MacContentNavigationBar())
+      #endif
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(action: openSettings) {
+            #if PIYOKEY_MAC_DEMO
+              // Match the native toolbar symbol used by practice and quiz settings.
+              // Catalyst owns the toolbar background and hover/active appearance.
               Image(systemName: "gearshape.fill")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(AppPalette.accent)
-            }
-            .frame(width: 44, height: 44)
-            .contentShape(Rectangle())
-          #endif
+            #else
+              ZStack {
+                Circle()
+                  .fill(AppPalette.card.opacity(0.9))
+                  .frame(width: 32, height: 32)
+                Image(systemName: "gearshape.fill")
+                  .font(.subheadline.weight(.bold))
+                  .foregroundStyle(AppPalette.accent)
+              }
+              .frame(width: 44, height: 44)
+              .contentShape(Rectangle())
+            #endif
+          }
+          .accessibilityLabel(Text("settings.navigation_title"))
+          .accessibilityIdentifier("root.settings")
+          .appTourTarget(.settings)
         }
-        .accessibilityLabel(Text("settings.navigation_title"))
-        .accessibilityIdentifier("root.settings")
-        .appTourTarget(.settings)
       }
-    }
   }
 }
 
