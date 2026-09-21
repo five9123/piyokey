@@ -782,6 +782,7 @@ struct PracticeView: View {
       target: viewModel.target,
       acceptedText: viewModel.enteredText,
       resetRevision: inputResetRevision,
+      sessionRevision: inputResetRevision,
       onInputStart: {
         HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: mascotCombo)
       },

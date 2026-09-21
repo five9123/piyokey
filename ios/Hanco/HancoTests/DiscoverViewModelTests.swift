@@ -65,10 +65,59 @@ final class DiscoverViewModelTests: XCTestCase {
     XCTAssertTrue(viewModel.purposeDecks.contains { $0.tags.contains("Kドラマ") })
   }
 
+  func testOfficialOnlyCatalogRemovesNonOfficialDecksFromEveryRoute() throws {
+    let bundled = try BundleCatalogRepository().loadCatalog()
+    let source = try XCTUnwrap(bundled.decks.first)
+    let nonOfficial = CatalogDeck(
+      deckId: "user_cached_deck",
+      version: source.version,
+      name: source.name,
+      authorNickname: source.authorNickname,
+      official: false,
+      featured: true,
+      type: source.type,
+      level: source.level,
+      tags: source.tags,
+      itemCount: source.itemCount,
+      sizeBytes: source.sizeBytes,
+      downloadsTotal: source.downloadsTotal + 1,
+      downloads7d: source.downloads7d + 1,
+      createdAt: source.createdAt,
+      previewItems: source.previewItems,
+      fileUrl: source.fileUrl,
+      localizations: source.localizations
+    )
+    let mixed = Catalog(
+      catalogVersion: bundled.catalogVersion,
+      generatedAt: bundled.generatedAt,
+      decks: bundled.decks + [nonOfficial],
+      tags: bundled.tags
+    )
+    let viewModel = DiscoverViewModel(
+      repository: StaticCatalogRepository(catalog: mixed),
+      officialOnly: true
+    )
+
+    viewModel.loadIfNeeded()
+
+    XCTAssertEqual(viewModel.loadState, .loaded)
+    XCTAssertTrue(try XCTUnwrap(viewModel.catalog).decks.allSatisfy(\.official))
+    XCTAssertTrue(viewModel.filteredDecks.allSatisfy(\.official))
+    XCTAssertTrue(viewModel.featuredDecks.allSatisfy(\.official))
+    XCTAssertFalse(viewModel.catalog?.decks.contains { $0.deckId == nonOfficial.deckId } ?? true)
+  }
+
   private func makeLoadedViewModel() -> DiscoverViewModel {
     let viewModel = DiscoverViewModel(repository: BundleCatalogRepository())
     viewModel.loadIfNeeded()
     XCTAssertEqual(viewModel.loadState, .loaded)
     return viewModel
   }
+}
+
+private struct StaticCatalogRepository: CatalogRepository {
+  let catalog: Catalog
+
+  func loadCatalog() throws -> Catalog { catalog }
+  func refreshCatalog() async throws -> Catalog? { nil }
 }

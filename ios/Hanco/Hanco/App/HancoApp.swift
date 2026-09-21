@@ -13,11 +13,13 @@ struct HancoApp: App {
         SoundPreferenceKeys.all.forEach(UserDefaults.standard.removeObject(forKey:))
         SettingsPreferenceKeys.all.forEach(UserDefaults.standard.removeObject(forKey:))
       }
-      if ProcessInfo.processInfo.environment["UITEST_RESET_DECK_LIBRARY"] == "1" {
-        try? DeckInstallationStore.live.reset()
-        try? UserDeckDraftStore.live.clear()
-        resetPiyoDeckPendingImports()
-      }
+      #if !PIYOKEY_MAC_DEMO
+        if ProcessInfo.processInfo.environment["UITEST_RESET_DECK_LIBRARY"] == "1" {
+          try? DeckInstallationStore.live.reset()
+          try? UserDeckDraftStore.live.clear()
+          resetPiyoDeckPendingImports()
+        }
+      #endif
       if ProcessInfo.processInfo.environment["UITEST_RESET_CATALOG_CACHE"] == "1" {
         try? CatalogCacheStore.live.reset()
       }
@@ -68,24 +70,30 @@ struct HancoApp: App {
       if ProcessInfo.processInfo.environment["UITEST_SEED_APP_STORE_CAPTURE"] == "1" {
         seedAppStoreCaptureState()
       }
-      if ProcessInfo.processInfo.environment["UITEST_SEED_PIYODECK_CAPTURE"] == "1" {
-        seedPiyoDeckCaptureDocument()
-      }
+      #if !PIYOKEY_MAC_DEMO
+        if ProcessInfo.processInfo.environment["UITEST_SEED_PIYODECK_CAPTURE"] == "1" {
+          seedPiyoDeckCaptureDocument()
+        }
+      #endif
       if ProcessInfo.processInfo.environment["UITEST_SEED_USER_DECK_DELETE"] == "1" {
         seedUserDeckDeleteFixture()
       }
-      if ProcessInfo.processInfo.environment["UITEST_SEED_PIYODECK_DOWNGRADE"] == "1" {
-        seedPiyoDeckDowngradeFixture()
-      }
-      if ProcessInfo.processInfo.environment["UITEST_SEED_USER_DECK_DRAFT"] == "1" {
-        seedUserDeckDraftFixture()
-      }
+      #if !PIYOKEY_MAC_DEMO
+        if ProcessInfo.processInfo.environment["UITEST_SEED_PIYODECK_DOWNGRADE"] == "1" {
+          seedPiyoDeckDowngradeFixture()
+        }
+        if ProcessInfo.processInfo.environment["UITEST_SEED_USER_DECK_DRAFT"] == "1" {
+          seedUserDeckDraftFixture()
+        }
+      #endif
       if ProcessInfo.processInfo.environment["UITEST_SEED_PRACTICE_DECK"] == "1" {
         seedPracticeDeckFixture()
       }
     #endif
     AppLanguage.migrateLegacyPreference()
-    TelemetryService.shared.configure()
+    #if !PIYOKEY_MAC_DEMO
+      TelemetryService.shared.configure()
+    #endif
   }
 
   var body: some Scene {
@@ -103,6 +111,9 @@ struct HancoApp: App {
   }
 
   private var appRoot: some View {
+    #if PIYOKEY_MAC_DEMO
+      MacDemoRootView()
+    #else
     AppRootView()
       .onChange(of: scenePhase) { phase in
         switch phase {
@@ -116,6 +127,7 @@ struct HancoApp: App {
           break
         }
       }
+    #endif
   }
 }
 
@@ -170,7 +182,8 @@ struct HancoApp: App {
       )
   }
 
-  private func seedPiyoDeckCaptureDocument() {
+  #if !PIYOKEY_MAC_DEMO
+    private func seedPiyoDeckCaptureDocument() {
     let date = Date(timeIntervalSince1970: 1_786_588_800)
     let deck = Deck(
       deckId: "user_0123456789abcdef0123456789abcdef",
@@ -222,7 +235,8 @@ struct HancoApp: App {
       to: rootURL.appendingPathComponent("r11-capture.typedeck"),
       options: .atomic
     )
-  }
+    }
+  #endif
 
   private func seedUserDeckDeleteFixture() {
     installUITestDeck(
@@ -235,7 +249,8 @@ struct HancoApp: App {
     )
   }
 
-  private func seedPiyoDeckDowngradeFixture() {
+  #if !PIYOKEY_MAC_DEMO
+    private func seedPiyoDeckDowngradeFixture() {
     let currentDeck = makeUITestDeck(
       version: 2,
       name: "現在の安全デッキ",
@@ -263,9 +278,9 @@ struct HancoApp: App {
       to: rootURL.appendingPathComponent("r11-downgrade.typedeck"),
       options: .atomic
     )
-  }
+    }
 
-  private func seedUserDeckDraftFixture() {
+    private func seedUserDeckDraftFixture() {
     var draft = UserDeckDraft(
       newAt: Date(timeIntervalSince1970: 1_786_675_200),
       uuidHexGenerator: { "cccccccccccccccccccccccccccccccc" }
@@ -280,7 +295,8 @@ struct HancoApp: App {
       draft,
       at: Date(timeIntervalSince1970: 1_786_675_200)
     )
-  }
+    }
+  #endif
 
   private func makeUITestDeck(
     version: Int,

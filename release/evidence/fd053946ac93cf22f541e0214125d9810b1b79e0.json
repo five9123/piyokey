@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "verified_commit": "fd053946ac93cf22f541e0214125d9810b1b79e0",
+  "verified_tree": "656b02db4b2744b973f422cdb09a4a72fbcc0606",
+  "branch": "codex/175-macos-demo",
+  "scope": "TYP-123 Mac-only settings icon and navigation-bar placement; no iOS/iPad render change",
+  "result": "pass",
+  "recorded_at": "2026-09-21T06:58:14.462324+00:00",
+  "checks": [
+    {
+      "name": "MAC_BUILD",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme 'Piyokey Mac' -configuration Debug -destination 'platform=macOS,variant=Mac Catalyst' -derivedDataPath /private/tmp/PIYOKEY_MAC_SETTINGS_20260921",
+      "note": "Signed Debug Mac Catalyst build passed on this clean commit; app 1.1(11). Run 2026-09-21T06:48:19.422842+00:00 to 2026-09-21T06:48:29.228315+00:00."
+    },
+    {
+      "name": "IOS_FULL",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Debug -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -derivedDataPath /private/tmp/PIYOKEY_MAC_RESUME_IOS_20260920 -resultBundlePath /private/tmp/PIYOKEY_MAC_SETTINGS_FINAL_IOS_20260921.xcresult -only-testing:HancoTests -parallel-testing-enabled NO",
+      "note": "Entire HancoTests target: 452 tests, 0 failures; TEST SUCCEEDED. UI tests and physical-device checks are separate. Run 2026-09-21T06:48:19.422632+00:00 to 2026-09-21T06:49:50.868644+00:00."
+    },
+    {
+      "name": "PREFLIGHT",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "Repository release preflight passed; no release or signing gate waived. Run 2026-09-21T06:48:19.423780+00:00 to 2026-09-21T06:48:19.602738+00:00."
+    },
+    {
+      "name": "DOCTOR",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "Strict workspace doctor passed for existing issue #175 worktree. Run 2026-09-21T06:48:19.609599+00:00 to 2026-09-21T06:48:20.043791+00:00."
+    },
+    {
+      "name": "mac_navigation_ui",
+      "status": "pass",
+      "command": "Run signed Piyokey Mac app; Lessons > Learn consonant keys > End practice; resize; switch tabs; open and close settings",
+      "note": "Agent UI observation on this commit: settings remains at right of content navigation bar after practice round trip and resize; window title stays typee. Session settings and root settings open/close. Game then Discover then Practice return preserves right-side Lessons settings. No physical typing or audio acceptance claimed."
+    },
+    {
+      "name": "scope_and_clean_tree",
+      "status": "pass",
+      "command": "git diff --check; git status --porcelain; git rev-parse HEAD",
+      "note": "Same clean implementation SHA before and after all automated checks. UIKit helper and icon change are PIYOKEY_MAC_DEMO-only."
+    }
+  ],
+  "manual_gates": [
+    "Settings position needs human acceptance on this new build. Native toolbar button background can still change between plain and white/rounded appearance; this was observed after the position fix and is not marked resolved.",
+    "Full Mac manual acceptance remains: physical IME and language switch on new candidate, audio/mixing/inactive stop, hide/resume, persistence and six games. Prior human input/delete/Listen pass is tied to previous app source, not a new physical test here.",
+    "Prior iPad four-case OS-IME smoke passed at source 25539b4de87738821c10f124e8a6da8fe83d5a9a. Current change is Mac-conditional only; not a new iPad test.",
+    "Current PR head including evidence needs fresh independent Claude review and maintainer approval; recheck latest main before merge. PR remains Draft. No PR #176 protection exception approved.",
+    "CloudKit/KVS, Universal Purchase, external account/IAP, rights, release signing and store gates remain outside this local demo verification."
+  ]
+}

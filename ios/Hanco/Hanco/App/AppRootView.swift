@@ -1,6 +1,110 @@
 import SwiftUI
 import UIKit
 
+#if PIYOKEY_MAC_DEMO
+  private enum MacDemoTab: Hashable {
+    case curriculum
+    case officialDecks
+    case games
+  }
+
+  struct MacDemoRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var deckLibrary = DeckLibrary()
+    @StateObject private var discoverViewModel = DiscoverViewModel(
+      repository: BundleCatalogRepository(),
+      officialOnly: true
+    )
+    @StateObject private var gameProgress = GameProgressLibrary()
+    @StateObject private var reviewDeck = ReviewDeckLibrary()
+    @StateObject private var curriculumProgress = CurriculumProgressLibrary()
+    @StateObject private var retention = RetentionLibrary()
+    @StateObject private var dailyReminder = DailyReminderLibrary.appRootDefault()
+    @StateObject private var onboarding = OnboardingLibrary()
+    @StateObject private var mascotCompanion = MascotCompanionLibrary()
+    @StateObject private var gameCenter = GameCenterService()
+    @AppStorage(SoundPreferenceKeys.effectsEnabled) private var soundEffectsEnabled = true
+    @AppStorage(SettingsPreferenceKeys.fontScale) private var fontScale =
+      HancoFontScale.standard.rawValue
+    @AppStorage(SettingsPreferenceKeys.theme) private var theme = HancoTheme.light.rawValue
+    @AppStorage(SettingsPreferenceKeys.language) private var language = AppLanguage.preferred.rawValue
+    @State private var selectedTab: MacDemoTab = .curriculum
+    @State private var showsSettings = false
+
+    init() {
+      UserDefaults.standard.register(defaults: [
+        KeyboardPreferenceKeys.inputModeDefault: SessionInputMode.osIME.rawValue
+      ])
+    }
+
+    var body: some View {
+      TabView(selection: $selectedTab) {
+        CurriculumMapView(catalog: discoverViewModel.catalog)
+          .tabItem { Label("tab.practice", systemImage: "book.closed.fill") }
+          .tag(MacDemoTab.curriculum)
+          .accessibilityIdentifier("mac_demo.tab.curriculum")
+
+        DiscoverView(viewModel: discoverViewModel)
+          .tabItem { Label("tab.discover", systemImage: "checkmark.seal.fill") }
+          .tag(MacDemoTab.officialDecks)
+          .accessibilityIdentifier("mac_demo.tab.official_decks")
+
+        GameDeckSelectionView { selectedTab = .officialDecks }
+          .tabItem { Label("tab.game", systemImage: "gamecontroller.fill") }
+          .tag(MacDemoTab.games)
+          .accessibilityIdentifier("mac_demo.tab.games")
+      }
+      .tint(AppPalette.accent)
+      .hancoAdaptiveLayout()
+      .environmentObject(deckLibrary)
+      .environmentObject(discoverViewModel)
+      .environmentObject(gameProgress)
+      .environmentObject(reviewDeck)
+      .environmentObject(curriculumProgress)
+      .environmentObject(retention)
+      .environmentObject(dailyReminder)
+      .environmentObject(onboarding)
+      .environmentObject(mascotCompanion)
+      .environmentObject(gameCenter)
+      .environment(\.locale, AppLanguage.resolved(from: language).locale)
+      .environment(\.hancoFontScale, HancoFontScale.resolved(from: fontScale).multiplier)
+      .environment(\.openRootSettings) { showsSettings = true }
+      .preferredColorScheme(HancoTheme.resolved(from: theme).colorScheme)
+      .id(language)
+      .sheet(isPresented: $showsSettings) {
+        SettingsView(showsCloseButton: true)
+          .hancoAdaptiveLayout()
+          .environmentObject(deckLibrary)
+          .environmentObject(curriculumProgress)
+          .environmentObject(retention)
+          .environmentObject(dailyReminder)
+          .environmentObject(mascotCompanion)
+          .environmentObject(gameCenter)
+          .environment(\.locale, AppLanguage.resolved(from: language).locale)
+          .environment(\.hancoFontScale, HancoFontScale.resolved(from: fontScale).multiplier)
+          .preferredColorScheme(HancoTheme.resolved(from: theme).colorScheme)
+      }
+      .task { discoverViewModel.loadIfNeeded() }
+      .onAppear { HancoSoundEngine.shared.setEnabled(soundEffectsEnabled) }
+      .onChange(of: soundEffectsEnabled) { HancoSoundEngine.shared.setEnabled($0) }
+      .onChange(of: scenePhase) { phase in
+        if phase != .active {
+          curriculumProgress.flush()
+          reviewDeck.flush()
+          gameProgress.flush()
+          HancoSoundEngine.shared.suspendForInactivity()
+        }
+      }
+      .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) {
+        _ in
+        curriculumProgress.flush()
+        reviewDeck.flush()
+        gameProgress.flush()
+      }
+    }
+  }
+#endif
+
 enum AppTourTarget: String, Hashable {
   case homePrimary
   case discoverSearch
@@ -99,8 +203,10 @@ private enum AppTourStep: Int, CaseIterable {
 struct AppRootView: View {
   @Environment(\.scenePhase) private var scenePhase
   @StateObject private var deckLibrary = DeckLibrary()
+  #if !PIYOKEY_MAC_DEMO
   @StateObject private var deckMakerPurchaseStore: DeckMakerPurchaseStore
   @StateObject private var piyoDeckDocumentCoordinator = PiyoDeckDocumentCoordinator()
+  #endif
   @StateObject private var discoverViewModel = DiscoverViewModel()
   @StateObject private var gameProgress = GameProgressLibrary()
   @StateObject private var reviewDeck = ReviewDeckLibrary()
@@ -137,6 +243,7 @@ struct AppRootView: View {
 
   init() {
     _dailyReminder = StateObject(wrappedValue: DailyReminderLibrary.appRootDefault())
+    #if !PIYOKEY_MAC_DEMO
     #if DEBUG
       if let rawAccess = ProcessInfo.processInfo.environment["UITEST_DECK_MAKER_ACCESS"] {
         _deckMakerPurchaseStore = StateObject(
@@ -147,6 +254,7 @@ struct AppRootView: View {
       }
     #else
       _deckMakerPurchaseStore = StateObject(wrappedValue: DeckMakerPurchaseStore())
+    #endif
     #endif
   }
 
@@ -166,8 +274,10 @@ struct AppRootView: View {
     }
     .hancoAdaptiveLayout()
     .environmentObject(deckLibrary)
+    #if !PIYOKEY_MAC_DEMO
     .environmentObject(deckMakerPurchaseStore)
     .environmentObject(piyoDeckDocumentCoordinator)
+    #endif
     .environmentObject(discoverViewModel)
     .environmentObject(gameProgress)
     .environmentObject(reviewDeck)
@@ -229,12 +339,14 @@ struct AppRootView: View {
       .preferredColorScheme(HancoTheme.resolved(from: theme).colorScheme)
     }
     .task { discoverViewModel.loadIfNeeded() }
+    #if !PIYOKEY_MAC_DEMO
     .task { await deckMakerPurchaseStore.prepare() }
     .task { await piyoDeckDocumentCoordinator.resumePendingIfNeeded() }
     .onOpenURL { url in
       guard url.pathExtension.lowercased() == "typedeck" else { return }
       Task { await piyoDeckDocumentCoordinator.receive(url) }
     }
+    #endif
     .task(id: shouldStartAppTour) {
       guard shouldStartAppTour else { return }
       // Let the first preference pass publish the spotlight frame without leaving
@@ -502,7 +614,8 @@ struct AppRootView: View {
       .tag(AppTab.game)
       .accessibilityIdentifier("tab.game")
 
-      MyPageView(
+      #if !PIYOKEY_MAC_DEMO
+        MyPageView(
         catalog: discoverViewModel.catalog,
         isActive: selectedTab == .myPage && !showsSettings && appTourStep == nil
       ) {
@@ -517,6 +630,7 @@ struct AppRootView: View {
       }
       .tag(AppTab.myPage)
       .accessibilityIdentifier("tab.my_page")
+      #endif
     }
     .tint(AppPalette.accent)
     .onAppear {
@@ -774,29 +888,72 @@ extension AppTourStep {
   }
 }
 
+#if PIYOKEY_MAC_DEMO
+  // Keep navigation actions in the content bar instead of letting Catalyst move
+  // them into the window toolbar after a push/pop transition.
+  private struct MacContentNavigationBar: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> Controller { Controller() }
+
+    func updateUIViewController(_ controller: Controller, context: Context) {
+      controller.configureNavigationBar()
+    }
+
+    final class Controller: UIViewController {
+      override func loadView() {
+        view = UIView(frame: .zero)
+        view.isUserInteractionEnabled = false
+      }
+
+      override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        configureNavigationBar()
+      }
+
+      override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNavigationBar()
+      }
+
+      func configureNavigationBar() {
+        navigationController?.navigationBar.preferredBehavioralStyle = .pad
+      }
+    }
+  }
+#endif
+
 private struct RootSettingsToolbarModifier: ViewModifier {
   @Environment(\.openRootSettings) private var openSettings
 
   func body(content: Content) -> some View {
-    content.toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button(action: openSettings) {
-          ZStack {
-            Circle()
-              .fill(AppPalette.card.opacity(0.9))
-              .frame(width: 32, height: 32)
-            Image(systemName: "gearshape.fill")
-              .font(.subheadline.weight(.bold))
-              .foregroundStyle(AppPalette.accent)
+    content
+      #if PIYOKEY_MAC_DEMO
+      .background(MacContentNavigationBar())
+      #endif
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(action: openSettings) {
+            #if PIYOKEY_MAC_DEMO
+              // Match the native toolbar symbol used by practice and quiz settings.
+              // Catalyst owns the toolbar background and hover/active appearance.
+              Image(systemName: "gearshape.fill")
+            #else
+              ZStack {
+                Circle()
+                  .fill(AppPalette.card.opacity(0.9))
+                  .frame(width: 32, height: 32)
+                Image(systemName: "gearshape.fill")
+                  .font(.subheadline.weight(.bold))
+                  .foregroundStyle(AppPalette.accent)
+              }
+              .frame(width: 44, height: 44)
+              .contentShape(Rectangle())
+            #endif
           }
-          .frame(width: 44, height: 44)
-          .contentShape(Rectangle())
+          .accessibilityLabel(Text("settings.navigation_title"))
+          .accessibilityIdentifier("root.settings")
+          .appTourTarget(.settings)
         }
-        .accessibilityLabel(Text("settings.navigation_title"))
-        .accessibilityIdentifier("root.settings")
-        .appTourTarget(.settings)
       }
-    }
   }
 }
 
