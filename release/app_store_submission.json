@@ -153,16 +153,16 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_1_public_storefront_observed_build_25_submission_record",
+    "record_status": "version_1_1_2_build_26_source_candidate",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
-    "marketing_version": "1.1.1",
-    "build_number": "25",
-    "currently_linked_build_number": "25",
-    "latest_uploaded_superseded_build_number": "24",
-    "app_store_connect_version_status": "WAITING_FOR_REVIEW",
+    "marketing_version": "1.1.2",
+    "build_number": "26",
+    "currently_linked_build_number": null,
+    "latest_uploaded_superseded_build_number": "25",
+    "app_store_connect_version_status": "NOT_CREATED",
     "app_store_connect_version_record_created_at": null,
     "localized_media": {
       "status": "apple_login_restored_final_rc_media_pending",
@@ -282,7 +282,7 @@
       "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
     },
     "qa_gates": {
-      "release_archive_validated": true,
+      "release_archive_validated": false,
       "full_unit_and_ui_regression": false,
       "testflight_clean_install_smoke": false,
       "korean_os_ime_device_check": false,
@@ -291,62 +291,22 @@
       "external_audio_mix_device_check": false,
       "iphone_12_performance_gate": false,
       "game_center_live_device_check": false,
-      "deck_maker_local_storekit_check": true,
+      "deck_maker_local_storekit_check": false,
       "deck_maker_sandbox_purchase_check": false,
       "deck_maker_sandbox_cancel_check": false,
       "deck_maker_sandbox_pending_check": false,
       "deck_maker_sandbox_restore_check": false,
       "deck_maker_sandbox_refund_revocation_check": false,
-      "free_piyodeck_boundary_check": true
+      "free_piyodeck_boundary_check": false
     },
     "build_artifact": {
-      "status": "ARCHIVED_EXPORTED_UPLOADED_AND_REVIEW_SUBMITTED",
-      "source_branch": "main",
-      "build_uploaded": true,
-      "linked_to_version": true,
-      "final_review_submission_sent": true,
-      "source_main_sha": "602e923e3eddcb32b7ef75c62e3921f28f7a3e33",
-      "archive_checkout_sha": null,
-      "app_store_connect_build_id": "cb235a28-982c-43e8-851d-f22ca96b704b",
-      "source_tree": "8e4ed637929f14633d95c02e26fee8193875cb1d",
-      "upload_completed_at": "2026-09-10T23:09:59+09:00",
-      "record_source": "GitHub Issue #181 release comments, 2026-09-10/11 JST; /private/tmp/piyokey-hotfix-release/release-status.json"
-    },
-    "live_console_observation_20260829": {
-      "version_status": "PREPARE_FOR_SUBMISSION",
-      "free_apps_agreement_status": "ACTIVE",
-      "paid_apps_agreement_status": "NEW",
-      "legal_entity_update_required": true,
-      "automatic_release_after_approval_selected": true,
-      "phased_release_enabled": false,
-      "copyright": "2026 Kiish",
-      "japanese_description_still_lists_retired_korean_ui": true,
-      "metadata_saved_this_run": false,
-      "note": "Observed settings are not a new approval of legal identity, copyright, or release mode. Historical records and pending product-owner decisions remain unchanged.",
-      "build_link_only_saved_this_run": true
+      "status": "SOURCE_CANDIDATE",
+      "source_branch": "codex/fix-dismissed-deck-draft",
+      "build_uploaded": false,
+      "linked_to_version": false,
+      "final_review_submission_sent": false
     },
     "review_submission_blocked": false,
-    "release_decision": {
-      "confirmed_on": "2026-09-10",
-      "source": "User authorized App Store hotfix and common fixes / four legacy archives / conditional Flow beginner replacement.",
-      "manual_after_approval": true,
-      "console_selection_verified": true,
-      "phased_release_enabled": false,
-      "does_not_waive_submission_gates": true
-    },
-    "submission_followup": {
-      "issue": 181,
-      "version_status": "PUBLIC_STOREFRONT_OBSERVED",
-      "final_review_submission_sent": true,
-      "public_release_completed": true,
-      "game_center_component_submission_sent": true,
-      "game_center_component_submission_id": "acb65714-82c5-477e-96ca-e39b320280c3",
-      "game_center_component_status": "LIVE",
-      "game_center_component_status_verified_on": "2026-09-10 22:29 JST",
-      "public_release_scope": "JP, US and KR storefront availability observed; does not assert all external QA or regional gates passed",
-      "linear_issue": "TYP-120"
-    },
-    "previous_source_candidate_record": "release/history/ios-1.1-build-11-source-candidate.json",
     "current_live_release": {
       "marketing_version": "1.1.1",
       "build_number": "25",
@@ -379,13 +339,7 @@
         }
       ]
     },
-    "hotfix_scope": "All keyboard participation; independent Cup/Flow; ranking button and status in the score card; retained-best server-score read-back, bounded recovery, and occurrence-specific weekly submission. Flow beginner uses Live v5; other15 IDs unchanged. Actual device acceptance is still open.",
-    "inherited_external_fields_note": "Rights, IAP, availability and media fields remain unverified carry-forward data, not fresh ASC assertions. Public 1.1.1 availability is separately observed in JP/US/KR. Unchecked QA gates remain unchecked; TYP-81/120/121 track remaining evidence.",
-    "app_store_connect_version_record_created_at_note": "Creation and Prepare for Submission observed in App Store Connect; exact server timestamp was not exposed.",
-    "game_center_hotfix_operations_record": "release/GAME_CENTER_HOTFIX_20260910.md",
-    "app_store_connect_version_record_created_on": "2026-09-10 JST",
-    "app_store_connect_version_status_verified_at": "2026-09-11T00:02:07.062126+09:00",
-    "app_store_connect_version_status_note": "Last direct ASC observation on 2026-09-11; historical after the public 1.1.1 storefront observation below. ASC was not re-queried during this sync.",
+    "inherited_external_fields_note": "Availability, rights, IAP, media and public 1.1.1 records are historical carry-forward data. No new legal assertions or external QA pass is claimed. Current build-specific gates are reset until separately verified.",
     "previous_live_release_observation": {
       "marketing_version": "1.1",
       "build_number": "24",
@@ -393,13 +347,46 @@
       "verified_on": "2026-09-10 JST"
     },
     "public_release_observation_does_not_waive_external_gates": true,
-    "manual_hold_note": "Historical MANUAL hold at submission is retained. Public availability is observed separately; this sync did not operate a release control.",
     "privacy_disclosure_observation": {
       "recorded_on": "2026-09-11 JST",
       "source": "https://github.com/five9123-maker/piyokey/issues/181",
       "public_policy": "Published via hanco_web PR #12; 1.1.1 notice observed in ja/en/es/ko",
       "app_privacy": "Coarse Location published for Analytics, not linked to identity, no tracking; 8 data types",
       "remaining_verification_issue": "TYP-121"
-    }
+    },
+    "previous_submission_record": "release/history/ios-1.1.1-build-25-submission.json",
+    "release_notes": "release/IOS_1_1_2_BUILD_26.md",
+    "release_scope": "Respect explicitly dismissed Deck Maker drafts while preserving manual resume and interrupted-session recovery. Record the already-applied PostHog post-consent lesson funnel correction; no analytics collection changes.",
+    "submission_authorization": {
+      "approved": true,
+      "approved_on": "2026-09-30 JST",
+      "instruction": "User explicitly requested merge, deployment, and App Review submission with the English and Japanese app preview videos.",
+      "completed_external_checks_claimed": false
+    },
+    "authentication_verified_on": "2026-09-30 JST",
+    "preview_assets": [
+      {
+        "locale": "en-US",
+        "filename": "piyokey-app-preview-en-886x1920.mp4",
+        "sha256": "ba699a3823741e505a6720e53d91419574642f729a47cfbc345e41f3935e9b04",
+        "bytes": 34706403,
+        "width": 886,
+        "height": 1920,
+        "duration_seconds": 29.8,
+        "fps": 30,
+        "uploaded": false
+      },
+      {
+        "locale": "ja",
+        "filename": "piyokey-app-preview-ja-886x1920.mp4",
+        "sha256": "e14a4ff201099929617bac027af0c2ac621d30d9b976582752f8e5b8e99c45af",
+        "bytes": 34583817,
+        "width": 886,
+        "height": 1920,
+        "duration_seconds": 29.8,
+        "fps": 30,
+        "uploaded": false
+      }
+    ]
   }
 }
