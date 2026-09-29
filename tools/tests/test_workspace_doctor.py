@@ -18,13 +18,13 @@ class WorkspaceDoctorTests(unittest.TestCase):
     def test_normalize_remote_accepts_https_and_ssh(self):
         self.assertEqual(
             workspace_doctor.normalize_remote(
-                "https://github.com/five9123-maker/piyokey.git"
+                "https://github.com/five9123/piyokey.git"
             ),
             workspace_doctor.EXPECTED_REMOTE,
         )
         self.assertEqual(
             workspace_doctor.normalize_remote(
-                "git@github.com:five9123-maker/piyokey.git"
+                "git@github.com:five9123/piyokey.git"
             ),
             workspace_doctor.EXPECTED_REMOTE,
         )

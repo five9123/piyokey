@@ -73,6 +73,112 @@ enum SpacingPassageCatalog {
   }
 }
 
+enum SpacingKeyboardCommand: Equatable {
+  case moveLeft
+  case moveRight
+  case toggleSpace
+
+  static func resolve(input: String) -> Self? {
+    switch input {
+    case UIKeyCommand.inputLeftArrow:
+      .moveLeft
+    case UIKeyCommand.inputRightArrow:
+      .moveRight
+    case " ":
+      .toggleSpace
+    default:
+      nil
+    }
+  }
+}
+
+#if targetEnvironment(macCatalyst)
+  private struct SpacingKeyboardCommandView: UIViewRepresentable {
+    let onMoveLeft: () -> Void
+    let onMoveRight: () -> Void
+    let onToggleSpace: () -> Void
+
+    func makeUIView(context: Context) -> SpacingKeyboardCommandResponderView {
+      let view = SpacingKeyboardCommandResponderView()
+      update(view)
+      return view
+    }
+
+    func updateUIView(_ uiView: SpacingKeyboardCommandResponderView, context: Context) {
+      update(uiView)
+      if uiView.window != nil, !uiView.isFirstResponder {
+        DispatchQueue.main.async { uiView.becomeFirstResponder() }
+      }
+    }
+
+    static func dismantleUIView(
+      _ uiView: SpacingKeyboardCommandResponderView,
+      coordinator: Void
+    ) {
+      uiView.resignFirstResponder()
+    }
+
+    private func update(_ view: SpacingKeyboardCommandResponderView) {
+      view.onMoveLeft = onMoveLeft
+      view.onMoveRight = onMoveRight
+      view.onToggleSpace = onToggleSpace
+    }
+  }
+
+  private final class SpacingKeyboardCommandResponderView: UIView {
+    var onMoveLeft: () -> Void = {}
+    var onMoveRight: () -> Void = {}
+    var onToggleSpace: () -> Void = {}
+
+    override init(frame: CGRect) {
+      super.init(frame: frame)
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(restoreFirstResponder),
+        name: UIApplication.didBecomeActiveNotification,
+        object: nil
+      )
+    }
+
+    required init?(coder: NSCoder) {
+      super.init(coder: coder)
+    }
+
+    deinit {
+      NotificationCenter.default.removeObserver(self)
+    }
+
+    override var canBecomeFirstResponder: Bool { true }
+
+    override var keyCommands: [UIKeyCommand]? {
+      [
+        command(input: UIKeyCommand.inputLeftArrow, action: #selector(moveLeft)),
+        command(input: UIKeyCommand.inputRightArrow, action: #selector(moveRight)),
+        command(input: " ", action: #selector(toggleSpace)),
+      ]
+    }
+
+    override func didMoveToWindow() {
+      super.didMoveToWindow()
+      if window != nil { becomeFirstResponder() }
+    }
+
+    @objc private func restoreFirstResponder() {
+      if window != nil { becomeFirstResponder() }
+    }
+
+    private func command(input: String, action: Selector) -> UIKeyCommand {
+      let command = UIKeyCommand(input: input, modifierFlags: [], action: action)
+      command.wantsPriorityOverSystemBehavior = true
+      return command
+    }
+
+    @objc private func moveLeft() { onMoveLeft() }
+    @objc private func moveRight() { onMoveRight() }
+    @objc private func toggleSpace() { onToggleSpace() }
+  }
+#endif
+
 struct SpacingMistakeReview: Equatable, Identifiable {
   let boundary: Int
   let attemptedText: String
@@ -659,6 +765,17 @@ struct SpacingGameView: View {
         .opacity(0.01)
         .accessibilityIdentifier("spacing.play.screen")
     }
+    #if targetEnvironment(macCatalyst)
+      .background {
+        SpacingKeyboardCommandView(
+          onMoveLeft: goBack,
+          onMoveRight: goForward,
+          onToggleSpace: toggleSpace
+        )
+        .frame(width: 0, height: 0)
+        .accessibilityHidden(true)
+      }
+    #endif
   }
 
   private var progressCard: some View {

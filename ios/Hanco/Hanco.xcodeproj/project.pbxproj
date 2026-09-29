@@ -145,6 +145,7 @@
 		B00000000000000000000008 /* PracticeSessionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSessionViewModelTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000064 /* OSIMEInputResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSIMEInputResetTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000009 /* Hanco.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hanco.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B50000000000000000000001 /* Piyokey Mac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Piyokey Mac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0000000000000000000000A /* HancoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HancoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0000000000000000000000B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
 		B0000000000000000000000C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -257,6 +258,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D50000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000000000000000000062 /* GameKit.framework in Frameworks */,
+				C00000000000000000000008 /* HangulEngine in Frameworks */,
+				C00000000000000000000017 /* DeckKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D00000000000000000000002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -305,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				B00000000000000000000009 /* Hanco.app */,
+				B50000000000000000000001 /* Piyokey Mac.app */,
 				B0000000000000000000000A /* HancoTests.xctest */,
 				B0000000000000000000000E /* HancoUITests.xctest */,
 			);
@@ -662,6 +674,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E50000000000000000000001 /* Piyokey Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F50000000000000000000001 /* Build configuration list for PBXNativeTarget "Piyokey Mac" */;
+			buildPhases = (
+				D50000000000000000000001 /* Sources */,
+				D50000000000000000000002 /* Frameworks */,
+				D50000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Piyokey Mac";
+			packageProductDependencies = (
+				G00000000000000000000002 /* HangulEngine */,
+				G00000000000000000000003 /* DeckKit */,
+			);
+			productName = "Piyokey Mac";
+			productReference = B50000000000000000000001 /* Piyokey Mac.app */;
+			productType = "com.apple.product-type.application";
+		};
 		E00000000000000000000001 /* Hanco */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F00000000000000000000002 /* Build configuration list for PBXNativeTarget "Hanco" */;
@@ -737,6 +770,9 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					E50000000000000000000001 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					E00000000000000000000001 = {
 						CreatedOnToolsVersion = 26.0;
 						SystemCapabilities = {
@@ -781,6 +817,7 @@
 			projectRoot = "";
 			targets = (
 				E00000000000000000000001 /* Hanco */,
+				E50000000000000000000001 /* Piyokey Mac */,
 				E00000000000000000000002 /* HancoTests */,
 				E00000000000000000000003 /* HancoUITests */,
 			);
@@ -788,6 +825,25 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D50000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000000000000000000006 /* Assets.xcassets in Resources */,
+				5D1B465B88152FB3254886C9 /* Localizable.stringsdict in Resources */,
+				C00000000000000000000007 /* Localizable.strings in Resources */,
+				C65000000000000000000001 /* KoreanLearningContent.strings in Resources */,
+				C00000000000000000000051 /* InfoPlist.strings in Resources */,
+				C00000000000000000000016 /* catalog.json in Resources */,
+				C00000000000000000000020 /* decks in Resources */,
+				C00000000000000000000056 /* audio in Resources */,
+				C00000000000000000000059 /* ui_basic_mouse_click_640020.caf in Resources */,
+				C00000000000000000000024 /* updates in Resources */,
+				C0000000000000000000002F /* game_rank_tuning.json in Resources */,
+				C00000000000000000000055 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D00000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -868,6 +924,67 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D50000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000000000000000000001 /* HancoApp.swift in Sources */,
+				C00000000000000000000060 /* GameCenterService.swift in Sources */,
+				C00000000000000000000010 /* AppRootView.swift in Sources */,
+				C00000000000000000000002 /* AppPalette.swift in Sources */,
+				C41000000000000000000001 /* HancoAdaptiveLayout.swift in Sources */,
+				C00000000000000000000003 /* PracticeSessionViewModel.swift in Sources */,
+				C00000000000000000000004 /* HangulKeyboardView.swift in Sources */,
+				C00000000000000000000005 /* PracticeView.swift in Sources */,
+				C0000000000000000000000D /* InputLatencyMonitor.swift in Sources */,
+				C0000000000000000000000F /* ChickMascotView.swift in Sources */,
+				C0000000000000000000004E /* MascotGrowthSystem.swift in Sources */,
+				C00000000000000000000050 /* PiyokeyLogoMark.swift in Sources */,
+				C00000000000000000000011 /* CatalogRepository.swift in Sources */,
+				C00000000000000000000012 /* DiscoverViewModel.swift in Sources */,
+				C00000000000000000000013 /* DeckCardView.swift in Sources */,
+				C00000000000000000000014 /* DiscoverView.swift in Sources */,
+				C00000000000000000000019 /* DeckInstallationStore.swift in Sources */,
+				C0000000000000000000001A /* MockDeckSource.swift in Sources */,
+				C0000000000000000000001B /* DeckLibrary.swift in Sources */,
+				C0000000000000000000001C /* DeckDetailView.swift in Sources */,
+				C00000000000000000000038 /* ReviewDeckView.swift in Sources */,
+				C0000000000000000000001E /* DeckPracticeDestination.swift in Sources */,
+				C00000000000000000000021 /* StaticContentClient.swift in Sources */,
+				C00000000000000000000022 /* CatalogCacheStore.swift in Sources */,
+				C00000000000000000000026 /* DeckRecommendationEngine.swift in Sources */,
+				C00000000000000000000027 /* PracticeResultView.swift in Sources */,
+				C00000000000000000000029 /* FlowGameViewModel.swift in Sources */,
+				C0000000000000000000002A /* GameDeckSelectionView.swift in Sources */,
+				C0000000000000000000002B /* FlowGameView.swift in Sources */,
+				C0000000000000000000002C /* FlowGameResultView.swift in Sources */,
+				C0000000000000000000002E /* FlowGameRankTuning.swift in Sources */,
+				C00000000000000000000035 /* GameFrameRateMonitor.swift in Sources */,
+				C00000000000000000000030 /* GameProgressStore.swift in Sources */,
+				C00000000000000000000036 /* ReviewDeckStore.swift in Sources */,
+				C00000000000000000000033 /* SessionResultView.swift in Sources */,
+				C00000000000000000000039 /* CurriculumCatalog.swift in Sources */,
+				C0000000000000000000003A /* CurriculumProgressStore.swift in Sources */,
+				C0000000000000000000003B /* CurriculumMapView.swift in Sources */,
+				C0000000000000000000003D /* RetentionStore.swift in Sources */,
+				C0000000000000000000003E /* DailyReminder.swift in Sources */,
+				C0000000000000000000003F /* RetentionViews.swift in Sources */,
+				C00000000000000000000041 /* OnboardingStore.swift in Sources */,
+				C00000000000000000000042 /* OnboardingView.swift in Sources */,
+				C00000000000000000000044 /* OSIMEInputView.swift in Sources */,
+				C00000000000000000000045 /* SessionShareCard.swift in Sources */,
+				C00000000000000000000047 /* HancoSoundEngine.swift in Sources */,
+				C00000000000000000000049 /* AppSettings.swift in Sources */,
+				C0000000000000000000004A /* SettingsView.swift in Sources */,
+				C00000000000000000000052 /* RecoverableJSONFile.swift in Sources */,
+				C00000000000000000000053 /* ChoseongQuizView.swift in Sources */,
+				C00000000000000000000057 /* SpacingGameView.swift in Sources */,
+				C30000000000000000000001 /* TargetSpeechSynthesizer.swift in Sources */,
+				C40000000000000000000001 /* AnalyticsContract.generated.swift in Sources */,
+				C40000000000000000000002 /* TelemetryService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D00000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1030,6 +1147,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F50000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Hanco/Resources/MacDemo-Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey;
+				PRODUCT_NAME = "Piyokey Mac";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG PIYOKEY_MAC_DEMO $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 6;
+			};
+			name = Debug;
+		};
+		F50000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = X44BQNTAH9;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Hanco/Resources/MacDemo-Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey;
+				PRODUCT_NAME = "Piyokey Mac";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "PIYOKEY_MAC_DEMO $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 6;
+			};
+			name = Release;
+		};
 		F00000000000000000000011 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1199,6 +1368,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F50000000000000000000001 /* Build configuration list for PBXNativeTarget "Piyokey Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F50000000000000000000011 /* Debug */,
+				F50000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F00000000000000000000001 /* Build configuration list for PBXProject "Hanco" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

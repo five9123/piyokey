@@ -1613,6 +1613,16 @@ struct ChoseongTypingView: View {
     .toolbar { sessionToolbar }
     .toolbarBackground(AppPalette.backgroundTop, for: .navigationBar)
     .toolbarBackground(.automatic, for: .navigationBar)
+    #if targetEnvironment(macCatalyst)
+      .safeAreaInset(edge: .top, spacing: 0) {
+        hud
+          .padding(.horizontal, 12)
+          .padding(.vertical, 6)
+          .frame(maxWidth: .infinity)
+          .background(AppPalette.backgroundTop)
+          .accessibilityIdentifier("\(mode.accessibilityNamespace).mac_hud")
+      }
+    #endif
     .navigationDestination(isPresented: $showsResult) {
       FlowGameResultView(
         deck: deck,
@@ -1750,9 +1760,11 @@ struct ChoseongTypingView: View {
       .accessibilityLabel(Text("game.end"))
       .accessibilityIdentifier("game.end")
     }
-    ToolbarItem(placement: .principal) {
-      hud
-    }
+    #if !targetEnvironment(macCatalyst)
+      ToolbarItem(placement: .principal) {
+        hud
+      }
+    #endif
   }
 
   private var hud: some View {
@@ -2185,6 +2197,7 @@ struct ChoseongTypingView: View {
       target: viewModel.currentRound.answer.ko,
       acceptedText: viewModel.enteredText,
       resetRevision: viewModel.roundRevision + inputResetRevision,
+      sessionRevision: inputResetRevision,
       onInputStart: {
         HancoSoundEngine.shared.prepareForInputFeedback(currentCombo: viewModel.combo)
       },

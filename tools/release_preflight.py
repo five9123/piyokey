@@ -740,8 +740,24 @@ def ios_universal_contract_findings(project: str, info: dict[str, Any]) -> list[
     }
     add(
         findings,
-        bool(raw_device_families) and device_families == {"1,2"},
-        f"All iOS targets must support iPhone and iPad device families: {sorted(device_families)}",
+        bool(raw_device_families) and device_families == {"1,2", "6"},
+        "iOS targets must remain universal and the Mac demo must remain Mac-only: "
+        f"{sorted(device_families)}",
+    )
+    mac_demo_contract = [
+        'E50000000000000000000001 /* Piyokey Mac */',
+        'PRODUCT_BUNDLE_IDENTIFIER = app.piyokey.Piyokey;',
+        'SUPPORTED_PLATFORMS = macosx;',
+        'SUPPORTS_MACCATALYST = YES;',
+        'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;',
+        'MACOSX_DEPLOYMENT_TARGET = 14.0;',
+        'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG PIYOKEY_MAC_DEMO $(inherited)";',
+    ]
+    missing_mac_contract = [value for value in mac_demo_contract if value not in project]
+    add(
+        findings,
+        not missing_mac_contract,
+        f"Mac Catalyst demo target contract differs: {missing_mac_contract}",
     )
 
     iphone_orientations = info.get("UISupportedInterfaceOrientations")

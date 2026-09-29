@@ -137,7 +137,8 @@ class ReleasePreflightTests(unittest.TestCase):
             finding.message
             for finding in release_preflight.ios_universal_contract_findings(project, info)
         }
-        self.assertTrue(any("iPhone and iPad device families" in message for message in messages))
+        self.assertTrue(any("iOS targets must remain universal" in message for message in messages))
+        self.assertTrue(any("Mac Catalyst demo target contract differs" in message for message in messages))
         self.assertTrue(any("iPhone orientations must remain portrait-only" in message for message in messages))
         self.assertTrue(any("iPad must declare all four" in message for message in messages))
         self.assertIn(

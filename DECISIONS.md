@@ -1835,6 +1835,14 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 근거: 설정에서 OS 키보드를 선택해도 피요컵만 내장 두벌식으로 강제되던 예외는 사용자 기대와 불일치한다. 주간 보드는 같은 피요컵 콘텐츠·시간·목숨·채점 계약을 공유하므로 선택 입력을 허용하되, 입력 방식 비교가 섞이지 않게 운영 중인 클래식 보드는 기존 정책을 유지한다.
 - 영향 범위: iOS/iPadOS `FlowGameView` 초기 입력 모드 결정, Game Center 피요컵 leaderboard mapping, 피요컵 안내 현지화, focused 단위/UI 회귀, PRD·현황판. 피요컵 콘텐츠·채점·일반 공식 덱 랭킹·동결 Android는 변경하지 않는다.
 
+## 2026-09-07 Issue #175 Mac Catalyst 로컬 데모 경계
+
+- 결정: 최신 iOS/iPadOS 구현을 공유하는 별도 `Piyokey Mac` target/scheme을 Mac Catalyst로 추가하고 macOS 14+를 기준으로 한다. 같은 `app.piyokey.Piyokey` bundle ID를 유지하며 native AppKit 재작성은 현재 Catalyst에서 빌드·입력이 성립하므로 선택하지 않는다.
+- 결정: Mac root는 커리큘럼, 공식 카탈로그/공식 덱 연습, 기존 5개 직접 입력 게임과 띄어쓰기만 노출한다. 물리 한국어 IME를 기본값으로 두고 띄어쓰기는 좌우 방향키와 Space를 버튼 동작과 같은 상태 전이에 연결한다. 기존 JSON/UserDefaults 저장, 오프라인 음원, `.playback`/`mixWithOthers`, scene 비활성 정지·flush를 재사용한다.
+- 결정: Mac target에서 My Page, 사용자 덱 draft/document/editor/paywall/purchase source와 파일 문서 등록을 제외한다. 게임 목록은 공식 설치 덱만 허용하고 피요컵 카드·Game Center 준비/제출 경로를 차단한다. 실제 CloudKit/KVS, 계정 동기화, distribution/archive, App Store Connect·TestFlight·제출은 후속 승인 범위다.
+- 후속 저장 경계: 현재 각 persistence store의 로컬 파일 API를 유지한다. 동기화 승인 시 작은 설정은 KVS adapter, 학습/게임 레코드는 CloudKit private database + CKSyncEngine adapter로 store 바깥에서 연결하고 schema·migration·충돌 정책을 별도 PRD/Issue에서 정한다.
+- 검증 gate: signed Debug 앱의 실제 실행, 한국어 IME 조합·겹받침·Backspace·한영 전환, 전체 커리큘럼/공식 덱/6개 게임, 방향키·Space, 창 resize, inactive/active, 음원·효과음, 종료·재실행 복원을 Mac에서 확인한다. focused iOS 회귀도 통과해야 한다. 측정하지 않은 60fps·실기기·배포·스토어·동기화 gate는 통과로 기록하지 않는다.
+
 ## 2026-09-10 Issue #181 피요컵과 일반 Flow 기록 분리
 
 - 근거: 사용자가 “두 플레이는 명백하게 별도로 관리되어야 한다”고 정정했다. 기존 구현의 이중 제출은 제품 의도가 아니며, 2026-09-06 TYP-113과 그 이전의 피요컵·Flow 동시 제출 결정을 이 항목으로 대체한다. OS 입력 허용 정책은 유지한다.
@@ -1882,3 +1890,11 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 일반 Flow 초급 enum·intended·후보 baseline을 함께 v5로 바꾼다. iOS 16–25에서도 초급 CTA/제출이 빠지지 않도록 최종 후보 구성을 준비하되 실제 서버 확인은 미완료로 유지한다. 기존의 Live·실기기 검증 목적은 출고 전 동일 후보의 실제 제출·조회 gate로 지키며, 모의 검증만으로 출고하지 않는다.
 - 결정: 기본 보드 v5 전환·기존 v4 archive는 새 앱 실제 검증과 배포 후에만 진행한다. 기존 v4 서버 점수와 출처 불명 집계는 복사하지 않는다. 나머지15개 ID·콘텐츠·점수 규칙은 유지한다.
 - 검증: c127b04 Claude 통과는 이전 head에만 적용한다. v5 전환 후 새 SHA focused 증빙·exact-head 리뷰·maintainer 승인과 실제 기기 검증을 다시 요구한다.
+
+## 2026-09-20 Mac 개발 재개와 기존 데모 통합
+
+- 근거: 정민의 Mac 개발 재개 요청. 기존 TYP-116 중지 결정은 재개 지시로 대체한다.
+- 첫 실행: 니모가 기존 TYP-123 / Issue #175 / PR #176 작업공간에서 최신 main 통합·충돌 해소·Mac 빌드 복구를 맡는다. 동일 이슈의 새 작업공간·PR을 만들지 않는다.
+- 범위: 기존 Catalyst 데모를 현재 iOS 공유 코드에 통합하고 Mac 빌드·공용 코드 회귀를 검증한다. TYP-115의 학습·6개 게임·동기화·구매 연동 목표는 유지하되, Catalyst 제품화 적합성과 TYP-116의 미검증 항목은 다음 단계에서 확인한다. 과거 일정은 현재 확약이 아니다.
+- 종료 조건: 통합 변경, 정확한 검증 SHA와 결과, 현재 HEAD의 독립 Claude 리뷰와 maintainer 병합 gate. 기존 데모 수락은 역사적 증빙으로 보존하며 새 통합본의 수락을 대신하지 않는다.
+- 제한: 이번 통합은 실제 CloudKit/KVS·구매·스토어 배포를 구현하거나 검증한 것으로 취급하지 않는다. Android 동결은 유지하며 PR #187에 한해 승인된 보호 규칙 예외를 #176에 재사용하지 않는다.

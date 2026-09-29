@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "verified_commit": "475b4f25c34ce0a83f25ddcdc475d0985ada48f4",
+  "verified_tree": "3341f9d9635f75a29ea9769b9c5802af06b0f3ce",
+  "branch": "codex/175-macos-demo",
+  "scope": "TYP-123 / Issue #175 Mac Catalyst demo latest-main integration and Mac/iOS regression",
+  "result": "pass",
+  "recorded_at": "2026-09-20T15:03:05.323151+00:00",
+  "checks": [
+    {
+      "name": "Mac Debug Catalyst build",
+      "status": "pass",
+      "command": "xcodebuild build -project ios/Hanco/Hanco.xcodeproj -scheme 'Piyokey Mac' -configuration Debug -destination 'platform=macOS,variant=Mac Catalyst' -derivedDataPath /private/tmp/PIYOKEY_MAC_RESUME_20260920",
+      "note": "BUILD SUCCEEDED; Xcode 26.6; clean implementation commit"
+    },
+    {
+      "name": "Python tools full suite",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 -m unittest discover -s tools/tests -p 'test_*.py'",
+      "note": "110 tests, 0 failures"
+    },
+    {
+      "name": "HangulEngine full suite",
+      "status": "pass",
+      "command": "cd ios/HangulEngine && swift test",
+      "note": "67 tests, 0 failures"
+    },
+    {
+      "name": "HancoTests full suite",
+      "status": "pass",
+      "command": "xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -configuration Debug -destination 'platform=iOS Simulator,id=001DD016-283A-430F-AF05-B31288E5B605' -derivedDataPath /private/tmp/PIYOKEY_MAC_RESUME_IOS_20260920 -resultBundlePath /private/tmp/PIYOKEY_MAC_475B4F2_IOS.xcresult -only-testing:HancoTests -parallel-testing-enabled NO",
+      "note": "452 tests, 0 failures; TEST SUCCEEDED"
+    },
+    {
+      "name": "Repository preflight",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/release_preflight.py",
+      "note": "PASS"
+    },
+    {
+      "name": "Strict workspace doctor",
+      "status": "pass",
+      "command": "/opt/homebrew/bin/python3.12 tools/workspace_doctor.py --strict",
+      "note": "PASS"
+    },
+    {
+      "name": "Diff integrity",
+      "status": "pass",
+      "command": "git diff --check && git diff --cached --check",
+      "note": "PASS; worktree clean at verification"
+    }
+  ],
+  "manual_gates": [
+    "Independent Claude review must cover current PR HEAD including this evidence-only commit; maintainer approval remains open. Actions are disabled; required branch protections remain in force. PR #187 exception does not apply.",
+    "Actual Mac physical Korean IME, input-source switching, pronunciation/effect listening, resize, hide/resume, persistence and all-six-game acceptance remain open for the integration candidate. Earlier human demo acceptance is historical.",
+    "Pre-commit local UI observation used the identical tree 3341f9d9635f75a29ea9769b9c5802af06b0f3ce: Lessons, six-game menu, Flow beginner countdown, no-input result and Done return observed. First process ended with SIGTERM (request source unknown); second run reached results and was intentionally quit with exit 0. No claim of a diagnosed or fixed crash.",
+    "CloudKit/KVS, Universal Purchase, account/IAP/content rights, Game Center service behavior, release signing, distribution, Mac App Store and full iOS UI/physical-device release gates were not performed in this scope."
+  ]
+}

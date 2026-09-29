@@ -3,14 +3,39 @@ import os
 import SwiftUI
 import UIKit
 
+enum KoreanKeyboardAvailabilityStatus: Equatable {
+  case available
+  case unavailable
+  case unknown
+}
+
 enum KoreanKeyboardAvailability {
   static var isAvailable: Bool {
+    permitsOSIME(for: currentStatus)
+  }
+
+  static var currentStatus: KoreanKeyboardAvailabilityStatus {
     #if DEBUG
       if let override = ProcessInfo.processInfo.environment["UITEST_KOREAN_KEYBOARD_AVAILABLE"] {
-        return override == "1"
+        return override == "1" ? .available : .unavailable
       }
     #endif
-    return containsKorean(languages: UITextInputMode.activeInputModes.map(\.primaryLanguage))
+    #if targetEnvironment(macCatalyst)
+      // Catalyst does not reliably expose the Mac's installed input sources through
+      // UITextInputMode. Keep OS input available and let the nonblocking input panel
+      // guide the user to switch sources if ASCII is received.
+      return .unknown
+    #else
+      return status(languages: UITextInputMode.activeInputModes.map(\.primaryLanguage))
+    #endif
+  }
+
+  static func status(languages: [String?]) -> KoreanKeyboardAvailabilityStatus {
+    containsKorean(languages: languages) ? .available : .unavailable
+  }
+
+  static func permitsOSIME(for status: KoreanKeyboardAvailabilityStatus) -> Bool {
+    status != .unavailable
   }
 
   static func containsKorean(languages: [String?]) -> Bool {
@@ -30,7 +55,7 @@ enum OSIMEInputPanelPolicy {
     requested: Bool,
     on interfaceIdiom: UIUserInterfaceIdiom
   ) -> Bool {
-    requested && interfaceIdiom == .pad
+    requested && (interfaceIdiom == .pad || interfaceIdiom == .mac)
   }
 }
 
@@ -91,6 +116,7 @@ struct OSIMEInputPanel: View {
   let candidateTargets: [String]
   let acceptedText: String
   let resetRevision: Int
+  let sessionRevision: Int
   let onInputStart: () -> Void
   let onAcceptedSequence: ([Character]) -> Void
   let onAcceptedCandidateSequence: ((String, [Character]) -> Void)?
@@ -103,6 +129,7 @@ struct OSIMEInputPanel: View {
   @State private var fieldText = ""
   @State private var focusRevision = 0
   @State private var isFieldFocused = false
+  @State private var sceneSuspendsFocus = false
   @State private var showsInputSourceWarning = false
   @State private var inputSourceWarningFeedbackRevision = 0
   @State private var inputSourceWarningShakeStep: CGFloat = 0
@@ -113,6 +140,7 @@ struct OSIMEInputPanel: View {
     candidateTargets: [String] = [],
     acceptedText: String,
     resetRevision: Int,
+    sessionRevision: Int = 0,
     onInputStart: @escaping () -> Void = {},
     onAcceptedSequence: @escaping ([Character]) -> Void,
     onAcceptedCandidateSequence: ((String, [Character]) -> Void)? = nil,
@@ -126,6 +154,7 @@ struct OSIMEInputPanel: View {
     self.candidateTargets = candidateTargets
     self.acceptedText = acceptedText
     self.resetRevision = resetRevision
+    self.sessionRevision = sessionRevision
     self.onInputStart = onInputStart
     self.onAcceptedSequence = onAcceptedSequence
     self.onAcceptedCandidateSequence = onAcceptedCandidateSequence
@@ -172,11 +201,15 @@ struct OSIMEInputPanel: View {
       if !isFocusSuspended { requestFocus() }
     }
     .onChange(of: scenePhase) { phase in
-      guard phase == .active, !isFocusSuspended else { return }
-      requestFocus()
+      if phase == .active {
+        sceneSuspendsFocus = false
+        if !isFocusSuspended { requestFocus() }
+      } else {
+        sceneSuspendsFocus = true
+      }
     }
     .onChange(of: isFocusSuspended) { suspended in
-      if !suspended { requestFocus() }
+      if !suspended, scenePhase == .active { requestFocus() }
     }
     .task(id: inputSourceWarningFeedbackRevision) {
       guard inputSourceWarningFeedbackRevision > 0 else { return }
@@ -278,12 +311,16 @@ struct OSIMEInputPanel: View {
       targets: candidateTargets.isEmpty ? [target] : candidateTargets,
       resetRevision: resetRevision,
       focusRevision: focusRevision,
-      isFocusSuspended: isFocusSuspended,
+      isFocusSuspended: isFocusSuspended || sceneSuspendsFocus,
       isFocused: $isFieldFocused,
       onReturn: requestFocus,
       onFocusRecovery: requestFocus,
       onTextChange: evaluate(committedText:markedText:)
     )
+    // Result/retry and input-mode transitions can retain this SwiftUI panel.
+    // Give UIKit a fresh text-input client at those session boundaries while
+    // keeping ordinary per-target resets in the same responder session.
+    .id(sessionRevision)
   }
 
   private func requestFocus() {
@@ -1049,7 +1086,9 @@ struct IMETextField: UIViewRepresentable {
         }
       }
     }
-    if !isFocusSuspended, context.coordinator.lastFocusRevision != focusRevision {
+    if !isFocusSuspended,
+      (context.coordinator.lastFocusRevision != focusRevision || !textField.isFirstResponder)
+    {
       context.coordinator.lastFocusRevision = focusRevision
       let requestedRevision = focusRevision
       DispatchQueue.main.async { [weak textField, weak coordinator = context.coordinator] in
