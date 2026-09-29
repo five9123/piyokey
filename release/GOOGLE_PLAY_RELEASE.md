@@ -26,7 +26,7 @@ lint error 0, Hangul coverage line 99.85% / branch 95.99%, release APK 10.0 MB �
 | 입력 | 설명 |
 |---|---|
 | `PIYOKEY_APPLICATION_ID` / `PIYOKEY_APPLICATION_ID_CONFIRMED` | 기본 `app.piyokey.piyokey`. Play Console 등록 전 사용자 확정 필요 |
-| `PIYOKEY_VERSION_CODE`, `PIYOKEY_VERSION_NAME` | 기본 1 / 1.1.1 |
+| `PIYOKEY_VERSION_CODE`, `PIYOKEY_VERSION_NAME` | 기본 1 / 1.1.2 |
 | `PIYOKEY_PRIVACY_URL`, `PIYOKEY_SUPPORT_URL` | 기본 typee.app 경로 |
 | `PIYOKEY_POSTHOG_PROJECT_TOKEN` (+ `PIYOKEY_POSTHOG_HOST=https://eu.i.posthog.com`) | 분석 |
 | `android/app/google-services.json` (미추적) | Crashlytics |

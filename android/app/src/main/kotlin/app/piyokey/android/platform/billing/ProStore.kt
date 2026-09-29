@@ -69,6 +69,16 @@ object ProStore {
 
   val productId: String = DeckMakerPurchaseConstants.LIFETIME_PRODUCT_ID
   val hasAccess: StateFlow<Boolean> get() = accessState.asStateFlow()
+
+  /**
+   * Instrumented-test hook (debug builds only): grants or revokes the cached entitlement so Deck
+   * Maker flows can be exercised without a Play license tester account.
+   */
+  fun setAccessForTesting(granted: Boolean) {
+    check(app.piyokey.android.BuildConfig.DEBUG) { "Test-only entitlement override" }
+    cachedEntitlement.value = granted
+    accessState.value = granted
+  }
   val product: StateFlow<ProProduct?> = productState.asStateFlow()
   val activity: StateFlow<ProPurchaseActivity> = activityState.asStateFlow()
   val notice: StateFlow<ProPurchaseNotice?> = noticeState.asStateFlow()

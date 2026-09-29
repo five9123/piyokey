@@ -204,6 +204,8 @@ fun MyPageTabRoot() {
 
   // Deck Maker routing -------------------------------------------------------------------
   fun presentEditor(active: app.piyokey.android.data.decks.ActiveUserDeckDraft, source: InstalledDeckSource, derivedFrom: String?, deletes: String?) {
+    // Explicitly resuming makes an interrupted editing session recoverable again.
+    if (DeckMakerPrefs.dismissedDraftId.value == active.draftId) DeckMakerPrefs.dismissedDraftId.value = ""
     appNavigator.push(DeckEditorRoute(DeckEditorPresentation(active.draftId, active.draft, source, derivedFrom, deletes)))
   }
 
@@ -290,6 +292,9 @@ fun MyPageTabRoot() {
         // Deletion and entitlement changes never silently discard authored content.
         UserDeckDraft.Origin.Editing -> if (!AppData.deckLibrary.isInstalled(draft.deckId)) return
       }
+      // Closing the editor keeps its draft but opts out of automatic presentation,
+      // including after relaunch. Create/edit actions still resume it explicitly.
+      if (active.draftId == DeckMakerPrefs.dismissedDraftId.value) return
       presentExisting(active)
     } catch (_: Exception) {
       draftRecoveryFailure = true

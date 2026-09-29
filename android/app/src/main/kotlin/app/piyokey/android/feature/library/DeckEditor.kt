@@ -110,8 +110,15 @@ class DeckEditorRoute(private val presentation: DeckEditorPresentation) : Route 
         { draftId: String? -> DeckMakerCommits.deleteFromEditor(deckId, presentation, draftId ?: presentation.draftId) }
       },
       onClose = { navigator.pop() },
+      // Closing keeps the draft but opts it out of automatic restore (iOS 1.1.2, #195).
+      onCancel = { latestDraftId -> DeckMakerPrefs.dismissedDraftId.value = latestDraftId ?: presentation.draftId },
     )
   }
+}
+
+/** iOS `@AppStorage("deck_maker.dismissed_draft_id")`. */
+object DeckMakerPrefs {
+  val dismissedDraftId = app.piyokey.android.data.settings.StringPref("deck_maker.dismissed_draft_id", "")
 }
 
 private enum class ItemPart { KOREAN, READING, MEANING }
@@ -142,6 +149,7 @@ fun DeckEditorScreen(
   onSaveAsCopy: (suspend (Deck, String?) -> Unit)?,
   onDelete: (suspend (String?) -> Unit)?,
   onClose: () -> Unit,
+  onCancel: ((String?) -> Unit)? = null,
 ) {
   val colors = Piyo.colors
   val scope = rememberCoroutineScope()
@@ -196,7 +204,10 @@ fun DeckEditorScreen(
 
   fun cancel() {
     if (busy) return
-    if (persist(draft)) onClose()
+    if (persist(draft)) {
+      onCancel?.invoke(latestDraftId)
+      onClose()
+    }
   }
   BackHandler { cancel() }
 

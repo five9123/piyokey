@@ -23,7 +23,7 @@ val configuredApplicationId = releaseInput("PIYOKEY_APPLICATION_ID").orElse(cand
 val configuredVersionCode = releaseInput("PIYOKEY_VERSION_CODE").orElse("1").map {
   it.toIntOrNull() ?: error("PIYOKEY_VERSION_CODE must be an integer.")
 }
-val configuredVersionName = releaseInput("PIYOKEY_VERSION_NAME").orElse("1.1.1")
+val configuredVersionName = releaseInput("PIYOKEY_VERSION_NAME").orElse("1.1.2")
 val configuredCatalogUrl = releaseInput("PIYOKEY_CATALOG_URL").orElse("")
 val configuredPrivacyUrl = releaseInput("PIYOKEY_PRIVACY_URL").orElse("https://typee.app/privacy")
 val configuredSupportUrl = releaseInput("PIYOKEY_SUPPORT_URL").orElse("https://typee.app/support")
