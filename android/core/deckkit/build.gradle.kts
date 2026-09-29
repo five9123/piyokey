@@ -1,11 +1,10 @@
 plugins {
   alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
-  compilerOptions {
-    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-  }
+  compilerOptions { jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17 }
 }
 
 java {
@@ -14,15 +13,11 @@ java {
 }
 
 dependencies {
-  implementation(project(":core:hangul"))
-  implementation(libs.kotlinx.serialization.json)
-
+  api(project(":core:hangul"))
+  api(libs.kotlinx.serialization.json)
   testImplementation(libs.kotlin.test.junit)
 }
 
 tasks.test {
-  systemProperty(
-    "piyokey.repositoryRoot",
-    rootProject.layout.projectDirectory.dir("..").asFile.absolutePath,
-  )
+  systemProperty("piyokey.sharedRoot", rootProject.layout.projectDirectory.dir("../shared").asFile.absolutePath)
 }

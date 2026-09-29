@@ -137,7 +137,7 @@ evidence에 기록한다. 표는 최소 범위이며 실제 diff가 소비자 �
 | `release/**` | Python tools/content/release contracts |
 | `ios/Hanco/**` | Python contracts + iOS simulator build |
 | `ios/HangulEngine/**` | Python contracts + Swift contracts + iOS simulator build |
-| `android/**` | 없음; Android 포트는 참고용 동결 |
+| `android/**` | `cd android && ./gradlew :core:hangul:check :core:deckkit:test :core:domain:test :app:testDebugUnitTest :app:lintDebug`; UI 변경은 `:app:connectedDebugAndroidTest`, 출시 후보는 `:app:bundleRelease` |
 | `shared/**` | Python + Swift + iOS |
 | `.github/workflows/**` | Python contracts + `git diff --check -- .github/workflows`; 실행 가능한 로컬 workflow validator가 없으면 미실행 gate와 이유를 evidence에 기록하고 Actions를 켜지 않음 |
 

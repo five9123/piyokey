@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only copy for Discover / My Page / Deck Maker (feature/discover, feature/library). -->
+<resources>
+  <string name="library_notice_unsupported_version_message">Mets typee à jour sur Google Play, puis réessaie.</string>
+  <string name="library_notice_cannot_read_message">Vérifie que le fichier est toujours disponible, puis réessaie.</string>
+  <string name="library_paywall_feature_edit_detail">Ajoute, modifie, supprime et réorganise les éléments sur ton téléphone.</string>
+  <string name="library_restore_empty_message">Vérifie que tu es connecté à Google Play avec le même compte que lors de l’achat.</string>
+  <string name="library_back">Retour</string>
+  <string name="library_item_move_up">Monter</string>
+  <string name="library_item_move_down">Descendre</string>
+  <string name="library_item_delete">Supprimer l’élément</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only strings for feature/input (no iOS equivalent). Owned by feature/input; not generated. -->
+<resources>
+  <string name="keyboard_guide_android_subtitle">Add it once in your device\'s Settings, then switch languages from the keyboard with the globe key or by swiping the space bar.</string>
+  <string name="keyboard_guide_android_step_1_title">Open Settings → System</string>
+  <string name="keyboard_guide_android_step_1_detail">Choose Languages &amp; input (on Samsung: General management)</string>
+  <string name="keyboard_guide_android_step_2_title">Keyboard → On-screen keyboard</string>
+  <string name="keyboard_guide_android_step_2_detail">Pick the keyboard you use, such as Gboard or Samsung Keyboard</string>
+  <string name="keyboard_guide_android_step_3_title">Add Korean</string>
+  <string name="keyboard_guide_android_step_3_detail">Languages → Add keyboard → 한국어, then choose 2-Set (Dubeolsik) or 10-key (Cheonjiin)</string>
+  <string name="keyboard_guide_android_open_settings">Open keyboard settings</string>
+  <string name="keyboard_guide_android_link">How to add a Korean keyboard</string>
+  <string name="keyboard_guide_android_not_detected">No Korean keyboard was detected. If Korean doesn\'t appear, check the setup guide after this session.</string>
+  <string name="os_ime_android_input_source_warning_detail">Switch your keyboard to Korean Dubeolsik with the globe key or by swiping the space bar.</string>
+  <string name="os_ime_android_input_hint">Tap the field and switch your keyboard to Korean. Changes during composition are not counted as mistakes.</string>
+  <string name="keyboard_android_shift_on">On</string>
+</resources>

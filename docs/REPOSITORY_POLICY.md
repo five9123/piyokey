@@ -3,8 +3,9 @@
 ## Source layout
 
 PIYOKEY uses one private source monorepo. The active iOS/iPadOS product lives
-under `ios/`; the existing Kotlin/Compose port under `android/` is frozen as
-historical reference and is not an active maintenance or release target. A
+under `ios/`; the former Kotlin/Compose port was deleted on 2026-09-30 and a
+from-scratch Android port will live under `android/` once
+`docs/ANDROID_PORT_PLAN.md` is approved. A
 future web port will live under `web/`. Shared contracts live under `shared/`;
 platform UI, storage, audio, input, and purchase integrations stay in their
 platform trees.
@@ -49,8 +50,8 @@ native path filters under `.github/workflows/`. Python content/release contracts
 absorb the former standalone pronunciation workflow; Swift and iOS each have
 an independently scoped workflow. Pure documentation changes do not start a
 platform build, while `release/**` keeps the fast Python contract and
-`shared/**` keeps Python plus the active Swift/iOS consumer. Frozen `android/`
-changes do not start CI and are not part of routine work.
+`shared/**` keeps Python plus the active Swift/iOS consumer. There is no
+Android tree or Android CI until the new port's A0 milestone adds them.
 
 `Scheduled iOS regression` runs every Monday at 03:00 JST and can also be
 started manually. It runs iOS unit tests on the pinned simulator. A failed or

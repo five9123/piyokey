@@ -58,7 +58,6 @@ class CIWorkflowScopeTests(unittest.TestCase):
             "PRD.md": {"source"},
             "ios/Hanco/Hanco/App.swift": {"source", "ios"},
             "ios/HangulEngine/Sources/DeckKit/Deck.swift": {"source", "swift", "ios"},
-            "android/app/build.gradle.kts": set(),
             "shared/schema/deck.schema.json": {"source", "swift", "ios"},
             ".github/workflows/ios-ci.yml": {"source", "ios"},
             ".github/workflows/platform-regression.yml": {"source"},

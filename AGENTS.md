@@ -36,11 +36,12 @@
 
 ## 활성 플랫폼 경계
 
-iOS/iPadOS만 현재 제품 개발·출시 범위다. `android/`는 과거 포트의 참고 자료로
-동결하며 일반 기능, 수정, 의존성 갱신, CI, 출시 gate에 포함하지 않는다. Android를
-다시 시작하려면 기존 포트의 연속 작업으로 처리하지 않고 사용자가 승인한 새 PRD,
-로드맵, Issue와 초기 아키텍처 결정에서 시작한다. 그 전에는 `android/`를 삭제하거나
-현행 공용 계약에 맞춰 유지보수하지 않는다.
+iOS/iPadOS가 현재 출시 중인 제품이다. 2026-09-30 사용자 결정으로 과거 Android 포트를
+삭제하고 iOS 현행 기능을 처음부터 동일하게 포팅한 새 `android/`(Kotlin/Compose)를 만들었다.
+기준 계획은 `docs/ANDROID_PORT_PLAN.md`, 구조·규칙은 `android/README.md`, 출시 gate는
+`release/GOOGLE_PLAY_RELEASE.md`다. Play Console·서명·결제·Play Games 같은 외부 작업은
+사용자 확인 전에 하지 않는다. Android에서 iOS에 없는 새 기능을 먼저 추가하지 않으며,
+iOS 문자열은 `tools/gen_android_strings.py`로만 Android에 반영한다.
 
 `main`은 공유 기준선이므로 Issue 소유권을 두지 않는다. 작업 병합 후 clean `main`이 `origin/main`과 같은 때에만 `python3 tools/worktree_owner.py unclaim`으로 해당 worktree의 작업 소유권을 해제한다.
 
@@ -74,7 +75,7 @@ shared/                  플랫폼 공용 스키마·fixture·콘텐츠
 tools/                   생성기·검증·운영 도구
 ios/Hanco/               SwiftUI iOS 앱
 ios/HangulEngine/        순수 Swift 조합·DeckKit 패키지
-android/                 동결된 과거 Kotlin/Compose 포트(참고 전용)
+android/                 Kotlin/Compose Android 앱 (iOS parity 포트)
 release/                 스토어 메타데이터와 출시 gate
 docs/                    workflow·handoff·운영 문서
 ```
@@ -102,6 +103,8 @@ docs/                    workflow·handoff·운영 문서
 - 발음 생성·정리: `python3 tools/gen_gtts_audio.py --prune`
 - 저장소 preflight: `python3 tools/release_preflight.py`
 - Swift 공용 패키지: `cd ios/HangulEngine && swift test`
+- Android 문자열 생성: `python3 tools/gen_android_strings.py` (`--check`로 검증)
+- Android: `cd android && ./gradlew :core:hangul:check :core:deckkit:test :core:domain:test :app:testDebugUnitTest :app:lintDebug`
 - iOS 앱: `xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'`
 
-일반 변경은 직접 관련된 단위·UI 테스트만 실행한다. 공용 상태·저장 schema·조합 엔진 변경은 활성 소비자인 Python reference, Swift와 웹 계약까지 넓힌다. 동결된 Android는 기본 검증 범위에 넣지 않는다. 전체 회귀는 마일스톤 종료나 release candidate에서 실행한다.
+일반 변경은 직접 관련된 단위·UI 테스트만 실행한다. 공용 상태·저장 schema·조합 엔진 변경은 활성 소비자인 Python reference, Swift와 웹 계약까지 넓힌다. Android 모듈이 생기면 공용 계약 변경 시 Kotlin 계약 테스트도 함께 실행한다. 전체 회귀는 마일스톤 종료나 release candidate에서 실행한다.

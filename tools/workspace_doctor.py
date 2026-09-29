@@ -117,22 +117,6 @@ def java_version_status(output: str) -> tuple[str, str]:
     return "PASS", f"Java {rendered}"
 
 
-def android_sdk_path(environment: dict[str, str], home: Path) -> Optional[Path]:
-    configured = environment.get("ANDROID_HOME") or environment.get("ANDROID_SDK_ROOT")
-    candidates = [Path(configured).expanduser()] if configured else []
-    candidates.append(home / "Library/Android/sdk")
-    return next((candidate for candidate in candidates if candidate.is_dir()), None)
-
-
-def android_platform_path(sdk: Optional[Path], api_level: int) -> Optional[Path]:
-    if sdk is None:
-        return None
-    platforms = sdk / "platforms"
-    candidates = [platforms / f"android-{api_level}"]
-    candidates.extend(sorted(platforms.glob(f"android-{api_level}.*")))
-    return next((candidate for candidate in candidates if candidate.is_dir()), None)
-
-
 def run(*args: str, cwd: Path = ROOT) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         args,
@@ -269,56 +253,30 @@ def collect_checks(
 
     if scope == "android":
         java = shutil.which("java")
-        if java is None:
-            checks.append(Check("java", "FAIL", "JDK 17 이상이 필요합니다"))
+        java_home = os.environ.get("JAVA_HOME")
+        if java_home:
+            java = str(Path(java_home) / "bin/java")
+        if not java or not Path(java).exists():
+            checks.append(Check("java", "FAIL", "JDK 17 이상이 필요합니다 (JAVA_HOME 설정)"))
         else:
             result = run(java, "-version")
             status, detail = java_version_status(result.stdout + result.stderr)
             checks.append(Check("java", status, detail))
-
-        sdk = android_sdk_path(dict(os.environ), Path.home())
-        checks.append(
-            Check(
-                "android_sdk",
-                "PASS" if sdk else "FAIL",
-                str(sdk) if sdk else "ANDROID_HOME 또는 API 37 SDK가 필요합니다",
-            )
-        )
-        api_37 = android_platform_path(sdk, 37)
-        checks.append(
-            Check(
-                "android_api_37",
-                "PASS" if api_37 and api_37.is_dir() else "FAIL",
-                str(api_37) if api_37 else "Android API 37이 없습니다",
-            )
-        )
-
+        sdk = os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT")
+        local = ROOT / "android/local.properties"
+        if not sdk and local.is_file():
+            for line in local.read_text(encoding="utf-8").splitlines():
+                if line.startswith("sdk.dir="):
+                    sdk = line.split("=", 1)[1].strip()
+        if not sdk:
+            default = Path.home() / "Library/Android/sdk"
+            sdk = str(default) if default.is_dir() else None
+        platforms = Path(sdk) / "platforms" if sdk else None
+        has_37 = bool(platforms and any(platforms.glob("android-37*")))
+        checks.append(Check("android_sdk", "PASS" if has_37 else "FAIL",
+                            str(platforms) if has_37 else "Android SDK platform 37이 필요합니다"))
         wrapper = ROOT / "android/gradlew"
-        checks.append(
-            Check(
-                "gradle_wrapper",
-                "PASS" if wrapper.is_file() and os.access(wrapper, os.X_OK) else "FAIL",
-                str(wrapper),
-            )
-        )
-        required_modules = (
-            "android/app/build.gradle.kts",
-            "android/core/hangul/build.gradle.kts",
-            "android/core/deckkit/build.gradle.kts",
-            "android/core/piyodeck/build.gradle.kts",
-        )
-        missing_modules = [
-            relative for relative in required_modules if not (ROOT / relative).is_file()
-        ]
-        checks.append(
-            Check(
-                "android_modules",
-                "FAIL" if missing_modules else "PASS",
-                "누락: " + ", ".join(missing_modules)
-                if missing_modules
-                else "app·hangul·deckkit·piyodeck 확인",
-            )
-        )
+        checks.append(Check("gradle_wrapper", "PASS" if wrapper.is_file() and os.access(wrapper, os.X_OK) else "FAIL", str(wrapper)))
 
     return checks
 

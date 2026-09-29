@@ -20,7 +20,7 @@ Orca 카드는 이 상태의 작업공간별 표시이며 별도 완료 기준�
 | Game Center 핫픽스 | PR #183 병합. 모든 키보드 참여·Flow/Cup 분리·등록 복구·서버 점수 재조회. 구형 v3 4개 archive·Flow 초급 v5 Live 기록 | TYP-120의 동일 서명 기기별 인증·오프라인·최고점 재시도·주간 경계 read-back 증빙 |
 | 분석·진단 | PR #182 병합. PostHog 국가·사용 환경 분석과 동의 v2. #181에서 정책 게시·ASC Coarse Location 공시, #180에서 9월 12일 국가 집계 확인 | TYP-121의 재동의·OFF 네트워크·금지 속성 미보관·Crashlytics crash/dSYM |
 | 웹 Builder | 별도 `hanco_web` 저장소. schema v2 Builder PR #6 통합 기록, 정책 게시 PR #12는 #181에서 확인 | 모바일 교차 편집·미확인 서비스 gate는 별도. 이 저장소의 `web/`은 analytics 계약 패키지 |
-| Android | 과거 포트 참고용 동결 | 개발·의존성·CI·출시 범위 제외. TYP-119는 재개 시 재설계 backlog |
+| Android | 2026-09-30 과거 포트 삭제 후 iOS parity 재포팅. `android/` 소스 A0~A7 완료: JVM 499·계측 54 통과, lint 0, release APK/AAB 빌드, 에뮬레이터 신규 사용자 흐름 QA (`docs/ANDROID_PORT_PLAN.md`) | **main 미병합·미커밋**. `release/GOOGLE_PLAY_RELEASE.md`의 외부 gate(applicationId·Play Console·서명·IAP·Play Games ID·Data safety·권리)와 실기기 QA, Issue·Linear 연결, Claude 리뷰·maintainer 병합 gate |
 | macOS | #175 / Draft PR #176 로컬 Catalyst 데모 수락 기록, **main 미병합**. TYP-123으로 연결 | 데모와 TYP-115/116 제품·동기화·출시 스파이크는 별도. TYP-116 사용자 중지/Backlog 유지 |
 | CI·병합 | Actions 비활성. 현재 head Claude 리뷰·focused 로컬 SHA evidence·최신 main tree·maintainer 수동 승인 정책 | 비활성 CI와 외부 미검증 항목을 성공으로 취급하지 않는다 |
 

@@ -52,7 +52,7 @@ class AnalyticsContractTests(unittest.TestCase):
     def test_every_platform_disables_posthog_geoip(self):
         sources = (
             ROOT / "ios/Hanco/Hanco/Core/Analytics/TelemetryService.swift",
-            ROOT / "android/app/src/main/java/app/piyokey/piyokey/TelemetryRuntime.kt",
+            ROOT / "android/app/src/main/kotlin/app/piyokey/android/platform/analytics/Telemetry.kt",
             ROOT / "web/analytics/src/index.ts",
         )
         for source in sources:

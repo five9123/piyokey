@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only strings for feature/input (no iOS equivalent). Owned by feature/input; not generated. -->
+<resources>
+  <string name="keyboard_guide_android_subtitle">Añádelo una vez en los Ajustes del dispositivo y cambia de idioma cuando quieras con la tecla del globo o deslizando la barra espaciadora.</string>
+  <string name="keyboard_guide_android_step_1_title">Abre Ajustes → Sistema</string>
+  <string name="keyboard_guide_android_step_1_detail">Elige Idiomas y entrada de texto (en Samsung: Administración general)</string>
+  <string name="keyboard_guide_android_step_2_title">Teclado → Teclado en pantalla</string>
+  <string name="keyboard_guide_android_step_2_detail">Elige el teclado que usas, como Gboard o Teclado Samsung</string>
+  <string name="keyboard_guide_android_step_3_title">Añade el coreano</string>
+  <string name="keyboard_guide_android_step_3_detail">Idiomas → Añadir teclado → 한국어 y elige dos conjuntos (Dubeolsik) o 10 teclas (Cheonjiin)</string>
+  <string name="keyboard_guide_android_open_settings">Abrir ajustes del teclado</string>
+  <string name="keyboard_guide_android_link">Cómo añadir un teclado coreano</string>
+  <string name="keyboard_guide_android_not_detected">No se ha detectado un teclado coreano. Si no aparece el coreano, consulta la guía al terminar esta sesión.</string>
+  <string name="os_ime_android_input_source_warning_detail">Cambia a coreano de dos conjuntos con la tecla del globo o deslizando la barra espaciadora.</string>
+  <string name="os_ime_android_input_hint">Toca el campo y cambia el teclado a coreano. Los cambios durante la composición no cuentan como errores.</string>
+  <string name="keyboard_android_shift_on">Activado</string>
+</resources>

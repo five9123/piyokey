@@ -3,7 +3,6 @@
 import plistlib
 import re
 import unittest
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from tools import release_preflight
@@ -70,21 +69,6 @@ class UILanguageScopeTests(unittest.TestCase):
                         self.assertEqual(value, candidate[key], f"{locale}:{key}")
             self.assertEqual(candidate["curriculum.chapter_1_basic_consonants.item_meaning"],
                              {"es": "Consonante básica", "de": "Grundkonsonant", "fr": "Consonne de base"}[locale])
-            for path in (ROOT / "android").glob("**/src/main/res/values/strings.xml"):
-                translated = path.parent.with_name(f"values-{locale}") / "strings.xml"
-                compare(
-                    {s.attrib["name"]: s.text for s in ET.parse(path).getroot() if s.tag == "string"},
-                    {s.attrib["name"]: s.text for s in ET.parse(translated).getroot() if s.tag == "string"},
-                )
-                originals = ET.parse(path).getroot().findall("string-array")
-                translations = ET.parse(translated).getroot()
-                for original in originals:
-                    candidate_array = translations.find(f"string-array[@name='{original.attrib['name']}']")
-                    self.assertIsNotNone(candidate_array)
-                    self.assertEqual(len(original), len(candidate_array))
-                    self.assertTrue(all(item.text and item.text.strip() for item in candidate_array))
-                    for source, target in zip(original, candidate_array):
-                        self.assertEqual(tokens.findall(source.text), tokens.findall(target.text))
 
     def test_privacy_modal_copy_is_synced_and_provider_neutral_in_all_six_sources(self):
         for locale in UI_LOCALES | {"ko"}:
@@ -128,7 +112,7 @@ class UILanguageScopeTests(unittest.TestCase):
             self.assertEqual(values["piyodeck.import.items"], expected)
             self.assertNotEqual(values["deck.detail.items"], values["closet.prop_section"])
 
-    def test_plural_resources_preserve_printf_arguments_and_match_android(self):
+    def test_plural_resources_preserve_printf_arguments(self):
         reference = None
         for code in sorted(UI_LOCALES):
             with (RESOURCES / f"{code}.lproj/Localizable.stringsdict").open("rb") as stream:
@@ -141,17 +125,6 @@ class UILanguageScopeTests(unittest.TestCase):
                 self.assertEqual(entry["NSStringLocalizedFormatKey"], "%#@count@")
                 for quantity in ("other",) if code == "ja" else ("one", "other"):
                     self.assertEqual(re.findall(r"%[a-z@]", rule[quantity]), ["%d"], key)
-            for module, key, expected in (
-                ("discover", "deck_item_count", ["%1$d"]),
-                ("retention", "review_count", ["%1$d"]),
-                ("retention", "retention_week_progress", ["%1$d", "%2$d"]),
-            ):
-                folder = "values" if code == "en" else f"values-{code}"
-                root = ET.parse(ROOT / f"android/feature/{module}/src/main/res/{folder}/strings.xml").getroot()
-                quantity = root.find(f"plurals[@name='{key}']")
-                self.assertIsNotNone(quantity)
-                for item in quantity:
-                    self.assertEqual(re.findall(r"%\d+\$[a-z]", item.text), expected)
         with (RESOURCES / "fr.lproj/Localizable.stringsdict").open("rb") as stream:
             self.assertEqual(plistlib.load(stream)["deck.items.format"]["count"]["one"], "%d élément")
 
@@ -159,22 +132,6 @@ class UILanguageScopeTests(unittest.TestCase):
         for code in UI_LOCALES:
             values = release_preflight.parse_strings(RESOURCES / f"{code}.lproj/Localizable.strings")
             self.assertNotIn("PIYOKEY", " ".join(values.values()))
-            folder = "values" if code == "en" else f"values-{code}"
-            for path in (ROOT / "android").glob(f"**/src/main/res/{folder}/strings.xml"):
-                self.assertNotIn("PIYOKEY", " ".join(ET.parse(path).getroot().itertext()), str(path))
-
-    def test_android_filters_legacy_ui_without_deleting_learning_sources(self):
-        config = ET.parse(ROOT / "android/app/src/main/res/xml/locales_config.xml")
-        locales = {node.attrib["{http://schemas.android.com/apk/res/android}name"]
-                   for node in config.getroot()}
-        self.assertEqual(locales, UI_LOCALES)
-        build = (ROOT / "android/app/build.gradle.kts").read_text()
-        self.assertIn('localeFilters += listOf("en", "ja", "es", "de", "fr")', build)
-        path = ROOT / "android/feature/practice/src/main/res/values"
-        english = {s.attrib["name"]: s.text for s in ET.parse(path / "strings.xml").getroot()}
-        korean = {s.attrib["name"]: s.text for s in ET.parse(path.with_name("values-ko") / "strings.xml").getroot()}
-        for key in ("practice_sample_target_1", "practice_sample_target_2", "practice_sample_target_3"):
-            self.assertEqual(english[key], korean[key])
 
 
 if __name__ == "__main__":

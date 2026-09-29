@@ -32,7 +32,7 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 - `ko`: 앱 UI로 제공하지 않는다. 기존 한국어 목표·번역·읽기·발음·덱 메타데이터는 보존하고 영어 UI에서는 기존 영어 콘텐츠를 표시한다.
 - `en`·`es`·`de`·`fr`·`ko`·미지원 언어에서는 일본어 뜻이나 가타카나를 fallback으로 노출하지 않는다.
 - 첫 실행은 기기 선호 언어 중 `ja`·`en`·`es`·`de`·`fr` 첫 일치를 사용하고, 일치하지 않으면 영어로 시작한다. 사용자가 설정에서 고른 앱 언어는 영속화한다.
-- Android M7은 2026-08-21 사용자 결정으로 재개했으며 Google Play는 iOS App Store와 분리된 출시 트랙으로 준비한다. Android 소스·listing 준비가 iOS 1.1 제출 범위를 변경하지 않는다.
+- Android는 2026-09-30 과거 포트를 삭제하고 처음부터 재포팅한다(`docs/ANDROID_PORT_PLAN.md`). Google Play는 iOS App Store와 분리된 출시 트랙이며 iOS 제출 범위를 변경하지 않는다.
 
 ## 3. App Store 메타데이터
 
@@ -107,4 +107,4 @@ App Store 제품 페이지의 이름·부제·설명은 등록된 스토어 로�
 
 2026-08-28 App Store Connect에서 앱과 IAP의 175개 국가 또는 지역 및 향후 신규 storefront 자동 포함을 저장했다. 당시 일본 1개 지역은 Available, 145개 지역은 Processing to Available, EU 29개 지역은 Trader Status Not Provided였다. ja·en-US·en-GB·en-AU·en-CA·ko 이름과 1.1 제품 페이지 메타데이터, ja·en-US·ko IAP 현지화를 저장했다. 빌드·최신 스크린샷·IAP 심사 스크린샷·Paid Apps Agreement·DSA 등 출시 gate는 별도로 남아 있다.
 
-Android의 과거 Google Play 초안은 참고용으로 동결됐다. 2026-08-30 PRD v6.14 이후 이 문서의 실행 범위에는 Android 기능·CI·Play Console·배포 승인이 포함되지 않으며, 기존 listing 파일은 역사적 기록으로만 보존한다.
+과거 Google Play listing·콘솔 선언 초안은 2026-09-30 삭제했다(git 이력 `1f3027a`에서 참고 가능). 이 문서의 실행 범위에는 Android Play Console·배포 승인이 포함되지 않으며, 새 포트의 A8 단계에서 별도로 준비한다.

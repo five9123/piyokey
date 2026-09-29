@@ -1,8 +1,9 @@
 # PIYOKEY / ピヨキー
 
 일본어를 포함한 다섯 UI 언어 사용자가 한국어 타이핑을 배우는 iOS/iPadOS
-SwiftUI 앱입니다. 기존 Android Kotlin/Compose 포트는 참고용으로 동결되어 현재
-제품·유지보수·출시 범위에 포함되지 않습니다. `.typedeck` 웹 Builder 앱은 별도
+SwiftUI 앱입니다. Android 앱(`android/`, Kotlin/Compose)은 iOS 기능을 처음부터 동일하게
+포팅한 새 구현이며 Google Play 외부 gate가 남아 있습니다([Android 포팅 계획](docs/ANDROID_PORT_PLAN.md),
+[Android README](android/README.md)). `.typedeck` 웹 Builder 앱은 별도
 [`hanco_web`](https://github.com/five9123-maker/hanco_web) 저장소에서 운영합니다.
 
 ## 저장소 구조
@@ -10,7 +11,7 @@ SwiftUI 앱입니다. 기존 Android Kotlin/Compose 포트는 참고용으로 �
 ```text
 .
 ├── ios/                  # SwiftUI 앱과 Swift 공용 로직
-├── android/              # 동결된 과거 Kotlin/Compose 포트(참고 전용)
+├── android/              # Kotlin/Compose Android 앱(iOS parity 포트)
 ├── web/                  # 앱과 웹이 공유하는 독립 analytics 계약 패키지
 ├── shared/               # 스키마, 테스트 벡터, 목 카탈로그, 오프라인 음원
 ├── tools/                # 콘텐츠 생성·검증 도구
@@ -40,9 +41,8 @@ python3 tools/release_preflight.py
 (cd ios/HangulEngine && swift test)
 ```
 
-과거 Android 구현의 맥락은 [Android README](android/README.md)와
-[M7 준비 기록](docs/ANDROID_M7_READINESS.md)에 보존되어 있으나 현재 작업 지침으로
-사용하지 않습니다.
+Android 재시작 범위·아키텍처·마일스톤은 [Android 포팅 계획](docs/ANDROID_PORT_PLAN.md)을
+따릅니다. 삭제된 과거 포트는 git 이력(`b5362eb`)에서만 참고합니다.
 
 전체 iOS 회귀는 마일스톤 종료나 출시 후보에서 실행합니다.
 

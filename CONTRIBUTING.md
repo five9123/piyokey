@@ -56,7 +56,7 @@ python3 tools/release_preflight.py
 마일스톤 종료, release candidate, 공통 기반 대규모 변경에만 실행합니다.
 
 `shared/` 계약을 수정했다면 현재 존재하는 모든 소비자 테스트를 실행합니다.
-현재 Swift·Kotlin contract suite가 필수이며, 웹이 추가되면 TypeScript suite도
+현재 Python·Swift contract suite가 필수이며, 새 Android 포트의 Kotlin suite와 웹 TypeScript suite도 생기면
 같은 필수 검증에 포함합니다.
 
 ## 완료 조건

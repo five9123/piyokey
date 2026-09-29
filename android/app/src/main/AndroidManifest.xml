@@ -1,58 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
+
   <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+
   <application
     android:name=".PiyokeyApplication"
     android:allowBackup="false"
     android:dataExtractionRules="@xml/data_extraction_rules"
-    android:fullBackupContent="@xml/backup_rules"
-    android:label="@string/app_name"
+    android:fullBackupContent="false"
     android:icon="@mipmap/ic_launcher"
     android:roundIcon="@mipmap/ic_launcher_round"
+    android:label="@string/app_name"
     android:localeConfig="@xml/locales_config"
     android:supportsRtl="true"
-    android:theme="@style/Theme.Piyokey">
-    <meta-data
-      android:name="firebase_crashlytics_collection_enabled"
-      android:value="false" />
-    <meta-data
-      android:name="com.google.android.gms.games.APP_ID"
-      android:value="@string/game_services_project_id" />
-    <meta-data
-      android:name="com.google.android.gms.games.SUPPRESS_GAMES_SIGNIN"
-      android:value="true" />
-    <meta-data
-      android:name="com.google.android.gms.games.SUPPRESS_GAME_PROFILE_CREATION"
-      android:value="true" />
+    android:usesCleartextTraffic="false"
+    android:theme="@style/Theme.Piyokey"
+    tools:targetApi="36">
+
+    <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="@string/game_services_project_id" />
+    <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+    <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
+    <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+
     <activity
       android:name=".MainActivity"
       android:exported="true"
-      android:launchMode="singleTop">
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-      <intent-filter>
+      <intent-filter tools:ignore="AppLinkUrlError">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="content" />
+        <data android:scheme="file" />
         <data android:mimeType="application/vnd.piyokey.deck+zip" />
+      </intent-filter>
+      <intent-filter tools:ignore="AppLinkUrlError">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="content" />
+        <data android:mimeType="application/octet-stream" />
+        <data android:mimeType="application/zip" />
+        <data android:host="*" />
+        <data android:pathPattern=".*\\.typedeck" />
+        <data android:pathPattern=".*\\..*\\.typedeck" />
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.SEND" />
         <category android:name="android.intent.category.DEFAULT" />
         <data android:mimeType="application/vnd.piyokey.deck+zip" />
+        <data android:mimeType="application/zip" />
+        <data android:mimeType="application/octet-stream" />
       </intent-filter>
     </activity>
+
+    <receiver
+      android:name=".platform.ReminderReceiver"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+        <action android:name="android.intent.action.TIME_SET" />
+        <action android:name="android.intent.action.LOCALE_CHANGED" />
+      </intent-filter>
+    </receiver>
+
     <provider
       android:name="androidx.core.content.FileProvider"
       android:authorities="${applicationId}.files"
       android:exported="false"
       android:grantUriPermissions="true">
-      <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/file_paths" />
+      <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
     </provider>
   </application>
 </manifest>

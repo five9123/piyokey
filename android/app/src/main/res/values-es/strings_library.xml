@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only copy for Discover / My Page / Deck Maker (feature/discover, feature/library). -->
+<resources>
+  <string name="library_notice_unsupported_version_message">Actualiza typee desde Google Play e inténtalo de nuevo.</string>
+  <string name="library_notice_cannot_read_message">Comprueba que el archivo sigue disponible e inténtalo de nuevo.</string>
+  <string name="library_paywall_feature_edit_detail">Añade, modifica, elimina y reordena elementos directamente en el teléfono.</string>
+  <string name="library_restore_empty_message">Comprueba que has iniciado sesión en Google Play con la misma cuenta con la que realizaste la compra.</string>
+  <string name="library_back">Atrás</string>
+  <string name="library_item_move_up">Subir</string>
+  <string name="library_item_move_down">Bajar</string>
+  <string name="library_item_delete">Eliminar elemento</string>
+</resources>

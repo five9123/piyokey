@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only strings for feature/input (no iOS equivalent). Owned by feature/input; not generated. -->
+<resources>
+  <string name="keyboard_guide_android_subtitle">Füge sie einmal in den Geräteeinstellungen hinzu und wechsle dann jederzeit mit der Globustaste oder durch Wischen über die Leertaste.</string>
+  <string name="keyboard_guide_android_step_1_title">Einstellungen → System öffnen</string>
+  <string name="keyboard_guide_android_step_1_detail">Sprachen &amp; Eingabe wählen (bei Samsung: Allgemeine Verwaltung)</string>
+  <string name="keyboard_guide_android_step_2_title">Tastatur → Bildschirmtastatur</string>
+  <string name="keyboard_guide_android_step_2_detail">Wähle deine Tastatur, z. B. Gboard oder Samsung Keyboard</string>
+  <string name="keyboard_guide_android_step_3_title">Koreanisch hinzufügen</string>
+  <string name="keyboard_guide_android_step_3_detail">Sprachen → Tastatur hinzufügen → 한국어, dann Dubeolsik oder 10 Tasten (Cheonjiin) wählen</string>
+  <string name="keyboard_guide_android_open_settings">Tastatureinstellungen öffnen</string>
+  <string name="keyboard_guide_android_link">So fügst du eine koreanische Tastatur hinzu</string>
+  <string name="keyboard_guide_android_not_detected">Keine koreanische Tastatur erkannt. Wenn Koreanisch nicht erscheint, sieh dir nach dieser Sitzung die Anleitung an.</string>
+  <string name="os_ime_android_input_source_warning_detail">Wechsle mit der Globustaste oder durch Wischen über die Leertaste zu Koreanisch (Dubeolsik).</string>
+  <string name="os_ime_android_input_hint">Tippe auf das Feld und stelle die Tastatur auf Koreanisch um. Änderungen beim Silbenaufbau zählen nicht als Fehler.</string>
+  <string name="keyboard_android_shift_on">An</string>
+</resources>
