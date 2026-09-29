@@ -400,6 +400,85 @@ final class HancoUITests: XCTestCase {
     attachScreenshot(named: "r11-new-deck-editor-ja")
   }
 
+  func testR11PurchaseCreatesAndSavesNewDeck() {
+    app.tabBars.buttons["マイページ"].tap()
+    let createDeck = app.buttons["my_decks.create"]
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_maker.paywall.screen").waitForExistence(timeout: 5))
+    let purchase = app.buttons["deck_maker.paywall.purchase"]
+    XCTAssertTrue(purchase.waitForExistence(timeout: 5))
+    purchase.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 10), app.debugDescription)
+    XCTAssertTrue(element("deck_editor.name").exists)
+    attachScreenshot(named: "purchase-new-deck-editor")
+
+    let nameField = element("deck_editor.name")
+    nameField.tap()
+    let nextKeyboard = app.buttons["次のキーボード"]
+    if nextKeyboard.exists, (nextKeyboard.value as? String)?.contains("English") == true {
+      nextKeyboard.tap()
+    }
+    nameField.typeText("Purchased Test Deck")
+    for (identifier, value) in [
+      ("deck_editor.author", "Tester"),
+      ("deck_editor.tags", "test"),
+    ] {
+      let field = element(identifier)
+      scrollToHittable(field)
+      field.tap()
+      field.typeText(value)
+      XCTAssertEqual(field.value as? String, value)
+    }
+    for (index, value) in ["안녕", "annyeong", "Hello"].enumerated() {
+      let field = app.textFields.matching(identifier: "deck_editor.item.0").element(boundBy: index)
+      scrollToHittable(field)
+      field.tap()
+      field.typeText(value)
+      XCTAssertEqual(field.value as? String, value)
+    }
+    attachScreenshot(named: "purchase-new-deck-filled")
+    app.buttons["deck_editor.save"].tap()
+    waitForNonexistence(element("deck_editor.screen"), timeout: 5)
+    XCTAssertTrue(app.staticTexts["Purchased Test Deck"].waitForExistence(timeout: 5))
+    attachScreenshot(named: "purchase-new-deck-saved")
+  }
+
+  func testR11PurchaseCancelledDraftDoesNotReopen() {
+    app.buttons["マイページ"].firstMatch.tap()
+    let createDeck = app.buttons["my_decks.create"]
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_maker.paywall.screen").waitForExistence(timeout: 5))
+    app.buttons["deck_maker.paywall.purchase"].tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+
+    let nameField = element("deck_editor.name")
+    nameField.tap()
+    let nextKeyboard = app.buttons["次のキーボード"]
+    if nextKeyboard.exists, (nextKeyboard.value as? String)?.contains("English") == true {
+      nextKeyboard.tap()
+    }
+    nameField.typeText("Kept After Cancel")
+    app.buttons["deck_editor.save"].tap()
+    XCTAssertTrue(element("deck_editor.screen").exists,
+                  "Incomplete content must remain in the editor after validation fails")
+    app.buttons["deck_editor.cancel"].tap()
+    waitForNonexistence(element("deck_editor.screen"), timeout: 5)
+
+    app.buttons["ゲーム"].firstMatch.tap()
+    XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
+    app.buttons["マイページ"].firstMatch.tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("deck_editor.screen").waitForExistence(timeout: 2),
+                   "An unfinished purchase flow must not force the editor open again")
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(element("deck_editor.name").value as? String, "Kept After Cancel")
+    attachScreenshot(named: "cancelled-purchase-draft-resumes-on-request")
+  }
+
   func testR11PaywallScreenshotCapture() {
     app.tabBars.buttons["マイページ"].tap()
     let createDeck = app.buttons["my_decks.create"]
@@ -552,13 +631,49 @@ final class HancoUITests: XCTestCase {
       "A stored draft must not interrupt Home"
     )
 
-    app.tabBars.buttons["ゲーム"].tap()
+    app.buttons["ゲーム"].firstMatch.tap()
     XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
     XCTAssertFalse(element("deck_editor.screen").exists)
 
-    app.tabBars.buttons["マイページ"].tap()
+    app.buttons["マイページ"].firstMatch.tap()
     XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
     XCTAssertTrue(app.navigationBars["新しいデッキ"].exists)
+    XCTAssertEqual(element("deck_editor.name").value as? String, "復元する下書き")
+
+    app.buttons["deck_editor.cancel"].tap()
+    waitForNonexistence(element("deck_editor.screen"), timeout: 5)
+    for _ in 0..<2 {
+      app.buttons["ゲーム"].firstMatch.tap()
+      XCTAssertTrue(element("game.selection.screen").waitForExistence(timeout: 5))
+      app.buttons["マイページ"].firstMatch.tap()
+      XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+      XCTAssertFalse(element("deck_editor.screen").waitForExistence(timeout: 2),
+                     "A dismissed draft must not reopen on each visit")
+    }
+
+    app.terminate()
+    app.launchEnvironment.removeValue(forKey: "UITEST_RESET_DECK_LIBRARY")
+    app.launchEnvironment.removeValue(forKey: "UITEST_SEED_USER_DECK_DRAFT")
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    app.buttons["マイページ"].firstMatch.tap()
+    XCTAssertTrue(element("my_page.screen").waitForExistence(timeout: 5))
+    XCTAssertFalse(element("deck_editor.screen").waitForExistence(timeout: 2),
+                   "An intentional dismissal must survive relaunch")
+
+    let createDeck = app.buttons["my_decks.create"]
+    scrollToHittable(createDeck)
+    createDeck.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5))
+    XCTAssertEqual(element("deck_editor.name").value as? String, "復元する下書き")
+
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(element("home.screen").waitForExistence(timeout: 5))
+    app.buttons["マイページ"].firstMatch.tap()
+    XCTAssertTrue(element("deck_editor.screen").waitForExistence(timeout: 5),
+                  "An interrupted editor must remain automatically recoverable")
+    XCTAssertEqual(element("deck_editor.name").value as? String, "復元する下書き")
   }
 
   func testIdlePiyoReactsToTouchAndLongPressOpensCloset() {

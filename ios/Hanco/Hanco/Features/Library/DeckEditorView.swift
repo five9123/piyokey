@@ -872,6 +872,7 @@ struct DeckEditorView: View {
   @FocusState private var focusedField: FocusedField?
 
   private let onDraftChange: DraftChangeAction?
+  private let onCancel: (@MainActor (String?) -> Void)?
   private let onSave: SaveAction
   private let onSaveAsCopy: SaveAsCopyAction?
   private let onDelete: DeleteAction?
@@ -894,6 +895,7 @@ struct DeckEditorView: View {
     draft: UserDeckDraft,
     draftID: String? = nil,
     onDraftChange: DraftChangeAction? = nil,
+    onCancel: (@MainActor (String?) -> Void)? = nil,
     onSave: @escaping SaveAction,
     onSaveAsCopy: SaveAsCopyAction? = nil,
     onDelete: DeleteAction?
@@ -912,6 +914,7 @@ struct DeckEditorView: View {
       : Set(draft.items.prefix(1).map(\.id))
     _expandedItemIDs = State(initialValue: initiallyExpanded)
     self.onDraftChange = onDraftChange
+    self.onCancel = onCancel
     self.onSave = onSave
     self.onSaveAsCopy = onSaveAsCopy
     self.onDelete = onDelete
@@ -942,6 +945,7 @@ struct DeckEditorView: View {
           Button("deck_editor.cancel") {
             draftSaveTask?.cancel()
             if persistDraft(draft) {
+              onCancel?(latestDraftID)
               dismiss()
             }
           }
