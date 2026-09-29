@@ -153,46 +153,43 @@
     ]
   },
   "next_submission": {
-    "record_status": "version_1_1_2_build_26_source_candidate",
+    "record_status": "version_1_1_2_build_26_waiting_for_review",
     "historical_top_level_record_immutable": true,
     "app_store_connect_app_id": "6794853985",
     "developer_team_id": "X44BQNTAH9",
     "bundle_id": "app.piyokey.Piyokey",
     "marketing_version": "1.1.2",
     "build_number": "26",
-    "currently_linked_build_number": null,
+    "currently_linked_build_number": "26",
     "latest_uploaded_superseded_build_number": "25",
-    "app_store_connect_version_status": "NOT_CREATED",
-    "app_store_connect_version_record_created_at": null,
+    "app_store_connect_version_status": "WAITING_FOR_REVIEW",
+    "app_store_connect_version_record_created_at": "2026-09-29T09:10:54-07:00",
     "localized_media": {
-      "status": "apple_login_restored_final_rc_media_pending",
-      "evidence": "release/store-assets/verification-20260828.json",
-      "locales": [
-        "ja",
+      "status": "UPLOADED_AND_INCLUDED_IN_REVIEW_SUBMISSION",
+      "preview_locales": [
         "en-US",
-        "ko",
-        "zh-Hans",
-        "zh-Hant",
-        "de-DE",
-        "fr-FR",
-        "es-ES",
-        "pt-BR",
-        "id"
+        "en-GB",
+        "en-AU",
+        "en-CA",
+        "ja"
       ],
-      "screenshots": 100,
-      "previews": 10,
-      "latest_review_at": "2026-08-28T09:16:00+09:00",
-      "upload_blocker": "Apple login restored in Chrome on 2026-08-29 JST. Final 1.1 RC matching, native-language review, iPad assets, required locale metadata and upload/save verification remain open. Existing Japanese assets are still the previous eight screenshots and one preview; no media was replaced.",
-      "new_locale_required_metadata_saved": false,
-      "final_release_candidate_match_verified": false,
-      "app_store_connect_uploaded": false
+      "preview_type": "IPHONE_67",
+      "asset_delivery_state": "COMPLETE",
+      "video_delivery_note": "Japanese preview processing complete; English previews still processing at final pre-submission read. Apple accepted the app and these previews into Waiting for Review.",
+      "inherited_screenshots": {
+        "ja": {
+          "APP_IPHONE_67": 8,
+          "APP_IPAD_PRO_3GEN_129": 10
+        }
+      },
+      "existing_screenshot_fallbacks_preserved": true
     },
     "release_mode": "manual_after_approval",
     "manual_hold": true,
     "privacy_policy_url": "https://typee.app/privacy",
     "support_url": "https://typee.app/support",
     "marketing_url": "https://typee.app/",
-    "copyright": "2026 Jungmin Oh",
+    "copyright": "2026 Kiish",
     "availability": {
       "selection": "ALL_COUNTRIES_OR_REGIONS",
       "include_future_storefronts": true,
@@ -248,7 +245,8 @@
       "notes_prepared": true,
       "notes_path": "release/APP_REVIEW_NOTES_1_1_1.md",
       "hotfix_notes_saved_to_app_store_connect": true,
-      "hotfix_notes_reloaded_on": "2026-09-10 22:29 JST"
+      "hotfix_notes_reloaded_on": "2026-09-10 22:29 JST",
+      "notes": "Version 1.1.2 fixes repeated presentation of the Deck Maker editor after a draft is intentionally closed, and updates English and Japanese app previews. Reviewers are given purchase/restore, cancel, tab-switch and manual-resume steps. Existing contact details and no-demo-account requirement were preserved."
     },
     "in_app_purchase": {
       "reference_name": "typee pro Lifetime",
@@ -282,7 +280,7 @@
       "legal_entity_status_note": "Earlier update warning is no longer visible; complete legal verification is not assumed. Pending bank and tax information remains."
     },
     "qa_gates": {
-      "release_archive_validated": false,
+      "release_archive_validated": true,
       "full_unit_and_ui_regression": false,
       "testflight_clean_install_smoke": false,
       "korean_os_ime_device_check": false,
@@ -300,11 +298,20 @@
       "free_piyodeck_boundary_check": false
     },
     "build_artifact": {
-      "status": "SOURCE_CANDIDATE",
+      "status": "ARCHIVED_EXPORTED_UPLOADED_AND_REVIEW_SUBMITTED",
       "source_branch": "codex/fix-dismissed-deck-draft",
-      "build_uploaded": false,
-      "linked_to_version": false,
-      "final_review_submission_sent": false
+      "source_commit": "fb1af933cd0589217d4d59727b032d0e1ec50b60",
+      "source_tree": "cc63142962e1e49e830193457d3eec1c63aafbf3",
+      "ios_tree": "64b1a38edb8744b32b8f3a2e3c9cf68e0d9f9581",
+      "source_pr": "https://github.com/five9123/piyokey/pull/195",
+      "build_uploaded": true,
+      "linked_to_version": true,
+      "final_review_submission_sent": true,
+      "app_store_connect_build_id": "99788b18-254b-4e1b-9795-b140156bd18c",
+      "upload_delivery_id": "99788b18-254b-4e1b-9795-b140156bd18c",
+      "ipa_sha256": "1e238f1c566cb8faa77f4962407d85a88914954251eafce169855456f349e208",
+      "processing_state": "VALID",
+      "source_note": "Archive was built from fb1af93. Subsequent release-record-only changes do not alter the iOS source tree."
     },
     "review_submission_blocked": false,
     "current_live_release": {
@@ -374,7 +381,25 @@
         "height": 1920,
         "duration_seconds": 29.8,
         "fps": 30,
-        "uploaded": false
+        "uploaded": true,
+        "app_store_previews": [
+          {
+            "locale": "en-AU",
+            "id": "eac00019-5013-8e61-8101-1928adf0b273"
+          },
+          {
+            "locale": "en-CA",
+            "id": "63000019-5013-8e61-8128-7dd858335e7e"
+          },
+          {
+            "locale": "en-GB",
+            "id": "3f800019-5013-8e61-8127-bbd9b042b4d7"
+          },
+          {
+            "locale": "en-US",
+            "id": "9a000019-5013-8e61-8129-8b33775dc240"
+          }
+        ]
       },
       {
         "locale": "ja",
@@ -385,8 +410,31 @@
         "height": 1920,
         "duration_seconds": 29.8,
         "fps": 30,
-        "uploaded": false
+        "uploaded": true,
+        "app_store_previews": [
+          {
+            "locale": "ja",
+            "id": "c8800019-5013-8e61-8104-758bd139c6c0"
+          }
+        ]
       }
-    ]
+    ],
+    "app_store_connect_version_id": "08b430da-b73b-48f2-9c68-b2c04966ae83",
+    "app_store_connect_version_status_verified_at": "2026-09-29T16:32:33.809183+00:00",
+    "submission_followup": {
+      "submission_id": "63c65ee3-cbae-492d-9e73-090c5dca9038",
+      "state": "WAITING_FOR_REVIEW",
+      "submitted_date": "2026-09-29T16:31:30.734Z",
+      "review_url": "https://appstoreconnect.apple.com/apps/6794853985/distribution/reviewsubmissions/details/63c65ee3-cbae-492d-9e73-090c5dca9038",
+      "public_release_completed": false,
+      "release_type": "MANUAL"
+    },
+    "automated_validation": {
+      "ios_unit_tests": 449,
+      "swift_shared_tests": 67,
+      "python_tests": 110,
+      "repository_preflight": "PASS",
+      "ui": "Targeted iPhone/iPad purchase and draft dismissal/resume/relaunch scenarios passed. Not a full UI-suite or real-StoreKit transaction assertion."
+    }
   }
 }

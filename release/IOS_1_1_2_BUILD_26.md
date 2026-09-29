@@ -1,6 +1,7 @@
 # iOS 1.1.2 (26) — Deck Maker draft recovery
 
-2026-09-30 JST. Source candidate; upload and App Review status must be verified separately.
+2026-09-30 JST. **App Review submitted: Waiting for Review.**
+Public release remains subject to Apple approval and the existing manual release setting.
 
 ## App change
 
@@ -43,8 +44,9 @@ The saved configuration was read back again for this release:
 ## Release operation
 
 Public JP lookup and authenticated ASC both confirm 1.1.1, with build 25 as the latest
-upload. Prepare 1.1.2 (26), preserving existing store settings and manual release
-after approval. Authentication was restored and the version/build allocation verified. Source signing and upload must use existing team
+upload. 1.1.2 (26) was archived, exported, uploaded, processed as VALID, selected, and
+submitted for review. Existing store settings and manual release after approval
+were preserved. Authentication and version/build allocation were verified. Source signing and upload must use existing team
 X44BQNTAH9, bundle `app.piyokey.Piyokey`, and app ID 6794853985.
 Historical 1.1.1 (25) submission data is preserved in
 `release/history/ios-1.1.1-build-25-submission.json`.
@@ -60,6 +62,18 @@ What's New draft:
 User-supplied English and Japanese previews: 886×1920, 29.8 seconds, H.264 High
 Level 4.0, 30 fps, AAC stereo 48 kHz. Register them for the corresponding English
 and Japanese iPhone localizations. Filenames and SHA-256 hashes are recorded in
-`app_store_submission.json`; uploaded/processing status requires ASC read-back.
+`app_store_submission.json`. All five localized uploads completed. Japanese
+processing completed; English processing was still pending when Apple accepted
+the submission. The inherited Japanese preview in the new candidate was replaced;
+the published 1.1.1 preview was not changed.
 
 Repository Python validation: 110 tests passed.
+
+## Submission evidence
+
+- Version ID: `08b430da-b73b-48f2-9c68-b2c04966ae83`.
+- Build / delivery ID: `99788b18-254b-4e1b-9795-b140156bd18c`.
+- [Review submission](https://appstoreconnect.apple.com/apps/6794853985/distribution/reviewsubmissions/details/63c65ee3-cbae-492d-9e73-090c5dca9038): both submission and version read back as **WAITING_FOR_REVIEW**.
+- Archive source: `fb1af933cd0589217d4d59727b032d0e1ec50b60`; subsequent changes are release records only.
+- Swift shared engine: 67 tests passed. Repository preflight passed.
+- This records submission, not App Review approval or public availability.
