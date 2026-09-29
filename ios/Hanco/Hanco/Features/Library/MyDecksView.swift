@@ -115,6 +115,7 @@ struct MyPageView: View {
   @State private var deckPendingDeletionAfterExport: Deck?
   @State private var deletionFailure: DeckDeletionFailure?
   @State private var deletingDeckID: String?
+  @AppStorage("deck_maker.dismissed_draft_id") private var dismissedDraftID = ""
   @State private var draftRecoveryFailure = false
   @State private var isPageVisible = false
   let catalog: Catalog?
@@ -185,6 +186,9 @@ struct MyPageView: View {
           draftID: presentation.draftID,
           onDraftChange: { draft in
             try UserDeckDraftStore.live.save(draft)
+          },
+          onCancel: { latestDraftID in
+            dismissedDraftID = latestDraftID ?? presentation.draftID
           },
           onSave: { deck, latestDraftID in
             try await saveUserDeck(
@@ -1378,6 +1382,10 @@ struct MyPageView: View {
     derivedFromDeckID: String?,
     deletesDeckID: String?
   ) {
+    // Explicitly resuming makes an interrupted editing session recoverable again.
+    if dismissedDraftID == active.draftID {
+      dismissedDraftID = ""
+    }
     editorPresentation = DeckEditorPresentation(
       draftID: active.draftID,
       draft: active.draft,
@@ -1518,6 +1526,9 @@ struct MyPageView: View {
         derivedFromDeckID = sourceDeckID
         deletesDeckID = nil
       }
+      // Closing the editor keeps its draft but opts out of automatic presentation,
+      // including after relaunch. Create/edit actions still resume it explicitly.
+      guard active.draftID != dismissedDraftID else { return }
       presentDeckEditor(
         active,
         source: source,
