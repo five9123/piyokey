@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     AppSettings.migrateLegacyLanguage()
-    handleIncoming(intent)
+    // A recreated Activity (font/locale change, process restore) replays its original intent.
+    if (savedInstanceState == null) handleIncoming(intent)
     setContent {
       val themeRaw by AppSettings.theme.flow.collectAsStateWithLifecycle()
       val fontRaw by AppSettings.fontScale.flow.collectAsStateWithLifecycle()
@@ -50,6 +51,8 @@ class MainActivity : ComponentActivity() {
     if (intent == null) return
     if (intent.action == Intent.ACTION_VIEW || intent.action == Intent.ACTION_SEND) {
       IncomingDocuments.offer(intent)
+      // Consume it so a later recreation cannot stage the same document again.
+      setIntent(Intent(Intent.ACTION_MAIN))
     }
   }
 }

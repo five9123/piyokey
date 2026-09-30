@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import app.piyokey.android.feature.onboarding.RootGate
 import app.piyokey.android.ui.theme.PiyoBackground
 
@@ -16,9 +17,13 @@ fun AppRoot() {
   CompositionLocalProvider(LocalAppNavigator provides appNavigator) {
     PiyoBackground {
       Box(Modifier.fillMaxSize()) {
-        RootGate { MainTabs() }
-        if (appNavigator.depth > 0) {
-          PiyoBackground { appNavigator.RenderStack(allowRootBack = true) }
+        val covered = appNavigator.depth > 0
+        // Tabs under a full-screen cover must not take touches or accessibility focus.
+        Box(Modifier.fillMaxSize().then(if (covered) Modifier.clearAndSetSemantics {} else Modifier)) {
+          RootGate { MainTabs() }
+        }
+        if (covered) {
+          PiyoBackground(Modifier.blockPointersBelow()) { appNavigator.RenderStack(allowRootBack = true) }
         }
       }
     }

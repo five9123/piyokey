@@ -56,8 +56,9 @@ class PiyoDeckImportCoordinator(
   suspend fun resumePendingIfNeeded() {
     if (candidateState.value != null || queue.isNotEmpty() || isPreparingCandidate || activeReadCount > 0) return
     val files = withContext(io) { runCatching { store.pending() }.getOrDefault(emptyList()) }
-    queue.clear()
-    queue.addAll(files)
+    // A document may have started staging while the directory was listed.
+    if (candidateState.value != null || isPreparingCandidate || activeReadCount > 0) return
+    files.filterNot { file -> queue.any { it.canonicalPath == file.canonicalPath } }.forEach(queue::addLast)
     prepareNextIfPossible()
   }
 

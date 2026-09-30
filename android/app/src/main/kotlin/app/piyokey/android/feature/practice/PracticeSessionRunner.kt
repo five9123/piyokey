@@ -36,6 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 /** iOS `PracticeCompletionPersistenceState` (curriculum completion is saved durably before hatch "next"). */
@@ -414,16 +415,25 @@ class PracticeSessionRunner(
     val accuracy = session.accuracyPercent
     val stars = curriculumStars
     completionPersistenceState = PracticeCompletionPersistenceState.SAVING
-    completionJob = scope.launch {
+    val chainsHatchMissions = config.chainsHatchMissions
+    val retention = retentionSession
+    val hostActivity = activity()
+    // The durable part runs in the app scope: leaving the screen (close/Back) during the save must
+    // not drop the streak stamp or growth sync. Only the UI state update is tied to this screen.
+    val durable = AppData.scope.async {
       val saved = AppData.curriculum.finishAndWait(stageId, stars, accuracy)
       if (saved && stars > 0) {
-        AppData.retention.record(RetentionActivityKind.CURRICULUM, retentionSession)
-        if (config.chainsHatchMissions) {
+        AppData.retention.record(RetentionActivityKind.CURRICULUM, retention)
+        if (chainsHatchMissions) {
           val index = HatchOnboardingPolicy.requiredStages.indexOfFirst { it.id == stageId }
           if (index >= 0) Telemetry.onboardingStepCompleted("hatch_${index + 1}")
         }
-        PracticeGrowth.synchronize(activity())
+        PracticeGrowth.synchronize(hostActivity)
       }
+      saved
+    }
+    completionJob = scope.launch {
+      val saved = durable.await()
       if (!isActive || generation != completionGeneration) return@launch
       completionPersistenceState = if (saved) PracticeCompletionPersistenceState.SAVED else PracticeCompletionPersistenceState.FAILED
       completionJob = null

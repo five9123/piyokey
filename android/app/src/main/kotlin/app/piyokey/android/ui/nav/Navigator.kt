@@ -1,13 +1,18 @@
 package app.piyokey.android.ui.nav
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -61,21 +66,36 @@ class Navigator(root: Route? = null) {
     push(route)
   }
 
+  /**
+   * Draws every entry, top last. Lower entries stay composed (hidden, no input, no semantics) so a
+   * session or result under a pushed screen keeps its state and is not restarted on Back.
+   */
   @Composable
   internal fun RenderStack(allowRootBack: Boolean = false) {
     val holder = rememberSaveableStateHolder()
-    val current = entries.lastOrNull() ?: return
+    if (entries.isEmpty()) return
     BackHandler(enabled = entries.size > 1 || (allowRootBack && entries.isNotEmpty())) { pop() }
-    AnimatedContent(
-      targetState = current,
-      transitionSpec = {
-        val forward = targetState.id > initialState.id
-        (slideInHorizontally { if (forward) it / 4 else -it / 4 } + fadeIn()) togetherWith
-          (slideOutHorizontally { if (forward) -it / 4 else it / 4 } + fadeOut())
-      },
-      label = "nav",
-    ) { entry ->
-      holder.SaveableStateProvider(entry.id) { entry.route.Content() }
+    Box(Modifier.fillMaxSize()) {
+      val snapshot = entries.toList()
+      snapshot.forEachIndexed { index, entry ->
+        key(entry.id) {
+          val isTop = index == snapshot.lastIndex
+          // Pushed entries slide/fade in once; the root entry appears without animation.
+          val appear = remember { Animatable(if (index == 0) 1f else 0f) }
+          LaunchedEffect(Unit) { appear.animateTo(1f, tween(220)) }
+          Box(
+            Modifier
+              .fillMaxSize()
+              .graphicsLayer {
+                alpha = if (isTop) appear.value else 0f
+                translationX = (1f - appear.value) * size.width / 4f
+              }
+              .then(if (isTop) Modifier.blockPointersBelow() else Modifier.clearAndSetSemantics {}),
+          ) {
+            holder.SaveableStateProvider(entry.id) { entry.route.Content() }
+          }
+        }
+      }
     }
   }
 
@@ -93,3 +113,13 @@ val LocalTabNavigator = staticCompositionLocalOf<Navigator> { error("No tab navi
  * are pushed here and render above the tab bar (iOS `fullScreenCover`).
  */
 val LocalAppNavigator = staticCompositionLocalOf<Navigator> { error("No app navigator") }
+
+/**
+ * Makes this layer the hit target for its whole area so touches never reach siblings drawn below
+ * it (tabs under a full-screen session, or hidden stack entries). Children still receive events.
+ */
+fun Modifier.blockPointersBelow(): Modifier = pointerInput(Unit) {
+  awaitPointerEventScope {
+    while (true) awaitPointerEvent()
+  }
+}

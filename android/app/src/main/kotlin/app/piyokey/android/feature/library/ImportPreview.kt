@@ -198,7 +198,9 @@ fun ImportPreview(candidate: PiyoDeckImportCandidate, coordinator: PiyoDeckImpor
 
   fun install(replacing: Boolean) {
     if (!replacing && collision != PiyoDeckImportCollision.New) return
-    if (!replacing && !canInstallNewDeck) {
+    // Read the entitlement live: this closure may be replayed after a purchase from a composition
+    // where the remembered `canInstallNewDeck` was still false.
+    if (!replacing && !AppData.deckLibrary.canInstallNewUserDeck(ProStore.hasAccess.value)) {
       afterPurchase = { install(false) }
       showsPaywall = true
       return

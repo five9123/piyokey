@@ -49,7 +49,9 @@ fun LocalizedApp(language: AppLanguage, content: @Composable () -> Unit) {
   val activity = androidx.activity.compose.LocalActivity.current
   val registryOwner = androidx.activity.compose.LocalActivityResultRegistryOwner.current
   val backOwner = androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current
-  val localized = remember(base, language) { L.localizedContext(base, language) }
+  // Rebuild on configuration changes too (rotation, density, dark mode are handled in-process).
+  val configuration = LocalConfiguration.current
+  val localized = remember(base, language, configuration) { L.localizedContext(base, language) }
   CompositionLocalProvider(
     LocalContext provides localized,
     LocalConfiguration provides localized.resources.configuration,

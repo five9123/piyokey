@@ -71,4 +71,20 @@ class DeckDraftDismissalInstrumentedTest {
     rule.waitUntil(5_000) { editorVisible() }
     assertEquals("", DeckMakerPrefs.dismissedDraftId.value)
   }
+
+  @Test
+  fun purchasingFromCreateOpensTheEditorAfterThePaywallCloses() {
+    runBlocking(Dispatchers.Main) { ProStore.setAccessForTesting(false) }
+    rule.setContent { LibraryTestHost(AppTab.MY_PAGE) { MyPageTabRoot() } }
+
+    rule.onNodeWithTag("my_decks.create").performScrollTo().performClick()
+    rule.waitUntil(5_000) { rule.onAllNodes(hasTestTag("deck_maker.paywall.screen")).fetchSemanticsNodes().isNotEmpty() }
+
+    // Entitlement arrives while the paywall is showing (purchase or "already owned").
+    runBlocking(Dispatchers.Main) { ProStore.setAccessForTesting(true) }
+    rule.waitForIdle()
+    rule.onNodeWithTag("deck_maker.paywall.purchase").performClick()
+
+    rule.waitUntil(5_000) { editorVisible() }
+  }
 }

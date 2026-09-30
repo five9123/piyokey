@@ -148,6 +148,7 @@ fun MyPageTabRoot() {
   var showsPaywall by remember { mutableStateOf(false) }
   var pendingAction by remember { mutableStateOf<DeckMakerAction?>(null) }
   var paywallGrantedAccess by remember { mutableStateOf(false) }
+  var routeAfterPaywall by remember { mutableStateOf<DeckMakerAction?>(null) }
   var draftConflict by remember { mutableStateOf<Pair<DeckMakerAction, app.piyokey.android.data.decks.ActiveUserDeckDraft>?>(null) }
   var deletion by remember { mutableStateOf<DeletionPresentation?>(null) }
   var pendingDeletionAfterExport by remember { mutableStateOf<Deck?>(null) }
@@ -274,7 +275,16 @@ fun MyPageTabRoot() {
     showsPaywall = false
     pendingAction = null
     paywallGrantedAccess = false
-    if (granted && ProStore.hasAccess.value && action != null) routeAction(action)
+    // Route once the paywall has left composition: `canPresentDraftUI` in this closure was
+    // captured while the paywall was still showing.
+    if (granted && ProStore.hasAccess.value && action != null) routeAfterPaywall = action
+  }
+  LaunchedEffect(routeAfterPaywall, canPresentDraftUI) {
+    val action = routeAfterPaywall ?: return@LaunchedEffect
+    if (canPresentDraftUI) {
+      routeAfterPaywall = null
+      routeAction(action)
+    }
   }
 
   fun restoreDraftIfAvailable() {

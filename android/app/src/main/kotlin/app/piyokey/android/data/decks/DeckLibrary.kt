@@ -231,5 +231,7 @@ class DeckLibrary(
     }
   }
 
-  private suspend fun <T> write(block: () -> T): T = writer.withLock { withContext(io) { block() } }
+  // A committed write must also update memory: never let caller cancellation drop the result.
+  private suspend fun <T> write(block: () -> T): T =
+    withContext(kotlinx.coroutines.NonCancellable) { writer.withLock { withContext(io) { block() } } }
 }

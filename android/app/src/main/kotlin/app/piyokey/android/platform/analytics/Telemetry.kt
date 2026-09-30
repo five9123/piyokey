@@ -54,7 +54,8 @@ object Telemetry {
     appOpenTracker = AnalyticsAppOpenTracker(analyticsConsent)
     if (appOpenTracker.analyticsEnabled) configurePostHogIfAvailable() else deleteQueuedEvents()
     configureCrashlyticsIfAvailable()
-    captureAppOpened(appOpenTracker.configure())
+    // `app_opened` is captured from the first process foreground (sceneDidBecomeActive), not here:
+    // the reminder alarm and boot broadcasts also start the process without opening the app.
   }
 
   /** Re-reads both consent settings (iOS `updateConsent(productAnalytics:crashDiagnostics:)`). */

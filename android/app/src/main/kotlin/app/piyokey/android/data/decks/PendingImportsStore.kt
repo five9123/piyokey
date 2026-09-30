@@ -19,11 +19,15 @@ class PiyoDeckFileTooLargeException : IOException("The .typedeck file exceeds ${
  * confirms or dismisses it. Blocking file IO.
  */
 class PendingImportsStore(val rootDir: File) {
+  /** `.partial` files currently being written by [stage]; [pending] must not delete these. */
+  private val activePartials = java.util.Collections.synchronizedSet(mutableSetOf<String>())
+
   /** Copies [input] (≤ 8 MiB) to `<uuid>.typedeck` via a `.partial` file. */
   fun stage(input: InputStream): File {
     if (!rootDir.isDirectory && !rootDir.mkdirs() && !rootDir.isDirectory) throw IOException("Could not create $rootDir")
     val staged = File(rootDir, "${UUID.randomUUID().toString().uppercase()}.typedeck")
     val partial = File(staged.path + ".partial")
+    activePartials += partial.canonicalPath
     try {
       partial.outputStream().use { output ->
         val buffer = ByteArray(64 * 1024)
@@ -43,13 +47,17 @@ class PendingImportsStore(val rootDir: File) {
       partial.delete()
       staged.delete()
       throw error
+    } finally {
+      activePartials -= partial.canonicalPath
     }
   }
 
   /** Staged documents in name order; interrupted `.partial` copies are deleted. */
   fun pending(): List<File> {
     val contents = rootDir.listFiles()?.filter { !it.name.startsWith(".") } ?: return emptyList()
-    contents.filter { it.extension.equals("partial", ignoreCase = true) }.forEach { it.delete() }
+    // A partial that belongs to an in-flight stage() is not an interrupted copy.
+    contents.filter { it.extension.equals("partial", ignoreCase = true) && it.canonicalPath !in activePartials }
+      .forEach { it.delete() }
     return contents.filter { it.extension.equals("typedeck", ignoreCase = true) && it.exists() }.sortedBy { it.name }
   }
 
