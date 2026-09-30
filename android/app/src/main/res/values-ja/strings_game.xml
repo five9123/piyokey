@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only game copy (Play Games Services replaces iOS Game Center). Owned by feature/game. -->
+<resources>
+  <string name="game_play_games_result_action">Play Games のランキングを見る</string>
+  <string name="game_play_games_result_rank_format">#%d · Play Games ランキング</string>
+  <string name="game_play_games_submission_sign_in">Play Games にサインインするとスコアを登録できます。</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only game copy (Play Games Services replaces iOS Game Center). Owned by feature/game. -->
+<resources>
+  <string name="game_play_games_result_action">View Play Games leaderboard</string>
+  <string name="game_play_games_result_rank_format">#%d · Play Games leaderboard</string>
+  <string name="game_play_games_submission_sign_in">Sign in to Play Games to register your score.</string>
+</resources>

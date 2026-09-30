@@ -1,0 +1,48 @@
+{
+  "_comment": "Android-only replacements for iOS copy that names Apple products or iOS UI. Applied by tools/gen_android_strings.py on top of the iOS Localizable.strings; keys use iOS names.",
+  "en": {
+    "closet.cond_game_center": "Submit a score to Google Play Games",
+    "deck_maker.restore.empty.message": "Make sure you're signed in to Google Play with the account you used for the purchase.",
+    "onboarding.keyboard.device_note": "Bluetooth and USB keyboards work through your device's Korean Dubeolsik input.",
+    "piyodeck.notice.cannotRead.message": "Check that the file is still available on your device or in your cloud storage app, then try again.",
+    "piyodeck.notice.unsupportedVersion.message": "Update typee from Google Play, then try again.",
+    "result.share.saved": "Saved the result image to Pictures.",
+    "retention.reminder.denied": "Notifications aren't allowed. You can change this in your device's Settings."
+  },
+  "ja": {
+    "closet.cond_game_center": "Google Play Gamesへスコアを送信",
+    "deck_maker.restore.empty.message": "購入時と同じアカウントでGoogle Playにログインしているか確認してください。",
+    "onboarding.keyboard.device_note": "Bluetooth・USBキーボードも、端末の韓国語2ボル式入力として使えます。",
+    "piyodeck.notice.cannotRead.message": "端末またはクラウドストレージアプリでファイルにアクセスできるか確認して、もう一度お試しください。",
+    "piyodeck.notice.unsupportedVersion.message": "Google Playでピヨキーを更新してから、もう一度お試しください。",
+    "result.share.saved": "結果画像を「Pictures」に保存しました。",
+    "retention.reminder.denied": "通知が許可されていません。端末の設定から変更できます。"
+  },
+  "es": {
+    "closet.cond_game_center": "Envía una puntuación a Google Play Juegos",
+    "deck_maker.restore.empty.message": "Comprueba que has iniciado sesión en Google Play con la cuenta con la que realizaste la compra.",
+    "onboarding.keyboard.device_note": "Los teclados Bluetooth y USB usan la entrada coreana de dos conjuntos de tu dispositivo.",
+    "piyodeck.notice.cannotRead.message": "Comprueba que el archivo sigue disponible en tu dispositivo o en tu app de almacenamiento en la nube e inténtalo de nuevo.",
+    "piyodeck.notice.unsupportedVersion.message": "Actualiza typee desde Google Play e inténtalo de nuevo.",
+    "result.share.saved": "Imagen del resultado guardada en Imágenes.",
+    "retention.reminder.denied": "Las notificaciones no están permitidas. Puedes cambiarlo en los Ajustes del dispositivo."
+  },
+  "de": {
+    "closet.cond_game_center": "Punktzahl an Google Play Spiele senden",
+    "deck_maker.restore.empty.message": "Melde dich bei Google Play mit demselben Konto an, das du beim Kauf verwendet hast.",
+    "onboarding.keyboard.device_note": "Bluetooth- und USB-Tastaturen nutzen die koreanische Dubeolsik-Eingabe deines Geräts.",
+    "piyodeck.notice.cannotRead.message": "Prüfe, ob die Datei auf deinem Gerät oder in deiner Cloud-Speicher-App noch verfügbar ist, und versuche es erneut.",
+    "piyodeck.notice.unsupportedVersion.message": "Aktualisiere typee bei Google Play und versuche es erneut.",
+    "result.share.saved": "Ergebnisbild in „Bilder“ gespeichert.",
+    "retention.reminder.denied": "Benachrichtigungen sind nicht erlaubt. Ändere dies in den Einstellungen deines Geräts."
+  },
+  "fr": {
+    "closet.cond_game_center": "Envoyer un score à Google Play Jeux",
+    "deck_maker.restore.empty.message": "Vérifie que tu es connecté à Google Play avec le compte utilisé lors de l’achat.",
+    "onboarding.keyboard.device_note": "Les claviers Bluetooth et USB utilisent la saisie coréenne Dubeolsik de ton appareil.",
+    "piyodeck.notice.cannotRead.message": "Vérifie que le fichier est toujours disponible sur ton appareil ou dans ton app de stockage cloud, puis réessaie.",
+    "piyodeck.notice.unsupportedVersion.message": "Mets typee à jour sur Google Play, puis réessaie.",
+    "result.share.saved": "Image du résultat enregistrée dans Images.",
+    "retention.reminder.denied": "Les notifications ne sont pas autorisées. Tu peux les activer dans les réglages de ton appareil."
+  }
+}

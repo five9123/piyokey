@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only strings for feature/input (no iOS equivalent). Owned by feature/input; not generated. -->
+<resources>
+  <string name="keyboard_guide_android_subtitle">端末の設定で一度追加すると、キーボードの地球儀キーやスペースバーのスワイプでいつでも切り替えられます。</string>
+  <string name="keyboard_guide_android_step_1_title">設定 → システム を開く</string>
+  <string name="keyboard_guide_android_step_1_detail">「言語と入力」を選択（Samsungでは「一般管理」）</string>
+  <string name="keyboard_guide_android_step_2_title">キーボード → 画面キーボード</string>
+  <string name="keyboard_guide_android_step_2_detail">GboardやSamsungキーボードなど、使っているキーボードを選択</string>
+  <string name="keyboard_guide_android_step_3_title">韓国語を追加</string>
+  <string name="keyboard_guide_android_step_3_detail">言語 → キーボードを追加 → 한국어 を選び、2ボル式または10キー（天地人）を選択</string>
+  <string name="keyboard_guide_android_open_settings">キーボード設定を開く</string>
+  <string name="keyboard_guide_android_link">韓国語キーボードの追加方法</string>
+  <string name="keyboard_guide_android_not_detected">韓国語キーボードが見つかりませんでした。韓国語が表示されない場合は、セッション終了後に設定の案内を確認してください。</string>
+  <string name="os_ime_android_input_source_warning_detail">地球儀キーまたはスペースバーのスワイプで韓国語2ボル式に切り替えてください。</string>
+  <string name="os_ime_android_input_hint">入力欄をタップし、キーボードを韓国語に切り替えてください。変換中の揺れはミスに数えません。</string>
+  <string name="keyboard_android_shift_on">オン</string>
+</resources>

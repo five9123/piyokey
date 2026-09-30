@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="launcher_background">#FFF6F1</color>
+  <color name="piyo_background">#FFFFF0F7</color>
+  <color name="piyo_accent">#FFF54F8C</color>
+  <color name="ic_launcher_background">#FFFDE6CF</color>
 </resources>

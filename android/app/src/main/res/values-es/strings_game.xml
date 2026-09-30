@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only game copy (Play Games Services replaces iOS Game Center). Owned by feature/game. -->
+<resources>
+  <string name="game_play_games_result_action">Ver clasificación de Play Games</string>
+  <string name="game_play_games_result_rank_format">#%d · Clasificación de Play Games</string>
+  <string name="game_play_games_submission_sign_in">Inicia sesión en Play Games para registrar tu puntuación.</string>
+</resources>

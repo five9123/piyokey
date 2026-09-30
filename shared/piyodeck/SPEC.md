@@ -205,7 +205,6 @@ three writers reproduce it byte-for-byte and all three readers accept it.
 `fixtures/valid/pretty-basic.typedeck` preserves valid pretty-printed entry
 bytes and must be accepted by all readers. `fixtures/cases.json` records the
 portable malicious corpus with exact size, SHA-256, and coarse error family.
-Python and Swift execute every listed binary directly; Kotlin directly executes
-the shared SHA and Unicode cases and covers the remaining recorded ZIP/JSON
-families with deterministic in-memory mutations. Regenerate the binary corpus
+Python and Swift execute every listed binary directly; the Android Kotlin
+reader (being re-ported from scratch) must also execute every listed binary. Regenerate the binary corpus
 with `python3 tools/gen_piyodeck_fixtures.py`.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only copy for Discover / My Page / Deck Maker (feature/discover, feature/library). -->
+<resources>
+  <string name="library_notice_unsupported_version_message">Google Playでピヨキーを更新してから、もう一度お試しください。</string>
+  <string name="library_notice_cannot_read_message">ファイルにアクセスできるか確認して、もう一度お試しください。</string>
+  <string name="library_paywall_feature_edit_detail">項目の追加・修正・並べ替えをスマートフォンだけで完結できます。</string>
+  <string name="library_restore_empty_message">購入時と同じGoogleアカウントでGoogle Playにログインしているか確認してください。</string>
+  <string name="library_back">戻る</string>
+  <string name="library_item_move_up">上へ移動</string>
+  <string name="library_item_move_down">下へ移動</string>
+  <string name="library_item_delete">項目を削除</string>
+</resources>

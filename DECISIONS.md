@@ -1882,3 +1882,20 @@ PRD가 모호한 지점에서 내린 결정을 기록한다. 형식:
 - 결정: 일반 Flow 초급 enum·intended·후보 baseline을 함께 v5로 바꾼다. iOS 16–25에서도 초급 CTA/제출이 빠지지 않도록 최종 후보 구성을 준비하되 실제 서버 확인은 미완료로 유지한다. 기존의 Live·실기기 검증 목적은 출고 전 동일 후보의 실제 제출·조회 gate로 지키며, 모의 검증만으로 출고하지 않는다.
 - 결정: 기본 보드 v5 전환·기존 v4 archive는 새 앱 실제 검증과 배포 후에만 진행한다. 기존 v4 서버 점수와 출처 불명 집계는 복사하지 않는다. 나머지15개 ID·콘텐츠·점수 규칙은 유지한다.
 - 검증: c127b04 Claude 통과는 이전 head에만 적용한다. v5 전환 후 새 SHA focused 증빙·exact-head 리뷰·maintainer 승인과 실제 기기 검증을 다시 요구한다.
+
+## 2026-09-30 Android 포트 삭제와 처음부터 재시작
+- 결정: 사용자 요청으로 2026-08-30에 동결한 Android 포트 전체를 저장소에서 삭제한다. 대상은 `android/`, `docs/ANDROID_M7_*`·`ANDROID_R11A_*`·`ANDROID_RELEASE_DISTRIBUTION_HANDOFF.md`·`ANDROID_M7_CONTRACTS.sha256`, `artifacts/android-m5`·`artifacts/m7`, Google Play listing·콘솔 선언·Data safety·QA 초안과 Play 그래픽 생성기다. 과거 코드는 git 이력(`b5362eb`, 삭제 직전 `1f3027a`)에서 읽기 전용으로만 참고하고 복사해 이어 쓰지 않는다.
+- 결정: Android는 현재 iOS 앱(공개 1.1.1과 이후 `main` 병합분)을 parity 기준으로 처음부터 동일하게 포팅한다. 범위 체크리스트·초기 아키텍처 제안·A0~A8 마일스톤·승인 필요 항목은 `docs/ANDROID_PORT_PLAN.md`가 소유한다. applicationId, 최소 SDK·태블릿 범위, 주간 피요컵 랭킹 방식, notice v2 적용, 저장 방식(JSON 파일 vs Room), 추적 Issue가 사용자 결정으로 확정되기 전에는 Gradle 프로젝트 생성·Play Console 작업을 시작하지 않는다.
+- 결정: 삭제에 맞춰 도구에서 Android 참조를 제거한다. `gen_analytics_contract.py`의 Kotlin 출력(새 포트 A1에서 재추가), `workspace_doctor.py --scope android`(A0에서 재추가), `release_preflight.py`의 Google Play 초안 검사와 `android_m7` 동결 상태 검사, 관련 Python 테스트다. `shared/analytics/events.json`의 `android` platform 값과 `.gitignore`의 Gradle 항목은 새 포트를 위해 유지한다.
+- 근거: 과거 포트는 iOS 1.1 build 7 시점 스냅샷을 기준으로 해 이후 천지인·플릭, 설정 IA, 동의 v2, Game Center 분리·재조회 등에서 drift가 생겼고, 입력 지연 실기기 gate(p95 54ms > 50ms)와 모든 외부 gate를 통과하지 못했다. 이어 고치기보다 현행 iOS를 기준으로 실기기 gate를 단계마다 두는 새 설계가 비용과 위험이 낮다.
+- 관련 PRD 섹션: v6.29, §12, §12.1, §13, §14
+- 영향 범위: `android/`(삭제), Android 문서·Play 초안(삭제), `tools/gen_analytics_contract.py`, `tools/workspace_doctor.py`, `tools/release_preflight.py`, `release/global_app_store_metadata.json`, 관련 테스트, AGENTS·README·ROADMAP·PROJECT_STATUS·docs
+
+## 2026-09-30 Android 재포팅 구현 기준과 잠정 결정
+- 결정: 사용자 지시("출시 가능한 수준으로 iOS와 최대한 유사하게 만들고 테스트")에 따라 `docs/ANDROID_PORT_PLAN.md` §5.1의 잠정 기본값으로 구현한다. applicationId 기본 `app.piyokey.piyokey`(빌드 입력으로 변경 가능, 배포 AAB는 확인 입력 필수), minSdk 26 · targetSdk 36 · compileSdk 37, 휴대폰+태블릿, iOS와 같은 JSON 파일 저장 + SharedPreferences(iOS UserDefaults 키 그대로), 주간 피요컵은 로컬 JST 주간 기록 원본 + 주입된 경우만 Play Games 제출.
+- 결정: 모듈은 순수 `:core:hangul`·`:core:deckkit`·`:core:domain`과 단일 `:app`(패키지 분리)이다. 툴체인은 AGP 9.3.1 · Gradle 9.5.0 · Kotlin 2.3.21 · Compose BOM 2026.08.00 · JVM 17. UI 문자열은 iOS `Localizable.strings`/`.stringsdict`/`KoreanLearningContent.strings`에서 `tools/gen_android_strings.py`로 생성하고, Apple 제품명을 언급하는 문구만 `tools/android_string_overrides.json`으로 Android 표현으로 바꾼다. 분석 계약 Kotlin 출력은 `android/app/.../platform/analytics/`로 되돌렸다.
+- 결정: 앱 내 언어 선택은 `LocalizedApp`이 설정 context를 제공하는 방식이며, Activity 기반 로컬(ActivityResultRegistry·BackPressed·LocalActivity)은 교체 전에 원래 Activity에서 보존한다. 진행 저장소 revision은 reload 후에도 단조 증가시켜 저장 누락을 막는다. 첫 foreground의 Play Billing 연결은 첫 프레임 이후로 미룬다.
+- 근거: 사용자가 결정 대기 없이 구현·테스트를 지시했고, 모든 선택은 빌드 입력·설정으로 되돌릴 수 있으며 외부 등록 전에 바꿀 수 있다. iOS와 같은 저장 형식·키·문자열 원본을 쓰면 parity 검증과 유지보수 비용이 줄어든다.
+- 검증: JVM 499 · 계측 UI 54 통과, lint error 0, Hangul coverage line 99.85% / branch 95.99%, release APK/AAB 빌드, API 35 에뮬레이터 신규 사용자 흐름(온보딩→부화 3미션→투어→알림→개인정보→흐름 게임·덱 설치·연습·공유 저장·Deck Maker 페이월·일본어·다크·태블릿 폭) 수동 QA. 실기기·Play Console·결제·Play Games·권리 gate는 미완료다.
+- 관련 PRD 섹션: v6.29, §12, §12.1, §13, §14
+- 영향 범위: `android/**`, `tools/gen_android_strings.py`, `tools/android_string_overrides.json`, `tools/gen_analytics_contract.py`, `tools/tests/*`, `release/GOOGLE_PLAY_RELEASE.md`, `release/google_play/**`

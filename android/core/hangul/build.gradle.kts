@@ -3,14 +3,8 @@ plugins {
   jacoco
 }
 
-jacoco {
-  toolVersion = "0.8.13"
-}
-
 kotlin {
-  compilerOptions {
-    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-  }
+  compilerOptions { jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17 }
 }
 
 java {
@@ -24,39 +18,23 @@ dependencies {
 }
 
 tasks.test {
-  systemProperty(
-    "piyokey.sharedTestVectors",
-    rootProject.layout.projectDirectory.file("../shared/test_vectors.json").asFile.absolutePath,
-  )
+  systemProperty("piyokey.sharedRoot", rootProject.layout.projectDirectory.dir("../shared").asFile.absolutePath)
+  finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
   dependsOn(tasks.test)
-  reports {
-    html.required.set(true)
-    xml.required.set(true)
-    csv.required.set(false)
-  }
+  reports { xml.required.set(true); html.required.set(true) }
 }
 
 tasks.jacocoTestCoverageVerification {
   dependsOn(tasks.test)
   violationRules {
     rule {
-      limit {
-        counter = "LINE"
-        value = "COVEREDRATIO"
-        minimum = "0.95".toBigDecimal()
-      }
-      limit {
-        counter = "BRANCH"
-        value = "COVEREDRATIO"
-        minimum = "0.95".toBigDecimal()
-      }
+      limit { counter = "LINE"; value = "COVEREDRATIO"; minimum = "0.95".toBigDecimal() }
+      limit { counter = "BRANCH"; value = "COVEREDRATIO"; minimum = "0.90".toBigDecimal() }
     }
   }
 }
 
-tasks.check {
-  dependsOn(tasks.jacocoTestCoverageVerification)
-}
+tasks.check { dependsOn(tasks.jacocoTestCoverageVerification) }

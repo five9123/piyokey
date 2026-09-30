@@ -4,7 +4,7 @@
 
 PIYOKEY uses PostHog Cloud EU for anonymous product analytics on iOS/iPadOS, Android, and web. Firebase Crashlytics handles native iOS/iPadOS crashes and Android crashes/ANRs; PostHog Error Tracking handles sanitized web exceptions.
 
-`shared/analytics/events.json` is the only product-event allowlist. Run `python3 tools/gen_analytics_contract.py` after changing it, then commit the generated Swift, Kotlin, and TypeScript files. A platform must reject unknown properties before calling its SDK.
+`shared/analytics/events.json` is the only product-event allowlist. Run `python3 tools/gen_analytics_contract.py` after changing it, then commit the generated Swift and TypeScript files (the new Android port re-adds a Kotlin output in its A1 milestone). A platform must reject unknown properties before calling its SDK.
 
 Both `Anonymous usage analytics` and `Crash diagnostics` are off by default and independent. Debug/test builds and builds without service configuration are no-op. Do not add a session-time consent modal.
 
@@ -23,7 +23,7 @@ The shared semantic-event schema stays v1. The consent marker and SDK context ar
 Use one PostHog EU project for production and do not place secret personal API keys in apps. Project tokens are injected at build/deploy time.
 
 - iOS/iPadOS: set `PIYOKEY_POSTHOG_PROJECT_TOKEN` in the Release xcconfig/build settings and add the Firebase Console-generated `ios/Hanco/Hanco/Resources/GoogleService-Info.plist` outside version control. Register bundle ID `app.piyokey.Piyokey` without enabling Google Analytics.
-- Android: pass `PIYOKEY_POSTHOG_PROJECT_TOKEN`; keep `PIYOKEY_POSTHOG_HOST=https://eu.i.posthog.com`; place the Firebase-generated file at `android/app/google-services.json` outside version control. Register the final Play application ID without enabling Google Analytics.
+- Android (new port, not yet created): pass `PIYOKEY_POSTHOG_PROJECT_TOKEN`; keep `PIYOKEY_POSTHOG_HOST=https://eu.i.posthog.com`; place the Firebase-generated file at `android/app/google-services.json` outside version control. Register the final Play application ID without enabling Google Analytics.
 - Web: provide the project token to `@piyokey/web-analytics` only in a production client build. The adapter is standalone because this repository has no web application source yet.
 
 Firebase Analytics is not a dependency and must remain disabled. Firebase Crashlytics collection is explicitly false in both native manifests until the user enables diagnostics.
@@ -66,7 +66,6 @@ Stay within PostHog/Firebase free plans. Configure PostHog billing limits/notifi
 python3 tools/gen_analytics_contract.py --check
 python3 -m unittest tools.tests.test_analytics_contract
 cd web/analytics && npm test
-cd android && ./gradlew :core:analytics:test :core:settings:test :app:lintDebug :app:assembleRelease
 xcodebuild test -project ios/Hanco/Hanco.xcodeproj -scheme Hanco -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HancoTests/AppSettingsTests
 python3 tools/release_preflight.py
 ```

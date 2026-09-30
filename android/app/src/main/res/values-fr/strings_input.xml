@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android-only strings for feature/input (no iOS equivalent). Owned by feature/input; not generated. -->
+<resources>
+  <string name="keyboard_guide_android_subtitle">Ajoute-le une fois dans les paramètres de l’appareil, puis change de langue avec la touche globe ou en balayant la barre d’espace.</string>
+  <string name="keyboard_guide_android_step_1_title">Ouvre Paramètres → Système</string>
+  <string name="keyboard_guide_android_step_1_detail">Choisis Langues et saisie (sur Samsung : Gestion globale)</string>
+  <string name="keyboard_guide_android_step_2_title">Clavier → Clavier à l’écran</string>
+  <string name="keyboard_guide_android_step_2_detail">Choisis ton clavier, par exemple Gboard ou Clavier Samsung</string>
+  <string name="keyboard_guide_android_step_3_title">Ajoute le coréen</string>
+  <string name="keyboard_guide_android_step_3_detail">Langues → Ajouter un clavier → 한국어, puis choisis Dubeolsik ou 10 touches (Cheonjiin)</string>
+  <string name="keyboard_guide_android_open_settings">Ouvrir les paramètres du clavier</string>
+  <string name="keyboard_guide_android_link">Comment ajouter un clavier coréen</string>
+  <string name="keyboard_guide_android_not_detected">Aucun clavier coréen détecté. Si le coréen n’apparaît pas, consulte le guide après cette session.</string>
+  <string name="os_ime_android_input_source_warning_detail">Passe au coréen Dubeolsik avec la touche globe ou en balayant la barre d’espace.</string>
+  <string name="os_ime_android_input_hint">Touche le champ et passe le clavier en coréen. Les modifications pendant la composition ne comptent pas comme des erreurs.</string>
+  <string name="keyboard_android_shift_on">Activé</string>
+</resources>

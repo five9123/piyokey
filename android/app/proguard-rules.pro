@@ -1,4 +1,8 @@
-# PIYOKEY relies on library consumer rules for Room, kotlinx.serialization, Billing, and Play Games.
-# Keep source locations useful for Play Console stack traces without exposing local filesystem paths.
--keepattributes SourceFile,LineNumberTable
--renamesourcefileattribute SourceFile
+# kotlinx.serialization keeps generated serializers for @Serializable models.
+-keepattributes *Annotation*, InnerClasses
+-keepclassmembers class app.piyokey.** {
+    *** Companion;
+}
+-keepclasseswithmembers class app.piyokey.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
